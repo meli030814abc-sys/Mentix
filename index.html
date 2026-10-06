@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="referrer" content="strict-origin-when-cross-origin" />
+  <script>
+    // Si la app fue abierta como archivo local (file://), verificar si el servidor local está activo y redirigir automáticamente
+    if (window.location.protocol === 'file:') {
+      fetch('http://localhost:8080/index.html', { method: 'HEAD', cache: 'no-store' })
+        .then(function(r) {
+          if (r.ok) {
+            window.location.replace('http://localhost:8080/' + (window.location.hash || ''));
+          }
+        })
+        .catch(function() {});
+    }
+  </script>
+  <title>🧠 MENTIX — Plataforma de Juegos y Cuestionarios en Vivo</title>
+  
+  <!-- Tipografía Gamer, Moderna y Colección Completa de Fuentes para Presentaciones -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo+Black&family=Bebas+Neue&family=Caveat:wght@600;700&family=Chewy&family=Cinzel:wght@700;900&family=Comfortaa:wght@700&family=Inter:wght@400;500;600;700&family=Lobster&family=Merriweather:wght@700;900&family=Montserrat:wght@700;900&family=Orbitron:wght@700;900&family=Outfit:wght@400;600;700;800;900&family=Pacifico&family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Poppins:wght@600;800;900&family=Press+Start+2P&family=Righteous&display=swap" rel="stylesheet">
+  <link href="https://fonts.cdnfonts.com/css/gagalin" rel="stylesheet">
+  
+  <!-- Estilos propios de MENTIX -->
+  <link rel="stylesheet" href="css/styles.css" />
+
+  <!-- Supabase JS Client v2 -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+
+  <!-- Canvas de Confeti Explosivo -->
+  <canvas id="confetti-canvas"></canvas>
+
+  <!-- Barra de Navegación Glassmorphism -->
+  <header class="glass-nav">
+    <div style="max-width: 1250px; margin: 0 auto; padding: 0.85rem 1.25rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem;">
+      
+      <!-- Logotipo de Marca Propia MENTIX -->
+      <a href="javascript:void(0)" onclick="window.appRouter.navigate('home')" style="text-decoration: none; display: flex; align-items: center; gap: 0.5rem;">
+        <span style="font-size: 1.8rem; filter: drop-shadow(0 0 10px rgba(0,245,212,0.7));">🧠</span>
+        <span class="brand-title-text" style="font-size: 1.6rem; font-weight: 900; letter-spacing: -0.03em; color: var(--text-primary);">
+          MEN<span style="color: var(--neon-cyan); text-shadow: 0 0 15px rgba(0,245,212,0.6);">TIX</span>
+        </span>
+      </a>
+
+      <!-- Enlaces Centrales de Navegación -->
+      <nav style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
+        <button class="btn btn-outline" style="padding: 0.45rem 0.85rem; font-size: 0.9rem;" onclick="window.appRouter.navigate('home')">
+          <span>🏠</span> Inicio
+        </button>
+        <button class="btn btn-primary" style="padding: 0.45rem 0.95rem; font-size: 0.9rem; font-weight: 800;" onclick="window.appRouter.navigate('lobby-join')">
+          <span>🎮</span> Unirse (PIN)
+        </button>
+        <button class="btn btn-cyan" style="padding: 0.45rem 0.95rem; font-size: 0.9rem; font-weight: 800;" onclick="window.appRouter.navigate('creator')">
+          <span>🚀</span> Crear Reto
+        </button>
+        <button class="btn btn-outline" style="padding: 0.45rem 0.85rem; font-size: 0.9rem;" onclick="window.appRouter.navigate('projects')">
+          <span>📁</span> Proyectos
+        </button>
+
+        <!-- Enlaces Condicionales para Roles Docente y Administrador -->
+        <button id="nav-teacher-link" class="btn btn-outline" style="padding: 0.45rem 0.85rem; font-size: 0.9rem; display: none;" onclick="window.appRouter.navigate('teacher')">
+          <span>👨‍🏫</span> Panel Profe
+        </button>
+        <button id="nav-admin-link" class="btn btn-outline" style="padding: 0.45rem 0.85rem; font-size: 0.9rem; display: none; border-color: var(--neon-magenta);" onclick="window.appRouter.navigate('admin')">
+          <span>🛡️</span> Admin
+        </button>
+      </nav>
+
+      <!-- Controles de Audio, Tema y Usuario -->
+      <div style="display: flex; align-items: center; gap: 0.6rem;">
+        <button id="sound-toggle-btn" class="btn btn-outline btn-icon" title="Alternar Sonidos de Juego" onclick="window.appRouter.toggleSound()">
+          🔊
+        </button>
+        <button id="theme-toggle-btn" class="btn btn-outline btn-icon" title="Modo Oscuro / Claro" onclick="window.appRouter.toggleTheme()">
+          🌙
+        </button>
+
+        <!-- Slot de Usuario Dinámico -->
+        <div id="nav-user-slot"></div>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- Banner informativo si se abre como archivo local file:// -->
+  <div id="file-protocol-bar" style="display: none; background: linear-gradient(90deg, #7209b7, #00f5d4); color: #050510; font-weight: 800; font-size: 0.85rem; padding: 0.45rem 1rem; text-align: center; box-shadow: 0 4px 15px rgba(0,245,212,0.3);">
+    <span>🚀 Para reproducir videos de YouTube sin restricciones de archivo local: </span>
+    <a href="http://localhost:8080/" style="color: #050510; background: #fff; padding: 0.2rem 0.6rem; border-radius: 6px; text-decoration: none; font-weight: 900; margin-left: 0.4rem; box-shadow: 0 2px 5px rgba(0,0,0,0.2);">Abrir en MENTIX Web Local</a>
+  </div>
+  <script>
+    if (window.location.protocol === 'file:') {
+      document.getElementById('file-protocol-bar').style.display = 'block';
+    }
+  </script>
+
+  <!-- Contenedor Principal de Vistas SPA -->
+  <main id="app-viewport">
+    <div id="view-home" class="app-view active"></div>
+    <div id="view-creator" class="app-view"></div>
+    <div id="view-experience" class="app-view"></div>
+    <div id="view-lobby" class="app-view"></div>
+    <div id="view-game" class="app-view"></div>
+    <div id="view-leaderboard" class="app-view"></div>
+    <div id="view-podium" class="app-view"></div>
+    <div id="view-profile" class="app-view"></div>
+    <div id="view-teacher" class="app-view"></div>
+    <div id="view-admin" class="app-view"></div>
+    <div id="view-ranking" class="app-view"></div>
+    <div id="view-projects" class="app-view"></div>
+    <div id="view-presentation" class="app-view"></div>
+    <div id="view-video" class="app-view"></div>
+  </main>
+
+  <!-- Modal de Configuración de Acceso para Estudiantes (Nombres con Correos vs Nombres Libres) -->
+  <div id="roster-config-modal" class="modal-overlay">
+    <div class="modal-content" style="max-width: 620px; padding: 2.25rem 2rem; border-radius: 20px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+        <div>
+          <span class="badge-tag tag-easy" style="margin-bottom: 0.35rem; display: inline-block;">CONFIGURACIÓN DOCENTE DE SALA</span>
+          <h2 style="font-size: 1.55rem; margin: 0; display: flex; align-items: center; gap: 0.5rem; color: var(--text-primary);">
+            <span>👨‍🏫</span> Acceso de Estudiantes
+          </h2>
+        </div>
+        <button class="btn btn-outline btn-icon" onclick="window.LobbyView.closeRosterModal()">✕</button>
+      </div>
+
+      <p style="color: var(--text-secondary); font-size: 0.95rem; margin-bottom: 1.5rem; line-height: 1.45;">
+        Al crear la sala con PIN, ¿cómo deseas que se identifiquen los alumnos?
+      </p>
+
+      <!-- Tarjetas de Selección de Modalidad -->
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;" id="roster-mode-cards">
+        
+        <!-- Opción 1: Entrada Libre (Los estudiantes ponen su nombre) -->
+        <div 
+          class="roster-mode-card selected" 
+          id="opt-roster-open"
+          onclick="window.LobbyView.selectRosterMode('open')"
+          style="padding: 1.25rem 1rem; border-radius: 14px; border: 2px solid var(--neon-cyan); background: rgba(0, 245, 212, 0.08); cursor: pointer; text-align: center; transition: var(--transition-bounce);"
+        >
+          <div style="font-size: 2.2rem; margin-bottom: 0.5rem;">✍️</div>
+          <div style="font-weight: 800; font-size: 1.05rem; color: var(--text-primary); margin-bottom: 0.35rem;">
+            Ponen su nombre
+          </div>
+          <div style="font-size: 0.82rem; color: var(--text-secondary); line-height: 1.35;">
+            Cada estudiante escribe libremente su nombre o apodo al entrar con el PIN.
+          </div>
+          <span class="badge-tag" style="margin-top: 0.75rem; background: rgba(0, 245, 212, 0.15); color: var(--neon-cyan); font-size: 0.72rem; display: inline-block;">
+            🎮 Juego Libre
+          </span>
+        </div>
+
+        <!-- Opción 2: Listado de Nombres con Correos -->
+        <div 
+          class="roster-mode-card" 
+          id="opt-roster-list"
+          onclick="window.LobbyView.selectRosterMode('roster')"
+          style="padding: 1.25rem 1rem; border-radius: 14px; border: 2px solid var(--border-color); background: var(--bg-card); cursor: pointer; text-align: center; transition: var(--transition-bounce);"
+        >
+          <div style="font-size: 2.2rem; margin-bottom: 0.5rem;">📋</div>
+          <div style="font-weight: 800; font-size: 1.05rem; color: var(--text-primary); margin-bottom: 0.35rem;">
+            Listado con correos
+          </div>
+          <div style="font-size: 0.82rem; color: var(--text-secondary); line-height: 1.35;">
+            Tú defines los nombres y correos. Los alumnos se seleccionan de la lista.
+          </div>
+          <span class="badge-tag" style="margin-top: 0.75rem; background: rgba(255, 209, 102, 0.15); color: #ffd166; font-weight: 800; font-size: 0.72rem; display: inline-block;">
+            🎓 Control Académico
+          </span>
+        </div>
+
+      </div>
+
+      <!-- Panel Desplegable para Configuración de la Lista (visible solo si elige 'roster') -->
+      <div id="roster-details-panel" style="display: none; background: rgba(0,0,0,0.25); border: 1.5px solid rgba(255, 209, 102, 0.4); border-radius: 14px; padding: 1.25rem; margin-bottom: 1.5rem;">
+        
+        <div style="margin-bottom: 1rem;">
+          <label style="display: block; font-weight: 800; font-size: 0.82rem; text-transform: uppercase; color: #ffd166; margin-bottom: 0.4rem;">
+            1. ELIGE UN GRUPO REGISTRADO O CREA LISTA MANUAL
+          </label>
+          <select 
+            id="roster-group-select" 
+            style="width: 100%; padding: 0.75rem; font-weight: 700; font-size: 0.95rem; border-radius: var(--border-radius-md);"
+            onchange="window.LobbyView.onRosterGroupChanged(this.value)"
+          >
+            <!-- Se llena dinámicamente con los grupos de appState -->
+          </select>
+        </div>
+
+        <div style="margin-bottom: 0.75rem;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem; flex-wrap: wrap; gap: 0.5rem;">
+            <label style="font-weight: 800; font-size: 0.82rem; text-transform: uppercase; color: var(--text-secondary);">
+              2. NOMBRES Y CORREOS (Nombre, correo por línea)
+            </label>
+            <button type="button" class="btn btn-outline" style="font-size: 0.75rem; padding: 0.2rem 0.5rem;" onclick="window.LobbyView.loadExampleRoster()">
+              ⚡ Cargar ejemplo
+            </button>
+          </div>
+          <textarea 
+            id="roster-students-textarea" 
+            rows="4" 
+            placeholder="Andrea Valderrama, andrea@colegio.edu.co&#10;Juan Sebastián Mora, juan@colegio.edu.co&#10;María Camila Gómez, maria@colegio.edu.co"
+            style="width: 100%; padding: 0.75rem; font-family: monospace; font-size: 0.85rem; border-radius: var(--border-radius-md); resize: vertical;"
+            oninput="window.LobbyView.updateRosterPreviewCount()"
+          ></textarea>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; flex-wrap: wrap; gap: 0.5rem;">
+          <span style="color: var(--neon-cyan); font-weight: 700;" id="roster-count-indicator">
+            👥 5 alumnos listos con correo
+          </span>
+          <span style="color: var(--text-muted); font-size: 0.8rem;">
+            Formato: <em>Nombre Completo, correo@dominio.com</em>
+          </span>
+        </div>
+
+      </div>
+
+      <!-- Botones de Acción -->
+      <div style="display: flex; gap: 0.75rem; justify-content: flex-end; flex-wrap: wrap;">
+        <button class="btn btn-outline" onclick="window.LobbyView.closeRosterModal()">
+          Cancelar
+        </button>
+        <button class="btn btn-primary btn-lg" id="btn-confirm-roster-launch" onclick="window.LobbyView.confirmRosterAndLaunch()" style="font-weight: 800; padding: 0.85rem 1.75rem;">
+          <span>🚀</span> ¡Crear Sala y Abrir Lobby!
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal para Cambiar Modo de Juego en Vivo (Pantalla del Profesor) -->
+  <div id="change-mode-modal" class="modal-overlay">
+    <div class="modal-content" style="max-width: 780px; max-height: 85vh; display: flex; flex-direction: column; padding: 2rem; border-radius: 20px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+        <div>
+          <span class="badge-tag tag-easy" style="margin-bottom: 0.35rem; display: inline-block;">DINÁMICA DE SALA EN VIVO</span>
+          <h2 style="font-size: 1.55rem; margin: 0; display: flex; align-items: center; gap: 0.5rem; color: var(--text-primary);">
+            <span>🔄</span> Cambiar Modo de Juego
+          </h2>
+        </div>
+        <button class="btn btn-outline btn-icon" onclick="window.LobbyView.closeChangeModeModal()">✕</button>
+      </div>
+
+      <p style="color: var(--text-secondary); font-size: 0.95rem; margin-bottom: 1.25rem; line-height: 1.45;">
+        Selecciona la dinámica con la que deseas jugar. Se actualizará en tiempo real en la pantalla de todos los estudiantes conectados:
+      </p>
+
+      <div id="change-mode-options-list" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 0.75rem; overflow-y: auto; padding-right: 0.5rem; margin-bottom: 1.5rem; max-height: 460px;">
+        <!-- Inyectado dinámicamente con los 14 modos -->
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: 0.75rem;">
+        <button class="btn btn-outline" onclick="window.LobbyView.closeChangeModeModal()">
+          Cerrar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de Autenticación (Login / Registro / Roles) -->
+  <div id="auth-modal" class="modal-overlay">
+    <div class="modal-content" style="padding: 2.5rem 2rem;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+        <h2 style="font-size: 1.6rem; display: flex; align-items: center; gap: 0.5rem;">
+          <span class="glow-text-cyan">🧠</span> Acceso a MENTIX
+        </h2>
+        <button class="btn btn-outline btn-icon" onclick="window.appRouter.closeModal('auth-modal')">✕</button>
+      </div>
+
+      <!-- Selector de pestaña Login / Registro -->
+      <div style="display: flex; gap: 0.5rem; margin-bottom: 1.75rem;">
+        <button id="tab-btn-login" class="btn btn-cyan" style="flex: 1;" onclick="window.appRouter.switchAuthTab('login')">
+          Iniciar Sesión
+        </button>
+        <button id="tab-btn-reg" class="btn btn-outline" style="flex: 1;" onclick="window.appRouter.switchAuthTab('register')">
+          Crear Cuenta
+        </button>
+      </div>
+
+      <!-- Formulario de Inicio de Sesión -->
+      <form id="auth-login-form" onsubmit="window.appRouter.handleLogin(event)">
+        <div style="margin-bottom: 1rem;">
+          <label style="display: block; font-weight: 700; margin-bottom: 0.35rem; font-size: 0.9rem;">Correo o Usuario</label>
+          <input type="text" id="login-email" value="mateo@te-reto.app" required style="width: 100%; padding: 0.75rem; border-radius: var(--border-radius-md); background: rgba(0,0,0,0.4); border: 1px solid var(--border-color); color: white;" />
+        </div>
+        <div style="margin-bottom: 1.5rem;">
+          <label style="display: block; font-weight: 700; margin-bottom: 0.35rem; font-size: 0.9rem;">Contraseña</label>
+          <input type="password" value="••••••••" required style="width: 100%; padding: 0.75rem; border-radius: var(--border-radius-md); background: rgba(0,0,0,0.4); border: 1px solid var(--border-color); color: white;" />
+        </div>
+        <button type="submit" class="btn btn-primary btn-lg" style="width: 100%; margin-bottom: 1.25rem;">
+          ¡Entrar a la Arena! 🚀
+        </button>
+      </form>
+
+      <!-- Formulario de Registro con Selección de Rol -->
+      <form id="auth-register-form" style="display: none;" onsubmit="window.appRouter.handleRegister(event)">
+        <div style="margin-bottom: 0.85rem;">
+          <label style="display: block; font-weight: 700; margin-bottom: 0.35rem; font-size: 0.9rem;">Nombre Completo</label>
+          <input type="text" id="reg-name" placeholder="Ej: Camilo Torres" required style="width: 100%; padding: 0.75rem; border-radius: var(--border-radius-md); background: rgba(0,0,0,0.4); border: 1px solid var(--border-color); color: white;" />
+        </div>
+        <div style="margin-bottom: 0.85rem;">
+          <label style="display: block; font-weight: 700; margin-bottom: 0.35rem; font-size: 0.9rem;">Usuario / Nickname</label>
+          <input type="text" id="reg-username" placeholder="camilo_gamer" required style="width: 100%; padding: 0.75rem; border-radius: var(--border-radius-md); background: rgba(0,0,0,0.4); border: 1px solid var(--border-color); color: white;" />
+        </div>
+        <div style="margin-bottom: 0.85rem;">
+          <label style="display: block; font-weight: 700; margin-bottom: 0.35rem; font-size: 0.9rem;">Correo Electrónico</label>
+          <input type="email" id="reg-email" placeholder="camilo@correo.com" required style="width: 100%; padding: 0.75rem; border-radius: var(--border-radius-md); background: rgba(0,0,0,0.4); border: 1px solid var(--border-color); color: white;" />
+        </div>
+        <div style="margin-bottom: 1.25rem;">
+          <label style="display: block; font-weight: 700; margin-bottom: 0.35rem; font-size: 0.9rem;">¿Cuál es tu Rol Principal?</label>
+          <select id="reg-role" style="width: 100%; padding: 0.75rem; border-radius: var(--border-radius-md); background: #131b2e; border: 1px solid var(--border-color); color: white; font-weight: 700;">
+            <option value="student">🎒 Estudiante (Competir y resolver retos)</option>
+            <option value="teacher">👨‍🏫 Profesor (Crear retos, grupos y analíticas)</option>
+            <option value="admin">🛡️ Administrador (Gestión global de la plataforma)</option>
+          </select>
+        </div>
+        <button type="submit" class="btn btn-cyan btn-lg" style="width: 100%; margin-bottom: 1.25rem;">
+          Completar Registro ✨
+        </button>
+      </form>
+
+      <!-- Opciones Sociales -->
+      <div style="text-align: center; border-top: 1px solid var(--border-color); padding-top: 1.25rem;">
+        <span style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.75rem;">O continúa con</span>
+        <div style="display: flex; gap: 0.75rem; justify-content: center;">
+          <button class="btn btn-outline" style="font-size: 0.85rem; padding: 0.5rem 1rem;" onclick="alert('Conexión con Google simulada con éxito.')">
+            🌐 Google
+          </button>
+          <button class="btn btn-outline" style="font-size: 0.85rem; padding: 0.5rem 1rem;" onclick="alert('Conexión con Microsoft simulada con éxito.')">
+            🟦 Microsoft
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de Previsualización de Reto (Pantalla Completa) -->
+  <div id="preview-modal" class="modal-overlay preview-fullscreen-modal">
+    <div class="modal-content preview-fullscreen-content">
+      <div id="preview-modal-body"></div>
+    </div>
+  </div>
+
+  <!-- Modal de Nueva Categoría Personalizada -->
+  <div id="category-modal" class="modal-overlay">
+    <div class="modal-content" style="padding: 2rem;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+        <h2 style="font-size: 1.4rem;">➕ Nueva Categoría Personalizada</h2>
+        <button class="btn btn-outline btn-icon" onclick="window.appRouter.closeModal('category-modal')">✕</button>
+      </div>
+      <form onsubmit="window.appRouter.handleCreateCategory(event)">
+        <div style="margin-bottom: 1rem;">
+          <label style="display: block; font-weight: 700; margin-bottom: 0.35rem; font-size: 0.9rem;">Nombre de la Categoría</label>
+          <input type="text" id="cat-name" placeholder="Ej: Robótica & Automatización" required style="width: 100%; padding: 0.75rem; border-radius: var(--border-radius-md); background: rgba(0,0,0,0.4); border: 1px solid var(--border-color); color: white;" />
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
+          <div>
+            <label style="display: block; font-weight: 700; margin-bottom: 0.35rem; font-size: 0.9rem;">Emoji / Ícono</label>
+            <input type="text" id="cat-icon" placeholder="🤖" value="💡" style="width: 100%; padding: 0.75rem; border-radius: var(--border-radius-md); background: rgba(0,0,0,0.4); border: 1px solid var(--border-color); color: white; font-size: 1.2rem; text-align: center;" />
+          </div>
+          <div>
+            <label style="display: block; font-weight: 700; margin-bottom: 0.35rem; font-size: 0.9rem;">Color Neón</label>
+            <input type="color" id="cat-color" value="#00f5d4" style="width: 100%; height: 48px; border-radius: var(--border-radius-md); background: transparent; border: 1px solid var(--border-color); cursor: pointer;" />
+          </div>
+        </div>
+        <button type="submit" class="btn btn-cyan btn-lg" style="width: 100%;">
+          Guardar Categoría
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal de Generación con IA -->
+  <div id="creator-ai-modal" class="modal-overlay">
+    <div class="modal-content ai-pulse-glow" style="max-width: 620px; padding: 2rem;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+        <div>
+          <h2 style="font-size: 1.4rem; display: flex; align-items: center; gap: 0.5rem; margin: 0;">
+            <span class="glow-text-cyan">✨</span> Generador de Cuestionarios con IA
+          </h2>
+          <p style="font-size: 0.82rem; color: var(--text-secondary); margin: 0.25rem 0 0;">
+            Crea cuestionarios de cualquier carrera universitaria o tema especializado con búsqueda rápida enciclopédica en vivo.
+          </p>
+        </div>
+        <button class="btn btn-outline btn-icon" onclick="window.CreatorView.closeAIModal()">✕</button>
+      </div>
+
+      <form id="ai-generator-form" onsubmit="window.CreatorView.executeAIGeneration(event)">
+        <div style="margin-bottom: 1rem;">
+          <label style="display: block; font-weight: 700; margin-bottom: 0.35rem; font-size: 0.9rem;">
+            🎯 Tema o Asunto del Cuestionario *
+          </label>
+          <input 
+            type="text" 
+            id="ai-topic-input" 
+            placeholder="Ej: DAMA-DMBOK, Gobierno de Datos, Termodinámica, Derecho Penal, Medicina, Finanzas..." 
+            required 
+            style="width: 100%; padding: 0.75rem; border-radius: var(--border-radius-md); background: rgba(0,0,0,0.5); border: 1px solid var(--border-color); color: white; font-weight: 600;" 
+          />
+          <div style="display: flex; align-items: center; gap: 0.45rem; margin-top: 0.45rem; font-size: 0.8rem; color: var(--neon-cyan);">
+            <span style="font-size: 1rem;">🌐</span>
+            <span>Búsqueda rápida en vivo activada: Conoce cualquier carrera (Medicina, Ingenierías, Derecho, Ciencias, etc.)</span>
+          </div>
+        </div>
+
+        <div style="margin-bottom: 1rem;">
+          <label style="display: flex; justify-content: space-between; font-weight: 700; margin-bottom: 0.35rem; font-size: 0.9rem;">
+            <span>📝 Contenido o Apuntes Base (Opcional)</span>
+            <span style="font-size: 0.78rem; font-weight: 400; color: var(--text-secondary);">Para preguntas exactas de tu material</span>
+          </label>
+          <textarea 
+            id="ai-notes-input" 
+            rows="3" 
+            placeholder="Pega aquí un resumen, apuntes de clase, texto de un libro o artículo para que el generador cree las preguntas basadas en este contenido..." 
+            style="width: 100%; padding: 0.75rem; border-radius: var(--border-radius-md); background: rgba(0,0,0,0.5); border: 1px solid var(--border-color); color: white; font-size: 0.85rem; resize: vertical;"
+          ></textarea>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 0.75rem; margin-bottom: 1.25rem;">
+          <div>
+            <label style="display: block; font-weight: 700; margin-bottom: 0.35rem; font-size: 0.85rem;">Cantidad de Preguntas</label>
+            <input 
+              type="number" 
+              id="ai-count-input" 
+              min="1" 
+              value="5" 
+              placeholder="Ej: 10, 50, 500, 2000..."
+              style="width: 100%; padding: 0.6rem 0.75rem; border-radius: 6px; background: #0b0f19; color: white; border: 1px solid var(--border-color); font-weight: 700; font-size: 0.95rem; outline: none; transition: border-color 0.2s;"
+              onfocus="this.style.borderColor='var(--neon-cyan)'"
+              onblur="this.style.borderColor='var(--border-color)'"
+            />
+          </div>
+
+          <div>
+            <label style="display: block; font-weight: 700; margin-bottom: 0.35rem; font-size: 0.85rem;">Dificultad</label>
+            <select id="ai-diff-select" style="width: 100%; padding: 0.6rem; border-radius: 6px; background: #0b0f19; color: white; border: 1px solid var(--border-color); font-weight: 700;">
+              <option value="Fácil">Fácil</option>
+              <option value="Medio" selected>Medio</option>
+              <option value="Difícil">Difícil</option>
+            </select>
+          </div>
+
+          <div>
+            <label style="display: block; font-weight: 700; margin-bottom: 0.35rem; font-size: 0.85rem;">Tipo de Pregunta</label>
+            <select id="ai-type-select" style="width: 100%; padding: 0.6rem; border-radius: 6px; background: #0b0f19; color: white; border: 1px solid var(--border-color); font-weight: 700;">
+              <option value="single" selected>🔘 Selección Múltiple</option>
+              <option value="boolean">⚖️ Verdadero / Falso</option>
+              <option value="multi">☑️ Múltiple Respuesta (varias)</option>
+              <option value="text">✍️ Respuesta Corta (Escribir)</option>
+              <option value="open">💬 Respuesta Abierta (Ideas / Mentix)</option>
+              <option value="poll">📊 Encuesta / Votación</option>
+              <option value="mixed">🎲 Mixto (Combinado variado)</option>
+            </select>
+          </div>
+
+          <div>
+            <label style="display: block; font-weight: 700; margin-bottom: 0.35rem; font-size: 0.85rem;">Tiempo</label>
+            <select id="ai-time-select" style="width: 100%; padding: 0.6rem; border-radius: 6px; background: #0b0f19; color: white; border: 1px solid var(--border-color); font-weight: 700;">
+              <option value="15">15 seg</option>
+              <option value="20" selected>20 seg</option>
+              <option value="30">30 seg</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem;">
+          <input type="checkbox" id="ai-replace-check" style="width: 18px; height: 18px; accent-color: var(--neon-cyan); cursor: pointer;" checked />
+          <label for="ai-replace-check" style="font-size: 0.85rem; color: var(--text-secondary); cursor: pointer;">
+            Reemplazar las preguntas actuales del cuestionario
+          </label>
+        </div>
+
+        <div id="ai-loading-indicator" style="display: none; text-align: center; margin-bottom: 1.25rem; padding: 1rem; background: rgba(0,0,0,0.3); border-radius: 8px;">
+          <div class="ai-spinner" style="margin-bottom: 0.5rem;"></div>
+          <div id="ai-loading-text" style="font-weight: 700; font-size: 0.95rem; color: var(--neon-cyan);">
+            Analizando y generando preguntas...
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 0.75rem;">
+          <button type="button" class="btn btn-outline" style="flex: 1;" onclick="window.CreatorView.closeAIModal()">
+            Cancelar
+          </button>
+          <button type="submit" id="ai-submit-btn" class="btn btn-primary btn-lg" style="flex: 2; background: linear-gradient(135deg, #7209b7, #f72585); border: none;">
+            <span>⚡</span> ¡Generar Cuestionario!
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal de Importación de Archivo y Preguntas -->
+  <div id="creator-file-modal" class="modal-overlay">
+    <div class="modal-content" style="max-width: 650px; padding: 2rem;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+        <div>
+          <h2 style="font-size: 1.4rem; display: flex; align-items: center; gap: 0.5rem; margin: 0;">
+            <span class="glow-text-cyan">📁</span> Importar Preguntas desde Archivo
+          </h2>
+          <p style="font-size: 0.82rem; color: var(--text-secondary); margin: 0.25rem 0 0;">
+            Carga tus cuestionarios desde archivos de texto, Word, Excel o pégalos directamente.
+          </p>
+        </div>
+        <button class="btn btn-outline btn-icon" onclick="window.CreatorView.closeFileImportModal()">✕</button>
+      </div>
+
+      <!-- Format pills -->
+      <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1.25rem;">
+        <span class="format-pill">📕 PDF (.pdf)</span>
+        <span class="format-pill">📊 PowerPoint (.pptx)</span>
+        <span class="format-pill">📝 Word (.docx)</span>
+        <span class="format-pill">⚡ Mentix (.mentix / .json)</span>
+        <span class="format-pill">📄 .TXT</span>
+        <span class="format-pill">📊 .CSV / Excel</span>
+      </div>
+
+      <!-- Zona de arrastre de archivos -->
+      <div 
+        class="creator-dropzone" 
+        id="creator-file-dropzone"
+        ondragover="window.CreatorView.handleDragOver(event)"
+        ondragleave="window.CreatorView.handleDragLeave(event)"
+        ondrop="window.CreatorView.handleDrop(event)"
+      >
+        <span style="font-size: 2.2rem; display: block; margin-bottom: 0.4rem;">📤</span>
+        <div style="font-weight: 800; font-size: 1.05rem;" id="dropzone-label">
+          Arrastra tu archivo aquí o haz clic para buscarlo
+        </div>
+        <div style="font-size: 0.82rem; color: var(--text-secondary); margin-top: 0.35rem;" id="dropzone-filename">
+          Soporta PDF, PowerPoint (.pptx), Word (.docx), archivos propios (.mentix, .json) y texto plano
+        </div>
+        <input 
+          type="file" 
+          id="creator-file-input" 
+          accept=".pdf,.pptx,.ppt,.docx,.doc,.json,.mentix,.txt,.csv,.tsv,.md,application/pdf,application/vnd.openxmlformats-officedocument.presentationml.presentation,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/json,text/plain,text/csv" 
+          onchange="window.CreatorView.handleFileInput(this.files[0])" 
+        />
+      </div>
+
+      <!-- Ajuste de Tipo de Preguntas al Importar -->
+      <div style="background: rgba(0,0,0,0.35); padding: 0.75rem 1rem; border-radius: var(--border-radius-md); border: 1px solid var(--border-color); margin-bottom: 1.25rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem;">
+        <label style="font-weight: 700; font-size: 0.88rem; color: var(--neon-cyan); display: flex; align-items: center; gap: 0.4rem;">
+          <span>⚙️</span> Tipo de preguntas al importar:
+        </label>
+        <select id="file-type-select" style="padding: 0.45rem 0.85rem; border-radius: 6px; background: #0b0f19; color: white; border: 1px solid var(--border-color); font-weight: 700; font-size: 0.85rem;">
+          <option value="auto" selected>✨ Auto-detectar según contenido</option>
+          <option value="single">🔘 Forzar Selección Múltiple</option>
+          <option value="boolean">⚖️ Forzar Verdadero / Falso</option>
+          <option value="multi">☑️ Forzar Múltiple Respuesta</option>
+          <option value="text">✍️ Forzar Respuesta Corta (Escribir)</option>
+          <option value="open">💬 Forzar Respuesta Abierta</option>
+          <option value="poll">📊 Forzar Encuesta / Votación</option>
+        </select>
+      </div>
+
+      <div style="text-align: center; margin: 1rem 0; font-size: 0.85rem; color: var(--text-muted); font-weight: 700;">
+        — O PEGA EL TEXTO AQUÍ DIRECTAMENTE —
+      </div>
+
+      <div style="margin-bottom: 1rem;">
+        <textarea 
+          id="creator-import-textarea" 
+          rows="6" 
+          placeholder="Ejemplo de formato admitido:&#10;1. ¿Cuál es el río más largo del mundo?&#10;a) Nilo&#10;b) Amazonas*&#10;c) Misisipi&#10;d) Danubio&#10;&#10;2. La fotosíntesis requiere luz solar&#10;Respuesta: Verdadero"
+          style="width: 100%; padding: 0.75rem; border-radius: var(--border-radius-md); background: rgba(0,0,0,0.5); border: 1px solid var(--border-color); color: white; font-size: 0.85rem; font-family: monospace; resize: vertical;"
+        ></textarea>
+      </div>
+
+      <div style="margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem;">
+        <div style="display: flex; align-items: center; gap: 0.5rem;">
+          <input type="checkbox" id="file-replace-check" style="width: 18px; height: 18px; accent-color: var(--neon-cyan); cursor: pointer;" checked />
+          <label for="file-replace-check" style="font-size: 0.85rem; color: var(--text-secondary); cursor: pointer;">
+            Reemplazar las preguntas actuales del cuestionario
+          </label>
+        </div>
+        <button 
+          type="button" 
+          class="btn btn-outline" 
+          style="padding: 0.25rem 0.6rem; font-size: 0.78rem;" 
+          onclick="window.CreatorView.insertSampleTemplate()"
+        >
+          💡 Ver plantilla de ejemplo
+        </button>
+      </div>
+
+      <div style="display: flex; gap: 0.75rem;">
+        <button type="button" class="btn btn-outline" style="flex: 1;" onclick="window.CreatorView.closeFileImportModal()">
+          Cancelar
+        </button>
+        <button 
+          type="button" 
+          id="file-submit-btn" 
+          class="btn btn-cyan btn-lg" 
+          style="flex: 2;" 
+          onclick="window.CreatorView.processImport()"
+        >
+          <span>📥</span> Procesar e Insertar Preguntas
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Importar Presentación (PowerPoint, PDF, Markdown o JSON) -->
+  <div id="presentation-import-modal" class="modal-overlay">
+    <div class="modal-content glass-panel" style="max-width: 720px; padding: 2rem; border-radius: 20px; border: 2px solid #7c3aed;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+        <div>
+          <div style="display: inline-flex; align-items: center; gap: 0.4rem; background: rgba(124, 58, 237, 0.2); border: 1px solid #7c3aed; padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.78rem; font-weight: 800; color: #c4b5fd; margin-bottom: 0.4rem;">
+            <span>📥</span> IMPORTAR DIAPOSITIVAS
+          </div>
+          <h2 style="font-size: 1.6rem; font-weight: 900; margin: 0; color: var(--text-primary);">
+            Importar Presentación
+          </h2>
+          <p style="font-size: 0.88rem; color: var(--text-secondary); margin: 0.35rem 0 0;">
+            Convierte tus diapositivas de PowerPoint (.pptx), PDF (.pdf), texto o JSON en diapositivas interactivas.
+          </p>
+        </div>
+        <button class="btn btn-outline btn-icon" onclick="window.PresentationView.closeImportModal()">✕</button>
+      </div>
+
+      <!-- Zona de arrastre de archivos -->
+      <div 
+        class="creator-dropzone" 
+        id="pres-file-dropzone"
+        ondragover="window.PresentationView.handleDragOver(event)"
+        ondragleave="window.PresentationView.handleDragLeave(event)"
+        ondrop="window.PresentationView.handleDrop(event)"
+        style="border-color: #7c3aed; margin-bottom: 1.25rem; text-align: center; padding: 1.75rem; cursor: pointer;"
+        onclick="document.getElementById('pres-file-input').click()"
+      >
+        <span style="font-size: 2.4rem; display: block; margin-bottom: 0.4rem;">📊</span>
+        <div style="font-weight: 800; font-size: 1.05rem;" id="pres-dropzone-label">
+          Arrastra tu presentación aquí o haz clic para buscarla
+        </div>
+        <div style="font-size: 0.82rem; color: var(--text-secondary); margin-top: 0.35rem;" id="pres-dropzone-filename">
+          Soporta PowerPoint (.pptx), Documentos PDF (.pdf), Markdown (.md), texto (.txt) y .json
+        </div>
+        <input 
+          type="file" 
+          id="pres-file-input" 
+          accept=".pptx,.pdf,.json,.mentix,.txt,.md,application/pdf,application/vnd.openxmlformats-officedocument.presentationml.presentation,application/json,text/plain" 
+          style="display: none;"
+          onchange="window.PresentationView.handleFileInput(this.files[0])" 
+        />
+      </div>
+
+      <div style="text-align: center; margin: 1rem 0; font-size: 0.85rem; color: var(--text-muted); font-weight: 700;">
+        — O PEGA EL ESQUEMA DE TU PRESENTACIÓN DIRECTAMENTE —
+      </div>
+
+      <!-- Área de texto para pegar diapositivas -->
+      <div style="margin-bottom: 1rem;">
+        <textarea 
+          id="pres-import-textarea" 
+          rows="6" 
+          placeholder="Ejemplo de formato admitido:&#10;# El Sistema Solar&#10;&#10;---&#10;## Diapositiva 1: El Sol&#10;El Sol es la estrella central del sistema planetario.&#10;- Representa el 99.8% de la masa del sistema.&#10;- Fuente principal de luz y energía.&#10;&#10;---&#10;## Diapositiva 2: Los Planetas Rocosos&#10;Mercurio, Venus, Tierra y Marte son planetas terrestres.&#10;- Superficie sólida compuesta de roca y metal."
+          style="width: 100%; padding: 0.75rem; border-radius: var(--border-radius-md); background: rgba(0,0,0,0.5); border: 1px solid var(--border-color); color: white; font-size: 0.85rem; font-family: monospace; resize: vertical;"
+        ></textarea>
+      </div>
+
+      <div style="margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem;">
+        <div style="display: flex; align-items: center; gap: 0.5rem;">
+          <input type="checkbox" id="pres-replace-check" style="width: 18px; height: 18px; accent-color: #7c3aed; cursor: pointer;" checked />
+          <label for="pres-replace-check" style="font-size: 0.85rem; color: var(--text-secondary); cursor: pointer;">
+            Reemplazar las diapositivas actuales de la presentación
+          </label>
+        </div>
+        <button 
+          type="button" 
+          class="btn btn-outline" 
+          style="padding: 0.25rem 0.6rem; font-size: 0.78rem;" 
+          onclick="window.PresentationView.insertSampleTemplate()"
+        >
+          💡 Cargar plantilla de ejemplo
+        </button>
+      </div>
+
+      <div style="display: flex; gap: 0.75rem;">
+        <button type="button" class="btn btn-outline" style="flex: 1;" onclick="window.PresentationView.closeImportModal()">
+          Cancelar
+        </button>
+        <button 
+          type="button" 
+          id="pres-submit-btn" 
+          class="btn btn-cyan btn-lg" 
+          style="flex: 2; background: linear-gradient(135deg, #7c3aed, var(--neon-cyan)); border: none; font-weight: 900;" 
+          onclick="window.PresentationView.processImport()"
+        >
+          <span>📥</span> Procesar e Importar Diapositivas
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Crear Nuevo Proyecto (Presentación, Video Interactivo o Quiz) -->
+  <div id="create-project-type-modal" class="modal-overlay" style="display: none;">
+    <div class="modal-content glass-panel" style="max-width: 680px; padding: 2rem; border-radius: 20px; border: 2px solid var(--neon-cyan);">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+        <div>
+          <div style="display: inline-flex; align-items: center; gap: 0.4rem; background: rgba(0,245,212,0.15); border: 1px solid var(--neon-cyan); padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.78rem; font-weight: 800; color: var(--neon-cyan); margin-bottom: 0.4rem;">
+            <span>✨</span> NUEVO PROYECTO EDUCATIVO
+          </div>
+          <h2 style="font-size: 1.6rem; font-weight: 900; margin: 0; color: var(--text-primary);">
+            ¿Qué tipo de proyecto deseas crear?
+          </h2>
+          <p style="font-size: 0.88rem; color: var(--text-secondary); margin: 0.35rem 0 0;">
+            Selecciona el formato para estructurar tu contenido interactivo de clase:
+          </p>
+        </div>
+        <button class="btn btn-outline btn-icon" onclick="window.ProjectsView.closeCreateProjectModal()">✕</button>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.25rem; margin-bottom: 1.5rem;">
+        <!-- Opción 1: Presentación Interactiva -->
+        <div 
+          class="glass-panel" 
+          onclick="window.ProjectsView.startNewProject('presentation')"
+          style="padding: 1.6rem 1.25rem; border-radius: 16px; border: 2px solid #7c3aed; background: rgba(124, 58, 237, 0.08); cursor: pointer; text-align: center; transition: var(--transition-bounce);"
+          onmouseenter="this.style.transform='translateY(-4px)'; this.style.borderColor='var(--neon-cyan)'"
+          onmouseleave="this.style.transform='none'; this.style.borderColor='#7c3aed'"
+        >
+          <div style="font-size: 2.8rem; margin-bottom: 0.6rem;">📊</div>
+          <h3 style="font-size: 1.25rem; font-weight: 900; margin: 0 0 0.4rem; color: var(--text-primary);">Presentación</h3>
+          <p style="font-size: 0.85rem; color: var(--text-secondary); margin: 0 0 1.2rem; line-height: 1.45;">
+            Diapositivas estructuradas con explicaciones, imágenes y conceptos clave para tus clases.
+          </p>
+          <span class="btn btn-outline" style="font-size: 0.85rem; padding: 0.45rem 1rem; border-color: #7c3aed; color: #c4b5fd; font-weight: 800;">
+            Crear Presentación →
+          </span>
+        </div>
+
+        <!-- Opción 2: Video Interactivo -->
+        <div 
+          class="glass-panel" 
+          onclick="window.ProjectsView.startNewProject('video')"
+          style="padding: 1.6rem 1.25rem; border-radius: 16px; border: 2px solid #ef4444; background: rgba(239, 68, 68, 0.08); cursor: pointer; text-align: center; transition: var(--transition-bounce);"
+          onmouseenter="this.style.transform='translateY(-4px)'; this.style.borderColor='var(--neon-cyan)'"
+          onmouseleave="this.style.transform='none'; this.style.borderColor='#ef4444'"
+        >
+          <div style="font-size: 2.8rem; margin-bottom: 0.6rem;">🎬</div>
+          <h3 style="font-size: 1.25rem; font-weight: 900; margin: 0 0 0.4rem; color: var(--text-primary);">Video Clase</h3>
+          <p style="font-size: 0.85rem; color: var(--text-secondary); margin: 0 0 1.2rem; line-height: 1.45;">
+            Integra videos educativos (YouTube, Drive, Vimeo, MP4) con capítulos, resumen y debate.
+          </p>
+          <span class="btn btn-outline" style="font-size: 0.85rem; padding: 0.45rem 1rem; border-color: #ef4444; color: #fca5a5; font-weight: 800;">
+            Crear Video Clase →
+          </span>
+        </div>
+      </div>
+
+      <div style="text-align: right;">
+        <button type="button" class="btn btn-outline" onclick="window.ProjectsView.closeCreateProjectModal()">
+          Cerrar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PDF.js para soporte de extracción de documentos PDF -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <script>
+    if (window.pdfjsLib) {
+      window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+    }
+  </script>
+
+  <!-- Scripts en orden de dependencias -->
+  <script src="js/audio.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/modes.js"></script>
+  <script src="js/supabase.js"></script>
+  <script src="js/realtime.js"></script>
+  
+  <script src="js/views/home.js"></script>
+  <script src="js/views/creator.js"></script>
+  <script src="js/views/experience.js"></script>
+  <script src="js/views/lobby.js"></script>
+  <script src="js/views/game.js"></script>
+  <script src="js/views/leaderboard.js"></script>
+  <script src="js/views/podium.js"></script>
+  <script src="js/views/profile.js"></script>
+  <script src="js/views/teacher.js"></script>
+  <script src="js/views/admin.js"></script>
+  <script src="js/views/ranking.js"></script>
+  <script src="js/views/projects.js"></script>
+  <script src="js/views/presentation.js"></script>
+  <script src="js/views/video-project.js"></script>
+  
+  <script src="js/app.js"></script>
+</body>
+</html>
