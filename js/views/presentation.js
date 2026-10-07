@@ -1260,19 +1260,50 @@ window.PresentationView = {
                 >${this.escapeHtml((currentSlide.bullets || []).join('\n'))}</textarea>
               </div>
 
-              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
-                <div>
-                  <label style="display: block; font-size: 0.85rem; font-weight: 800; margin-bottom: 0.4rem;">URL de Imagen de Apoyo</label>
-                  <input 
-                    type="text" 
-                    value="${this.escapeHtml(currentSlide.media || '')}" 
-                    placeholder="https://..." 
-                    style="width: 100%; padding: 0.75rem 1rem; border-radius: 10px; background: rgba(0,0,0,0.3); border: 1.5px solid var(--border-color); color: var(--text-primary); font-size: 0.95rem; outline: none;"
-                    oninput="window.PresentationView.updateCurrentSlideField('media', this.value)"
-                  />
+              ${isVideoLayout ? `
+                <!-- Entrada de Video Explicativo (reemplaza la imagen de apoyo) -->
+                <div style="background: rgba(239, 68, 68, 0.08); border: 1.5px solid rgba(239, 68, 68, 0.35); border-radius: 14px; padding: 1.15rem 1.25rem; margin-bottom: 1.25rem;">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; flex-wrap: wrap; gap: 0.5rem;">
+                    <label style="font-size: 0.9rem; font-weight: 900; color: #fca5a5; display: flex; align-items: center; gap: 0.4rem; margin: 0;">
+                      <span>🎬</span> URL del Video Explicativo (en vez de imagen)
+                    </label>
+                    <span style="font-size: 0.78rem; color: var(--text-muted);">
+                      YouTube, Google Drive, Vimeo, Loom o MP4 directo
+                    </span>
+                  </div>
+                  <div style="display: flex; gap: 0.75rem; align-items: center;">
+                    <input 
+                      type="text" 
+                      id="edit-slide-video-input"
+                      value="${this.escapeHtml(currentSlide.videoUrl || currentSlide.media || '')}" 
+                      placeholder="Ej: https://www.youtube.com/watch?v=... o https://drive.google.com/..." 
+                      style="flex: 1; padding: 0.75rem 1rem; border-radius: 10px; background: rgba(0,0,0,0.3); border: 1.5px solid var(--border-color); color: var(--text-primary); font-size: 0.95rem; outline: none;"
+                      oninput="window.PresentationView.updateSlideVideo(this.value)"
+                    />
+                    ${(currentSlide.videoUrl || currentSlide.media) ? `
+                      <button 
+                        type="button" 
+                        class="btn btn-outline" 
+                        style="padding: 0.75rem 0.9rem; font-size: 0.85rem;" 
+                        onclick="window.PresentationView.updateSlideVideo(''); document.getElementById('edit-slide-video-input').value='';" 
+                        title="Quitar video"
+                      >
+                        🗑️
+                      </button>
+                    ` : ''}
+                  </div>
+
+                  ${(currentSlide.videoUrl || currentSlide.media) ? `
+                    <div style="margin-top: 1rem; max-width: 560px;">
+                      <div style="font-size: 0.8rem; font-weight: 800; color: var(--neon-cyan); margin-bottom: 0.45rem;">
+                        Vista previa del reproductor:
+                      </div>
+                      ${this.renderVideoPlayerHtml(this.parseVideoSource(currentSlide.videoUrl || currentSlide.media), 'max-height: 240px; min-height: 200px;')}
+                    </div>
+                  ` : ''}
                 </div>
 
-                <div>
+                <div style="margin-bottom: 1rem;">
                   <label style="display: block; font-size: 0.85rem; font-weight: 800; margin-bottom: 0.4rem;">Notas del Docente (Privadas)</label>
                   <input 
                     type="text" 
@@ -1282,8 +1313,31 @@ window.PresentationView = {
                     oninput="window.PresentationView.updateCurrentSlideField('teacherNotes', this.value)"
                   />
                 </div>
-              </div>
-            `}
+              ` : `
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                  <div>
+                    <label style="display: block; font-size: 0.85rem; font-weight: 800; margin-bottom: 0.4rem;">URL de Imagen de Apoyo</label>
+                    <input 
+                      type="text" 
+                      value="${this.escapeHtml(currentSlide.media || '')}" 
+                      placeholder="https://..." 
+                      style="width: 100%; padding: 0.75rem 1rem; border-radius: 10px; background: rgba(0,0,0,0.3); border: 1.5px solid var(--border-color); color: var(--text-primary); font-size: 0.95rem; outline: none;"
+                      oninput="window.PresentationView.updateCurrentSlideField('media', this.value)"
+                    />
+                  </div>
+
+                  <div>
+                    <label style="display: block; font-size: 0.85rem; font-weight: 800; margin-bottom: 0.4rem;">Notas del Docente (Privadas)</label>
+                    <input 
+                      type="text" 
+                      value="${this.escapeHtml(currentSlide.teacherNotes || '')}" 
+                      placeholder="Puntos a recordar al exponer..." 
+                      style="width: 100%; padding: 0.75rem 1rem; border-radius: 10px; background: rgba(0,0,0,0.3); border: 1.5px solid var(--border-color); color: var(--text-primary); font-size: 0.95rem; outline: none;"
+                      oninput="window.PresentationView.updateCurrentSlideField('teacherNotes', this.value)"
+                    />
+                  </div>
+                </div>
+              `}
 
           </div>
 
@@ -1482,7 +1536,33 @@ window.PresentationView = {
     const slide = this.currentProject.slides[this.currentSlideIndex];
     slide.layout = mode;
     slide.isFullImage = (mode === 'full');
+    if (mode === 'video' && !slide.videoUrl && slide.media) {
+      slide.videoUrl = slide.media;
+    }
+    const p = this.currentProject;
+    if (window.appState && window.appState.challenges) {
+      const idx = window.appState.challenges.findIndex(c => c.id === p.id);
+      if (idx >= 0) {
+        window.appState.challenges[idx] = p;
+        if (typeof saveGlobalState === 'function') saveGlobalState(window.appState);
+      }
+    }
     this.renderEditor(document.getElementById('view-presentation'));
+  },
+
+  updateSlideVideo(val) {
+    if (!this.currentProject.slides[this.currentSlideIndex]) return;
+    const slide = this.currentProject.slides[this.currentSlideIndex];
+    slide.videoUrl = val;
+    slide.media = val;
+    const p = this.currentProject;
+    if (window.appState && window.appState.challenges) {
+      const idx = window.appState.challenges.findIndex(c => c.id === p.id);
+      if (idx >= 0) {
+        window.appState.challenges[idx] = p;
+        if (typeof saveGlobalState === 'function') saveGlobalState(window.appState);
+      }
+    }
   },
 
   removeSlide(idx) {
