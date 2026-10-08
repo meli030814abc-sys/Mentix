@@ -15,10 +15,8 @@ window.makeEntityLogoTransparent = function(imgEl) {
     const data = imgData.data;
     let modified = false;
 
-    // Detectar color vivo dominante del logo (letras o símbolo)
-    let colorBuckets = {};
-    let maxBucketCount = 0;
-    let dominantColor = { r: 0, g: 245, b: 212 }; // default cyan neón
+    // Detectar color dominante del logo (por cantidad de píxeles no blancos)
+    const buckets = {};
 
     for (let i = 0; i < data.length; i += 4) {
       const r = data[i];
@@ -31,31 +29,9 @@ window.makeEntityLogoTransparent = function(imgEl) {
         data[i + 3] = 0; // Transparente 100%
         modified = true;
       } else if (a > 50) {
-        // Analizar píxeles del logo con saturación o tono reconocible
-        const max = Math.max(r, g, b);
-        const min = Math.min(r, g, b);
-        const sat = max === 0 ? 0 : (max - min) / max;
-        // Ponderar colores vivos y letras
-        const weight = (sat > 0.25 ? 3 : 1);
-        const qr = Math.floor(r / 32) * 32;
-        const qg = Math.floor(g / 32) * 32;
-        const qb = Math.floor(b / 32) * 32;
-        const key = `${qr},${qg},${qb}`;
-        colorBuckets[key] = (colorBuckets[key] || 0) + weight;
-
-        if (colorBuckets[key] > maxBucketCount) {
-          maxBucketCount = colorBuckets[key];
-          // Aumentar viveza si es muy oscuro
-          const brightness = (r + g + b) / 3;
-          let boostR = r, boostG = g, boostB = b;
-          if (brightness < 60) {
-            // Si el texto es azul oscuro/negro, resaltar con cian eléctrico o azul vivo
-            boostR = Math.min(255, r + 40);
-            boostG = Math.min(255, g + 180);
-            boostB = Math.max(220, b + 150);
-          }
-          dominantColor = { r: boostR, g: boostG, b: boostB };
-        }
+        const key = `${r >> 5},${g >> 5},${b >> 5}`;
+        const bk = buckets[key] || (buckets[key] = { n: 0, r: 0, g: 0, b: 0 });
+        bk.n++; bk.r += r; bk.g += g; bk.b += b;
       }
     }
 
@@ -66,15 +42,39 @@ window.makeEntityLogoTransparent = function(imgEl) {
 
     imgEl.dataset.processedTransparent = 'true';
 
-    // Aplicar sombra brillante y viva personalizada según el logo
-    const glowColor = `rgb(${dominantColor.r}, ${dominantColor.g}, ${dominantColor.b})`;
-    imgEl.style.filter = `drop-shadow(0 0 1px #ffffff) drop-shadow(0 0 4px ${glowColor}) drop-shadow(0 0 8px rgba(${dominantColor.r}, ${dominantColor.g}, ${dominantColor.b}, 0.7))`;
+    // Elegir el cubo de color más frecuente
+    let best = null;
+    Object.values(buckets).forEach(bk => { if (!best || bk.n > best.n) best = bk; });
 
-    // Resaltar también el recuadro con el color del logo
+    // Color de la sombra: blanco por defecto; color vivo si el logo tiene un color dominante vivo
+    let hue = 0, useColor = false;
+    if (best && best.n > 0) {
+      const r = best.r / best.n / 255, g = best.g / best.n / 255, b = best.b / best.n / 255;
+      const mx = Math.max(r, g, b), mn = Math.min(r, g, b), d = mx - mn;
+      const l = (mx + mn) / 2;
+      const s = d === 0 ? 0 : d / (1 - Math.abs(2 * l - 1));
+      if (d > 0) {
+        if (mx === r) hue = ((g - b) / d) % 6;
+        else if (mx === g) hue = (b - r) / d + 2;
+        else hue = (r - g) / d + 4;
+        hue = Math.round(hue * 60);
+        if (hue < 0) hue += 360;
+      }
+      // Logos oscuros/apagados (ej. azul marino) => halo blanco; logos vivos => halo del color del logo
+      useColor = !(l < 0.3 && s < 0.5) && s >= 0.35;
+    }
+
+    const glow = useColor ? `hsl(${hue}, 100%, 60%)` : '#ffffff';
+    const glowSoft = useColor ? `hsla(${hue}, 100%, 60%, 0.75)` : 'rgba(255,255,255,0.75)';
+
+    // Halo que contornea las letras y el símbolo del logo
+    imgEl.style.filter = `drop-shadow(0 0 1.5px ${glow}) drop-shadow(0 0 4px ${glow}) drop-shadow(0 0 9px ${glowSoft})`;
+
+    // Resaltar también el recuadro con el color de la sombra
     const parentBox = imgEl.closest('.entity-badge-box');
     if (parentBox) {
-      parentBox.style.borderColor = glowColor;
-      parentBox.style.boxShadow = `0 8px 24px rgba(0,0,0,0.65), 0 0 16px rgba(${dominantColor.r}, ${dominantColor.g}, ${dominantColor.b}, 0.45)`;
+      parentBox.style.borderColor = glow;
+      parentBox.style.boxShadow = `0 8px 24px rgba(0,0,0,0.65), 0 0 16px ${glowSoft}`;
     }
   } catch (err) {
     imgEl.style.mixBlendMode = 'lighten';
