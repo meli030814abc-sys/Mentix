@@ -124,7 +124,15 @@ class AppRouter {
       v.classList.remove('active');
     });
 
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    // Controlar visibilidad del navbar principal (ocultar en lobby-join para diseño limpio y minimalista como Mentimeter)
+    const navEl = document.getElementById('main-navbar');
+    if (navEl) {
+      if (viewName === 'lobby-join') {
+        navEl.style.display = 'none';
+      } else {
+        navEl.style.display = '';
+      }
+    }
 
     switch (viewName) {
       case 'home':

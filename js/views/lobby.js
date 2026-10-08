@@ -624,53 +624,67 @@ window.LobbyView = {
   },
 
   // ==========================================
-  // 🎮 PASO 1: INGRESO EXCLUSIVO DEL CÓDIGO PIN
+  // 🎮 PASO 1: INGRESO EXCLUSIVO DEL CÓDIGO PIN (ESTILO MINIMALISTA MENTIMETER)
   // ==========================================
   renderJoinPinStep(container) {
     container.innerHTML = `
-      <div style="max-width: 480px; margin: 3.5rem auto; padding: 0 1.25rem;">
-        <div class="glass-panel" style="padding: 2.75rem 2rem; text-align: center; border-color: var(--neon-cyan); box-shadow: 0 15px 45px rgba(0,0,0,0.35);">
+      <div style="min-height: calc(100vh - 40px); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2rem 1.25rem;">
+        
+        <!-- Nombre de la Página / Logotipo Minimalista (Como Mentimeter) -->
+        <a href="javascript:void(0)" onclick="window.appRouter.navigate('home')" style="text-decoration: none; display: flex; align-items: center; gap: 0.5rem; margin-bottom: 2rem; cursor: pointer;">
+          <span style="font-size: 2rem; filter: drop-shadow(0 0 10px rgba(0,245,212,0.7));">🧠</span>
+          <span style="font-size: 1.85rem; font-weight: 900; letter-spacing: -0.02em; color: var(--text-primary); font-family: var(--font-family);">
+            MEN<span style="color: var(--neon-cyan); text-shadow: 0 0 15px rgba(0,245,212,0.6);">TIX</span>
+          </span>
+        </a>
+
+        <!-- Contenedor Central Minimalista -->
+        <div style="width: 100%; max-width: 440px; text-align: center;">
           
-          <div style="font-size: 3.6rem; margin-bottom: 0.85rem; animation: timer-pulse 1.8s infinite alternate;">🎮</div>
-          
-          <h1 style="font-size: 2.2rem; font-weight: 900; margin-bottom: 0.5rem;" class="glow-text-cyan">
-            Unirse a un Reto
+          <h1 style="font-size: 1.65rem; font-weight: 800; margin: 0 0 0.4rem; color: var(--text-primary); letter-spacing: -0.01em;">
+            Enter the code to join
           </h1>
           
-          <p style="color: var(--text-secondary); font-size: 0.98rem; margin-bottom: 2rem; line-height: 1.45;">
-            Ingresa el código PIN que se proyecta en la pantalla del profesor o anfitrión:
+          <p style="color: var(--text-muted); font-size: 0.92rem; margin: 0 0 1.75rem;">
+            It's on the screen in front of you
           </p>
 
           <form id="join-pin-form" onsubmit="event.preventDefault(); window.LobbyView.submitPinStep();">
-            <div style="margin-bottom: 2rem; text-align: left;">
-              <label style="display: block; font-weight: 800; font-size: 0.85rem; text-transform: uppercase; color: var(--neon-cyan); margin-bottom: 0.6rem; letter-spacing: 1px;">
-                CÓDIGO DEL RETO (PIN)
-              </label>
+            <div style="margin-bottom: 1.25rem;">
               <input 
                 type="text" 
                 id="join-pin-input" 
-                placeholder="000 000" 
+                placeholder="1234 5678" 
                 maxlength="7"
                 inputmode="numeric"
                 value="${this.joinPin ? (this.joinPin.length === 6 ? this.joinPin.slice(0, 3) + ' ' + this.joinPin.slice(3) : this.joinPin) : ''}"
                 required
                 autofocus
                 autocomplete="off"
-                style="width: 100%; text-align: center; font-size: 2.5rem; font-weight: 900; letter-spacing: 5px; padding: 0.95rem; border-radius: var(--border-radius-md); background: rgba(0,0,0,0.4); border: 2.5px solid var(--neon-cyan); color: var(--neon-cyan); outline: none; font-family: monospace; box-shadow: 0 0 25px rgba(14, 116, 144, 0.2);"
+                style="width: 100%; text-align: center; font-size: 1.45rem; font-weight: 700; padding: 0.85rem 1rem; border-radius: 12px; background: rgba(255,255,255,0.06); border: 2px solid #818cf8; color: var(--text-primary); outline: none; transition: var(--transition-bounce); box-shadow: 0 4px 18px rgba(0,0,0,0.15);"
+                onfocus="this.style.borderColor='var(--neon-cyan)'; this.style.boxShadow='0 0 0 3px rgba(0,245,212,0.2)';"
+                onblur="this.style.borderColor='#818cf8'; this.style.boxShadow='0 4px 18px rgba(0,0,0,0.15)';"
                 oninput="window.LobbyView.formatPinInput(this)"
               />
-              <div id="pin-error-msg" style="color: #ef4444; font-size: 0.88rem; font-weight: 800; margin-top: 0.65rem; display: none; text-align: center;"></div>
+              <div id="pin-error-msg" style="color: #ef4444; font-size: 0.85rem; font-weight: 700; margin-top: 0.5rem; display: none; text-align: center;"></div>
             </div>
 
-            <button type="submit" class="btn btn-primary btn-lg" style="width: 100%; font-size: 1.25rem; font-weight: 900; padding: 1.05rem; letter-spacing: 0.5px; box-shadow: 0 6px 25px rgba(247, 37, 133, 0.45);">
-              <span>CONTINUAR</span> <span style="font-size: 1.4rem;">➔</span>
+            <button 
+              type="submit" 
+              class="btn" 
+              style="padding: 0.65rem 2.2rem; font-size: 1.05rem; font-weight: 800; border-radius: 9999px; background: #1e1e24; color: #ffffff; border: 1.5px solid rgba(255,255,255,0.2); cursor: pointer; transition: var(--transition-bounce); box-shadow: 0 4px 12px rgba(0,0,0,0.3);"
+              onmouseenter="this.style.background='var(--neon-cyan)'; this.style.color='#050510'; this.style.borderColor='var(--neon-cyan)';"
+              onmouseleave="this.style.background='#1e1e24'; this.style.color='#ffffff'; this.style.borderColor='rgba(255,255,255,0.2)';"
+            >
+              Join
             </button>
           </form>
 
-          <div style="margin-top: 1.75rem;">
-            <button class="btn btn-outline" style="font-size: 0.88rem; width: 100%;" onclick="window.appRouter.navigate('home')">
-              ← Cancelar y volver al inicio
-            </button>
+          <!-- Enlace discreto para volver -->
+          <div style="margin-top: 2rem;">
+            <a href="javascript:void(0)" onclick="window.appRouter.navigate('home')" style="font-size: 0.85rem; color: var(--text-muted); text-decoration: none; transition: opacity 0.2s;" onmouseenter="this.style.color='var(--neon-cyan)'" onmouseleave="this.style.color='var(--text-muted)'">
+              ← Volver al inicio
+            </a>
           </div>
 
         </div>
