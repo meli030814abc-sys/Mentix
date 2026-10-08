@@ -125,17 +125,19 @@ window.DocumentProjectView = {
         ` : (p.docFileUrl ? `
           <!-- Visor Fiel Embebido por Enlace URL (Google Drive, PDF directo, OneDrive, Dropbox o Web) -->
           <div class="glass-panel" style="padding: 1rem; border-radius: 18px; border: 2px solid #3b82f6; background: #18181b; box-shadow: 0 10px 35px rgba(0,0,0,0.7);">
-            <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.4rem 0.8rem 0.8rem; font-size: 0.82rem; color: var(--text-muted); border-bottom: 1px solid rgba(255,255,255,0.06); margin-bottom: 0.8rem;">
-              <span>Documento Oficial Incrustado</span>
-              <a href="${this.escapeHtml(p.docFileUrl)}" target="_blank" rel="noopener noreferrer" style="color: var(--neon-cyan); font-weight: 700; text-decoration: underline;">
-                Abrir archivo en pestaña completa ↗
-              </a>
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.4rem 0.8rem 0.8rem; font-size: 0.82rem; color: var(--text-muted); border-bottom: 1px solid rgba(255,255,255,0.06); margin-bottom: 0.8rem; flex-wrap: wrap; gap: 0.5rem;">
+              <span style="color: #93c5fd; font-weight: 700;">📄 Documento Oficial Incrustado por Enlace</span>
+              <div style="display: flex; gap: 0.75rem;">
+                <a href="${this.escapeHtml(p.docFileUrl)}" target="_blank" rel="noopener noreferrer" style="color: var(--neon-cyan); font-weight: 700; text-decoration: underline;">
+                  Abrir archivo original en pestaña completa ↗
+                </a>
+              </div>
             </div>
-            <div style="position: relative; width: 100%; height: calc(100vh - 270px); min-height: 600px; border-radius: 10px; overflow: hidden; background: #ffffff;">
+            <div style="position: relative; width: 100%; height: calc(100vh - 270px); min-height: 650px; border-radius: 10px; overflow: hidden; background: #ffffff;">
               <iframe 
                 src="${this.getEmbeddableDocUrl(p.docFileUrl)}" 
                 style="width: 100%; height: 100%; border: none;"
-                allow="autoplay; encrypted-media"
+                allow="autoplay; encrypted-media; fullscreen"
                 allowfullscreen
               ></iframe>
             </div>
@@ -373,10 +375,14 @@ window.DocumentProjectView = {
       return;
     }
 
-    // Si el usuario creó el documento dentro de la app con secciones o texto y no tiene páginas PDF,
-    // o si modificó las secciones, generar automáticamente las hojas visuales PDF para que se vea
-    // idéntico a un documento importado
-    if (!p.pdfPages || p.pdfPages.length === 0 || p.originalFormat === 'sections') {
+    // Si el usuario especificó una URL de documento (Drive, PDF, Word) y no hay páginas PDF cargadas de archivo local,
+    // NO generamos páginas de plantilla en blanco para que se muestre directamente el visor del documento por link
+    if (p.docFileUrl && p.docFileUrl.trim() && (!p.pdfPages || p.pdfPages.length === 0 || p.originalFormat === 'url_doc')) {
+      p.originalFormat = 'url_doc';
+      p.pdfPages = []; // Priorizar el visor de documento por enlace
+    } else if (!p.pdfPages || p.pdfPages.length === 0 || p.originalFormat === 'sections') {
+      // Si el usuario creó el documento dentro de la app con secciones o texto y no tiene páginas PDF,
+      // generar automáticamente las hojas visuales PDF para que se vea idéntico a un documento importado
       const allParagraphs = [];
       allParagraphs.push(p.title);
       if (p.description) allParagraphs.push(p.description);
@@ -886,24 +892,75 @@ window.DocumentProjectView = {
     return { title, sections };
   },
 
+  handleUrlImportBtn() {
+    const input = document.getElementById('doc-import-url-input');
+    const feedback = document.getElementById('doc-url-feedback');
+    if (!input || !input.value.trim()) {
+      alert('Por favor introduce una URL o enlace válido del documento.');
+      return;
+    }
+    const url = input.value.trim();
+    let detectedName = 'Documento en Línea';
+    try {
+      const parsedUrl = new URL(url.startsWith('http') ? url : 'https://' + url);
+      const pathname = parsedUrl.pathname;
+      const lastPart = pathname.split('/').filter(Boolean).pop();
+      if (lastPart && (lastPart.endsWith('.pdf') || lastPart.endsWith('.docx') || lastPart.endsWith('.doc'))) {
+        detectedName = decodeURIComponent(lastPart.replace(/\.[^/.]+$/, ''));
+      } else if (url.includes('drive.google.com')) {
+        detectedName = 'Documento de Google Drive';
+      } else if (url.includes('docs.google.com')) {
+        detectedName = 'Documento de Google Docs';
+      }
+    } catch(e) {}
+
+    this.pendingParsedDoc = {
+      title: detectedName,
+      docFileUrl: url.startsWith('http') ? url : 'https://' + url,
+      pdfPages: [],
+      originalFormat: 'url_doc',
+      sections: [
+        {
+          title: 'Documento en Línea',
+          text: `Este documento está vinculado mediante el siguiente enlace oficial: ${url}`
+        }
+      ]
+    };
+
+    if (feedback) {
+      feedback.style.color = '#34d399';
+      feedback.textContent = `✅ Enlace vinculado: "${detectedName}". Haz clic en "Procesar e Importar Documento".`;
+    }
+  },
+
   processImport() {
+    const urlInput = document.getElementById('doc-import-url-input');
+    const urlVal = urlInput ? urlInput.value.trim() : '';
     const textarea = document.getElementById('doc-import-textarea');
     const textVal = textarea ? textarea.value.trim() : '';
+
+    if (!this.pendingParsedDoc && urlVal) {
+      this.handleUrlImportBtn();
+    }
 
     let parsed = this.pendingParsedDoc;
     if (!parsed && textVal) {
       parsed = this.parseDocumentText(textVal, 'Documento Importado');
     }
 
-    if (!parsed || !parsed.sections || parsed.sections.length === 0) {
-      alert('⚠️ Por favor selecciona un archivo (.docx, .pdf, .txt, .md) o pega texto en el cuadro para importar.');
+    if (!parsed || (!parsed.sections && !parsed.docFileUrl)) {
+      alert('⚠️ Por favor selecciona un archivo (.docx, .pdf, .txt, .md), vincula una URL o pega texto en el cuadro para importar.');
       return;
     }
 
     if (parsed.title) {
       this.currentProject.title = parsed.title;
     }
-    if (parsed.pdfPages && parsed.pdfPages.length > 0) {
+    if (parsed.docFileUrl) {
+      this.currentProject.docFileUrl = parsed.docFileUrl;
+      this.currentProject.originalFormat = 'url_doc';
+      this.currentProject.pdfPages = []; // Priorizar la vista oficial del documento incrustado
+    } else if (parsed.pdfPages && parsed.pdfPages.length > 0) {
       this.currentProject.pdfPages = parsed.pdfPages;
       this.currentProject.originalFormat = parsed.originalFormat || 'pdf';
     }
@@ -915,9 +972,11 @@ window.DocumentProjectView = {
     if (window.soundEngine && window.soundEngine.playCorrect) {
       window.soundEngine.playCorrect();
     }
-    const pageMsg = (this.currentProject.pdfPages && this.currentProject.pdfPages.length > 0)
-      ? ` con ${this.currentProject.pdfPages.length} páginas en formato PDF idéntico al original`
-      : ` con ${parsed.sections.length} secciones`;
+    const pageMsg = (this.currentProject.docFileUrl)
+      ? ` mediante enlace web interactivo`
+      : ((this.currentProject.pdfPages && this.currentProject.pdfPages.length > 0)
+        ? ` con ${this.currentProject.pdfPages.length} páginas en formato PDF idéntico al original`
+        : ` con ${parsed.sections.length} secciones`);
     alert(`🎉 ¡Se importó el documento exitosamente${pageMsg}! Al publicarlo o visualizarlo se verá literalmente como tu archivo.`);
   },
 
@@ -944,27 +1003,36 @@ window.DocumentProjectView = {
       }
     }
 
-    // 2. Dropbox (dl=0 -> raw=1)
+    // 2. Google Docs / Sheets / Slides (/edit -> /preview o /pub?embedded=true)
+    if (trimmed.includes('docs.google.com/document') || trimmed.includes('docs.google.com/presentation') || trimmed.includes('docs.google.com/spreadsheets')) {
+      if (trimmed.includes('/edit')) {
+        return trimmed.replace(/\/edit.*$/, '/preview');
+      }
+      return trimmed;
+    }
+
+    // 3. Dropbox (dl=0 -> raw=1)
     if (trimmed.includes('dropbox.com')) {
       return trimmed.replace('dl=0', 'raw=1').replace('?dl=1', '?raw=1');
     }
 
-    // 3. OneDrive
+    // 4. OneDrive
     if (trimmed.includes('onedrive.live.com') || trimmed.includes('1drv.ms')) {
       if (!trimmed.includes('embed')) {
         return trimmed.replace('/view.aspx', '/embed.aspx');
       }
     }
 
-    // 4. Si es un archivo PDF directo
-    if (trimmed.toLowerCase().split('?')[0].endsWith('.pdf')) {
-      return trimmed;
-    }
-
-    // 5. Si es un archivo de Word directo (.docx) público, usar el visor oficial de Microsoft Office
+    // 5. Archivos de Word directo (.docx, .doc), PowerPoint o Excel públicos -> Visor de Microsoft Office
     const ext = trimmed.toLowerCase().split('?')[0].split('.').pop();
     if (ext === 'docx' || ext === 'doc' || ext === 'pptx' || ext === 'xlsx') {
       return `https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(trimmed)}`;
+    }
+
+    // 6. Archivos PDF directos o URLs públicas -> Si no es un servicio conocido, usar Google Docs Viewer universal
+    if (trimmed.toLowerCase().split('?')[0].endsWith('.pdf')) {
+      // Para PDF público, el visor de Google Docs garantiza carga limpia en iframe sin bloqueos
+      return `https://docs.google.com/viewer?url=${encodeURIComponent(trimmed)}&embedded=true`;
     }
 
     return trimmed;

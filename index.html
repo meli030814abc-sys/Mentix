@@ -743,7 +743,37 @@
         />
       </div>
 
-      <div style="text-align: center; margin: 1rem 0; font-size: 0.85rem; color: var(--text-muted); font-weight: 700;">
+      <div style="text-align: center; margin: 0.75rem 0; font-size: 0.85rem; color: var(--text-muted); font-weight: 700;">
+        — O IMPORTA MEDIANTE ENLACE WEB / URL (DRIVE, PDF, DOCX) —
+      </div>
+
+      <!-- Campo de importación por enlace / URL -->
+      <div style="margin-bottom: 1rem; background: rgba(59, 130, 246, 0.08); border: 1.5px solid #3b82f6; border-radius: 12px; padding: 0.85rem 1rem;">
+        <label style="display: block; font-size: 0.85rem; font-weight: 800; color: #93c5fd; margin-bottom: 0.4rem;">
+          🔗 Enlace / URL del Documento (Google Drive, PDF online, OneDrive, etc.)
+        </label>
+        <div style="display: flex; gap: 0.5rem;">
+          <input 
+            type="url" 
+            id="doc-import-url-input" 
+            placeholder="https://drive.google.com/... o https://ejemplo.com/archivo.pdf" 
+            style="flex: 1; padding: 0.65rem 0.85rem; border-radius: 8px; background: rgba(0,0,0,0.5); border: 1px solid var(--border-color); color: white; font-size: 0.9rem; outline: none;"
+          />
+          <button 
+            type="button" 
+            class="btn btn-outline" 
+            style="border-color: #3b82f6; color: #93c5fd; font-weight: 800; padding: 0.5rem 0.9rem; font-size: 0.85rem;"
+            onclick="window.DocumentProjectView.handleUrlImportBtn()"
+          >
+            Vincular Link
+          </button>
+        </div>
+        <div id="doc-url-feedback" style="font-size: 0.78rem; color: var(--text-muted); margin-top: 0.35rem;">
+          Pega el link de Google Drive, PDF o Word para visualizarlo idéntico a un documento importado.
+        </div>
+      </div>
+
+      <div style="text-align: center; margin: 0.75rem 0; font-size: 0.85rem; color: var(--text-muted); font-weight: 700;">
         — O PEGA EL CONTENIDO DEL DOCUMENTO DIRECTAMENTE —
       </div>
 
@@ -751,7 +781,7 @@
       <div style="margin-bottom: 1.25rem;">
         <textarea 
           id="doc-import-textarea" 
-          rows="6" 
+          rows="5" 
           placeholder="Pega aquí el contenido de tu lectura, guía o apuntes...&#10;&#10;Ejemplo:&#10;# Título de la Guía&#10;&#10;## 1. Introducción&#10;Texto de la primera sección...&#10;&#10;## 2. Desarrollo&#10;Contenido detallado..."
           style="width: 100%; padding: 0.75rem; border-radius: var(--border-radius-md); background: rgba(0,0,0,0.5); border: 1px solid var(--border-color); color: white; font-size: 0.85rem; font-family: monospace; resize: vertical;"
         ></textarea>
