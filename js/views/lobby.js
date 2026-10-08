@@ -902,9 +902,9 @@ window.LobbyView = {
       `;
     }
 
-    // Modo Abierto estándar (los estudiantes ponen su nombre libremente)
+    // Modo Abierto estándar (los estudiantes ponen su nombre y correo libremente)
     return `
-      <div style="margin-bottom: 1.5rem; text-align: left;">
+      <div style="margin-bottom: 1.25rem; text-align: left;">
         <label style="display: block; font-weight: 800; font-size: 0.85rem; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 0.5rem;">
           TU NOMBRE O NICKNAME
         </label>
@@ -917,8 +917,25 @@ window.LobbyView = {
           required
           style="width: 100%; font-size: 1.1rem; font-weight: 700; padding: 0.85rem; border-radius: var(--border-radius-md); background: var(--bg-card); border: 2px solid var(--border-color); color: var(--text-primary); outline: none;"
           onfocus="this.style.borderColor='var(--neon-magenta)'"
+          onblur="this.style.borderColor='var(--border-color)'"
         />
-        <input type="hidden" id="join-email-input" value="${window.appState?.currentUser?.email || ''}" />
+      </div>
+
+      <div style="margin-bottom: 1.5rem; text-align: left;">
+        <label style="display: block; font-weight: 800; font-size: 0.85rem; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 0.5rem;">
+          CORREO ELECTRÓNICO
+        </label>
+        <input 
+          type="email" 
+          id="join-email-input" 
+          placeholder="Ej: usuario@correo.com" 
+          maxlength="60"
+          value="${window.appState?.currentUser?.email || ''}"
+          required
+          style="width: 100%; font-size: 1.05rem; font-weight: 600; padding: 0.85rem; border-radius: var(--border-radius-md); background: var(--bg-card); border: 2px solid var(--border-color); color: var(--text-primary); outline: none;"
+          onfocus="this.style.borderColor='var(--neon-cyan)'"
+          onblur="this.style.borderColor='var(--border-color)'"
+        />
         <input type="hidden" id="join-student-id-input" value="" />
       </div>
     `;
@@ -1083,6 +1100,10 @@ window.LobbyView = {
     }
     if (!nickname) {
       alert('Por favor selecciona tu nombre de la lista o escribe tu nombre para unirte.');
+      return;
+    }
+    if (!email) {
+      alert('Por favor ingresa tu correo electrónico para unirte.');
       return;
     }
 
