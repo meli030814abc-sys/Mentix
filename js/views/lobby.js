@@ -628,24 +628,27 @@ window.LobbyView = {
   // ==========================================
   renderJoinPinStep(container) {
     container.innerHTML = `
-      <div style="min-height: 85vh; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 3rem 1.5rem 5rem; box-sizing: border-box;">
+      <div style="min-height: 100vh; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2rem 1.5rem; box-sizing: border-box; background: url('assets/mentix_join_bg.jpg') center center / cover no-repeat; position: relative;">
         
-        <!-- Nombre de la Página / Logotipo Destacado -->
-        <a href="javascript:void(0)" onclick="window.appRouter.navigate('home')" style="text-decoration: none; display: flex; align-items: center; gap: 0.75rem; margin-bottom: 2.25rem; cursor: pointer;">
-          <span style="font-size: 2.8rem; filter: drop-shadow(0 0 12px rgba(0,245,212,0.7));">🧠</span>
-          <span style="font-size: 2.5rem; font-weight: 900; letter-spacing: -0.02em; color: var(--text-primary); font-family: var(--font-family);">
-            MEN<span style="color: var(--neon-cyan); text-shadow: 0 0 18px rgba(0,245,212,0.6);">TIX</span>
-          </span>
-        </a>
+        <!-- Overlay sutil para legibilidad perfecta conservando todo el brillo y geometrías -->
+        <div style="position: absolute; inset: 0; background: radial-gradient(circle at center, rgba(5, 12, 35, 0.45) 0%, rgba(3, 7, 24, 0.75) 100%); pointer-events: none;"></div>
 
-        <!-- Contenedor Amplio en Toda la Pantalla -->
-        <div style="width: 100%; max-width: 680px; text-align: center; margin: 0 auto;">
+        <!-- Contenido principal interactivo sobre el fondo -->
+        <div style="position: relative; z-index: 2; width: 100%; max-width: 680px; text-align: center; margin: 0 auto;">
           
-          <h1 style="font-size: clamp(2rem, 5vw, 2.75rem); font-weight: 900; margin: 0 0 0.6rem; color: var(--text-primary); letter-spacing: -0.02em;">
+          <!-- Nombre de la Página / Logotipo Destacado -->
+          <a href="javascript:void(0)" onclick="window.appRouter.navigate('home')" style="text-decoration: none; display: inline-flex; align-items: center; gap: 0.75rem; margin-bottom: 2rem; cursor: pointer;">
+            <span style="font-size: 2.8rem; filter: drop-shadow(0 0 16px rgba(0,245,212,0.85));">🧠</span>
+            <span style="font-size: 2.6rem; font-weight: 900; letter-spacing: -0.02em; color: #ffffff; text-shadow: 0 4px 20px rgba(0,0,0,0.8);">
+              MEN<span style="color: var(--neon-cyan); text-shadow: 0 0 20px rgba(0,245,212,0.8);">TIX</span>
+            </span>
+          </a>
+
+          <h1 style="font-size: clamp(2rem, 5vw, 2.75rem); font-weight: 900; margin: 0 0 0.6rem; color: #ffffff; letter-spacing: -0.02em; text-shadow: 0 4px 24px rgba(0,0,0,0.8);">
             Ingresa el código para unirte
           </h1>
           
-          <p style="color: var(--text-muted); font-size: clamp(1rem, 2.5vw, 1.2rem); margin: 0 0 2.25rem;">
+          <p style="color: rgba(220, 235, 255, 0.9); font-size: clamp(1rem, 2.5vw, 1.2rem); margin: 0 0 2.25rem; text-shadow: 0 2px 10px rgba(0,0,0,0.6);">
             Está en la pantalla frente a ti
           </p>
 
@@ -661,20 +664,20 @@ window.LobbyView = {
                 required
                 autofocus
                 autocomplete="off"
-                style="width: 100%; box-sizing: border-box; text-align: center; font-size: clamp(1.8rem, 4vw, 2.4rem); font-weight: 800; padding: 1.15rem 1.5rem; border-radius: 18px; background: rgba(255,255,255,0.06); border: 2.5px solid #818cf8; color: var(--text-primary); outline: none; transition: var(--transition-bounce); box-shadow: 0 8px 30px rgba(0,0,0,0.18); letter-spacing: 2px;"
-                onfocus="this.style.borderColor='var(--neon-cyan)'; this.style.boxShadow='0 0 0 4px rgba(0,245,212,0.25)';"
-                onblur="this.style.borderColor='#818cf8'; this.style.boxShadow='0 8px 30px rgba(0,0,0,0.18)';"
+                style="width: 100%; box-sizing: border-box; text-align: center; font-size: clamp(1.8rem, 4vw, 2.4rem); font-weight: 800; padding: 1.15rem 1.5rem; border-radius: 18px; background: rgba(10, 20, 45, 0.75); backdrop-filter: blur(12px); border: 2.5px solid rgba(0, 245, 212, 0.6); color: #ffffff; outline: none; transition: var(--transition-bounce); box-shadow: 0 10px 35px rgba(0,0,0,0.5), 0 0 20px rgba(0, 245, 212, 0.25); letter-spacing: 2px;"
+                onfocus="this.style.borderColor='var(--neon-cyan)'; this.style.boxShadow='0 0 30px rgba(0,245,212,0.5)';"
+                onblur="this.style.borderColor='rgba(0, 245, 212, 0.6)'; this.style.boxShadow='0 10px 35px rgba(0,0,0,0.5), 0 0 20px rgba(0, 245, 212, 0.25)';"
                 oninput="window.LobbyView.formatPinInput(this)"
               />
-              <div id="pin-error-msg" style="color: #ef4444; font-size: 0.95rem; font-weight: 700; margin-top: 0.75rem; display: none; text-align: center;"></div>
+              <div id="pin-error-msg" style="color: #ff4d6d; font-size: 0.95rem; font-weight: 700; margin-top: 0.75rem; display: none; text-align: center; text-shadow: 0 2px 8px rgba(0,0,0,0.8);"></div>
             </div>
 
             <button 
               type="submit" 
               class="btn" 
-              style="padding: 0.85rem 3.5rem; font-size: 1.25rem; font-weight: 900; border-radius: 9999px; background: #1e1e24; color: #ffffff; border: 2px solid rgba(255,255,255,0.25); cursor: pointer; transition: var(--transition-bounce); box-shadow: 0 6px 20px rgba(0,0,0,0.35); min-width: 200px;"
-              onmouseenter="this.style.background='var(--neon-cyan)'; this.style.color='#050510'; this.style.borderColor='var(--neon-cyan)'; this.style.transform='translateY(-2px) scale(1.03)';"
-              onmouseleave="this.style.background='#1e1e24'; this.style.color='#ffffff'; this.style.borderColor='rgba(255,255,255,0.25)'; this.style.transform='none';"
+              style="padding: 0.85rem 3.5rem; font-size: 1.25rem; font-weight: 900; border-radius: 9999px; background: #0b152d; color: #ffffff; border: 2px solid rgba(0, 245, 212, 0.5); cursor: pointer; transition: var(--transition-bounce); box-shadow: 0 8px 25px rgba(0,0,0,0.5), 0 0 18px rgba(0, 245, 212, 0.3); min-width: 200px;"
+              onmouseenter="this.style.background='var(--neon-cyan)'; this.style.color='#050510'; this.style.borderColor='var(--neon-cyan)'; this.style.boxShadow='0 0 30px rgba(0,245,212,0.8)'; this.style.transform='translateY(-2px) scale(1.03)';"
+              onmouseleave="this.style.background='#0b152d'; this.style.color='#ffffff'; this.style.borderColor='rgba(0, 245, 212, 0.5)'; this.style.boxShadow='0 8px 25px rgba(0,0,0,0.5), 0 0 18px rgba(0, 245, 212, 0.3)'; this.style.transform='none';"
             >
               Unirse
             </button>
@@ -682,7 +685,7 @@ window.LobbyView = {
 
           <!-- Enlace discreto para volver -->
           <div style="margin-top: 2.75rem;">
-            <a href="javascript:void(0)" onclick="window.appRouter.navigate('home')" style="font-size: 0.95rem; color: var(--text-muted); text-decoration: none; transition: color 0.2s;" onmouseenter="this.style.color='var(--neon-cyan)'" onmouseleave="this.style.color='var(--text-muted)'">
+            <a href="javascript:void(0)" onclick="window.appRouter.navigate('home')" style="font-size: 0.95rem; color: rgba(220, 235, 255, 0.8); text-decoration: none; transition: color 0.2s; text-shadow: 0 2px 8px rgba(0,0,0,0.8);" onmouseenter="this.style.color='var(--neon-cyan)'" onmouseleave="this.style.color='rgba(220, 235, 255, 0.8)'">
               ← Volver al inicio
             </a>
           </div>
