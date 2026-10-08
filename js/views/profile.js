@@ -53,8 +53,8 @@ window.ProfileView = {
             </div>
 
             <div style="display: flex; gap: 0.5rem;">
-              <button class="btn btn-outline" onclick="window.ProfileView.switchRoleModal()">
-                🔄 Cambiar Rol
+              <button class="btn btn-outline" onclick="window.appRouter.logout()">
+                🚪 Cerrar Sesión
               </button>
               <button class="btn btn-cyan" onclick="window.ProfileView.editAvatar()">
                 🎨 Cambiar Avatar

@@ -736,6 +736,19 @@ class AppRouter {
     this.navigate('profile');
   }
 
+  async logout() {
+    if (!confirm('¿Seguro que quieres cerrar sesión?')) return;
+    try {
+      if (window.supabaseService && window.supabaseService.client) {
+        await window.supabaseService.client.auth.signOut();
+      }
+    } catch (e) {}
+    localStorage.removeItem('te_reto_session');
+    localStorage.removeItem('te_reto_current_user');
+    window.location.hash = '';
+    window.location.reload();
+  }
+
   // Inicio de sesión real con Google (Gmail) o Microsoft mediante Supabase Auth
   async oauthLogin(provider) {
     const client = window.supabaseService && window.supabaseService.client;
