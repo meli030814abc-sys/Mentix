@@ -127,16 +127,8 @@ window.DocumentProjectView = {
           </div>
         ` : (p.docFileUrl ? `
           <!-- Visor Fiel Embebido por Enlace URL (Google Drive, PDF directo, OneDrive, Dropbox o Web) -->
-          <div class="glass-panel" style="padding: 1rem; border-radius: 18px; border: 2px solid #3b82f6; background: #18181b; box-shadow: 0 10px 35px rgba(0,0,0,0.7);">
-            <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.4rem 0.8rem 0.8rem; font-size: 0.82rem; color: var(--text-muted); border-bottom: 1px solid rgba(255,255,255,0.06); margin-bottom: 0.8rem; flex-wrap: wrap; gap: 0.5rem;">
-              <span style="color: #93c5fd; font-weight: 700;">📄 Documento Oficial Incrustado por Enlace</span>
-              <div style="display: flex; gap: 0.75rem;">
-                <a href="${this.escapeHtml(p.docFileUrl)}" target="_blank" rel="noopener noreferrer" style="color: var(--neon-cyan); font-weight: 700; text-decoration: underline;">
-                  Abrir archivo original en pestaña completa ↗
-                </a>
-              </div>
-            </div>
-            <div style="position: relative; width: 100%; height: calc(100vh - 270px); min-height: 650px; border-radius: 10px; overflow: hidden; background: #ffffff;">
+          <div class="glass-panel" style="padding: 0.75rem; border-radius: 18px; border: 2px solid #3b82f6; background: #18181b; box-shadow: 0 10px 35px rgba(0,0,0,0.7);">
+            <div style="position: relative; width: 100%; height: calc(100vh - 250px); min-height: 680px; border-radius: 12px; overflow: hidden; background: #ffffff;">
               <iframe 
                 src="${this.getEmbeddableDocUrl(p.docFileUrl)}" 
                 style="width: 100%; height: 100%; border: none;"
