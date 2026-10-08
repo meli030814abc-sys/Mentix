@@ -343,11 +343,43 @@ window.DocumentProjectView = {
     this.renderEditor(document.getElementById('view-document'));
   },
 
-  saveDocument() {
+  async saveDocument() {
     const p = this.currentProject;
     if (!p.title || !p.title.trim()) {
       alert('Ingresa un título para el documento.');
       return;
+    }
+
+    // Si el usuario creó el documento dentro de la app con secciones o texto y no tiene páginas PDF,
+    // o si modificó las secciones, generar automáticamente las hojas visuales PDF para que se vea
+    // idéntico a un documento importado
+    if (!p.pdfPages || p.pdfPages.length === 0 || p.originalFormat === 'sections') {
+      const allParagraphs = [];
+      allParagraphs.push(p.title);
+      if (p.description) allParagraphs.push(p.description);
+
+      if (p.sections && p.sections.length > 0) {
+        p.sections.forEach(sec => {
+          if (sec.title) allParagraphs.push(sec.title);
+          if (sec.text) {
+            sec.text.split('\n').map(t => t.trim()).filter(Boolean).forEach(line => {
+              allParagraphs.push(line);
+            });
+          }
+        });
+      }
+
+      if (allParagraphs.length > 0) {
+        try {
+          const generatedPages = await this.renderTextToDocumentPages(allParagraphs.join('\n\n'), p.title);
+          if (generatedPages && generatedPages.length > 0) {
+            p.pdfPages = generatedPages;
+            p.originalFormat = 'sections';
+          }
+        } catch(err) {
+          console.warn('Error auto-generating PDF pages on save:', err);
+        }
+      }
     }
 
     const existingIndex = window.appState.challenges.findIndex(c => c.id === p.id);
@@ -358,7 +390,7 @@ window.DocumentProjectView = {
     }
 
     saveGlobalState(window.appState);
-    alert('✅ ¡Documento guardado con éxito!');
+    alert('✅ ¡Documento guardado y publicado con éxito en formato de hoja impresa PDF!');
     this.isEditing = false;
     this.renderViewer(document.getElementById('view-document'));
   },
@@ -607,25 +639,53 @@ window.DocumentProjectView = {
     for (let pIdx = 0; pIdx < paragraphs.length; pIdx++) {
       const pText = paragraphs[pIdx];
 
-      // Detectar si es un encabezado o subtítulo
-      const isHeading = pText.startsWith('#') || 
-                        /^\d+[\.\)]\s+/.test(pText) || 
-                        (pText.length < 80 && pText.endsWith('?')) || 
-                        (pText.length < 60 && pText === pText.toUpperCase());
+      // 1. Título principal del documento
+      const isDocTitle = (pIdx === 0 && (pText.startsWith('# ') || !/^\d+[\.\)]/.test(pText)));
+      
+      // 2. Pregunta o Título numerado: "1. ¿Cómo se distribuía...?"
+      const isQuestion = /^\d+[\.\)]\s+/.test(pText);
 
-      if (isHeading) {
-        ctx.font = 'bold 34px system-ui, -apple-system, sans-serif';
+      // 3. Viñeta: "•", "-", "*"
+      const isBullet = /^[•\-\*]\s+/.test(pText) || /^\s+[•\-\*]\s+/.test(pText);
+
+      // 4. Sub-párrafo de respuesta o explicación interna
+      const isSubParagraph = !isQuestion && !isDocTitle && !isBullet && (pText.startsWith('En ') || pText.startsWith('Al ') || pText.startsWith('El ') || pText.startsWith('Los ') || pText.startsWith('Las '));
+
+      let indent = 0;
+      let effectiveLineHeight = lineHeight;
+
+      if (isDocTitle) {
+        ctx.font = 'bold 38px system-ui, -apple-system, sans-serif';
         ctx.fillStyle = '#0f172a';
+        effectiveLineHeight = 52;
+      } else if (isQuestion) {
+        ctx.font = 'bold 30px system-ui, -apple-system, sans-serif';
+        ctx.fillStyle = '#0f172a';
+        effectiveLineHeight = 46;
+        indent = 0;
+      } else if (isBullet) {
+        ctx.font = 'normal 27px system-ui, -apple-system, sans-serif';
+        ctx.fillStyle = '#1e293b';
+        effectiveLineHeight = 42;
+        indent = 80;
+      } else if (isSubParagraph) {
+        ctx.font = 'normal 27px system-ui, -apple-system, sans-serif';
+        ctx.fillStyle = '#1e293b';
+        effectiveLineHeight = 42;
+        indent = 45;
       } else {
         ctx.font = 'normal 27px system-ui, -apple-system, sans-serif';
         ctx.fillStyle = '#1e293b';
+        effectiveLineHeight = 42;
+        indent = 30;
       }
 
       const cleanText = pText.replace(/^#+\s*/, '');
-      const lines = wrapText(cleanText, contentWidth);
-      const paragraphHeight = (lines.length * lineHeight) + (isHeading ? 36 : 24);
+      const usableWidth = contentWidth - indent;
+      const lines = wrapText(cleanText, usableWidth);
+      const paragraphHeight = (lines.length * effectiveLineHeight) + (isQuestion ? 34 : 20);
 
-      // Si no cabe en la página actual, guardar y crear nueva hoja
+      // Si no cabe en la página actual, crear nueva hoja
       if (currentY + paragraphHeight > pageHeight - marginBottom) {
         pages.push(currentCanvas.toDataURL('image/jpeg', 0.92));
         pageNum++;
@@ -637,21 +697,28 @@ window.DocumentProjectView = {
         currentY = marginTop;
       }
 
-      // Dibujar líneas
-      if (isHeading) {
-        ctx.font = 'bold 34px system-ui, -apple-system, sans-serif';
+      // Restablecer estilos para pintar
+      if (isDocTitle) {
+        ctx.font = 'bold 38px system-ui, -apple-system, sans-serif';
         ctx.fillStyle = '#0f172a';
         currentY += 10;
+      } else if (isQuestion) {
+        ctx.font = 'bold 30px system-ui, -apple-system, sans-serif';
+        ctx.fillStyle = '#0f172a';
+        currentY += 14;
+      } else if (isBullet) {
+        ctx.font = 'normal 27px system-ui, -apple-system, sans-serif';
+        ctx.fillStyle = '#1e293b';
       } else {
         ctx.font = 'normal 27px system-ui, -apple-system, sans-serif';
         ctx.fillStyle = '#1e293b';
       }
 
       for (let l = 0; l < lines.length; l++) {
-        ctx.fillText(lines[l], marginX, currentY);
-        currentY += lineHeight;
+        ctx.fillText(lines[l], marginX + indent, currentY);
+        currentY += effectiveLineHeight;
       }
-      currentY += isHeading ? 24 : 18;
+      currentY += (isDocTitle ? 30 : (isQuestion ? 18 : 14));
     }
 
     pages.push(currentCanvas.toDataURL('image/jpeg', 0.92));
