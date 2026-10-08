@@ -56,7 +56,10 @@ window.DocumentProjectView = {
     const p = this.currentProject;
     const sections = p.sections || [];
     const pdfPages = p.pdfPages || [];
-    const isPdfView = pdfPages.length > 0;
+    // Si tiene docFileUrl y el formato es url_doc o no hay páginas importadas de un archivo físico, priorizar el visor incrustado
+    const hasDocFileUrl = !!(p.docFileUrl && p.docFileUrl.trim());
+    const isUrlMode = hasDocFileUrl && (p.originalFormat === 'url_doc' || pdfPages.length === 0 || p.originalFormat === 'sections');
+    const isPdfView = !isUrlMode && pdfPages.length > 0;
 
     container.innerHTML = `
       <div style="max-width: ${isPdfView ? '980px' : '900px'}; margin: 0 auto; padding: 2rem 1.25rem 5rem;">
@@ -236,7 +239,7 @@ window.DocumentProjectView = {
                 value="${this.escapeHtml(p.docFileUrl || '')}" 
                 placeholder="https://drive.google.com/... o enlace de PDF/Word"
                 style="width: 100%; padding: 0.75rem 1rem; border-radius: 10px; background: rgba(0,0,0,0.3); border: 1.5px solid #3b82f6; color: var(--text-primary); font-size: 0.95rem; outline: none;"
-                oninput="window.DocumentProjectView.currentProject.docFileUrl = this.value"
+                oninput="window.DocumentProjectView.handleDocUrlInput(this.value)"
               />
               <span style="font-size: 0.78rem; color: var(--text-muted); margin-top: 0.25rem; display: block;">
                 Soporta enlaces de Google Drive, PDFs web, OneDrive o Dropbox. Se incrustará como documento visible en el visor.
@@ -361,6 +364,22 @@ window.DocumentProjectView = {
   updateSection(idx, field, val) {
     if (!this.currentProject.sections[idx]) return;
     this.currentProject.sections[idx][field] = val;
+  },
+
+  handleDocUrlInput(val) {
+    this.currentProject.docFileUrl = val;
+    if (val && val.trim()) {
+      // Si el usuario pega una URL de documento, eliminar páginas de plantilla automática
+      if (this.currentProject.originalFormat === 'sections' || !this.currentProject.originalFormat || this.currentProject.originalFormat === 'url_doc') {
+        this.currentProject.pdfPages = [];
+        this.currentProject.originalFormat = 'url_doc';
+        // Re-renderizar el panel de editor si mostraba páginas de plantilla para actualizar la vista previa
+        const pagesPanel = document.getElementById('view-document');
+        if (pagesPanel) {
+          this.renderEditor(pagesPanel);
+        }
+      }
+    }
   },
 
   openEditMode() {
