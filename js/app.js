@@ -736,6 +736,29 @@ class AppRouter {
     this.navigate('profile');
   }
 
+  guestLogin() {
+    const guest = {
+      id: 'guest_' + Date.now(),
+      name: 'Invitado',
+      username: 'invitado',
+      email: '',
+      role: 'student',
+      avatar: '👤',
+      xp: 0,
+      level: 1,
+      levelName: 'Invitado',
+      challengesPlayed: 0,
+      challengesCreated: 0,
+      victories: 0,
+      medals: [],
+      institution: 'Invitado',
+      status: 'active',
+      isGuest: true
+    };
+    this.finishAuth(guest);
+    this.navigate('home');
+  }
+
   async logout() {
     if (!confirm('¿Seguro que quieres cerrar sesión?')) return;
     try {
