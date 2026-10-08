@@ -133,7 +133,10 @@ window.DocumentProjectView = {
             </h1>
           </div>
 
-          <div style="display: flex; gap: 0.6rem;">
+          <div style="display: flex; gap: 0.6rem; flex-wrap: wrap;">
+            <button class="btn btn-outline" style="border-color: #3b82f6; color: #93c5fd; font-weight: 800; display: inline-flex; align-items: center; gap: 0.4rem;" onclick="window.DocumentProjectView.openImportModal()">
+              <span>📥</span> Importar Documento
+            </button>
             <button class="btn btn-outline" onclick="window.appRouter.navigate('projects')">
               Cancelar
             </button>
@@ -293,6 +296,283 @@ window.DocumentProjectView = {
     alert('✅ ¡Documento guardado con éxito!');
     this.isEditing = false;
     this.renderViewer(document.getElementById('view-document'));
+  },
+
+  // ==========================================
+  // 📥 IMPORTACIÓN INTELIGENTE DE DOCUMENTOS
+  // ==========================================
+  openImportModal() {
+    const modal = document.getElementById('document-import-modal');
+    if (modal) {
+      modal.classList.add('active');
+      const textarea = document.getElementById('doc-import-textarea');
+      if (textarea) textarea.value = '';
+      const label = document.getElementById('doc-dropzone-label');
+      if (label) label.textContent = 'Arrastra tu documento aquí o haz clic para seleccionarlo';
+      const filename = document.getElementById('doc-dropzone-filename');
+      if (filename) filename.textContent = 'Soporta Word (.docx), PDF (.pdf), Markdown (.md) y archivos de texto (.txt)';
+      this.pendingParsedDoc = null;
+    }
+  },
+
+  closeImportModal() {
+    const modal = document.getElementById('document-import-modal');
+    if (modal) modal.classList.remove('active');
+  },
+
+  handleDragOver(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    const dropzone = document.getElementById('doc-file-dropzone');
+    if (dropzone) dropzone.classList.add('dragover');
+  },
+
+  handleDragLeave(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    const dropzone = document.getElementById('doc-file-dropzone');
+    if (dropzone) dropzone.classList.remove('dragover');
+  },
+
+  handleDrop(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    const dropzone = document.getElementById('doc-file-dropzone');
+    if (dropzone) dropzone.classList.remove('dragover');
+    if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+      this.handleFileInput(e.dataTransfer.files[0]);
+    }
+  },
+
+  async handleFileInput(file) {
+    if (!file) return;
+    const label = document.getElementById('doc-dropzone-label');
+    const filename = document.getElementById('doc-dropzone-filename');
+    const textarea = document.getElementById('doc-import-textarea');
+
+    if (label) label.textContent = `📄 ${file.name}`;
+    if (filename) filename.textContent = `Tamaño: ${(file.size / 1024).toFixed(1)} KB — Procesando archivo...`;
+
+    const ext = file.name.toLowerCase().split('.').pop();
+    const baseName = file.name.replace(/\.[^/.]+$/, '');
+
+    // 1. Archivos PDF (.pdf)
+    if (ext === 'pdf') {
+      const reader = new FileReader();
+      reader.onload = async (e) => {
+        try {
+          const text = await this.extractTextFromPDF(e.target.result);
+          if (text) {
+            this.pendingParsedDoc = this.parseDocumentText(text, baseName);
+            if (textarea) textarea.value = text.substring(0, 3000);
+            if (filename) filename.textContent = `✅ ¡PDF procesado! Se estructuraron ${this.pendingParsedDoc.sections.length} secciones. Haz clic en "Procesar e Importar".`;
+          } else {
+            if (filename) filename.textContent = '⚠️ No se pudo extraer texto del PDF (podría ser un PDF escaneado sólo como imágenes).';
+          }
+        } catch(err) {
+          if (filename) filename.textContent = '⚠️ Error leyendo PDF: ' + err.message;
+        }
+      };
+      reader.readAsArrayBuffer(file);
+      return;
+    }
+
+    // 2. Archivos Word (.docx)
+    if (ext === 'docx') {
+      const reader = new FileReader();
+      reader.onload = async (e) => {
+        try {
+          const text = await this.extractTextFromDOCX(e.target.result);
+          if (text) {
+            this.pendingParsedDoc = this.parseDocumentText(text, baseName);
+            if (textarea) textarea.value = text.substring(0, 3000);
+            if (filename) filename.textContent = `✅ ¡Word procesado! Se estructuraron ${this.pendingParsedDoc.sections.length} secciones. Haz clic en "Procesar e Importar".`;
+          } else {
+            if (filename) filename.textContent = '⚠️ No se pudo extraer texto del archivo Word.';
+          }
+        } catch(err) {
+          if (filename) filename.textContent = '⚠️ Error leyendo DOCX: ' + err.message;
+        }
+      };
+      reader.readAsArrayBuffer(file);
+      return;
+    }
+
+    // 3. Texto plano / Markdown (.txt, .md)
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const text = e.target.result || '';
+      this.pendingParsedDoc = this.parseDocumentText(text, baseName);
+      if (textarea) textarea.value = text;
+      if (filename) filename.textContent = `✅ Documento leído con éxito. Se detectaron ${this.pendingParsedDoc.sections.length} secciones.`;
+    };
+    reader.readAsText(file, 'UTF-8');
+  },
+
+  async extractTextFromPDF(arrayBuffer) {
+    if (!window.pdfjsLib || !window.pdfjsLib.getDocument) {
+      return '';
+    }
+    try {
+      const loadingTask = window.pdfjsLib.getDocument({ data: arrayBuffer });
+      const pdf = await loadingTask.promise;
+      let fullText = '';
+      for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+        const page = await pdf.getPage(pageNum);
+        const textContent = await page.getTextContent();
+        const pageText = textContent.items.map(item => item.str).join(' ');
+        fullText += `\n\n--- Página ${pageNum} ---\n` + pageText;
+      }
+      return fullText.trim();
+    } catch(err) {
+      console.warn('PDF extract text error:', err);
+      return '';
+    }
+  },
+
+  async extractTextFromDOCX(arrayBuffer) {
+    try {
+      const bytes = new Uint8Array(arrayBuffer);
+      const dv = new DataView(arrayBuffer);
+      const dec = new TextDecoder('utf-8', { fatal: false });
+
+      // Buscar document.xml en el zip
+      let eocd = -1;
+      for (let i = bytes.length - 22; i >= Math.max(0, bytes.length - 65600); i--) {
+        if (dv.getUint32(i, true) === 0x06054b50) { eocd = i; break; }
+      }
+      if (eocd < 0) return '';
+
+      const total = dv.getUint16(eocd + 10, true);
+      let ptr = dv.getUint32(eocd + 16, true);
+      let docXmlData = null;
+
+      for (let n = 0; n < total; n++) {
+        if (ptr + 46 > bytes.length || dv.getUint32(ptr, true) !== 0x02014b50) break;
+        const method = dv.getUint16(ptr + 10, true);
+        const csize = dv.getUint32(ptr + 20, true);
+        const nl = dv.getUint16(ptr + 28, true);
+        const el = dv.getUint16(ptr + 30, true);
+        const cl = dv.getUint16(ptr + 32, true);
+        const off = dv.getUint32(ptr + 42, true);
+        const name = dec.decode(bytes.subarray(ptr + 46, ptr + 46 + nl));
+
+        if (name === 'word/document.xml') {
+          const l_nl = dv.getUint16(off + 26, true);
+          const l_el = dv.getUint16(off + 28, true);
+          const start = off + 30 + l_nl + l_el;
+          const data = bytes.subarray(start, start + csize);
+          if (method === 0) {
+            docXmlData = data;
+          } else if (method === 8 && typeof DecompressionStream !== 'undefined') {
+            const ds = new DecompressionStream('deflate-raw');
+            const writer = ds.writable.getWriter();
+            writer.write(data);
+            writer.close();
+            docXmlData = new Uint8Array(await new Response(ds.readable).arrayBuffer());
+          }
+          break;
+        }
+        ptr += 46 + nl + el + cl;
+      }
+
+      if (!docXmlData) return '';
+      const xmlStr = dec.decode(docXmlData);
+
+      // Extraer párrafos de Word
+      const pMatches = xmlStr.match(/<w:p[ >][\s\S]*?<\/w:p>/g) || [];
+      const paragraphs = pMatches.map(p => {
+        const tMatches = p.match(/<w:t[ >][\s\S]*?<\/w:t>/g) || [];
+        return tMatches.map(t => t.replace(/<[^>]+>/g, '')).join('')
+          .replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"');
+      }).filter(text => text.trim().length > 0);
+
+      return paragraphs.join('\n\n');
+    } catch(err) {
+      console.warn('DOCX extract error:', err);
+      return '';
+    }
+  },
+
+  parseDocumentText(rawText, defaultTitle = 'Documento Importado') {
+    if (!rawText) return { title: defaultTitle, sections: [] };
+
+    const lines = rawText.split('\n').map(l => l.trim()).filter(Boolean);
+    let title = defaultTitle;
+    const sections = [];
+    let currentSection = null;
+
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i];
+
+      // Detectar título principal
+      if (i === 0 && (line.startsWith('# ') || !line.includes('.'))) {
+        title = line.replace(/^#+\s*/, '');
+        continue;
+      }
+
+      // Detectar subtítulo o nueva sección (##, números como 1., 2., o mayúsculas cortas)
+      const isHeader = line.startsWith('## ') || line.startsWith('### ') || 
+                       /^\d+[\.\)]\s+[A-ZÁÉÍÓÚ]/.test(line) ||
+                       (line.length < 65 && line === line.toUpperCase() && line.length > 3);
+
+      if (isHeader) {
+        if (currentSection) sections.push(currentSection);
+        currentSection = {
+          title: line.replace(/^#+\s*/, ''),
+          text: ''
+        };
+      } else {
+        if (!currentSection) {
+          currentSection = {
+            title: '1. Introducción',
+            text: line
+          };
+        } else {
+          currentSection.text += (currentSection.text ? '\n\n' : '') + line;
+        }
+      }
+    }
+
+    if (currentSection) sections.push(currentSection);
+
+    // Si no se detectaron secciones específicas, crear una sección completa
+    if (sections.length === 0) {
+      sections.push({
+        title: '1. Contenido General',
+        text: rawText
+      });
+    }
+
+    return { title, sections };
+  },
+
+  processImport() {
+    const textarea = document.getElementById('doc-import-textarea');
+    const textVal = textarea ? textarea.value.trim() : '';
+
+    let parsed = this.pendingParsedDoc;
+    if (!parsed && textVal) {
+      parsed = this.parseDocumentText(textVal, 'Documento Importado');
+    }
+
+    if (!parsed || !parsed.sections || parsed.sections.length === 0) {
+      alert('⚠️ Por favor selecciona un archivo (.docx, .pdf, .txt, .md) o pega texto en el cuadro para importar.');
+      return;
+    }
+
+    if (parsed.title) {
+      this.currentProject.title = parsed.title;
+    }
+    this.currentProject.sections = parsed.sections;
+
+    this.closeImportModal();
+    this.renderEditor(document.getElementById('view-document'));
+
+    if (window.soundEngine && window.soundEngine.playCorrect) {
+      window.soundEngine.playCorrect();
+    }
+    alert(`🎉 ¡Se importó el documento exitosamente con ${parsed.sections.length} secciones!`);
   },
 
   escapeHtml(str) {

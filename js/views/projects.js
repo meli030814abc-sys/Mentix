@@ -92,6 +92,9 @@ window.ProjectsView = {
             <button class="btn" style="background: linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%); color: #fff; font-weight: 800; border: none; box-shadow: 0 0 16px rgba(124,58,237,0.55), 0 4px 12px rgba(0,0,0,0.3); letter-spacing: 0.03em;" onclick="window.ProjectsView.openImportPresentationModal()">
               <span>📥</span> Importar Presentación
             </button>
+            <button class="btn" style="background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%); color: #fff; font-weight: 800; border: none; box-shadow: 0 0 16px rgba(37,99,235,0.55), 0 4px 12px rgba(0,0,0,0.3); letter-spacing: 0.03em;" onclick="window.ProjectsView.openImportDocumentModal()">
+              <span>📄</span> Importar Documento
+            </button>
             <button class="btn btn-cyan btn-lg" onclick="window.ProjectsView.openCreateProjectModal()" style="box-shadow: 0 6px 20px rgba(0,245,212,0.35); font-weight: 800;">
               <span>➕</span> <span>Crear Nuevo Proyecto</span>
             </button>
@@ -568,6 +571,15 @@ window.ProjectsView = {
     setTimeout(() => {
       if (window.PresentationView) {
         window.PresentationView.openImportModal();
+      }
+    }, 120);
+  },
+
+  openImportDocumentModal() {
+    window.appRouter.createDocument();
+    setTimeout(() => {
+      if (window.DocumentProjectView) {
+        window.DocumentProjectView.openImportModal();
       }
     }, 120);
   },
