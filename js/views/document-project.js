@@ -104,7 +104,7 @@ window.DocumentProjectView = {
           </div>
         </div>
 
-        <!-- Visor del Documento: Modo PDF Fiel vs Modo Texto -->
+        <!-- Visor del Documento: Modo PDF Fiel (Páginas renderizadas o Enlace URL de PDF/Drive) vs Modo Texto -->
         ${isPdfView ? `
           <div style="display: flex; flex-direction: column; gap: 2rem;">
             ${pdfPages.map((pageImg, idx) => `
@@ -121,6 +121,24 @@ window.DocumentProjectView = {
                 />
               </div>
             `).join('')}
+          </div>
+        ` : (p.docFileUrl ? `
+          <!-- Visor Fiel Embebido por Enlace URL (Google Drive, PDF directo, OneDrive, Dropbox o Web) -->
+          <div class="glass-panel" style="padding: 1rem; border-radius: 18px; border: 2px solid #3b82f6; background: #18181b; box-shadow: 0 10px 35px rgba(0,0,0,0.7);">
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.4rem 0.8rem 0.8rem; font-size: 0.82rem; color: var(--text-muted); border-bottom: 1px solid rgba(255,255,255,0.06); margin-bottom: 0.8rem;">
+              <span>Documento Oficial Incrustado</span>
+              <a href="${this.escapeHtml(p.docFileUrl)}" target="_blank" rel="noopener noreferrer" style="color: var(--neon-cyan); font-weight: 700; text-decoration: underline;">
+                Abrir archivo en pestaña completa ↗
+              </a>
+            </div>
+            <div style="position: relative; width: 100%; height: calc(100vh - 270px); min-height: 600px; border-radius: 10px; overflow: hidden; background: #ffffff;">
+              <iframe 
+                src="${this.getEmbeddableDocUrl(p.docFileUrl)}" 
+                style="width: 100%; height: 100%; border: none;"
+                allow="autoplay; encrypted-media"
+                allowfullscreen
+              ></iframe>
+            </div>
           </div>
         ` : `
           <!-- Modo de Lectura Tradicional -->
@@ -140,7 +158,7 @@ window.DocumentProjectView = {
               </div>
             `).join('')}
           </div>
-        `}
+        `)}
 
       </div>
     `;
@@ -208,14 +226,19 @@ window.DocumentProjectView = {
             </div>
 
             <div>
-              <label style="display: block; font-size: 0.85rem; font-weight: 800; margin-bottom: 0.4rem;">URL de Archivo PDF / Word (Opcional)</label>
+              <label style="display: block; font-size: 0.85rem; font-weight: 800; margin-bottom: 0.4rem; color: #93c5fd;">
+                🔗 URL de Archivo PDF / Word / Drive (Visor Fiel)
+              </label>
               <input 
                 type="text" 
                 value="${this.escapeHtml(p.docFileUrl || '')}" 
-                placeholder="https://drive.google.com/... o enlace de descarga"
-                style="width: 100%; padding: 0.75rem 1rem; border-radius: 10px; background: rgba(0,0,0,0.3); border: 1.5px solid var(--border-color); color: var(--text-primary); font-size: 0.95rem; outline: none;"
+                placeholder="https://drive.google.com/... o enlace de PDF/Word"
+                style="width: 100%; padding: 0.75rem 1rem; border-radius: 10px; background: rgba(0,0,0,0.3); border: 1.5px solid #3b82f6; color: var(--text-primary); font-size: 0.95rem; outline: none;"
                 oninput="window.DocumentProjectView.currentProject.docFileUrl = this.value"
               />
+              <span style="font-size: 0.78rem; color: var(--text-muted); margin-top: 0.25rem; display: block;">
+                Soporta enlaces de Google Drive, PDFs web, OneDrive o Dropbox. Se incrustará como documento visible en el visor.
+              </span>
             </div>
           </div>
 
@@ -903,6 +926,48 @@ window.DocumentProjectView = {
       this.currentProject.pdfPages = [];
       this.renderEditor(document.getElementById('view-document'));
     }
+  },
+
+  getEmbeddableDocUrl(url) {
+    if (!url) return '';
+    let trimmed = String(url).trim();
+
+    // 1. Google Drive (/file/d/ID/view -> /file/d/ID/preview)
+    if (trimmed.includes('drive.google.com')) {
+      const match = trimmed.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
+      if (match && match[1]) {
+        return `https://drive.google.com/file/d/${match[1]}/preview`;
+      }
+      if (trimmed.includes('id=')) {
+        const fileId = trimmed.split('id=')[1].split('&')[0];
+        return `https://drive.google.com/file/d/${fileId}/preview`;
+      }
+    }
+
+    // 2. Dropbox (dl=0 -> raw=1)
+    if (trimmed.includes('dropbox.com')) {
+      return trimmed.replace('dl=0', 'raw=1').replace('?dl=1', '?raw=1');
+    }
+
+    // 3. OneDrive
+    if (trimmed.includes('onedrive.live.com') || trimmed.includes('1drv.ms')) {
+      if (!trimmed.includes('embed')) {
+        return trimmed.replace('/view.aspx', '/embed.aspx');
+      }
+    }
+
+    // 4. Si es un archivo PDF directo
+    if (trimmed.toLowerCase().split('?')[0].endsWith('.pdf')) {
+      return trimmed;
+    }
+
+    // 5. Si es un archivo de Word directo (.docx) público, usar el visor oficial de Microsoft Office
+    const ext = trimmed.toLowerCase().split('?')[0].split('.').pop();
+    if (ext === 'docx' || ext === 'doc' || ext === 'pptx' || ext === 'xlsx') {
+      return `https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(trimmed)}`;
+    }
+
+    return trimmed;
   },
 
   escapeHtml(str) {
