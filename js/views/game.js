@@ -1747,126 +1747,11 @@ window.GameView = {
     const responses = (data && data.responses) ? data.responses : (this.room?.responses || {});
     const isLastQuestion = this.currentQuestionIndex >= this.challenge.questions.length - 1;
 
-    // 🎓 1. PANTALLA DEL PROFESOR (ESTILO KAHOOT - IMAGEN 3)
+    // 🎓 1. PANTALLA DEL PROFESOR / CREADOR DE LA SALA:
     if (this.isHost && !this.isSolo) {
       window.soundEngine.playFanfare();
-
-      const isTextOrOpen = q.type === 'text' || q.type === 'open';
-      if (isTextOrOpen) {
-        // En preguntas de texto o respuesta abierta, mostrar banner de respuestas aceptadas y evaluar tarjetas
-        const stage = document.getElementById('host-text-responses-stage');
-        if (stage && !document.getElementById('host-accepted-banner')) {
-          const banner = document.createElement('div');
-          banner.id = 'host-accepted-banner';
-          banner.className = `host-accepted-answer-banner ${q.type === 'open' ? 'open-banner' : ''}`;
-          if (q.type === 'open') {
-            banner.innerHTML = `
-              <span style="font-size: 1.5rem;">💡</span>
-              <span style="font-weight: 800; font-size: 1.15rem;">¡Excelentes aportes de todos los estudiantes!</span>
-              <span style="color: var(--text-secondary); font-size: 0.95rem; margin-left: 0.5rem;">
-                Todas las reflexiones han sido registradas y sumaron puntos.
-              </span>
-            `;
-          } else {
-            const acceptedList = (q.acceptedAnswers && q.acceptedAnswers.length > 0) ? q.acceptedAnswers : [q.correctAnswer];
-            banner.innerHTML = `
-              <span style="font-size: 1.5rem;">🎯</span>
-              <span style="font-weight: 800; font-size: 1.1rem;">Respuesta correcta esperada:</span>
-              <span style="background: rgba(0,245,212,0.2); padding: 0.25rem 0.85rem; border-radius: 8px; font-weight: 900; color: var(--neon-cyan); font-size: 1.25rem; border: 1px solid var(--neon-cyan);">
-                ${this.escapeHtml(q.correctAnswer || acceptedList[0] || '')}
-              </span>
-              ${acceptedList.length > 1 ? `
-                <span style="font-size: 0.88rem; color: var(--text-secondary); margin-left: 0.5rem;">
-                  (Otras aceptadas: ${acceptedList.slice(1).map(a => this.escapeHtml(a)).join(', ')})
-                </span>
-              ` : ''}
-            `;
-          }
-          const grid = document.getElementById('host-live-answers-grid');
-          if (grid) {
-            stage.insertBefore(banner, grid);
-          } else {
-            stage.appendChild(banner);
-          }
-        }
-
-        // Evaluar visualmente cada tarjeta del muro en la pantalla del host
-        Object.entries(responses).forEach(([pId, r]) => {
-          const card = document.getElementById(`host-live-card-${pId}`);
-          if (card) {
-            if (q.type === 'open' || r.isCorrect) {
-              card.classList.add('correct-text-card');
-              const bubble = card.querySelector('.host-live-answer-bubble');
-              if (bubble && !card.querySelector('.text-card-status-badge')) {
-                const badge = document.createElement('span');
-                badge.className = 'text-card-status-badge';
-                badge.style.cssText = 'color: #00f5d4; font-weight: 900; margin-left: 0.6rem; font-size: 0.9rem;';
-                badge.textContent = q.type === 'open' ? '💡 Válida' : '✓ Correcto';
-                bubble.appendChild(badge);
-              }
-            } else {
-              card.classList.add('wrong-text-card');
-              const bubble = card.querySelector('.host-live-answer-bubble');
-              if (bubble && !card.querySelector('.text-card-status-badge')) {
-                const badge = document.createElement('span');
-                badge.className = 'text-card-status-badge';
-                badge.style.cssText = 'color: #f72585; font-weight: 800; margin-left: 0.6rem; font-size: 0.85rem;';
-                badge.textContent = '✗ No coincide';
-                bubble.appendChild(badge);
-              }
-            }
-          }
-        });
-      } else {
-        // Calcular votos de alumnos para opciones múltiples
-        const voteCounts = new Array((q.options || []).length).fill(0);
-        Object.values(responses).forEach(r => {
-          if (r.answerIndex !== undefined && voteCounts[r.answerIndex] !== undefined) {
-            voteCounts[r.answerIndex]++;
-          }
-        });
-
-        // Resaltar opciones estilo Kahoot en la pantalla del profesor
-        (q.options || []).forEach((opt, idx) => {
-          const card = document.getElementById(`host-opt-card-${idx}`);
-          const statPill = document.getElementById(`host-stat-pill-${idx}`);
-          const isCorr = q.type === 'poll' ? true : Array.isArray(correctIdx) ? correctIdx.includes(idx) : (idx === correctIdx);
-          const count = voteCounts[idx] || 0;
-
-          if (card) {
-            if (isCorr) {
-              card.classList.add('correct-result');
-            } else {
-              card.classList.add('wrong-result');
-            }
-          }
-          if (statPill) {
-            statPill.innerHTML = `${isCorr ? '✓ ' : ''}${count} ${count === 1 ? 'voto' : 'votos'}`;
-            statPill.style.display = 'inline-block';
-          }
-        });
-      }
-
-      // Reemplazar botón omitir temporizador por botón Siguiente en la barra superior
-      const skipBtn = document.getElementById('btn-skip-timer');
-      if (skipBtn) {
-        skipBtn.outerHTML = `
-          <button class="btn btn-primary" onclick="window.GameView.goToLeaderboardHost(${isLastQuestion})" style="padding: 0.55rem 1.35rem; font-weight: 800; font-size: 0.95rem; border-radius: 8px; box-shadow: 0 0 20px rgba(0,245,212,0.45); display: inline-flex; align-items: center; gap: 0.5rem;">
-            <span>${isLastQuestion ? '🏆 Ver Podio' : 'Siguiente ⏩'}</span>
-          </button>
-        `;
-      }
-
-      // Mostrar botón de avance para el profesor
-      const nextContainer = document.getElementById('host-next-action-container');
-      if (nextContainer) {
-        nextContainer.innerHTML = `
-          <button class="btn btn-primary btn-lg" onclick="window.GameView.goToLeaderboardHost(${isLastQuestion})" style="padding: 0.95rem 2.5rem; font-size: 1.2rem; font-weight: 800; box-shadow: 0 0 30px rgba(0,245,212,0.45); border-radius: 12px;">
-            <span>${isLastQuestion ? '🏆 Ver Podio Final' : 'Siguiente Pregunta ⏩'}</span>
-          </button>
-        `;
-        nextContainer.style.display = 'block';
-      }
+      // El creador de la sala ve la pantalla completa con el histograma desahogado y la tabla de resumen
+      this.renderFullStatsScreen(responses, correctIdx, q, null, null);
       return;
     }
 
@@ -1976,20 +1861,100 @@ window.GameView = {
     ribbonWrapper.appendChild(ribbon);
     document.body.appendChild(ribbonWrapper);
 
-    // 5. Transición a PANTALLA COMPLETA DE ESTADÍSTICAS tras 1.3s
+    // 5. Transición tras 1.3s
     if (this.transitionTimeout) clearTimeout(this.transitionTimeout);
     this.transitionTimeout = setTimeout(() => {
       const activeWrapper = document.getElementById('full-screen-ribbon-wrapper');
       if (activeWrapper) activeWrapper.remove();
-      this.renderFullStatsScreen(responses, correctIdx, q, localResp, isCorrect);
+      if (this.isSolo) {
+        this.renderFullStatsScreen(responses, correctIdx, q, localResp, isCorrect);
+      } else {
+        this.renderStudentFeedbackScreen(q, localResp, isCorrect, correctIdx, isTimeout);
+      }
     }, 1300);
   },
 
+  // ==========================================
+  // 📱 PANTALLA DEL ALUMNO (SIN GRÁFICAS)
+  // ==========================================
+  renderStudentFeedbackScreen(q, localResp, isCorrect, correctIdx, isTimeout) {
+    const container = document.getElementById('view-game');
+    if (!container) return;
+
+    let updatedPlayer = window.realtimeEngine.localPlayer;
+    const finalScore = updatedPlayer ? (updatedPlayer.score || 0) : 0;
+    const isLastQuestion = this.currentQuestionIndex >= this.challenge.questions.length - 1;
+
+    let correctText = '';
+    if (q.type === 'text') {
+      correctText = q.correctAnswer || (q.acceptedAnswers && q.acceptedAnswers[0]) || '';
+    } else if (Array.isArray(correctIdx)) {
+      correctText = correctIdx.map(i => q.options[i]?.text).filter(Boolean).join(', ');
+    } else if (q.options && q.options[correctIdx]) {
+      correctText = q.options[correctIdx].text;
+    }
+
+    const isPollOrOpen = q.type === 'poll' || q.type === 'open';
+
+    container.innerHTML = `
+      <div class="student-feedback-container">
+        <!-- Tarjeta de Resultado Individual del Alumno -->
+        <div class="student-feedback-card ${isPollOrOpen || isCorrect ? 'is-correct' : 'is-wrong'}">
+          <div style="font-size: 3.5rem; margin-bottom: 0.5rem; line-height: 1;">
+            ${isPollOrOpen ? '📊' : (isCorrect ? '🎯' : (isTimeout ? '⏱️' : '❌'))}
+          </div>
+          
+          <h2 style="font-size: 1.85rem; font-weight: 900; margin-bottom: 0.5rem; color: ${isPollOrOpen || isCorrect ? 'var(--neon-emerald)' : 'var(--neon-magenta)'};">
+            ${isPollOrOpen ? '¡Respuesta Registrada!' : (isCorrect ? '¡Respuesta Correcta!' : (isTimeout ? '¡Tiempo Agotado!' : '¡Respuesta Incorrecta!'))}
+          </h2>
+
+          ${localResp && localResp.pointsEarned ? `
+            <div style="display: inline-flex; align-items: center; gap: 0.5rem; background: rgba(0, 245, 212, 0.15); border: 1.5px solid var(--neon-cyan); padding: 0.45rem 1.25rem; border-radius: 9999px; margin-bottom: 1rem;">
+              <span style="font-weight: 900; font-size: 1.15rem; color: var(--neon-cyan);">+${localResp.pointsEarned} PTS</span>
+              ${localResp.comboMultiplier > 1 ? `<span style="font-weight: 800; font-size: 0.95rem; color: #ffb703;">🔥 Racha x${localResp.comboMultiplier}</span>` : ''}
+            </div>
+          ` : ''}
+
+          ${(!isCorrect && !isPollOrOpen && correctText) ? `
+            <div style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); border-radius: 12px; padding: 0.85rem 1.25rem; margin: 1rem auto; max-width: 480px; text-align: left;">
+              <div style="font-size: 0.78rem; text-transform: uppercase; font-weight: 800; color: var(--text-secondary); margin-bottom: 0.25rem;">
+                Respuesta correcta:
+              </div>
+              <div style="font-size: 1.1rem; font-weight: 800; color: var(--neon-cyan);">
+                ${this.escapeHtml(correctText)}
+              </div>
+            </div>
+          ` : ''}
+
+          <!-- Puntaje Acumulado -->
+          <div style="margin-top: 1.25rem; padding-top: 1.25rem; border-top: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; gap: 0.75rem;">
+            <span style="font-size: 0.9rem; font-weight: 800; color: var(--text-secondary); text-transform: uppercase;">Tu Puntaje Total:</span>
+            <span style="font-size: 1.4rem; font-weight: 900; color: #ffd166;">🏆 ${finalScore} PTS</span>
+          </div>
+        </div>
+
+        <!-- Tarjeta de Espera al Profesor -->
+        <div class="glass-panel" style="width: 100%; padding: 1.75rem; text-align: center; border-color: rgba(0, 245, 212, 0.3); background: rgba(0, 245, 212, 0.05);">
+          <div style="font-size: 2rem; margin-bottom: 0.5rem; animation: timer-pulse 1.2s infinite alternate;">⏳</div>
+          <div style="font-size: 1.2rem; font-weight: 800; color: var(--text-primary); margin-bottom: 0.35rem;">
+            ${isLastQuestion ? 'Esperando Podio Final...' : 'Esperando a que el profesor continúe...'}
+          </div>
+          <p style="font-size: 0.88rem; color: var(--text-secondary); margin: 0; max-width: 440px; margin: 0 auto;">
+            El profesor está revisando los resultados en la pantalla principal. La siguiente pregunta comenzará automáticamente.
+          </p>
+        </div>
+      </div>
+    `;
+  },
+
+  // ==========================================
+  // 🎓 PANTALLA COMPLETA DE ESTADÍSTICAS Y TABLA PARA EL PROFESOR
+  // ==========================================
   renderFullStatsScreen(responses, correctIdx, q, localResp, isCorrect) {
     const container = document.getElementById('view-game');
     if (!container) return;
 
-    // Calcular estadísticas
+    // Calcular estadísticas de respuestas
     const counts = new Array((q.options || []).length).fill(0);
     if (responses) {
       Object.values(responses).forEach(r => {
@@ -2018,58 +1983,45 @@ window.GameView = {
     }
     const finalScore = updatedPlayer ? (updatedPlayer.score || 0) : 0;
 
-    // RENDERIZAR EN TODA LA PÁGINA (Sin mostrar la pregunta respondida)
     container.innerHTML = `
       <div class="full-stats-container">
         <!-- Barra Superior de Estado y Avance -->
         <div class="full-stats-header">
-          <div style="display: flex; align-items: center; gap: 0.75rem;">
+          <div style="display: flex; align-items: center; gap: 0.85rem; flex-wrap: wrap;">
             <span style="font-weight: 900; font-size: 1.15rem; color: var(--neon-cyan);">
               Pregunta ${this.currentQuestionIndex + 1} de ${this.challenge.questions.length}
             </span>
-            <span class="badge-tag" style="background: rgba(255,183,3,0.15); border: 1px solid rgba(255,183,3,0.4); color: #ffb703; font-weight: 800; font-size: 0.95rem; padding: 0.35rem 0.85rem; border-radius: 9999px;">
-              🏆 <span id="full-stats-score-val">${finalScore}</span> PTS
+            <span class="badge-tag" style="background: rgba(0, 245, 212, 0.12); border: 1px solid var(--neon-cyan); color: var(--neon-cyan); font-weight: 800; font-size: 0.9rem; padding: 0.35rem 0.85rem; border-radius: 9999px;">
+              👥 ${Object.keys(responses || {}).length} ${(Object.keys(responses || {}).length === 1) ? 'respuesta' : 'respuestas'}
             </span>
+            ${this.isSolo ? `
+              <span class="badge-tag" style="background: rgba(255,183,3,0.15); border: 1px solid rgba(255,183,3,0.4); color: #ffb703; font-weight: 800; font-size: 0.95rem; padding: 0.35rem 0.85rem; border-radius: 9999px;">
+                🏆 ${finalScore} PTS
+              </span>
+            ` : ''}
           </div>
 
-          <!-- Resumen de resultado del jugador -->
-          <div>
-            ${(isCorrect || q.type === 'poll' || q.type === 'open') ? `
-              <div class="badge-tag" style="background: rgba(6, 214, 160, 0.2); border: 1px solid var(--neon-emerald); color: #06d6a0; font-weight: 900; font-size: 1.05rem; padding: 0.4rem 1.25rem;">
-                ${q.type === 'poll' ? '¡VOTO REGISTRADO! 📊' : q.type === 'open' ? '¡IDEA COMPARTIDA! 💬' : `¡CORRECTO! 🎯 +${localResp?.pointsEarned || 1000} pts ${localResp?.comboMultiplier > 1 ? `(🔥 x${localResp.comboMultiplier})` : ''}`}
-              </div>
-            ` : `
-              <div class="badge-tag" style="background: rgba(247, 37, 133, 0.2); border: 1px solid var(--neon-magenta); color: #f72585; font-weight: 900; font-size: 1.05rem; padding: 0.4rem 1.25rem;">
-                ¡INCORRECTO! ❌ Correcta: "${q.type === 'text' ? (q.correctAnswer || (q.acceptedAnswers && q.acceptedAnswers[0]) || '') : Array.isArray(correctIdx) ? correctIdx.map(i => q.options[i]?.text).join(', ') : (q.options[correctIdx]?.text || '')}"
-              </div>
-            `}
-          </div>
-
-          <!-- Botón de avance manual del maestro o estado de espera del alumno -->
+          <!-- Botón de avance del profesor -->
           <div>
             ${(this.isHost || this.isSolo) ? `
-              <button id="btn-next-direct" class="btn btn-primary btn-lg" onclick="window.GameView.goToNextDirect(${isLastQuestion})" style="padding: 0.85rem 2rem; font-weight: 900; font-size: 1.15rem; box-shadow: 0 0 25px rgba(0,245,212,0.45); border-radius: 12px;">
+              <button id="btn-next-direct" class="btn btn-primary btn-lg" onclick="window.GameView.goToNextDirect(${isLastQuestion})" style="padding: 0.75rem 2rem; font-weight: 900; font-size: 1.15rem; box-shadow: 0 0 25px rgba(0,245,212,0.45); border-radius: 12px;">
                 <span>${isLastQuestion ? '🏆 ¡Ver Podio Final!' : 'Siguiente Pregunta ⏩'}</span>
               </button>
-            ` : `
-              <div class="glass-panel" style="padding: 0.6rem 1.5rem; border-color: var(--neon-cyan); background: rgba(0, 245, 212, 0.1);">
-                <span style="font-weight: 800; font-size: 1rem; color: var(--neon-cyan);">
-                  ${isLastQuestion ? '🏆 Esperando Podio Final...' : 'Esperando al profesor...'}
-                </span>
-                <span style="font-size: 0.82rem; color: var(--text-muted); display: block; margin-top: 0.2rem;">
-                  El profesor avanzará cuando todos completen la actividad
-                </span>
-              </div>
-            `}
+            ` : ''}
           </div>
         </div>
 
-        <!-- Tarjeta de Estadísticas en Pantalla Completa (Histograma o Muro de Respuestas) -->
+        <!-- Pregunta en Pantalla Gigante -->
+        <div class="kahoot-host-question-banner" style="margin-bottom: 1.5rem; font-size: 1.5rem; padding: 1.25rem 2rem; border-radius: 14px;">
+          ${q.text}
+        </div>
+
+        <!-- Tarjeta de Estadísticas e Histograma Desahogado -->
         <div class="full-stats-card">
-          <div style="font-size: 1.35rem; font-weight: 900; color: var(--text-primary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.35rem;">
+          <div style="font-size: 1.4rem; font-weight: 900; color: var(--text-primary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.4rem;">
             📊 ${q.type === 'open' ? 'Ideas y Reflexiones Compartidas' : 'Estadísticas de Respuestas'}
           </div>
-          <p style="color: var(--text-secondary); font-size: 0.95rem; margin-bottom: 1.5rem; font-weight: 600;">
+          <p style="color: var(--text-secondary); font-size: 0.95rem; margin-bottom: 1.75rem; font-weight: 600;">
             ${Object.keys(responses || {}).length} ${(Object.keys(responses || {}).length === 1) ? 'estudiante participó' : 'estudiantes participaron'} en esta pregunta
           </p>
 
@@ -2114,10 +2066,11 @@ window.GameView = {
               </div>
             </div>
           ` : (q.options && q.options.length > 0) ? `
+            <!-- 📊 Histograma de Barras Amplio y Desahogado -->
             <div class="full-stats-grid">
               ${q.options.map((opt, idx) => {
                 const count = counts[idx] || 0;
-                const heightPx = Math.max(20, Math.round((count / maxVotes) * 200));
+                const heightPx = Math.max(16, Math.round((count / maxVotes) * 150));
                 const isCorr = q.type === 'poll' ? true : Array.isArray(correctIdx) ? correctIdx.includes(idx) : (idx === correctIdx);
                 const color = colors[idx % colors.length];
                 const shapeDef = this.getShapeDef(idx);
@@ -2133,11 +2086,74 @@ window.GameView = {
                       ${isCorr ? `<span class="histogram-check" title="Respuesta Correcta">✓</span>` : ''}
                     </div>
                     <div class="full-stats-label">
-                      ${opt.text}
+                      ${this.escapeHtml(opt.text)}
                     </div>
                   </div>
                 `;
               }).join('')}
+            </div>
+
+            <!-- 📋 Tabla Resumen de Respuestas por Opción para el Creador -->
+            <div class="host-stats-table-wrapper">
+              <div style="padding: 0.85rem 1.25rem; background: rgba(255,255,255,0.03); border-bottom: 1px solid var(--border-color); text-align: left; display: flex; align-items: center; justify-content: space-between;">
+                <span style="font-weight: 800; font-size: 0.9rem; color: var(--neon-cyan); text-transform: uppercase; letter-spacing: 0.5px;">📋 Tabla Detallada de Respuestas</span>
+                <span style="font-size: 0.82rem; color: var(--text-secondary); font-weight: 700;">${totalVotes} votos totales</span>
+              </div>
+              <table class="host-stats-table">
+                <thead>
+                  <tr>
+                    <th style="width: 50%;">Opción</th>
+                    <th style="text-align: center; width: 15%;">Votos</th>
+                    <th style="text-align: center; width: 20%;">Porcentaje</th>
+                    <th style="text-align: center; width: 15%;">Estado</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${q.options.map((opt, idx) => {
+                    const count = counts[idx] || 0;
+                    const pct = totalVotes > 0 ? Math.round((count / totalVotes) * 100) : 0;
+                    const isCorr = q.type === 'poll' ? true : Array.isArray(correctIdx) ? correctIdx.includes(idx) : (idx === correctIdx);
+                    const color = colors[idx % colors.length];
+                    const shapeDef = this.getShapeDef(idx);
+                    return `
+                      <tr class="${isCorr ? 'correct-row' : ''}">
+                        <td>
+                          <div style="display: flex; align-items: center; gap: 0.65rem;">
+                            <span style="display: inline-flex; width: 24px; height: 24px; border-radius: 6px; background: ${color}; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 2px 6px rgba(0,0,0,0.3);">
+                              ${shapeDef.svg}
+                            </span>
+                            <span style="font-weight: 700; color: var(--text-primary); line-height: 1.3;">
+                              ${this.escapeHtml(opt.text)}
+                            </span>
+                          </div>
+                        </td>
+                        <td style="text-align: center; font-weight: 900; font-size: 1.1rem; color: ${color};">
+                          ${count}
+                        </td>
+                        <td style="text-align: center;">
+                          <div style="display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+                            <div style="width: 60px; height: 8px; background: rgba(255,255,255,0.1); border-radius: 999px; overflow: hidden;">
+                              <div style="width: ${pct}%; height: 100%; background: ${color}; border-radius: 999px;"></div>
+                            </div>
+                            <span style="font-weight: 800; font-size: 0.85rem; color: var(--text-secondary);">${pct}%</span>
+                          </div>
+                        </td>
+                        <td style="text-align: center;">
+                          ${isCorr ? `
+                            <span style="display: inline-flex; align-items: center; gap: 0.3rem; background: rgba(6, 214, 160, 0.15); border: 1px solid var(--neon-emerald); color: #06d6a0; font-weight: 800; font-size: 0.8rem; padding: 0.2rem 0.6rem; border-radius: 999px;">
+                              ✓ Correcta
+                            </span>
+                          ` : `
+                            <span style="color: var(--text-muted); font-size: 0.8rem; font-weight: 600;">
+                              —
+                            </span>
+                          `}
+                        </td>
+                      </tr>
+                    `;
+                  }).join('')}
+                </tbody>
+              </table>
             </div>
           ` : `
             <div style="padding: 2.5rem 1.5rem; background: rgba(0,0,0,0.3); border-radius: 12px; margin: 1.5rem auto; max-width: 550px; border: 1px dashed var(--neon-cyan); text-align: center;">
@@ -2145,6 +2161,15 @@ window.GameView = {
               <div style="font-size: 1.8rem; font-weight: 900; color: var(--neon-cyan);">${q.correctAnswer || (q.acceptedAnswers && q.acceptedAnswers[0]) || ''}</div>
             </div>
           `}
+
+          <!-- Botón de avance inferior para el profesor -->
+          ${(this.isHost || this.isSolo) ? `
+            <div style="margin-top: 2.25rem; display: flex; justify-content: center;">
+              <button class="btn btn-primary btn-lg" onclick="window.GameView.goToNextDirect(${isLastQuestion})" style="padding: 0.95rem 2.8rem; font-size: 1.2rem; font-weight: 900; box-shadow: 0 0 30px rgba(0,245,212,0.45); border-radius: 12px;">
+                <span>${isLastQuestion ? '🏆 ¡Ver Podio Final!' : 'Siguiente Pregunta ⏩'}</span>
+              </button>
+            </div>
+          ` : ''}
         </div>
       </div>
     `;

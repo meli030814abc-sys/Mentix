@@ -1065,13 +1065,13 @@ h1, h2, h3, h4, h5, h6 {
 
 /* 📊 Pantalla Completa de Estadísticas de Respuestas */
 .full-stats-container {
-  max-width: 1050px;
+  max-width: 1100px;
   margin: 0 auto;
   padding: 1.5rem 1.25rem 4rem;
   min-height: 85vh;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   animation: fadeInView 0.4s ease;
 }
 
@@ -1081,7 +1081,7 @@ h1, h2, h3, h4, h5, h6 {
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 1rem;
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
   background: var(--bg-card);
   padding: 1rem 1.5rem;
   border-radius: var(--border-radius-lg);
@@ -1089,24 +1089,28 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .full-stats-card {
-  background: rgba(11, 15, 25, 0.85);
+  background: rgba(11, 15, 25, 0.92);
   border: 1px solid var(--border-color);
   border-radius: var(--border-radius-xl);
-  padding: 2.5rem 2rem 2rem;
+  padding: 2.25rem 2rem 2.5rem;
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
   text-align: center;
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   margin-bottom: 2rem;
+  overflow: visible;
 }
 
 .full-stats-grid {
   display: flex;
   align-items: flex-end;
   justify-content: center;
-  gap: 1.5rem;
-  height: 290px;
-  padding: 1.5rem 1rem 0;
+  gap: 1.75rem;
+  min-height: 250px;
+  padding: 1.5rem 0.5rem 0.5rem;
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
+  width: 100%;
 }
 
 .full-stats-col {
@@ -1115,23 +1119,26 @@ h1, h2, h3, h4, h5, h6 {
   align-items: center;
   justify-content: flex-end;
   flex: 1;
-  max-width: 190px;
-  height: 100%;
+  min-width: 130px;
+  max-width: 220px;
 }
 
 .full-stats-bar-wrap {
   width: 100%;
-  height: 210px;
+  height: 160px;
   display: flex;
   align-items: flex-end;
   justify-content: center;
+  position: relative;
+  overflow: hidden;
+  border-radius: 12px 12px 0 0;
 }
 
 .full-stats-bar {
   width: 100%;
   border-radius: 12px 12px 0 0;
   transition: height 0.85s cubic-bezier(0.34, 1.56, 0.64, 1);
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
 }
 
 .full-stats-badge {
@@ -1142,7 +1149,7 @@ h1, h2, h3, h4, h5, h6 {
   padding: 0.65rem 0.75rem;
   border-radius: 0 0 12px 12px;
   font-weight: 900;
-  font-size: 1.3rem;
+  font-size: 1.25rem;
   color: white;
   width: 100%;
   text-align: center;
@@ -1150,13 +1157,100 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .full-stats-label {
-  font-size: 0.95rem;
+  font-size: 0.88rem;
   font-weight: 700;
-  color: var(--text-secondary);
+  color: var(--text-primary);
   margin-top: 0.85rem;
   text-align: center;
   max-width: 100%;
-  word-break: break-word;
+  line-height: 1.35;
+  padding: 0.5rem 0.65rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* 📋 Tabla de Desglose de Respuestas para el Profesor */
+.host-stats-table-wrapper {
+  margin-top: 2rem;
+  width: 100%;
+  border-radius: var(--border-radius-lg);
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+  background: rgba(0, 0, 0, 0.28);
+}
+
+.host-stats-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 0.95rem;
+}
+
+.host-stats-table th {
+  background: rgba(255, 255, 255, 0.06);
+  padding: 0.85rem 1.25rem;
+  font-weight: 800;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  font-size: 0.78rem;
+  letter-spacing: 0.05em;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.host-stats-table td {
+  padding: 0.95rem 1.25rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  color: var(--text-primary);
+  vertical-align: middle;
+}
+
+.host-stats-table tr:last-child td {
+  border-bottom: none;
+}
+
+.host-stats-table tr.correct-row {
+  background: rgba(0, 245, 212, 0.07);
+}
+
+/* 📱 Pantalla de Feedback del Alumno (Sin Gráficas) */
+.student-feedback-container {
+  max-width: 600px;
+  margin: 2.5rem auto;
+  padding: 0 1.25rem;
+  min-height: 75vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  animation: fadeInView 0.4s ease;
+}
+
+.student-feedback-card {
+  width: 100%;
+  background: rgba(11, 15, 25, 0.92);
+  border: 2px solid var(--border-color);
+  border-radius: var(--border-radius-xl);
+  padding: 2.5rem 2rem;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  margin-bottom: 1.5rem;
+}
+
+.student-feedback-card.is-correct {
+  border-color: var(--neon-emerald);
+  box-shadow: 0 0 35px rgba(6, 214, 160, 0.25);
+}
+
+.student-feedback-card.is-wrong {
+  border-color: var(--neon-magenta);
+  box-shadow: 0 0 35px rgba(247, 37, 133, 0.25);
 }
 
 /* Animación de acumulación de puntos 🏆 */
@@ -2781,6 +2875,33 @@ body.light-theme .full-stats-card p {
 body.light-theme .full-stats-label {
   color: #1e293b !important;
   font-weight: 800;
+  background: rgba(0, 0, 0, 0.04) !important;
+}
+
+body.light-theme .host-stats-table-wrapper {
+  background: #f8fafc;
+  border-color: rgba(0, 0, 0, 0.1);
+}
+
+body.light-theme .host-stats-table th {
+  background: #f1f5f9;
+  color: #64748b;
+  border-bottom-color: rgba(0, 0, 0, 0.1);
+}
+
+body.light-theme .host-stats-table td {
+  color: #0f172a;
+  border-bottom-color: rgba(0, 0, 0, 0.06);
+}
+
+body.light-theme .host-stats-table tr.correct-row {
+  background: rgba(0, 245, 212, 0.08);
+}
+
+body.light-theme .student-feedback-card {
+  background: #ffffff;
+  border-color: rgba(0, 0, 0, 0.12);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.08);
 }
 
 /* Creador de Quizzes en Modo Claro */
