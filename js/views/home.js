@@ -225,22 +225,16 @@ window.HomeView = {
             ` : ''}
           </div>
 
-          <!-- Entidad Destacada en el Banner (Estilo Escudo + Nombre Grande como en la imagen) -->
-          ${(challenge.entityName || challenge.entityLogo) ? `
-            <div style="position: absolute; right: 1rem; bottom: 0.85rem; display: flex; align-items: center; gap: 0.85rem; background: rgba(5, 10, 25, 0.78); backdrop-filter: blur(12px); border: 2px solid rgba(59, 130, 246, 0.6); border-radius: 16px; padding: 0.5rem 1rem 0.5rem 0.75rem; box-shadow: 0 8px 25px rgba(0,0,0,0.6); max-width: calc(100% - 2rem); z-index: 3;">
+          <!-- Entidad Destacada en el Banner (Solo el Logo de la Entidad, Limpio y Elegante) -->
+          ${(challenge.entityLogo || challenge.entityName) ? `
+            <div style="position: absolute; right: 0.85rem; bottom: 0.75rem; display: flex; align-items: center; justify-content: center; background: rgba(5, 10, 25, 0.82); backdrop-filter: blur(12px); border: 2px solid rgba(59, 130, 246, 0.75); border-radius: 14px; padding: 0.4rem 0.65rem; box-shadow: 0 8px 24px rgba(0,0,0,0.65), 0 0 15px rgba(59, 130, 246, 0.3); z-index: 3;">
               ${challenge.entityLogo ? `
-                <div style="width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; overflow: hidden; flex-shrink: 0; background: rgba(255,255,255,0.08); border: 1.5px solid rgba(147, 197, 253, 0.5);">
-                  <img src="${challenge.entityLogo}" alt="${challenge.entityName || 'Entidad'}" style="width: 100%; height: 100%; object-fit: contain;" onerror="this.parentElement.innerHTML='🛡️'">
+                <div style="width: auto; height: 38px; min-width: 38px; max-width: 95px; border-radius: 8px; display: flex; align-items: center; justify-content: center; overflow: hidden; background: #ffffff; padding: 2px 4px; box-shadow: 0 2px 8px rgba(0,0,0,0.3);">
+                  <img src="${challenge.entityLogo}" alt="${challenge.entityName || 'Entidad'}" style="max-height: 100%; max-width: 100%; object-fit: contain; display: block;" onerror="this.parentElement.style.display='none'">
                 </div>
               ` : `
-                <span style="font-size: 2rem; filter: drop-shadow(0 0 8px rgba(59, 130, 246, 0.8));">🛡️</span>
+                <span style="font-size: 1.25rem; font-weight: 900; color: #ffffff; letter-spacing: 0.5px; text-transform: uppercase;">${challenge.entityName}</span>
               `}
-              <div style="display: flex; align-items: center; gap: 0.6rem;">
-                <div style="width: 2px; height: 32px; background: rgba(255,255,255,0.4); border-radius: 2px;"></div>
-                <span style="font-size: 1.45rem; font-weight: 900; letter-spacing: 0.5px; color: #ffffff; text-transform: uppercase; text-shadow: 0 2px 10px rgba(0,0,0,0.6); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 170px;">
-                  ${challenge.entityName || ''}
-                </span>
-              </div>
             </div>
           ` : ''}
 
