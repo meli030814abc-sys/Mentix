@@ -628,29 +628,29 @@ window.LobbyView = {
   // ==========================================
   renderJoinPinStep(container) {
     container.innerHTML = `
-      <div style="min-height: calc(100vh - 40px); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2rem 1.25rem;">
+      <div style="min-height: 85vh; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 3rem 1.5rem 5rem; box-sizing: border-box;">
         
-        <!-- Nombre de la Página / Logotipo Minimalista (Como Mentimeter) -->
-        <a href="javascript:void(0)" onclick="window.appRouter.navigate('home')" style="text-decoration: none; display: flex; align-items: center; gap: 0.5rem; margin-bottom: 2rem; cursor: pointer;">
-          <span style="font-size: 2rem; filter: drop-shadow(0 0 10px rgba(0,245,212,0.7));">🧠</span>
-          <span style="font-size: 1.85rem; font-weight: 900; letter-spacing: -0.02em; color: var(--text-primary); font-family: var(--font-family);">
-            MEN<span style="color: var(--neon-cyan); text-shadow: 0 0 15px rgba(0,245,212,0.6);">TIX</span>
+        <!-- Nombre de la Página / Logotipo Destacado -->
+        <a href="javascript:void(0)" onclick="window.appRouter.navigate('home')" style="text-decoration: none; display: flex; align-items: center; gap: 0.75rem; margin-bottom: 2.25rem; cursor: pointer;">
+          <span style="font-size: 2.8rem; filter: drop-shadow(0 0 12px rgba(0,245,212,0.7));">🧠</span>
+          <span style="font-size: 2.5rem; font-weight: 900; letter-spacing: -0.02em; color: var(--text-primary); font-family: var(--font-family);">
+            MEN<span style="color: var(--neon-cyan); text-shadow: 0 0 18px rgba(0,245,212,0.6);">TIX</span>
           </span>
         </a>
 
-        <!-- Contenedor Central Minimalista -->
-        <div style="width: 100%; max-width: 440px; text-align: center;">
+        <!-- Contenedor Amplio en Toda la Pantalla -->
+        <div style="width: 100%; max-width: 680px; text-align: center; margin: 0 auto;">
           
-          <h1 style="font-size: 1.65rem; font-weight: 800; margin: 0 0 0.4rem; color: var(--text-primary); letter-spacing: -0.01em;">
-            Enter the code to join
+          <h1 style="font-size: clamp(2rem, 5vw, 2.75rem); font-weight: 900; margin: 0 0 0.6rem; color: var(--text-primary); letter-spacing: -0.02em;">
+            Ingresa el código para unirte
           </h1>
           
-          <p style="color: var(--text-muted); font-size: 0.92rem; margin: 0 0 1.75rem;">
-            It's on the screen in front of you
+          <p style="color: var(--text-muted); font-size: clamp(1rem, 2.5vw, 1.2rem); margin: 0 0 2.25rem;">
+            Está en la pantalla frente a ti
           </p>
 
-          <form id="join-pin-form" onsubmit="event.preventDefault(); window.LobbyView.submitPinStep();">
-            <div style="margin-bottom: 1.25rem;">
+          <form id="join-pin-form" onsubmit="event.preventDefault(); window.LobbyView.submitPinStep();" style="width: 100%;">
+            <div style="margin-bottom: 1.75rem; width: 100%;">
               <input 
                 type="text" 
                 id="join-pin-input" 
@@ -661,28 +661,28 @@ window.LobbyView = {
                 required
                 autofocus
                 autocomplete="off"
-                style="width: 100%; text-align: center; font-size: 1.45rem; font-weight: 700; padding: 0.85rem 1rem; border-radius: 12px; background: rgba(255,255,255,0.06); border: 2px solid #818cf8; color: var(--text-primary); outline: none; transition: var(--transition-bounce); box-shadow: 0 4px 18px rgba(0,0,0,0.15);"
-                onfocus="this.style.borderColor='var(--neon-cyan)'; this.style.boxShadow='0 0 0 3px rgba(0,245,212,0.2)';"
-                onblur="this.style.borderColor='#818cf8'; this.style.boxShadow='0 4px 18px rgba(0,0,0,0.15)';"
+                style="width: 100%; box-sizing: border-box; text-align: center; font-size: clamp(1.8rem, 4vw, 2.4rem); font-weight: 800; padding: 1.15rem 1.5rem; border-radius: 18px; background: rgba(255,255,255,0.06); border: 2.5px solid #818cf8; color: var(--text-primary); outline: none; transition: var(--transition-bounce); box-shadow: 0 8px 30px rgba(0,0,0,0.18); letter-spacing: 2px;"
+                onfocus="this.style.borderColor='var(--neon-cyan)'; this.style.boxShadow='0 0 0 4px rgba(0,245,212,0.25)';"
+                onblur="this.style.borderColor='#818cf8'; this.style.boxShadow='0 8px 30px rgba(0,0,0,0.18)';"
                 oninput="window.LobbyView.formatPinInput(this)"
               />
-              <div id="pin-error-msg" style="color: #ef4444; font-size: 0.85rem; font-weight: 700; margin-top: 0.5rem; display: none; text-align: center;"></div>
+              <div id="pin-error-msg" style="color: #ef4444; font-size: 0.95rem; font-weight: 700; margin-top: 0.75rem; display: none; text-align: center;"></div>
             </div>
 
             <button 
               type="submit" 
               class="btn" 
-              style="padding: 0.65rem 2.2rem; font-size: 1.05rem; font-weight: 800; border-radius: 9999px; background: #1e1e24; color: #ffffff; border: 1.5px solid rgba(255,255,255,0.2); cursor: pointer; transition: var(--transition-bounce); box-shadow: 0 4px 12px rgba(0,0,0,0.3);"
-              onmouseenter="this.style.background='var(--neon-cyan)'; this.style.color='#050510'; this.style.borderColor='var(--neon-cyan)';"
-              onmouseleave="this.style.background='#1e1e24'; this.style.color='#ffffff'; this.style.borderColor='rgba(255,255,255,0.2)';"
+              style="padding: 0.85rem 3.5rem; font-size: 1.25rem; font-weight: 900; border-radius: 9999px; background: #1e1e24; color: #ffffff; border: 2px solid rgba(255,255,255,0.25); cursor: pointer; transition: var(--transition-bounce); box-shadow: 0 6px 20px rgba(0,0,0,0.35); min-width: 200px;"
+              onmouseenter="this.style.background='var(--neon-cyan)'; this.style.color='#050510'; this.style.borderColor='var(--neon-cyan)'; this.style.transform='translateY(-2px) scale(1.03)';"
+              onmouseleave="this.style.background='#1e1e24'; this.style.color='#ffffff'; this.style.borderColor='rgba(255,255,255,0.25)'; this.style.transform='none';"
             >
-              Join
+              Unirse
             </button>
           </form>
 
           <!-- Enlace discreto para volver -->
-          <div style="margin-top: 2rem;">
-            <a href="javascript:void(0)" onclick="window.appRouter.navigate('home')" style="font-size: 0.85rem; color: var(--text-muted); text-decoration: none; transition: opacity 0.2s;" onmouseenter="this.style.color='var(--neon-cyan)'" onmouseleave="this.style.color='var(--text-muted)'">
+          <div style="margin-top: 2.75rem;">
+            <a href="javascript:void(0)" onclick="window.appRouter.navigate('home')" style="font-size: 0.95rem; color: var(--text-muted); text-decoration: none; transition: color 0.2s;" onmouseenter="this.style.color='var(--neon-cyan)'" onmouseleave="this.style.color='var(--text-muted)'">
               ← Volver al inicio
             </a>
           </div>
