@@ -88,7 +88,7 @@ window.ProfileView = {
         </div>
 
         <!-- Métricas Rápidas de Rendimiento -->
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1rem; margin-bottom: 2.5rem;">
+        <div style="display: ${u.isGuest ? 'none' : 'grid'}; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1rem; margin-bottom: 2.5rem;">
           <div class="glass-panel" style="padding: 1.25rem; text-align: center;">
             <div style="font-size: 2rem; margin-bottom: 0.25rem;">🎮</div>
             <div style="font-size: 1.6rem; font-weight: 900; color: var(--text-primary);">${u.challengesPlayed || 0}</div>
@@ -115,7 +115,7 @@ window.ProfileView = {
         </div>
 
         <!-- Vitrina de Medallas y Logros -->
-        <div class="glass-panel" style="padding: 2rem; margin-bottom: 2.5rem;">
+        <div class="glass-panel" style="padding: 2rem; margin-bottom: 2.5rem; ${u.isGuest ? 'display: none;' : ''}">
           <h2 style="font-size: 1.4rem; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.6rem;">
             <span>🎖️</span> Vitrina de Medallas y Logros
           </h2>
@@ -134,6 +134,8 @@ window.ProfileView = {
               </div>
             `).join('')}
           </div>
+        </div>
+
         <!-- Sección: Mis Cuestionarios Creados -->
         <div class="glass-panel" style="padding: 2rem; margin-bottom: 2.5rem;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 0.75rem;">
