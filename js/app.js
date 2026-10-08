@@ -209,6 +209,16 @@ class AppRouter {
         if (window.VideoProjectView) window.VideoProjectView.render(params);
         break;
 
+      case 'document':
+        document.getElementById('view-document')?.classList.add('active');
+        if (window.DocumentProjectView) window.DocumentProjectView.render(params);
+        break;
+
+      case 'url':
+        document.getElementById('view-url')?.classList.add('active');
+        if (window.UrlProjectView) window.UrlProjectView.render(params);
+        break;
+
       default:
         document.getElementById('view-home')?.classList.add('active');
         window.HomeView.render();
@@ -239,6 +249,30 @@ class AppRouter {
 
   createVideo() {
     this.navigate('video', { edit: true });
+  }
+
+  openDocument(id) {
+    this.navigate('document', { id: id, edit: false });
+  }
+
+  editDocument(id) {
+    this.navigate('document', { id: id, edit: true });
+  }
+
+  createDocument() {
+    this.navigate('document', { edit: true });
+  }
+
+  openUrl(id) {
+    this.navigate('url', { id: id, edit: false });
+  }
+
+  editUrl(id) {
+    this.navigate('url', { id: id, edit: true });
+  }
+
+  createUrl() {
+    this.navigate('url', { edit: true });
   }
 
   updateNavbar() {

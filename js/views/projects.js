@@ -13,8 +13,10 @@ window.ProjectsView = {
     if (!container) return;
 
     const u = window.appState.currentUser;
-    // En MENTIX, los proyectos son estrictamente Presentaciones (Diapositivas) y Video Clases
-    const allProjects = (window.appState.challenges || []).filter(c => c.projectType === 'presentation' || c.projectType === 'video');
+    // En MENTIX, los proyectos abarcan: Presentaciones, Video Clases, Documentos Didácticos y Enlaces Web/URL
+    const allProjects = (window.appState.challenges || []).filter(c => 
+      c.projectType === 'presentation' || c.projectType === 'video' || c.projectType === 'document' || c.projectType === 'url'
+    );
     const categories = window.appState.categories || [];
 
     // Reconciliar categorías: si un proyecto tiene categoryName pero category no coincide con ningún id,
@@ -61,10 +63,12 @@ window.ProjectsView = {
       );
     }
 
-    // Estadísticas exclusivas de Proyectos (Presentaciones y Videos)
+    // Estadísticas exclusivas de Proyectos
     const totalProjects = allProjects.length;
     const totalSlides = allProjects.filter(c => c.projectType === 'presentation').reduce((acc, c) => acc + (c.slides ? c.slides.length : 0), 0);
     const totalVideos = allProjects.filter(c => c.projectType === 'video').length;
+    const totalDocs = allProjects.filter(c => c.projectType === 'document').length;
+    const totalUrls = allProjects.filter(c => c.projectType === 'url').length;
 
     container.innerHTML = `
       <div style="max-width: 1200px; margin: 0 auto; padding: 2.5rem 1.25rem 5rem;">
@@ -80,7 +84,7 @@ window.ProjectsView = {
               <span class="gradient-title">Mis Proyectos Educativos</span>
             </h1>
             <p style="color: var(--text-secondary); font-size: 1.05rem; margin: 0; max-width: 650px;">
-              Diseña lecciones completas con presentaciones visuales en diapositivas o video clases explicativas.
+              Diseña lecciones completas con presentaciones, video clases, documentos didácticos o enlaces web y simuladores.
             </p>
           </div>
 
@@ -97,51 +101,95 @@ window.ProjectsView = {
           </div>
         </div>
 
-        <!-- Suite de Creación Rápida de Tipos de Proyecto (Solo Presentaciones y Videos) -->
+        <!-- Suite de Creación Rápida de Tipos de Proyecto (Presentaciones, Videos, Documentos y URL) -->
         <section style="margin-bottom: 2.5rem;">
-          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.25rem;">
             
             <!-- Card 1: Presentaciones -->
             <div 
               class="glass-panel" 
               onclick="window.ProjectsView.startNewProject('presentation')"
-              style="padding: 1.6rem; border-radius: 16px; border: 2px solid #7c3aed; background: linear-gradient(135deg, rgba(124, 58, 237, 0.12), rgba(0,0,0,0.3)); cursor: pointer; transition: var(--transition-bounce);"
+              style="padding: 1.5rem; border-radius: 16px; border: 2px solid #7c3aed; background: linear-gradient(135deg, rgba(124, 58, 237, 0.12), rgba(0,0,0,0.3)); cursor: pointer; transition: var(--transition-bounce);"
               onmouseenter="this.style.transform='translateY(-4px)'; this.style.borderColor='var(--neon-cyan)'"
               onmouseleave="this.style.transform='none'; this.style.borderColor='#7c3aed'"
             >
               <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem;">
-                <span style="font-size: 2.6rem;">📊</span>
+                <span style="font-size: 2.4rem;">📊</span>
                 <span class="badge-tag" style="background: rgba(124, 58, 237, 0.25); color: #c4b5fd; font-weight: 800; font-size: 0.75rem;">DIAPOSITIVAS</span>
               </div>
-              <h3 style="font-size: 1.25rem; font-weight: 900; margin: 0 0 0.4rem; color: var(--text-primary);">Presentación Interactiva</h3>
-              <p style="font-size: 0.88rem; color: var(--text-secondary); margin: 0 0 1.2rem; line-height: 1.45;">
-                Diapositivas visuales para explicar conceptos en clase con notas del docente, imágenes y temas estructurados.
+              <h3 style="font-size: 1.2rem; font-weight: 900; margin: 0 0 0.35rem; color: var(--text-primary);">Presentación Interactiva</h3>
+              <p style="font-size: 0.85rem; color: var(--text-secondary); margin: 0 0 1.1rem; line-height: 1.4;">
+                Diapositivas visuales para explicar conceptos en clase con notas, imágenes y videos.
               </p>
               <div style="display: flex; align-items: center; justify-content: space-between;">
-                <span style="font-size: 0.85rem; font-weight: 800; color: #a78bfa;">+ Crear Presentación</span>
-                <span style="font-size: 1.1rem; color: #a78bfa;">→</span>
+                <span style="font-size: 0.82rem; font-weight: 800; color: #a78bfa;">+ Crear Presentación</span>
+                <span style="font-size: 1rem; color: #a78bfa;">→</span>
               </div>
             </div>
 
-            <!-- Card 2: Video Interactivo -->
+            <!-- Card 2: Video Clase -->
             <div 
               class="glass-panel" 
               onclick="window.ProjectsView.startNewProject('video')"
-              style="padding: 1.6rem; border-radius: 16px; border: 2px solid #ef4444; background: linear-gradient(135deg, rgba(239, 68, 68, 0.12), rgba(0,0,0,0.3)); cursor: pointer; transition: var(--transition-bounce);"
+              style="padding: 1.5rem; border-radius: 16px; border: 2px solid #ef4444; background: linear-gradient(135deg, rgba(239, 68, 68, 0.12), rgba(0,0,0,0.3)); cursor: pointer; transition: var(--transition-bounce);"
               onmouseenter="this.style.transform='translateY(-4px)'; this.style.borderColor='var(--neon-cyan)'"
               onmouseleave="this.style.transform='none'; this.style.borderColor='#ef4444'"
             >
               <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem;">
-                <span style="font-size: 2.6rem;">🎬</span>
+                <span style="font-size: 2.4rem;">🎬</span>
                 <span class="badge-tag" style="background: rgba(239, 68, 68, 0.25); color: #fca5a5; font-weight: 800; font-size: 0.75rem;">VIDEO CLASE</span>
               </div>
-              <h3 style="font-size: 1.25rem; font-weight: 900; margin: 0 0 0.4rem; color: var(--text-primary);">Video Clase</h3>
-              <p style="font-size: 0.88rem; color: var(--text-secondary); margin: 0 0 1.2rem; line-height: 1.45;">
-                Integra videos educativos (YouTube, Drive, Vimeo, MP4) con capítulos, resumen pedagógico y debate de clase.
+              <h3 style="font-size: 1.2rem; font-weight: 900; margin: 0 0 0.35rem; color: var(--text-primary);">Video Clase</h3>
+              <p style="font-size: 0.85rem; color: var(--text-secondary); margin: 0 0 1.1rem; line-height: 1.4;">
+                Integra videos (YouTube, Drive, Vimeo, MP4) con capítulos, resumen pedagógico y debate.
               </p>
               <div style="display: flex; align-items: center; justify-content: space-between;">
-                <span style="font-size: 0.85rem; font-weight: 800; color: #f87171;">+ Crear Video Clase</span>
-                <span style="font-size: 1.1rem; color: #f87171;">→</span>
+                <span style="font-size: 0.82rem; font-weight: 800; color: #f87171;">+ Crear Video Clase</span>
+                <span style="font-size: 1rem; color: #f87171;">→</span>
+              </div>
+            </div>
+
+            <!-- Card 3: Documento Didáctico -->
+            <div 
+              class="glass-panel" 
+              onclick="window.ProjectsView.startNewProject('document')"
+              style="padding: 1.5rem; border-radius: 16px; border: 2px solid #3b82f6; background: linear-gradient(135deg, rgba(59, 130, 246, 0.12), rgba(0,0,0,0.3)); cursor: pointer; transition: var(--transition-bounce);"
+              onmouseenter="this.style.transform='translateY(-4px)'; this.style.borderColor='var(--neon-cyan)'"
+              onmouseleave="this.style.transform='none'; this.style.borderColor='#3b82f6'"
+            >
+              <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem;">
+                <span style="font-size: 2.4rem;">📄</span>
+                <span class="badge-tag" style="background: rgba(59, 130, 246, 0.25); color: #93c5fd; font-weight: 800; font-size: 0.75rem;">DOCUMENTO</span>
+              </div>
+              <h3 style="font-size: 1.2rem; font-weight: 900; margin: 0 0 0.35rem; color: var(--text-primary);">Documento de Clase</h3>
+              <p style="font-size: 0.85rem; color: var(--text-secondary); margin: 0 0 1.1rem; line-height: 1.4;">
+                Redacta lecturas estructuradas, guías pedagógicas o adjunta documentos PDF.
+              </p>
+              <div style="display: flex; align-items: center; justify-content: space-between;">
+                <span style="font-size: 0.82rem; font-weight: 800; color: #60a5fa;">+ Crear Documento</span>
+                <span style="font-size: 1rem; color: #60a5fa;">→</span>
+              </div>
+            </div>
+
+            <!-- Card 4: Recurso Web / URL -->
+            <div 
+              class="glass-panel" 
+              onclick="window.ProjectsView.startNewProject('url')"
+              style="padding: 1.5rem; border-radius: 16px; border: 2px solid #10b981; background: linear-gradient(135deg, rgba(16, 185, 129, 0.12), rgba(0,0,0,0.3)); cursor: pointer; transition: var(--transition-bounce);"
+              onmouseenter="this.style.transform='translateY(-4px)'; this.style.borderColor='var(--neon-cyan)'"
+              onmouseleave="this.style.transform='none'; this.style.borderColor='#10b981'"
+            >
+              <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem;">
+                <span style="font-size: 2.4rem;">🌐</span>
+                <span class="badge-tag" style="background: rgba(16, 185, 129, 0.25); color: #6ee7b7; font-weight: 800; font-size: 0.75rem;">ENLACE / URL</span>
+              </div>
+              <h3 style="font-size: 1.2rem; font-weight: 900; margin: 0 0 0.35rem; color: var(--text-primary);">Recurso por URL</h3>
+              <p style="font-size: 0.85rem; color: var(--text-secondary); margin: 0 0 1.1rem; line-height: 1.4;">
+                Incrusta simuladores (PhET, GeoGebra), páginas de consulta, mapas y sitios web.
+              </p>
+              <div style="display: flex; align-items: center; justify-content: space-between;">
+                <span style="font-size: 0.82rem; font-weight: 800; color: #34d399;">+ Agregar URL</span>
+                <span style="font-size: 1rem; color: #34d399;">→</span>
               </div>
             </div>
 
@@ -149,34 +197,54 @@ window.ProjectsView = {
         </section>
 
         <!-- Barra de Estadísticas Resumen -->
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin-bottom: 2.25rem;">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2.25rem;">
           <div class="glass-panel" style="padding: 1.25rem; display: flex; align-items: center; gap: 1rem;">
-            <div style="width: 50px; height: 50px; border-radius: 12px; background: rgba(0, 245, 212, 0.15); display: flex; align-items: center; justify-content: center; font-size: 1.8rem; color: var(--neon-cyan);">
+            <div style="width: 48px; height: 48px; border-radius: 12px; background: rgba(0, 245, 212, 0.15); display: flex; align-items: center; justify-content: center; font-size: 1.6rem; color: var(--neon-cyan);">
               📁
             </div>
             <div>
-              <div style="font-size: 1.8rem; font-weight: 900; color: var(--text-primary); line-height: 1;">${totalProjects}</div>
-              <div style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.2rem;">Proyectos Creados</div>
+              <div style="font-size: 1.7rem; font-weight: 900; color: var(--text-primary); line-height: 1;">${totalProjects}</div>
+              <div style="font-size: 0.82rem; color: var(--text-secondary); margin-top: 0.2rem;">Total Proyectos</div>
             </div>
           </div>
 
           <div class="glass-panel" style="padding: 1.25rem; display: flex; align-items: center; gap: 1rem;">
-            <div style="width: 50px; height: 50px; border-radius: 12px; background: rgba(124, 58, 237, 0.15); display: flex; align-items: center; justify-content: center; font-size: 1.8rem; color: #a78bfa;">
+            <div style="width: 48px; height: 48px; border-radius: 12px; background: rgba(124, 58, 237, 0.15); display: flex; align-items: center; justify-content: center; font-size: 1.6rem; color: #a78bfa;">
               📊
             </div>
             <div>
-              <div style="font-size: 1.8rem; font-weight: 900; color: var(--text-primary); line-height: 1;">${totalSlides}</div>
-              <div style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.2rem;">Diapositivas Totales</div>
+              <div style="font-size: 1.7rem; font-weight: 900; color: var(--text-primary); line-height: 1;">${totalSlides}</div>
+              <div style="font-size: 0.82rem; color: var(--text-secondary); margin-top: 0.2rem;">Diapositivas</div>
             </div>
           </div>
 
           <div class="glass-panel" style="padding: 1.25rem; display: flex; align-items: center; gap: 1rem;">
-            <div style="width: 50px; height: 50px; border-radius: 12px; background: rgba(239, 68, 68, 0.15); display: flex; align-items: center; justify-content: center; font-size: 1.8rem; color: #f87171;">
+            <div style="width: 48px; height: 48px; border-radius: 12px; background: rgba(239, 68, 68, 0.15); display: flex; align-items: center; justify-content: center; font-size: 1.6rem; color: #f87171;">
               🎬
             </div>
             <div>
-              <div style="font-size: 1.8rem; font-weight: 900; color: var(--text-primary); line-height: 1;">${totalVideos}</div>
-              <div style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.2rem;">Video Clases</div>
+              <div style="font-size: 1.7rem; font-weight: 900; color: var(--text-primary); line-height: 1;">${totalVideos}</div>
+              <div style="font-size: 0.82rem; color: var(--text-secondary); margin-top: 0.2rem;">Video Clases</div>
+            </div>
+          </div>
+
+          <div class="glass-panel" style="padding: 1.25rem; display: flex; align-items: center; gap: 1rem;">
+            <div style="width: 48px; height: 48px; border-radius: 12px; background: rgba(59, 130, 246, 0.15); display: flex; align-items: center; justify-content: center; font-size: 1.6rem; color: #60a5fa;">
+              📄
+            </div>
+            <div>
+              <div style="font-size: 1.7rem; font-weight: 900; color: var(--text-primary); line-height: 1;">${totalDocs}</div>
+              <div style="font-size: 0.82rem; color: var(--text-secondary); margin-top: 0.2rem;">Documentos</div>
+            </div>
+          </div>
+
+          <div class="glass-panel" style="padding: 1.25rem; display: flex; align-items: center; gap: 1rem;">
+            <div style="width: 48px; height: 48px; border-radius: 12px; background: rgba(16, 185, 129, 0.15); display: flex; align-items: center; justify-content: center; font-size: 1.6rem; color: #34d399;">
+              🌐
+            </div>
+            <div>
+              <div style="font-size: 1.7rem; font-weight: 900; color: var(--text-primary); line-height: 1;">${totalUrls}</div>
+              <div style="font-size: 0.82rem; color: var(--text-secondary); margin-top: 0.2rem;">Enlaces Web</div>
             </div>
           </div>
         </div>
@@ -185,14 +253,14 @@ window.ProjectsView = {
         <div class="glass-panel" style="padding: 1.25rem; margin-bottom: 2rem;">
           <div style="display: flex; flex-wrap: wrap; gap: 1rem; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
             
-            <!-- Selector de Tipo de Proyecto (Solo Presentaciones y Videos) -->
+            <!-- Selector de Tipo de Proyecto -->
             <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
               <button 
                 onclick="window.ProjectsView.filterType('all')" 
                 class="btn ${this.currentTypeFilter === 'all' ? 'btn-cyan' : 'btn-outline'}"
                 style="padding: 0.45rem 0.9rem; font-size: 0.85rem; font-weight: 700;"
               >
-                🌟 Todos los Proyectos
+                🌟 Todos (${allProjects.length})
               </button>
               <button 
                 onclick="window.ProjectsView.filterType('presentation')" 
@@ -206,7 +274,21 @@ window.ProjectsView = {
                 class="btn ${this.currentTypeFilter === 'video' ? 'btn-cyan' : 'btn-outline'}"
                 style="padding: 0.45rem 0.9rem; font-size: 0.85rem; font-weight: 700;"
               >
-                🎬 Videos Interactivos
+                🎬 Videos
+              </button>
+              <button 
+                onclick="window.ProjectsView.filterType('document')" 
+                class="btn ${this.currentTypeFilter === 'document' ? 'btn-cyan' : 'btn-outline'}"
+                style="padding: 0.45rem 0.9rem; font-size: 0.85rem; font-weight: 700;"
+              >
+                📄 Documentos
+              </button>
+              <button 
+                onclick="window.ProjectsView.filterType('url')" 
+                class="btn ${this.currentTypeFilter === 'url' ? 'btn-cyan' : 'btn-outline'}"
+                style="padding: 0.45rem 0.9rem; font-size: 0.85rem; font-weight: 700;"
+              >
+                🌐 Enlaces / URL
               </button>
             </div>
 
@@ -291,23 +373,37 @@ window.ProjectsView = {
       : ((c.difficulty === 'Medio' || c.difficulty === 'medium') ? '<span class="badge-tag tag-medium">Medio</span>' : '<span class="badge-tag tag-easy">Fácil</span>');
 
     const projectType = c.projectType || 'presentation';
-    const typeBadge = projectType === 'presentation'
-      ? '<span class="badge-tag" style="background: rgba(124, 58, 237, 0.85); color: white;">📊 Diapositivas</span>'
-      : '<span class="badge-tag" style="background: rgba(239, 68, 68, 0.85); color: white;">🎬 Video Clase</span>';
+    let typeBadge = '<span class="badge-tag" style="background: rgba(124, 58, 237, 0.85); color: white;">📊 Diapositivas</span>';
+    let defaultBanner = 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=800';
+    let cardAction = `window.appRouter.openPresentation('${c.id}')`;
+    let countBadge = `📄 ${(c.slides ? c.slides.length : 0)} diaps`;
 
-    const cardAction = projectType === 'presentation' 
-      ? `window.appRouter.openPresentation('${c.id}')` 
-      : `window.appRouter.openVideo('${c.id}')`;
+    if (projectType === 'video') {
+      typeBadge = '<span class="badge-tag" style="background: rgba(239, 68, 68, 0.85); color: white;">🎬 Video Clase</span>';
+      defaultBanner = 'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800';
+      cardAction = `window.appRouter.openVideo('${c.id}')`;
+      countBadge = `⏱️ ${c.duration || 'Video'}`;
+    } else if (projectType === 'document') {
+      typeBadge = '<span class="badge-tag" style="background: rgba(59, 130, 246, 0.85); color: white;">📄 Documento</span>';
+      defaultBanner = 'https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=800';
+      cardAction = `window.appRouter.openDocument('${c.id}')`;
+      countBadge = `📝 ${(c.sections ? c.sections.length : 1)} secciones`;
+    } else if (projectType === 'url') {
+      typeBadge = '<span class="badge-tag" style="background: rgba(16, 185, 129, 0.85); color: white;">🌐 Enlace / URL</span>';
+      defaultBanner = 'https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?w=800';
+      cardAction = `window.appRouter.openUrl('${c.id}')`;
+      countBadge = `🔗 Enlace Web`;
+    }
 
     return `
       <div class="challenge-card" onclick="${cardAction}" style="display: flex; flex-direction: column; height: 100%; cursor: pointer;">
-        <div class="challenge-banner" style="background-image: url('${c.banner || (projectType === 'presentation' ? 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=800' : 'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800')}'); position: relative; height: 160px;">
+        <div class="challenge-banner" style="background-image: url('${c.banner || defaultBanner}'); position: relative; height: 160px;">
           <div style="position: absolute; top: 0.6rem; left: 0.6rem; display: flex; gap: 0.35rem;">
             ${typeBadge}
             ${diffBadge}
           </div>
           <span class="badge-tag" style="position: absolute; bottom: 0.6rem; left: 0.6rem; background: rgba(0,0,0,0.65); color: white;">
-            ${projectType === 'presentation' ? `📄 ${(c.slides ? c.slides.length : 0)} diaps` : `⏱️ ${c.duration || 'Video'}`}
+            ${countBadge}
           </span>
           
           ${isAuthor ? `
@@ -327,7 +423,7 @@ window.ProjectsView = {
             <span style="font-size: 0.85rem; color: var(--neon-cyan); font-weight: 800;">${c.categoryName || 'General'}</span>
             <span style="color: var(--text-muted);">•</span>
             <span style="font-size: 0.85rem; color: var(--text-muted);">
-              ${projectType === 'presentation' ? (c.slides ? c.slides.length : 0) + ' diapositivas' : (c.chapters ? c.chapters.length : 0) + ' capítulos'}
+              ${projectType === 'presentation' ? (c.slides ? c.slides.length : 0) + ' diapositivas' : (projectType === 'video' ? (c.chapters ? c.chapters.length : 0) + ' capítulos' : (projectType === 'document' ? 'Lectura / Guía' : 'Recurso Web'))}
             </span>
           </div>
 
@@ -336,7 +432,7 @@ window.ProjectsView = {
           </h3>
 
           <p style="color: var(--text-secondary); font-size: 0.88rem; margin: 0 0 1.25rem; flex: 1; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.45;">
-            ${this.escapeHtml(c.description || (projectType === 'presentation' ? 'Presentación de diapositivas interactivas para clase.' : 'Video clase con capítulos y resumen pedagógico.'))}
+            ${this.escapeHtml(c.description || 'Proyecto interactivo para aprendizaje de clase.')}
           </p>
 
           <div style="display: flex; align-items: center; justify-content: space-between; border-top: 1px solid var(--border-color); padding-top: 1rem; gap: 0.5rem; flex-wrap: wrap;">
@@ -362,7 +458,7 @@ window.ProjectsView = {
                 >
                   🖥️ Presentar
                 </button>
-              ` : `
+              ` : (projectType === 'video' ? `
                 <button 
                   class="btn btn-outline" 
                   title="Editar Video Clase"
@@ -378,7 +474,39 @@ window.ProjectsView = {
                 >
                   🎬 Ver Video
                 </button>
-              `}
+              ` : (projectType === 'document' ? `
+                <button 
+                  class="btn btn-outline" 
+                  title="Editar Documento"
+                  style="padding: 0.45rem 0.75rem; font-size: 0.85rem;" 
+                  onclick="event.stopPropagation(); window.appRouter.editDocument('${c.id}')"
+                >
+                  ✏️
+                </button>
+                <button 
+                  class="btn btn-cyan" 
+                  style="padding: 0.45rem 1rem; font-size: 0.85rem; font-weight: 800; background: linear-gradient(135deg, #3b82f6, var(--neon-cyan)); border: none;" 
+                  onclick="event.stopPropagation(); window.appRouter.openDocument('${c.id}')"
+                >
+                  📄 Leer
+                </button>
+              ` : `
+                <button 
+                  class="btn btn-outline" 
+                  title="Editar Recurso Web"
+                  style="padding: 0.45rem 0.75rem; font-size: 0.85rem;" 
+                  onclick="event.stopPropagation(); window.appRouter.editUrl('${c.id}')"
+                >
+                  ✏️
+                </button>
+                <button 
+                  class="btn btn-cyan" 
+                  style="padding: 0.45rem 1rem; font-size: 0.85rem; font-weight: 800; background: linear-gradient(135deg, #10b981, var(--neon-cyan)); border: none;" 
+                  onclick="event.stopPropagation(); window.appRouter.openUrl('${c.id}')"
+                >
+                  🌐 Abrir
+                </button>
+              `))}
             </div>
           </div>
         </div>
@@ -426,6 +554,10 @@ window.ProjectsView = {
       window.appRouter.createPresentation();
     } else if (type === 'video') {
       window.appRouter.createVideo();
+    } else if (type === 'document') {
+      window.appRouter.createDocument();
+    } else if (type === 'url') {
+      window.appRouter.createUrl();
     } else {
       window.appRouter.navigate('creator');
     }
