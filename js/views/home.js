@@ -152,30 +152,6 @@ window.HomeView = {
         </div>
       </section>
 
-      <!-- Banner Rápido: Modo Multijugador en Vivo con Código -->
-      <section style="max-width: 1200px; margin: 0 auto 3.5rem; padding: 0 1.25rem;">
-        <div class="glass-panel" style="background: linear-gradient(135deg, rgba(114, 9, 183, 0.4), rgba(247, 37, 133, 0.3)); border-color: rgba(247, 37, 133, 0.4); padding: 2.25rem; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1.5rem;">
-          <div style="max-width: 580px;">
-            <div class="combo-gauge" style="display: inline-flex; margin-bottom: 0.75rem;">
-              <span>⚡</span> SALA DE JUEGO EN TIEMPO REAL
-            </div>
-            <h3 style="font-size: 1.8rem; margin-bottom: 0.5rem;">¿Tienes un código de reto de tu clase o amigos?</h3>
-            <p style="color: #e2e8f0; font-size: 1.05rem;">Ingresa el PIN de 6 dígitos para conectarte en vivo y competir en el marcador.</p>
-          </div>
-          <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
-            <input 
-              type="text" 
-              id="home-pin-input" 
-              placeholder="Ej: 742913" 
-              maxlength="6"
-              style="width: 140px; text-align: center; font-size: 1.3rem; font-weight: 900; letter-spacing: 2px; padding: 0.75rem; border-radius: var(--border-radius-md); background: rgba(0,0,0,0.6); border: 2px solid var(--neon-cyan); color: var(--neon-cyan); outline: none;"
-            />
-            <button class="btn btn-cyan btn-lg" onclick="window.HomeView.joinByQuickPin()">
-              ¡Entrar a Reto! ⚡
-            </button>
-          </div>
-        </div>
-      </section>
 
       <!-- Todos los Retos / Resultados de Búsqueda -->
       <section style="max-width: 1200px; margin: 0 auto 4rem; padding: 0 1.25rem;">
