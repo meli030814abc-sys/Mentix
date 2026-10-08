@@ -137,7 +137,7 @@ window.ProfileView = {
         </div>
 
         <!-- Sección: Mis Cuestionarios Creados -->
-        <div class="glass-panel" style="padding: 2rem; margin-bottom: 2.5rem;">
+        <div class="glass-panel" style="padding: 2rem; margin-bottom: 2.5rem; ${u.isGuest ? 'display: none;' : ''}">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 0.75rem;">
             <div>
               <h2 style="font-size: 1.4rem; display: flex; align-items: center; gap: 0.6rem; margin: 0;">

@@ -150,9 +150,9 @@ window.HomeView = {
           <button class="btn btn-primary btn-lg" onclick="window.appRouter.navigate('lobby-join')" style="font-weight: 900; padding: 0.9rem 1.8rem; box-shadow: 0 6px 20px rgba(114, 9, 183, 0.4);">
             <span style="font-size: 1.4rem;">🎮</span> Unirse a un reto
           </button>
-          <button class="btn btn-cyan btn-lg" onclick="window.appRouter.navigate('creator')" style="font-weight: 900; padding: 0.9rem 1.8rem; box-shadow: 0 6px 20px rgba(0, 245, 212, 0.4);">
+          ${currentUser && currentUser.isGuest ? '' : `<button class="btn btn-cyan btn-lg" onclick="window.appRouter.navigate('creator')" style="font-weight: 900; padding: 0.9rem 1.8rem; box-shadow: 0 6px 20px rgba(0, 245, 212, 0.4);">
             <span style="font-size: 1.4rem;">🚀</span> Crear un reto
-          </button>
+          </button>`}
           ${!currentUser ? `
             <button class="btn btn-outline" onclick="window.appRouter.openAuthModal('login')">
               <span>👤</span> Iniciar sesión
@@ -226,7 +226,7 @@ window.HomeView = {
               <span style="font-size: 2.2rem; display: block; margin-bottom: 0.5rem;">🚀</span>
               <h3 style="font-size: 1.2rem; font-weight: 800; color: var(--text-primary); margin-bottom: 0.35rem;">Aún no hay retos creados</h3>
               <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1.25rem;">Crea tu primer cuestionario interactivo para que aparezca aquí.</p>
-              <button class="btn btn-cyan" onclick="window.appRouter.navigate('creator')" style="font-weight: 800;">🚀 Crear Reto</button>
+              ${currentUser && currentUser.isGuest ? '' : `<button class="btn btn-cyan" onclick="window.appRouter.navigate('creator')" style="font-weight: 800;">🚀 Crear Reto</button>`}
             </div>
           ` : popularChallenges.map(c => this.renderCard(c)).join('')}
         </div>
@@ -250,7 +250,7 @@ window.HomeView = {
               <span style="font-size: 2.2rem; display: block; margin-bottom: 0.5rem;">🎮</span>
               <h3 style="font-size: 1.2rem; font-weight: 800; color: var(--text-primary); margin-bottom: 0.35rem;">No hay retos disponibles</h3>
               <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1.25rem;">Crea tu primer cuestionario interactivo para empezar a jugar con tus estudiantes.</p>
-              <button class="btn btn-cyan" onclick="window.appRouter.navigate('creator')" style="font-weight: 800;">🚀 Crear Reto</button>
+              ${currentUser && currentUser.isGuest ? '' : `<button class="btn btn-cyan" onclick="window.appRouter.navigate('creator')" style="font-weight: 800;">🚀 Crear Reto</button>`}
             </div>
           ` : filtered.map(c => this.renderCard(c)).join('')}
         </div>

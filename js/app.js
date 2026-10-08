@@ -36,10 +36,12 @@ class AppRouter {
     const oauthReturn = /access_token=|[?&#]code=/.test(window.location.href);
 
     // Restaurar vista actual si se presionó F5 o se accedió con enlace directo
+    this.booting = true;
     const restored = oauthReturn ? false : this.restoreInitialRoute();
     if (!restored) {
       this.navigate('home', {}, false);
     }
+    this.booting = false;
 
     // Registro obligatorio antes de mostrar la página
     if (oauthReturn) {
@@ -107,7 +109,26 @@ class AppRouter {
     });
   }
 
+  isGuest() {
+    const u = window.appState && window.appState.currentUser;
+    return !!(u && u.isGuest);
+  }
+
+  guestBlocked() {
+    alert('🔒 Los invitados solo pueden unirse a salas. Regístrate o inicia sesión para crear cuestionarios.');
+    this.openAuthModal('register');
+  }
+
   navigate(viewName, params = {}, pushToHistory = true) {
+    // Invitados: solo unirse a salas (sin crear cuestionarios, proyectos ni salas)
+    if (this.isGuest() && ['creator', 'projects', 'lobby-host'].includes(viewName)) {
+      if (this.booting) {
+        viewName = 'home';
+      } else {
+        this.guestBlocked();
+        return;
+      }
+    }
     if (pushToHistory) {
       this.historyStack.push(viewName);
     }
@@ -336,6 +357,7 @@ class AppRouter {
   }
 
   hostRoom(challengeId) {
+    if (this.isGuest()) { this.guestBlocked(); return; }
     const c = window.appState.challenges.find(item => item.id === challengeId);
     if (!c) return;
     this.selectExperience(challengeId);
