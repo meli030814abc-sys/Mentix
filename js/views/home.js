@@ -1,5 +1,6 @@
 /**
  * 🔥 Helper global para hacer transparente cualquier logo de entidad en tiempo de ejecución
+ * y aplicar sombra/resplandor vivo que resalte según los colores propios de cada logo.
  */
 window.makeEntityLogoTransparent = function(imgEl) {
   if (!imgEl || imgEl.dataset.processedTransparent) return;
@@ -14,26 +15,70 @@ window.makeEntityLogoTransparent = function(imgEl) {
     const data = imgData.data;
     let modified = false;
 
-    // Detectar píxeles blancos o muy claros (fondo blanco típico de logos JPG)
+    // Detectar color vivo dominante del logo (letras o símbolo)
+    let colorBuckets = {};
+    let maxBucketCount = 0;
+    let dominantColor = { r: 0, g: 245, b: 212 }; // default cyan neón
+
     for (let i = 0; i < data.length; i += 4) {
       const r = data[i];
       const g = data[i + 1];
       const b = data[i + 2];
-      // Si el color es casi blanco o muy claro
-      if (r >= 220 && g >= 220 && b >= 220) {
+      const a = data[i + 3];
+
+      // Si el pixel es blanco o casi blanco (fondo de logos JPG)
+      if (r >= 210 && g >= 210 && b >= 210) {
         data[i + 3] = 0; // Transparente 100%
         modified = true;
+      } else if (a > 50) {
+        // Analizar píxeles del logo con saturación o tono reconocible
+        const max = Math.max(r, g, b);
+        const min = Math.min(r, g, b);
+        const sat = max === 0 ? 0 : (max - min) / max;
+        // Ponderar colores vivos y letras
+        const weight = (sat > 0.25 ? 3 : 1);
+        const qr = Math.floor(r / 32) * 32;
+        const qg = Math.floor(g / 32) * 32;
+        const qb = Math.floor(b / 32) * 32;
+        const key = `${qr},${qg},${qb}`;
+        colorBuckets[key] = (colorBuckets[key] || 0) + weight;
+
+        if (colorBuckets[key] > maxBucketCount) {
+          maxBucketCount = colorBuckets[key];
+          // Aumentar viveza si es muy oscuro
+          const brightness = (r + g + b) / 3;
+          let boostR = r, boostG = g, boostB = b;
+          if (brightness < 60) {
+            // Si el texto es azul oscuro/negro, resaltar con cian eléctrico o azul vivo
+            boostR = Math.min(255, r + 40);
+            boostG = Math.min(255, g + 180);
+            boostB = Math.max(220, b + 150);
+          }
+          dominantColor = { r: boostR, g: boostG, b: boostB };
+        }
       }
     }
 
     if (modified) {
       ctx.putImageData(imgData, 0, 0);
-      imgEl.dataset.processedTransparent = 'true';
       imgEl.src = canvas.toDataURL('image/png');
     }
+
+    imgEl.dataset.processedTransparent = 'true';
+
+    // Aplicar sombra brillante y viva personalizada según el logo
+    const glowColor = `rgb(${dominantColor.r}, ${dominantColor.g}, ${dominantColor.b})`;
+    imgEl.style.filter = `drop-shadow(0 0 1px #ffffff) drop-shadow(0 0 4px ${glowColor}) drop-shadow(0 0 8px rgba(${dominantColor.r}, ${dominantColor.g}, ${dominantColor.b}, 0.7))`;
+
+    // Resaltar también el recuadro con el color del logo
+    const parentBox = imgEl.closest('.entity-badge-box');
+    if (parentBox) {
+      parentBox.style.borderColor = glowColor;
+      parentBox.style.boxShadow = `0 8px 24px rgba(0,0,0,0.65), 0 0 16px rgba(${dominantColor.r}, ${dominantColor.g}, ${dominantColor.b}, 0.45)`;
+    }
   } catch (err) {
-    // Si la imagen tiene bloqueo CORS externo y no permite canvas, usamos filtro css inteligente
     imgEl.style.mixBlendMode = 'lighten';
+    imgEl.style.filter = 'drop-shadow(0 0 4px #00f5d4)';
     imgEl.dataset.processedTransparent = 'true';
   }
 };
