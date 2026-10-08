@@ -390,7 +390,9 @@ window.ProjectsView = {
       typeBadge = '<span class="badge-tag" style="background: rgba(59, 130, 246, 0.85); color: white;">📄 Documento</span>';
       defaultBanner = 'https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=800';
       cardAction = `window.appRouter.openDocument('${c.id}')`;
-      countBadge = `📝 ${(c.sections ? c.sections.length : 1)} secciones`;
+      countBadge = (c.pdfPages && c.pdfPages.length > 0)
+        ? `📄 ${c.pdfPages.length} págs (PDF)`
+        : `📝 ${(c.sections ? c.sections.length : 1)} secciones`;
     } else if (projectType === 'url') {
       typeBadge = '<span class="badge-tag" style="background: rgba(16, 185, 129, 0.85); color: white;">🌐 Enlace / URL</span>';
       defaultBanner = 'https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?w=800';

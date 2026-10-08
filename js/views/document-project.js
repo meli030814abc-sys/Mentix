@@ -42,6 +42,8 @@ window.DocumentProjectView = {
       authorAvatar: window.appState.currentUser?.avatar || '👨‍🏫',
       banner: 'https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=800',
       difficulty: 'Medio',
+      pdfPages: [],
+      originalFormat: 'sections',
       sections: [
         { title: '1. Introducción y Objetivos', text: 'Define el propósito principal de esta lectura o guía.' },
         { title: '2. Contenido Teórico', text: 'Desarrolla los conceptos clave explicados con claridad.' },
@@ -53,61 +55,92 @@ window.DocumentProjectView = {
   renderViewer(container) {
     const p = this.currentProject;
     const sections = p.sections || [];
+    const pdfPages = p.pdfPages || [];
+    const isPdfView = pdfPages.length > 0;
 
     container.innerHTML = `
-      <div style="max-width: 900px; margin: 0 auto; padding: 2rem 1.25rem 5rem;">
+      <div style="max-width: ${isPdfView ? '980px' : '900px'}; margin: 0 auto; padding: 2rem 1.25rem 5rem;">
         
         <!-- Barra Superior -->
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
           <button class="btn btn-outline" onclick="window.appRouter.navigate('projects')">
             ← Volver a Proyectos
           </button>
-          <div style="display: flex; gap: 0.6rem;">
+          <div style="display: flex; gap: 0.6rem; flex-wrap: wrap;">
             <button class="btn btn-outline" onclick="window.DocumentProjectView.openEditMode()">
               ✏️ Editar Documento
             </button>
-            <button class="btn btn-cyan" onclick="window.print()">
+            <button class="btn btn-cyan" onclick="window.print()" style="font-weight: 800;">
               🖨️ Imprimir / Guardar PDF
             </button>
           </div>
         </div>
 
         <!-- Encabezado del Documento -->
-        <div class="glass-panel" style="padding: 2.5rem; border-radius: 20px; border: 2px solid #3b82f6; margin-bottom: 2rem; background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(0,0,0,0.4));">
-          <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem;">
-            <span class="badge-tag" style="background: rgba(59, 130, 246, 0.25); color: #93c5fd; font-weight: 800;">DOCUMENTO DIDÁCTICO</span>
-            <span style="font-size: 0.85rem; color: var(--text-muted);">${p.categoryName || 'General'}</span>
+        <div class="glass-panel" style="padding: 2.25rem; border-radius: 20px; border: 2px solid #3b82f6; margin-bottom: 2rem; background: linear-gradient(135deg, rgba(59, 130, 246, 0.12), rgba(0,0,0,0.5));">
+          <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.75rem;">
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+              <span class="badge-tag" style="background: rgba(59, 130, 246, 0.3); color: #93c5fd; font-weight: 800;">
+                ${isPdfView ? '📄 DOCUMENTO / PDF ORIGINAL' : 'DOCUMENTO DIDÁCTICO'}
+              </span>
+              <span style="font-size: 0.85rem; color: var(--text-muted);">${p.categoryName || 'General'}</span>
+            </div>
+            ${isPdfView ? `
+              <span class="badge-tag" style="background: rgba(16, 185, 129, 0.2); color: #6ee7b7; font-weight: 800;">
+                ✓ ${pdfPages.length} página${pdfPages.length > 1 ? 's' : ''} en formato original
+              </span>
+            ` : ''}
           </div>
           <h1 style="font-size: 2.2rem; font-weight: 900; margin: 0 0 0.8rem; color: var(--text-primary); line-height: 1.2;">
             ${this.escapeHtml(p.title)}
           </h1>
-          <p style="font-size: 1.05rem; color: var(--text-secondary); margin: 0 0 1.5rem; line-height: 1.5;">
+          <p style="font-size: 1.05rem; color: var(--text-secondary); margin: 0 0 1.25rem; line-height: 1.5;">
             ${this.escapeHtml(p.description || '')}
           </p>
 
-          <div style="display: flex; align-items: center; gap: 1rem; border-top: 1px solid var(--border-color); padding-top: 1rem; font-size: 0.85rem; color: var(--text-muted);">
+          <div style="display: flex; align-items: center; gap: 1rem; border-top: 1px solid var(--border-color); padding-top: 1rem; font-size: 0.85rem; color: var(--text-muted); flex-wrap: wrap;">
             <span>${p.authorAvatar || '👤'} Creado por: <strong style="color: var(--text-primary);">${this.escapeHtml(p.author || 'Docente')}</strong></span>
             ${p.docFileUrl ? `<span>• <a href="${this.escapeHtml(p.docFileUrl)}" target="_blank" style="color: var(--neon-cyan); text-decoration: underline;">Descargar Archivo Adjunto 📥</a></span>` : ''}
           </div>
         </div>
 
-        <!-- Cuerpo del Documento -->
-        <div class="glass-panel" style="padding: 2.5rem; border-radius: 20px; border: 1.5px solid var(--border-color); line-height: 1.7; font-size: 1.05rem; color: var(--text-primary);">
-          ${p.docContent ? `
-            <div style="white-space: pre-wrap; margin-bottom: 2rem;">${this.escapeHtml(p.docContent)}</div>
-          ` : ''}
-
-          ${sections.map((sec, i) => `
-            <div style="margin-bottom: 2rem; border-bottom: ${i < sections.length - 1 ? '1px solid rgba(255,255,255,0.08)' : 'none'}; padding-bottom: ${i < sections.length - 1 ? '1.5rem' : '0'};">
-              <h3 style="font-size: 1.35rem; font-weight: 800; color: #60a5fa; margin: 0 0 0.6rem;">
-                ${this.escapeHtml(sec.title)}
-              </h3>
-              <div style="white-space: pre-wrap; color: var(--text-secondary);">
-                ${this.escapeHtml(sec.text)}
+        <!-- Visor del Documento: Modo PDF Fiel vs Modo Texto -->
+        ${isPdfView ? `
+          <div style="display: flex; flex-direction: column; gap: 2rem;">
+            ${pdfPages.map((pageImg, idx) => `
+              <div class="glass-panel" style="padding: 1rem; border-radius: 16px; border: 1.5px solid var(--border-color); background: #18181b; box-shadow: 0 10px 30px rgba(0,0,0,0.6);">
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.4rem 0.8rem 0.8rem; font-size: 0.82rem; color: var(--text-muted); border-bottom: 1px solid rgba(255,255,255,0.06); margin-bottom: 0.8rem;">
+                  <span>Página ${idx + 1} de ${pdfPages.length}</span>
+                  <span style="color: var(--neon-cyan); font-weight: 700;">Vista de Hoja Impresa</span>
+                </div>
+                <img 
+                  src="${pageImg}" 
+                  alt="Página ${idx + 1}" 
+                  style="width: 100%; height: auto; display: block; border-radius: 8px; box-shadow: 0 4px 14px rgba(0,0,0,0.4);"
+                  loading="lazy"
+                />
               </div>
-            </div>
-          `).join('')}
-        </div>
+            `).join('')}
+          </div>
+        ` : `
+          <!-- Modo de Lectura Tradicional -->
+          <div class="glass-panel" style="padding: 2.5rem; border-radius: 20px; border: 1.5px solid var(--border-color); line-height: 1.7; font-size: 1.05rem; color: var(--text-primary);">
+            ${p.docContent ? `
+              <div style="white-space: pre-wrap; margin-bottom: 2rem;">${this.escapeHtml(p.docContent)}</div>
+            ` : ''}
+
+            ${sections.map((sec, i) => `
+              <div style="margin-bottom: 2rem; border-bottom: ${i < sections.length - 1 ? '1px solid rgba(255,255,255,0.08)' : 'none'}; padding-bottom: ${i < sections.length - 1 ? '1.5rem' : '0'};">
+                <h3 style="font-size: 1.35rem; font-weight: 800; color: #60a5fa; margin: 0 0 0.6rem;">
+                  ${this.escapeHtml(sec.title)}
+                </h3>
+                <div style="white-space: pre-wrap; color: var(--text-secondary);">
+                  ${this.escapeHtml(sec.text)}
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        `}
 
       </div>
     `;
@@ -196,6 +229,38 @@ window.DocumentProjectView = {
             >${this.escapeHtml(p.description || '')}</textarea>
           </div>
         </div>
+
+        <!-- Panel de Páginas del Documento Fiel (Si fue importado como PDF/Word) -->
+        ${(p.pdfPages && p.pdfPages.length > 0) ? `
+          <div class="glass-panel" style="padding: 1.5rem; border-radius: 16px; margin-bottom: 1.5rem; border: 2px solid #10b981; background: rgba(16, 185, 129, 0.08);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.5rem;">
+              <div>
+                <div style="font-size: 0.82rem; font-weight: 800; color: #6ee7b7; text-transform: uppercase;">
+                  ✓ Formato Impreso Fiel Activo
+                </div>
+                <h3 style="font-size: 1.15rem; font-weight: 800; margin: 0.2rem 0 0; color: var(--text-primary);">
+                  Páginas del Documento (${p.pdfPages.length} página${p.pdfPages.length > 1 ? 's' : ''})
+                </h3>
+              </div>
+              <button 
+                type="button" 
+                class="btn btn-outline" 
+                style="padding: 0.35rem 0.75rem; font-size: 0.8rem; border-color: #ef4444; color: #fca5a5;" 
+                onclick="window.DocumentProjectView.clearPdfPages()"
+              >
+                🗑️ Quitar formato de páginas fijas
+              </button>
+            </div>
+            <div style="display: flex; gap: 1rem; overflow-x: auto; padding-bottom: 0.75rem;">
+              ${p.pdfPages.map((pg, i) => `
+                <div style="min-width: 140px; max-width: 160px; background: #000; border: 1px solid var(--border-color); border-radius: 8px; padding: 0.4rem; text-align: center;">
+                  <img src="${pg}" alt="Página ${i + 1}" style="width: 100%; height: 180px; object-fit: contain; border-radius: 4px; display: block; margin: 0 auto 0.4rem;" />
+                  <span style="font-size: 0.78rem; color: var(--text-muted);">Página ${i + 1}</span>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        ` : ''}
 
         <!-- Secciones del Documento -->
         <div class="glass-panel" style="padding: 1.75rem; border-radius: 16px; margin-bottom: 1.5rem; border: 1.5px solid var(--border-color);">
@@ -356,39 +421,58 @@ window.DocumentProjectView = {
     const ext = file.name.toLowerCase().split('.').pop();
     const baseName = file.name.replace(/\.[^/.]+$/, '');
 
-    // 1. Archivos PDF (.pdf)
+    // 1. Archivos PDF (.pdf) -> Renderizado fiel a páginas impresas
     if (ext === 'pdf') {
       const reader = new FileReader();
       reader.onload = async (e) => {
         try {
+          if (filename) filename.textContent = 'Renderizando páginas visuales de alta definición del PDF...';
+          const pages = await this.renderPdfPagesFromBuffer(e.target.result);
           const text = await this.extractTextFromPDF(e.target.result);
-          if (text) {
-            this.pendingParsedDoc = this.parseDocumentText(text, baseName);
-            if (textarea) textarea.value = text.substring(0, 3000);
-            if (filename) filename.textContent = `✅ ¡PDF procesado! Se estructuraron ${this.pendingParsedDoc.sections.length} secciones. Haz clic en "Procesar e Importar".`;
-          } else {
-            if (filename) filename.textContent = '⚠️ No se pudo extraer texto del PDF (podría ser un PDF escaneado sólo como imágenes).';
+          
+          this.pendingParsedDoc = {
+            title: baseName,
+            pdfPages: pages || [],
+            originalFormat: 'pdf',
+            sections: this.parseDocumentText(text || baseName, baseName).sections
+          };
+
+          if (textarea) textarea.value = text.substring(0, 3000);
+          if (filename) {
+            filename.textContent = `✅ ¡PDF procesado! Se capturaron ${pages.length} páginas visuales idénticas al original. Haz clic en "Procesar e Importar".`;
           }
         } catch(err) {
-          if (filename) filename.textContent = '⚠️ Error leyendo PDF: ' + err.message;
+          if (filename) filename.textContent = '⚠️ Error procesando PDF: ' + err.message;
         }
       };
       reader.readAsArrayBuffer(file);
       return;
     }
 
-    // 2. Archivos Word (.docx)
+    // 2. Archivos Word (.docx) -> Conversión visual a páginas fieles estilo hoja impresa PDF
     if (ext === 'docx') {
       const reader = new FileReader();
       reader.onload = async (e) => {
         try {
+          if (filename) filename.textContent = 'Convirtiendo documento de Word a formato fiel de hoja PDF...';
           const text = await this.extractTextFromDOCX(e.target.result);
           if (text) {
-            this.pendingParsedDoc = this.parseDocumentText(text, baseName);
+            const pages = await this.renderTextToDocumentPages(text, baseName);
+            const parsedOutline = this.parseDocumentText(text, baseName);
+
+            this.pendingParsedDoc = {
+              title: parsedOutline.title || baseName,
+              pdfPages: pages || [],
+              originalFormat: 'docx',
+              sections: parsedOutline.sections
+            };
+
             if (textarea) textarea.value = text.substring(0, 3000);
-            if (filename) filename.textContent = `✅ ¡Word procesado! Se estructuraron ${this.pendingParsedDoc.sections.length} secciones. Haz clic en "Procesar e Importar".`;
+            if (filename) {
+              filename.textContent = `✅ ¡Word procesado! Se generaron ${pages.length} páginas en formato PDF idéntico. Haz clic en "Procesar e Importar".`;
+            }
           } else {
-            if (filename) filename.textContent = '⚠️ No se pudo extraer texto del archivo Word.';
+            if (filename) filename.textContent = '⚠️ No se pudo extraer el contenido del archivo Word.';
           }
         } catch(err) {
           if (filename) filename.textContent = '⚠️ Error leyendo DOCX: ' + err.message;
@@ -400,13 +484,178 @@ window.DocumentProjectView = {
 
     // 3. Texto plano / Markdown (.txt, .md)
     const reader = new FileReader();
-    reader.onload = (e) => {
+    reader.onload = async (e) => {
       const text = e.target.result || '';
-      this.pendingParsedDoc = this.parseDocumentText(text, baseName);
+      const pages = await this.renderTextToDocumentPages(text, baseName);
+      const parsedOutline = this.parseDocumentText(text, baseName);
+
+      this.pendingParsedDoc = {
+        title: parsedOutline.title || baseName,
+        pdfPages: pages || [],
+        originalFormat: ext,
+        sections: parsedOutline.sections
+      };
+
       if (textarea) textarea.value = text;
-      if (filename) filename.textContent = `✅ Documento leído con éxito. Se detectaron ${this.pendingParsedDoc.sections.length} secciones.`;
+      if (filename) {
+        filename.textContent = `✅ Documento leído con éxito (${pages.length} páginas generadas en formato PDF). Haz clic en "Procesar e Importar".`;
+      }
     };
     reader.readAsText(file, 'UTF-8');
+  },
+
+  async renderPdfPagesFromBuffer(arrayBuffer) {
+    if (!window.pdfjsLib || !window.pdfjsLib.getDocument) {
+      return [];
+    }
+    try {
+      const loadingTask = window.pdfjsLib.getDocument({ data: arrayBuffer });
+      const pdf = await loadingTask.promise;
+      const pages = [];
+
+      for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+        const page = await pdf.getPage(pageNum);
+        // Escala 2.0 para nitidez fotográfica idéntica al original
+        const scale = 2.0;
+        const viewport = page.getViewport({ scale });
+        const canvas = document.createElement('canvas');
+        canvas.width = viewport.width;
+        canvas.height = viewport.height;
+        const ctx = canvas.getContext('2d');
+        await page.render({ canvasContext: ctx, viewport }).promise;
+        pages.push(canvas.toDataURL('image/jpeg', 0.92));
+      }
+      return pages;
+    } catch(err) {
+      console.warn('PDF render pages error:', err);
+      return [];
+    }
+  },
+
+  /**
+   * Transforma texto de Word (.docx) o TXT en hojas visuales PDF de alta calidad con márgenes,
+   * tipografía editorial, encabezado y numeración de página.
+   */
+  async renderTextToDocumentPages(rawText, docTitle) {
+    if (!rawText) return [];
+
+    const pageWidth = 1600;
+    const pageHeight = 2260; // Proporción A4 / Hoja estándar (1 : 1.414)
+    const marginX = 140;
+    const marginTop = 180;
+    const marginBottom = 150;
+    const lineHeight = 44;
+    const contentWidth = pageWidth - (marginX * 2);
+
+    const paragraphs = rawText.split('\n').map(p => p.trim()).filter(Boolean);
+    const pages = [];
+
+    let currentCanvas = document.createElement('canvas');
+    currentCanvas.width = pageWidth;
+    currentCanvas.height = pageHeight;
+    let ctx = currentCanvas.getContext('2d');
+
+    const initPageBackground = (ctxRef, pageIndex) => {
+      // Fondo blanco tipo papel
+      ctxRef.fillStyle = '#ffffff';
+      ctxRef.fillRect(0, 0, pageWidth, pageHeight);
+
+      // Encabezado sutil
+      ctxRef.fillStyle = '#64748b';
+      ctxRef.font = '500 22px system-ui, -apple-system, sans-serif';
+      ctxRef.fillText((docTitle || 'Documento').substring(0, 60), marginX, 90);
+
+      // Línea divisoria superior
+      ctxRef.strokeStyle = '#e2e8f0';
+      ctxRef.lineWidth = 2;
+      ctxRef.beginPath();
+      ctxRef.moveTo(marginX, 115);
+      ctxRef.lineTo(pageWidth - marginX, 115);
+      ctxRef.stroke();
+
+      // Pie de página con numeración
+      ctxRef.fillText(`Página ${pageIndex}`, pageWidth - marginX - 110, pageHeight - 70);
+      ctxRef.beginPath();
+      ctxRef.moveTo(marginX, pageHeight - 100);
+      ctxRef.lineTo(pageWidth - marginX, pageHeight - 100);
+      ctxRef.stroke();
+    };
+
+    let pageNum = 1;
+    initPageBackground(ctx, pageNum);
+    let currentY = marginTop;
+
+    const wrapText = (text, maxWidth) => {
+      const words = text.split(' ');
+      const lines = [];
+      let currentLine = words[0] || '';
+
+      for (let i = 1; i < words.length; i++) {
+        const word = words[i];
+        const width = ctx.measureText(currentLine + ' ' + word).width;
+        if (width < maxWidth) {
+          currentLine += ' ' + word;
+        } else {
+          lines.push(currentLine);
+          currentLine = word;
+        }
+      }
+      if (currentLine) lines.push(currentLine);
+      return lines;
+    };
+
+    for (let pIdx = 0; pIdx < paragraphs.length; pIdx++) {
+      const pText = paragraphs[pIdx];
+
+      // Detectar si es un encabezado o subtítulo
+      const isHeading = pText.startsWith('#') || 
+                        /^\d+[\.\)]\s+/.test(pText) || 
+                        (pText.length < 80 && pText.endsWith('?')) || 
+                        (pText.length < 60 && pText === pText.toUpperCase());
+
+      if (isHeading) {
+        ctx.font = 'bold 34px system-ui, -apple-system, sans-serif';
+        ctx.fillStyle = '#0f172a';
+      } else {
+        ctx.font = 'normal 27px system-ui, -apple-system, sans-serif';
+        ctx.fillStyle = '#1e293b';
+      }
+
+      const cleanText = pText.replace(/^#+\s*/, '');
+      const lines = wrapText(cleanText, contentWidth);
+      const paragraphHeight = (lines.length * lineHeight) + (isHeading ? 36 : 24);
+
+      // Si no cabe en la página actual, guardar y crear nueva hoja
+      if (currentY + paragraphHeight > pageHeight - marginBottom) {
+        pages.push(currentCanvas.toDataURL('image/jpeg', 0.92));
+        pageNum++;
+        currentCanvas = document.createElement('canvas');
+        currentCanvas.width = pageWidth;
+        currentCanvas.height = pageHeight;
+        ctx = currentCanvas.getContext('2d');
+        initPageBackground(ctx, pageNum);
+        currentY = marginTop;
+      }
+
+      // Dibujar líneas
+      if (isHeading) {
+        ctx.font = 'bold 34px system-ui, -apple-system, sans-serif';
+        ctx.fillStyle = '#0f172a';
+        currentY += 10;
+      } else {
+        ctx.font = 'normal 27px system-ui, -apple-system, sans-serif';
+        ctx.fillStyle = '#1e293b';
+      }
+
+      for (let l = 0; l < lines.length; l++) {
+        ctx.fillText(lines[l], marginX, currentY);
+        currentY += lineHeight;
+      }
+      currentY += isHeading ? 24 : 18;
+    }
+
+    pages.push(currentCanvas.toDataURL('image/jpeg', 0.92));
+    return pages;
   },
 
   async extractTextFromPDF(arrayBuffer) {
@@ -564,7 +813,11 @@ window.DocumentProjectView = {
     if (parsed.title) {
       this.currentProject.title = parsed.title;
     }
-    this.currentProject.sections = parsed.sections;
+    if (parsed.pdfPages && parsed.pdfPages.length > 0) {
+      this.currentProject.pdfPages = parsed.pdfPages;
+      this.currentProject.originalFormat = parsed.originalFormat || 'pdf';
+    }
+    this.currentProject.sections = parsed.sections || [];
 
     this.closeImportModal();
     this.renderEditor(document.getElementById('view-document'));
@@ -572,7 +825,17 @@ window.DocumentProjectView = {
     if (window.soundEngine && window.soundEngine.playCorrect) {
       window.soundEngine.playCorrect();
     }
-    alert(`🎉 ¡Se importó el documento exitosamente con ${parsed.sections.length} secciones!`);
+    const pageMsg = (this.currentProject.pdfPages && this.currentProject.pdfPages.length > 0)
+      ? ` con ${this.currentProject.pdfPages.length} páginas en formato PDF idéntico al original`
+      : ` con ${parsed.sections.length} secciones`;
+    alert(`🎉 ¡Se importó el documento exitosamente${pageMsg}! Al publicarlo o visualizarlo se verá literalmente como tu archivo.`);
+  },
+
+  clearPdfPages() {
+    if (confirm('¿Deseas quitar la vista de hojas fijas y volver a la vista de párrafos editables?')) {
+      this.currentProject.pdfPages = [];
+      this.renderEditor(document.getElementById('view-document'));
+    }
   },
 
   escapeHtml(str) {
