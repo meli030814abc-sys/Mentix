@@ -225,15 +225,19 @@ window.HomeView = {
             ` : ''}
           </div>
 
-          <!-- Entidad Destacada en el Banner (Solo el Logo de la Entidad, Limpio y Elegante) -->
+          <!-- Entidad Destacada en el Banner (Ocupa todo el cuadrito con PNG transparente) -->
           ${(challenge.entityLogo || challenge.entityName) ? `
-            <div style="position: absolute; right: 0.85rem; bottom: 0.75rem; display: flex; align-items: center; justify-content: center; background: rgba(5, 10, 25, 0.82); backdrop-filter: blur(12px); border: 2px solid rgba(59, 130, 246, 0.75); border-radius: 14px; padding: 0.4rem 0.65rem; box-shadow: 0 8px 24px rgba(0,0,0,0.65), 0 0 15px rgba(59, 130, 246, 0.3); z-index: 3;">
+            <div style="position: absolute; right: 0.85rem; bottom: 0.75rem; width: 68px; height: 50px; display: flex; align-items: center; justify-content: center; background: rgba(5, 10, 25, 0.85); backdrop-filter: blur(12px); border: 2px solid rgba(59, 130, 246, 0.85); border-radius: 12px; padding: 3px; box-shadow: 0 8px 24px rgba(0,0,0,0.65), 0 0 15px rgba(59, 130, 246, 0.35); z-index: 3; overflow: hidden;">
               ${challenge.entityLogo ? `
-                <div style="width: auto; height: 38px; min-width: 38px; max-width: 95px; border-radius: 8px; display: flex; align-items: center; justify-content: center; overflow: hidden; background: #ffffff; padding: 2px 4px; box-shadow: 0 2px 8px rgba(0,0,0,0.3);">
-                  <img src="${challenge.entityLogo}" alt="${challenge.entityName || 'Entidad'}" style="max-height: 100%; max-width: 100%; object-fit: contain; display: block;" onerror="this.parentElement.style.display='none'">
-                </div>
+                <img 
+                  src="${challenge.entityLogo}" 
+                  alt="${challenge.entityName || 'Entidad'}" 
+                  style="width: 100%; height: 100%; object-fit: contain; display: block; mix-blend-mode: lighten; filter: drop-shadow(0 2px 6px rgba(0,0,0,0.5));" 
+                  onload="if(this.naturalWidth>0){ /* asegurar nitidez */ }"
+                  onerror="this.style.display='none'"
+                />
               ` : `
-                <span style="font-size: 1.25rem; font-weight: 900; color: #ffffff; letter-spacing: 0.5px; text-transform: uppercase;">${challenge.entityName}</span>
+                <span style="font-size: 1.1rem; font-weight: 900; color: #ffffff; letter-spacing: 0.5px; text-transform: uppercase;">${challenge.entityName}</span>
               `}
             </div>
           ` : ''}

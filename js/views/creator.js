@@ -268,25 +268,39 @@ window.CreatorView = {
                 />
               </div>
               <div>
-                <label style="display: block; font-weight: 700; margin-bottom: 0.4rem; font-size: 0.85rem; color: var(--text-secondary);">Logo / Imagen de la Entidad (URL)</label>
-                <div style="display: flex; gap: 0.5rem; align-items: center;">
+                <label style="display: block; font-weight: 700; margin-bottom: 0.4rem; font-size: 0.85rem; color: var(--text-secondary);">Logo de la Entidad (URL o Subir Imagen)</label>
+                <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
                   <input 
                     type="text"
                     id="challenge-entity-logo"
                     value="${c.entityLogo || ''}"
-                    placeholder="https://... logo de la entidad"
-                    style="flex: 1; padding: 0.65rem; border-radius: var(--border-radius-md); background: var(--bg-card); border: 1px solid var(--border-color); color: var(--text-primary); font-size: 0.85rem; outline: none;"
+                    placeholder="https://... o sube una imagen"
+                    style="flex: 1; min-width: 160px; padding: 0.65rem; border-radius: var(--border-radius-md); background: var(--bg-card); border: 1px solid var(--border-color); color: var(--text-primary); font-size: 0.85rem; outline: none;"
                     oninput="window.CreatorView.currentChallenge.entityLogo = this.value; const prev=document.getElementById('entity-logo-preview'); if(prev) prev.src = this.value || '';"
                   />
-                  <img 
-                    id="entity-logo-preview"
-                    src="${c.entityLogo || ''}"
-                    alt="logo"
-                    style="width: 40px; height: 40px; border-radius: 8px; object-fit: cover; border: 1px solid var(--border-color); background: rgba(0,0,0,0.3); display: ${c.entityLogo ? 'block' : 'none'};"
-                    onerror="this.style.display='none'"
-                    onload="this.style.display='block'"
-                  />
+                  <label class="btn btn-outline" style="padding: 0.55rem 0.85rem; font-size: 0.82rem; cursor: pointer; display: inline-flex; align-items: center; gap: 0.35rem; margin: 0;">
+                    <span>📁</span> Subir Logo
+                    <input 
+                      type="file" 
+                      accept="image/*" 
+                      style="display: none;" 
+                      onchange="window.CreatorView.handleEntityLogoUpload(this.files[0])"
+                    />
+                  </label>
+                  <div style="width: 44px; height: 44px; border-radius: 10px; border: 1.5px solid var(--border-color); background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; overflow: hidden; padding: 2px;">
+                    <img 
+                      id="entity-logo-preview"
+                      src="${c.entityLogo || ''}"
+                      alt="logo"
+                      style="width: 100%; height: 100%; object-fit: contain; display: ${c.entityLogo ? 'block' : 'none'};"
+                      onerror="this.style.display='none'"
+                      onload="this.style.display='block'"
+                    />
+                  </div>
                 </div>
+                <span style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.3rem; display: block;">
+                  ✨ Al subir el logo, Mentix remueve automáticamente fondos blancos para que quede como PNG transparente perfecto.
+                </span>
               </div>
             </div>
           </div>
@@ -791,7 +805,65 @@ window.CreatorView = {
     return true;
   },
 
-  saveChallenge() {
+  async handleEntityLogoUpload(file) {
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = async (e) => {
+      const originalDataUrl = e.target.result;
+      try {
+        const transparentDataUrl = await this.removeWhiteBackgroundFromImage(originalDataUrl);
+        this.currentChallenge.entityLogo = transparentDataUrl || originalDataUrl;
+      } catch (err) {
+        this.currentChallenge.entityLogo = originalDataUrl;
+      }
+      const logoInput = document.getElementById('challenge-entity-logo');
+      if (logoInput) logoInput.value = this.currentChallenge.entityLogo;
+      const preview = document.getElementById('entity-logo-preview');
+      if (preview) {
+        preview.src = this.currentChallenge.entityLogo;
+        preview.style.display = 'block';
+      }
+    };
+    reader.readAsDataURL(file);
+  },
+
+  removeWhiteBackgroundFromImage(dataUrl, threshold = 230) {
+    return new Promise((resolve) => {
+      const img = new Image();
+      img.crossOrigin = 'anonymous';
+      img.onload = () => {
+        try {
+          const canvas = document.createElement('canvas');
+          canvas.width = img.width;
+          canvas.height = img.height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0);
+
+          const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+          const data = imgData.data;
+
+          for (let i = 0; i < data.length; i += 4) {
+            const r = data[i];
+            const g = data[i + 1];
+            const b = data[i + 2];
+            // Si el pixel es blanco o casi blanco (fondo típico de logos JPG)
+            if (r >= threshold && g >= threshold && b >= threshold) {
+              data[i + 3] = 0; // Transparente 100%
+            }
+          }
+
+          ctx.putImageData(imgData, 0, 0);
+          resolve(canvas.toDataURL('image/png'));
+        } catch (e) {
+          resolve(dataUrl);
+        }
+      };
+      img.onerror = () => resolve(dataUrl);
+      img.src = dataUrl;
+    });
+  },
+
+  async saveChallenge() {
     const titleEl = document.getElementById('challenge-title');
     const descEl = document.getElementById('challenge-desc');
     const catEl = document.getElementById('challenge-category');
@@ -808,7 +880,14 @@ window.CreatorView = {
     if (timeEl) this.currentChallenge.timePerQuestion = parseInt(timeEl.value) || 20;
     if (bannerEl) this.currentChallenge.banner = bannerEl.value.trim();
     if (entityNameEl) this.currentChallenge.entityName = entityNameEl.value.trim();
-    if (entityLogoEl) this.currentChallenge.entityLogo = entityLogoEl.value.trim();
+    if (entityLogoEl && entityLogoEl.value.trim()) {
+      let logoVal = entityLogoEl.value.trim();
+      try {
+        // Convertir automáticamente a PNG transparente si tiene fondo blanco
+        logoVal = await this.removeWhiteBackgroundFromImage(logoVal);
+      } catch(e) {}
+      this.currentChallenge.entityLogo = logoVal;
+    }
 
     if (!this.validateChallenge()) return;
 
