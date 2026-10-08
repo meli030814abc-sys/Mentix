@@ -37,6 +37,9 @@ class AppRouter {
     if (!restored) {
       this.navigate('home', {}, false);
     }
+
+    // Registro obligatorio antes de mostrar la página
+    this.requireAuth();
   }
 
   restoreInitialRoute() {
@@ -605,6 +608,8 @@ class AppRouter {
     const modal = document.getElementById('auth-modal');
     if (!modal) return;
     this.switchAuthTab(tab);
+    const closeBtn = document.getElementById('auth-close-btn');
+    if (closeBtn) closeBtn.style.display = localStorage.getItem('te_reto_session') ? '' : 'none';
     modal.classList.add('active');
   }
 
@@ -638,6 +643,7 @@ class AppRouter {
     const user = window.appState.users.find(u => u.email.toLowerCase() === email.toLowerCase()) || window.appState.users[0];
     window.appState.currentUser = user;
     saveGlobalState(window.appState);
+    localStorage.setItem('te_reto_session', '1');
     this.closeModal('auth-modal');
     this.updateNavbar();
     alert(`¡Bienvenido de nuevo, ${user.name}!`);
@@ -672,6 +678,7 @@ class AppRouter {
     window.appState.users.push(newUser);
     window.appState.currentUser = newUser;
     saveGlobalState(window.appState);
+    localStorage.setItem('te_reto_session', '1');
     this.closeModal('auth-modal');
     this.updateNavbar();
     window.soundEngine.playFanfare();
@@ -706,8 +713,18 @@ class AppRouter {
   }
 
   closeModal(modalId) {
+    // El acceso es obligatorio: no se puede cerrar sin registrarse o iniciar sesión
+    if (modalId === 'auth-modal' && !localStorage.getItem('te_reto_session')) return;
     const modal = document.getElementById(modalId);
     if (modal) modal.classList.remove('active');
+  }
+
+  // Muestra el registro obligatorio antes de ver la página principal
+  requireAuth() {
+    if (localStorage.getItem('te_reto_session')) return;
+    this.openAuthModal('register');
+    const closeBtn = document.getElementById('auth-close-btn');
+    if (closeBtn) closeBtn.style.display = 'none';
   }
 
   toggleTheme() {
