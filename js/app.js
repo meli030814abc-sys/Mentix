@@ -759,8 +759,8 @@ class AppRouter {
     this.navigate('home');
   }
 
-  async logout() {
-    if (!confirm('¿Seguro que quieres cerrar sesión?')) return;
+  async logout(skipConfirm = false) {
+    if (!skipConfirm && !confirm('¿Seguro que quieres cerrar sesión?')) return;
     try {
       if (window.supabaseService && window.supabaseService.client) {
         await window.supabaseService.client.auth.signOut();
