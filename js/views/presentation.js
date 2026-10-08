@@ -268,8 +268,11 @@ window.PresentationView = {
     }
 
     // 1. Archivos directos (.mp4, .webm, .ogg, .mov)
+    if (trimmed.startsWith('blob:') || trimmed.startsWith('data:video/')) {
+      return { type: 'direct', url: trimmed, platform: 'Video incrustado' };
+    }
     const cleanExt = trimmed.toLowerCase().split('?')[0];
-    if (cleanExt.endsWith('.mp4') || cleanExt.endsWith('.webm') || cleanExt.endsWith('.ogg') || cleanExt.endsWith('.mov')) {
+    if (cleanExt.endsWith('.mp4') || cleanExt.endsWith('.m4v') || cleanExt.endsWith('.webm') || cleanExt.endsWith('.ogg') || cleanExt.endsWith('.mov')) {
       return { type: 'direct', url: trimmed, platform: 'Video Directo (MP4)' };
     }
 
@@ -1839,8 +1842,10 @@ window.PresentationView = {
         if (slides && slides.length > 0) {
           this.pendingParsedSlides = slides;
           this.pendingPresentationTitle = baseName;
-          if (textarea) textarea.value = slides.map((s, i) => `## Diapositiva ${i+1}: ${s.title}\n${s.bullets.map(b => '- ' + b).join('\n')}`).join('\n\n---\n\n');
-          if (filename) filename.textContent = `✅ ¡PowerPoint procesado! Se encontraron ${slides.length} diapositivas. Haz clic en "Procesar e Importar".`;
+          if (textarea) textarea.value = slides.map((s, i) => `## Diapositiva ${i+1}: ${s.title}${s.videoUrl ? '  [🎬 VIDEO]' : (s.isFullImage ? '  [🖼️ IMAGEN]' : '')}\n${(s.bullets || []).map(b => '- ' + b).join('\n')}`).join('\n\n---\n\n');
+          const vCount = slides.filter(s => s.videoUrl).length;
+          const warn = (this.pptxImportWarnings && this.pptxImportWarnings.length) ? ' ⚠️ ' + this.pptxImportWarnings.join(' ') : '';
+          if (filename) filename.textContent = `✅ ¡PowerPoint procesado! Se encontraron ${slides.length} diapositivas${vCount ? ` (${vCount} con video)` : ''}. Haz clic en "Procesar e Importar".${warn}`;
         } else {
           if (filename) filename.textContent = `⚠️ No se pudieron descomprimir las diapositivas de PowerPoint. Puedes pegar el texto en el recuadro.`;
         }
@@ -1859,6 +1864,196 @@ window.PresentationView = {
   },
 
   async extractSlidesFromPPTX(arrayBuffer) {
+    this.pptxImportWarnings = [];
+    try {
+      const bytes = new Uint8Array(arrayBuffer);
+      const dv = new DataView(arrayBuffer);
+      const dec = new TextDecoder('utf-8', { fatal: false });
+
+      // 1) Leer el directorio central del ZIP (más fiable que escanear cabeceras locales)
+      let eocd = -1;
+      for (let i = bytes.length - 22; i >= Math.max(0, bytes.length - 65600); i--) {
+        if (dv.getUint32(i, true) === 0x06054b50) { eocd = i; break; }
+      }
+      if (eocd < 0) return await this.extractSlidesFromPPTXLegacy(arrayBuffer);
+
+      const total = dv.getUint16(eocd + 10, true);
+      let ptr = dv.getUint32(eocd + 16, true);
+      const entries = {};
+      for (let n = 0; n < total; n++) {
+        if (ptr + 46 > bytes.length || dv.getUint32(ptr, true) !== 0x02014b50) break;
+        const method = dv.getUint16(ptr + 10, true);
+        const csize = dv.getUint32(ptr + 20, true);
+        const nl = dv.getUint16(ptr + 28, true);
+        const el = dv.getUint16(ptr + 30, true);
+        const cl = dv.getUint16(ptr + 32, true);
+        const off = dv.getUint32(ptr + 42, true);
+        const name = dec.decode(bytes.subarray(ptr + 46, ptr + 46 + nl));
+        entries[name] = { method, csize, off };
+        ptr += 46 + nl + el + cl;
+      }
+
+      const readEntry = async (name) => {
+        const en = entries[name];
+        if (!en) return null;
+        const nl = dv.getUint16(en.off + 26, true);
+        const el = dv.getUint16(en.off + 28, true);
+        const start = en.off + 30 + nl + el;
+        const data = bytes.subarray(start, start + en.csize);
+        if (en.method === 0) return data;
+        if (en.method === 8 && typeof DecompressionStream !== 'undefined') {
+          const ds = new DecompressionStream('deflate-raw');
+          const writer = ds.writable.getWriter();
+          writer.write(data);
+          writer.close();
+          return new Uint8Array(await new Response(ds.readable).arrayBuffer());
+        }
+        return null;
+      };
+      const readText = async (name) => {
+        const d = await readEntry(name);
+        return d ? dec.decode(d) : '';
+      };
+
+      const parseRels = (xml, baseDir) => {
+        const rels = {};
+        (xml.match(/<Relationship\b[^>]*>/g) || []).forEach(tag => {
+          const id = (tag.match(/\bId="([^"]*)"/) || [])[1];
+          const type = (tag.match(/\bType="([^"]*)"/) || [])[1] || '';
+          let target = (tag.match(/\bTarget="([^"]*)"/) || [])[1] || '';
+          const external = /TargetMode="External"/i.test(tag);
+          if (!id) return;
+          if (!external) {
+            if (target.startsWith('/')) target = target.slice(1);
+            else {
+              const parts = (baseDir + '/' + target).split('/');
+              const out = [];
+              parts.forEach(pt => { if (pt === '..') out.pop(); else if (pt && pt !== '.') out.push(pt); });
+              target = out.join('/');
+            }
+          } else {
+            target = target.replace(/&amp;/g, '&');
+          }
+          rels[id] = { type, target, external };
+        });
+        return rels;
+      };
+
+      const toDataUrl = (u8, mime) => new Promise((resolve) => {
+        const fr = new FileReader();
+        fr.onload = () => resolve(fr.result);
+        fr.onerror = () => resolve('');
+        fr.readAsDataURL(new Blob([u8], { type: mime }));
+      });
+
+      const IMG_MIME = { png: 'image/png', jpg: 'image/jpeg', jpeg: 'image/jpeg', gif: 'image/gif', webp: 'image/webp', bmp: 'image/bmp' };
+      const VID_MIME = { mp4: 'video/mp4', m4v: 'video/mp4', mov: 'video/mp4', webm: 'video/webm', ogv: 'video/ogg', ogg: 'video/ogg', wmv: 'video/x-ms-wmv', avi: 'video/x-msvideo', mpg: 'video/mpeg', mpeg: 'video/mpeg' };
+
+      // 2) Orden real de las diapositivas
+      let slidePaths = [];
+      try {
+        const presXml = await readText('ppt/presentation.xml');
+        const presRels = parseRels(await readText('ppt/_rels/presentation.xml.rels'), 'ppt');
+        const ids = (presXml.match(/<p:sldId\b[^>]*>/g) || []).map(t => (t.match(/r:id="([^"]*)"/) || [])[1]).filter(Boolean);
+        slidePaths = ids.map(id => presRels[id] && presRels[id].target).filter(t => t && entries[t]);
+      } catch (e) { slidePaths = []; }
+      if (slidePaths.length === 0) {
+        slidePaths = Object.keys(entries)
+          .filter(n => /^ppt\/slides\/slide\d+\.xml$/.test(n))
+          .sort((a, b) => parseInt(a.match(/slide(\d+)/)[1], 10) - parseInt(b.match(/slide(\d+)/)[1], 10));
+      }
+      if (slidePaths.length === 0) return null;
+
+      const slides = [];
+      for (let idx = 0; idx < slidePaths.length; idx++) {
+        const path = slidePaths[idx];
+        const xml = await readText(path);
+        const dir = path.substring(0, path.lastIndexOf('/'));
+        const file = path.substring(path.lastIndexOf('/') + 1);
+        const rels = parseRels(await readText(dir + '/_rels/' + file + '.rels'), dir);
+
+        // Textos
+        const pMatches = xml.match(/<a:p[ >][\s\S]*?<\/a:p>/g) || [];
+        const lines = pMatches.map(p => {
+          const tMatches = p.match(/<a:t[^>]*>([\s\S]*?)<\/a:t>/g) || [];
+          return tMatches.map(t => t.replace(/<[^>]+>/g, '')).join('')
+            .replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&apos;/g, "'");
+        }).filter(l => l.trim().length > 0);
+
+        // Video: enlace en línea (YouTube, etc.) o archivo incrustado
+        let videoUrl = '';
+        const relList = Object.values(rels);
+        const videoRels = relList.filter(r => /\/(video|media)$/i.test(r.type));
+        const extVideo = videoRels.find(r => r.external && /^https?:/i.test(r.target));
+        if (extVideo) {
+          videoUrl = extVideo.target;
+        } else {
+          const intVideo = videoRels.find(r => !r.external && VID_MIME[(r.target.split('.').pop() || '').toLowerCase()]);
+          if (intVideo) {
+            const vext = intVideo.target.split('.').pop().toLowerCase();
+            const vdata = await readEntry(intVideo.target);
+            if (vdata && vdata.length) {
+              const mime = VID_MIME[vext];
+              if (vdata.length <= 3 * 1024 * 1024) {
+                videoUrl = await toDataUrl(vdata, mime);
+              } else {
+                videoUrl = URL.createObjectURL(new Blob([vdata], { type: mime }));
+                this.pptxImportWarnings.push(`La diapositiva ${idx + 1} tiene un video incrustado de ${(vdata.length / 1048576).toFixed(1)} MB: se verá en esta sesión, pero para guardarlo permanentemente súbelo a YouTube/Drive y pega el enlace en el editor.`);
+              }
+            }
+          }
+        }
+
+        // Imagen principal de la diapositiva (si la hay)
+        let imageData = '';
+        const imgRel = relList.find(r => !r.external && /\/image$/i.test(r.type) && IMG_MIME[(r.target.split('.').pop() || '').toLowerCase()]);
+        if (imgRel) {
+          const iext = imgRel.target.split('.').pop().toLowerCase();
+          const idata = await readEntry(imgRel.target);
+          if (idata && idata.length && idata.length <= 2.5 * 1024 * 1024) {
+            imageData = await toDataUrl(idata, IMG_MIME[iext]);
+          }
+        }
+
+        const base = {
+          id: 'slide_' + Date.now() + '_' + idx,
+          title: '', subtitle: '', content: '', bullets: [], media: '', teacherNotes: ''
+        };
+
+        if (lines.length > 0) {
+          base.title = lines[0];
+          const subtitle = (lines.length > 1 && lines[1].length < 90) ? lines[1] : '';
+          const startIndex = subtitle ? 2 : 1;
+          base.subtitle = subtitle;
+          base.bullets = lines.slice(startIndex, startIndex + 5);
+          base.content = lines.slice(startIndex + 5).join(' ');
+        } else {
+          base.title = videoUrl ? `Video ${idx + 1}` : `Diapositiva ${idx + 1}`;
+        }
+
+        if (videoUrl) {
+          base.layout = 'video';
+          base.videoUrl = videoUrl;
+          base.media = videoUrl;
+        } else if (lines.length === 0 && imageData) {
+          base.layout = 'full';
+          base.media = imageData;
+          base.isImported = true;
+          base.isFullImage = true;
+        } else {
+          base.layout = 'split';
+          if (imageData) base.media = imageData;
+        }
+        slides.push(base);
+      }
+      return slides.length > 0 ? slides : null;
+    } catch (e) {
+      console.warn('PPTX extraction warning:', e);
+      try { return await this.extractSlidesFromPPTXLegacy(arrayBuffer); } catch (e2) { return null; }
+    }
+  },
+
+  async extractSlidesFromPPTXLegacy(arrayBuffer) {
     try {
       const bytes = new Uint8Array(arrayBuffer);
       const textDecoder = new TextDecoder('utf-8', { fatal: false });
