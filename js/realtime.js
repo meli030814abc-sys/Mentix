@@ -13,6 +13,11 @@ class RealtimeEngine {
     this.localPlayer = null;
     this.botIntervals = [];
 
+    // PeerJS para comunicación WebRTC entre múltiples dispositivos
+    this.peer = null;
+    this.peerConnections = []; // Para el host: lista de conexiones con clientes
+    this.hostConnection = null; // Para el jugador: conexión activa con el host
+
     this.initBus();
   }
 
@@ -26,7 +31,7 @@ class RealtimeEngine {
       console.warn('BroadcastChannel no soportado, usando fallback de Storage', e);
     }
 
-    // Fallback con eventos de storage para navegadores antiguos
+    // Fallback con eventos de storage para navegadores/pestañas locales
     window.addEventListener('storage', (event) => {
       if (event.key === 'te_reto_storage_bus' && event.newValue) {
         try {
@@ -35,6 +40,118 @@ class RealtimeEngine {
         } catch (err) {}
       }
     });
+  }
+
+  // ==========================================
+  // 🌐 WEBRTC P2P: CONECTIVIDAD MULTIDISPOSITIVO POR INTERNET
+  // ==========================================
+  initHostPeer(pin) {
+    if (!window.Peer) return;
+    try {
+      if (this.peer) this.peer.destroy();
+      const hostPeerId = `mentix-room-${pin}`;
+      this.peer = new window.Peer(hostPeerId, {
+        debug: 1,
+        config: {
+          iceServers: [
+            { urls: 'stun:stun.l.google.com:19302' },
+            { urls: 'stun:global.stun.twilio.com:3478' }
+          ]
+        }
+      });
+
+      this.peer.on('open', (id) => {
+        console.log('📡 Host P2P activo en la nube con ID:', id);
+      });
+
+      this.peer.on('connection', (conn) => {
+        this.peerConnections.push(conn);
+        console.log('📱 Nuevo jugador conectado por WebRTC:', conn.peer);
+
+        // Al conectarse un jugador remoto, responderle inmediatamente con el estado completo de la sala
+        conn.on('open', () => {
+          if (this.currentRoom) {
+            conn.send({
+              type: 'HOST_ROOM_STATE',
+              pin: this.currentRoom.pin,
+              room: this.currentRoom,
+              timestamp: Date.now()
+            });
+          }
+        });
+
+        conn.on('data', (data) => {
+          this.handleMessage(data);
+        });
+
+        conn.on('close', () => {
+          this.peerConnections = this.peerConnections.filter(c => c !== conn);
+        });
+      });
+
+      this.peer.on('error', (err) => {
+        console.warn('PeerJS Host warning:', err.type || err);
+      });
+    } catch (e) {
+      console.warn('Error inicializando Peer host:', e);
+    }
+  }
+
+  initPlayerPeer(pin, onConnected) {
+    if (!window.Peer) return;
+    try {
+      if (this.peer) this.peer.destroy();
+      this.peer = new window.Peer({
+        debug: 1,
+        config: {
+          iceServers: [
+            { urls: 'stun:stun.l.google.com:19302' },
+            { urls: 'stun:global.stun.twilio.com:3478' }
+          ]
+        }
+      });
+
+      this.peer.on('open', () => {
+        const hostPeerId = `mentix-room-${pin}`;
+        console.log('🔗 Conectando jugador con el anfitrión:', hostPeerId);
+        const conn = this.peer.connect(hostPeerId, { reliable: true });
+
+        conn.on('open', () => {
+          console.log('✅ Conexión P2P establecida con la sala del anfitrión');
+          this.hostConnection = conn;
+          if (onConnected) onConnected(conn);
+
+          // Si el jugador ya tiene perfil, enviarle el evento de entrada
+          if (this.localPlayer) {
+            conn.send({
+              type: 'PLAYER_JOIN',
+              pin: pin,
+              player: this.localPlayer,
+              timestamp: Date.now()
+            });
+          }
+        });
+
+        conn.on('data', (data) => {
+          this.handleMessage(data);
+        });
+
+        conn.on('close', () => {
+          console.warn('Conexión con el host cerrada');
+          this.hostConnection = null;
+        });
+
+        conn.on('error', (e) => {
+          console.warn('Error en conexión con host:', e);
+        });
+      });
+
+      this.peer.on('error', (err) => {
+        console.warn('PeerJS Player warning:', err.type || err);
+      });
+    } catch (e) {
+      console.warn('Error inicializando Peer player:', e);
+    }
   }
 
   broadcast(message) {
@@ -48,6 +165,21 @@ class RealtimeEngine {
     try {
       localStorage.setItem('te_reto_storage_bus', JSON.stringify(message));
     } catch (e) {}
+
+    // Enviar a todos los clientes WebRTC si somos el host
+    if (this.isHost && this.peerConnections && this.peerConnections.length > 0) {
+      this.peerConnections.forEach(conn => {
+        if (conn && conn.open) {
+          try { conn.send(message); } catch (e) {}
+        }
+      });
+    }
+
+    // Enviar al host si somos jugador remoto
+    if (!this.isHost && this.hostConnection && this.hostConnection.open) {
+      try { this.hostConnection.send(message); } catch (e) {}
+    }
+
     // Supabase Realtime Cloud Broadcast
     if (window.supabaseService && window.supabaseService.isConnected) {
       const pin = message.pin || this.currentRoom?.pin;
@@ -154,10 +286,8 @@ class RealtimeEngine {
       rosterCount: rosterList.length
     });
 
-    // Suscribir a Supabase Realtime si está conectado
-    if (window.supabaseService && window.supabaseService.isConnected) {
-      window.supabaseService.subscribeToRoom(pin, (msg) => this.handleMessage(msg));
-    }
+    // Activar servidor WebRTC P2P en la nube para conexión desde cualquier dispositivo o red
+    this.initHostPeer(pin);
 
     return this.currentRoom;
   }
@@ -221,10 +351,8 @@ class RealtimeEngine {
       };
     }
 
-    // Suscribir a Supabase Realtime si está conectado
-    if (window.supabaseService && window.supabaseService.isConnected) {
-      window.supabaseService.subscribeToRoom(pin, (msg) => this.handleMessage(msg));
-    }
+    // Conectar por WebRTC P2P a la sala del host en internet
+    this.initPlayerPeer(pin);
 
     // Notificar al host y a la sala
     this.broadcast({

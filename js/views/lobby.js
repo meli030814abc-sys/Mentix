@@ -725,15 +725,20 @@ window.LobbyView = {
       return;
     }
 
+    // Conectar a la sala (si existe en almacenamiento local o se sincroniza por WebRTC en red)
     const room = this.findRoomByPin(cleanPin);
-    if (!room) {
-      const proceed = confirm(`No encontramos una sala activa con el PIN "${cleanPin}".\n\n¿Deseas continuar de todos modos para conectarte a la red?`);
-      if (!proceed) return;
-    }
 
     this.joinPin = cleanPin;
     this.joinRoomData = room || { pin: cleanPin, rosterMode: 'open', gameMode: 'clasico' };
     this.joinStep = 'profile';
+
+    // Iniciar conexión anticipada por WebRTC para descubrir la sala remota
+    if (window.realtimeEngine && window.realtimeEngine.initPlayerPeer) {
+      window.realtimeEngine.initPlayerPeer(cleanPin, (conn) => {
+        console.log('📡 Sala remota detectada y enlazada por WebRTC:', cleanPin);
+      });
+    }
+
     if (window.soundEngine) window.soundEngine.playClick();
     this.render();
   },
