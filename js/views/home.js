@@ -193,25 +193,57 @@ window.HomeView = {
 
     return `
       <div class="challenge-card" onclick="${cardAction}" style="cursor: pointer;">
-        <div class="challenge-banner" style="background-image: url('${challenge.banner || 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=600'}'); position: relative;">
-          ${projectType === 'presentation' ? '<span class="badge-tag" style="background: rgba(124, 58, 237, 0.85); color: white;">📊 Diapositivas</span>' : (projectType === 'video' ? '<span class="badge-tag" style="background: rgba(239, 68, 68, 0.85); color: white;">🎬 Video</span>' : (projectType === 'document' ? '<span class="badge-tag" style="background: rgba(59, 130, 246, 0.85); color: white;">📄 Documento</span>' : (projectType === 'url' ? '<span class="badge-tag" style="background: rgba(16, 185, 129, 0.85); color: white;">🌐 Enlace</span>' : `<span class="badge-tag ${diffTag}">${challenge.difficulty || 'Normal'}</span>`)))}
-          <span class="badge-tag" style="background: rgba(0,0,0,0.6); color: white;">⏱️ ${challenge.timePerQuestion || 20}s</span>
+        <div class="challenge-banner" style="background-image: url('${challenge.banner || 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=600'}'); position: relative; height: 165px; border-radius: 16px 16px 0 0; overflow: hidden; display: flex; align-items: flex-end; padding: 1rem;">
+          
+          <!-- Insignia Superior Izquierda: Tipo de Proyecto o Dificultad -->
+          <div style="position: absolute; top: 0.75rem; left: 0.75rem; z-index: 4;">
+            ${projectType === 'presentation' 
+              ? '<span class="badge-tag" style="background: rgba(124, 58, 237, 0.9); color: white; font-weight: 800; font-size: 0.85rem; padding: 0.4rem 0.85rem; border-radius: 9999px;">📊 Diapositivas</span>' 
+              : (projectType === 'video' 
+                ? '<span class="badge-tag" style="background: rgba(239, 68, 68, 0.9); color: white; font-weight: 800; font-size: 0.85rem; padding: 0.4rem 0.85rem; border-radius: 9999px;">🎬 Video</span>' 
+                : (projectType === 'document' 
+                  ? '<span class="badge-tag" style="background: rgba(59, 130, 246, 0.9); color: white; font-weight: 800; font-size: 0.85rem; padding: 0.4rem 0.85rem; border-radius: 9999px;">📄 Documento</span>' 
+                  : (projectType === 'url' 
+                    ? '<span class="badge-tag" style="background: rgba(16, 185, 129, 0.9); color: white; font-weight: 800; font-size: 0.85rem; padding: 0.4rem 0.85rem; border-radius: 9999px;">🌐 Enlace</span>' 
+                    : `<span class="badge-tag ${diffTag}" style="font-size: 0.88rem; font-weight: 900; padding: 0.4rem 1rem; border-radius: 9999px; display: inline-flex; align-items: center; gap: 0.35rem; box-shadow: 0 4px 15px rgba(0,0,0,0.3);"><span style="font-size: 0.8rem;">📊</span> ${challenge.difficulty || 'Normal'}</span>`)))}
+          </div>
+
+          <!-- Superior Derecha: Tiempo + Botón Eliminar -->
+          <div style="position: absolute; top: 0.75rem; right: 0.75rem; display: flex; align-items: center; gap: 0.5rem; z-index: 4;">
+            <div style="background: rgba(10, 15, 30, 0.85); backdrop-filter: blur(8px); border: 1.5px solid rgba(0, 245, 212, 0.4); border-radius: 9999px; padding: 0.35rem 0.75rem; display: flex; align-items: center; gap: 0.35rem; font-weight: 900; font-size: 0.85rem; color: #ffffff; box-shadow: 0 4px 12px rgba(0,0,0,0.4);">
+              <span style="font-size: 0.9rem;">⏱️</span> <span>${challenge.timePerQuestion || 20}</span>
+            </div>
+            ${isOwner ? `
+              <button 
+                class="btn btn-danger" 
+                title="Eliminar este reto"
+                style="width: 36px; height: 36px; padding: 0; border-radius: 10px; font-size: 0.95rem; display: flex; align-items: center; justify-content: center; background: rgba(239, 68, 68, 0.9); border: none; box-shadow: 0 4px 12px rgba(239,68,68,0.35); cursor: pointer;"
+                onclick="event.stopPropagation(); window.appRouter.deleteChallenge('${challenge.id}')"
+              >
+                🗑️
+              </button>
+            ` : ''}
+          </div>
+
+          <!-- Entidad Destacada en el Banner (Estilo Escudo + Nombre Grande como en la imagen) -->
           ${(challenge.entityName || challenge.entityLogo) ? `
-            <div style="position: absolute; bottom: 0.5rem; right: 0.5rem; display: flex; align-items: center; gap: 0.4rem; background: rgba(0,0,0,0.72); backdrop-filter: blur(6px); border-radius: 8px; padding: 0.3rem 0.55rem; max-width: 140px;">
-              ${challenge.entityLogo ? `<img src="${challenge.entityLogo}" alt="" style="width: 22px; height: 22px; border-radius: 4px; object-fit: cover; flex-shrink: 0;" onerror="this.style.display='none'">` : ''}
-              ${challenge.entityName ? `<span style="font-size: 0.72rem; font-weight: 700; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${challenge.entityName}</span>` : ''}
+            <div style="position: absolute; right: 1rem; bottom: 0.85rem; display: flex; align-items: center; gap: 0.85rem; background: rgba(5, 10, 25, 0.78); backdrop-filter: blur(12px); border: 2px solid rgba(59, 130, 246, 0.6); border-radius: 16px; padding: 0.5rem 1rem 0.5rem 0.75rem; box-shadow: 0 8px 25px rgba(0,0,0,0.6); max-width: calc(100% - 2rem); z-index: 3;">
+              ${challenge.entityLogo ? `
+                <div style="width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; overflow: hidden; flex-shrink: 0; background: rgba(255,255,255,0.08); border: 1.5px solid rgba(147, 197, 253, 0.5);">
+                  <img src="${challenge.entityLogo}" alt="${challenge.entityName || 'Entidad'}" style="width: 100%; height: 100%; object-fit: contain;" onerror="this.parentElement.innerHTML='🛡️'">
+                </div>
+              ` : `
+                <span style="font-size: 2rem; filter: drop-shadow(0 0 8px rgba(59, 130, 246, 0.8));">🛡️</span>
+              `}
+              <div style="display: flex; align-items: center; gap: 0.6rem;">
+                <div style="width: 2px; height: 32px; background: rgba(255,255,255,0.4); border-radius: 2px;"></div>
+                <span style="font-size: 1.45rem; font-weight: 900; letter-spacing: 0.5px; color: #ffffff; text-transform: uppercase; text-shadow: 0 2px 10px rgba(0,0,0,0.6); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 170px;">
+                  ${challenge.entityName || ''}
+                </span>
+              </div>
             </div>
           ` : ''}
-          ${isOwner ? `
-            <button 
-              class="btn btn-danger" 
-              title="Eliminar este proyecto"
-              style="position: absolute; top: 0.6rem; right: 0.6rem; width: 32px; height: 32px; padding: 0; border-radius: 8px; font-size: 0.85rem; display: flex; align-items: center; justify-content: center; z-index: 5; background: rgba(239, 68, 68, 0.9); box-shadow: 0 2px 8px rgba(0,0,0,0.4);"
-              onclick="event.stopPropagation(); window.appRouter.deleteChallenge('${challenge.id}')"
-            >
-              🗑️
-            </button>
-          ` : ''}
+
         </div>
         
         <div style="padding: 1.25rem; display: flex; flex-direction: column; flex: 1;">
