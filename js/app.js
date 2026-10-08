@@ -887,8 +887,13 @@ class AppRouter {
   }
 
   // Muestra el registro obligatorio antes de ver la página principal
+  // Si entra directamente por enlace a #lobby-join o #join, NO lo pide al inicio
   requireAuth() {
     if (localStorage.getItem('te_reto_session')) return;
+    const hash = (window.location.hash || '').toLowerCase();
+    if (hash.includes('lobby-join') || hash.includes('join') || this.currentView === 'lobby-join') {
+      return; // Permitir entrar directo a la sala sin pedir registro
+    }
     this.openAuthModal('register');
     const closeBtn = document.getElementById('auth-close-btn');
     if (closeBtn) closeBtn.style.display = 'none';

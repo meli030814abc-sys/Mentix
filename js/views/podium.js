@@ -200,6 +200,13 @@ window.PodiumView = {
 
       </div>
     `;
+
+    // Si terminó el quiz y aún no tiene cuenta o sesión guardada, pedirle registro/acceso para guardar su progreso
+    if (!localStorage.getItem('te_reto_session') || window.appState.currentUser?.isGuest) {
+      setTimeout(() => {
+        window.appRouter.openAuthModal('register');
+      }, 1500);
+    }
   },
 
   launchConfetti() {
