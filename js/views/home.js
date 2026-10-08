@@ -1,7 +1,42 @@
 /**
- * 🔥 TE RETO - Vista Principal (Home View)
- * Pantalla de inicio llamativa, moderna, con tarjetas de retos, categorías y acciones rápidas.
+ * 🔥 Helper global para hacer transparente cualquier logo de entidad en tiempo de ejecución
  */
+window.makeEntityLogoTransparent = function(imgEl) {
+  if (!imgEl || imgEl.dataset.processedTransparent) return;
+  try {
+    const canvas = document.createElement('canvas');
+    canvas.width = imgEl.naturalWidth || imgEl.width;
+    canvas.height = imgEl.naturalHeight || imgEl.height;
+    if (!canvas.width || !canvas.height) return;
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(imgEl, 0, 0);
+    const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    const data = imgData.data;
+    let modified = false;
+
+    // Detectar píxeles blancos o muy claros (fondo blanco típico de logos JPG)
+    for (let i = 0; i < data.length; i += 4) {
+      const r = data[i];
+      const g = data[i + 1];
+      const b = data[i + 2];
+      // Si el color es casi blanco o muy claro
+      if (r >= 220 && g >= 220 && b >= 220) {
+        data[i + 3] = 0; // Transparente 100%
+        modified = true;
+      }
+    }
+
+    if (modified) {
+      ctx.putImageData(imgData, 0, 0);
+      imgEl.dataset.processedTransparent = 'true';
+      imgEl.src = canvas.toDataURL('image/png');
+    }
+  } catch (err) {
+    // Si la imagen tiene bloqueo CORS externo y no permite canvas, usamos filtro css inteligente
+    imgEl.style.mixBlendMode = 'lighten';
+    imgEl.dataset.processedTransparent = 'true';
+  }
+};
 
 window.HomeView = {
   activeCategory: 'all',
@@ -227,17 +262,17 @@ window.HomeView = {
 
           <!-- Entidad Destacada en el Banner (Ocupa todo el cuadrito con PNG transparente) -->
           ${(challenge.entityLogo || challenge.entityName) ? `
-            <div style="position: absolute; right: 0.85rem; bottom: 0.75rem; width: 68px; height: 50px; display: flex; align-items: center; justify-content: center; background: rgba(5, 10, 25, 0.85); backdrop-filter: blur(12px); border: 2px solid rgba(59, 130, 246, 0.85); border-radius: 12px; padding: 3px; box-shadow: 0 8px 24px rgba(0,0,0,0.65), 0 0 15px rgba(59, 130, 246, 0.35); z-index: 3; overflow: hidden;">
+            <div class="entity-badge-box" style="position: absolute; right: 0.85rem; bottom: 0.75rem; width: 84px; height: 56px; display: flex; align-items: center; justify-content: center; background: rgba(5, 10, 25, 0.9); backdrop-filter: blur(12px); border: 2px solid rgba(59, 130, 246, 0.85); border-radius: 12px; padding: 0; box-shadow: 0 8px 24px rgba(0,0,0,0.65), 0 0 15px rgba(59, 130, 246, 0.35); z-index: 3; overflow: hidden;">
               ${challenge.entityLogo ? `
                 <img 
                   src="${challenge.entityLogo}" 
                   alt="${challenge.entityName || 'Entidad'}" 
-                  style="width: 100%; height: 100%; object-fit: contain; display: block; mix-blend-mode: lighten; filter: drop-shadow(0 2px 6px rgba(0,0,0,0.5));" 
-                  onload="if(this.naturalWidth>0){ /* asegurar nitidez */ }"
+                  style="width: 100%; height: 100%; object-fit: contain; object-position: center; display: block;" 
+                  onload="window.makeEntityLogoTransparent ? window.makeEntityLogoTransparent(this) : null"
                   onerror="this.style.display='none'"
                 />
               ` : `
-                <span style="font-size: 1.1rem; font-weight: 900; color: #ffffff; letter-spacing: 0.5px; text-transform: uppercase;">${challenge.entityName}</span>
+                <span style="font-size: 1.05rem; font-weight: 900; color: #ffffff; letter-spacing: 0.5px; text-transform: uppercase; padding: 4px; text-align: center;">${challenge.entityName}</span>
               `}
             </div>
           ` : ''}

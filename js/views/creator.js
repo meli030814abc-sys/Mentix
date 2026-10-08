@@ -827,7 +827,7 @@ window.CreatorView = {
     reader.readAsDataURL(file);
   },
 
-  removeWhiteBackgroundFromImage(dataUrl, threshold = 230) {
+  removeWhiteBackgroundFromImage(dataUrl, threshold = 215) {
     return new Promise((resolve) => {
       const img = new Image();
       img.crossOrigin = 'anonymous';
