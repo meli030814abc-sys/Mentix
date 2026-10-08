@@ -285,11 +285,11 @@
       <form id="auth-login-form" onsubmit="window.appRouter.handleLogin(event)">
         <div style="margin-bottom: 1rem;">
           <label style="display: block; font-weight: 700; margin-bottom: 0.35rem; font-size: 0.9rem;">Correo o Usuario</label>
-          <input type="text" id="login-email" value="mateo@te-reto.app" required style="width: 100%; padding: 0.75rem; border-radius: var(--border-radius-md); background: rgba(0,0,0,0.4); border: 1px solid var(--border-color); color: white;" />
+          <input type="text" id="login-email" placeholder="correo@gmail.com o tu usuario" required autocomplete="username" style="width: 100%; padding: 0.75rem; border-radius: var(--border-radius-md); background: rgba(0,0,0,0.4); border: 1px solid var(--border-color); color: white;" />
         </div>
         <div style="margin-bottom: 1.5rem;">
           <label style="display: block; font-weight: 700; margin-bottom: 0.35rem; font-size: 0.9rem;">Contraseña</label>
-          <input type="password" value="••••••••" required style="width: 100%; padding: 0.75rem; border-radius: var(--border-radius-md); background: rgba(0,0,0,0.4); border: 1px solid var(--border-color); color: white;" />
+          <input type="password" id="login-password" placeholder="Tu contraseña" required autocomplete="current-password" style="width: 100%; padding: 0.75rem; border-radius: var(--border-radius-md); background: rgba(0,0,0,0.4); border: 1px solid var(--border-color); color: white;" />
         </div>
         <button type="submit" class="btn btn-primary btn-lg" style="width: 100%; margin-bottom: 1.25rem;">
           ¡Entrar a la Arena! 🚀
@@ -310,6 +310,14 @@
           <label style="display: block; font-weight: 700; margin-bottom: 0.35rem; font-size: 0.9rem;">Correo Electrónico</label>
           <input type="email" id="reg-email" placeholder="camilo@correo.com" required style="width: 100%; padding: 0.75rem; border-radius: var(--border-radius-md); background: rgba(0,0,0,0.4); border: 1px solid var(--border-color); color: white;" />
         </div>
+        <div style="margin-bottom: 0.85rem;">
+          <label style="display: block; font-weight: 700; margin-bottom: 0.35rem; font-size: 0.9rem;">Contraseña</label>
+          <input type="password" id="reg-password" placeholder="Mínimo 6 caracteres" minlength="6" required autocomplete="new-password" style="width: 100%; padding: 0.75rem; border-radius: var(--border-radius-md); background: rgba(0,0,0,0.4); border: 1px solid var(--border-color); color: white;" />
+        </div>
+        <div style="margin-bottom: 0.85rem;">
+          <label style="display: block; font-weight: 700; margin-bottom: 0.35rem; font-size: 0.9rem;">Confirmar Contraseña</label>
+          <input type="password" id="reg-password2" placeholder="Repite tu contraseña" minlength="6" required autocomplete="new-password" style="width: 100%; padding: 0.75rem; border-radius: var(--border-radius-md); background: rgba(0,0,0,0.4); border: 1px solid var(--border-color); color: white;" />
+        </div>
         <div style="margin-bottom: 1.25rem;">
           <label style="display: block; font-weight: 700; margin-bottom: 0.35rem; font-size: 0.9rem;">¿Cuál es tu Rol Principal?</label>
           <select id="reg-role" style="width: 100%; padding: 0.75rem; border-radius: var(--border-radius-md); background: #131b2e; border: 1px solid var(--border-color); color: white; font-weight: 700;">
@@ -327,10 +335,10 @@
       <div style="text-align: center; border-top: 1px solid var(--border-color); padding-top: 1.25rem;">
         <span style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.75rem;">O continúa con</span>
         <div style="display: flex; gap: 0.75rem; justify-content: center;">
-          <button class="btn btn-outline" style="font-size: 0.85rem; padding: 0.5rem 1rem;" onclick="alert('Conexión con Google simulada con éxito.')">
-            🌐 Google
+          <button type="button" class="btn btn-outline" style="font-size: 0.85rem; padding: 0.5rem 1rem;" onclick="window.appRouter.oauthLogin('google')">
+            🌐 Google / Gmail
           </button>
-          <button class="btn btn-outline" style="font-size: 0.85rem; padding: 0.5rem 1rem;" onclick="alert('Conexión con Microsoft simulada con éxito.')">
+          <button type="button" class="btn btn-outline" style="font-size: 0.85rem; padding: 0.5rem 1rem;" onclick="window.appRouter.oauthLogin('azure')">
             🟦 Microsoft
           </button>
         </div>

@@ -32,14 +32,21 @@ class AppRouter {
     // Manejar atajos globales
     this.setupGlobalEvents();
 
+    // Retorno de Google/Microsoft: el hash/URL trae el token, no debe usarse como ruta
+    const oauthReturn = /access_token=|[?&#]code=/.test(window.location.href);
+
     // Restaurar vista actual si se presionó F5 o se accedió con enlace directo
-    const restored = this.restoreInitialRoute();
+    const restored = oauthReturn ? false : this.restoreInitialRoute();
     if (!restored) {
       this.navigate('home', {}, false);
     }
 
     // Registro obligatorio antes de mostrar la página
-    this.requireAuth();
+    if (oauthReturn) {
+      this.checkOAuthSession().then(ok => { if (!ok) this.requireAuth(); });
+    } else {
+      this.requireAuth();
+    }
   }
 
   restoreInitialRoute() {
@@ -636,32 +643,79 @@ class AppRouter {
     }
   }
 
-  handleLogin(e) {
-    e.preventDefault();
-    const email = document.getElementById('login-email').value.trim();
-    // Simular login con el usuario predeterminado o coincidente
-    const user = window.appState.users.find(u => u.email.toLowerCase() === email.toLowerCase()) || window.appState.users[0];
+  async hashPassword(email, password) {
+    const data = new TextEncoder().encode(email.toLowerCase() + ':' + password);
+    const buf = await crypto.subtle.digest('SHA-256', data);
+    return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+  }
+
+  finishAuth(user, message) {
     window.appState.currentUser = user;
     saveGlobalState(window.appState);
     localStorage.setItem('te_reto_session', '1');
     this.closeModal('auth-modal');
     this.updateNavbar();
-    alert(`¡Bienvenido de nuevo, ${user.name}!`);
+    if (message) alert(message);
+  }
+
+  async handleLogin(e) {
+    e.preventDefault();
+    const id = document.getElementById('login-email').value.trim().toLowerCase();
+    const password = document.getElementById('login-password').value;
+
+    const user = window.appState.users.find(u =>
+      (u.email && u.email.toLowerCase() === id) || (u.username && u.username.toLowerCase() === id)
+    );
+    if (!user) {
+      alert('⚠️ No existe una cuenta con ese correo o usuario. Crea una cuenta nueva.');
+      return;
+    }
+    if (!user.passwordHash) {
+      alert('⚠️ Esta cuenta no tiene contraseña (se creó con Google/Microsoft o es antigua). Usa el botón de Google/Microsoft o crea una cuenta nueva.');
+      return;
+    }
+    const hash = await this.hashPassword(user.email, password);
+    if (hash !== user.passwordHash) {
+      alert('❌ Contraseña incorrecta.');
+      return;
+    }
+    this.finishAuth(user, `¡Bienvenido de nuevo, ${user.name}!`);
     this.navigate('home');
   }
 
-  handleRegister(e) {
+  async handleRegister(e) {
     e.preventDefault();
     const name = document.getElementById('reg-name').value.trim();
     const username = document.getElementById('reg-username').value.trim();
     const email = document.getElementById('reg-email').value.trim();
+    const password = document.getElementById('reg-password').value;
+    const password2 = document.getElementById('reg-password2').value;
     const role = document.getElementById('reg-role').value;
+
+    if (password.length < 6) {
+      alert('⚠️ La contraseña debe tener al menos 6 caracteres.');
+      return;
+    }
+    if (password !== password2) {
+      alert('⚠️ Las contraseñas no coinciden.');
+      return;
+    }
+    const exists = window.appState.users.find(u =>
+      (u.email && u.email.toLowerCase() === email.toLowerCase()) ||
+      (u.username && u.username.toLowerCase() === username.toLowerCase())
+    );
+    if (exists) {
+      alert('⚠️ Ya existe una cuenta con ese correo o usuario. Inicia sesión.');
+      this.switchAuthTab('login');
+      return;
+    }
 
     const newUser = {
       id: 'user_' + Date.now(),
       name: name,
       username: username,
       email: email,
+      passwordHash: await this.hashPassword(email, password),
       role: role,
       avatar: role === 'teacher' ? '👨‍🏫' : '🦊',
       xp: 100,
@@ -676,14 +730,69 @@ class AppRouter {
     };
 
     window.appState.users.push(newUser);
-    window.appState.currentUser = newUser;
-    saveGlobalState(window.appState);
-    localStorage.setItem('te_reto_session', '1');
-    this.closeModal('auth-modal');
-    this.updateNavbar();
+    this.finishAuth(newUser);
     window.soundEngine.playFanfare();
     alert(`🎉 ¡Cuenta creada con éxito! Bienvenido a MENTIX, ${name}.`);
     this.navigate('profile');
+  }
+
+  // Inicio de sesión real con Google (Gmail) o Microsoft mediante Supabase Auth
+  async oauthLogin(provider) {
+    const client = window.supabaseService && window.supabaseService.client;
+    if (!client) {
+      alert('⚠️ No se pudo conectar con el servicio de autenticación. Revisa tu conexión a internet.');
+      return;
+    }
+    try {
+      const options = { redirectTo: window.location.origin + window.location.pathname };
+      if (provider === 'azure') options.scopes = 'email';
+      const { error } = await client.auth.signInWithOAuth({ provider, options });
+      if (error) throw error;
+    } catch (err) {
+      alert(`⚠️ No se pudo iniciar con ${provider === 'google' ? 'Google' : 'Microsoft'}: ${err.message || err}\n\nVerifica que el proveedor esté activado en Supabase (Authentication → Providers).`);
+    }
+  }
+
+  // Al volver de Google/Microsoft: crear o recuperar el usuario local con ese correo
+  async checkOAuthSession() {
+    const client = window.supabaseService && window.supabaseService.client;
+    if (!client) return false;
+    try {
+      const { data } = await client.auth.getSession();
+      const su = data && data.session && data.session.user;
+      if (!su || !su.email) return false;
+
+      const meta = su.user_metadata || {};
+      let user = window.appState.users.find(u => u.email && u.email.toLowerCase() === su.email.toLowerCase());
+      if (!user) {
+        user = {
+          id: 'user_' + Date.now(),
+          name: meta.full_name || meta.name || su.email.split('@')[0],
+          username: su.email.split('@')[0],
+          email: su.email,
+          role: 'student',
+          avatar: '🦊',
+          xp: 100,
+          level: 1,
+          levelName: 'Principiante',
+          challengesPlayed: 0,
+          challengesCreated: 0,
+          victories: 0,
+          medals: [],
+          institution: 'Comunidad MENTIX',
+          status: 'active',
+          provider: (su.app_metadata && su.app_metadata.provider) || 'oauth'
+        };
+        window.appState.users.push(user);
+      }
+      this.finishAuth(user);
+      if (window.history && window.history.replaceState) {
+        window.history.replaceState(null, '', window.location.pathname);
+      }
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
 
   openCategoryModal() {
