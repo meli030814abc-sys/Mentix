@@ -405,7 +405,6 @@ window.ProjectsView = {
         <div class="challenge-banner" style="background-image: url('${c.banner || defaultBanner}'); position: relative; height: 160px;">
           <div style="position: absolute; top: 0.6rem; left: 0.6rem; display: flex; gap: 0.35rem;">
             ${typeBadge}
-            ${diffBadge}
           </div>
           <span class="badge-tag" style="position: absolute; bottom: 0.6rem; left: 0.6rem; background: rgba(0,0,0,0.65); color: white;">
             ${countBadge}

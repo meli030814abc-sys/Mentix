@@ -218,7 +218,7 @@ window.HomeView = {
     return `
       <div class="challenge-card" onclick="${cardAction}" style="cursor: pointer;">
         <div class="challenge-banner" style="background-image: url('${challenge.banner || 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=600'}'); position: relative;">
-          ${projectType === 'presentation' ? '<span class="badge-tag" style="background: rgba(124, 58, 237, 0.85); color: white;">📊 Diapositivas</span>' : (projectType === 'video' ? '<span class="badge-tag" style="background: rgba(239, 68, 68, 0.85); color: white;">🎬 Video</span>' : `<span class="badge-tag ${diffTag}">${challenge.difficulty || 'Normal'}</span>`)}
+          ${projectType === 'presentation' ? '<span class="badge-tag" style="background: rgba(124, 58, 237, 0.85); color: white;">📊 Diapositivas</span>' : (projectType === 'video' ? '<span class="badge-tag" style="background: rgba(239, 68, 68, 0.85); color: white;">🎬 Video</span>' : (projectType === 'document' ? '<span class="badge-tag" style="background: rgba(59, 130, 246, 0.85); color: white;">📄 Documento</span>' : (projectType === 'url' ? '<span class="badge-tag" style="background: rgba(16, 185, 129, 0.85); color: white;">🌐 Enlace</span>' : `<span class="badge-tag ${diffTag}">${challenge.difficulty || 'Normal'}</span>`)))}
           <span class="badge-tag" style="background: rgba(0,0,0,0.6); color: white;">⏱️ ${challenge.timePerQuestion || 20}s</span>
           ${(challenge.entityName || challenge.entityLogo) ? `
             <div style="position: absolute; bottom: 0.5rem; right: 0.5rem; display: flex; align-items: center; gap: 0.4rem; background: rgba(0,0,0,0.72); backdrop-filter: blur(6px); border-radius: 8px; padding: 0.3rem 0.55rem; max-width: 140px;">
