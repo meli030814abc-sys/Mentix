@@ -861,23 +861,14 @@ window.LobbyView = {
       <div style="max-width: 520px; margin: 2.5rem auto; padding: 0 1.25rem;">
         <div class="glass-panel" style="padding: 2.25rem 2rem; text-align: center; border-color: ${currentMode.accentColor || 'var(--neon-cyan)'}; box-shadow: 0 15px 45px rgba(0,0,0,0.35);">
           
-          <!-- Encabezado de la Sala Encontrada y Modo Elegido por el Docente -->
-          <div style="background: rgba(0,0,0,0.25); border: 1.5px solid ${currentMode.accentColor || 'var(--neon-cyan)'}; border-radius: 14px; padding: 0.95rem 1.25rem; margin-bottom: 1.75rem; text-align: left; display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap;">
-            <div style="display: flex; align-items: center; gap: 0.85rem;">
-              <div style="width: 48px; height: 48px; border-radius: 12px; background: ${currentMode.gradient || 'var(--neon-cyan)'}; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; flex-shrink: 0; box-shadow: 0 4px 12px rgba(0,0,0,0.3);">
-                ${currentMode.icon}
+          <!-- Encabezado de la Sala Encontrada -->
+          <div style="background: rgba(0,0,0,0.25); border: 1.5px solid rgba(0, 245, 212, 0.4); border-radius: 14px; padding: 0.95rem 1.25rem; margin-bottom: 1.75rem; text-align: left; display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap;">
+            <div>
+              <div style="font-size: 0.78rem; font-weight: 800; color: #ffd166; text-transform: uppercase; margin-bottom: 0.2rem;">
+                SALA PIN: ${formattedPin}
               </div>
-              <div>
-                <div style="display: flex; align-items: center; gap: 0.45rem; margin-bottom: 0.15rem;">
-                  <span style="font-size: 0.72rem; font-weight: 800; color: #ffd166; text-transform: uppercase;">SALA PIN: ${formattedPin}</span>
-                  <span class="badge-tag" style="background: rgba(255,255,255,0.12); font-size: 0.68rem; padding: 0.1rem 0.45rem; font-weight: 800;">${currentMode.badge}</span>
-                </div>
-                <div style="font-size: 1.15rem; font-weight: 900; color: var(--text-primary); line-height: 1.2;">
-                  ${room.challenge?.title || 'Reto en Vivo'}
-                </div>
-                <div style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 0.2rem;">
-                  Modo activo: <strong>${currentMode.name}</strong>
-                </div>
+              <div style="font-size: 1.2rem; font-weight: 900; color: var(--text-primary); line-height: 1.2;">
+                ${room.challenge?.title || 'Reto MENTIX'}
               </div>
             </div>
             <button type="button" class="btn btn-outline" style="font-size: 0.78rem; padding: 0.35rem 0.75rem; border-color: rgba(255,255,255,0.2);" onclick="window.LobbyView.backToPinStep()" title="Cambiar código PIN">
@@ -1127,36 +1118,13 @@ window.LobbyView = {
             <span>📱</span> <span>SALA PIN: ${formattedPin}</span>
           </div>
 
-          <!-- Tarjeta Completa del Modo de Juego Escogido -->
-          <div class="waiting-mode-card" style="border-color: ${currentMode.accentColor || 'var(--neon-cyan)'};">
-            <div style="display: flex; align-items: center; gap: 1rem;">
-              <div style="width: 54px; height: 54px; border-radius: 14px; background: ${currentMode.gradient || 'var(--neon-cyan)'}; display: flex; align-items: center; justify-content: center; font-size: 2rem; flex-shrink: 0; box-shadow: 0 4px 15px rgba(0,0,0,0.4);">
-                ${currentMode.icon}
-              </div>
-              <div>
-                <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.2rem;">
-                  <span style="font-size: 0.78rem; font-weight: 800; color: #ffd166; text-transform: uppercase; letter-spacing: 0.5px;">Modo de Juego Activo</span>
-                  <span class="badge-tag" style="background: rgba(255,255,255,0.12); font-size: 0.72rem; padding: 0.15rem 0.5rem; font-weight: 800;">${currentMode.badge}</span>
-                </div>
-                <div style="font-size: 1.35rem; font-weight: 900; color: var(--text-primary);">
-                  ${currentMode.name}
-                </div>
-              </div>
+          <div style="margin: 1.5rem 0; display: flex; flex-direction: column; align-items: center; gap: 0.75rem;">
+            <div style="font-size: 1.25rem; font-weight: 800; color: var(--text-primary);">
+              ${room?.challenge?.title || 'Reto MENTIX'}
             </div>
-            <div style="color: var(--text-secondary); font-size: 0.95rem; max-width: 480px; line-height: 1.45;">
-              ${currentMode.description}
+            <div style="display: inline-flex; align-items: center; gap: 0.5rem; background: rgba(0,245,212,0.12); border: 1.5px solid var(--neon-cyan); padding: 0.45rem 1.25rem; border-radius: 9999px; color: var(--neon-cyan); font-weight: 800; font-size: 0.95rem;">
+              <span>🎮</span> Conectado a la sala
             </div>
-          </div>
-
-          <!-- Estado de Espera en Vivo -->
-          <div class="waiting-status-box">
-            <div style="font-size: 2.4rem; animation: timer-pulse 1.2s infinite alternate;">⏳</div>
-            <h3 style="font-weight: 800; font-size: 1.3rem; color: var(--text-primary); margin: 0;">
-              Esperando a que el profesor inicie la partida...
-            </h3>
-            <p style="font-size: 0.95rem; color: var(--text-secondary); margin: 0; max-width: 580px;">
-              Mantén esta pantalla lista. En cuanto el profesor pulse <strong>¡Empezar!</strong>, las preguntas se proyectarán en pantalla gigante y responderás aquí con tus figuras de colores.
-            </p>
           </div>
 
           <!-- Botón de Salida -->

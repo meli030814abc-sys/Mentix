@@ -83,8 +83,13 @@ window.GameView = {
       this.challenge = window.LobbyView.joinRoomData.challenge;
       if (this.room) this.room.challenge = this.challenge;
     }
-    if (!this.challenge && window.appState?.challenges?.length > 0) {
+    if ((!this.challenge || !Array.isArray(this.challenge.questions) || this.challenge.questions.length === 0) && window.appState?.challenges?.length > 0) {
       this.challenge = window.appState.challenges[0];
+      if (this.room) this.room.challenge = this.challenge;
+    }
+    if ((!this.challenge || !Array.isArray(this.challenge.questions) || this.challenge.questions.length === 0) && typeof DEFAULT_CHALLENGES !== 'undefined' && DEFAULT_CHALLENGES[0]) {
+      this.challenge = DEFAULT_CHALLENGES[0];
+      if (this.room) this.room.challenge = this.challenge;
     }
     let detectedMode = this.room?.gameMode;
     if (!detectedMode || detectedMode === 'clasico') {
@@ -108,7 +113,12 @@ window.GameView = {
     this.modeConfig = this.room?.modeConfig || {};
     this.currentQuestionIndex = this.room?.currentQuestionIndex || 0;
     this.setupPlayerListeners();
-    this.renderQuestionScreen();
+
+    if (this.room?.status === 'intro' || this.currentQuestionIndex === 0) {
+      this.startCountdownIntro();
+    } else {
+      this.renderQuestionScreen();
+    }
   },
 
   setupHostListeners() {
@@ -261,8 +271,8 @@ window.GameView = {
     if (!container) return;
 
     if (!this.challenge || !Array.isArray(this.challenge.questions) || this.challenge.questions.length === 0) {
-      if (typeof DEFAULT_CHALLENGES !== 'undefined' && DEFAULT_CHALLENGES[0] && this.challenge?.id === 'reto_sample_cloud') {
-        this.challenge.questions = DEFAULT_CHALLENGES[0].questions;
+      if (typeof DEFAULT_CHALLENGES !== 'undefined' && DEFAULT_CHALLENGES[0]) {
+        this.challenge = { ...(this.challenge || {}), questions: DEFAULT_CHALLENGES[0].questions };
       } else {
         alert('⚠️ Este reto aún no tiene preguntas configuradas. Edita el reto o agrega preguntas para comenzar a jugar.');
         window.appRouter.navigate('home');
@@ -317,8 +327,8 @@ window.GameView = {
     if (!container) return;
 
     if (!this.challenge || !Array.isArray(this.challenge.questions) || this.challenge.questions.length === 0) {
-      if (typeof DEFAULT_CHALLENGES !== 'undefined' && DEFAULT_CHALLENGES[0] && this.challenge?.id === 'reto_sample_cloud') {
-        this.challenge.questions = DEFAULT_CHALLENGES[0].questions;
+      if (typeof DEFAULT_CHALLENGES !== 'undefined' && DEFAULT_CHALLENGES[0]) {
+        this.challenge = { ...(this.challenge || {}), questions: DEFAULT_CHALLENGES[0].questions };
       } else {
         alert('⚠️ Este reto aún no tiene preguntas configuradas.');
         window.appRouter.navigate('home');
@@ -641,8 +651,10 @@ window.GameView = {
           </div>
         </div>
 
-        <!-- Overlay del Modo de Juego en Móvil -->
-        ${window.GameModes ? window.GameModes.renderPlayerQuestionOverlay(this.gameMode, this) : ''}
+        <!-- Enunciado de la Pregunta para el Estudiante -->
+        <div class="kahoot-host-question-banner" style="font-size: clamp(1.05rem, 3.2vw, 1.35rem); margin: 0.4rem 0 0.85rem; padding: 0.75rem 1rem; border-radius: 14px; min-height: auto;">
+          ${this.escapeHtml(q.text)}
+        </div>
 
         ${isTextOrOpen ? `
           <!-- Entrada de Respuesta Corta o Abierta para el Estudiante -->
@@ -1208,11 +1220,7 @@ window.GameView = {
           >
             ➡️ Continuar a Estadísticas
           </button>
-        ` : `
-          <div style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.4rem;">
-            Observa la pantalla del profesor mientras se revelan los resultados...
-          </div>
-        `}
+        ` : ''}
       </div>
     `;
     panel.style.display = 'block';
@@ -2066,17 +2074,6 @@ window.GameView = {
             <span style="font-size: 0.9rem; font-weight: 800; color: var(--text-secondary); text-transform: uppercase;">Tu Puntaje Total:</span>
             <span style="font-size: 1.4rem; font-weight: 900; color: #ffd166;">🏆 ${finalScore} PTS</span>
           </div>
-        </div>
-
-        <!-- Tarjeta de Espera al Profesor -->
-        <div class="glass-panel" style="width: 100%; padding: 1.75rem; text-align: center; border-color: rgba(0, 245, 212, 0.3); background: rgba(0, 245, 212, 0.05);">
-          <div style="font-size: 2rem; margin-bottom: 0.5rem; animation: timer-pulse 1.2s infinite alternate;">⏳</div>
-          <div style="font-size: 1.2rem; font-weight: 800; color: var(--text-primary); margin-bottom: 0.35rem;">
-            ${isLastQuestion ? 'Esperando Podio Final...' : 'Esperando a que el profesor continúe...'}
-          </div>
-          <p style="font-size: 0.88rem; color: var(--text-secondary); margin: 0; max-width: 440px; margin: 0 auto;">
-            El profesor está revisando los resultados en la pantalla principal. La siguiente pregunta comenzará automáticamente.
-          </p>
         </div>
       </div>
     `;

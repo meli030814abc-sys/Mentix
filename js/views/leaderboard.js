@@ -82,13 +82,7 @@ window.LeaderboardView = {
               <span>Siguiente Pregunta</span> ⏩
             </button>
           </div>
-        ` : `
-          <div style="text-align: center; color: var(--text-secondary); font-weight: 600; padding: 1rem; background: rgba(0,0,0,0.25); border-radius: 12px; border: 1px dashed rgba(255,255,255,0.15);">
-            <div style="font-size: 1.8rem; margin-bottom: 0.4rem; animation: timer-pulse 1.2s infinite alternate;">⏳</div>
-            <div style="font-size: 1.1rem; font-weight: 800; color: var(--text-primary); margin-bottom: 0.25rem;">Esperando a que el anfitrión avance a la siguiente pregunta...</div>
-            <div style="font-size: 0.85rem; color: var(--text-muted);">La pantalla cambiará automáticamente a los botones de colores</div>
-          </div>
-        `}
+        ` : ''}
       </div>
     `;
 
