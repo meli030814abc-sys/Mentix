@@ -422,8 +422,10 @@ window.LobbyView = {
 
   renderHostView(container) {
     const r = this.currentRoom;
-    const shareUrl = `${window.location.origin}${window.location.pathname}#join?pin=${r.pin}`;
-    const qrSvg = window.realtimeEngine.generateQRCodeSVG(r.pin);
+    const origin = window.location.origin || (window.location.protocol + '//' + window.location.host);
+    const pathname = window.location.pathname || '/';
+    const shareUrl = `${origin}${pathname}#lobby-join?pin=${r.pin}`;
+    const qrSvg = window.realtimeEngine.generateQRCodeHTML(shareUrl, 180);
 
     // Formatear PIN con espacio (ej: 160 182) estilo Kahoot
     const formattedPin = r.pin.length === 6 ? `${r.pin.slice(0, 3)} ${r.pin.slice(3)}` : r.pin;
@@ -533,11 +535,13 @@ window.LobbyView = {
           </div>
 
           <!-- Bloque QR Code -->
-          <div style="display: flex; flex-direction: column; align-items: center; background: #f8fafc; padding: 1rem 1.25rem; border-radius: 14px; border: 1px solid #e2e8f0; box-shadow: 0 4px 15px rgba(0,0,0,0.06);">
-            <div style="margin-bottom: 0.4rem;">
+          <div style="display: flex; flex-direction: column; align-items: center; background: #ffffff; padding: 1.15rem 1.35rem; border-radius: 16px; border: 1.5px solid #e2e8f0; box-shadow: 0 4px 18px rgba(0,0,0,0.06); cursor: pointer;" onclick="window.open('${shareUrl}', '_blank')" title="Toca o escanea para unirte">
+            <div style="margin-bottom: 0.6rem;">
               ${qrSvg}
             </div>
-            <span style="font-size: 0.82rem; color: #64748b; font-weight: 700;">📱 Escanea con tu celular</span>
+            <span style="font-size: 0.82rem; color: #475569; font-weight: 800; display: flex; align-items: center; gap: 0.35rem;">
+              <span>📱</span> Escanea con tu celular
+            </span>
           </div>
         </div>
 

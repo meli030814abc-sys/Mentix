@@ -593,49 +593,51 @@ class RealtimeEngine {
     };
   }
 
-  // Generador de código QR nativo SVG (sin librería externa)
-  generateQRCodeSVG(text) {
-    // Generador de patrón matricial estilizado decorativo QR para el código PIN
-    const size = 180;
-    const cells = 21;
-    const cellSize = size / cells;
-    let rects = '';
+  // Generador de código QR auténtico, 100% escaneable desde celulares (cámara iOS / Android)
+  generateQRCodeHTML(url, size = 180) {
+    const boxId = 'qr-box-' + Math.random().toString(36).substr(2, 9);
+    const encoded = encodeURIComponent(url);
+    // API de respaldo inmediata con código QR estándar y zona segura blanca
+    const qrImgUrl = `https://api.qrserver.com/v1/create-qr-code/?size=${size}x${size}&data=${encoded}&margin=2&color=0b0f19&bgcolor=ffffff`;
 
-    // Algoritmo de hash determinístico para el patrón visual
-    let hash = 0;
-    for (let i = 0; i < text.length; i++) {
-      hash = (hash << 5) - hash + text.charCodeAt(i);
-      hash |= 0;
-    }
-
-    for (let r = 0; r < cells; r++) {
-      for (let c = 0; c < cells; c++) {
-        // Esquinas marcadoras fijas QR (Top-Left, Top-Right, Bottom-Left)
-        const isCorner = 
-          (r < 7 && c < 7) || 
-          (r < 7 && c >= cells - 7) || 
-          (r >= cells - 7 && c < 7);
-        
-        let filled = false;
-        if (isCorner) {
-          // Patrón de diana estándar QR
-          const localR = r < 7 ? r : r - (cells - 7);
-          const localC = c < 7 ? c : c - (cells - 7);
-          if (localR === 0 || localR === 6 || localC === 0 || localC === 6) filled = true;
-          else if (localR >= 2 && localR <= 4 && localC >= 2 && localC <= 4) filled = true;
-        } else {
-          // Datos pseudoaleatorios basados en el hash y coordenadas
-          const v = Math.sin(r * 12.9898 + c * 78.233 + hash) * 43758.5453;
-          filled = (v - Math.floor(v)) > 0.5;
-        }
-
-        if (filled) {
-          rects += `<rect x="${c * cellSize}" y="${r * cellSize}" width="${cellSize + 0.5}" height="${cellSize + 0.5}" fill="#00f5d4"/>`;
+    // Renderizado local instantáneo vía QRCode.js si está cargado
+    setTimeout(() => {
+      const container = document.getElementById(boxId);
+      if (!container) return;
+      if (typeof window.QRCode === 'function') {
+        try {
+          container.innerHTML = '';
+          new window.QRCode(container, {
+            text: url,
+            width: size - 12,
+            height: size - 12,
+            colorDark: '#0b0f19',
+            colorLight: '#ffffff',
+            correctLevel: window.QRCode.CorrectLevel.M
+          });
+          const el = container.querySelector('canvas, img');
+          if (el) {
+            el.style.display = 'block';
+            el.style.margin = '0 auto';
+            el.style.borderRadius = '6px';
+            el.style.maxWidth = '100%';
+            el.style.height = 'auto';
+          }
+        } catch (e) {
+          console.warn('Fallback a imagen QR de servidor:', e);
         }
       }
-    }
+    }, 40);
 
-    return `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" style="border-radius:12px; background:#0b0f19; padding:8px; box-shadow:0 0 20px rgba(0,245,212,0.4);">${rects}</svg>`;
+    return `
+      <div id="${boxId}" style="width: ${size}px; height: ${size}px; background: #ffffff; padding: 6px; border-radius: 14px; box-shadow: 0 4px 18px rgba(0,0,0,0.12), 0 0 10px rgba(0, 245, 212, 0.25); display: flex; align-items: center; justify-content: center; overflow: hidden; margin: 0 auto; border: 2px solid rgba(0, 245, 212, 0.4);">
+        <img src="${qrImgUrl}" alt="Código QR de la sala" width="${size}" height="${size}" style="display: block; width: 100%; height: 100%; object-fit: contain; border-radius: 8px;" />
+      </div>
+    `;
+  },
+
+  generateQRCodeSVG(text) {
+    return this.generateQRCodeHTML(text);
   }
 }
 
