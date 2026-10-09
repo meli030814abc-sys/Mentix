@@ -976,7 +976,7 @@ class AppRouter {
     } catch (e) {
       console.warn('Error sincronizando categorías globales:', e);
     }
-  },
+  }
 
   isChallengeOwner(challenge) {
     if (!challenge) return false;
@@ -999,7 +999,7 @@ class AppRouter {
     }
 
     return false;
-  },
+  }
 
   pushChallengeToCloud(challenge) {
     if (!challenge || !challenge.id || !challenge.title) return;
@@ -1010,7 +1010,7 @@ class AppRouter {
         body: JSON.stringify({ challenge })
       }).catch(e => console.warn('Error al subir reto a la nube:', e));
     } catch(e) {}
-  },
+  }
 
   async syncChallengesWithCloud() {
     try {
@@ -1063,7 +1063,7 @@ class AppRouter {
     } catch (e) {
       console.warn('Error sincronizando retos con la nube:', e);
     }
-  },
+  }
 
   closeModal(modalId) {
     // El acceso es obligatorio: no se puede cerrar sin registrarse o iniciar sesión
