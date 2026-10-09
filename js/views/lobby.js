@@ -18,7 +18,11 @@ window.LobbyView = {
 
   initHost(challenge, gameMode = 'clasico', modeConfig = {}, rosterConfig = null) {
     this.mode = 'host';
-    this.currentRoom = window.realtimeEngine.createRoom(challenge, gameMode, modeConfig, rosterConfig);
+    try {
+      this.currentRoom = window.realtimeEngine.createRoom(challenge, gameMode, modeConfig, rosterConfig);
+    } catch (e) {
+      console.error('Error inicializando sala de anfitrión:', e);
+    }
     this.setupListeners();
     this.render();
   },
@@ -139,7 +143,7 @@ window.LobbyView = {
 
     const modal = document.getElementById('roster-config-modal');
     if (!modal) {
-      window.appRouter.launchHostWithMode(challenge.id, gameMode, modeConfig);
+      window.appRouter.launchHostWithMode(challenge, gameMode, modeConfig);
       return;
     }
 
@@ -273,7 +277,13 @@ window.LobbyView = {
   },
 
   confirmRosterAndLaunch() {
-    if (!this.pendingChallenge) return;
+    if (!this.pendingChallenge) {
+      this.pendingChallenge = window.ExperienceView?.currentChallenge || window.appState?.challenges?.[0];
+    }
+    if (!this.pendingChallenge) {
+      alert('⚠️ No se ha seleccionado un cuestionario para abrir la sala.');
+      return;
+    }
     this.closeRosterModal();
 
     let rosterConfig = { mode: 'open', students: [] };
@@ -301,7 +311,7 @@ window.LobbyView = {
     if (window.soundEngine) window.soundEngine.playFanfare();
 
     window.appRouter.launchHostWithMode(
-      this.pendingChallenge.id,
+      this.pendingChallenge,
       this.pendingModeId,
       this.pendingModeConfig,
       rosterConfig
@@ -422,25 +432,54 @@ window.LobbyView = {
 
   renderHostView(container) {
     const r = this.currentRoom;
+    if (!r || !r.pin) {
+      console.warn('No hay currentRoom válido al renderizar host view');
+      container.innerHTML = `
+        <div style="text-align: center; padding: 4rem 1rem; color: #ffffff;">
+          <h2>⚠️ Creando la sala...</h2>
+          <p style="color: var(--text-secondary);">Un momento por favor.</p>
+        </div>
+      `;
+      return;
+    }
+
     const origin = window.location.origin || (window.location.protocol + '//' + window.location.host);
     const pathname = window.location.pathname || '/';
     const shareUrl = `${origin}${pathname}#lobby-join?pin=${r.pin}`;
-    const qrSvg = window.realtimeEngine.generateQRCodeHTML(shareUrl, 180);
+    
+    let qrSvg = '';
+    try {
+      qrSvg = window.realtimeEngine.generateQRCodeHTML(shareUrl, 180);
+    } catch(e) {
+      qrSvg = `<img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(shareUrl)}" style="width:180px;height:180px;border-radius:8px;" />`;
+    }
 
     // Formatear PIN con espacio (ej: 160 182) estilo Kahoot
-    const formattedPin = r.pin.length === 6 ? `${r.pin.slice(0, 3)} ${r.pin.slice(3)}` : r.pin;
+    const pinStr = String(r.pin || '');
+    const formattedPin = pinStr.length === 6 ? `${pinStr.slice(0, 3)} ${pinStr.slice(3)}` : pinStr;
 
     // Obtener información del modo de juego seleccionado
-    const currentMode = window.GameModes ? window.GameModes.getMode(r.gameMode) : { name: 'Modo Clásico', icon: '🏆', badge: '🏆 TRADICIONAL' };
+    const currentMode = (window.GameModes && typeof window.GameModes.getMode === 'function')
+      ? window.GameModes.getMode(r.gameMode) 
+      : { name: 'Modo Clásico', icon: '🏆', badge: '🏆 TRADICIONAL', description: 'Todos compiten en vivo.' };
+
+    const playersList = Array.isArray(r.players) ? r.players : [];
+    const rosterList = Array.isArray(r.roster) ? r.roster : [];
 
     // Calcular alumnos del roster que faltan por unirse
-    const missingStudents = (r.rosterMode === 'roster' && r.roster)
-      ? r.roster.filter(st => !r.players.some(p => 
+    const missingStudents = (r.rosterMode === 'roster' && rosterList.length > 0)
+      ? rosterList.filter(st => !playersList.some(p => 
           (p.rosterStudentId && p.rosterStudentId === st.id) ||
-          (p.email && st.email && p.email.toLowerCase() === st.email.toLowerCase()) ||
-          (p.nickname && st.name && p.nickname.toLowerCase() === st.name.toLowerCase())
+          (p.email && st.email && String(p.email).toLowerCase() === String(st.email).toLowerCase()) ||
+          (p.nickname && st.name && String(p.nickname).trim().toLowerCase() === String(st.name).trim().toLowerCase())
         ))
       : [];
+
+    const challengeTitle = r.challenge?.title || 'Cuestionario MENTIX';
+    const questionsCount = Array.isArray(r.challenge?.questions) 
+      ? r.challenge.questions.length 
+      : (r.challenge?.slides?.length || r.challenge?.sections?.length || 0);
+    const timeLimit = r.challenge?.timePerQuestion || 20;
 
     container.innerHTML = `
       <div style="max-width: 1050px; margin: 0 auto; padding: 2rem 1.25rem 5rem;">
@@ -454,19 +493,19 @@ window.LobbyView = {
               </span>
               ${r.rosterMode === 'roster' ? `
                 <span class="badge-tag badge-roster-pill">
-                  📋 LISTA: ${r.rosterGroupName || 'Oficial'} (${r.players.length}/${r.roster?.length || 0} PRESENTES)
+                  📋 LISTA: ${r.rosterGroupName || 'Oficial'} (${playersList.length}/${rosterList.length} PRESENTES)
                 </span>
               ` : `
                 <span class="badge-tag badge-open-pill">
                   ✍️ NOMBRES LIBRES
                 </span>
               `}
-              <span class="kahoot-pin-pill">👤 ${r.players.length} Conectados</span>
+              <span class="kahoot-pin-pill">👤 ${playersList.length} Conectados</span>
             </div>
             <h1 style="font-size: 2rem; margin: 0; color: var(--text-primary);">
-              ${r.challenge.title}
+              ${challengeTitle}
             </h1>
-            <p style="color: var(--text-secondary); margin-top: 0.25rem;">${r.challenge.questions.length} preguntas • Tiempo estándar: ${r.challenge.timePerQuestion || 20}s</p>
+            <p style="color: var(--text-secondary); margin-top: 0.25rem;">${questionsCount} preguntas • Tiempo estándar: ${timeLimit}s</p>
           </div>
 
           <div style="display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap;">
@@ -482,7 +521,7 @@ window.LobbyView = {
             <button class="btn btn-outline btn-host-bots" onclick="window.LobbyView.addBots()">
               <span>🤖</span> +4 Bots de Prueba
             </button>
-            <button class="btn btn-primary btn-lg" id="btn-start-game" onclick="window.LobbyView.startGame()" ${r.players.length === 0 ? 'disabled' : ''} style="font-weight: 800; padding: 0.85rem 1.75rem;">
+            <button class="btn btn-primary btn-lg" id="btn-start-game" onclick="window.LobbyView.startGame()" ${playersList.length === 0 ? 'disabled' : ''} style="font-weight: 800; padding: 0.85rem 1.75rem;">
               <span>🚀</span> ¡Empezar!
             </button>
           </div>
@@ -549,14 +588,14 @@ window.LobbyView = {
         <div class="glass-panel" style="padding: 2rem; border-radius: 16px;">
           <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 0.5rem;">
             <h2 style="font-size: 1.35rem; display: flex; align-items: center; gap: 0.6rem; color: var(--text-primary);">
-              <span>👥</span> Alumnos en la Sala (<span style="color: var(--neon-cyan);">${r.players.length}</span>)
+              <span>👥</span> Alumnos en la Sala (<span style="color: var(--neon-cyan);">${playersList.length}</span>)
             </h2>
             <span style="font-size: 0.9rem; color: var(--text-muted); font-weight: 600;">
-              ${r.players.length === 0 ? 'Esperando a que los alumnos ingresen el PIN...' : '¡Listos para competir!'}
+              ${playersList.length === 0 ? 'Esperando a que los alumnos ingresen el PIN...' : '¡Listos para competir!'}
             </span>
           </div>
 
-          ${r.players.length === 0 ? `
+          ${playersList.length === 0 ? `
             <div style="text-align: center; padding: 3rem 1rem; color: var(--text-muted);">
               <div style="font-size: 3.5rem; margin-bottom: 1rem; animation: timer-pulse 1.5s infinite alternate;">🎮</div>
               <p style="font-size: 1.2rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.5rem;">Esperando a que los jugadores se unan...</p>
@@ -569,7 +608,7 @@ window.LobbyView = {
             </div>
           ` : `
             <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 1rem;">
-              ${r.players.map((p, idx) => `
+              ${playersList.map((p, idx) => `
                 <div class="lobby-player-card">
                   <div style="display: flex; align-items: center; gap: 0.65rem; overflow: hidden;">
                     <span style="font-size: 2rem;">${p.avatar || '😎'}</span>
@@ -1107,18 +1146,23 @@ window.LobbyView = {
       alert('Por favor selecciona tu nombre de la lista o escribe tu nombre para unirte.');
       return;
     }
-    if (!email) {
-      alert('Por favor ingresa tu correo electrónico para unirte.');
-      return;
-    }
 
     // Obtener los datos reales de la sala para no perder el modo de juego
     const room = this.joinRoomData || this.findRoomByPin(pin);
+
+    let finalEmail = email;
+    if (!finalEmail) {
+      if (room && room.rosterMode === 'roster') {
+        alert('Por favor selecciona tu nombre y correo oficial de la lista.');
+        return;
+      }
+      finalEmail = `${nickname.toLowerCase().replace(/[^a-z0-9]/g, '') || 'alumno'}@mentix.player`;
+    }
     if (!room) {
       console.log('Buscando sala en la red con PIN:', pin);
     }
 
-    window.realtimeEngine.joinRoom(pin, nickname, avatar, email, studentId, room);
+    window.realtimeEngine.joinRoom(pin, nickname, avatar, finalEmail, studentId, room);
     if (room && room.gameMode && window.realtimeEngine.currentRoom) {
       window.realtimeEngine.currentRoom.gameMode = room.gameMode;
       window.realtimeEngine.currentRoom.challenge = room.challenge || window.realtimeEngine.currentRoom.challenge;

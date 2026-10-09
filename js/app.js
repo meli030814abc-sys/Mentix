@@ -200,8 +200,11 @@ class AppRouter {
 
       case 'lobby-host':
         document.getElementById('view-lobby')?.classList.add('active');
-        if (params.challenge) {
-          window.LobbyView.initHost(params.challenge, params.gameMode || 'clasico', params.modeConfig || {}, params.rosterConfig || null);
+        const hostChallenge = params.challenge || window.LobbyView?.pendingChallenge || window.ExperienceView?.currentChallenge || window.realtimeEngine?.currentRoom?.challenge || window.appState?.challenges?.[0];
+        if (hostChallenge) {
+          window.LobbyView.initHost(hostChallenge, params.gameMode || 'clasico', params.modeConfig || {}, params.rosterConfig || null);
+        } else {
+          this.navigate('home');
         }
         break;
 
@@ -398,9 +401,32 @@ class AppRouter {
     this.navigate('select-experience', { challenge: c, gameMode: defaultMode });
   }
 
-  launchHostWithMode(challengeId, modeId = 'clasico', config = {}, rosterConfig = null) {
-    const c = window.appState.challenges.find(item => item.id === challengeId);
-    if (!c) return;
+  launchHostWithMode(challengeOrId, modeId = 'clasico', config = {}, rosterConfig = null) {
+    let c = null;
+    if (challengeOrId && typeof challengeOrId === 'object') {
+      c = challengeOrId;
+    } else if (challengeOrId) {
+      const idStr = String(challengeOrId).trim();
+      c = (window.appState?.challenges || []).find(item => item && String(item.id).trim() === idStr)
+        || (window.appState?.projects || []).find(item => item && String(item.id).trim() === idStr);
+    }
+
+    if (!c && window.LobbyView?.pendingChallenge) {
+      c = window.LobbyView.pendingChallenge;
+    }
+    if (!c && window.ExperienceView?.currentChallenge) {
+      c = window.ExperienceView.currentChallenge;
+    }
+    if (!c && Array.isArray(window.appState?.challenges) && window.appState.challenges.length > 0) {
+      c = window.appState.challenges[0];
+    }
+
+    if (!c) {
+      alert('⚠️ No se encontró la información del cuestionario para abrir la sala.');
+      this.navigate('home');
+      return;
+    }
+
     this.navigate('lobby-host', { challenge: c, gameMode: modeId, modeConfig: config, rosterConfig: rosterConfig });
   }
 

@@ -246,6 +246,7 @@ class RealtimeEngine {
     this.isHost = true;
     this.localPlayer = null; // El anfitrión es el profesor/presentador, no un jugador competidor
 
+    const safeChallenge = challenge || { title: 'Reto MENTIX', questions: [], timePerQuestion: 20 };
     const rosterMode = rosterConfig?.mode || 'open'; // 'open' | 'roster'
     const rosterList = (rosterConfig?.students || []).map((st, idx) => ({
       id: st.id || ('st_' + idx + '_' + Math.random().toString(36).substr(2, 6)),
@@ -257,8 +258,8 @@ class RealtimeEngine {
 
     this.currentRoom = {
       pin: pin,
-      challenge: challenge,
-      hostName: window.appState.currentUser?.name || 'Profesor',
+      challenge: safeChallenge,
+      hostName: window.appState?.currentUser?.name || 'Profesor',
       status: 'lobby',
       gameMode: gameMode || 'clasico',
       modeConfig: modeConfig || {},
@@ -268,26 +269,33 @@ class RealtimeEngine {
       players: [], // Solo contendrá los alumnos o bots que se unan (el profesor no se incluye)
       currentQuestionIndex: 0,
       questionStartTime: 0,
-      questionTimeLimit: challenge.timePerQuestion || 20,
+      questionTimeLimit: safeChallenge.timePerQuestion || 20,
       responses: {}
     };
 
-    // Registrar en storage para persistencia y reconexión
-    localStorage.setItem(`te_reto_room_${pin}`, JSON.stringify(this.currentRoom));
+    // Registrar en storage para persistencia y reconexión local
+    try {
+      localStorage.setItem(`te_reto_room_${pin}`, JSON.stringify(this.currentRoom));
+      localStorage.setItem(`mentix_room_${pin}`, JSON.stringify(this.currentRoom));
+    } catch(e) {}
     
     // Broadcast de sala disponible con el modo de juego real seleccionado
-    this.broadcast({
-      type: 'ROOM_CREATED',
-      pin: pin,
-      title: challenge.title,
-      gameMode: gameMode,
-      modeConfig: modeConfig,
-      rosterMode: rosterMode,
-      rosterCount: rosterList.length
-    });
+    try {
+      this.broadcast({
+        type: 'ROOM_CREATED',
+        pin: pin,
+        title: safeChallenge.title,
+        gameMode: gameMode,
+        modeConfig: modeConfig,
+        rosterMode: rosterMode,
+        rosterCount: rosterList.length
+      });
+    } catch(e) {}
 
     // Activar servidor WebRTC P2P en la nube para conexión desde cualquier dispositivo o red
-    this.initHostPeer(pin);
+    try {
+      this.initHostPeer(pin);
+    } catch(e) {}
 
     return this.currentRoom;
   }
@@ -634,7 +642,7 @@ class RealtimeEngine {
         <img src="${qrImgUrl}" alt="Código QR de la sala" width="${size}" height="${size}" style="display: block; width: 100%; height: 100%; object-fit: contain; border-radius: 8px;" />
       </div>
     `;
-  },
+  }
 
   generateQRCodeSVG(text) {
     return this.generateQRCodeHTML(text);
