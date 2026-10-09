@@ -973,6 +973,11 @@ class AppRouter {
           window.ProjectsView.render();
         }
       }
+    } catch (e) {
+      console.warn('Error sincronizando categorías globales:', e);
+    }
+  },
+
   isChallengeOwner(challenge) {
     if (!challenge) return false;
     const u = window.appState?.currentUser;
