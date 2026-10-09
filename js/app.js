@@ -29,6 +29,9 @@ class AppRouter {
       window.supabaseService.syncChallenges(window.appState.challenges);
     }
 
+    // Sincronizar categorías globales desde la nube para todos los usuarios
+    this.syncCategoriesWithCloud();
+
     // Manejar atajos globales
     this.setupGlobalEvents();
 
@@ -858,25 +861,100 @@ class AppRouter {
     if (modal) modal.classList.add('active');
   }
 
-  handleCreateCategory(e) {
+  async handleCreateCategory(e) {
     e.preventDefault();
-    const name = document.getElementById('cat-name').value.trim();
-    const icon = document.getElementById('cat-icon').value.trim() || '💡';
-    const color = document.getElementById('cat-color').value || '#00f5d4';
+    const nameInput = document.getElementById('cat-name');
+    const iconInput = document.getElementById('cat-icon');
+    const colorInput = document.getElementById('cat-color');
+    const name = nameInput ? nameInput.value.trim() : '';
+    const icon = (iconInput && iconInput.value.trim()) ? iconInput.value.trim() : '💡';
+    const color = (colorInput && colorInput.value) ? colorInput.value : '#00f5d4';
 
+    if (!name) return;
+
+    const cleanId = name.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]/g, '_');
     const newCat = {
-      id: name.toLowerCase().replace(/[^a-z0-9]/g, '_'),
+      id: cleanId,
       name: name,
       icon: icon,
       color: color,
       count: 0
     };
 
-    window.appState.categories.push(newCat);
+    // 1. Guardar inmediatamente de forma local para respuesta instantánea
+    const existingIndex = window.appState.categories.findIndex(c => c.id === newCat.id);
+    if (existingIndex >= 0) {
+      window.appState.categories[existingIndex] = { ...window.appState.categories[existingIndex], ...newCat };
+    } else {
+      window.appState.categories.push(newCat);
+    }
     saveGlobalState(window.appState);
     this.closeModal('category-modal');
-    window.HomeView.render();
-    alert('✅ Categoría creada exitosamente.');
+    if (nameInput) nameInput.value = '';
+
+    // Refrescar vistas locales activas
+    if (window.HomeView && this.currentView === 'home') window.HomeView.render();
+    if (window.ProjectsView && this.currentView === 'projects') window.ProjectsView.render();
+
+    // 2. Guardar en la nube pública para que todos los usuarios en otros dispositivos la vean
+    try {
+      const res = await fetch('/api/categories', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ category: newCat })
+      });
+      if (res.ok) {
+        const data = await res.json();
+        if (data && Array.isArray(data.categories)) {
+          window.appState.categories = data.categories;
+          saveGlobalState(window.appState);
+          if (window.HomeView && this.currentView === 'home') window.HomeView.render();
+          if (window.ProjectsView && this.currentView === 'projects') window.ProjectsView.render();
+        }
+      }
+    } catch (cloudErr) {
+      console.warn('Categoría guardada localmente, sincronización en nube diferida:', cloudErr);
+    }
+
+    if (window.soundEngine) window.soundEngine.playCorrect();
+    alert(`✅ Categoría "${name}" guardada y disponible para todos los usuarios.`);
+  }
+
+  async syncCategoriesWithCloud() {
+    try {
+      let cloudCategories = null;
+      try {
+        const res = await fetch(`/api/categories?t=${Date.now()}`);
+        if (res.ok) {
+          const data = await res.json();
+          if (Array.isArray(data)) cloudCategories = data;
+          else if (data && Array.isArray(data.categories)) cloudCategories = data.categories;
+        }
+      } catch (errApi) {
+        try {
+          const resStatic = await fetch(`data/categories.json?t=${Date.now()}`);
+          if (resStatic.ok) cloudCategories = await resStatic.json();
+        } catch(e) {}
+      }
+
+      if (Array.isArray(cloudCategories) && cloudCategories.length > 0) {
+        const local = window.appState.categories || [];
+        const map = new Map();
+        local.forEach(c => { if (c && c.id) map.set(c.id, c); });
+        cloudCategories.forEach(c => { if (c && c.id) map.set(c.id, c); });
+
+        window.appState.categories = Array.from(map.values());
+        saveGlobalState(window.appState);
+
+        if (this.currentView === 'home' && window.HomeView) {
+          window.HomeView.render();
+        } else if (this.currentView === 'projects' && window.ProjectsView) {
+          window.ProjectsView.render();
+        }
+      }
+    } catch (e) {
+      console.warn('Error sincronizando categorías globales:', e);
+    }
   }
 
   closeModal(modalId) {

@@ -57,9 +57,10 @@ window.LeaderboardView = {
                   <span style="font-size: 1.8rem;">${p.avatar || '😎'}</span>
                   <div style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
                     <div style="font-weight: 800; font-size: 1.1rem; color: var(--text-primary);">${p.nickname}</div>
-                    <div style="font-size: 0.8rem; color: var(--text-muted); display: flex; align-items: center; gap: 0.5rem;">
+                    <div style="font-size: 0.8rem; color: var(--text-muted); display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
                       ${p.streak > 1 ? `<span style="color:#ff9e00; font-weight:700;">🔥 ${p.streak} en racha</span>` : ''}
                       <span>${p.correctCount || 0} aciertos</span>
+                      ${isHost && window.PodiumView?.failuresLink ? `<span style="margin-left: 0.25rem;">· ${window.PodiumView.failuresLink(p, room, currentQIdx + 1)}</span>` : ''}
                     </div>
                   </div>
                 </div>

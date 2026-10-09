@@ -416,7 +416,8 @@ window.HomeView = {
   },
 
   joinByQuickPin() {
-    const pin = document.getElementById('home-pin-input')?.value.trim();
+    const rawPin = document.getElementById('home-pin-input')?.value || '';
+    const pin = rawPin.replace(/\D/g, '').trim();
     if (!pin || pin.length < 4) {
       alert('Ingresa un código PIN válido de al menos 4 a 6 dígitos');
       return;

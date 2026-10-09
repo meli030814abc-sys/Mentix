@@ -1,0 +1,12 @@
+[
+  { "id": "matematicas", "name": "Matemáticas", "icon": "🧮", "color": "#ffb703", "count": 18 },
+  { "id": "lenguaje", "name": "Lenguaje y Literatura", "icon": "📚", "color": "#f72585", "count": 14 },
+  { "id": "sociales", "name": "Ciencias Sociales", "icon": "🌎", "color": "#4361ee", "count": 12 },
+  { "id": "ciencias", "name": "Ciencias Naturales", "icon": "🔬", "color": "#06d6a0", "count": 16 },
+  { "id": "tecnologia", "name": "Tecnología & Programación", "icon": "💻", "color": "#00f5d4", "count": 24 },
+  { "id": "ingles", "name": "Inglés Práctico", "icon": "🇬🇧", "color": "#7209b7", "count": 15 },
+  { "id": "derecho", "name": "Derecho & Leyes", "icon": "⚖️", "color": "#fb5607", "count": 9 },
+  { "id": "admin", "name": "Administración Pública", "icon": "🏛️", "color": "#3a0ca3", "count": 8 },
+  { "id": "cultura", "name": "Cultura General", "icon": "🎨", "color": "#f72585", "count": 32 },
+  { "id": "entretenimiento", "name": "Entretenimiento & Juegos", "icon": "🎮", "color": "#4cc9f0", "count": 29 }
+]

@@ -29,11 +29,12 @@ window.LobbyView = {
     if (cleanPrefilled && cleanPrefilled.length >= 4) {
       this.joinPin = cleanPrefilled;
       const room = this.findRoomByPin(cleanPrefilled);
-      if (room) {
-        this.joinRoomData = room;
-        this.joinStep = 'profile';
-      } else {
-        this.joinStep = 'pin';
+      this.joinRoomData = room || { pin: cleanPrefilled, rosterMode: 'open', gameMode: 'clasico' };
+      this.joinStep = 'profile';
+      if (window.realtimeEngine && window.realtimeEngine.initPlayerPeer) {
+        window.realtimeEngine.initPlayerPeer(cleanPrefilled, (conn) => {
+          console.log('📡 Sala remota detectada y enlazada por WebRTC:', cleanPrefilled);
+        });
       }
     } else {
       this.joinStep = 'pin';
@@ -658,7 +659,7 @@ window.LobbyView = {
                 type="text" 
                 id="join-pin-input" 
                 placeholder="1234 5678" 
-                maxlength="7"
+                maxlength="10"
                 inputmode="numeric"
                 value="${this.joinPin ? (this.joinPin.length === 6 ? this.joinPin.slice(0, 3) + ' ' + this.joinPin.slice(3) : this.joinPin) : ''}"
                 required

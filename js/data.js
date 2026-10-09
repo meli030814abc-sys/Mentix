@@ -131,9 +131,9 @@ const DEFAULT_CHALLENGES = [];
 // Helper para inicializar o recuperar almacenamiento con desinfección automática
 function loadInitialState() {
   // Purgar almacenamiento local si contiene texto corrupto (mojibake)
-  ['te_reto_challenges', 'te_reto_users', 'te_reto_groups', 'te_reto_categories'].forEach(key => {
+  ['te_reto_challenges', 'te_reto_users', 'te_reto_groups'].forEach(key => {
     const raw = localStorage.getItem(key);
-    if (raw && (/ðŸ|Ã¡|Ã³|Ã©|Ã­|Ãº|Ã±|âœ|â¬|âš|Ã/.test(raw))) {
+    if (raw && (/ðŸ|Ã¡|Ã³|Ã©|Ã­|Ãº|Ã±|âœ|â¬|âš/.test(raw))) {
       console.log(`[Auto-Clean] Desinfectando entrada de localStorage: ${key}`);
       localStorage.removeItem(key);
     }

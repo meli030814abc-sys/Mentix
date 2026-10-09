@@ -561,6 +561,7 @@ class RealtimeEngine {
     if (!player.answers) player.answers = [];
     player.answers.push({
       questionId: question.id,
+      questionIndex: (window.GameView && typeof window.GameView.currentQuestionIndex === 'number') ? window.GameView.currentQuestionIndex : room.currentQuestionIndex,
       answerIndex: answerIndex,
       isCorrect: isCorrect,
       pointsEarned: pointsEarned,

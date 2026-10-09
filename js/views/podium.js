@@ -4,7 +4,120 @@
  */
 
 window.PodiumView = {
+  // ==========================================
+  // 🔗 PREGUNTAS FALLADAS POR ESTUDIANTE (solo creador de la sala)
+  // ==========================================
+  esc(s) {
+    return String(s === undefined || s === null ? '' : s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  },
+
+  isRoomCreator() {
+    return !!(window.realtimeEngine?.isHost || window.GameView?.isHost);
+  },
+
+  getReportRoom() {
+    return this.currentRoom || window.GameView?.room || window.realtimeEngine?.currentRoom || null;
+  },
+
+  // Devuelve [{ num, text, chosen, correct, status }] con las preguntas que el estudiante falló
+  getFailures(player, room, upTo) {
+    const qs = room?.challenge?.questions || window.GameView?.challenge?.questions || [];
+    const limit = (typeof upTo === 'number') ? Math.min(upTo, qs.length) : qs.length;
+    const answeredByIdx = {};
+
+    (player.answers || []).forEach((a, pos) => {
+      let idx = -1;
+      if (a.questionId !== undefined && a.questionId !== null) {
+        idx = qs.findIndex(q => q.id === a.questionId);
+      }
+      if (idx < 0 && typeof a.questionIndex === 'number') idx = a.questionIndex;
+      if (idx < 0) idx = pos;
+      answeredByIdx[idx] = a;
+    });
+
+    const optText = (q, v) => (typeof v === 'number' && q.options && q.options[v]) ? q.options[v].text : String(v);
+    const fails = [];
+    for (let i = 0; i < limit; i++) {
+      const q = qs[i];
+      if (!q || q.type === 'poll' || q.type === 'open') continue;
+      const a = answeredByIdx[i];
+      if (a && a.isCorrect) continue;
+
+      let correct = '';
+      if (q.type === 'text') {
+        correct = q.correctAnswer || (q.acceptedAnswers && q.acceptedAnswers[0]) || '';
+      } else if (Array.isArray(q.correctAnswer)) {
+        correct = q.correctAnswer.map(ix => optText(q, ix)).join(', ');
+      } else {
+        correct = optText(q, q.correctAnswer);
+      }
+
+      fails.push({
+        num: i + 1,
+        text: q.text || '',
+        chosen: a ? optText(q, a.answerIndex) : null,
+        correct: correct,
+        status: a ? 'wrong' : 'timeout'
+      });
+    }
+    return fails;
+  },
+
+  // Enlace azul "N fallos" que abre el detalle (solo se muestra al creador de la sala)
+  failuresLink(player, room, upTo) {
+    if (!player) return '';
+    const fails = this.getFailures(player, room || this.getReportRoom(), upTo);
+    const pid = String(player.id || '').replace(/'/g, '');
+    const upArg = (typeof upTo === 'number') ? upTo : 'undefined';
+    if (fails.length === 0) {
+      return '<span style="color: #06d6a0; font-weight: 700;">✓ Sin fallos</span>';
+    }
+    return `<a href="javascript:void(0)" onclick="window.PodiumView.showFailures('${pid}', ${upArg})" style="color: #4da3ff; text-decoration: underline; font-weight: 700; cursor: pointer;">${fails.length} ${fails.length === 1 ? 'fallo' : 'fallos'} · ver</a>`;
+  },
+
+  showFailures(playerId, upTo) {
+    const room = this.getReportRoom();
+    const player = (room?.players || []).find(p => String(p.id) === String(playerId));
+    if (!player) return;
+    const fails = this.getFailures(player, room, upTo);
+
+    const old = document.getElementById('failures-modal-overlay');
+    if (old) old.remove();
+
+    const overlay = document.createElement('div');
+    overlay.id = 'failures-modal-overlay';
+    overlay.style.cssText = 'position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 99999; display: flex; align-items: center; justify-content: center; padding: 1rem; backdrop-filter: blur(4px);';
+    overlay.onclick = (e) => { if (e.target === overlay) overlay.remove(); };
+
+    overlay.innerHTML = `
+      <div style="background: #0f1629; border: 1px solid rgba(77,163,255,0.5); border-radius: 18px; width: 100%; max-width: 620px; max-height: 85vh; overflow-y: auto; padding: 1.5rem; text-align: left; box-shadow: 0 20px 60px rgba(0,0,0,0.6); color: #fff;">
+        <div style="display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: 1rem;">
+          <div style="font-size: 1.2rem; font-weight: 900;">
+            <span style="font-size: 1.4rem; margin-right: 0.35rem;">${this.esc(player.avatar || '👤')}</span>
+            ${this.esc(player.nickname)} <span style="color: #4da3ff;">· ${fails.length} ${fails.length === 1 ? 'fallo' : 'fallos'}</span>
+          </div>
+          <button onclick="document.getElementById('failures-modal-overlay').remove()" style="background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.2); color: #fff; border-radius: 8px; padding: 0.35rem 0.75rem; cursor: pointer; font-weight: 800;">✕</button>
+        </div>
+        ${fails.length === 0 ? `
+          <div style="padding: 1.5rem; text-align: center; color: #06d6a0; font-weight: 800;">🎯 Este estudiante no falló ninguna pregunta.</div>
+        ` : fails.map(f => `
+          <div style="border: 1px solid rgba(247,37,133,0.35); background: rgba(247,37,133,0.07); border-radius: 12px; padding: 0.9rem 1rem; margin-bottom: 0.75rem;">
+            <div style="font-size: 0.8rem; font-weight: 800; color: #4da3ff; text-transform: uppercase; margin-bottom: 0.25rem;">Pregunta ${f.num}</div>
+            <div style="font-weight: 700; margin-bottom: 0.5rem; line-height: 1.35;">${this.esc(f.text)}</div>
+            <div style="font-size: 0.9rem; color: #ff6b8a; font-weight: 700;">
+              ${f.status === 'timeout' ? '⏱ Sin responder (tiempo agotado)' : '✗ Respondió: ' + this.esc(f.chosen)}
+            </div>
+            <div style="font-size: 0.9rem; color: #06d6a0; font-weight: 700;">✓ Correcta: ${this.esc(f.correct)}</div>
+          </div>
+        `).join('')}
+      </div>
+    `;
+    document.body.appendChild(overlay);
+  },
+
   render(room) {
+    this.currentRoom = room;
     const container = document.getElementById('view-podium');
     if (!container) return;
 
@@ -178,6 +291,7 @@ window.PodiumView = {
                   <th style="padding: 0.75rem;">Puntos</th>
                   <th style="padding: 0.75rem;">Aciertos</th>
                   <th style="padding: 0.75rem;">Racha Máx</th>
+                  ${this.isRoomCreator() ? '<th style="padding: 0.75rem; color: #4da3ff;">Detalle de Errores</th>' : ''}
                 </tr>
               </thead>
               <tbody>
@@ -191,6 +305,7 @@ window.PodiumView = {
                     <td style="padding: 0.75rem; font-weight: 800; color: var(--neon-cyan);">${(p.score || 0).toLocaleString()}</td>
                     <td style="padding: 0.75rem; color: var(--text-secondary);">${p.correctCount || 0} / ${totalQuestions}</td>
                     <td style="padding: 0.75rem; color: #ff9e00; font-weight: 700;">🔥 ${p.maxStreak || p.streak || 0}</td>
+                    ${this.isRoomCreator() ? `<td style="padding: 0.75rem;">${this.failuresLink(p, room)}</td>` : ''}
                   </tr>
                 `).join('')}
               </tbody>
