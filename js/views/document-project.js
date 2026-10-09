@@ -422,6 +422,12 @@ window.DocumentProjectView = {
       }
     }
 
+    const u = window.appState.currentUser;
+    p.author = p.author || u?.name || 'Docente';
+    p.authorAvatar = p.authorAvatar || u?.avatar || '👨‍🏫';
+    p.authorId = p.authorId || u?.id || ('user_' + (u?.email || u?.name || 'anon'));
+    p.authorEmail = p.authorEmail || u?.email || '';
+
     const existingIndex = window.appState.challenges.findIndex(c => c.id === p.id);
     if (existingIndex >= 0) {
       window.appState.challenges[existingIndex] = p;
@@ -430,6 +436,9 @@ window.DocumentProjectView = {
     }
 
     saveGlobalState(window.appState);
+    if (window.appRouter && window.appRouter.pushChallengeToCloud) {
+      window.appRouter.pushChallengeToCloud(p);
+    }
     alert('✅ ¡Documento guardado y publicado con éxito en formato de hoja impresa PDF!');
     this.isEditing = false;
     this.renderViewer(document.getElementById('view-document'));

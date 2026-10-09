@@ -259,12 +259,7 @@ window.HomeView = {
   },
 
   renderCard(challenge) {
-    const u = window.appState.currentUser;
-    const isOwner = u && (
-      (challenge.author && challenge.author.toLowerCase() === u.name?.toLowerCase()) ||
-      (challenge.authorId && challenge.authorId === u.id) ||
-      u.role === 'admin'
-    );
+    const isOwner = window.appRouter ? window.appRouter.isChallengeOwner(challenge) : false;
     const diffTag = challenge.difficulty === 'Fácil' ? 'tag-easy' : challenge.difficulty === 'Medio' ? 'tag-medium' : 'tag-hard';
     const projectType = challenge.projectType || 'quiz';
     const cardAction = projectType === 'presentation' 
@@ -348,13 +343,15 @@ window.HomeView = {
             </div>
             <div style="display: flex; gap: 0.5rem; flex-shrink: 0;">
               ${projectType === 'presentation' ? `
-                <button 
-                  class="btn btn-outline" 
-                  title="Editar Diapositivas"
-                  style="padding: 0.45rem 0.75rem; font-size: 0.85rem;" 
-                  onclick="event.stopPropagation(); window.appRouter.editPresentation('${challenge.id}')">
-                  ✏️
-                </button>
+                ${isOwner ? `
+                  <button 
+                    class="btn btn-outline" 
+                    title="Editar Diapositivas"
+                    style="padding: 0.45rem 0.75rem; font-size: 0.85rem;" 
+                    onclick="event.stopPropagation(); window.appRouter.editPresentation('${challenge.id}')">
+                    ✏️
+                  </button>
+                ` : ''}
                 <button 
                   class="btn btn-cyan" 
                   style="padding: 0.45rem 1rem; font-size: 0.88rem; font-weight: 800; background: linear-gradient(135deg, #7c3aed, var(--neon-cyan)); border: none;"
@@ -362,13 +359,15 @@ window.HomeView = {
                   🖥️ Presentar
                 </button>
               ` : (projectType === 'video' ? `
-                <button 
-                  class="btn btn-outline" 
-                  title="Editar Video Clase"
-                  style="padding: 0.45rem 0.75rem; font-size: 0.85rem;" 
-                  onclick="event.stopPropagation(); window.appRouter.editVideo('${challenge.id}')">
-                  ✏️
-                </button>
+                ${isOwner ? `
+                  <button 
+                    class="btn btn-outline" 
+                    title="Editar Video Clase"
+                    style="padding: 0.45rem 0.75rem; font-size: 0.85rem;" 
+                    onclick="event.stopPropagation(); window.appRouter.editVideo('${challenge.id}')">
+                    ✏️
+                  </button>
+                ` : ''}
                 <button 
                   class="btn btn-cyan" 
                   style="padding: 0.45rem 1rem; font-size: 0.88rem; font-weight: 800; background: linear-gradient(135deg, #ef4444, #dc2626); border: none;"

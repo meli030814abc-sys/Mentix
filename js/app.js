@@ -29,8 +29,9 @@ class AppRouter {
       window.supabaseService.syncChallenges(window.appState.challenges);
     }
 
-    // Sincronizar categorías globales desde la nube para todos los usuarios
+    // Sincronizar categorías y retos globales desde la nube para todos los usuarios
     this.syncCategoriesWithCloud();
+    this.syncChallengesWithCloud();
 
     // Manejar atajos globales
     this.setupGlobalEvents();
@@ -179,6 +180,11 @@ class AppRouter {
         if (params.editId) {
           // Editar un reto existente por id
           const challengeToEdit = (window.appState.challenges || []).find(c => c.id === params.editId);
+          if (challengeToEdit && !this.isChallengeOwner(challengeToEdit)) {
+            alert('🚫 Solo el creador de este cuestionario tiene permiso para editarlo.');
+            this.navigate('home');
+            return;
+          }
           window.CreatorView.render(challengeToEdit || null);
         } else {
           window.CreatorView.render(params.challenge || null);
@@ -274,6 +280,11 @@ class AppRouter {
   }
 
   editPresentation(id) {
+    const p = (window.appState.challenges || []).find(c => c.id === id);
+    if (p && !this.isChallengeOwner(p)) {
+      alert('🚫 Solo el creador de esta presentación puede editarla.');
+      return;
+    }
     this.navigate('presentation', { id: id, edit: true });
   }
 
@@ -286,6 +297,11 @@ class AppRouter {
   }
 
   editVideo(id) {
+    const p = (window.appState.challenges || []).find(c => c.id === id);
+    if (p && !this.isChallengeOwner(p)) {
+      alert('🚫 Solo el creador de esta video clase puede editarla.');
+      return;
+    }
     this.navigate('video', { id: id, edit: true });
   }
 
@@ -298,6 +314,11 @@ class AppRouter {
   }
 
   editDocument(id) {
+    const p = (window.appState.challenges || []).find(c => c.id === id);
+    if (p && !this.isChallengeOwner(p)) {
+      alert('🚫 Solo el creador de este documento puede editarlo.');
+      return;
+    }
     this.navigate('document', { id: id, edit: true });
   }
 
@@ -310,6 +331,11 @@ class AppRouter {
   }
 
   editUrl(id) {
+    const p = (window.appState.challenges || []).find(c => c.id === id);
+    if (p && !this.isChallengeOwner(p)) {
+      alert('🚫 Solo el creador de este recurso web puede editarlo.');
+      return;
+    }
     this.navigate('url', { id: id, edit: true });
   }
 
@@ -418,12 +444,7 @@ class AppRouter {
     const content = document.getElementById('preview-modal-body');
     if (!modal || !content) return;
 
-    const u = window.appState.currentUser;
-    const isOwner = u && (
-      (c.author && c.author.toLowerCase() === u.name?.toLowerCase()) ||
-      (c.authorId && c.authorId === u.id) ||
-      u.role === 'admin'
-    );
+    const isOwner = this.isChallengeOwner(c);
 
     const diffTag = c.difficulty === 'Fácil' ? 'tag-easy' : c.difficulty === 'Difícil' ? 'tag-hard' : 'tag-medium';
     const numQuestions = c.questions ? c.questions.length : 0;
@@ -555,43 +576,43 @@ class AppRouter {
     const c = window.appState.challenges.find(item => item.id === challengeId);
     if (!c) return;
 
-    const u = window.appState.currentUser;
-    const isOwner = u && (
-      (c.author && c.author.toLowerCase() === u.name?.toLowerCase()) ||
-      (c.authorId && c.authorId === u.id) ||
-      u.role === 'admin'
-    );
-
-    if (!isOwner) {
-      alert('🚫 Solo el creador original de este reto tiene permiso para eliminarlo.');
+    if (!this.isChallengeOwner(c)) {
+      alert('🚫 Solo el creador original de este proyecto tiene permiso para eliminarlo.');
       return;
     }
 
-    const ok = confirm(`⚠️ ¿Deseas eliminar definitivamente tu cuestionario "${c.title}"?\n\nEsta acción borrará el reto de la plataforma para todos los usuarios.`);
+    const ok = confirm(`⚠️ ¿Deseas eliminar definitivamente tu proyecto "${c.title}"?\n\nEsta acción borrará el reto de la plataforma para todos los usuarios.`);
     if (!ok) return;
 
     // Eliminar del estado local
     window.appState.challenges = window.appState.challenges.filter(item => item.id !== challengeId);
-    if (u.challengesCreated && u.challengesCreated > 0) {
+    const u = window.appState.currentUser;
+    if (u && u.challengesCreated && u.challengesCreated > 0) {
       u.challengesCreated--;
     }
     saveGlobalState(window.appState);
 
+    // Eliminar de la nube pública Vercel / GitHub
+    try {
+      fetch('/api/challenges?id=' + encodeURIComponent(challengeId), { method: 'DELETE' }).catch(() => {});
+    } catch (e) {}
+
     // Eliminar de Supabase en la nube si está conectado
     if (window.supabaseService && window.supabaseService.isConnected && window.supabaseService.client) {
-      window.supabaseService.client.from('challenges').delete().eq('id', challengeId).then(() => {
-        console.log('✅ Reto eliminado de Supabase');
-      });
+      try {
+        window.supabaseService.client.from('challenges').delete().eq('id', challengeId).then(() => {});
+      } catch(e) {}
     }
 
     this.closeModal('preview-modal');
     if (window.soundEngine && window.soundEngine.playWrong) {
       window.soundEngine.playWrong();
     }
-    alert(`🗑️ Tu cuestionario "${c.title}" ha sido eliminado exitosamente.`);
+    alert(`🗑️ Tu proyecto "${c.title}" ha sido eliminado exitosamente.`);
 
     // Actualizar la vista actual
     if (this.currentView === 'home' && window.HomeView) window.HomeView.render();
+    if (this.currentView === 'projects' && window.ProjectsView) window.ProjectsView.render();
     if (this.currentView === 'profile' && window.ProfileView) window.ProfileView.render();
     if (this.currentView === 'creator' && window.CreatorView) this.navigate('home');
   }
@@ -952,10 +973,92 @@ class AppRouter {
           window.ProjectsView.render();
         }
       }
-    } catch (e) {
-      console.warn('Error sincronizando categorías globales:', e);
+  isChallengeOwner(challenge) {
+    if (!challenge) return false;
+    const u = window.appState?.currentUser;
+    if (!u || u.isGuest) return false;
+    if (u.role === 'admin') return true;
+
+    // 1. Comparación por authorId
+    if (challenge.authorId && u.id && String(challenge.authorId) === String(u.id)) return true;
+
+    // 2. Comparación por authorEmail
+    if (challenge.authorEmail && u.email && challenge.authorEmail.trim().toLowerCase() === u.email.trim().toLowerCase()) return true;
+
+    // 3. Comparación por nombre exacto o normalizado
+    if (challenge.author && u.name) {
+      const cleanAuthor = challenge.author.trim().toLowerCase();
+      const cleanName = u.name.trim().toLowerCase();
+      if (cleanAuthor === cleanName) return true;
+      if (cleanAuthor.includes(cleanName) || cleanName.includes(cleanAuthor)) return true;
     }
-  }
+
+    return false;
+  },
+
+  pushChallengeToCloud(challenge) {
+    if (!challenge || !challenge.id || !challenge.title) return;
+    try {
+      fetch('/api/challenges', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ challenge })
+      }).catch(e => console.warn('Error al subir reto a la nube:', e));
+    } catch(e) {}
+  },
+
+  async syncChallengesWithCloud() {
+    try {
+      let cloudChallenges = null;
+      try {
+        const res = await fetch(`/api/challenges?t=${Date.now()}`);
+        if (res.ok) {
+          const data = await res.json();
+          if (Array.isArray(data)) cloudChallenges = data;
+        }
+      } catch (errApi) {
+        try {
+          const resStatic = await fetch(`data/challenges.json?t=${Date.now()}`);
+          if (resStatic.ok) cloudChallenges = await resStatic.json();
+        } catch(e) {}
+      }
+
+      if (Array.isArray(cloudChallenges) && cloudChallenges.length > 0) {
+        const local = Array.isArray(window.appState.challenges) ? window.appState.challenges : [];
+        const map = new Map();
+        local.forEach(c => { if (c && c.id) map.set(c.id, c); });
+        cloudChallenges.forEach(c => {
+          if (c && c.id && !map.has(c.id)) {
+            map.set(c.id, c);
+          }
+        });
+
+        window.appState.challenges = Array.from(map.values());
+        saveGlobalState(window.appState);
+
+        // Subir a la nube cualquier reto local que falte
+        local.forEach(c => {
+          if (c && c.id && c.title && !cloudChallenges.some(cc => cc.id === c.id)) {
+            this.pushChallengeToCloud(c);
+          }
+        });
+
+        if (this.currentView === 'home' && window.HomeView) {
+          window.HomeView.render();
+        } else if (this.currentView === 'projects' && window.ProjectsView) {
+          window.ProjectsView.render();
+        }
+      } else if (Array.isArray(window.appState.challenges) && window.appState.challenges.length > 0) {
+        window.appState.challenges.forEach(c => {
+          if (c && c.id && c.title) {
+            this.pushChallengeToCloud(c);
+          }
+        });
+      }
+    } catch (e) {
+      console.warn('Error sincronizando retos con la nube:', e);
+    }
+  },
 
   closeModal(modalId) {
     // El acceso es obligatorio: no se puede cerrar sin registrarse o iniciar sesión

@@ -366,10 +366,7 @@ window.ProjectsView = {
   },
 
   renderProjectCard(c, currentUser) {
-    const isAuthor = (currentUser && (
-      (c.author && c.author.toLowerCase() === currentUser.name?.toLowerCase()) ||
-      (c.authorId && c.authorId === currentUser.id)
-    )) || (currentUser && (currentUser.role === 'teacher' || currentUser.role === 'admin'));
+    const isAuthor = window.appRouter ? window.appRouter.isChallengeOwner(c) : false;
 
     const diffBadge = c.difficulty === 'Difícil' || c.difficulty === 'hard'
       ? '<span class="badge-tag tag-hard">Difícil</span>'
@@ -447,14 +444,16 @@ window.ProjectsView = {
 
             <div style="display: flex; gap: 0.45rem; align-items: center;">
               ${projectType === 'presentation' ? `
-                <button 
-                  class="btn btn-outline" 
-                  title="Editar Diapositivas"
-                  style="padding: 0.45rem 0.75rem; font-size: 0.85rem;" 
-                  onclick="event.stopPropagation(); window.appRouter.editPresentation('${c.id}')"
-                >
-                  ✏️
-                </button>
+                ${isAuthor ? `
+                  <button 
+                    class="btn btn-outline" 
+                    title="Editar Diapositivas" 
+                    style="padding: 0.45rem 0.75rem; font-size: 0.85rem;" 
+                    onclick="event.stopPropagation(); window.appRouter.editPresentation('${c.id}')"
+                  >
+                    ✏️
+                  </button>
+                ` : ''}
                 <button 
                   class="btn btn-cyan" 
                   style="padding: 0.45rem 1rem; font-size: 0.85rem; font-weight: 800; background: linear-gradient(135deg, #7c3aed, var(--neon-cyan)); border: none;" 
@@ -463,14 +462,16 @@ window.ProjectsView = {
                   🖥️ Presentar
                 </button>
               ` : (projectType === 'video' ? `
-                <button 
-                  class="btn btn-outline" 
-                  title="Editar Video Clase"
-                  style="padding: 0.45rem 0.75rem; font-size: 0.85rem;" 
-                  onclick="event.stopPropagation(); window.appRouter.editVideo('${c.id}')"
-                >
-                  ✏️
-                </button>
+                ${isAuthor ? `
+                  <button 
+                    class="btn btn-outline" 
+                    title="Editar Video Clase" 
+                    style="padding: 0.45rem 0.75rem; font-size: 0.85rem;" 
+                    onclick="event.stopPropagation(); window.appRouter.editVideo('${c.id}')"
+                  >
+                    ✏️
+                  </button>
+                ` : ''}
                 <button 
                   class="btn btn-cyan" 
                   style="padding: 0.45rem 1rem; font-size: 0.85rem; font-weight: 800; background: linear-gradient(135deg, #ef4444, #dc2626); border: none;" 
@@ -479,14 +480,16 @@ window.ProjectsView = {
                   🎬 Ver Video
                 </button>
               ` : (projectType === 'document' ? `
-                <button 
-                  class="btn btn-outline" 
-                  title="Editar Documento"
-                  style="padding: 0.45rem 0.75rem; font-size: 0.85rem;" 
-                  onclick="event.stopPropagation(); window.appRouter.editDocument('${c.id}')"
-                >
-                  ✏️
-                </button>
+                ${isAuthor ? `
+                  <button 
+                    class="btn btn-outline" 
+                    title="Editar Documento" 
+                    style="padding: 0.45rem 0.75rem; font-size: 0.85rem;" 
+                    onclick="event.stopPropagation(); window.appRouter.editDocument('${c.id}')"
+                  >
+                    ✏️
+                  </button>
+                ` : ''}
                 <button 
                   class="btn btn-cyan" 
                   style="padding: 0.45rem 1rem; font-size: 0.85rem; font-weight: 800; background: linear-gradient(135deg, #3b82f6, var(--neon-cyan)); border: none;" 
@@ -495,14 +498,16 @@ window.ProjectsView = {
                   📄 Leer
                 </button>
               ` : `
-                <button 
-                  class="btn btn-outline" 
-                  title="Editar Recurso Web"
-                  style="padding: 0.45rem 0.75rem; font-size: 0.85rem;" 
-                  onclick="event.stopPropagation(); window.appRouter.editUrl('${c.id}')"
-                >
-                  ✏️
-                </button>
+                ${isAuthor ? `
+                  <button 
+                    class="btn btn-outline" 
+                    title="Editar Recurso Web" 
+                    style="padding: 0.45rem 0.75rem; font-size: 0.85rem;" 
+                    onclick="event.stopPropagation(); window.appRouter.editUrl('${c.id}')"
+                  >
+                    ✏️
+                  </button>
+                ` : ''}
                 <button 
                   class="btn btn-cyan" 
                   style="padding: 0.45rem 1rem; font-size: 0.85rem; font-weight: 800; background: linear-gradient(135deg, #10b981, var(--neon-cyan)); border: none;" 

@@ -894,9 +894,12 @@ window.CreatorView = {
     const c = this.currentChallenge;
     const cat = window.appState.categories.find(item => item.id === c.category);
     c.categoryName = cat ? cat.name : 'General';
-    c.author = window.appState.currentUser.name;
-    c.authorAvatar = window.appState.currentUser.avatar;
-    c.plays = 0;
+    const u = window.appState.currentUser;
+    c.author = c.author || u?.name || 'Creador';
+    c.authorAvatar = c.authorAvatar || u?.avatar || '👤';
+    c.authorId = c.authorId || u?.id || ('user_' + (u?.email || u?.name || 'anon'));
+    c.authorEmail = c.authorEmail || u?.email || '';
+    if (c.plays === undefined) c.plays = 0;
 
     // Verificar si es edición o nuevo
     const existingIndex = window.appState.challenges.findIndex(item => item.id === c.id);
@@ -911,6 +914,9 @@ window.CreatorView = {
     }
 
     saveGlobalState(window.appState);
+    if (window.appRouter && window.appRouter.pushChallengeToCloud) {
+      window.appRouter.pushChallengeToCloud(c);
+    }
     window.soundEngine.playCorrect();
 
     // Sincronizar en la nube con Supabase si está disponible
