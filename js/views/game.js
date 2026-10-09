@@ -116,8 +116,9 @@ window.GameView = {
     this.hostListenersAttached = true;
 
     window.realtimeEngine.on('PLAYER_ANSWER', (data) => {
-      const myPin = this.room?.pin || window.realtimeEngine.currentRoom?.pin;
-      if (myPin && String(data.pin) === String(myPin)) {
+      const myPin = String(this.room?.pin || window.realtimeEngine.currentRoom?.pin || '').replace(/\D/g, '');
+      const dataPin = String(data?.pin || data?.room?.pin || '').replace(/\D/g, '');
+      if (myPin && dataPin === myPin) {
         if (!data.isBot) {
           window.realtimeEngine.processAnswer(data.playerId, data.answerIndex, data.timeTaken, this.challenge.questions[this.currentQuestionIndex]);
         }
@@ -126,8 +127,9 @@ window.GameView = {
     });
 
     window.realtimeEngine.on('PLAYER_MODE_ACTION', (data) => {
-      const myPin = this.room?.pin || window.realtimeEngine.currentRoom?.pin;
-      if (myPin && String(data.pin) === String(myPin)) {
+      const myPin = String(this.room?.pin || window.realtimeEngine.currentRoom?.pin || '').replace(/\D/g, '');
+      const dataPin = String(data?.pin || data?.room?.pin || '').replace(/\D/g, '');
+      if (myPin && dataPin === myPin) {
         this.showHostModeActionToast(data);
         if (this.room && this.room.players && data.playerId && data.bonusPoints) {
           const targetPlayer = this.room.players.find(p => p.id === data.playerId);
@@ -158,15 +160,17 @@ window.GameView = {
     this.playerListenersAttached = true;
 
     window.realtimeEngine.on('ROOM_ANSWER_PROGRESS', (data) => {
-      const myPin = this.room?.pin || window.realtimeEngine.currentRoom?.pin;
-      if (myPin && String(data.pin) === String(myPin)) {
+      const myPin = String(this.room?.pin || window.realtimeEngine.currentRoom?.pin || '').replace(/\D/g, '');
+      const dataPin = String(data?.pin || data?.room?.pin || '').replace(/\D/g, '');
+      if (myPin && dataPin === myPin) {
         this.updateResponseCounter(data.totalResponses, data.totalPlayers);
       }
     });
 
     window.realtimeEngine.on('SHOW_QUESTION_RESULTS', (data) => {
-      const myPin = this.room?.pin || window.realtimeEngine.currentRoom?.pin;
-      if (myPin && String(data.pin) === String(myPin)) {
+      const myPin = String(this.room?.pin || window.realtimeEngine.currentRoom?.pin || '').replace(/\D/g, '');
+      const dataPin = String(data?.pin || data?.room?.pin || '').replace(/\D/g, '');
+      if (myPin && dataPin === myPin) {
         if (this.timerInterval) clearInterval(this.timerInterval);
         if (data.responses) this.room.responses = data.responses;
         if (data.players) {
@@ -196,8 +200,9 @@ window.GameView = {
     });
 
     window.realtimeEngine.on('NEXT_QUESTION', (data) => {
-      const myPin = this.room?.pin || window.realtimeEngine.currentRoom?.pin;
-      if (myPin && String(data.pin) === String(myPin)) {
+      const myPin = String(this.room?.pin || window.realtimeEngine.currentRoom?.pin || '').replace(/\D/g, '');
+      const dataPin = String(data?.pin || data?.room?.pin || '').replace(/\D/g, '');
+      if (myPin && dataPin === myPin) {
         if (this.autoAdvanceInterval) clearInterval(this.autoAdvanceInterval);
         if (this.timerInterval) clearInterval(this.timerInterval);
         if (window.LeaderboardView && window.LeaderboardView.waitingPollInterval) {
@@ -219,8 +224,9 @@ window.GameView = {
     });
 
     window.realtimeEngine.on('SHOW_LEADERBOARD', (data) => {
-      const myPin = this.room?.pin || window.realtimeEngine.currentRoom?.pin;
-      if (myPin && String(data.pin) === String(myPin)) {
+      const myPin = String(this.room?.pin || window.realtimeEngine.currentRoom?.pin || '').replace(/\D/g, '');
+      const dataPin = String(data?.pin || data?.room?.pin || '').replace(/\D/g, '');
+      if (myPin && dataPin === myPin) {
         if (this.autoAdvanceInterval) clearInterval(this.autoAdvanceInterval);
         if (this.timerInterval) clearInterval(this.timerInterval);
         if (data.room) {
@@ -232,8 +238,9 @@ window.GameView = {
     });
 
     window.realtimeEngine.on('SHOW_PODIUM', (data) => {
-      const myPin = this.room?.pin || window.realtimeEngine.currentRoom?.pin;
-      if (myPin && String(data.pin) === String(myPin)) {
+      const myPin = String(this.room?.pin || window.realtimeEngine.currentRoom?.pin || '').replace(/\D/g, '');
+      const dataPin = String(data?.pin || data?.room?.pin || '').replace(/\D/g, '');
+      if (myPin && dataPin === myPin) {
         if (this.autoAdvanceInterval) clearInterval(this.autoAdvanceInterval);
         if (this.timerInterval) clearInterval(this.timerInterval);
         if (window.LeaderboardView && window.LeaderboardView.waitingPollInterval) {

@@ -74,10 +74,16 @@ window.LobbyView = {
     this.listenersSetup = true;
 
     window.realtimeEngine.on('PLAYER_JOIN', (data) => {
-      if (this.mode === 'host' && this.currentRoom && data.pin === this.currentRoom.pin) {
+      const dataPin = String(data?.pin || '').replace(/\D/g, '');
+      const hostPin = String(this.currentRoom?.pin || '').replace(/\D/g, '');
+      if (this.mode === 'host' && this.currentRoom && dataPin === hostPin && data.player) {
         // Evitar duplicados por id o nickname idéntico
-        const exists = this.currentRoom.players.some(p => p.id === data.player.id || p.nickname.toLowerCase() === data.player.nickname.toLowerCase());
-        if (!exists) {
+        const existingIdx = this.currentRoom.players.findIndex(p => 
+          (p.id && data.player.id && p.id === data.player.id) || 
+          (p.nickname && data.player.nickname && p.nickname.toLowerCase() === data.player.nickname.toLowerCase())
+        );
+
+        if (existingIdx === -1) {
           this.currentRoom.players.push(data.player);
           if (this.currentRoom.roster && this.currentRoom.roster.length > 0) {
             this.currentRoom.roster.forEach(st => {
@@ -88,16 +94,25 @@ window.LobbyView = {
               }
             });
           }
-          window.soundEngine.playTick();
+          if (window.soundEngine) window.soundEngine.playTick();
           window.realtimeEngine.syncRoomState();
           this.render();
+        } else {
+          // Si el jugador ya estaba en la lista, actualizar sus datos y conexión
+          this.currentRoom.players[existingIdx] = {
+            ...this.currentRoom.players[existingIdx],
+            ...data.player,
+            connected: true
+          };
+          window.realtimeEngine.syncRoomState();
         }
       }
     });
 
     window.realtimeEngine.on('START_GAME', (data) => {
-      const myPin = window.realtimeEngine.currentRoom?.pin || this.joinPin;
-      if (this.mode === 'waiting' && (!data.pin || String(data.pin) === String(myPin))) {
+      const myPin = String(window.realtimeEngine.currentRoom?.pin || this.joinPin || '').replace(/\D/g, '');
+      const dataPin = String(data?.pin || data?.room?.pin || '').replace(/\D/g, '');
+      if (this.mode === 'waiting' && (!dataPin || dataPin === myPin)) {
         if (this.waitingPollInterval) clearInterval(this.waitingPollInterval);
         window.soundEngine.playFanfare();
         const fullRoom = data.room || window.realtimeEngine.currentRoom || this.joinRoomData;
@@ -107,8 +122,9 @@ window.LobbyView = {
 
     // Sincronizar el estado de la sala (incluyendo el modo de juego y reto) enviado por el anfitrión
     window.realtimeEngine.on('HOST_ROOM_STATE', (data) => {
-      const myPin = window.realtimeEngine.currentRoom?.pin || this.joinPin;
-      if (data && (!data.pin || String(data.pin) === String(myPin)) && data.room) {
+      const myPin = String(window.realtimeEngine.currentRoom?.pin || this.joinPin || '').replace(/\D/g, '');
+      const dataPin = String(data?.pin || data?.room?.pin || '').replace(/\D/g, '');
+      if (data && (!dataPin || dataPin === myPin) && data.room) {
         if (data.room.challenge) {
           this.joinRoomData = data.room;
         }
@@ -1218,8 +1234,20 @@ window.LobbyView = {
         clearInterval(this.waitingPollInterval);
         return;
       }
-      const pin = window.realtimeEngine.currentRoom?.pin || this.joinPin;
+      const pin = String(window.realtimeEngine.currentRoom?.pin || this.joinPin || '').replace(/\D/g, '');
       if (pin) {
+        // Enviar anuncio periódico cada ~1.5s al anfitrión por MQTT/WebRTC para garantizar presencia permanente
+        if (!this.lastJoinPing || Date.now() - this.lastJoinPing > 1500) {
+          this.lastJoinPing = Date.now();
+          if (window.realtimeEngine && window.realtimeEngine.localPlayer) {
+            window.realtimeEngine.broadcast({
+              type: 'PLAYER_JOIN',
+              pin: pin,
+              player: window.realtimeEngine.localPlayer
+            });
+          }
+        }
+
         const stored = localStorage.getItem(`te_reto_room_${pin}`) || localStorage.getItem(`mentix_room_${pin}`);
         if (stored) {
           try {
@@ -1239,7 +1267,7 @@ window.LobbyView = {
           } catch(e) {}
         }
       }
-    }, 350);
+    }, 400);
   },
 
   addBots() {
@@ -1282,11 +1310,12 @@ window.LobbyView = {
       return;
     }
 
+    const cleanPin = String(this.currentRoom.pin).replace(/\D/g, '');
     this.currentRoom.status = 'intro';
-    localStorage.setItem(`te_reto_room_${this.currentRoom.pin}`, JSON.stringify(this.currentRoom));
+    localStorage.setItem(`te_reto_room_${cleanPin}`, JSON.stringify(this.currentRoom));
     window.realtimeEngine.broadcast({
       type: 'START_GAME',
-      pin: this.currentRoom.pin,
+      pin: cleanPin,
       room: this.currentRoom
     });
 

@@ -58,10 +58,40 @@ class RealtimeEngine {
       return;
     }
 
+    if (!this.mqttQueue) {
+      this.mqttQueue = [];
+    }
+
+    // Si ya existe cliente MQTT conectado o en proceso para este PIN y rol, no reiniciar la conexión
+    if (this.mqttClient && this.activeMqttPin === cleanPin && this.activeMqttIsHost === isHost) {
+      console.log(`🌐 MQTT ya está enlazado a la sala ${cleanPin} (${isHost ? 'Host' : 'Jugador'})`);
+      if (this.mqttClient.connected) {
+        if (!isHost && this.localPlayer) {
+          this.publishMqtt(`mentix/rooms/${cleanPin}/player_events`, {
+            type: 'PLAYER_JOIN',
+            pin: cleanPin,
+            player: this.localPlayer,
+            timestamp: Date.now()
+          });
+        } else if (isHost && this.currentRoom) {
+          this.publishMqtt(`mentix/rooms/${cleanPin}/host_state`, {
+            type: 'HOST_ROOM_STATE',
+            pin: cleanPin,
+            room: this.currentRoom,
+            timestamp: Date.now()
+          });
+        }
+      }
+      return;
+    }
+
     if (this.mqttClient) {
-      try { this.mqttClient.end(); } catch (e) {}
+      try { this.mqttClient.end(true); } catch (e) {}
       this.mqttClient = null;
     }
+
+    this.activeMqttPin = cleanPin;
+    this.activeMqttIsHost = isHost;
 
     try {
       const clientId = (isHost ? 'mentix_host_' : 'mentix_ply_') + cleanPin + '_' + Math.random().toString(36).substr(2, 6);
@@ -69,9 +99,9 @@ class RealtimeEngine {
       const client = window.mqtt.connect(brokerUrl, {
         clientId: clientId,
         clean: true,
-        connectTimeout: 4000,
+        connectTimeout: 5000,
         reconnectPeriod: 2000,
-        keepalive: 45
+        keepalive: 30
       });
 
       this.mqttClient = client;
@@ -82,11 +112,34 @@ class RealtimeEngine {
         client.subscribe(topicFilter, { qos: 0 }, (err) => {
           if (!err) {
             console.log(`📡 Suscripción MQTT activa a: ${topicFilter}`);
+
+            // 1. Vaciar cola de mensajes enviados mientras se establecía la conexión
+            if (this.mqttQueue && this.mqttQueue.length > 0) {
+              const pending = [...this.mqttQueue];
+              this.mqttQueue = [];
+              pending.forEach(item => {
+                if (Date.now() - item.time < 20000) {
+                  this.publishMqtt(item.topic, item.payload);
+                }
+              });
+            }
+
+            // 2. Si es host, anunciar estado
             if (isHost && this.currentRoom) {
               this.publishMqtt(`mentix/rooms/${cleanPin}/host_state`, {
                 type: 'HOST_ROOM_STATE',
                 pin: cleanPin,
                 room: this.currentRoom,
+                timestamp: Date.now()
+              });
+            }
+
+            // 3. Si es jugador y ya tiene perfil, anunciar PLAYER_JOIN de inmediato
+            if (!isHost && this.localPlayer) {
+              this.publishMqtt(`mentix/rooms/${cleanPin}/player_events`, {
+                type: 'PLAYER_JOIN',
+                pin: cleanPin,
+                player: this.localPlayer,
                 timestamp: Date.now()
               });
             }
@@ -98,7 +151,8 @@ class RealtimeEngine {
         try {
           const msgStr = messageBuffer.toString();
           const data = JSON.parse(msgStr);
-          if (data && data.pin && String(data.pin) === String(cleanPin)) {
+          const dataPin = String(data?.pin || data?.room?.pin || '').replace(/\D/g, '');
+          if (data && (!dataPin || dataPin === cleanPin)) {
             // Si el host recibe solicitud de información de sala, responde de inmediato con su estado completo
             if (isHost && data.type === 'REQ_ROOM_INFO') {
               if (this.currentRoom) {
@@ -129,9 +183,15 @@ class RealtimeEngine {
   publishMqtt(topic, payload) {
     if (this.mqttClient && this.mqttClient.connected) {
       try {
-        const payloadStr = JSON.stringify(payload);
+        const payloadStr = typeof payload === 'string' ? payload : JSON.stringify(payload);
         this.mqttClient.publish(topic, payloadStr, { qos: 0 });
-      } catch (e) {}
+      } catch (e) {
+        console.warn('Error publicando MQTT:', e);
+      }
+    } else {
+      if (!this.mqttQueue) this.mqttQueue = [];
+      this.mqttQueue.push({ topic, payload, time: Date.now() });
+      if (this.mqttQueue.length > 50) this.mqttQueue.shift();
     }
   }
 
@@ -141,7 +201,7 @@ class RealtimeEngine {
     const clean = pin.toString().replace(/\D/g, '').trim();
 
     // 1. Probar en memoria activa local
-    if (this.currentRoom && String(this.currentRoom.pin) === clean && this.currentRoom.challenge) {
+    if (this.currentRoom && String(this.currentRoom.pin).replace(/\D/g, '') === clean && this.currentRoom.challenge) {
       return this.currentRoom;
     }
 
@@ -150,7 +210,7 @@ class RealtimeEngine {
       const stored = localStorage.getItem(`te_reto_room_${clean}`) || localStorage.getItem(`mentix_room_${clean}`);
       if (stored) {
         const parsed = JSON.parse(stored);
-        if (parsed && parsed.pin && parsed.challenge) {
+        if (parsed && parsed.challenge) {
           return parsed;
         }
       }
@@ -165,15 +225,15 @@ class RealtimeEngine {
         if (resolved) return;
         resolved = true;
         if (tempClient) {
-          try { tempClient.end(); } catch(e) {}
+          try { tempClient.end(true); } catch(e) {}
         }
         resolve(result);
       };
 
-      // Tiempo límite de respuesta: 2.5 segundos
+      // Tiempo límite de respuesta: 3.5 segundos
       const timer = setTimeout(() => {
         finish(null);
-      }, 2500);
+      }, 3500);
 
       if (!window.mqtt) {
         clearTimeout(timer);
@@ -185,7 +245,7 @@ class RealtimeEngine {
         tempClient = window.mqtt.connect('wss://broker.emqx.io:8084/mqtt', {
           clientId,
           clean: true,
-          connectTimeout: 2000
+          connectTimeout: 3000
         });
 
         tempClient.on('connect', () => {
@@ -204,7 +264,8 @@ class RealtimeEngine {
           try {
             const data = JSON.parse(payload.toString());
             if (data && (data.type === 'HOST_ROOM_STATE' || data.type === 'ROOM_CREATED') && data.room) {
-              if (String(data.pin || data.room.pin) === clean) {
+              const resPin = String(data.pin || data.room.pin || '').replace(/\D/g, '');
+              if (resPin === clean && data.room.challenge) {
                 clearTimeout(timer);
                 finish(data.room);
               }
@@ -355,6 +416,8 @@ class RealtimeEngine {
 
   broadcast(message) {
     message.timestamp = Date.now();
+    message._msgId = message._msgId || (message.type + '_' + (message.player?.id || message.playerId || '') + '_' + message.timestamp + '_' + Math.random().toString(36).substr(2, 5));
+
     if (this.channel) {
       try {
         this.channel.postMessage(message);
@@ -366,8 +429,8 @@ class RealtimeEngine {
     } catch (e) {}
 
     // Publicación por MQTT Cloud en tiempo real
-    const pin = message.pin || this.currentRoom?.pin || this.activePin;
-    if (pin && this.mqttClient) {
+    const pin = String(message.pin || this.currentRoom?.pin || this.activePin || '').replace(/\D/g, '');
+    if (pin) {
       const topic = this.isHost ? `mentix/rooms/${pin}/host_events` : `mentix/rooms/${pin}/player_events`;
       this.publishMqtt(topic, message);
     }
@@ -425,18 +488,30 @@ class RealtimeEngine {
 
   handleMessage(msg) {
     if (!msg || !msg.type) return;
-    // Evitar procesamiento duplicado instantáneo del mismo mensaje exacto
-    if (msg.timestamp && this.lastProcessedTimestamp === msg.timestamp) {
+
+    // Control de duplicados usando un set rotativo de identificadores únicos
+    if (!this.processedMessageIds) {
+      this.processedMessageIds = new Set();
+    }
+    const msgId = msg._msgId || (msg.type + '_' + (msg.player?.id || msg.playerId || '') + '_' + msg.timestamp);
+    if (msgId && this.processedMessageIds.has(msgId)) {
       return;
     }
-    // Si el mensaje es de una sala diferente y no es broadcast general, ignorar
-    const myPin = this.currentRoom?.pin;
-    if (myPin && msg.pin && String(msg.pin) !== String(myPin)) {
+    if (msgId) {
+      this.processedMessageIds.add(msgId);
+      if (this.processedMessageIds.size > 150) {
+        const first = this.processedMessageIds.values().next().value;
+        this.processedMessageIds.delete(first);
+      }
+    }
+
+    // Si el mensaje es de una sala diferente y ambos tienen PIN, ignorar
+    const myPin = String(this.currentRoom?.pin || this.activePin || '').replace(/\D/g, '');
+    const msgPin = String(msg.pin || msg.room?.pin || '').replace(/\D/g, '');
+    if (myPin && msgPin && myPin !== msgPin) {
       return;
     }
-    if (msg.timestamp) {
-      this.lastProcessedTimestamp = msg.timestamp;
-    }
+
     this.emit(msg.type, msg);
   }
 
@@ -508,6 +583,7 @@ class RealtimeEngine {
 
   // Unirse a una sala como Jugador
   joinRoom(pin, nickname, avatar = '😎', email = '', rosterStudentId = null, initialRoomData = null) {
+    const cleanPin = pin.toString().replace(/\D/g, '').trim();
     this.isHost = false;
     this.localPlayer = {
       id: rosterStudentId || ('p_' + Math.random().toString(36).substr(2, 9)),
@@ -528,7 +604,7 @@ class RealtimeEngine {
     let roomData = initialRoomData || null;
     if (!roomData) {
       try {
-        const stored = localStorage.getItem(`te_reto_room_${pin}`) || localStorage.getItem(`mentix_room_${pin}`);
+        const stored = localStorage.getItem(`te_reto_room_${cleanPin}`) || localStorage.getItem(`mentix_room_${cleanPin}`);
         if (stored) {
           roomData = JSON.parse(stored);
         }
@@ -541,7 +617,7 @@ class RealtimeEngine {
       const existingPlayers = Array.isArray(roomData.players) ? roomData.players : [];
       this.currentRoom = {
         ...roomData,
-        pin: pin,
+        pin: cleanPin,
         status: roomData.status || 'lobby',
         gameMode: roomData.gameMode || 'clasico',
         challenge: roomData.challenge || null,
@@ -549,13 +625,13 @@ class RealtimeEngine {
         rosterMode: roomData.rosterMode || 'open',
         rosterGroupName: roomData.rosterGroupName || '',
         players: [
-          ...existingPlayers.filter(p => p.id !== this.localPlayer.id && p.nickname !== this.localPlayer.nickname),
+          ...existingPlayers.filter(p => p.id !== this.localPlayer.id && p.nickname.toLowerCase() !== this.localPlayer.nickname.toLowerCase()),
           this.localPlayer
         ]
       };
     } else {
       this.currentRoom = {
-        pin: pin,
+        pin: cleanPin,
         status: 'lobby',
         gameMode: 'clasico',
         challenge: null,
@@ -567,14 +643,14 @@ class RealtimeEngine {
 
     // Conectar MQTT Cloud y WebRTC P2P del jugador a la sala del host
     try {
-      this.initMqtt(pin, false);
-      this.initPlayerPeer(pin);
+      this.initMqtt(cleanPin, false);
+      this.initPlayerPeer(cleanPin);
     } catch(e) {}
 
-    // Notificar al host y a la sala
+    // Notificar al host y a la sala (se enviará inmediatamente o mediante la cola MQTT si está conectando)
     this.broadcast({
       type: 'PLAYER_JOIN',
-      pin: pin,
+      pin: cleanPin,
       player: this.localPlayer
     });
 
