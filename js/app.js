@@ -618,6 +618,9 @@ class AppRouter {
     }
     saveGlobalState(window.appState);
 
+    // Eliminar de la nube persistente
+    this.deleteChallengeFromCloud(challengeId);
+
     // Eliminar de la nube pública Vercel / GitHub
     try {
       fetch('/api/challenges?id=' + encodeURIComponent(challengeId), { method: 'DELETE' }).catch(() => {});
@@ -944,21 +947,32 @@ class AppRouter {
     if (window.ProjectsView && this.currentView === 'projects') window.ProjectsView.render();
 
     // 2. Guardar en la nube pública para que todos los usuarios en otros dispositivos la vean
+    const cloudCatUrl = 'https://api.restful-api.dev/objects/ff808181a09d98f701a1223d56bf3159';
     try {
-      const res = await fetch('/api/categories', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ category: newCat })
-      });
-      if (res.ok) {
-        const data = await res.json();
-        if (data && Array.isArray(data.categories)) {
-          window.appState.categories = data.categories;
-          saveGlobalState(window.appState);
-          if (window.HomeView && this.currentView === 'home') window.HomeView.render();
-          if (window.ProjectsView && this.currentView === 'projects') window.ProjectsView.render();
-        }
+      const getRes = await fetch(cloudCatUrl);
+      let cloudCats = [];
+      if (getRes.ok) {
+        const json = await getRes.json();
+        cloudCats = json.data?.categories || [];
       }
+      const existingIdx = cloudCats.findIndex(c => c.id === newCat.id);
+      if (existingIdx >= 0) {
+        cloudCats[existingIdx] = { ...cloudCats[existingIdx], ...newCat };
+      } else {
+        cloudCats.push(newCat);
+      }
+      await fetch(cloudCatUrl, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: 'mentix_global_categories_v1',
+          data: { categories: cloudCats, updatedAt: new Date().toISOString() }
+        })
+      });
+      window.appState.categories = cloudCats;
+      saveGlobalState(window.appState);
+      if (window.HomeView && this.currentView === 'home') window.HomeView.render();
+      if (window.ProjectsView && this.currentView === 'projects') window.ProjectsView.render();
     } catch (cloudErr) {
       console.warn('Categoría guardada localmente, sincronización en nube diferida:', cloudErr);
     }
@@ -968,16 +982,18 @@ class AppRouter {
   }
 
   async syncCategoriesWithCloud() {
+    const cloudCatUrl = 'https://api.restful-api.dev/objects/ff808181a09d98f701a1223d56bf3159';
     try {
       let cloudCategories = null;
       try {
-        const res = await fetch(`/api/categories?t=${Date.now()}`);
+        const res = await fetch(cloudCatUrl);
         if (res.ok) {
-          const data = await res.json();
-          if (Array.isArray(data)) cloudCategories = data;
-          else if (data && Array.isArray(data.categories)) cloudCategories = data.categories;
+          const json = await res.json();
+          if (json.data && Array.isArray(json.data.categories)) {
+            cloudCategories = json.data.categories;
+          }
         }
-      } catch (errApi) {
+      } catch (errCloud) {
         try {
           const resStatic = await fetch(`data/categories.json?t=${Date.now()}`);
           if (resStatic.ok) cloudCategories = await resStatic.json();
@@ -1027,27 +1043,69 @@ class AppRouter {
     return false;
   }
 
-  pushChallengeToCloud(challenge) {
+  async pushChallengeToCloud(challenge) {
     if (!challenge || !challenge.id || !challenge.title) return;
+    const cloudChalUrl = 'https://api.restful-api.dev/objects/ff808181a09d98f701a1223cda883158';
     try {
-      fetch('/api/challenges', {
-        method: 'POST',
+      const getRes = await fetch(cloudChalUrl);
+      let list = [];
+      if (getRes.ok) {
+        const json = await getRes.json();
+        list = json.data?.challenges || [];
+      }
+      const existingIdx = list.findIndex(c => c.id === challenge.id);
+      if (existingIdx >= 0) {
+        list[existingIdx] = { ...list[existingIdx], ...challenge };
+      } else {
+        list.unshift(challenge);
+      }
+      await fetch(cloudChalUrl, {
+        method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ challenge })
-      }).catch(e => console.warn('Error al subir reto a la nube:', e));
+        body: JSON.stringify({
+          name: 'mentix_global_challenges_v1',
+          data: { challenges: list, updatedAt: new Date().toISOString() }
+        })
+      });
+      console.log('☁️ Reto guardado en la nube para todos los usuarios:', challenge.title);
+    } catch(e) {
+      console.warn('Error al subir reto a la nube:', e);
+    }
+  }
+
+  async deleteChallengeFromCloud(challengeId) {
+    if (!challengeId) return;
+    const cloudChalUrl = 'https://api.restful-api.dev/objects/ff808181a09d98f701a1223cda883158';
+    try {
+      const getRes = await fetch(cloudChalUrl);
+      if (getRes.ok) {
+        const json = await getRes.json();
+        const list = (json.data?.challenges || []).filter(c => c.id !== challengeId);
+        await fetch(cloudChalUrl, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name: 'mentix_global_challenges_v1',
+            data: { challenges: list, updatedAt: new Date().toISOString() }
+          })
+        });
+      }
     } catch(e) {}
   }
 
   async syncChallengesWithCloud() {
+    const cloudChalUrl = 'https://api.restful-api.dev/objects/ff808181a09d98f701a1223cda883158';
     try {
       let cloudChallenges = null;
       try {
-        const res = await fetch(`/api/challenges?t=${Date.now()}`);
+        const res = await fetch(cloudChalUrl);
         if (res.ok) {
-          const data = await res.json();
-          if (Array.isArray(data)) cloudChallenges = data;
+          const json = await res.json();
+          if (json.data && Array.isArray(json.data.challenges)) {
+            cloudChallenges = json.data.challenges;
+          }
         }
-      } catch (errApi) {
+      } catch (errCloud) {
         try {
           const resStatic = await fetch(`data/challenges.json?t=${Date.now()}`);
           if (resStatic.ok) cloudChallenges = await resStatic.json();

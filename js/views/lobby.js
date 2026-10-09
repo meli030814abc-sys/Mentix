@@ -27,18 +27,21 @@ window.LobbyView = {
     this.render();
   },
 
-  initJoin(prefilledPin = '') {
+  async initJoin(prefilledPin = '') {
     this.mode = 'join';
     const cleanPrefilled = (prefilledPin || '').toString().replace(/\D/g, '').trim();
     if (cleanPrefilled && cleanPrefilled.length >= 4) {
       this.joinPin = cleanPrefilled;
-      const room = this.findRoomByPin(cleanPrefilled);
-      this.joinRoomData = room || { pin: cleanPrefilled, rosterMode: 'open', gameMode: 'clasico' };
-      this.joinStep = 'profile';
-      if (window.realtimeEngine && window.realtimeEngine.initPlayerPeer) {
-        window.realtimeEngine.initPlayerPeer(cleanPrefilled, (conn) => {
-          console.log('📡 Sala remota detectada y enlazada por WebRTC:', cleanPrefilled);
-        });
+      const room = await (window.realtimeEngine ? window.realtimeEngine.findRoom(cleanPrefilled) : null);
+      if (room && room.challenge) {
+        this.joinRoomData = room;
+        this.joinStep = 'profile';
+        if (window.realtimeEngine && window.realtimeEngine.initMqtt) {
+          window.realtimeEngine.initMqtt(cleanPrefilled, false);
+        }
+      } else {
+        this.joinStep = 'pin';
+        this.joinRoomData = null;
       }
     } else {
       this.joinStep = 'pin';
@@ -93,25 +96,29 @@ window.LobbyView = {
     });
 
     window.realtimeEngine.on('START_GAME', (data) => {
-      const myPin = window.realtimeEngine.currentRoom?.pin;
-      if (this.mode === 'waiting' && (!data.pin || data.pin === myPin)) {
+      const myPin = window.realtimeEngine.currentRoom?.pin || this.joinPin;
+      if (this.mode === 'waiting' && (!data.pin || String(data.pin) === String(myPin))) {
         if (this.waitingPollInterval) clearInterval(this.waitingPollInterval);
         window.soundEngine.playFanfare();
-        window.appRouter.startLivePlayerGame(data.room || window.realtimeEngine.currentRoom);
+        const fullRoom = data.room || window.realtimeEngine.currentRoom || this.joinRoomData;
+        window.appRouter.startLivePlayerGame(fullRoom);
       }
     });
 
-    // Sincronizar el estado de la sala (incluyendo el modo de juego exacto) enviado por el anfitrión
+    // Sincronizar el estado de la sala (incluyendo el modo de juego y reto) enviado por el anfitrión
     window.realtimeEngine.on('HOST_ROOM_STATE', (data) => {
-      const myPin = window.realtimeEngine.currentRoom?.pin;
-      if (data && (!data.pin || data.pin === myPin) && data.room) {
+      const myPin = window.realtimeEngine.currentRoom?.pin || this.joinPin;
+      if (data && (!data.pin || String(data.pin) === String(myPin)) && data.room) {
+        if (data.room.challenge) {
+          this.joinRoomData = data.room;
+        }
         if (this.mode === 'waiting') {
           const prevMode = window.realtimeEngine.currentRoom?.gameMode;
           window.realtimeEngine.currentRoom = {
             ...data.room,
             players: data.room.players || window.realtimeEngine.currentRoom?.players || []
           };
-          if (prevMode !== data.room.gameMode) {
+          if (prevMode !== data.room.gameMode || !window.realtimeEngine.currentRoom.challenge) {
             this.render();
           }
         }
@@ -751,8 +758,9 @@ window.LobbyView = {
     if (err) err.style.display = 'none';
   },
 
-  submitPinStep() {
+  async submitPinStep() {
     const pinInput = document.getElementById('join-pin-input');
+    const submitBtn = document.querySelector('#join-pin-form button[type="submit"]');
     const rawPin = pinInput ? pinInput.value : '';
     const cleanPin = rawPin.replace(/\D/g, '').trim();
 
@@ -769,22 +777,49 @@ window.LobbyView = {
       return;
     }
 
-    // Conectar a la sala (si existe en almacenamiento local o se sincroniza por WebRTC en red)
-    const room = this.findRoomByPin(cleanPin);
-
-    this.joinPin = cleanPin;
-    this.joinRoomData = room || { pin: cleanPin, rosterMode: 'open', gameMode: 'clasico' };
-    this.joinStep = 'profile';
-
-    // Iniciar conexión anticipada por WebRTC para descubrir la sala remota
-    if (window.realtimeEngine && window.realtimeEngine.initPlayerPeer) {
-      window.realtimeEngine.initPlayerPeer(cleanPin, (conn) => {
-        console.log('📡 Sala remota detectada y enlazada por WebRTC:', cleanPin);
-      });
+    if (submitBtn) {
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = `<span>⏳</span> Conectando...`;
     }
 
-    if (window.soundEngine) window.soundEngine.playClick();
-    this.render();
+    try {
+      const room = await (window.realtimeEngine ? window.realtimeEngine.findRoom(cleanPin) : null);
+
+      if (!room || !room.challenge) {
+        if (err) {
+          err.innerHTML = `❌ No encontramos una sala activa con el código <strong>${cleanPin}</strong>.<br><span style="font-size: 0.82rem; font-weight: 500; color: #ffd166;">Verifica que el anfitrión tenga la sala abierta en pantalla e intenta de nuevo.</span>`;
+          err.style.display = 'block';
+        } else {
+          alert(`No se encontró ninguna sala activa con el PIN ${cleanPin}.`);
+        }
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Unirse';
+        }
+        return;
+      }
+
+      this.joinPin = cleanPin;
+      this.joinRoomData = room;
+      this.joinStep = 'profile';
+
+      // Conectar MQTT y WebRTC en el cliente del jugador
+      if (window.realtimeEngine && window.realtimeEngine.initMqtt) {
+        window.realtimeEngine.initMqtt(cleanPin, false);
+      }
+      if (window.realtimeEngine && window.realtimeEngine.initPlayerPeer) {
+        window.realtimeEngine.initPlayerPeer(cleanPin);
+      }
+
+      if (window.soundEngine) window.soundEngine.playClick();
+      this.render();
+    } catch(e) {
+      console.warn('Error verificando sala:', e);
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Unirse';
+      }
+    }
   },
 
   backToPinStep() {

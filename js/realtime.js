@@ -16,7 +16,9 @@ class RealtimeEngine {
     // PeerJS para comunicación WebRTC entre múltiples dispositivos
     this.peer = null;
     this.peerConnections = []; // Para el host: lista de conexiones con clientes
-    this.hostConnection = null; // Para el jugador: conexión activa con el host
+    // MQTT Cloud Backbone para conexión multidispositivo global
+    this.mqttClient = null;
+    this.activePin = null;
 
     this.initBus();
   }
@@ -43,12 +45,193 @@ class RealtimeEngine {
   }
 
   // ==========================================
+  // 🌐 MQTT CLOUD BACKBONE: MULTIDISPOSITIVO GLOBAL EN TIEMPO REAL
+  // ==========================================
+  initMqtt(pin, isHost = false) {
+    if (!pin) return;
+    const cleanPin = pin.toString().replace(/\D/g, '').trim();
+    this.activePin = cleanPin;
+    this.isHost = isHost;
+
+    if (!window.mqtt) {
+      console.warn('MQTT.js no disponible en window, usando WebRTC/Storage fallback');
+      return;
+    }
+
+    if (this.mqttClient) {
+      try { this.mqttClient.end(); } catch (e) {}
+      this.mqttClient = null;
+    }
+
+    try {
+      const clientId = (isHost ? 'mentix_host_' : 'mentix_ply_') + cleanPin + '_' + Math.random().toString(36).substr(2, 6);
+      const brokerUrl = 'wss://broker.emqx.io:8084/mqtt';
+      const client = window.mqtt.connect(brokerUrl, {
+        clientId: clientId,
+        clean: true,
+        connectTimeout: 4000,
+        reconnectPeriod: 2000,
+        keepalive: 45
+      });
+
+      this.mqttClient = client;
+
+      client.on('connect', () => {
+        console.log(`🌐 MQTT Cloud conectado exitosamente para sala ${cleanPin} (${isHost ? 'Host' : 'Jugador'})`);
+        const topicFilter = `mentix/rooms/${cleanPin}/#`;
+        client.subscribe(topicFilter, { qos: 0 }, (err) => {
+          if (!err) {
+            console.log(`📡 Suscripción MQTT activa a: ${topicFilter}`);
+            if (isHost && this.currentRoom) {
+              this.publishMqtt(`mentix/rooms/${cleanPin}/host_state`, {
+                type: 'HOST_ROOM_STATE',
+                pin: cleanPin,
+                room: this.currentRoom,
+                timestamp: Date.now()
+              });
+            }
+          }
+        });
+      });
+
+      client.on('message', (topic, messageBuffer) => {
+        try {
+          const msgStr = messageBuffer.toString();
+          const data = JSON.parse(msgStr);
+          if (data && data.pin && String(data.pin) === String(cleanPin)) {
+            // Si el host recibe solicitud de información de sala, responde de inmediato con su estado completo
+            if (isHost && data.type === 'REQ_ROOM_INFO') {
+              if (this.currentRoom) {
+                this.publishMqtt(`mentix/rooms/${cleanPin}/host_state`, {
+                  type: 'HOST_ROOM_STATE',
+                  pin: cleanPin,
+                  room: this.currentRoom,
+                  timestamp: Date.now()
+                });
+              }
+              return;
+            }
+            this.handleMessage(data);
+          }
+        } catch (e) {
+          console.warn('Error procesando mensaje MQTT:', e);
+        }
+      });
+
+      client.on('error', (err) => {
+        console.warn('Aviso MQTT client:', err);
+      });
+    } catch (e) {
+      console.warn('Error inicializando MQTT:', e);
+    }
+  }
+
+  publishMqtt(topic, payload) {
+    if (this.mqttClient && this.mqttClient.connected) {
+      try {
+        const payloadStr = JSON.stringify(payload);
+        this.mqttClient.publish(topic, payloadStr, { qos: 0 });
+      } catch (e) {}
+    }
+  }
+
+  // Descubrir y validar si existe una sala activa (Local o Cloud)
+  async findRoom(pin) {
+    if (!pin) return null;
+    const clean = pin.toString().replace(/\D/g, '').trim();
+
+    // 1. Probar en memoria activa local
+    if (this.currentRoom && String(this.currentRoom.pin) === clean && this.currentRoom.challenge) {
+      return this.currentRoom;
+    }
+
+    // 2. Probar en almacenamiento local de este navegador
+    try {
+      const stored = localStorage.getItem(`te_reto_room_${clean}`) || localStorage.getItem(`mentix_room_${clean}`);
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (parsed && parsed.pin && parsed.challenge) {
+          return parsed;
+        }
+      }
+    } catch(e) {}
+
+    // 3. Probar por MQTT Cloud preguntando al anfitrión en vivo
+    return new Promise((resolve) => {
+      let resolved = false;
+      let tempClient = null;
+
+      const finish = (result) => {
+        if (resolved) return;
+        resolved = true;
+        if (tempClient) {
+          try { tempClient.end(); } catch(e) {}
+        }
+        resolve(result);
+      };
+
+      // Tiempo límite de respuesta: 2.5 segundos
+      const timer = setTimeout(() => {
+        finish(null);
+      }, 2500);
+
+      if (!window.mqtt) {
+        clearTimeout(timer);
+        return resolve(null);
+      }
+
+      try {
+        const clientId = 'mentix_finder_' + clean + '_' + Math.random().toString(36).substr(2, 6);
+        tempClient = window.mqtt.connect('wss://broker.emqx.io:8084/mqtt', {
+          clientId,
+          clean: true,
+          connectTimeout: 2000
+        });
+
+        tempClient.on('connect', () => {
+          const stateTopic = `mentix/rooms/${clean}/host_state`;
+          tempClient.subscribe(stateTopic, () => {
+            const reqTopic = `mentix/rooms/${clean}/player_events`;
+            tempClient.publish(reqTopic, JSON.stringify({
+              type: 'REQ_ROOM_INFO',
+              pin: clean,
+              timestamp: Date.now()
+            }));
+          });
+        });
+
+        tempClient.on('message', (topic, payload) => {
+          try {
+            const data = JSON.parse(payload.toString());
+            if (data && (data.type === 'HOST_ROOM_STATE' || data.type === 'ROOM_CREATED') && data.room) {
+              if (String(data.pin || data.room.pin) === clean) {
+                clearTimeout(timer);
+                finish(data.room);
+              }
+            }
+          } catch(e) {}
+        });
+
+        tempClient.on('error', () => {
+          clearTimeout(timer);
+          finish(null);
+        });
+      } catch(e) {
+        clearTimeout(timer);
+        finish(null);
+      }
+    });
+  }
+
+  // ==========================================
   // 🌐 WEBRTC P2P: CONECTIVIDAD MULTIDISPOSITIVO POR INTERNET
   // ==========================================
   initHostPeer(pin) {
     if (!window.Peer) return;
     try {
-      if (this.peer) this.peer.destroy();
+      if (this.peer) {
+        try { this.peer.destroy(); } catch(e) {}
+      }
       const hostPeerId = `mentix-room-${pin}`;
       this.peer = new window.Peer(hostPeerId, {
         debug: 1,
@@ -68,8 +251,7 @@ class RealtimeEngine {
         this.peerConnections.push(conn);
         console.log('📱 Nuevo jugador conectado por WebRTC:', conn.peer);
 
-        // Al conectarse un jugador remoto, responderle inmediatamente con el estado completo de la sala
-        conn.on('open', () => {
+        const sendState = () => {
           if (this.currentRoom) {
             conn.send({
               type: 'HOST_ROOM_STATE',
@@ -78,7 +260,13 @@ class RealtimeEngine {
               timestamp: Date.now()
             });
           }
-        });
+        };
+
+        if (conn.open) {
+          sendState();
+        } else {
+          conn.on('open', sendState);
+        }
 
         conn.on('data', (data) => {
           this.handleMessage(data);
@@ -100,7 +288,13 @@ class RealtimeEngine {
   initPlayerPeer(pin, onConnected) {
     if (!window.Peer) return;
     try {
-      if (this.peer) this.peer.destroy();
+      if (this.peer && this.hostConnection && this.hostConnection.open) {
+        if (onConnected) onConnected(this.hostConnection);
+        return;
+      }
+      if (this.peer) {
+        try { this.peer.destroy(); } catch(e) {}
+      }
       this.peer = new window.Peer({
         debug: 1,
         config: {
@@ -116,12 +310,11 @@ class RealtimeEngine {
         console.log('🔗 Conectando jugador con el anfitrión:', hostPeerId);
         const conn = this.peer.connect(hostPeerId, { reliable: true });
 
-        conn.on('open', () => {
+        const onConnOpen = () => {
           console.log('✅ Conexión P2P establecida con la sala del anfitrión');
           this.hostConnection = conn;
           if (onConnected) onConnected(conn);
 
-          // Si el jugador ya tiene perfil, enviarle el evento de entrada
           if (this.localPlayer) {
             conn.send({
               type: 'PLAYER_JOIN',
@@ -130,7 +323,13 @@ class RealtimeEngine {
               timestamp: Date.now()
             });
           }
-        });
+        };
+
+        if (conn.open) {
+          onConnOpen();
+        } else {
+          conn.on('open', onConnOpen);
+        }
 
         conn.on('data', (data) => {
           this.handleMessage(data);
@@ -166,6 +365,13 @@ class RealtimeEngine {
       localStorage.setItem('te_reto_storage_bus', JSON.stringify(message));
     } catch (e) {}
 
+    // Publicación por MQTT Cloud en tiempo real
+    const pin = message.pin || this.currentRoom?.pin || this.activePin;
+    if (pin && this.mqttClient) {
+      const topic = this.isHost ? `mentix/rooms/${pin}/host_events` : `mentix/rooms/${pin}/player_events`;
+      this.publishMqtt(topic, message);
+    }
+
     // Enviar a todos los clientes WebRTC si somos el host
     if (this.isHost && this.peerConnections && this.peerConnections.length > 0) {
       this.peerConnections.forEach(conn => {
@@ -180,9 +386,8 @@ class RealtimeEngine {
       try { this.hostConnection.send(message); } catch (e) {}
     }
 
-    // Supabase Realtime Cloud Broadcast
+    // Supabase Realtime Cloud Broadcast si está conectado
     if (window.supabaseService && window.supabaseService.isConnected) {
-      const pin = message.pin || this.currentRoom?.pin;
       if (pin) {
         window.supabaseService.sendBroadcast(pin, message);
       }
@@ -292,8 +497,9 @@ class RealtimeEngine {
       });
     } catch(e) {}
 
-    // Activar servidor WebRTC P2P en la nube para conexión desde cualquier dispositivo o red
+    // Conectar MQTT Cloud y WebRTC P2P en la nube para conexión inmediata entre dispositivos
     try {
+      this.initMqtt(pin, true);
       this.initHostPeer(pin);
     } catch(e) {}
 
@@ -359,8 +565,11 @@ class RealtimeEngine {
       };
     }
 
-    // Conectar por WebRTC P2P a la sala del host en internet
-    this.initPlayerPeer(pin);
+    // Conectar MQTT Cloud y WebRTC P2P del jugador a la sala del host
+    try {
+      this.initMqtt(pin, false);
+      this.initPlayerPeer(pin);
+    } catch(e) {}
 
     // Notificar al host y a la sala
     this.broadcast({

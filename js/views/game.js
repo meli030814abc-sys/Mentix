@@ -79,8 +79,13 @@ window.GameView = {
     this.isHost = false;
     this.room = room || window.realtimeEngine.currentRoom;
     this.challenge = this.room?.challenge;
-
-    // Recuperar modo real configurado por el anfitrión si no vino en el objeto
+    if (!this.challenge && window.LobbyView?.joinRoomData?.challenge) {
+      this.challenge = window.LobbyView.joinRoomData.challenge;
+      if (this.room) this.room.challenge = this.challenge;
+    }
+    if (!this.challenge && window.appState?.challenges?.length > 0) {
+      this.challenge = window.appState.challenges[0];
+    }
     let detectedMode = this.room?.gameMode;
     if (!detectedMode || detectedMode === 'clasico') {
       const pin = this.room?.pin || window.realtimeEngine.currentRoom?.pin;
@@ -549,6 +554,21 @@ window.GameView = {
     const isTwoOptions = (q.options || []).length === 2;
     const isTextOrOpen = q.type === 'text' || q.type === 'open';
 
+    // 🎲 Variación / Aleatorización de opciones exclusiva para este alumno (anti-copia)
+    const rawOptions = q.options || [];
+    let displayOptions = rawOptions;
+    this.playerOptionMapping = null;
+
+    if (rawOptions.length > 1 && !isTextOrOpen) {
+      const indices = rawOptions.map((_, i) => i);
+      for (let i = indices.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [indices[i], indices[j]] = [indices[j], indices[i]];
+      }
+      this.playerOptionMapping = indices;
+      displayOptions = indices.map(idx => rawOptions[idx]);
+    }
+
     container.innerHTML = `
       <div class="kahoot-player-fullscreen-container">
         <!-- Barra Superior Compacta del Alumno -->
@@ -625,19 +645,25 @@ window.GameView = {
             <div id="answer-feedback-panel" style="display: none; width: 100%; margin-top: 1rem;"></div>
           </div>
         ` : `
-          <!-- Pads Táctiles Gigantes con SOLO LAS FORMAS GEOMÉTRICAS DE TE RETO (✦ ⬢ ⚡ 🛡️) -->
+          <!-- Pads Táctiles Gigantes con Respuestas Aleatorizadas por Estudiante y Figuras TE RETO -->
           <div class="kahoot-player-grid ${isTwoOptions ? 'two-options' : ''}" id="player-pads-grid">
-            ${(q.options || []).map((opt, optIdx) => {
-              const shapeDef = this.getShapeDef(optIdx);
+            ${displayOptions.map((opt, displayIdx) => {
+              const shapeDef = this.getShapeDef(displayIdx);
               return `
                 <button 
                   type="button" 
                   class="kahoot-player-pad ${shapeDef.colorClass}" 
-                  id="player-pad-${optIdx}"
-                  title="${shapeDef.name} (Opción ${optIdx + 1})"
-                  onclick="window.GameView.handleSelectAnswer(${optIdx})"
+                  id="player-pad-${displayIdx}"
+                  title="${shapeDef.name}: ${this.escapeAttr(opt.text)}"
+                  onclick="window.GameView.handleSelectAnswer(${displayIdx})"
+                  style="cursor: pointer;"
                 >
-                  <div class="pad-shape">${shapeDef.svg}</div>
+                  <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.45rem; width: 100%; height: 100%; padding: 0.85rem; text-align: center; box-sizing: border-box;">
+                    <div class="pad-shape" style="height: auto; width: auto;">${shapeDef.svg}</div>
+                    <div class="pad-option-text" style="color: #ffffff; font-weight: 800; font-size: clamp(0.95rem, 2.5vw, 1.3rem); line-height: 1.25; text-shadow: 0 2px 10px rgba(0,0,0,0.85); max-width: 95%; word-break: break-word;">
+                      ${this.escapeHtml(opt.text)}
+                    </div>
+                  </div>
                 </button>
               `;
             }).join('')}
@@ -664,6 +690,21 @@ window.GameView = {
     const localPlayer = this.room?.players?.[0];
     const currentScore = localPlayer?.score || 0;
     const streak = localPlayer?.streak || 0;
+
+    // 🎲 Variación / Aleatorización de opciones para práctica
+    const rawOptions = q.options || [];
+    let displayOptions = rawOptions;
+    this.playerOptionMapping = null;
+
+    if (rawOptions.length > 1 && !isTextOrOpen) {
+      const indices = rawOptions.map((_, i) => i);
+      for (let i = indices.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [indices[i], indices[j]] = [indices[j], indices[i]];
+      }
+      this.playerOptionMapping = indices;
+      displayOptions = indices.map(idx => rawOptions[idx]);
+    }
 
     container.innerHTML = `
       <div style="max-width: 1050px; margin: 0 auto; padding: 1.5rem 1rem 4rem;">
@@ -749,18 +790,18 @@ window.GameView = {
           </div>
         ` : `
           <div class="kahoot-answers-grid ${isTwoOptions ? 'two-options' : ''}" id="solo-answers-grid">
-            ${(q.options || []).map((opt, optIdx) => {
-              const shapeDef = this.getShapeDef(optIdx);
+            ${displayOptions.map((opt, displayIdx) => {
+              const shapeDef = this.getShapeDef(displayIdx);
               return `
                 <button 
                   type="button" 
                   class="kahoot-answer-card ${shapeDef.colorClass}" 
-                  id="opt-btn-${optIdx}"
+                  id="opt-btn-${displayIdx}"
                   style="cursor: pointer; width: 100%;"
-                  onclick="window.GameView.handleSelectAnswer(${optIdx})"
+                  onclick="window.GameView.handleSelectAnswer(${displayIdx})"
                 >
                   <span class="kahoot-shape">${shapeDef.svg}</span>
-                  <span class="kahoot-card-text">${opt.text}</span>
+                  <span class="kahoot-card-text">${this.escapeHtml(opt.text)}</span>
                 </button>
               `;
             }).join('')}
@@ -947,7 +988,13 @@ window.GameView = {
   handleSelectAnswer(index) {
     if (this.hasAnswered || this.timeLeft <= 0 || this.questionFinished) return;
     this.hasAnswered = true;
-    this.selectedAnswer = index;
+
+    const displayIndex = index;
+    let originalIndex = index;
+    if (typeof index === 'number' && this.playerOptionMapping && this.playerOptionMapping[index] !== undefined) {
+      originalIndex = this.playerOptionMapping[index];
+    }
+    this.selectedAnswer = originalIndex;
 
     const timeTaken = Math.max(0.1, (Date.now() - this.questionStartTime) / 1000);
     const q = this.challenge.questions[this.currentQuestionIndex];
@@ -955,14 +1002,14 @@ window.GameView = {
     // Marcar visualmente botón seleccionado y desactivar los demás
     document.querySelectorAll('.game-answer-btn, .kahoot-player-pad, .kahoot-answer-card').forEach((b, i) => {
       b.setAttribute('disabled', 'true');
-      if (i === index) {
+      if (i === displayIndex) {
         b.classList.add('selected');
         b.classList.remove('dimmed');
       } else {
         b.classList.add('dimmed');
       }
     });
-    const chosenBtn = document.getElementById(`player-pad-${index}`) || document.getElementById(`opt-btn-${index}`);
+    const chosenBtn = document.getElementById(`player-pad-${displayIndex}`) || document.getElementById(`opt-btn-${displayIndex}`);
     if (chosenBtn) {
       chosenBtn.classList.remove('dimmed');
       chosenBtn.classList.add('selected');
@@ -975,20 +1022,20 @@ window.GameView = {
       this.questionFinished = true;
 
       const p = this.room.players[0];
-      const res = window.realtimeEngine.processAnswer('solo_player', index, timeTaken, q);
+      const res = window.realtimeEngine.processAnswer('solo_player', originalIndex, timeTaken, q);
 
       let isCorr = false;
       if (q.type === 'poll' || q.type === 'open') {
         isCorr = true;
       } else if (q.type === 'text') {
         const norm = (s) => (s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim();
-        const userText = norm(String(index));
+        const userText = norm(String(originalIndex));
         const accepted = (q.acceptedAnswers && q.acceptedAnswers.length > 0) ? q.acceptedAnswers : [q.correctAnswer];
         isCorr = accepted.some(a => norm(String(a)) === userText);
       } else if (Array.isArray(q.correctAnswer)) {
-        isCorr = q.correctAnswer.includes(index);
+        isCorr = q.correctAnswer.includes(originalIndex);
       } else {
-        isCorr = index === q.correctAnswer;
+        isCorr = originalIndex === q.correctAnswer;
       }
       let ptsEarned = (isCorr || q.type === 'poll' || q.type === 'open') ? Math.round((q.points !== undefined ? q.points : 1000) * (0.5 + 0.5 * Math.max(0, (q.timeLimit || 20) - timeTaken) / (q.timeLimit || 20))) : 0;
       let comboMult = 1;
@@ -1043,11 +1090,14 @@ window.GameView = {
       // El host no responde
     } else {
       // 👥 MODO MULTIJUGADOR (CLIENTE REMOTO):
+      if (window.realtimeEngine.sendAnswer) {
+        window.realtimeEngine.sendAnswer(originalIndex, timeTaken);
+      }
       window.realtimeEngine.broadcast({
         type: 'PLAYER_ANSWER',
         pin: this.room.pin,
         playerId: window.realtimeEngine.localPlayer?.id,
-        answerIndex: index,
+        answerIndex: originalIndex,
         timeTaken: timeTaken
       });
 
