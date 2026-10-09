@@ -538,21 +538,10 @@ window.GameView = {
       }, 50);
     }
 
-    // Ajustar font-size dinámicamente según longitud del texto de cada opción
+    // Ajustar font-size dinámicamente según longitud del texto de la pregunta y de cada opción
     setTimeout(() => {
-      document.querySelectorAll('.kahoot-card-text').forEach(el => {
-        const len = (el.textContent || '').length;
-        if (len > 80) {
-          el.style.fontSize = '0.88rem';
-        } else if (len > 50) {
-          el.style.fontSize = '1rem';
-        } else if (len > 30) {
-          el.style.fontSize = '1.15rem';
-        } else {
-          el.style.fontSize = '1.35rem';
-        }
-      });
-    }, 80);
+      this.adjustCardAndBannerTextSizes();
+    }, 60);
   },
 
   /* 📱 PANTALLA DEL ALUMNO / JUGADOR */
@@ -788,6 +777,48 @@ window.GameView = {
         if (inp) inp.focus();
       }, 100);
     }
+
+    setTimeout(() => {
+      this.adjustCardAndBannerTextSizes();
+    }, 60);
+  },
+
+  adjustCardAndBannerTextSizes() {
+    // 1. Ajustar banner si la pregunta es extensa para que se lea completa sin cortes
+    const banner = document.querySelector('.kahoot-host-question-banner');
+    if (banner) {
+      const qLen = (banner.textContent || '').trim().length;
+      if (qLen > 180) {
+        banner.style.fontSize = '1.2rem';
+        banner.style.lineHeight = '1.3';
+        banner.style.padding = '1rem 1.25rem';
+      } else if (qLen > 110) {
+        banner.style.fontSize = '1.4rem';
+        banner.style.lineHeight = '1.35';
+        banner.style.padding = '1.15rem 1.5rem';
+      } else if (qLen > 65) {
+        banner.style.fontSize = '1.65rem';
+      }
+    }
+
+    // 2. Ajustar opciones para que se lean completas
+    document.querySelectorAll('.kahoot-card-text').forEach(el => {
+      const len = (el.textContent || '').trim().length;
+      if (len > 120) {
+        el.style.fontSize = '0.85rem';
+        el.style.lineHeight = '1.25';
+      } else if (len > 80) {
+        el.style.fontSize = '0.95rem';
+        el.style.lineHeight = '1.3';
+      } else if (len > 50) {
+        el.style.fontSize = '1.08rem';
+        el.style.lineHeight = '1.32';
+      } else if (len > 30) {
+        el.style.fontSize = '1.2rem';
+      } else {
+        el.style.fontSize = '1.35rem';
+      }
+    });
   },
 
   skipTimer() {

@@ -8,6 +8,42 @@ window.CreatorView = {
   currentPage: 1,
   pageSize: 20,
 
+  escapeHtml(str) {
+    if (str === null || str === undefined) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
+  },
+
+  escapeAttr(str) {
+    if (str === null || str === undefined) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
+  },
+
+  cleanAIText(str) {
+    if (!str) return '';
+    return String(str)
+      // 1. Quitar encabezados o separadores (ej: --- Gestión de datos --- o === ...)
+      .replace(/^[-=~#*_]{2,}\s*[^-\n=]+\s*[-=~#*_]{2,}/g, '')
+      .replace(/[-=~#*_]{2,}/g, ' ')
+      // 2. Quitar signos de puntuación (¿ ? ¡ ! " ' “ ” « » `)
+      .replace(/[¿?¡!""''“”«»`]/g, '')
+      // 3. Quitar guiones o decoraciones aisladas
+      .replace(/\s+[-–—]+\s+/g, ' ')
+      // 4. Quitar dos puntos, puntos, comas o guiones al inicio o final
+      .replace(/^[\s.,:;–—\-_]+/, '')
+      .replace(/[\s.,:;–—\-_]+$/, '')
+      // 5. Normalizar espacios
+      .replace(/\s+/g, ' ')
+      .trim();
+  },
+
   resetForm(existingChallenge = null) {
     this.currentPage = 1;
     if (existingChallenge) {
@@ -456,17 +492,16 @@ window.CreatorView = {
           </div>
         </div>
 
-        <!-- Enunciado de la pregunta -->
+        <!-- Enunciado de la pregunta (Textarea multilínea para que preguntas extensas se lean completas) -->
         <div style="margin-bottom: 1rem;">
-          <input 
-            type="text" 
+          <textarea 
+            rows="2" 
             placeholder="Escribe aquí la pregunta..." 
-            value="${q.text}" 
-            style="width: 100%; padding: 0.85rem 1rem; border-radius: var(--border-radius-md); background: var(--bg-card); border: 2px solid var(--border-color); color: var(--text-primary); font-size: 1.1rem; font-weight: 700; outline: none;"
+            style="width: 100%; padding: 0.85rem 1rem; border-radius: var(--border-radius-md); background: var(--bg-card); border: 2px solid var(--border-color); color: var(--text-primary); font-size: 1.05rem; font-weight: 700; outline: none; resize: vertical; line-height: 1.4; font-family: inherit;"
             oninput="window.CreatorView.updateQuestionText(${idx}, this.value)"
             onfocus="this.style.borderColor='var(--neon-cyan)'"
             onblur="this.style.borderColor='var(--border-color)'"
-          />
+          >${this.escapeHtml(q.text)}</textarea>
         </div>
 
         <!-- Adjunto Multimedia (Imagen, Audio o Video) -->
@@ -486,7 +521,7 @@ window.CreatorView = {
             <input 
               type="text" 
               placeholder="Pega la URL de la ${q.mediaType}..."
-              value="${q.media || ''}"
+              value="${this.escapeAttr(q.media || '')}"
               style="flex: 1; min-width: 200px; padding: 0.35rem 0.65rem; border-radius: 6px; background: var(--bg-card); border: 1px solid var(--border-color); color: var(--text-primary); font-size: 0.85rem;"
               onchange="window.CreatorView.updateQuestionParam(${idx}, 'media', this.value)"
             />
@@ -514,7 +549,7 @@ window.CreatorView = {
             <input 
               type="text" 
               placeholder="Escribe la respuesta esperada (ej: Ludwig van Beethoven, Beethoven)"
-              value="${Array.isArray(q.acceptedAnswers) ? q.acceptedAnswers.join(', ') : (q.correctAnswer || '')}"
+              value="${this.escapeAttr(Array.isArray(q.acceptedAnswers) ? q.acceptedAnswers.join(', ') : (q.correctAnswer || ''))}"
               style="width: 100%; padding: 0.75rem 1rem; border-radius: var(--border-radius-md); background: var(--bg-card); border: 1px solid var(--border-color); color: var(--text-primary); font-weight: 600; font-size: 1rem; outline: none;"
               oninput="window.CreatorView.updateAcceptedAnswers(${idx}, this.value)"
             />
@@ -530,18 +565,17 @@ window.CreatorView = {
             ${(q.options || []).map((opt, optIdx) => `
               <div style="display: flex; align-items: center; gap: 0.5rem; background: rgba(0,0,0,0.3); border-radius: var(--border-radius-md); padding: 0.5rem; border: 1px solid rgba(167, 139, 250, 0.4);">
                 <div 
-                  style="width: 38px; height: 38px; border-radius: 8px; border: 2px solid rgba(167, 139, 250, 0.5); background: rgba(167, 139, 250, 0.15); color: #c4b5fd; display: flex; align-items: center; justify-content: center; font-size: 1.1rem;"
+                  style="width: 38px; height: 38px; border-radius: 8px; border: 2px solid rgba(167, 139, 250, 0.5); background: rgba(167, 139, 250, 0.15); color: #c4b5fd; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; flex-shrink: 0;"
                 >
                   ${opt.shape}
                 </div>
 
-                <input 
-                  type="text" 
+                <textarea 
+                  rows="1"
                   placeholder="Opción ${optIdx + 1} de encuesta"
-                  value="${opt.text}"
-                  style="flex: 1; padding: 0.5rem; border-radius: 6px; background: transparent; border: none; color: var(--text-primary); font-weight: 600; outline: none;"
+                  style="flex: 1; min-height: 38px; padding: 0.45rem 0.6rem; border-radius: 6px; background: transparent; border: none; color: var(--text-primary); font-weight: 600; font-size: 0.95rem; outline: none; resize: vertical; font-family: inherit; line-height: 1.35; word-break: break-word;"
                   oninput="window.CreatorView.updateOptionText(${idx}, ${optIdx}, this.value)"
-                />
+                >${this.escapeHtml(opt.text)}</textarea>
               </div>
             `).join('')}
           </div>
@@ -558,18 +592,17 @@ window.CreatorView = {
                   type="button" 
                   title="${isCorr ? 'Desmarcar como correcta' : 'Marcar como correcta'}"
                   onclick="window.CreatorView.toggleMultiCorrectAnswer(${idx}, ${optIdx})"
-                  style="width: 38px; height: 38px; border-radius: 8px; border: 2px solid ${isCorr ? 'var(--neon-emerald)' : 'rgba(255,255,255,0.2)'}; background: ${isCorr ? 'var(--neon-emerald)' : 'transparent'}; color: ${isCorr ? '#0b0f19' : 'white'}; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; cursor: pointer; transition: var(--transition-bounce);"
+                  style="width: 38px; height: 38px; border-radius: 8px; border: 2px solid ${isCorr ? 'var(--neon-emerald)' : 'rgba(255,255,255,0.2)'}; background: ${isCorr ? 'var(--neon-emerald)' : 'transparent'}; color: ${isCorr ? '#0b0f19' : 'white'}; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; cursor: pointer; transition: var(--transition-bounce); flex-shrink: 0;"
                 >
                   ${isCorr ? '✓' : opt.shape}
                 </button>
 
-                <input 
-                  type="text" 
+                <textarea 
+                  rows="1"
                   placeholder="Opción ${optIdx + 1}"
-                  value="${opt.text}"
-                  style="flex: 1; padding: 0.5rem; border-radius: 6px; background: transparent; border: none; color: var(--text-primary); font-weight: 600; outline: none;"
+                  style="flex: 1; min-height: 38px; padding: 0.45rem 0.6rem; border-radius: 6px; background: transparent; border: none; color: var(--text-primary); font-weight: 600; font-size: 0.95rem; outline: none; resize: vertical; font-family: inherit; line-height: 1.35; word-break: break-word;"
                   oninput="window.CreatorView.updateOptionText(${idx}, ${optIdx}, this.value)"
-                />
+                >${this.escapeHtml(opt.text)}</textarea>
               </div>
             `}).join('')}
           </div>
@@ -582,18 +615,17 @@ window.CreatorView = {
                   type="button" 
                   title="Marcar como respuesta correcta"
                   onclick="window.CreatorView.setCorrectAnswer(${idx}, ${optIdx})"
-                  style="width: 38px; height: 38px; border-radius: 8px; border: 2px solid ${q.correctAnswer === optIdx ? 'var(--neon-emerald)' : 'rgba(255,255,255,0.2)'}; background: ${q.correctAnswer === optIdx ? 'var(--neon-emerald)' : 'transparent'}; color: ${q.correctAnswer === optIdx ? '#0b0f19' : 'white'}; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; cursor: pointer; transition: var(--transition-bounce);"
+                  style="width: 38px; height: 38px; border-radius: 8px; border: 2px solid ${q.correctAnswer === optIdx ? 'var(--neon-emerald)' : 'rgba(255,255,255,0.2)'}; background: ${q.correctAnswer === optIdx ? 'var(--neon-emerald)' : 'transparent'}; color: ${q.correctAnswer === optIdx ? '#0b0f19' : 'white'}; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; cursor: pointer; transition: var(--transition-bounce); flex-shrink: 0;"
                 >
                   ${q.correctAnswer === optIdx ? '✓' : opt.shape}
                 </button>
 
-                <input 
-                  type="text" 
+                <textarea 
+                  rows="1"
                   placeholder="Opción ${optIdx + 1}"
-                  value="${opt.text}"
-                  style="flex: 1; padding: 0.5rem; border-radius: 6px; background: transparent; border: none; color: var(--text-primary); font-weight: 600; outline: none;"
+                  style="flex: 1; min-height: 38px; padding: 0.45rem 0.6rem; border-radius: 6px; background: transparent; border: none; color: var(--text-primary); font-weight: 600; font-size: 0.95rem; outline: none; resize: vertical; font-family: inherit; line-height: 1.35; word-break: break-word;"
                   oninput="window.CreatorView.updateOptionText(${idx}, ${optIdx}, this.value)"
-                />
+                >${this.escapeHtml(opt.text)}</textarea>
               </div>
             `).join('')}
           </div>
@@ -1086,7 +1118,45 @@ window.CreatorView = {
       return;
     }
 
-    // 2. Documentos PDF (.pdf)
+    // 2. Hojas de Cálculo de Excel (.xlsx, .xls)
+    if (ext === 'xlsx' || ext === 'xls') {
+      const reader = new FileReader();
+      reader.onload = async (e) => {
+        if (filename) filename.textContent = 'Leyendo y organizando preguntas desde Excel...';
+        try {
+          if (window.XLSX) {
+            const workbook = window.XLSX.read(e.target.result, { type: 'array' });
+            let combined = '';
+            workbook.SheetNames.forEach(sheetName => {
+              const sheet = workbook.Sheets[sheetName];
+              const csv = window.XLSX.utils.sheet_to_csv(sheet);
+              if (csv && csv.trim()) {
+                combined += (combined ? '\n\n' : '') + csv.trim();
+              }
+            });
+            if (combined.trim()) {
+              if (textarea) textarea.value = combined;
+              if (filename) filename.textContent = `✅ Excel leído con éxito (${workbook.SheetNames.length} hoja(s)). Haz clic en "Procesar" abajo.`;
+              return;
+            }
+          }
+        } catch (err) {
+          console.warn('XLSX library warning:', err);
+        }
+
+        const extracted = await this.extractTextFromZip(e.target.result, 'xlsx');
+        if (extracted && extracted.trim()) {
+          if (textarea) textarea.value = extracted;
+          if (filename) filename.textContent = `✅ Celdas de Excel extraídas con éxito. Haz clic en "Procesar" abajo.`;
+        } else {
+          if (filename) filename.textContent = `⚠️ No se pudo procesar el archivo Excel. Prueba guardándolo como CSV o copia y pega las columnas.`;
+        }
+      };
+      reader.readAsArrayBuffer(file);
+      return;
+    }
+
+    // 3. Documentos PDF (.pdf)
     if (ext === 'pdf') {
       const reader = new FileReader();
       reader.onload = async (e) => {
@@ -1103,7 +1173,7 @@ window.CreatorView = {
       return;
     }
 
-    // 3. Documentos de Word (.docx, .doc)
+    // 4. Documentos de Word (.docx, .doc)
     if (ext === 'docx' || ext === 'doc') {
       const reader = new FileReader();
       reader.onload = async (e) => {
@@ -1120,7 +1190,7 @@ window.CreatorView = {
       return;
     }
 
-    // 4. Presentaciones de PowerPoint (.pptx, .ppt)
+    // 5. Presentaciones de PowerPoint (.pptx, .ppt)
     if (ext === 'pptx' || ext === 'ppt') {
       const reader = new FileReader();
       reader.onload = async (e) => {
@@ -1137,7 +1207,7 @@ window.CreatorView = {
       return;
     }
 
-    // 5. Archivos de texto plano (.txt, .csv, .tsv, .md)
+    // 6. Archivos de texto plano (.txt, .csv, .tsv, .md)
     const reader = new FileReader();
     reader.onload = (e) => {
       const content = e.target.result;
@@ -1169,6 +1239,8 @@ window.CreatorView = {
           if (fileType === 'docx' && (fileName === 'word/document.xml' || fileName.includes('document.xml'))) {
             isTarget = true;
           } else if (fileType === 'pptx' && fileName.includes('ppt/slides/slide') && fileName.endsWith('.xml')) {
+            isTarget = true;
+          } else if (fileType === 'xlsx' && (fileName === 'xl/sharedStrings.xml' || fileName.includes('sheet1.xml') || fileName.includes('worksheets/sheet'))) {
             isTarget = true;
           }
 
@@ -1206,6 +1278,10 @@ window.CreatorView = {
                     }).filter(l => l.trim().length > 0);
                     if (lines.length > 0) extractedPieces.push(lines.join('\n'));
                   }
+                } else if (fileType === 'xlsx') {
+                  const tMatches = xmlStr.match(/<t[^>]*>([\s\S]*?)<\/t>/g) || xmlStr.match(/<v[^>]*>([\s\S]*?)<\/v>/g) || [];
+                  const lines = tMatches.map(t => t.replace(/<[^>]+>/g, '').trim()).filter(l => l.length > 0);
+                  if (lines.length > 0) extractedPieces.push(lines.join('\t'));
                 }
               }
             } catch (err) {
@@ -1419,11 +1495,45 @@ d) Insulina`;
     alert(`🎉 ¡Se importaron con éxito ${parsedQuestions.length} preguntas al cuestionario!\nPuedes revisarlas, cambiar tiempos y editarlas.`);
   },
 
+  parseDelimitedLine(line) {
+    if (!line) return [];
+    let delimiter = '\t';
+    if (line.includes('\t')) {
+      delimiter = '\t';
+    } else {
+      const commas = (line.match(/,/g) || []).length;
+      const semis = (line.match(/;/g) || []).length;
+      delimiter = semis >= commas ? ';' : ',';
+    }
+
+    const cols = [];
+    let cur = '';
+    let inQuotes = false;
+    for (let i = 0; i < line.length; i++) {
+      const ch = line[i];
+      if (ch === '"' || ch === "'") {
+        if (inQuotes && line[i + 1] === ch) {
+          cur += ch;
+          i++;
+        } else {
+          inQuotes = !inQuotes;
+        }
+      } else if (ch === delimiter && !inQuotes) {
+        cols.push(cur.trim());
+        cur = '';
+      } else {
+        cur += ch;
+      }
+    }
+    cols.push(cur.trim());
+    return cols.map(c => c.replace(/^["']|["']$/g, '').trim());
+  },
+
   parseQuestions(rawText) {
     if (!rawText || !rawText.trim()) return [];
-    const text = rawText.trim();
+    let text = rawText.trim();
 
-    // 1. Detectar si es formato JSON
+    // 1. Detectar si es formato JSON (.json / .mentix)
     if (text.startsWith('[') || text.startsWith('{')) {
       try {
         const parsed = JSON.parse(text);
@@ -1434,7 +1544,7 @@ d) Insulina`;
             const rawOpts = q.options || q.opciones || [q.a, q.b, q.c, q.d].filter(Boolean);
             let correct = q.correctAnswer ?? q.correcta ?? q.answer ?? 0;
             if (typeof correct === 'string') {
-              const letterIdx = ['a', 'b', 'c', 'd'].indexOf(correct.toLowerCase().trim());
+              const letterIdx = ['a', 'b', 'c', 'd', 'e', 'f'].indexOf(correct.toLowerCase().trim());
               if (letterIdx >= 0) correct = letterIdx;
               else {
                 const foundIdx = rawOpts.findIndex(o => (typeof o === 'string' ? o : o.text).toLowerCase().trim() === correct.toLowerCase().trim());
@@ -1445,54 +1555,78 @@ d) Insulina`;
             return this.buildQuestionItem(qText, rawOpts, correct, q.type || (rawOpts.length === 2 ? 'boolean' : 'single'), q.timeLimit || 20, q.points || 1000);
           });
         }
-      } catch (e) {
-        // No es JSON válido, continuar con análisis de texto y CSV
+      } catch (e) {}
+    }
+
+    // 2. Detectar si es formato CSV / TSV / Excel tabulado
+    const allLines = text.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+    const delimitedRows = [];
+    for (const l of allLines) {
+      if (l.includes('\t') || l.includes(';') || l.includes(',')) {
+        const cols = this.parseDelimitedLine(l);
+        if (cols.length >= 3) {
+          delimitedRows.push(cols);
+        }
       }
     }
 
-    // 2. Detectar si es formato CSV / TSV
-    const lines = text.split(/\r?\n/).map(l => l.trim()).filter(l => l.length > 0);
-    const csvCandidates = lines.filter(l => (l.includes(',') || l.includes(';') || l.includes('\t')) && (l.split(/[,;\t]/).length >= 4));
-    
-    if (csvCandidates.length >= 2 && (csvCandidates.length / lines.length) > 0.5) {
+    // Si al menos 2 filas o más del 40% de las líneas son tabulares con 3+ columnas
+    if (delimitedRows.length >= 2 || (delimitedRows.length >= 1 && allLines.length <= 2)) {
       const results = [];
-      for (const line of csvCandidates) {
-        const cols = line.match(/(?:[^\s,;"\t]+|"(?:\\.|[^"])*")+/g) || line.split(/[,;\t]/);
-        const cleanCols = cols.map(c => c.trim().replace(/^["']|["']$/g, '').trim());
-        if (cleanCols.length >= 3) {
-          if (/^pregunta|^question/i.test(cleanCols[0]) && /opci[oó]n|answer/i.test(cleanCols[1])) continue;
-          
-          const qText = cleanCols[0];
-          let lastCol = cleanCols[cleanCols.length - 1];
-          let optCols = cleanCols.slice(1);
-          let correctIdx = 0;
+      for (const cleanCols of delimitedRows) {
+        if (/^(pregunta|question|enunciado|item|pregunta\/tema)/i.test(cleanCols[0]) && /opci[oó]n|answer|respuesta|correcta/i.test(cleanCols[1])) {
+          continue;
+        }
 
-          if (optCols.length >= 3) {
-            const isLetter = /^[a-dA-D]$/.test(lastCol);
-            const isDigit = /^[0-4]$/.test(lastCol);
-            if (isLetter) {
-              correctIdx = ['a', 'b', 'c', 'd'].indexOf(lastCol.toLowerCase());
-              optCols.pop();
-            } else if (isDigit) {
-              const val = parseInt(lastCol);
-              correctIdx = val > 0 && val <= optCols.length - 1 ? val - 1 : val;
-              optCols.pop();
-            } else {
-              const matchIdx = optCols.slice(0, -1).findIndex(o => o.toLowerCase() === lastCol.toLowerCase());
-              if (matchIdx >= 0) {
-                correctIdx = matchIdx;
-                optCols.pop();
-              }
-            }
+        const qText = cleanCols[0].replace(/^[-=~#*_]{2,}\s*[^-\n=]+\s*[-=~#*_]{2,}/g, '').trim();
+        if (!qText) continue;
+
+        let lastCol = cleanCols[cleanCols.length - 1];
+        let optCols = cleanCols.slice(1);
+        let correctIdx = 0;
+        let isAnswerInLastCol = false;
+
+        const isLetter = /^[a-fA-F]$/.test(lastCol);
+        const isDigit = /^[1-6]$/.test(lastCol);
+        const isBoolWord = /^(verdadero|falso|true|false)$/i.test(lastCol);
+        const hasExplicitAnswer = /^correct[ao]|resp|^rta|ans/i.test(lastCol);
+
+        if (optCols.length >= 3 && (isLetter || isDigit || isBoolWord || hasExplicitAnswer)) {
+          isAnswerInLastCol = true;
+          if (isLetter) {
+            correctIdx = ['a', 'b', 'c', 'd', 'e', 'f'].indexOf(lastCol.toLowerCase());
+          } else if (isDigit) {
+            correctIdx = parseInt(lastCol) - 1;
+          } else if (isBoolWord) {
+            correctIdx = /^verdadero|^true/i.test(lastCol) ? 0 : 1;
           }
-          results.push(this.buildQuestionItem(qText, optCols, correctIdx));
+          optCols.pop();
+        }
+
+        optCols = optCols.map((opt, idx) => {
+          let clean = opt;
+          if (/\*|✓|\[x\]|\(x\)|\(correcta\)|\(correct\)/i.test(clean)) {
+            if (!isAnswerInLastCol) correctIdx = idx;
+            clean = clean.replace(/\*|✓|\[x\]|\(x\)|\(correcta\)|\(correct\)/gi, '').trim();
+          }
+          return clean.replace(/^(?:[a-fA-F1-6][\.\)\-]|[-*•])\s*/, '').trim();
+        }).filter(Boolean);
+
+        if (optCols.length >= 2) {
+          const isBool = optCols.length === 2 && (
+            optCols[0].toLowerCase().includes('verdadero') || optCols[0].toLowerCase().includes('falso') ||
+            optCols[1].toLowerCase().includes('verdadero') || optCols[1].toLowerCase().includes('falso')
+          );
+          results.push(this.buildQuestionItem(qText, optCols, correctIdx, isBool ? 'boolean' : 'single'));
         }
       }
       if (results.length > 0) return results;
     }
 
-    // 3. Procesar texto estructurado (Preguntas numeradas o con letras)
-    const rawBlocks = text.split(/\n\s*(?=(?:\d+[\.\)]|Pregunta\s*\d*[\.\:]|\¿))/i);
+    // 3. Procesar texto estructurado y documentos (Word, PDF, PowerPoint, texto libre)
+    text = text.replace(/^[-=~#*_]{2,}\s*[^-\n=]+\s*[-=~#*_]{2,}\s*$/gm, '');
+
+    const rawBlocks = text.split(/\n\s*(?=(?:\b(?:Pregunta|Item|P|Q)\s*\d*[\.\:\)]|\d+[\.\)\-]\s+|¿))/i);
     const blocksToProcess = rawBlocks.length > 1 ? rawBlocks : text.split(/\n\s*\n+/);
     const parsedQuestions = [];
 
@@ -1503,20 +1637,22 @@ d) Insulina`;
       const blockLines = block.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
       if (blockLines.length === 0) continue;
 
+      while (blockLines.length > 1 && (/^[-=~#*_]{2,}/.test(blockLines[0]) || /^(?:Unidad|Cap[ií]tulo|Tema|M[oó]dulo)\b/i.test(blockLines[0]))) {
+        blockLines.shift();
+      }
+
       let qText = '';
       const options = [];
       let correctAnswer = 0;
+      let multiCorrect = [];
 
-      // Buscar dónde inician las opciones (la primera línea nunca es una opción si hay más líneas)
       let optStartIndex = -1;
       for (let i = 0; i < blockLines.length; i++) {
         if (i === 0 && blockLines.length > 1) continue;
         const line = blockLines[i];
-        const isOpt = /^(?:[a-dA-D][\.\)\-]|[-*•]|\([a-dA-D]\)|\[[a-dA-D]\])\s*/.test(line) ||
-                      (/^[1-4][\.\)\-]\s+/.test(line) && !line.includes('?') && !line.includes('¿')) ||
-                      /^Respuesta[\:\s]/i.test(line) ||
-                      /^Correcta[\:\s]/i.test(line) ||
-                      /^Soluci[oó]n[\:\s]/i.test(line);
+        const isOpt = /^(?:[a-fA-F][\.\)\-]|[-*•]|\([a-fA-F]\)|\[[a-fA-F]\])\s*/.test(line) ||
+                      (/^[1-6][\.\)\-]\s+/.test(line) && !line.includes('?') && !line.includes('¿')) ||
+                      /^(?:Respuesta|Correcta|Soluci[oó]n|Rta|R|Clave|Ans)[\:\s]/i.test(line);
         if (isOpt) {
           optStartIndex = i;
           break;
@@ -1524,9 +1660,33 @@ d) Insulina`;
       }
 
       if (optStartIndex === -1) {
-        // Detectar si es una pregunta tipo V/F en una o dos líneas
-        qText = blockLines[0].replace(/^\d+[\.\)]\s*/, '').replace(/^Pregunta\s*\d*[\.\:]\s*/i, '').trim();
         const fullBlock = blockLines.join(' ');
+        const inlineMatch = fullBlock.match(/(?:^|[\s])([a-dA-D][\.\)\-]\s+[^a-dA-D\.\)\-]+)/g);
+        if (inlineMatch && inlineMatch.length >= 2) {
+          const firstOptPos = fullBlock.search(/\b[a-dA-D][\.\)\-]\s+/);
+          if (firstOptPos > 0) {
+            qText = fullBlock.slice(0, firstOptPos).replace(/^\d+[\.\)\-]\s*/, '').replace(/^Pregunta\s*\d*[\.\:]\s*/i, '').trim();
+            for (const item of inlineMatch) {
+              let optText = item.trim();
+              let isCorr = false;
+              if (/\*|✓|\[x\]/i.test(optText)) {
+                isCorr = true;
+                optText = optText.replace(/\*|✓|\[x\]/gi, '').trim();
+              }
+              optText = optText.replace(/^[a-dA-D][\.\)\-]\s*/, '').trim();
+              if (optText) {
+                if (isCorr) correctAnswer = options.length;
+                options.push(optText);
+              }
+            }
+            if (options.length >= 2) {
+              parsedQuestions.push(this.buildQuestionItem(qText, options, correctAnswer));
+              continue;
+            }
+          }
+        }
+
+        qText = blockLines[0].replace(/^\d+[\.\)\-]\s*/, '').replace(/^Pregunta\s*\d*[\.\:]\s*/i, '').trim();
         if (/respuesta[\:\s]+verdadero|es\s+verdadero/i.test(fullBlock)) {
           parsedQuestions.push(this.buildQuestionItem(qText, ['Verdadero', 'Falso'], 0, 'boolean'));
           continue;
@@ -1534,26 +1694,41 @@ d) Insulina`;
           parsedQuestions.push(this.buildQuestionItem(qText, ['Verdadero', 'Falso'], 1, 'boolean'));
           continue;
         }
+
+        const ansMatch = fullBlock.match(/(?:Respuesta|Correcta|Soluci[oó]n|Rta|R)[\:\s]+(.+)/i);
+        if (ansMatch) {
+          const ansVal = ansMatch[1].trim();
+          qText = blockLines.filter(l => !/^(?:Respuesta|Correcta|Soluci[oó]n|Rta|R)[\:\s]/i.test(l)).join(' ').replace(/^\d+[\.\)\-]\s*/, '').trim();
+          parsedQuestions.push(this.buildQuestionItem(qText, [ansVal], ansVal, 'text'));
+          continue;
+        } else if (qText.length > 15) {
+          parsedQuestions.push(this.buildQuestionItem(qText, [], null, 'open'));
+          continue;
+        }
         continue;
       }
 
-      qText = blockLines.slice(0, optStartIndex).join(' ').replace(/^\d+[\.\)]\s*/, '').replace(/^Pregunta\s*\d*[\.\:]\s*/i, '').trim();
-      if (!qText) qText = blockLines[0].replace(/^\d+[\.\)]\s*/, '').trim();
+      qText = blockLines.slice(0, optStartIndex).join(' ')
+        .replace(/^[-=~#*_]{2,}\s*[^-\n=]+\s*[-=~#*_]{2,}/g, '')
+        .replace(/^\d+[\.\)\-]\s*/, '')
+        .replace(/^Pregunta\s*\d*[\.\:]\s*/i, '')
+        .trim();
+
+      if (!qText) qText = blockLines[0].replace(/^\d+[\.\)\-]\s*/, '').trim();
 
       for (let i = optStartIndex; i < blockLines.length; i++) {
         const line = blockLines[i];
-        
-        // Línea de respuesta explícita: "Respuesta: B", "Respuesta: Verdadero"
-        const ansMatch = line.match(/^(?:Respuesta|Correcta|Soluci[oó]n|R)[\:\s]+([a-dA-D1-4]|Verdadero|Falso|True|False|.*)/i);
+
+        const ansMatch = line.match(/^(?:Respuesta|Correcta|Soluci[oó]n|Rta|R|Clave|Ans)[\:\s]+([a-fA-F1-6]|Verdadero|Falso|True|False|.*)/i);
         if (ansMatch) {
           const ansVal = ansMatch[1].trim();
           if (/^verdadero|^true/i.test(ansVal)) {
             correctAnswer = 0;
           } else if (/^falso|^false/i.test(ansVal)) {
             correctAnswer = 1;
-          } else if (/^[a-dA-D]$/i.test(ansVal)) {
-            correctAnswer = ['a', 'b', 'c', 'd'].indexOf(ansVal.toLowerCase());
-          } else if (/^[1-4]$/.test(ansVal)) {
+          } else if (/^[a-fA-F]$/i.test(ansVal)) {
+            correctAnswer = ['a', 'b', 'c', 'd', 'e', 'f'].indexOf(ansVal.toLowerCase());
+          } else if (/^[1-6]$/.test(ansVal)) {
             correctAnswer = parseInt(ansVal) - 1;
           } else {
             const foundIdx = options.findIndex(o => o.toLowerCase() === ansVal.toLowerCase());
@@ -1565,26 +1740,24 @@ d) Insulina`;
         let isCorrectThisOpt = false;
         let cleanOpt = line;
 
-        // Marcadores de respuesta correcta en la misma opción: *, ✓, [x], (correcta)
         if (/\*|✓|\[x\]|\(x\)|\(correcta\)|\(correct\)/i.test(cleanOpt)) {
           isCorrectThisOpt = true;
           cleanOpt = cleanOpt.replace(/\*|✓|\[x\]|\(x\)|\(correcta\)|\(correct\)/gi, '').trim();
         }
 
-        // Quitar prefijo a), b), 1., etc.
-        cleanOpt = cleanOpt.replace(/^(?:[a-dA-D1-4][\.\)\-]|[-*•])\s*/, '').trim();
+        cleanOpt = cleanOpt.replace(/^(?:[a-fA-F1-6][\.\)\-]|[-*•])\s*/, '').trim();
 
         if (cleanOpt.length > 0) {
           const optIndex = options.length;
           options.push(cleanOpt);
           if (isCorrectThisOpt) {
             correctAnswer = optIndex;
+            multiCorrect.push(optIndex);
           }
         }
       }
 
       if (options.length === 0) {
-        // Si no se listaron opciones explícitas pero hubo línea de respuesta Verdadero/Falso
         options.push('Verdadero', 'Falso');
       }
 
@@ -1593,7 +1766,9 @@ d) Insulina`;
           options[0].toLowerCase().includes('verdadero') || options[0].toLowerCase().includes('falso') ||
           options[1].toLowerCase().includes('verdadero') || options[1].toLowerCase().includes('falso')
         );
-        parsedQuestions.push(this.buildQuestionItem(qText, options, correctAnswer, isBool ? 'boolean' : 'single'));
+        const qType = multiCorrect.length > 1 ? 'multi' : (isBool ? 'boolean' : 'single');
+        const finalAns = multiCorrect.length > 1 ? multiCorrect : correctAnswer;
+        parsedQuestions.push(this.buildQuestionItem(qText, options, finalAns, qType));
       }
     }
 
@@ -1610,13 +1785,13 @@ d) Insulina`;
     const isPoll = type === 'poll';
     const isMulti = type === 'multi';
 
-    const shapes = ['✦', '⬢', '⚡', '🛡️'];
-    const colors = ['opt-1', 'opt-2', 'opt-3', 'opt-4'];
+    const shapes = ['✦', '⬢', '⚡', '🛡️', '⬟', '💎'];
+    const colors = ['opt-1', 'opt-2', 'opt-3', 'opt-4', 'opt-1', 'opt-2'];
 
     if (isOpen) {
       return {
         id: 'q_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
-        text: text.trim(),
+        text: (text || '').trim(),
         type: 'open',
         media: '',
         mediaType: 'none',
@@ -1631,7 +1806,7 @@ d) Insulina`;
       const ans = typeof correctAnswerIndex === 'string' ? correctAnswerIndex : (optionsArray?.[0] || 'Respuesta');
       return {
         id: 'q_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
-        text: text.trim(),
+        text: (text || '').trim(),
         type: 'text',
         media: '',
         mediaType: 'none',
@@ -1658,13 +1833,15 @@ d) Insulina`;
           color: colors[idx % colors.length]
         };
       });
-      while (opts.length < 4) {
-        const idx = opts.length;
-        opts.push({
-          text: 'Opción ' + (idx + 1),
-          shape: shapes[idx % shapes.length],
-          color: colors[idx % colors.length]
-        });
+      if (opts.length < 2) {
+        while (opts.length < 2) {
+          const idx = opts.length;
+          opts.push({
+            text: 'Opción ' + (idx + 1),
+            shape: shapes[idx % shapes.length],
+            color: colors[idx % colors.length]
+          });
+        }
       }
     }
 
@@ -1683,7 +1860,7 @@ d) Insulina`;
 
     return {
       id: 'q_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
-      text: text.trim(),
+      text: (text || '').trim(),
       type: isBool ? 'boolean' : isPoll ? 'poll' : isMulti ? 'multi' : 'single',
       media: '',
       mediaType: 'none',
@@ -1841,10 +2018,11 @@ d) Insulina`;
         }
       }
 
-      // Configurar título y metadatos limpios según lo solicitado por el usuario
-      const cleanTitle = topic.trim().charAt(0).toUpperCase() + topic.trim().slice(1);
-      this.currentChallenge.title = `Reto de ${cleanTitle}`;
-      this.currentChallenge.description = `Cuestionario interactivo de evaluación y destreza sobre ${topic.trim().toLowerCase()}. ¡Responde rápido y acumula puntos!`;
+      // Configurar título y metadatos limpios sin signos de puntuación según lo solicitado
+      const cleanTopicClean = this.cleanAIText(topic.trim());
+      const cleanTitle = cleanTopicClean.charAt(0).toUpperCase() + cleanTopicClean.slice(1);
+      this.currentChallenge.title = this.cleanAIText(`Reto de ${cleanTitle}`);
+      this.currentChallenge.description = this.cleanAIText(`Cuestionario interactivo de evaluación y destreza sobre ${cleanTopicClean.toLowerCase()}`);
       this.currentChallenge.difficulty = difficulty;
       this.currentChallenge.timePerQuestion = timeLimit;
       this.currentChallenge.banner = this.getTopicBanner(topic);
@@ -1973,7 +2151,7 @@ d) Insulina`;
             let mainTitle = titles[0];
             Object.values(pages).forEach(p => {
               if (p.extract && p.extract.length > 60) {
-                fullText += `\n\n--- ${p.title} ---\n` + p.extract;
+                fullText += `\n\n` + p.extract;
               }
             });
 
@@ -2020,6 +2198,8 @@ d) Insulina`;
     // Limpiar títulos de sección de Wikipedia y bibliografía
     let cleanText = knowledge.content
       .replace(/==+[^=]+==+/g, ' ')
+      .replace(/[-=~#*_]{2,}\s*[^-\n=]+\s*[-=~#*_]{2,}/g, ' ')
+      .replace(/[-=~#*_]{2,}/g, ' ')
       .replace(/\[\d+\]/g, '')
       .replace(/\s+/g, ' ');
 
@@ -2041,7 +2221,7 @@ d) Insulina`;
         const isTrue = questions.length % 2 === 0;
         let qText = '';
         if (isTrue) {
-          qText = `Respecto a "${cleanTopic}", ¿es verdadera la siguiente afirmación?: "${sentence}".`;
+          qText = `Respecto a ${cleanTopic} es verdadera la siguiente afirmación: ${sentence}`;
           questions.push(this.buildQuestionItem(qText, ['Verdadero', 'Falso'], 0, 'boolean', timeLimit));
         } else {
           // Invertir ligeramente la afirmación
@@ -2060,12 +2240,12 @@ d) Insulina`;
             };
             return map[m.toLowerCase()] || 'no';
           });
-          if (inverted === sentence) inverted = `En "${cleanTopic}" se descarta que: ${sentence}`;
-          qText = `Afirmación sobre "${cleanTopic}": "${inverted}".`;
+          if (inverted === sentence) inverted = `En ${cleanTopic} se descarta que: ${sentence}`;
+          qText = `Afirmación sobre ${cleanTopic}: ${inverted}`;
           questions.push(this.buildQuestionItem(qText, ['Verdadero', 'Falso'], 1, 'boolean', timeLimit));
         }
       } else {
-        // Opción múltiple con distractores académicos
+        // Opción múltiple con distractores académicos completos sin truncar
         let qText = '';
         let correctOpt = '';
         
@@ -2074,18 +2254,18 @@ d) Insulina`;
         if (defMatch && defMatch[1].length < 40 && defMatch[3].length > 20) {
           const concept = defMatch[1].trim();
           const desc = defMatch[3].trim();
-          qText = `En el ámbito de "${cleanTopic}": ¿Qué concepto se define o describe como: "${desc.slice(0, 95)}${desc.length > 95 ? '...' : ''}"?`;
+          qText = `En el ámbito de ${cleanTopic}: Qué concepto se define o describe como: ${desc}`;
           correctOpt = concept;
         } else {
-          qText = `De acuerdo con los fundamentos documentados de "${cleanTopic}", ¿cuál de los siguientes enunciados es verdadero?`;
-          correctOpt = sentence.length > 90 ? sentence.slice(0, 90) + '...' : sentence;
+          qText = `De acuerdo con los fundamentos documentados de ${cleanTopic}, cuál de los siguientes enunciados es verdadero`;
+          correctOpt = sentence;
         }
 
-        // Distractores plausibles usando otras oraciones o contrastes académicos
+        // Distractores plausibles usando otras oraciones o contrastes académicos completos
         const nextSent1 = rawSentences[(i + 1) % rawSentences.length];
         const nextSent2 = rawSentences[(i + 2) % rawSentences.length];
-        const d1 = (nextSent1 && nextSent1 !== sentence) ? (nextSent1.length > 70 ? nextSent1.slice(0, 70) + '...' : nextSent1) : 'Es un principio descartado por la evidencia empírica';
-        const d2 = (nextSent2 && nextSent2 !== sentence) ? (nextSent2.length > 70 ? nextSent2.slice(0, 70) + '...' : nextSent2) : 'Aplica únicamente a modelos teóricos sin respaldo real';
+        const d1 = (nextSent1 && nextSent1 !== sentence) ? nextSent1 : 'Es un principio descartado por la evidencia empírica';
+        const d2 = (nextSent2 && nextSent2 !== sentence) ? nextSent2 : 'Aplica únicamente a modelos teóricos sin respaldo real';
         const d3 = 'Carece de aplicación en la práctica profesional contemporánea';
 
         const shuffled = this.shuffleOptions([correctOpt, d1, d2, d3], 0);
@@ -2103,7 +2283,7 @@ d) Insulina`;
     if (notes && notes.length > 30) {
       const contextual = this.getContextualQuestionsFromNotes(notes, count, type, timeLimit);
       questions.push(...contextual);
-      if (questions.length >= count) return questions.slice(0, count);
+      if (questions.length >= count) return this.cleanAIQuestionsList(questions.slice(0, count));
     }
 
     // 2. Si se obtuvo información de la búsqueda rápida en vivo en la web (Wikipedia / DuckDuckGo)
@@ -2111,7 +2291,7 @@ d) Insulina`;
       const remainder = count - questions.length;
       const webQuestions = this.extractQuestionsFromKnowledge(webKnowledge, topic, remainder, type, timeLimit);
       questions.push(...webQuestions);
-      if (questions.length >= count) return questions.slice(0, count);
+      if (questions.length >= count) return this.cleanAIQuestionsList(questions.slice(0, count));
     }
 
     // 3. Complementar o generar a partir de la Ontología Académica Universal de Carreras y Especialidades
@@ -2119,7 +2299,29 @@ d) Insulina`;
     const topicQ = await this.getTopicQuestions(topic, remainder, difficulty, type, timeLimit, onProgress);
     questions.push(...topicQ);
 
-    return questions.slice(0, count);
+    return this.cleanAIQuestionsList(questions.slice(0, count));
+  },
+
+  cleanAIQuestionsList(questions) {
+    return (questions || []).map(q => {
+      q.text = this.cleanAIText(q.text);
+      if (Array.isArray(q.options)) {
+        q.options = q.options.map(opt => {
+          if (typeof opt === 'string') return this.cleanAIText(opt);
+          return {
+            ...opt,
+            text: this.cleanAIText(opt.text)
+          };
+        });
+      }
+      if (Array.isArray(q.acceptedAnswers)) {
+        q.acceptedAnswers = q.acceptedAnswers.map(ans => this.cleanAIText(ans));
+      }
+      if (typeof q.correctAnswer === 'string') {
+        q.correctAnswer = this.cleanAIText(q.correctAnswer);
+      }
+      return q;
+    });
   },
 
   getContextualQuestionsFromNotes(notes, count, type, timeLimit) {
@@ -2138,7 +2340,7 @@ d) Insulina`;
         const isTrue = questions.length % 2 === 0;
         let qText = '';
         if (isTrue) {
-          qText = sentence.endsWith('?') ? sentence : `De acuerdo con el texto: "${sentence}".`;
+          qText = `De acuerdo con el texto: ${sentence}`;
           questions.push(this.buildQuestionItem(qText, ['Verdadero', 'Falso'], 0, 'boolean', timeLimit));
         } else {
           let inverted = sentence.replace(/\b(siempre|todos|nunca|aumenta|mayor|principal|primero)\b/i, (m) => {
@@ -2146,15 +2348,15 @@ d) Insulina`;
             return map[m.toLowerCase()] || 'no';
           });
           if (inverted === sentence) inverted = `No es cierto que: ${sentence}`;
-          qText = `Afirmación: "${inverted}".`;
+          qText = `Afirmación: ${inverted}`;
           questions.push(this.buildQuestionItem(qText, ['Verdadero', 'Falso'], 1, 'boolean', timeLimit));
         }
       } else {
-        let qText = `¿Cuál de los siguientes enunciados resume correctamente el siguiente concepto: "${sentence.slice(0, 80)}..."?`;
-        const correct = sentence.length > 60 ? sentence.slice(0, 60) + '...' : sentence;
+        let qText = `Cuál de los siguientes enunciados resume correctamente el concepto: ${sentence}`;
+        const correct = sentence;
         
-        const distractor1 = sentences[(i + 1) % sentences.length] ? sentences[(i + 1) % sentences.length].slice(0, 55) + '...' : 'Ocurre únicamente en condiciones artificiales controladas';
-        const distractor2 = sentences[(i + 2) % sentences.length] ? sentences[(i + 2) % sentences.length].slice(0, 55) + '...' : 'Carece de relevancia para el proceso principal analizado';
+        const distractor1 = sentences[(i + 1) % sentences.length] ? sentences[(i + 1) % sentences.length] : 'Ocurre únicamente en condiciones artificiales controladas';
+        const distractor2 = sentences[(i + 2) % sentences.length] ? sentences[(i + 2) % sentences.length] : 'Carece de relevancia para el proceso principal analizado';
         const distractor3 = 'Es un principio descartado por la evidencia empírica reciente';
 
         const shuffled = this.shuffleOptions([correct, distractor1, distractor2, distractor3], 0);
