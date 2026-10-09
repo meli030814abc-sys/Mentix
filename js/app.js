@@ -1116,18 +1116,35 @@ class AppRouter {
         const local = Array.isArray(window.appState.challenges) ? window.appState.challenges : [];
         const map = new Map();
         local.forEach(c => { if (c && c.id) map.set(c.id, c); });
+        
         cloudChallenges.forEach(c => {
-          if (c && c.id && !map.has(c.id)) {
-            map.set(c.id, c);
+          if (!c || !c.id) return;
+          // Si el reto en la nube no tiene preguntas, restaurar preguntas por defecto si es muestra
+          if (!Array.isArray(c.questions) || c.questions.length === 0) {
+            if (c.id === 'reto_sample_cloud' && typeof DEFAULT_CHALLENGES !== 'undefined' && DEFAULT_CHALLENGES[0]) {
+              c.questions = DEFAULT_CHALLENGES[0].questions;
+            }
+          }
+
+          if (!map.has(c.id)) {
+            if (Array.isArray(c.questions) && c.questions.length > 0) {
+              map.set(c.id, c);
+            }
+          } else {
+            const existing = map.get(c.id);
+            // Solo sobreescribir si el reto remoto tiene preguntas reales
+            if (Array.isArray(c.questions) && c.questions.length > 0) {
+              map.set(c.id, { ...existing, ...c });
+            }
           }
         });
 
         window.appState.challenges = Array.from(map.values());
         saveGlobalState(window.appState);
 
-        // Subir a la nube cualquier reto local que falte
+        // Subir a la nube cualquier reto local que tenga preguntas y falte en la nube
         local.forEach(c => {
-          if (c && c.id && c.title && !cloudChallenges.some(cc => cc.id === c.id)) {
+          if (c && c.id && c.title && Array.isArray(c.questions) && c.questions.length > 0 && !cloudChallenges.some(cc => cc.id === c.id)) {
             this.pushChallengeToCloud(c);
           }
         });

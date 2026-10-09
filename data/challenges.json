@@ -1,1 +1,140 @@
-[]
+[
+  {
+    "id": "reto_sample_cloud",
+    "title": "Reto Prueba Cloud Actualizado",
+    "description": "Desafío interactivo con preguntas de ciencia, cultura y tecnología.",
+    "category": "ciencias",
+    "categoryName": "Ciencias Naturales",
+    "author": "Comunidad",
+    "authorAvatar": "👨‍🏫",
+    "plays": 15,
+    "difficulty": "Medio",
+    "timePerQuestion": 20,
+    "pointsStandard": 1000,
+    "questions": [
+      {
+        "id": "q1",
+        "text": "¿Cuál es el planeta más cercano al Sol en el Sistema Solar?",
+        "type": "quiz",
+        "timeLimit": 20,
+        "points": 1000,
+        "options": [
+          { "text": "Mercurio" },
+          { "text": "Venus" },
+          { "text": "La Tierra" },
+          { "text": "Marte" }
+        ],
+        "correctAnswer": 0
+      },
+      {
+        "id": "q2",
+        "text": "La velocidad de la luz en el vacío es de aproximadamente 300,000 kilómetros por segundo.",
+        "type": "truefalse",
+        "timeLimit": 20,
+        "points": 1000,
+        "options": [
+          { "text": "Verdadero" },
+          { "text": "Falso" }
+        ],
+        "correctAnswer": 0
+      },
+      {
+        "id": "q3",
+        "text": "¿Cuál es el elemento químico más abundante en el universo observable?",
+        "type": "quiz",
+        "timeLimit": 20,
+        "points": 1000,
+        "options": [
+          { "text": "Hidrógeno" },
+          { "text": "Oxígeno" },
+          { "text": "Carbono" },
+          { "text": "Helio" }
+        ],
+        "correctAnswer": 0
+      },
+      {
+        "id": "q4",
+        "text": "¿Cuántos huesos forman aproximadamente el esqueleto humano de una persona adulta?",
+        "type": "quiz",
+        "timeLimit": 20,
+        "points": 1000,
+        "options": [
+          { "text": "206" },
+          { "text": "195" },
+          { "text": "218" },
+          { "text": "300" }
+        ],
+        "correctAnswer": 0
+      },
+      {
+        "id": "q5",
+        "text": "¿Cuál es el océano de mayor superficie y profundidad en el planeta Tierra?",
+        "type": "quiz",
+        "timeLimit": 20,
+        "points": 1000,
+        "options": [
+          { "text": "Océano Pacífico" },
+          { "text": "Océano Atlántico" },
+          { "text": "Océano Índico" },
+          { "text": "Océano Ártico" }
+        ],
+        "correctAnswer": 0
+      }
+    ]
+  },
+  {
+    "id": "reto_tech_mentix",
+    "title": "Desafío Relámpago de Tecnología y Código",
+    "description": "Pon a prueba tus conocimientos sobre internet, programación y el mundo digital.",
+    "category": "tecnologia",
+    "categoryName": "Tecnología & Programación",
+    "author": "Prof. Carlos Ruiz",
+    "authorAvatar": "💻",
+    "plays": 28,
+    "difficulty": "Medio",
+    "timePerQuestion": 20,
+    "pointsStandard": 1000,
+    "questions": [
+      {
+        "id": "qt1",
+        "text": "¿Qué lenguaje de programación se ejecuta nativamente en los navegadores web?",
+        "type": "quiz",
+        "timeLimit": 20,
+        "points": 1000,
+        "options": [
+          { "text": "JavaScript" },
+          { "text": "Python" },
+          { "text": "C++" },
+          { "text": "Java" }
+        ],
+        "correctAnswer": 0
+      },
+      {
+        "id": "qt2",
+        "text": "HTML es un lenguaje de marcado utilizado para estructurar las páginas web.",
+        "type": "truefalse",
+        "timeLimit": 20,
+        "points": 1000,
+        "options": [
+          { "text": "Verdadero" },
+          { "text": "Falso" }
+        ],
+        "correctAnswer": 0
+      },
+      {
+        "id": "qt3",
+        "text": "¿Qué significan las siglas de URL en internet?",
+        "type": "quiz",
+        "timeLimit": 20,
+        "points": 1000,
+        "options": [
+          { "text": "Uniform Resource Locator" },
+          { "text": "Universal Radio Link" },
+          { "text": "Unified Routing Language" },
+          { "text": "User Remote Login" }
+        ],
+        "correctAnswer": 0
+      }
+    ]
+  }
+]

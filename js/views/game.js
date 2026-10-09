@@ -260,6 +260,16 @@ window.GameView = {
     const container = document.getElementById('view-game');
     if (!container) return;
 
+    if (!this.challenge || !Array.isArray(this.challenge.questions) || this.challenge.questions.length === 0) {
+      if (typeof DEFAULT_CHALLENGES !== 'undefined' && DEFAULT_CHALLENGES[0] && this.challenge?.id === 'reto_sample_cloud') {
+        this.challenge.questions = DEFAULT_CHALLENGES[0].questions;
+      } else {
+        alert('⚠️ Este reto aún no tiene preguntas configuradas. Edita el reto o agrega preguntas para comenzar a jugar.');
+        window.appRouter.navigate('home');
+        return;
+      }
+    }
+
     let count = 3;
     window.soundEngine.playTick();
 
@@ -272,7 +282,7 @@ window.GameView = {
           ${count}
         </div>
         <p style="color: var(--text-secondary); font-size: 1.3rem; margin-top: 1.5rem; font-weight: 700;">
-          ${this.challenge.title}
+          ${this.challenge.title || 'Reto MENTIX'}
         </p>
       </div>
     `;
@@ -291,7 +301,13 @@ window.GameView = {
         window.soundEngine.playFanfare();
       } else {
         clearInterval(timer);
-        this.renderQuestionScreen();
+        try {
+          this.renderQuestionScreen();
+        } catch (err) {
+          console.error('Error al renderizar pregunta:', err);
+          alert('Hubo un inconveniente al cargar la pregunta. Regresando al inicio.');
+          window.appRouter.navigate('home');
+        }
       }
     }, 1000);
   },
@@ -299,6 +315,27 @@ window.GameView = {
   renderQuestionScreen() {
     const container = document.getElementById('view-game');
     if (!container) return;
+
+    if (!this.challenge || !Array.isArray(this.challenge.questions) || this.challenge.questions.length === 0) {
+      if (typeof DEFAULT_CHALLENGES !== 'undefined' && DEFAULT_CHALLENGES[0] && this.challenge?.id === 'reto_sample_cloud') {
+        this.challenge.questions = DEFAULT_CHALLENGES[0].questions;
+      } else {
+        alert('⚠️ Este reto aún no tiene preguntas configuradas.');
+        window.appRouter.navigate('home');
+        return;
+      }
+    }
+
+    if (this.currentQuestionIndex >= this.challenge.questions.length) {
+      this.finishGame();
+      return;
+    }
+
+    const q = this.challenge.questions[this.currentQuestionIndex];
+    if (!q) {
+      this.finishGame();
+      return;
+    }
 
     if (this.transitionTimeout) clearTimeout(this.transitionTimeout);
     if (this.autoAdvanceInterval) clearInterval(this.autoAdvanceInterval);
@@ -323,7 +360,6 @@ window.GameView = {
     const prevModeBanner = document.getElementById('host-mode-activity-banner');
     if (prevModeBanner) prevModeBanner.remove();
 
-    const q = this.challenge.questions[this.currentQuestionIndex];
     this.totalTime = q.timeLimit || 20;
     this.timeLeft = this.totalTime;
     this.questionStartTime = Date.now();
@@ -332,7 +368,7 @@ window.GameView = {
       this.room.responses = {};
       this.room.status = 'question';
       this.room.currentQuestionIndex = this.currentQuestionIndex;
-      if (this.isHost) {
+      if (this.isHost && !this.isSolo) {
         window.realtimeEngine.currentRoom = this.room;
         window.realtimeEngine.syncRoomState();
       }
@@ -424,6 +460,17 @@ window.GameView = {
       .replace(/>/g, '&gt;')
       .replace(/"/g, '&quot;')
       .replace(/'/g, '&#039;');
+  },
+
+  getOptionText(opt) {
+    if (opt === null || opt === undefined) return '';
+    if (typeof opt === 'string') return opt;
+    if (typeof opt === 'object' && opt.text !== undefined) return String(opt.text);
+    return String(opt);
+  },
+
+  escapeAttr(str) {
+    return this.escapeHtml(str);
   },
 
   /* 🎓 PANTALLA DEL PROFESOR / HOST (PROYECCIÓN EN VIVO CON FORMAS Y COLORES TE RETO) */
@@ -528,7 +575,7 @@ window.GameView = {
               return `
                 <div class="kahoot-answer-card ${shapeDef.colorClass}" id="host-opt-card-${optIdx}">
                   <span class="kahoot-shape">${shapeDef.svg}</span>
-                  <span class="kahoot-card-text">${opt.text}</span>
+                  <span class="kahoot-card-text">${this.escapeHtml(this.getOptionText(opt))}</span>
                   <div class="kahoot-stat-pill" id="host-stat-pill-${optIdx}" style="display: none;"></div>
                 </div>
               `;
@@ -661,14 +708,14 @@ window.GameView = {
                   type="button" 
                   class="kahoot-player-pad ${shapeDef.colorClass}" 
                   id="player-pad-${displayIdx}"
-                  title="${shapeDef.name}: ${this.escapeAttr(opt.text)}"
+                  title="${shapeDef.name}: ${this.escapeAttr(this.getOptionText(opt))}"
                   onclick="window.GameView.handleSelectAnswer(${displayIdx})"
                   style="cursor: pointer;"
                 >
                   <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.45rem; width: 100%; height: 100%; padding: 0.85rem; text-align: center; box-sizing: border-box;">
                     <div class="pad-shape" style="height: auto; width: auto;">${shapeDef.svg}</div>
                     <div class="pad-option-text" style="color: #ffffff; font-weight: 800; font-size: clamp(0.95rem, 2.5vw, 1.3rem); line-height: 1.25; text-shadow: 0 2px 10px rgba(0,0,0,0.85); max-width: 95%; word-break: break-word;">
-                      ${this.escapeHtml(opt.text)}
+                      ${this.escapeHtml(this.getOptionText(opt))}
                     </div>
                   </div>
                 </button>
@@ -808,7 +855,7 @@ window.GameView = {
                   onclick="window.GameView.handleSelectAnswer(${displayIdx})"
                 >
                   <span class="kahoot-shape">${shapeDef.svg}</span>
-                  <span class="kahoot-card-text">${this.escapeHtml(opt.text)}</span>
+                  <span class="kahoot-card-text">${this.escapeHtml(this.getOptionText(opt))}</span>
                 </button>
               `;
             }).join('')}
@@ -2328,6 +2375,24 @@ window.GameView = {
       }
       window.appRouter.showLeaderboard(this.room, true);
     }
+  },
+
+  finishGame() {
+    if (this.autoAdvanceInterval) clearInterval(this.autoAdvanceInterval);
+    if (this.timerInterval) clearInterval(this.timerInterval);
+    if (this.room) {
+      this.room.status = 'podium';
+      if (this.isHost && !this.isSolo) {
+        window.realtimeEngine.currentRoom = this.room;
+        window.realtimeEngine.syncRoomState();
+        window.realtimeEngine.broadcast({
+          type: 'SHOW_PODIUM',
+          pin: this.room.pin,
+          room: this.room
+        });
+      }
+    }
+    window.appRouter.showPodium(this.room);
   },
 
   nextQuestion() {

@@ -126,7 +126,91 @@ const DEFAULT_GROUPS = [
   }
 ];
 
-const DEFAULT_CHALLENGES = [];
+const DEFAULT_CHALLENGES = [
+  {
+    id: 'reto_sample_cloud',
+    title: 'Reto Prueba Cloud Actualizado',
+    description: 'Desafío interactivo con preguntas de ciencia, cultura y tecnología.',
+    category: 'ciencias',
+    categoryName: 'Ciencias Naturales',
+    author: 'Comunidad',
+    authorAvatar: '👨‍🏫',
+    plays: 15,
+    difficulty: 'Medio',
+    timePerQuestion: 20,
+    pointsStandard: 1000,
+    questions: [
+      {
+        id: 'q1',
+        text: '¿Cuál es el planeta más cercano al Sol en el Sistema Solar?',
+        type: 'quiz',
+        timeLimit: 20,
+        points: 1000,
+        options: [
+          { text: 'Mercurio' },
+          { text: 'Venus' },
+          { text: 'La Tierra' },
+          { text: 'Marte' }
+        ],
+        correctAnswer: 0
+      },
+      {
+        id: 'q2',
+        text: 'La velocidad de la luz en el vacío es de aproximadamente 300,000 kilómetros por segundo.',
+        type: 'truefalse',
+        timeLimit: 20,
+        points: 1000,
+        options: [
+          { text: 'Verdadero' },
+          { text: 'Falso' }
+        ],
+        correctAnswer: 0
+      },
+      {
+        id: 'q3',
+        text: '¿Cuál es el elemento químico más abundante en el universo observable?',
+        type: 'quiz',
+        timeLimit: 20,
+        points: 1000,
+        options: [
+          { text: 'Hidrógeno' },
+          { text: 'Oxígeno' },
+          { text: 'Carbono' },
+          { text: 'Helio' }
+        ],
+        correctAnswer: 0
+      },
+      {
+        id: 'q4',
+        text: '¿Cuántos huesos forman aproximadamente el esqueleto humano de una persona adulta?',
+        type: 'quiz',
+        timeLimit: 20,
+        points: 1000,
+        options: [
+          { text: '206' },
+          { text: '195' },
+          { text: '218' },
+          { text: '300' }
+        ],
+        correctAnswer: 0
+      },
+      {
+        id: 'q5',
+        text: '¿Cuál es el océano de mayor superficie y profundidad en el planeta Tierra?',
+        type: 'quiz',
+        timeLimit: 20,
+        points: 1000,
+        options: [
+          { text: 'Océano Pacífico' },
+          { text: 'Océano Atlántico' },
+          { text: 'Océano Índico' },
+          { text: 'Océano Ártico' }
+        ],
+        correctAnswer: 0
+      }
+    ]
+  }
+];
 
 // Helper para inicializar o recuperar almacenamiento con desinfección automática
 function loadInitialState() {
@@ -177,6 +261,19 @@ function loadInitialState() {
         challenges = parsed.filter(c => c && c.id && !OLD_MOCK_IDS.includes(c.id));
       }
     } catch(e) {}
+  }
+
+  // Si no hay retos o los que hay no tienen preguntas, sembrar retos por defecto
+  if (challenges.length === 0) {
+    challenges = [...DEFAULT_CHALLENGES];
+  } else {
+    // Si algún reto por defecto existe pero tiene preguntas vacías, restaurar sus preguntas
+    challenges = challenges.map(c => {
+      if (c.id === 'reto_sample_cloud' && (!c.questions || c.questions.length === 0)) {
+        return { ...c, questions: DEFAULT_CHALLENGES[0].questions };
+      }
+      return c;
+    });
   }
   localStorage.setItem('te_reto_challenges', JSON.stringify(challenges));
 
