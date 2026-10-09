@@ -872,6 +872,18 @@ h1, h2, h3, h4, h5, h6 {
   display: block;
 }
 
+/* 🌌 Fondo Oficial Futurista Mentix para la Experiencia Completa del Examen / Cuestionario */
+#view-game.active,
+#view-leaderboard.active,
+#view-podium.active,
+.waiting-fullscreen-view {
+  background: 
+    radial-gradient(circle at center, rgba(5, 12, 35, 0.45) 0%, rgba(3, 7, 24, 0.75) 100%),
+    url('../assets/mentix_join_bg.jpg') center center / cover no-repeat fixed !important;
+  min-height: 100vh;
+  position: relative;
+}
+
 @keyframes fadeInView {
   from {
     opacity: 0;

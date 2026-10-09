@@ -159,10 +159,10 @@ class AppRouter {
       v.classList.remove('active');
     });
 
-    // Controlar visibilidad del navbar principal (ocultar en lobby-join para diseño limpio y minimalista como Mentimeter)
+    // Controlar visibilidad del navbar principal (ocultar en lobby-join, game, leaderboard y podium para diseño inmersivo con fondo Mentix completo)
     const navEl = document.getElementById('main-navbar');
     if (navEl) {
-      if (viewName === 'lobby-join') {
+      if (viewName === 'lobby-join' || viewName === 'game' || viewName === 'leaderboard' || viewName === 'podium') {
         navEl.style.display = 'none';
       } else {
         navEl.style.display = '';

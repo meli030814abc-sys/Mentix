@@ -646,8 +646,13 @@ window.GameView = {
             </span>
           </div>
 
-          <div class="badge-tag" style="background: rgba(255, 183, 3, 0.15); border: 1px solid rgba(255, 183, 3, 0.4); color: #ffb703; font-weight: 800; font-size: 0.9rem; padding: 0.3rem 0.8rem; border-radius: 9999px;">
-            🏆 <span id="player-score-val">${window.realtimeEngine.localPlayer?.score || 0}</span> PTS
+          <div style="display: flex; align-items: center; gap: 0.5rem;">
+            <div class="badge-tag" style="background: rgba(255, 183, 3, 0.15); border: 1px solid rgba(255, 183, 3, 0.4); color: #ffb703; font-weight: 800; font-size: 0.9rem; padding: 0.3rem 0.8rem; border-radius: 9999px;">
+              🏆 <span id="player-score-val">${window.realtimeEngine.localPlayer?.score || 0}</span> PTS
+            </div>
+            <button type="button" class="btn btn-outline" style="padding: 0.25rem 0.6rem; font-size: 0.82rem; border-radius: 8px; border-color: rgba(255,255,255,0.2); cursor: pointer;" onclick="if(confirm('¿Deseas salir del cuestionario?')) window.appRouter.navigate('home');" title="Salir del cuestionario">
+              🚪
+            </button>
           </div>
         </div>
 

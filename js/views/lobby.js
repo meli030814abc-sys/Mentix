@@ -858,61 +858,67 @@ window.LobbyView = {
     const randomAvatar = avatars[Math.floor(Math.random() * avatars.length)];
 
     container.innerHTML = `
-      <div style="max-width: 520px; margin: 2.5rem auto; padding: 0 1.25rem;">
-        <div class="glass-panel" style="padding: 2.25rem 2rem; text-align: center; border-color: ${currentMode.accentColor || 'var(--neon-cyan)'}; box-shadow: 0 15px 45px rgba(0,0,0,0.35);">
-          
-          <!-- Encabezado de la Sala Encontrada -->
-          <div style="background: rgba(0,0,0,0.25); border: 1.5px solid rgba(0, 245, 212, 0.4); border-radius: 14px; padding: 0.95rem 1.25rem; margin-bottom: 1.75rem; text-align: left; display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap;">
-            <div>
-              <div style="font-size: 0.78rem; font-weight: 800; color: #ffd166; text-transform: uppercase; margin-bottom: 0.2rem;">
-                SALA PIN: ${formattedPin}
+      <div style="min-height: 100vh; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2.5rem 1.25rem; box-sizing: border-box; background: url('assets/mentix_join_bg.jpg') center center / cover no-repeat fixed; position: relative;">
+        <!-- Overlay sutil para legibilidad perfecta conservando todo el brillo y geometrías -->
+        <div style="position: absolute; inset: 0; background: radial-gradient(circle at center, rgba(5, 12, 35, 0.45) 0%, rgba(3, 7, 24, 0.75) 100%); pointer-events: none;"></div>
+
+        <!-- Contenedor interactivo -->
+        <div style="position: relative; z-index: 2; width: 100%; max-width: 520px; margin: 0 auto;">
+          <div class="glass-panel" style="padding: 2.25rem 2rem; text-align: center; border-color: var(--neon-cyan); box-shadow: 0 15px 45px rgba(0,0,0,0.5); backdrop-filter: blur(16px);">
+            
+            <!-- Encabezado de la Sala Encontrada -->
+            <div style="background: rgba(0,0,0,0.25); border: 1.5px solid rgba(0, 245, 212, 0.4); border-radius: 14px; padding: 0.95rem 1.25rem; margin-bottom: 1.75rem; text-align: left; display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap;">
+              <div>
+                <div style="font-size: 0.78rem; font-weight: 800; color: #ffd166; text-transform: uppercase; margin-bottom: 0.2rem;">
+                  SALA PIN: ${formattedPin}
+                </div>
+                <div style="font-size: 1.2rem; font-weight: 900; color: var(--text-primary); line-height: 1.2;">
+                  ${room.challenge?.title || 'Reto MENTIX'}
+                </div>
               </div>
-              <div style="font-size: 1.2rem; font-weight: 900; color: var(--text-primary); line-height: 1.2;">
-                ${room.challenge?.title || 'Reto MENTIX'}
-              </div>
+              <button type="button" class="btn btn-outline" style="font-size: 0.78rem; padding: 0.35rem 0.75rem; border-color: rgba(255,255,255,0.2);" onclick="window.LobbyView.backToPinStep()" title="Cambiar código PIN">
+                ← Cambiar PIN
+              </button>
             </div>
-            <button type="button" class="btn btn-outline" style="font-size: 0.78rem; padding: 0.35rem 0.75rem; border-color: rgba(255,255,255,0.2);" onclick="window.LobbyView.backToPinStep()" title="Cambiar código PIN">
-              ← Cambiar PIN
-            </button>
+
+            <!-- Formulario de Entrada: Lista oficial de correos vs Nombre libre -->
+            <form id="join-profile-form" onsubmit="event.preventDefault(); window.LobbyView.submitJoin();">
+              <input type="hidden" id="join-pin-input" value="${rawPin}" />
+              <div id="join-name-field-container">
+                ${this.renderJoinNameField(room)}
+              </div>
+
+              <!-- Selector de Animal / Avatar -->
+              <div style="margin-bottom: 2rem; text-align: left;">
+                <label style="display: block; font-weight: 800; font-size: 0.85rem; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 0.65rem; display: flex; align-items: center; gap: 0.4rem;">
+                  <span>🐾</span> ELIGE TU ANIMAL O AVATAR
+                </label>
+                <div style="display: flex; gap: 0.55rem; flex-wrap: wrap; justify-content: center;" id="avatar-selector">
+                  ${avatars.map(av => `
+                    <button 
+                      type="button" 
+                      onclick="window.LobbyView.selectAvatar('${av}', this)"
+                      class="avatar-pick-btn ${av === randomAvatar ? 'selected' : ''}"
+                      style="width: 48px; height: 48px; font-size: 1.6rem; border-radius: 12px; border: 2.5px solid ${av === randomAvatar ? 'var(--neon-cyan)' : 'var(--border-color)'}; background: rgba(0,0,0,0.3); cursor: pointer; transition: var(--transition-bounce);"
+                    >${av}</button>
+                  `).join('')}
+                </div>
+                <input type="hidden" id="join-avatar-input" value="${randomAvatar}" />
+              </div>
+
+              <!-- Botón de Entrada Final -->
+              <button type="submit" class="btn btn-primary btn-lg" style="width: 100%; font-size: 1.25rem; font-weight: 900; padding: 1.05rem; letter-spacing: 0.5px; box-shadow: 0 6px 25px rgba(247, 37, 133, 0.45);">
+                <span>🚀</span> ¡ENTRAR A LA SALA!
+              </button>
+            </form>
+
+            <div style="margin-top: 1.5rem;">
+              <button class="btn btn-outline" style="font-size: 0.85rem; width: 100%;" onclick="window.LobbyView.backToPinStep()">
+                ← Volver a ingresar otro PIN
+              </button>
+            </div>
+
           </div>
-
-          <!-- Formulario de Entrada: Lista oficial de correos vs Nombre libre -->
-          <form id="join-profile-form" onsubmit="event.preventDefault(); window.LobbyView.submitJoin();">
-            <input type="hidden" id="join-pin-input" value="${rawPin}" />
-            <div id="join-name-field-container">
-              ${this.renderJoinNameField(room)}
-            </div>
-
-            <!-- Selector de Animal / Avatar -->
-            <div style="margin-bottom: 2rem; text-align: left;">
-              <label style="display: block; font-weight: 800; font-size: 0.85rem; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 0.65rem; display: flex; align-items: center; gap: 0.4rem;">
-                <span>🐾</span> ELIGE TU ANIMAL O AVATAR
-              </label>
-              <div style="display: flex; gap: 0.55rem; flex-wrap: wrap; justify-content: center;" id="avatar-selector">
-                ${avatars.map(av => `
-                  <button 
-                    type="button" 
-                    onclick="window.LobbyView.selectAvatar('${av}', this)"
-                    class="avatar-pick-btn ${av === randomAvatar ? 'selected' : ''}"
-                    style="width: 48px; height: 48px; font-size: 1.6rem; border-radius: 12px; border: 2.5px solid ${av === randomAvatar ? 'var(--neon-cyan)' : 'var(--border-color)'}; background: rgba(0,0,0,0.3); cursor: pointer; transition: var(--transition-bounce);"
-                  >${av}</button>
-                `).join('')}
-              </div>
-              <input type="hidden" id="join-avatar-input" value="${randomAvatar}" />
-            </div>
-
-            <!-- Botón de Entrada Final -->
-            <button type="submit" class="btn btn-primary btn-lg" style="width: 100%; font-size: 1.25rem; font-weight: 900; padding: 1.05rem; letter-spacing: 0.5px; box-shadow: 0 6px 25px rgba(247, 37, 133, 0.45);">
-              <span>🚀</span> ¡ENTRAR A LA SALA!
-            </button>
-          </form>
-
-          <div style="margin-top: 1.5rem;">
-            <button class="btn btn-outline" style="font-size: 0.85rem; width: 100%;" onclick="window.LobbyView.backToPinStep()">
-              ← Volver a ingresar otro PIN
-            </button>
-          </div>
-
         </div>
       </div>
     `;
@@ -1100,7 +1106,7 @@ window.LobbyView = {
     const formattedPin = rawPin.length === 6 ? `${rawPin.slice(0, 3)} ${rawPin.slice(3)}` : rawPin;
 
     container.innerHTML = `
-      <div class="waiting-fullscreen-view">
+      <div class="waiting-fullscreen-view" style="background: radial-gradient(circle at center, rgba(5, 12, 35, 0.45) 0%, rgba(3, 7, 24, 0.75) 100%), url('assets/mentix_join_bg.jpg') center center / cover no-repeat fixed !important;">
         <div class="waiting-fullscreen-content">
           
           <!-- Avatar Flotante con Halo Neón -->
