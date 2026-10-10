@@ -31,11 +31,11 @@ window.LeaderboardView = {
     container.innerHTML = `
       <div style="max-width: 750px; margin: 0 auto; padding: 2rem 1.25rem 4rem;">
         <div style="text-align: center; margin-bottom: 2rem;">
-          <span class="badge-tag tag-easy" style="margin-bottom: 0.5rem; display: inline-block;">MARCADOR EN VIVO</span>
-          <h1 style="font-size: 2.2rem; display: flex; align-items: center; justify-content: center; gap: 0.6rem;">
+          <span class="badge-tag tag-easy" style="margin-bottom: 0.5rem; display: inline-block; font-weight: 800; background: rgba(0,245,212,0.18); border: 1.5px solid #00f5d4; color: #00f5d4 !important; text-shadow: 0 0 10px rgba(0,245,212,0.6);">MARCADOR EN VIVO</span>
+          <h1 style="font-size: 2.2rem; display: flex; align-items: center; justify-content: center; gap: 0.6rem; color: #ffffff !important; font-weight: 900; text-shadow: 0 3px 20px rgba(0,0,0,0.95), 0 0 25px rgba(255,209,102,0.4);">
             <span class="glow-text-gold">🏆</span> Tabla de Posiciones
           </h1>
-          <p style="color: var(--text-secondary);">Pregunta ${currentQIdx + 1} de ${totalQ}</p>
+          <p style="color: #ffffff !important; font-size: 1.05rem; font-weight: 700; text-shadow: 0 2px 8px rgba(0,0,0,0.9);">Pregunta ${currentQIdx + 1} de ${totalQ}</p>
         </div>
 
         <!-- Lista de Posiciones -->
@@ -43,31 +43,31 @@ window.LeaderboardView = {
           ${sortedPlayers.map((p, idx) => {
             let rankIcon = idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : `#${idx + 1}`;
             let bgGlow = idx === 0 
-              ? 'border-color: #ffd700; background: linear-gradient(90deg, rgba(255, 215, 0, 0.15), rgba(23, 32, 54, 0.85));'
+              ? 'border-color: #ffd700; background: linear-gradient(90deg, rgba(255, 215, 0, 0.22), rgba(15, 23, 42, 0.92));'
               : idx === 1 
-              ? 'border-color: #e0e6ed; background: linear-gradient(90deg, rgba(224, 230, 237, 0.12), rgba(23, 32, 54, 0.85));'
+              ? 'border-color: #e0e6ed; background: linear-gradient(90deg, rgba(224, 230, 237, 0.18), rgba(15, 23, 42, 0.92));'
               : idx === 2 
-              ? 'border-color: #cd7f32; background: linear-gradient(90deg, rgba(205, 127, 50, 0.12), rgba(23, 32, 54, 0.85));'
-              : 'border-color: var(--border-color); background: var(--bg-card);';
+              ? 'border-color: #cd7f32; background: linear-gradient(90deg, rgba(205, 127, 50, 0.18), rgba(15, 23, 42, 0.92));'
+              : 'border-color: rgba(0, 245, 212, 0.35); background: rgba(15, 23, 42, 0.88);';
 
             return `
-              <div class="glass-panel" style="${bgGlow} padding: 1rem 1.25rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; border-radius: var(--border-radius-md); transition: var(--transition-bounce);">
+              <div class="glass-panel" style="${bgGlow} padding: 1rem 1.25rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; border-radius: var(--border-radius-md); box-shadow: 0 8px 25px rgba(0,0,0,0.6); transition: var(--transition-bounce);">
                 <div style="display: flex; align-items: center; gap: 0.85rem; overflow: hidden;">
-                  <span style="font-size: 1.5rem; font-weight: 900; width: 36px; text-align: center;">${rankIcon}</span>
+                  <span style="font-size: 1.5rem; font-weight: 900; width: 36px; text-align: center; color: #ffffff !important; text-shadow: 0 2px 8px rgba(0,0,0,0.9);">${rankIcon}</span>
                   <span style="font-size: 1.8rem;">${p.avatar || '😎'}</span>
                   <div style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
-                    <div style="font-weight: 800; font-size: 1.1rem; color: var(--text-primary);">${p.nickname}</div>
-                    <div style="font-size: 0.8rem; color: var(--text-muted); display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
-                      ${p.streak > 1 ? `<span style="color:#ff9e00; font-weight:700;">🔥 ${p.streak} en racha</span>` : ''}
-                      <span>${p.correctCount || 0} aciertos</span>
+                    <div style="font-weight: 900; font-size: 1.15rem; color: #ffffff !important; text-shadow: 0 2px 10px rgba(0,0,0,0.95);">${p.nickname}</div>
+                    <div style="font-size: 0.85rem; color: rgba(220, 235, 255, 0.85); display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
+                      ${p.streak > 1 ? `<span style="color:#ffd166; font-weight:800; text-shadow: 0 0 10px rgba(255,209,102,0.6);">🔥 ${p.streak} en racha</span>` : ''}
+                      <span style="color: #ffffff !important; font-weight: 600;">${p.correctCount || 0} aciertos</span>
                       ${isHost && window.PodiumView?.failuresLink ? `<span style="margin-left: 0.25rem;">· ${window.PodiumView.failuresLink(p, room, currentQIdx + 1)}</span>` : ''}
                     </div>
                   </div>
                 </div>
 
                 <div style="text-align: right; flex-shrink: 0;">
-                  <div style="font-size: 1.4rem; font-weight: 900; color: var(--neon-cyan); letter-spacing: 0.5px;">
-                    ${(p.score || 0).toLocaleString()} <span style="font-size: 0.85rem; font-weight: 700; color: var(--text-secondary);">pts</span>
+                  <div style="font-size: 1.45rem; font-weight: 900; color: #00f5d4 !important; letter-spacing: 0.5px; text-shadow: 0 0 12px rgba(0,245,212,0.7);">
+                    ${(p.score || 0).toLocaleString()} <span style="font-size: 0.88rem; font-weight: 800; color: #ffffff !important;">pts</span>
                   </div>
                 </div>
               </div>

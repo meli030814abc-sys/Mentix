@@ -638,19 +638,19 @@ window.GameView = {
         <!-- Barra Superior Compacta del Alumno -->
         <div class="kahoot-player-topbar">
           <div style="display: flex; align-items: center; gap: 0.65rem;">
-            <div style="background: var(--bg-card); width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; color: var(--text-primary); border: 1px solid var(--border-color);">
+            <div style="background: rgba(10, 20, 45, 0.85); width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; color: #ffffff !important; border: 1.5px solid #00f5d4; text-shadow: 0 0 10px rgba(0,245,212,0.8); box-shadow: 0 0 12px rgba(0,245,212,0.3);">
               ${this.currentQuestionIndex + 1}
             </div>
-            <span style="font-weight: 700; font-size: 0.95rem; color: var(--text-secondary);">
+            <span style="font-weight: 800; font-size: 1rem; color: #ffffff !important; text-shadow: 0 2px 10px rgba(0,0,0,0.95);">
               Pregunta ${this.currentQuestionIndex + 1} de ${this.challenge.questions.length}
             </span>
           </div>
 
           <div style="display: flex; align-items: center; gap: 0.5rem;">
-            <div class="badge-tag" style="background: rgba(255, 183, 3, 0.15); border: 1px solid rgba(255, 183, 3, 0.4); color: #ffb703; font-weight: 800; font-size: 0.9rem; padding: 0.3rem 0.8rem; border-radius: 9999px;">
+            <div class="badge-tag" style="background: rgba(10, 20, 45, 0.85); border: 1.5px solid #ffd166; color: #ffd166 !important; font-weight: 900; font-size: 0.95rem; padding: 0.35rem 0.9rem; border-radius: 9999px; text-shadow: 0 0 10px rgba(255, 209, 102, 0.6); box-shadow: 0 4px 15px rgba(0,0,0,0.5);">
               🏆 <span id="player-score-val">${window.realtimeEngine.localPlayer?.score || 0}</span> PTS
             </div>
-            <button type="button" class="btn btn-outline" style="padding: 0.25rem 0.6rem; font-size: 0.82rem; border-radius: 8px; border-color: rgba(255,255,255,0.2); cursor: pointer;" onclick="if(confirm('¿Deseas salir del cuestionario?')) window.appRouter.navigate('home');" title="Salir del cuestionario">
+            <button type="button" class="btn btn-outline" style="padding: 0.3rem 0.7rem; font-size: 0.9rem; border-radius: 8px; border: 1.5px solid rgba(255,255,255,0.4); background: rgba(10,20,45,0.7); color: #ffffff !important; cursor: pointer; text-shadow: 0 2px 6px rgba(0,0,0,0.8);" onclick="if(confirm('¿Deseas salir del cuestionario?')) window.appRouter.navigate('home');" title="Salir del cuestionario">
               🚪
             </button>
           </div>

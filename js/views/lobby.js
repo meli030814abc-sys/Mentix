@@ -706,16 +706,16 @@ window.LobbyView = {
           <!-- Nombre de la Página / Logotipo Destacado -->
           <a href="javascript:void(0)" onclick="window.appRouter.navigate('home')" style="text-decoration: none; display: inline-flex; align-items: center; gap: 0.75rem; margin-bottom: 2rem; cursor: pointer;">
             <span style="font-size: 2.8rem; filter: drop-shadow(0 0 16px rgba(0,245,212,0.85));">🧠</span>
-            <span style="font-size: 2.6rem; font-weight: 900; letter-spacing: -0.02em; color: #ffffff; text-shadow: 0 4px 20px rgba(0,0,0,0.8);">
-              MEN<span style="color: var(--neon-cyan); text-shadow: 0 0 20px rgba(0,245,212,0.8);">TIX</span>
+            <span style="font-size: 2.6rem; font-weight: 900; letter-spacing: -0.02em; color: #ffffff !important; text-shadow: 0 4px 20px rgba(0,0,0,0.95);">
+              MEN<span style="color: #00f5d4 !important; text-shadow: 0 0 25px rgba(0,245,212,0.95), 0 2px 10px rgba(0,0,0,0.9);">TIX</span>
             </span>
           </a>
 
-          <h1 style="font-size: clamp(2rem, 5vw, 2.75rem); font-weight: 900; margin: 0 0 0.6rem; color: #ffffff; letter-spacing: -0.02em; text-shadow: 0 4px 24px rgba(0,0,0,0.8);">
+          <h1 style="font-size: clamp(2rem, 5vw, 2.75rem); font-weight: 900; margin: 0 0 0.6rem; color: #ffffff !important; letter-spacing: -0.02em; text-shadow: 0 4px 24px rgba(0,0,0,0.95), 0 0 30px rgba(0,245,212,0.45);">
             Ingresa el código para unirte
           </h1>
           
-          <p style="color: rgba(220, 235, 255, 0.9); font-size: clamp(1rem, 2.5vw, 1.2rem); margin: 0 0 2.25rem; text-shadow: 0 2px 10px rgba(0,0,0,0.6);">
+          <p style="color: #ffffff !important; font-size: clamp(1.05rem, 2.5vw, 1.25rem); font-weight: 700; margin: 0 0 2.25rem; text-shadow: 0 2px 12px rgba(0,0,0,0.95);">
             Está en la pantalla frente a ti
           </p>
 
@@ -725,26 +725,26 @@ window.LobbyView = {
                 type="text" 
                 id="join-pin-input" 
                 placeholder="1234 5678" 
-                maxlength="10"
+                maxlength="10" 
                 inputmode="numeric"
                 value="${this.joinPin ? (this.joinPin.length === 6 ? this.joinPin.slice(0, 3) + ' ' + this.joinPin.slice(3) : this.joinPin) : ''}"
                 required
                 autofocus
                 autocomplete="off"
-                style="width: 100%; box-sizing: border-box; text-align: center; font-size: clamp(1.8rem, 4vw, 2.4rem); font-weight: 800; padding: 1.15rem 1.5rem; border-radius: 18px; background: rgba(10, 20, 45, 0.75); backdrop-filter: blur(12px); border: 2.5px solid rgba(0, 245, 212, 0.6); color: #ffffff; outline: none; transition: var(--transition-bounce); box-shadow: 0 10px 35px rgba(0,0,0,0.5), 0 0 20px rgba(0, 245, 212, 0.25); letter-spacing: 2px;"
-                onfocus="this.style.borderColor='var(--neon-cyan)'; this.style.boxShadow='0 0 30px rgba(0,245,212,0.5)';"
-                onblur="this.style.borderColor='rgba(0, 245, 212, 0.6)'; this.style.boxShadow='0 10px 35px rgba(0,0,0,0.5), 0 0 20px rgba(0, 245, 212, 0.25)';"
+                style="width: 100%; box-sizing: border-box; text-align: center; font-size: clamp(1.8rem, 4vw, 2.4rem); font-weight: 900; padding: 1.15rem 1.5rem; border-radius: 18px; background: rgba(10, 20, 45, 0.88) !important; backdrop-filter: blur(12px); border: 2.5px solid #00f5d4 !important; color: #ffffff !important; outline: none; transition: var(--transition-bounce); box-shadow: 0 10px 35px rgba(0,0,0,0.6), 0 0 25px rgba(0, 245, 212, 0.35) !important; letter-spacing: 2px; text-shadow: 0 0 15px rgba(0, 245, 212, 0.7), 0 2px 8px rgba(0,0,0,0.9);"
+                onfocus="this.style.borderColor='#00f5d4'; this.style.boxShadow='0 0 35px rgba(0,245,212,0.7)';"
+                onblur="this.style.borderColor='#00f5d4'; this.style.boxShadow='0 10px 35px rgba(0,0,0,0.6), 0 0 25px rgba(0, 245, 212, 0.35)';"
                 oninput="window.LobbyView.formatPinInput(this)"
               />
-              <div id="pin-error-msg" style="color: #ff4d6d; font-size: 0.95rem; font-weight: 700; margin-top: 0.75rem; display: none; text-align: center; text-shadow: 0 2px 8px rgba(0,0,0,0.8);"></div>
+              <div id="pin-error-msg" style="color: #ff4d6d; font-size: 1rem; font-weight: 800; margin-top: 0.75rem; display: none; text-align: center; text-shadow: 0 2px 8px rgba(0,0,0,0.95);"></div>
             </div>
 
             <button 
               type="submit" 
               class="btn" 
-              style="padding: 0.85rem 3.5rem; font-size: 1.25rem; font-weight: 900; border-radius: 9999px; background: #0b152d; color: #ffffff; border: 2px solid rgba(0, 245, 212, 0.5); cursor: pointer; transition: var(--transition-bounce); box-shadow: 0 8px 25px rgba(0,0,0,0.5), 0 0 18px rgba(0, 245, 212, 0.3); min-width: 200px;"
-              onmouseenter="this.style.background='var(--neon-cyan)'; this.style.color='#050510'; this.style.borderColor='var(--neon-cyan)'; this.style.boxShadow='0 0 30px rgba(0,245,212,0.8)'; this.style.transform='translateY(-2px) scale(1.03)';"
-              onmouseleave="this.style.background='#0b152d'; this.style.color='#ffffff'; this.style.borderColor='rgba(0, 245, 212, 0.5)'; this.style.boxShadow='0 8px 25px rgba(0,0,0,0.5), 0 0 18px rgba(0, 245, 212, 0.3)'; this.style.transform='none';"
+              style="padding: 0.9rem 3.5rem; font-size: 1.25rem; font-weight: 900; border-radius: 9999px; background: #00f5d4; color: #050510 !important; border: 2px solid #00f5d4; cursor: pointer; transition: var(--transition-bounce); box-shadow: 0 8px 30px rgba(0, 245, 212, 0.55), 0 0 20px rgba(0, 245, 212, 0.4); min-width: 220px; letter-spacing: 0.5px;"
+              onmouseenter="this.style.background='#ffffff'; this.style.color='#050510'; this.style.borderColor='#ffffff'; this.style.boxShadow='0 0 35px rgba(255,255,255,0.9)';"
+              onmouseleave="this.style.background='#00f5d4'; this.style.color='#050510'; this.style.borderColor='#00f5d4'; this.style.boxShadow='0 8px 30px rgba(0, 245, 212, 0.55), 0 0 20px rgba(0, 245, 212, 0.4)';"
             >
               Unirse
             </button>
@@ -752,7 +752,7 @@ window.LobbyView = {
 
           <!-- Enlace discreto para volver -->
           <div style="margin-top: 2.75rem;">
-            <a href="javascript:void(0)" onclick="window.appRouter.navigate('home')" style="font-size: 0.95rem; color: rgba(220, 235, 255, 0.8); text-decoration: none; transition: color 0.2s; text-shadow: 0 2px 8px rgba(0,0,0,0.8);" onmouseenter="this.style.color='var(--neon-cyan)'" onmouseleave="this.style.color='rgba(220, 235, 255, 0.8)'">
+            <a href="javascript:void(0)" onclick="window.appRouter.navigate('home')" style="font-size: 1rem; font-weight: 700; color: #ffffff !important; text-decoration: none; transition: color 0.2s; text-shadow: 0 2px 10px rgba(0,0,0,0.95);" onmouseenter="this.style.color='#00f5d4'" onmouseleave="this.style.color='#ffffff'">
               ← Volver al inicio
             </a>
           </div>
@@ -867,16 +867,16 @@ window.LobbyView = {
           <div class="glass-panel" style="padding: 2.25rem 2rem; text-align: center; border-color: var(--neon-cyan); box-shadow: 0 15px 45px rgba(0,0,0,0.5); backdrop-filter: blur(16px);">
             
             <!-- Encabezado de la Sala Encontrada -->
-            <div style="background: rgba(0,0,0,0.25); border: 1.5px solid rgba(0, 245, 212, 0.4); border-radius: 14px; padding: 0.95rem 1.25rem; margin-bottom: 1.75rem; text-align: left; display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap;">
+            <div style="background: rgba(10, 20, 45, 0.75); border: 1.5px solid rgba(0, 245, 212, 0.6); border-radius: 14px; padding: 0.95rem 1.25rem; margin-bottom: 1.75rem; text-align: left; display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap;">
               <div>
-                <div style="font-size: 0.78rem; font-weight: 800; color: #ffd166; text-transform: uppercase; margin-bottom: 0.2rem;">
+                <div style="font-size: 0.82rem; font-weight: 900; color: #ffd166 !important; text-transform: uppercase; margin-bottom: 0.2rem; text-shadow: 0 2px 8px rgba(0,0,0,0.9);">
                   SALA PIN: ${formattedPin}
                 </div>
-                <div style="font-size: 1.2rem; font-weight: 900; color: var(--text-primary); line-height: 1.2;">
+                <div style="font-size: 1.25rem; font-weight: 900; color: #ffffff !important; line-height: 1.2; text-shadow: 0 2px 12px rgba(0,0,0,0.95);">
                   ${room.challenge?.title || 'Reto MENTIX'}
                 </div>
               </div>
-              <button type="button" class="btn btn-outline" style="font-size: 0.78rem; padding: 0.35rem 0.75rem; border-color: rgba(255,255,255,0.2);" onclick="window.LobbyView.backToPinStep()" title="Cambiar código PIN">
+              <button type="button" class="btn btn-outline" style="font-size: 0.8rem; font-weight: 800; padding: 0.4rem 0.85rem; color: #ffffff !important; border-color: rgba(255,255,255,0.4) !important; background: rgba(10,20,45,0.7) !important; text-shadow: 0 2px 6px rgba(0,0,0,0.8);" onclick="window.LobbyView.backToPinStep()" title="Cambiar código PIN">
                 ← Cambiar PIN
               </button>
             </div>
@@ -890,7 +890,7 @@ window.LobbyView = {
 
               <!-- Selector de Animal / Avatar -->
               <div style="margin-bottom: 2rem; text-align: left;">
-                <label style="display: block; font-weight: 800; font-size: 0.85rem; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 0.65rem; display: flex; align-items: center; gap: 0.4rem;">
+                <label style="display: block; font-weight: 900; font-size: 0.9rem; text-transform: uppercase; color: #ffffff !important; text-shadow: 0 2px 8px rgba(0,0,0,0.9); margin-bottom: 0.65rem; display: flex; align-items: center; gap: 0.4rem;">
                   <span>🐾</span> ELIGE TU ANIMAL O AVATAR
                 </label>
                 <div style="display: flex; gap: 0.55rem; flex-wrap: wrap; justify-content: center;" id="avatar-selector">
@@ -907,13 +907,13 @@ window.LobbyView = {
               </div>
 
               <!-- Botón de Entrada Final -->
-              <button type="submit" class="btn btn-primary btn-lg" style="width: 100%; font-size: 1.25rem; font-weight: 900; padding: 1.05rem; letter-spacing: 0.5px; box-shadow: 0 6px 25px rgba(247, 37, 133, 0.45);">
+              <button type="submit" class="btn btn-primary btn-lg" style="width: 100%; font-size: 1.25rem; font-weight: 900; padding: 1.05rem; letter-spacing: 0.5px; color: #ffffff !important; background: linear-gradient(135deg, #f72585, #7209b7); box-shadow: 0 6px 25px rgba(247, 37, 133, 0.5); text-shadow: 0 2px 8px rgba(0,0,0,0.8);">
                 <span>🚀</span> ¡ENTRAR A LA SALA!
               </button>
             </form>
 
             <div style="margin-top: 1.5rem;">
-              <button class="btn btn-outline" style="font-size: 0.85rem; width: 100%;" onclick="window.LobbyView.backToPinStep()">
+              <button class="btn btn-outline" style="font-size: 0.9rem; font-weight: 800; width: 100%; color: #ffffff !important; border-color: rgba(255,255,255,0.4) !important; background: rgba(10,20,45,0.7) !important; text-shadow: 0 2px 6px rgba(0,0,0,0.8);" onclick="window.LobbyView.backToPinStep()">
                 ← Volver a ingresar otro PIN
               </button>
             </div>
@@ -997,7 +997,7 @@ window.LobbyView = {
     // Modo Abierto estándar (los estudiantes ponen su nombre y correo libremente)
     return `
       <div style="margin-bottom: 1.25rem; text-align: left;">
-        <label style="display: block; font-weight: 800; font-size: 0.85rem; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 0.5rem;">
+        <label style="display: block; font-weight: 900; font-size: 0.88rem; text-transform: uppercase; color: #ffffff !important; text-shadow: 0 2px 8px rgba(0,0,0,0.9); margin-bottom: 0.5rem;">
           TU NOMBRE O NICKNAME
         </label>
         <input 
@@ -1007,14 +1007,14 @@ window.LobbyView = {
           maxlength="25"
           value="${window.appState?.currentUser?.name || ''}"
           required
-          style="width: 100%; font-size: 1.1rem; font-weight: 700; padding: 0.85rem; border-radius: var(--border-radius-md); background: var(--bg-card); border: 2px solid var(--border-color); color: var(--text-primary); outline: none;"
-          onfocus="this.style.borderColor='var(--neon-magenta)'"
-          onblur="this.style.borderColor='var(--border-color)'"
+          style="width: 100%; font-size: 1.15rem; font-weight: 800; padding: 0.9rem; border-radius: var(--border-radius-md); background: rgba(10, 20, 45, 0.88) !important; border: 2px solid #00f5d4 !important; color: #ffffff !important; outline: none; box-shadow: 0 4px 15px rgba(0,0,0,0.5); text-shadow: 0 1px 4px rgba(0,0,0,0.8);"
+          onfocus="this.style.borderColor='#00f5d4'; this.style.boxShadow='0 0 20px rgba(0,245,212,0.5)';"
+          onblur="this.style.borderColor='#00f5d4'; this.style.boxShadow='0 4px 15px rgba(0,0,0,0.5)';"
         />
       </div>
 
       <div style="margin-bottom: 1.5rem; text-align: left;">
-        <label style="display: block; font-weight: 800; font-size: 0.85rem; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 0.5rem;">
+        <label style="display: block; font-weight: 900; font-size: 0.88rem; text-transform: uppercase; color: #ffffff !important; text-shadow: 0 2px 8px rgba(0,0,0,0.9); margin-bottom: 0.5rem;">
           CORREO ELECTRÓNICO
         </label>
         <input 
@@ -1024,9 +1024,9 @@ window.LobbyView = {
           maxlength="60"
           value="${window.appState?.currentUser?.email || ''}"
           required
-          style="width: 100%; font-size: 1.05rem; font-weight: 600; padding: 0.85rem; border-radius: var(--border-radius-md); background: var(--bg-card); border: 2px solid var(--border-color); color: var(--text-primary); outline: none;"
-          onfocus="this.style.borderColor='var(--neon-cyan)'"
-          onblur="this.style.borderColor='var(--border-color)'"
+          style="width: 100%; font-size: 1.1rem; font-weight: 700; padding: 0.9rem; border-radius: var(--border-radius-md); background: rgba(10, 20, 45, 0.88) !important; border: 2px solid #00f5d4 !important; color: #ffffff !important; outline: none; box-shadow: 0 4px 15px rgba(0,0,0,0.5); text-shadow: 0 1px 4px rgba(0,0,0,0.8);"
+          onfocus="this.style.borderColor='#00f5d4'; this.style.boxShadow='0 0 20px rgba(0,245,212,0.5)';"
+          onblur="this.style.borderColor='#00f5d4'; this.style.boxShadow='0 4px 15px rgba(0,0,0,0.5)';"
         />
         <input type="hidden" id="join-student-id-input" value="" />
       </div>
@@ -1115,27 +1115,27 @@ window.LobbyView = {
           </div>
 
           <!-- Saludo Principal -->
-          <h1 class="waiting-title">
-            ¡Estás dentro, <span class="glow-text-cyan">${p?.nickname || 'Jugador'}</span>!
+          <h1 class="waiting-title" style="color: #ffffff !important; font-weight: 900 !important; text-shadow: 0 3px 20px rgba(0,0,0,0.95), 0 0 35px rgba(0,245,212,0.7) !important;">
+            ¡Estás dentro, <span class="glow-text-cyan" style="color: #00f5d4 !important; font-weight: 900 !important; text-shadow: 0 0 20px rgba(0,245,212,0.95), 0 0 40px rgba(0,245,212,0.8) !important;">${p?.nickname || 'Jugador'}</span>!
           </h1>
 
           <!-- Código PIN de la Sala -->
-          <div class="waiting-pin-pill">
+          <div class="waiting-pin-pill" style="background: rgba(10, 20, 45, 0.88) !important; border: 2px solid #00f5d4 !important; color: #00f5d4 !important; font-weight: 900 !important; text-shadow: 0 0 14px rgba(0,245,212,0.85) !important; box-shadow: 0 8px 25px rgba(0,0,0,0.6), 0 0 20px rgba(0,245,212,0.35) !important;">
             <span>📱</span> <span>SALA PIN: ${formattedPin}</span>
           </div>
 
           <div style="margin: 1.5rem 0; display: flex; flex-direction: column; align-items: center; gap: 0.75rem;">
-            <div style="font-size: 1.25rem; font-weight: 800; color: var(--text-primary);">
+            <div style="font-size: 1.35rem; font-weight: 900; color: #ffffff !important; text-shadow: 0 2px 14px rgba(0,0,0,0.95) !important;">
               ${room?.challenge?.title || 'Reto MENTIX'}
             </div>
-            <div style="display: inline-flex; align-items: center; gap: 0.5rem; background: rgba(0,245,212,0.12); border: 1.5px solid var(--neon-cyan); padding: 0.45rem 1.25rem; border-radius: 9999px; color: var(--neon-cyan); font-weight: 800; font-size: 0.95rem;">
+            <div style="display: inline-flex; align-items: center; gap: 0.5rem; background: rgba(0,245,212,0.18); border: 2px solid #00f5d4; padding: 0.5rem 1.4rem; border-radius: 9999px; color: #00f5d4 !important; font-weight: 900; font-size: 1rem; text-shadow: 0 0 15px rgba(0,245,212,0.85); box-shadow: 0 0 20px rgba(0,245,212,0.3);">
               <span>🎮</span> Conectado a la sala
             </div>
           </div>
 
           <!-- Botón de Salida -->
           <div style="margin-top: 0.5rem;">
-            <button class="btn btn-outline" style="padding: 0.65rem 1.6rem; font-size: 0.95rem; font-weight: 700; border-radius: var(--border-radius-md);" onclick="window.appRouter.navigate('home')">
+            <button class="btn btn-outline" style="padding: 0.7rem 1.8rem; font-size: 1rem; font-weight: 800; border-radius: var(--border-radius-md); color: #ffffff !important; border: 1.5px solid rgba(255,255,255,0.45) !important; background: rgba(10,20,45,0.75) !important; text-shadow: 0 2px 8px rgba(0,0,0,0.9);" onclick="window.appRouter.navigate('home')">
               🚪 Salir de la sala
             </button>
           </div>

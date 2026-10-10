@@ -2817,57 +2817,81 @@ body.light-theme .player-text-field:focus {
   box-shadow: 0 0 0 3px rgba(0, 180, 216, 0.25) !important;
 }
 
-/* Pantalla de Espera del Alumno (Fullscreen) en Modo Claro */
+/* Pantalla de Espera del Alumno (Fullscreen) con Fondo Mentix Oficial */
+.waiting-fullscreen-view,
 body.light-theme .waiting-fullscreen-view {
   background: 
-    radial-gradient(circle at 50% 25%, rgba(0, 245, 212, 0.1) 0%, transparent 55%),
-    radial-gradient(circle at 85% 75%, rgba(114, 9, 183, 0.08) 0%, transparent 55%),
-    var(--bg-primary);
+    radial-gradient(circle at center, rgba(5, 12, 35, 0.45) 0%, rgba(3, 7, 24, 0.75) 100%),
+    url('../assets/mentix_join_bg.jpg') center center / cover no-repeat fixed !important;
+  color: #ffffff !important;
 }
 
+.waiting-avatar-halo,
 body.light-theme .waiting-avatar-halo {
-  background: #ffffff;
-  border-color: #00b4d8;
-  box-shadow: 0 0 35px rgba(0, 180, 216, 0.35);
+  background: rgba(10, 20, 45, 0.88) !important;
+  border-color: #00f5d4 !important;
+  box-shadow: 0 0 45px rgba(0, 245, 212, 0.55), inset 0 0 25px rgba(0, 245, 212, 0.3) !important;
 }
 
-body.light-theme .waiting-title {
-  color: #0f172a !important;
+.waiting-title,
+body.light-theme .waiting-title,
+.waiting-fullscreen-view .waiting-title,
+body.light-theme .waiting-fullscreen-view .waiting-title {
+  color: #ffffff !important;
+  font-weight: 900 !important;
+  text-shadow: 0 3px 20px rgba(0, 0, 0, 0.95), 0 0 35px rgba(0, 245, 212, 0.7) !important;
+  letter-spacing: -0.02em !important;
 }
 
-body.light-theme .waiting-pin-pill {
-  background: #ffffff;
-  border-color: #00b4d8;
-  color: #0077b6;
-  box-shadow: 0 4px 15px rgba(0, 180, 216, 0.18);
+.waiting-pin-pill,
+body.light-theme .waiting-pin-pill,
+.waiting-fullscreen-view .waiting-pin-pill,
+body.light-theme .waiting-fullscreen-view .waiting-pin-pill {
+  background: rgba(10, 20, 45, 0.88) !important;
+  border: 2px solid #00f5d4 !important;
+  color: #00f5d4 !important;
+  font-weight: 900 !important;
+  text-shadow: 0 0 14px rgba(0, 245, 212, 0.85) !important;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6), 0 0 20px rgba(0, 245, 212, 0.35) !important;
 }
 
+.waiting-mode-card,
 body.light-theme .waiting-mode-card {
-  background: #ffffff;
-  border-color: rgba(0, 0, 0, 0.12);
-  color: #0f172a;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  background: rgba(10, 20, 45, 0.9) !important;
+  border: 2px solid rgba(0, 245, 212, 0.6) !important;
+  color: #ffffff !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6) !important;
 }
 
+.waiting-mode-card div[style*="color: #ffffff"],
+.waiting-mode-card div[style*="color: white"],
 body.light-theme .waiting-mode-card div[style*="color: #ffffff"],
 body.light-theme .waiting-mode-card div[style*="color: white"] {
-  color: #0f172a !important;
+  color: #ffffff !important;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.85) !important;
 }
 
+.waiting-mode-card div[style*="color: var(--text-secondary)"],
 body.light-theme .waiting-mode-card div[style*="color: var(--text-secondary)"] {
-  color: #475569 !important;
+  color: rgba(220, 235, 255, 0.85) !important;
 }
 
+.waiting-status-box,
 body.light-theme .waiting-status-box {
-  background: #ffffff;
-  border-color: rgba(0, 0, 0, 0.1);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.06);
+  background: rgba(10, 20, 45, 0.88) !important;
+  border: 1.5px solid rgba(0, 245, 212, 0.5) !important;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5) !important;
+  color: #ffffff !important;
 }
 
+.waiting-status-box h3,
+.waiting-status-box div[style*="color: #ffffff"],
+.waiting-status-box div[style*="color: white"],
 body.light-theme .waiting-status-box h3,
 body.light-theme .waiting-status-box div[style*="color: #ffffff"],
 body.light-theme .waiting-status-box div[style*="color: white"] {
-  color: #0f172a !important;
+  color: #ffffff !important;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.85) !important;
 }
 
 /* Pantalla Completa de Estadísticas de Respuestas (Histograma) */
@@ -2946,53 +2970,54 @@ body.light-theme .creator-pagination-bar strong[style*="color: white"] {
   color: #0f172a !important;
 }
 
-/* Lobby y Sala de Espera en Modo Claro */
-body.light-theme #view-lobby h1[style*="color: white"],
-body.light-theme #view-lobby h2[style*="color: white"] {
-  color: #0f172a !important;
+/* Lobby, Sala de Espera, Leaderboard y Podio con Fondo Mentix (Modo Claro y Oscuro) */
+#view-lobby,
+body.light-theme #view-lobby,
+#view-leaderboard,
+body.light-theme #view-leaderboard,
+#view-podium,
+body.light-theme #view-podium {
+  color: #ffffff !important;
 }
 
-body.light-theme #view-lobby div[style*="color: white"],
-body.light-theme #view-lobby div[style*="color: #ffffff"] {
-  color: #0f172a !important;
+#view-lobby h1,
+#view-lobby h2,
+#view-lobby h3,
+#view-lobby p,
+#view-lobby label,
+body.light-theme #view-lobby h1,
+body.light-theme #view-lobby h2,
+body.light-theme #view-lobby h3,
+body.light-theme #view-lobby p,
+body.light-theme #view-lobby label {
+  color: #ffffff !important;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.9) !important;
 }
 
-body.light-theme #view-lobby p[style*="color: white"] {
-  color: #0f172a !important;
-}
-
-body.light-theme #view-lobby div[style*="background: rgba(255,255,255,0.06)"] {
-  background: #f8fafc !important;
-  border-color: rgba(0, 0, 0, 0.12) !important;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05) !important;
-}
-
-/* Leaderboard & Podio en Modo Claro */
+#view-leaderboard h1,
+#view-leaderboard h2,
+#view-leaderboard p,
+#view-leaderboard .glass-panel,
+body.light-theme #view-leaderboard h1,
+body.light-theme #view-leaderboard h2,
+body.light-theme #view-leaderboard p,
 body.light-theme #view-leaderboard .glass-panel {
-  background: #ffffff;
-  border-color: rgba(0, 0, 0, 0.12);
+  color: #ffffff !important;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.9) !important;
 }
 
-body.light-theme #view-leaderboard div[style*="color: white"],
-body.light-theme #view-leaderboard div[style*="color: #ffffff"] {
-  color: #0f172a !important;
-}
-
-body.light-theme #view-podium .avatar-podium {
-  background: #f1f5f9;
-}
-
-body.light-theme #view-podium div[style*="color: white"],
-body.light-theme #view-podium div[style*="color: #ffffff"] {
-  color: #0f172a !important;
-}
-
-body.light-theme #view-podium table tbody tr {
-  border-bottom-color: rgba(0, 0, 0, 0.08) !important;
-}
-
-body.light-theme #view-podium table td {
-  color: #0f172a;
+#view-podium h1,
+#view-podium h2,
+#view-podium p,
+#view-podium td,
+#view-podium th,
+body.light-theme #view-podium h1,
+body.light-theme #view-podium h2,
+body.light-theme #view-podium p,
+body.light-theme #view-podium td,
+body.light-theme #view-podium th {
+  color: #ffffff !important;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.9) !important;
 }
 
 /* Previsualización Pantalla Completa en Modo Claro */
@@ -3300,52 +3325,90 @@ body.light-theme .lobby-missing-student-email {
   color: #475569 !important;
 }
 
-/* Pantalla Completa de Espera del Alumno en Modo Claro */
-body.light-theme .waiting-fullscreen-view {
-  background: 
-    radial-gradient(circle at 50% 25%, rgba(14, 116, 144, 0.06) 0%, transparent 55%),
-    radial-gradient(circle at 85% 75%, rgba(109, 40, 217, 0.06) 0%, transparent 55%),
-    #f8fafc !important;
+/* ==========================================================================
+   ✨ LETRAS Y TEXTOS ULTRA LEGIBLES Y LUMINOSOS EN LA PANTALLA DEL CÓDIGO
+   ========================================================================== */
+#join-pin-input,
+body.light-theme #join-pin-input {
+  background: rgba(10, 20, 45, 0.88) !important;
+  border: 2.5px solid #00f5d4 !important;
+  color: #ffffff !important;
+  text-shadow: 0 0 15px rgba(0, 245, 212, 0.7), 0 2px 8px rgba(0, 0, 0, 0.9) !important;
+  box-shadow: 0 10px 35px rgba(0, 0, 0, 0.6), 0 0 25px rgba(0, 245, 212, 0.35) !important;
 }
 
-body.light-theme .waiting-title {
-  color: #0f172a !important;
+#join-pin-input::placeholder,
+body.light-theme #join-pin-input::placeholder {
+  color: rgba(220, 235, 255, 0.55) !important;
+  text-shadow: none !important;
 }
 
-body.light-theme .waiting-avatar-halo {
-  background: #ffffff !important;
-  border-color: #0e7490 !important;
-  box-shadow: 0 0 35px rgba(14, 116, 144, 0.25) !important;
+#join-nickname-input,
+body.light-theme #join-nickname-input,
+#join-email-input,
+body.light-theme #join-email-input,
+#join-manual-name-input,
+body.light-theme #join-manual-name-input,
+#join-manual-email-input,
+body.light-theme #join-manual-email-input,
+#join-roster-select,
+body.light-theme #join-roster-select {
+  background: rgba(10, 20, 45, 0.88) !important;
+  border: 2px solid rgba(0, 245, 212, 0.65) !important;
+  color: #ffffff !important;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8) !important;
 }
 
-body.light-theme .waiting-pin-pill {
-  background: #ffffff !important;
-  border-color: #0e7490 !important;
-  color: #0e7490 !important;
-  box-shadow: 0 4px 15px rgba(14, 116, 144, 0.15) !important;
+#join-nickname-input::placeholder,
+body.light-theme #join-nickname-input::placeholder,
+#join-email-input::placeholder,
+body.light-theme #join-email-input::placeholder {
+  color: rgba(200, 225, 255, 0.6) !important;
 }
 
-body.light-theme .waiting-mode-card {
-  background: #ffffff !important;
-  border-color: #0e7490 !important;
-  color: #0f172a !important;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08) !important;
+.waiting-title,
+body.light-theme .waiting-title,
+.waiting-fullscreen-view .waiting-title,
+body.light-theme .waiting-fullscreen-view .waiting-title {
+  color: #ffffff !important;
+  font-weight: 900 !important;
+  text-shadow: 0 3px 20px rgba(0, 0, 0, 0.95), 0 0 35px rgba(0, 245, 212, 0.7) !important;
 }
 
-body.light-theme .waiting-mode-card div[style*="color: var(--text-primary)"],
-body.light-theme .waiting-mode-card div[style*="color:var(--text-primary)"] {
-  color: #0f172a !important;
+.waiting-title .glow-text-cyan,
+body.light-theme .waiting-title .glow-text-cyan,
+.waiting-fullscreen-view .glow-text-cyan,
+body.light-theme .waiting-fullscreen-view .glow-text-cyan {
+  color: #00f5d4 !important;
+  font-weight: 900 !important;
+  text-shadow: 0 0 20px rgba(0, 245, 212, 0.95), 0 0 40px rgba(0, 245, 212, 0.8) !important;
 }
 
-body.light-theme .waiting-mode-card div[style*="color: var(--text-secondary)"],
-body.light-theme .waiting-mode-card div[style*="color:var(--text-secondary)"] {
-  color: #334155 !important;
+.waiting-pin-pill,
+body.light-theme .waiting-pin-pill,
+.waiting-fullscreen-view .waiting-pin-pill,
+body.light-theme .waiting-fullscreen-view .waiting-pin-pill {
+  background: rgba(10, 20, 45, 0.88) !important;
+  border: 2px solid #00f5d4 !important;
+  color: #00f5d4 !important;
+  font-weight: 900 !important;
+  text-shadow: 0 0 14px rgba(0, 245, 212, 0.85) !important;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6), 0 0 20px rgba(0, 245, 212, 0.35) !important;
 }
 
-body.light-theme .waiting-status-box {
-  background: #ffffff !important;
-  border: 1px solid rgba(0, 0, 0, 0.12) !important;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.06) !important;
+.waiting-fullscreen-view .btn-outline,
+body.light-theme .waiting-fullscreen-view .btn-outline {
+  background: rgba(10, 20, 45, 0.75) !important;
+  color: #ffffff !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.45) !important;
+  font-weight: 800 !important;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.9) !important;
+}
+.waiting-fullscreen-view .btn-outline:hover,
+body.light-theme .waiting-fullscreen-view .btn-outline:hover {
+  background: rgba(0, 245, 212, 0.25) !important;
+  border-color: #00f5d4 !important;
+  color: #00f5d4 !important;
 }
 
 /* Tarjetas del Selector de Modos de Juego en Sala */
