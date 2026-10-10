@@ -18,9 +18,11 @@ class RealtimeEngine {
     this.peerConnections = []; // Para el host: lista de conexiones con clientes
     // MQTT Cloud Backbone para conexión multidispositivo global
     this.mqttClient = null;
+    this.globalMqttClient = null;
     this.activePin = null;
 
     this.initBus();
+    this.initGlobalMqtt();
   }
 
   initBus() {
@@ -193,6 +195,62 @@ class RealtimeEngine {
       this.mqttQueue.push({ topic, payload, time: Date.now() });
       if (this.mqttQueue.length > 50) this.mqttQueue.shift();
     }
+  }
+
+  // Sincronización Global de Diseño vía MQTT Cloud (Retained Messages)
+  initGlobalMqtt() {
+    if (!window.mqtt) return;
+    try {
+      const clientId = 'mentix_glob_' + Math.random().toString(36).substr(2, 8);
+      const brokerUrl = 'wss://broker.emqx.io:8084/mqtt';
+      const client = window.mqtt.connect(brokerUrl, {
+        clientId: clientId,
+        clean: true,
+        connectTimeout: 5000,
+        reconnectPeriod: 4000,
+        keepalive: 30
+      });
+      this.globalMqttClient = client;
+
+      client.on('connect', () => {
+        client.subscribe('mentix/global/design', { qos: 0 });
+      });
+
+      client.on('message', (topic, messageBuffer) => {
+        if (topic === 'mentix/global/design') {
+          try {
+            const data = JSON.parse(messageBuffer.toString());
+            if (data && data.design) {
+              try { localStorage.setItem('mentix_admin_design', JSON.stringify(data.design)); } catch(e) {}
+              if (window.AdminView) {
+                window.AdminView.applyDesign(data.design);
+                if (window.AdminView.selectedDesign) {
+                  window.AdminView.selectedDesign = data.design;
+                }
+              }
+            }
+          } catch(e) {}
+        }
+      });
+    } catch(e) {
+      console.warn('Aviso global MQTT:', e);
+    }
+  }
+
+  publishGlobalDesign(design) {
+    if (!design) return;
+    const payload = JSON.stringify({ type: 'GLOBAL_DESIGN_UPDATED', design: design, timestamp: Date.now() });
+    if (this.globalMqttClient && this.globalMqttClient.connected) {
+      try {
+        this.globalMqttClient.publish('mentix/global/design', payload, { qos: 0, retain: true });
+      } catch(e) {}
+    }
+    if (this.mqttClient && this.mqttClient.connected) {
+      try {
+        this.mqttClient.publish('mentix/global/design', payload, { qos: 0, retain: true });
+      } catch(e) {}
+    }
+    this.broadcast({ type: 'GLOBAL_DESIGN_UPDATED', design: design });
   }
 
   // Descubrir y validar si existe una sala activa (Local o Cloud)
@@ -512,6 +570,16 @@ class RealtimeEngine {
       return;
     }
 
+    // Sincronizar automáticamente el diseño global o el de la sala en tiempo real
+    if (msg.type === 'GLOBAL_DESIGN_UPDATED' && msg.design) {
+      try { localStorage.setItem('mentix_admin_design', JSON.stringify(msg.design)); } catch(e) {}
+      if (window.AdminView) window.AdminView.applyDesign(msg.design);
+    }
+    if (msg.room && msg.room.design && window.AdminView) {
+      window.AdminView.applyDesign(msg.room.design);
+      try { localStorage.setItem('mentix_admin_design', JSON.stringify(msg.room.design)); } catch(e) {}
+    }
+
     this.emit(msg.type, msg);
   }
 
@@ -544,6 +612,7 @@ class RealtimeEngine {
       gameMode: gameMode || 'clasico',
       roomType: roomType || 'presented', // 'presented' | 'normal'
       modeConfig: modeConfig || {},
+      design: window.AdminView ? window.AdminView.getSavedDesign() : null,
       rosterMode: rosterMode,
       rosterGroupName: rosterConfig?.groupName || (rosterMode === 'roster' ? 'Lista Oficial de Estudiantes' : ''),
       roster: rosterList,

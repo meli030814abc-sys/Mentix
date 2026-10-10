@@ -28,6 +28,7 @@ class AppRouter {
     if (window.AdminView && window.AdminView.applySavedDesign) {
       window.AdminView.applySavedDesign();
     }
+    this.syncDesignWithCloud();
 
     // Cargar estado inicial
     window.appState = loadInitialState();
@@ -1181,6 +1182,20 @@ class AppRouter {
     } catch (e) {
       console.warn('Error sincronizando retos con la nube:', e);
     }
+  }
+
+  async syncDesignWithCloud() {
+    try {
+      const res = await fetch(`data/design.json?t=${Date.now()}`);
+      if (res.ok) {
+        const fileDesign = await res.json();
+        const local = localStorage.getItem('mentix_admin_design');
+        if (!local && fileDesign) {
+          localStorage.setItem('mentix_admin_design', JSON.stringify(fileDesign));
+          if (window.AdminView) window.AdminView.applyDesign(fileDesign);
+        }
+      }
+    } catch(e) {}
   }
 
   closeModal(modalId) {

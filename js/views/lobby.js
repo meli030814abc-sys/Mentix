@@ -118,15 +118,23 @@ window.LobbyView = {
         if (this.waitingPollInterval) clearInterval(this.waitingPollInterval);
         window.soundEngine.playFanfare();
         const fullRoom = data.room || window.realtimeEngine.currentRoom || this.joinRoomData;
+        if (fullRoom?.design && window.AdminView) {
+          window.AdminView.applyDesign(fullRoom.design);
+          try { localStorage.setItem('mentix_admin_design', JSON.stringify(fullRoom.design)); } catch(e) {}
+        }
         window.appRouter.startLivePlayerGame(fullRoom);
       }
     });
 
-    // Sincronizar el estado de la sala (incluyendo el modo de juego y reto) enviado por el anfitrión
+    // Sincronizar el estado de la sala (incluyendo diseño, modo de juego y reto) enviado por el anfitrión
     window.realtimeEngine.on('HOST_ROOM_STATE', (data) => {
       const myPin = String(window.realtimeEngine.currentRoom?.pin || this.joinPin || '').replace(/\D/g, '');
       const dataPin = String(data?.pin || data?.room?.pin || '').replace(/\D/g, '');
       if (data && (!dataPin || dataPin === myPin) && data.room) {
+        if (data.room.design && window.AdminView) {
+          window.AdminView.applyDesign(data.room.design);
+          try { localStorage.setItem('mentix_admin_design', JSON.stringify(data.room.design)); } catch(e) {}
+        }
         if (data.room.challenge) {
           this.joinRoomData = data.room;
         }
@@ -1240,10 +1248,15 @@ window.LobbyView = {
     }
 
     window.realtimeEngine.joinRoom(pin, nickname, avatar, finalEmail, studentId, room);
-    if (room && room.gameMode && window.realtimeEngine.currentRoom) {
-      window.realtimeEngine.currentRoom.gameMode = room.gameMode;
+    if (room && window.realtimeEngine.currentRoom) {
+      if (room.gameMode) window.realtimeEngine.currentRoom.gameMode = room.gameMode;
       window.realtimeEngine.currentRoom.challenge = room.challenge || window.realtimeEngine.currentRoom.challenge;
       window.realtimeEngine.currentRoom.modeConfig = room.modeConfig || window.realtimeEngine.currentRoom.modeConfig;
+      if (room.design) {
+        window.realtimeEngine.currentRoom.design = room.design;
+        if (window.AdminView) window.AdminView.applyDesign(room.design);
+        try { localStorage.setItem('mentix_admin_design', JSON.stringify(room.design)); } catch(e) {}
+      }
     }
 
     if (window.soundEngine) window.soundEngine.playClick();

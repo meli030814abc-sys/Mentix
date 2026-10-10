@@ -89,7 +89,7 @@ window.AdminView = {
             </div>
           </div>
 
-          <!-- Selección de Color de Acento y Textos -->
+          <!-- Selección de Color de Acento, Temporizadores y Textos -->
           <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.25rem; background: rgba(0,0,0,0.25); border-radius: 12px; padding: 1.25rem; border: 1px solid var(--border-color);">
             <div>
               <label style="display: block; font-weight: 800; font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.6rem;">
@@ -97,6 +97,15 @@ window.AdminView = {
               </label>
               <div style="display: flex; gap: 0.65rem; flex-wrap: wrap;" id="admin-accent-dots">
                 ${this.renderAccentDots()}
+              </div>
+            </div>
+
+            <div>
+              <label style="display: block; font-weight: 800; font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.6rem;">
+                ⏱️ COLOR DE TEMPORIZADORES (RELOJ Y CUENTA REGRESIVA):
+              </label>
+              <div style="display: flex; gap: 0.65rem; flex-wrap: wrap;" id="admin-timer-dots">
+                ${this.renderTimerDots()}
               </div>
             </div>
 
@@ -254,6 +263,7 @@ window.AdminView = {
     return {
       bgTheme: 'mentix_official',
       accentColor: 'cyan',
+      timerColor: 'cyan',
       fontSize: 'normal',
       contrast: 'normal'
     };
@@ -307,7 +317,34 @@ window.AdminView = {
           type="button"
           onclick="window.AdminView.selectAccent('${a.id}')"
           title="${a.name}"
-          style="width: 36px; height: 36px; border-radius: 50%; background: ${a.color}; border: 3px solid ${active ? '#ffffff' : 'rgba(255,255,255,0.2)'}; transform: ${active ? 'scale(1.15)' : 'scale(1)'}; cursor: pointer; box-shadow: ${active ? `0 0 12px ${a.color}` : 'none'}; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; font-weight: 900; color: #0b0f19;"
+          style="width: 36px; height: 36px; border-radius: 50%; background: ${a.color}; border: 3px solid ${active ? '#ffffff' : 'rgba(255,255,255,0.2)'}; transform: ${active ? 'scale(1.15)' : 'scale(1)'}; cursor: pointer; box-shadow: ${active ? `0 0 12px ${a.color}` : 'none'}; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; font-weight: 900; color: #0b0f19; transition: all 0.2s;"
+        >${active ? '✓' : ''}</button>
+      `;
+    }).join('');
+  },
+
+  renderTimerDots() {
+    const current = this.selectedDesign || this.getSavedDesign();
+    const timerColors = [
+      { id: 'cyan', color: '#00f5d4', name: 'Cian Neón Radiante' },
+      { id: 'orange', color: '#fb5607', name: 'Naranja Fuego Láser' },
+      { id: 'magenta', color: '#f72585', name: 'Magenta Eléctrico' },
+      { id: 'gold', color: '#ffb703', name: 'Oro Ámbar Brillante' },
+      { id: 'emerald', color: '#06d6a0', name: 'Esmeralda Menta Cyber' },
+      { id: 'yellow', color: '#ffe600', name: 'Amarillo Láser Intenso' },
+      { id: 'purple', color: '#a855f7', name: 'Violeta Cosmos' },
+      { id: 'blue', color: '#3b82f6', name: 'Azul Neón' },
+      { id: 'red', color: '#ef233c', name: 'Rojo Carmesí Alerta' }
+    ];
+
+    return timerColors.map(t => {
+      const active = (current.timerColor === t.id);
+      return `
+        <button 
+          type="button"
+          onclick="window.AdminView.selectTimerColor('${t.id}')"
+          title="${t.name}"
+          style="width: 36px; height: 36px; border-radius: 50%; background: ${t.color}; border: 3px solid ${active ? '#ffffff' : 'rgba(255,255,255,0.2)'}; transform: ${active ? 'scale(1.15)' : 'scale(1)'}; cursor: pointer; box-shadow: ${active ? `0 0 14px ${t.color}` : 'none'}; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; font-weight: 900; color: #0b0f19; transition: all 0.2s;"
         >${active ? '✓' : ''}</button>
       `;
     }).join('');
@@ -327,6 +364,13 @@ window.AdminView = {
     if (dots) dots.innerHTML = this.renderAccentDots();
   },
 
+  selectTimerColor(timerColorId) {
+    if (!this.selectedDesign) this.selectedDesign = this.getSavedDesign();
+    this.selectedDesign.timerColor = timerColorId;
+    const dots = document.getElementById('admin-timer-dots');
+    if (dots) dots.innerHTML = this.renderTimerDots();
+  },
+
   saveDesignSettings() {
     if (!this.selectedDesign) this.selectedDesign = this.getSavedDesign();
     const sizeSelect = document.getElementById('admin-fontsize-select');
@@ -334,48 +378,78 @@ window.AdminView = {
 
     if (sizeSelect) this.selectedDesign.fontSize = sizeSelect.value;
     if (contrastSelect) this.selectedDesign.contrast = contrastSelect.value;
+    if (!this.selectedDesign.timerColor) this.selectedDesign.timerColor = 'cyan';
+    this.selectedDesign.updatedAt = new Date().toISOString();
 
     try {
       localStorage.setItem('mentix_admin_design', JSON.stringify(this.selectedDesign));
     } catch(e) {}
 
-    this.applySavedDesign();
+    // 1. Aplicar inmediatamente en este navegador
+    this.applyDesign(this.selectedDesign);
+
+    // 2. Propagar en vivo para todos los usuarios y salas abiertas
+    if (window.realtimeEngine) {
+      if (window.realtimeEngine.publishGlobalDesign) {
+        window.realtimeEngine.publishGlobalDesign(this.selectedDesign);
+      } else {
+        window.realtimeEngine.broadcast({ type: 'GLOBAL_DESIGN_UPDATED', design: this.selectedDesign });
+      }
+      if (window.realtimeEngine.currentRoom) {
+        window.realtimeEngine.currentRoom.design = this.selectedDesign;
+        window.realtimeEngine.syncRoomState();
+      }
+    }
+
     if (window.soundEngine && window.soundEngine.playCorrect) {
       window.soundEngine.playCorrect();
     }
-    alert('🎉 ¡Diseño de interfaz personalizado y aplicado con éxito por el Administrador!');
+    alert('🎉 ¡Diseño de interfaz y colores guardados exitosamente! Todos los alumnos, salas y usuarios verán estos cambios en tiempo real.');
     this.render();
   },
 
   resetDesignDefaults() {
+    this.selectedDesign = {
+      bgTheme: 'mentix_official',
+      accentColor: 'cyan',
+      timerColor: 'cyan',
+      fontSize: 'normal',
+      contrast: 'normal',
+      updatedAt: new Date().toISOString()
+    };
     try {
-      localStorage.removeItem('mentix_admin_design');
+      localStorage.setItem('mentix_admin_design', JSON.stringify(this.selectedDesign));
     } catch(e) {}
-    this.selectedDesign = null;
-    this.applySavedDesign();
+
+    this.applyDesign(this.selectedDesign);
+
+    if (window.realtimeEngine) {
+      if (window.realtimeEngine.publishGlobalDesign) {
+        window.realtimeEngine.publishGlobalDesign(this.selectedDesign);
+      } else {
+        window.realtimeEngine.broadcast({ type: 'GLOBAL_DESIGN_UPDATED', design: this.selectedDesign });
+      }
+      if (window.realtimeEngine.currentRoom) {
+        window.realtimeEngine.currentRoom.design = this.selectedDesign;
+        window.realtimeEngine.syncRoomState();
+      }
+    }
+
     if (window.soundEngine && window.soundEngine.playCorrect) {
       window.soundEngine.playCorrect();
     }
-    alert('🔄 Diseño de interfaz restablecido al modo predeterminado de Mentix.');
+    alert('🔄 Diseño de interfaz restablecido al modo predeterminado para todos los usuarios.');
     this.render();
   },
 
   applySavedDesign() {
-    try {
-      const saved = localStorage.getItem('mentix_admin_design');
-      if (!saved) {
-        document.body.style.background = '';
-        document.body.style.backgroundAttachment = '';
-        document.documentElement.style.removeProperty('--neon-cyan');
-        document.documentElement.style.removeProperty('--border-glow');
-        document.documentElement.style.removeProperty('--text-primary');
-        document.documentElement.style.removeProperty('--text-secondary');
-        document.documentElement.style.fontSize = '';
-        return;
-      }
-      const s = JSON.parse(saved);
+    this.applyDesign(this.getSavedDesign());
+  },
 
-      // Fondos
+  applyDesign(s) {
+    if (!s) return;
+    try {
+      // 1. Fondos
       if (s.bgTheme === 'cyberpunk') {
         document.body.style.background = 'radial-gradient(circle at 15% 25%, rgba(114, 9, 183, 0.55) 0%, transparent 55%), radial-gradient(circle at 85% 75%, rgba(247, 37, 133, 0.45) 0%, transparent 55%), linear-gradient(180deg, #070913 0%, #110d24 50%, #080314 100%)';
         document.body.style.backgroundAttachment = 'fixed';
@@ -406,7 +480,7 @@ window.AdminView = {
         document.body.style.backgroundAttachment = '';
       }
 
-      // Colores de acento
+      // 2. Colores de acento
       const colors = {
         cyan: '#00f5d4',
         magenta: '#f72585',
@@ -422,13 +496,31 @@ window.AdminView = {
         document.documentElement.style.setProperty('--border-glow', hex + '55');
       }
 
-      // Tamaño de fuentes
+      // 3. Colores de Temporizadores (Cuenta Regresiva y Reloj de Preguntas)
+      const timerColorsMap = {
+        cyan: { color: '#00f5d4', glow: 'rgba(0, 245, 212, 0.85)', bg: 'rgba(0, 245, 212, 0.18)' },
+        orange: { color: '#fb5607', glow: 'rgba(251, 86, 7, 0.85)', bg: 'rgba(251, 86, 7, 0.22)' },
+        magenta: { color: '#f72585', glow: 'rgba(247, 37, 133, 0.85)', bg: 'rgba(247, 37, 133, 0.22)' },
+        gold: { color: '#ffb703', glow: 'rgba(255, 183, 3, 0.85)', bg: 'rgba(255, 183, 3, 0.22)' },
+        emerald: { color: '#06d6a0', glow: 'rgba(6, 214, 160, 0.85)', bg: 'rgba(6, 214, 160, 0.22)' },
+        yellow: { color: '#ffe600', glow: 'rgba(255, 230, 0, 0.85)', bg: 'rgba(255, 230, 0, 0.22)' },
+        purple: { color: '#a855f7', glow: 'rgba(168, 85, 247, 0.85)', bg: 'rgba(168, 85, 247, 0.22)' },
+        blue: { color: '#3b82f6', glow: 'rgba(59, 130, 246, 0.85)', bg: 'rgba(59, 130, 246, 0.22)' },
+        red: { color: '#ef233c', glow: 'rgba(239, 35, 60, 0.85)', bg: 'rgba(239, 35, 60, 0.22)' }
+      };
+      const tKey = s.timerColor || 'cyan';
+      const tCfg = timerColorsMap[tKey] || timerColorsMap.cyan;
+      document.documentElement.style.setProperty('--timer-color', tCfg.color);
+      document.documentElement.style.setProperty('--timer-glow', tCfg.glow);
+      document.documentElement.style.setProperty('--timer-bg', tCfg.bg);
+
+      // 4. Tamaño de fuentes
       if (s.fontSize === 'small') document.documentElement.style.fontSize = '14.5px';
       else if (s.fontSize === 'large') document.documentElement.style.fontSize = '17px';
       else if (s.fontSize === 'xlarge') document.documentElement.style.fontSize = '18.5px';
       else document.documentElement.style.fontSize = '';
 
-      // Contraste
+      // 5. Contraste
       if (s.contrast === 'high') {
         document.documentElement.style.setProperty('--text-primary', '#ffffff');
         document.documentElement.style.setProperty('--text-secondary', '#f1f5f9');

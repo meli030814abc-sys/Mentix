@@ -112,6 +112,13 @@ window.GameView = {
     this.gameMode = detectedMode || 'clasico';
     this.modeConfig = this.room?.modeConfig || {};
     this.currentQuestionIndex = this.room?.currentQuestionIndex || 0;
+
+    // Aplicar diseño y colores configurados para este juego
+    const activeDesign = this.room?.design || window.realtimeEngine?.currentRoom?.design || (window.AdminView && window.AdminView.getSavedDesign());
+    if (activeDesign && window.AdminView) {
+      window.AdminView.applyDesign(activeDesign);
+    }
+
     this.setupPlayerListeners();
 
     if (this.room?.status === 'intro' || this.currentQuestionIndex === 0) {
@@ -168,6 +175,12 @@ window.GameView = {
   setupPlayerListeners() {
     if (this.playerListenersAttached) return;
     this.playerListenersAttached = true;
+
+    window.realtimeEngine.on('GLOBAL_DESIGN_UPDATED', (data) => {
+      if (data?.design && window.AdminView) {
+        window.AdminView.applyDesign(data.design);
+      }
+    });
 
     window.realtimeEngine.on('ROOM_ANSWER_PROGRESS', (data) => {
       const myPin = String(this.room?.pin || window.realtimeEngine.currentRoom?.pin || '').replace(/\D/g, '');
@@ -285,10 +298,10 @@ window.GameView = {
 
     container.innerHTML = `
       <div style="min-height: 70vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 2rem;">
-        <span class="badge-tag tag-medium" style="margin-bottom: 1.5rem; font-size: 1rem; padding: 0.5rem 1.25rem;">
+        <span class="badge-tag tag-medium countdown-banner" style="margin-bottom: 1.5rem; font-size: 1.05rem; padding: 0.5rem 1.4rem; font-weight: 900; letter-spacing: 1px;">
           ¡EL RETO COMIENZA EN...
         </span>
-        <div id="intro-countdown-num" style="font-size: clamp(6rem, 18vw, 10rem); font-weight: 900; line-height: 1; color: var(--neon-cyan); text-shadow: 0 0 50px rgba(0,245,212,0.8); animation: timer-pulse 0.9s infinite alternate;">
+        <div id="intro-countdown-num" style="font-size: clamp(6rem, 18vw, 10rem); font-weight: 900; line-height: 1; color: var(--timer-color, var(--neon-cyan)); text-shadow: 0 0 50px var(--timer-glow, rgba(0,245,212,0.8)), 0 0 90px var(--timer-glow, rgba(0,245,212,0.4)); animation: timer-pulse 0.9s infinite alternate;">
           ${count}
         </div>
         <p style="color: var(--text-secondary); font-size: 1.3rem; margin-top: 1.5rem; font-weight: 700;">
@@ -306,7 +319,8 @@ window.GameView = {
       } else if (count === 0) {
         if (el) {
           el.textContent = '¡A RETAR! 🔥';
-          el.style.color = 'var(--neon-magenta)';
+          el.style.color = 'var(--timer-color, var(--neon-magenta))';
+          el.style.textShadow = '0 0 50px var(--timer-glow, rgba(247,37,133,0.8))';
         }
         window.soundEngine.playFanfare();
       } else {
@@ -650,7 +664,7 @@ window.GameView = {
           </div>
 
           <div style="display: flex; align-items: center; gap: 0.5rem;">
-            <div class="badge-tag" style="background: rgba(10, 20, 45, 0.85); border: 1.5px solid #00f5d4; color: #00f5d4 !important; font-weight: 900; font-size: 0.95rem; padding: 0.35rem 0.8rem; border-radius: 9999px; text-shadow: 0 0 10px rgba(0, 245, 212, 0.8); box-shadow: 0 4px 15px rgba(0,0,0,0.5);">
+            <div class="badge-tag student-timer-badge" style="background: rgba(10, 20, 45, 0.85); border: 2px solid var(--timer-color, #00f5d4); color: var(--timer-color, #00f5d4) !important; font-weight: 900; font-size: 0.95rem; padding: 0.35rem 0.85rem; border-radius: 9999px; text-shadow: 0 0 10px var(--timer-glow, rgba(0, 245, 212, 0.8)); box-shadow: 0 4px 15px rgba(0,0,0,0.5);">
               ⏱️ <span id="player-timer-num">${this.timeLeft}</span>s
             </div>
             <div class="badge-tag" style="background: rgba(10, 20, 45, 0.85); border: 1.5px solid #ffd166; color: #ffd166 !important; font-weight: 900; font-size: 0.95rem; padding: 0.35rem 0.9rem; border-radius: 9999px; text-shadow: 0 0 10px rgba(255, 209, 102, 0.6); box-shadow: 0 4px 15px rgba(0,0,0,0.5);">
@@ -810,7 +824,7 @@ window.GameView = {
             <span>⚡</span> Racha: ${streak}
           </div>
 
-          <div style="font-size: 1.4rem; font-weight: 900; color: var(--neon-gold); background: rgba(0,0,0,0.4); padding: 0.4rem 1rem; border-radius: 9999px; border: 1px solid var(--border-color);">
+          <div class="solo-timer-badge" style="font-size: 1.4rem; font-weight: 900; color: var(--timer-color, var(--neon-gold)) !important; background: rgba(0,0,0,0.55); padding: 0.4rem 1.1rem; border-radius: 9999px; border: 2px solid var(--timer-color, var(--border-color)); box-shadow: 0 0 15px var(--timer-glow, rgba(255, 183, 3, 0.35)); text-shadow: 0 0 10px var(--timer-glow, rgba(255, 183, 3, 0.8));">
             ⏱️ <span id="timer-text">${this.timeLeft}</span>s
           </div>
         </div>
