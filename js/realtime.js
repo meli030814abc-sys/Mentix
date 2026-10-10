@@ -656,12 +656,19 @@ class RealtimeEngine {
   joinRoom(pin, nickname, avatar = '😎', email = '', rosterStudentId = null, initialRoomData = null) {
     const cleanPin = pin.toString().replace(/\D/g, '').trim();
     this.isHost = false;
+    const savedAv = window.AvatarEngine ? window.AvatarEngine.getSavedAvatar() : null;
     this.localPlayer = {
       id: rosterStudentId || ('p_' + Math.random().toString(36).substr(2, 9)),
       rosterStudentId: rosterStudentId,
       nickname: nickname.trim(),
       email: (email || '').trim(),
       avatar: avatar,
+      avatarConfig: savedAv,
+      isReady: false,
+      status: 'customizing',
+      xp: savedAv?.xp || 60,
+      level: savedAv?.level || 1,
+      title: savedAv?.title || 'Novato Curioso',
       score: 0,
       streak: 0,
       maxStreak: 0,
@@ -750,10 +757,22 @@ class RealtimeEngine {
         ? `${botProfile.name} ${i + 1}` 
         : botProfile.name;
 
+      const presetKeys = ['gamer', 'cyberpunk', 'scientist', 'explorer', 'hacker', 'ai', 'athletic', 'creative'];
+      const chosenPresetKey = presetKeys[i % presetKeys.length];
+      const botAvatarConfig = window.AvatarEngine?.presets?.[chosenPresetKey]?.config 
+        ? { ...window.AvatarEngine.presets[chosenPresetKey].config, alias: uniqueName }
+        : null;
+
       const bot = {
         id: botId,
         nickname: uniqueName,
         avatar: botProfile.avatar,
+        avatarConfig: botAvatarConfig,
+        isReady: true,
+        status: 'ready',
+        xp: 120 + (i * 40),
+        level: 2,
+        title: botAvatarConfig?.title || 'Gamer Pro',
         score: 0,
         streak: 0,
         maxStreak: 0,

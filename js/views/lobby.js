@@ -107,6 +107,92 @@ window.LobbyView = {
             connected: true
           };
           window.realtimeEngine.syncRoomState();
+          this.render();
+        }
+      } else if (this.mode === 'waiting') {
+        const myPin = String(window.realtimeEngine.currentRoom?.pin || this.joinPin || '').replace(/\D/g, '');
+        if (dataPin === myPin && data.player) {
+          if (!window.realtimeEngine.currentRoom) window.realtimeEngine.currentRoom = { players: [] };
+          if (!Array.isArray(window.realtimeEngine.currentRoom.players)) window.realtimeEngine.currentRoom.players = [];
+          const existingIdx = window.realtimeEngine.currentRoom.players.findIndex(p => 
+            p.id === data.player.id || (p.nickname && p.nickname.toLowerCase() === data.player.nickname.toLowerCase())
+          );
+          if (existingIdx === -1) {
+            window.realtimeEngine.currentRoom.players.push(data.player);
+            this.showJoinToast(data.player.nickname || 'Un compañero');
+            this.updateClassmatesList();
+          } else {
+            window.realtimeEngine.currentRoom.players[existingIdx] = {
+              ...window.realtimeEngine.currentRoom.players[existingIdx],
+              ...data.player
+            };
+            this.updateClassmatesList();
+          }
+        }
+      }
+    });
+
+    // Sincronización en tiempo real de actualizaciones de avatar y estado listo
+    window.realtimeEngine.on('PLAYER_AVATAR_UPDATE', (data) => {
+      const myPin = String(this.currentRoom?.pin || window.realtimeEngine.currentRoom?.pin || this.joinPin || '').replace(/\D/g, '');
+      const dataPin = String(data?.pin || '').replace(/\D/g, '');
+      if (data && (!dataPin || dataPin === myPin) && data.playerId) {
+        if (this.mode === 'host' && this.currentRoom?.players) {
+          const idx = this.currentRoom.players.findIndex(p => p.id === data.playerId);
+          if (idx !== -1) {
+            this.currentRoom.players[idx] = {
+              ...this.currentRoom.players[idx],
+              avatarConfig: data.avatarConfig || this.currentRoom.players[idx].avatarConfig,
+              nickname: data.nickname || this.currentRoom.players[idx].nickname,
+              isReady: data.isReady !== undefined ? data.isReady : this.currentRoom.players[idx].isReady,
+              status: data.status || this.currentRoom.players[idx].status,
+              title: data.title || this.currentRoom.players[idx].title,
+              xp: data.xp !== undefined ? data.xp : this.currentRoom.players[idx].xp,
+              level: data.level !== undefined ? data.level : this.currentRoom.players[idx].level
+            };
+            window.realtimeEngine.syncRoomState();
+            this.render();
+          }
+        }
+        if (this.mode === 'waiting') {
+          if (window.realtimeEngine.currentRoom?.players) {
+            const idx = window.realtimeEngine.currentRoom.players.findIndex(p => p.id === data.playerId);
+            if (idx !== -1) {
+              window.realtimeEngine.currentRoom.players[idx] = {
+                ...window.realtimeEngine.currentRoom.players[idx],
+                avatarConfig: data.avatarConfig || window.realtimeEngine.currentRoom.players[idx].avatarConfig,
+                nickname: data.nickname || window.realtimeEngine.currentRoom.players[idx].nickname,
+                isReady: data.isReady !== undefined ? data.isReady : window.realtimeEngine.currentRoom.players[idx].isReady,
+                status: data.status || window.realtimeEngine.currentRoom.players[idx].status,
+                title: data.title || window.realtimeEngine.currentRoom.players[idx].title
+              };
+              this.updateClassmatesList();
+            }
+          }
+        }
+      }
+    });
+
+    // Reacciones de emojis en vivo en la sala
+    window.realtimeEngine.on('LOBBY_REACTION', (data) => {
+      const myPin = String(this.currentRoom?.pin || window.realtimeEngine.currentRoom?.pin || this.joinPin || '').replace(/\D/g, '');
+      const dataPin = String(data?.pin || '').replace(/\D/g, '');
+      if (data && (!dataPin || dataPin === myPin) && data.emoji) {
+        this.spawnFloatingEmoji(data.emoji, data.sender || 'Jugador');
+      }
+    });
+
+    // Configuración del anfitrión en vivo (Minijuegos y Personalización)
+    window.realtimeEngine.on('LOBBY_CONFIG_UPDATE', (data) => {
+      const myPin = String(this.currentRoom?.pin || window.realtimeEngine.currentRoom?.pin || this.joinPin || '').replace(/\D/g, '');
+      const dataPin = String(data?.pin || '').replace(/\D/g, '');
+      if (data && (!dataPin || dataPin === myPin)) {
+        if (window.realtimeEngine.currentRoom) {
+          window.realtimeEngine.currentRoom.allowMinigames = data.allowMinigames !== false;
+          window.realtimeEngine.currentRoom.allowCustomization = data.allowCustomization !== false;
+        }
+        if (this.mode === 'waiting') {
+          this.render();
         }
       }
     });
@@ -116,13 +202,16 @@ window.LobbyView = {
       const dataPin = String(data?.pin || data?.room?.pin || '').replace(/\D/g, '');
       if (this.mode === 'waiting' && (!dataPin || dataPin === myPin)) {
         if (this.waitingPollInterval) clearInterval(this.waitingPollInterval);
-        window.soundEngine.playFanfare();
-        const fullRoom = data.room || window.realtimeEngine.currentRoom || this.joinRoomData;
-        if (fullRoom?.design && window.AdminView) {
-          window.AdminView.applyDesign(fullRoom.design);
-          try { localStorage.setItem('mentix_admin_design', JSON.stringify(fullRoom.design)); } catch(e) {}
-        }
-        window.appRouter.startLivePlayerGame(fullRoom);
+        if (window.LobbyMinigames) window.LobbyMinigames.destroy();
+        this.showGameStartTransition(() => {
+          window.soundEngine.playFanfare();
+          const fullRoom = data.room || window.realtimeEngine.currentRoom || this.joinRoomData;
+          if (fullRoom?.design && window.AdminView) {
+            window.AdminView.applyDesign(fullRoom.design);
+            try { localStorage.setItem('mentix_admin_design', JSON.stringify(fullRoom.design)); } catch(e) {}
+          }
+          window.appRouter.startLivePlayerGame(fullRoom);
+        });
       }
     });
 
@@ -179,6 +268,12 @@ window.LobbyView = {
         if (this.mode === 'waiting') {
           this.render();
         }
+      }
+    });
+
+    window.addEventListener('mentix_avatar_xp_updated', () => {
+      if (this.mode === 'waiting') {
+        this.updateMyCharacterPanel();
       }
     });
   },
@@ -579,6 +674,12 @@ window.LobbyView = {
                 </span>
               `}
               <span class="kahoot-pin-pill">👤 ${playersList.length} Conectados</span>
+              <span class="badge-tag" style="background: rgba(16, 185, 129, 0.2); border: 1.5px solid #10b981; color: #34d399; font-weight: 800; padding: 0.3rem 0.75rem; border-radius: 9999px;">
+                🟢 ${playersList.filter(p => p.isReady).length} Listos
+              </span>
+              <span class="badge-tag" style="background: rgba(234, 179, 8, 0.2); border: 1.5px solid #eab308; color: #fde047; font-weight: 800; padding: 0.3rem 0.75rem; border-radius: 9999px;">
+                ✏️ ${playersList.filter(p => !p.isReady).length} Editando
+              </span>
             </div>
             <h1 style="font-size: 2rem; margin: 0; color: var(--text-primary);">
               ${challengeTitle}
@@ -589,6 +690,12 @@ window.LobbyView = {
           </div>
 
           <div style="display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap;">
+            <button class="btn btn-outline" onclick="window.LobbyView.toggleHostMinigames()" title="Habilitar o pausar minijuegos durante la espera">
+              <span>${r.allowMinigames !== false ? '🎮' : '⏸️'}</span> Minijuegos: ${r.allowMinigames !== false ? 'Activos' : 'Pausados'}
+            </button>
+            <button class="btn btn-outline" onclick="window.LobbyView.toggleHostCustomization()" title="Permitir o bloquear la personalización de avatares">
+              <span>${r.allowCustomization !== false ? '🎨' : '🔒'}</span> Avatares: ${r.allowCustomization !== false ? 'Abiertos' : 'Bloqueados'}
+            </button>
             <button class="btn btn-outline" onclick="window.LobbyView.toggleRoomType()" title="Cambiar si las preguntas se proyectan en pantalla grande o aparecen en cada celular">
               <span>${r.roomType === 'normal' ? '📽️' : '🎮'}</span> ${r.roomType === 'normal' ? 'Cambiar a Preguntas Presentadas' : 'Cambiar a Sala Normal'}
             </button>
@@ -690,15 +797,20 @@ window.LobbyView = {
               </button>
             </div>
           ` : `
-            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 1rem;">
+            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 1rem;">
               ${playersList.map((p, idx) => `
-                <div class="lobby-player-card">
-                  <div style="display: flex; align-items: center; gap: 0.65rem; overflow: hidden;">
-                    <span style="font-size: 2rem;">${p.avatar || '😎'}</span>
+                <div class="lobby-player-card" style="padding: 0.85rem 1rem; border-radius: 16px; border: 1.5px solid ${p.isReady ? '#10b981' : 'rgba(0, 245, 212, 0.3)'}; background: ${p.isReady ? 'rgba(16, 185, 129, 0.12)' : 'rgba(15, 23, 42, 0.85)'}; display: flex; align-items: center; justify-content: space-between; gap: 0.65rem; transition: transform 0.2s;">
+                  <div style="display: flex; align-items: center; gap: 0.75rem; overflow: hidden;">
+                    <div style="width: 52px; height: 52px; border-radius: 12px; background: rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center; overflow: hidden; flex-shrink: 0; border: 1px solid rgba(255,255,255,0.15);">
+                      ${p.avatarConfig && window.AvatarEngine ? window.AvatarEngine.renderSVG(p.avatarConfig, { size: 52 }) : `<span style="font-size: 1.8rem;">${p.avatar || '😎'}</span>`}
+                    </div>
                     <div style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
-                      <div style="font-weight: 800; font-size: 1rem; color: var(--text-primary);">${p.nickname}</div>
-                      <div class="lobby-player-subtext" style="color: ${p.isBot ? 'var(--neon-purple)' : 'var(--neon-cyan)'};">
-                        ${p.email ? `✉️ ${p.email}` : (p.isBot ? '🤖 Bot' : '🟢 Alumno')}
+                      <div style="font-weight: 800; font-size: 0.98rem; color: #ffffff;">${p.nickname}</div>
+                      <div style="display: flex; align-items: center; gap: 0.35rem; margin-top: 0.2rem; flex-wrap: wrap;">
+                        <span style="font-size: 0.7rem; color: #ffd166; font-weight: 700;">${p.title || 'Novato'}</span>
+                        <span style="font-size: 0.65rem; padding: 0.1rem 0.45rem; border-radius: 9999px; background: ${p.isReady ? 'rgba(16,185,129,0.25)' : 'rgba(234,179,8,0.25)'}; color: ${p.isReady ? '#34d399' : '#fde047'}; font-weight: 800; border: 1px solid ${p.isReady ? '#10b981' : '#eab308'};">
+                          ${p.isReady ? '🟢 Listo' : '✏️ Editando'}
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -1139,6 +1251,25 @@ window.LobbyView = {
     }
   },
 
+  waitingMobileTab: 'character', // 'character' | 'minigames' | 'classmates'
+  studioTempConfig: null,
+  currentStudioTab: 'presets',
+
+  switchWaitingTab(tab) {
+    this.waitingMobileTab = tab;
+    const panelChar = document.getElementById('waiting-panel-character');
+    const panelMini = document.getElementById('waiting-panel-minigames');
+    const panelPeers = document.getElementById('waiting-panel-classmates');
+    if (panelChar) panelChar.classList.toggle('mobile-hidden', tab !== 'character');
+    if (panelMini) panelMini.classList.toggle('mobile-hidden', tab !== 'minigames');
+    if (panelPeers) panelPeers.classList.toggle('mobile-hidden', tab !== 'classmates');
+
+    document.querySelectorAll('.gamified-mobile-tabs button').forEach((btn, idx) => {
+      const isTarget = (idx === 0 && tab === 'character') || (idx === 1 && tab === 'minigames') || (idx === 2 && tab === 'classmates');
+      btn.className = `btn btn-sm ${isTarget ? 'btn-cyan' : 'btn-outline'}`;
+    });
+  },
+
   renderWaitingView(container) {
     const p = window.realtimeEngine.localPlayer;
     let room = window.realtimeEngine.currentRoom;
@@ -1159,50 +1290,1068 @@ window.LobbyView = {
       }
     }
 
+    // Cargar avatar del jugador con AvatarEngine
+    const avatarConfig = window.AvatarEngine ? window.AvatarEngine.getSavedAvatar() : null;
+    if (p && avatarConfig) {
+      p.avatarConfig = avatarConfig;
+      p.nickname = avatarConfig.alias || p.nickname;
+      p.title = avatarConfig.title || p.title || 'Novato Curioso';
+      p.xp = avatarConfig.xp || p.xp || 60;
+      p.level = avatarConfig.level || p.level || 1;
+    }
+
     const currentMode = window.GameModes ? window.GameModes.getMode(room?.gameMode) : { name: 'Modo Clásico', icon: '🏆', badge: '🏆 TRADICIONAL', description: 'Todos compiten por acumular la mayor cantidad de puntos en tiempo real.' };
 
-    // Formatear PIN con espacio (ej: 507 640)
-    const rawPin = room?.pin || '';
+    const rawPin = room?.pin || this.joinPin || '';
     const formattedPin = rawPin.length === 6 ? `${rawPin.slice(0, 3)} ${rawPin.slice(3)}` : rawPin;
+    const shareUrl = `${window.location.origin || ''}${window.location.pathname || '/'}#lobby-join?pin=${rawPin}`;
+
+    const stageBgObj = window.AvatarEngine?.stageBackgrounds?.[avatarConfig?.stageBg || 'matrix_neon'] || window.AvatarEngine?.stageBackgrounds?.matrix_neon;
+    const stageBgCss = stageBgObj?.css || 'radial-gradient(circle at 50% 30%, rgba(0, 245, 212, 0.25) 0%, rgba(5, 10, 26, 0.95) 75%)';
+
+    const xpPercent = Math.min(100, (p?.xp || 60) % 100);
+    const classmates = Array.isArray(room?.players) ? room.players.filter(pl => pl.id !== p?.id) : [];
 
     container.innerHTML = `
-      <div class="waiting-fullscreen-view" style="background: radial-gradient(circle at center, rgba(5, 12, 35, 0.45) 0%, rgba(3, 7, 24, 0.75) 100%), url('assets/mentix_join_bg.jpg') center center / cover no-repeat fixed !important;">
-        <div class="waiting-fullscreen-content">
-          
-          <!-- Avatar Flotante con Halo Neón -->
-          <div class="waiting-avatar-halo">
-            ${p?.avatar || '😎'}
-          </div>
-
-          <!-- Saludo Principal -->
-          <h1 class="waiting-title" style="color: #ffffff !important; font-weight: 900 !important; text-shadow: 0 3px 20px rgba(0,0,0,0.95), 0 0 35px rgba(0,245,212,0.7) !important;">
-            ¡Estás dentro, <span class="glow-text-cyan" style="color: #00f5d4 !important; font-weight: 900 !important; text-shadow: 0 0 20px rgba(0,245,212,0.95), 0 0 40px rgba(0,245,212,0.8) !important;">${p?.nickname || 'Jugador'}</span>!
-          </h1>
-
-          <!-- Código PIN de la Sala -->
-          <div class="waiting-pin-pill" style="background: rgba(10, 20, 45, 0.88) !important; border: 2px solid #00f5d4 !important; color: #00f5d4 !important; font-weight: 900 !important; text-shadow: 0 0 14px rgba(0,245,212,0.85) !important; box-shadow: 0 8px 25px rgba(0,0,0,0.6), 0 0 20px rgba(0,245,212,0.35) !important;">
-            <span>📱</span> <span>SALA PIN: ${formattedPin}</span>
-          </div>
-
-          <div style="margin: 1.5rem 0; display: flex; flex-direction: column; align-items: center; gap: 0.75rem;">
-            <div style="font-size: 1.35rem; font-weight: 900; color: #ffffff !important; text-shadow: 0 2px 14px rgba(0,0,0,0.95) !important;">
-              ${room?.challenge?.title || 'Reto MENTIX'}
+      <div class="gamified-lobby-container">
+        <!-- Barra Superior de Navegación Gamer -->
+        <div class="gamified-topbar">
+          <div style="display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
+            <a href="javascript:void(0)" onclick="window.appRouter.navigate('home')" style="text-decoration: none; display: flex; align-items: center; gap: 0.5rem;">
+              <span style="font-size: 1.8rem; filter: drop-shadow(0 0 10px #00f5d4);">🧠</span>
+              <span style="font-size: 1.5rem; font-weight: 900; color: #ffffff;">MEN<span style="color: #00f5d4;">TIX</span></span>
+            </a>
+            <div class="gamified-topbar-pin" onclick="window.LobbyView.copyShareLink('${shareUrl}')" title="Toca para copiar enlace" style="cursor: pointer;">
+              <span>📱</span> <span>PIN: ${formattedPin}</span>
+              <span style="font-size: 0.8rem; opacity: 0.75; font-weight: 600;">(Copiar)</span>
             </div>
-            <div style="display: inline-flex; align-items: center; gap: 0.5rem; background: rgba(0,245,212,0.18); border: 2px solid #00f5d4; padding: 0.5rem 1.4rem; border-radius: 9999px; color: #00f5d4 !important; font-weight: 900; font-size: 1rem; text-shadow: 0 0 15px rgba(0,245,212,0.85); box-shadow: 0 0 20px rgba(0,245,212,0.3);">
-              <span>🎮</span> Conectado a la sala
+            <div style="display: inline-flex; align-items: center; gap: 0.45rem; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); padding: 0.4rem 0.85rem; border-radius: 9999px; font-size: 0.82rem; font-weight: 800; color: #ffffff;">
+              <span>${currentMode.icon}</span> <span>${room?.challenge?.title || 'Reto MENTIX'}</span>
             </div>
           </div>
 
-          <!-- Botón de Salida -->
-          <div style="margin-top: 0.5rem;">
-            <button class="btn btn-outline" style="padding: 0.7rem 1.8rem; font-size: 1rem; font-weight: 800; border-radius: var(--border-radius-md); color: #ffffff !important; border: 1.5px solid rgba(255,255,255,0.45) !important; background: rgba(10,20,45,0.75) !important; text-shadow: 0 2px 8px rgba(0,0,0,0.9);" onclick="window.appRouter.navigate('home')">
-              🚪 Salir de la sala
+          <div style="display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;">
+            <div style="display: inline-flex; align-items: center; gap: 0.45rem; background: rgba(16, 185, 129, 0.15); border: 1px solid #10b981; padding: 0.35rem 0.8rem; border-radius: 9999px; font-size: 0.8rem; font-weight: 800; color: #34d399;">
+              <span style="width: 8px; height: 8px; border-radius: 50%; background: #10b981; box-shadow: 0 0 8px #10b981; display: inline-block;"></span> En Línea
+            </div>
+            <button class="btn btn-outline btn-sm" onclick="window.appRouter.navigate('home')" style="border-radius: 9999px; font-weight: 800; padding: 0.4rem 1rem;">
+              🚪 Salir
             </button>
+          </div>
+        </div>
+
+        <!-- Pestañas Móviles (visibles solo en pantallas pequeñas) -->
+        <div class="gamified-mobile-tabs">
+          <button class="btn btn-sm ${this.waitingMobileTab === 'character' ? 'btn-cyan' : 'btn-outline'}" onclick="window.LobbyView.switchWaitingTab('character')" style="flex: 1; font-weight: 800; border-radius: 9999px;">
+            👤 Mi Personaje
+          </button>
+          <button class="btn btn-sm ${this.waitingMobileTab === 'minigames' ? 'btn-cyan' : 'btn-outline'}" onclick="window.LobbyView.switchWaitingTab('minigames')" style="flex: 1; font-weight: 800; border-radius: 9999px;">
+            🎮 Minijuegos
+          </button>
+          <button class="btn btn-sm ${this.waitingMobileTab === 'classmates' ? 'btn-cyan' : 'btn-outline'}" onclick="window.LobbyView.switchWaitingTab('classmates')" style="flex: 1; font-weight: 800; border-radius: 9999px;">
+            👥 Compañeros (${classmates.length + 1})
+          </button>
+        </div>
+
+        <!-- Layout Principal de 3 Paneles AAA -->
+        <div class="gamified-lobby-grid">
+          
+          <!-- ==========================================
+               PANEL IZQUIERDO: MI PERSONAJE
+               ========================================== -->
+          <div class="gamified-panel-left ${this.waitingMobileTab !== 'character' ? 'mobile-hidden' : ''}" id="waiting-panel-character">
+            <div class="glass-panel" style="padding: 1.5rem 1.25rem; border-radius: 20px; border-color: rgba(0, 245, 212, 0.35); display: flex; flex-direction: column; gap: 1rem;">
+              
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span style="font-size: 0.8rem; font-weight: 900; letter-spacing: 1px; color: var(--neon-cyan); text-transform: uppercase;">
+                  MI PERSONAJE 3D
+                </span>
+                <span class="badge-tag" style="background: rgba(121, 40, 202, 0.25); border: 1px solid #7928ca; color: #d8b4fe; font-size: 0.72rem; font-weight: 800; padding: 0.15rem 0.55rem; border-radius: 9999px;">
+                  Nivel ${p?.level || 1}
+                </span>
+              </div>
+
+              <!-- Escenario del Avatar con Rotación Interactiva -->
+              <div 
+                id="waiting-avatar-viewport-container"
+                class="avatar-stage-viewport" 
+                style="background: ${stageBgCss}; min-height: 270px; border-color: ${p?.isReady ? '#10b981' : 'rgba(0, 245, 212, 0.5)'}; box-shadow: ${p?.isReady ? '0 0 35px rgba(16, 185, 129, 0.45)' : '0 10px 30px rgba(0,0,0,0.5)'};"
+              >
+                <div id="waiting-avatar-viewport">
+                  ${window.AvatarEngine ? window.AvatarEngine.renderSVG(avatarConfig, { size: 230 }) : `<span style="font-size: 4rem;">${p?.avatar || '😎'}</span>`}
+                </div>
+                <div style="font-size: 0.72rem; color: rgba(255,255,255,0.7); font-weight: 700; margin-top: 0.4rem; pointer-events: none;">
+                  🔄 Arrastra para girar 360°
+                </div>
+              </div>
+
+              <!-- Nombre, Título y Progreso de XP -->
+              <div style="text-align: center;">
+                <h3 style="font-size: 1.35rem; font-weight: 900; color: #ffffff; margin: 0 0 0.2rem; text-shadow: 0 0 15px rgba(0,245,212,0.6);" id="waiting-my-nickname">
+                  ${p?.nickname || 'Jugador Pro'}
+                </h3>
+                <div style="font-size: 0.82rem; font-weight: 800; color: #ffd166; margin-bottom: 0.65rem;" id="waiting-my-title">
+                  ${p?.title || 'Novato Curioso'}
+                </div>
+
+                <!-- Barra de XP -->
+                <div style="display: flex; justify-content: space-between; font-size: 0.72rem; color: var(--text-muted); font-weight: 700; margin-bottom: 0.25rem;">
+                  <span id="waiting-my-xp">XP: ${p?.xp || 60}</span>
+                  <span>Siguiente Nivel: 100 XP</span>
+                </div>
+                <div class="xp-progress-track">
+                  <div class="xp-progress-fill" id="waiting-my-xp-bar" style="width: ${xpPercent}%;"></div>
+                </div>
+              </div>
+
+              <!-- Selector Rápido de Gestos / Poses -->
+              <div>
+                <label style="display: block; font-size: 0.75rem; font-weight: 800; color: var(--text-secondary); text-transform: uppercase; margin-bottom: 0.4rem;">
+                  Gestos Rápidos:
+                </label>
+                <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.4rem;">
+                  <button class="btn btn-sm btn-outline" onclick="window.LobbyView.triggerQuickEmote('wave')" title="Saludar" style="padding: 0.4rem 0.2rem; font-size: 0.78rem; font-weight: 800;">
+                    👋 Saludo
+                  </button>
+                  <button class="btn btn-sm btn-outline" onclick="window.LobbyView.triggerQuickEmote('celebrate')" title="Celebrar" style="padding: 0.4rem 0.2rem; font-size: 0.78rem; font-weight: 800;">
+                    🎉 Salto
+                  </button>
+                  <button class="btn btn-sm btn-outline" onclick="window.LobbyView.triggerQuickEmote('dance')" title="Bailar" style="padding: 0.4rem 0.2rem; font-size: 0.78rem; font-weight: 800;">
+                    💃 Baile
+                  </button>
+                  <button class="btn btn-sm btn-outline" onclick="window.LobbyView.triggerQuickEmote('victory')" title="Victoria" style="padding: 0.4rem 0.2rem; font-size: 0.78rem; font-weight: 800;">
+                    ✌️ Victoria
+                  </button>
+                </div>
+              </div>
+
+              <!-- Botones Principales: Personalizar y Estoy Listo -->
+              <div style="display: flex; flex-direction: column; gap: 0.65rem; margin-top: 0.25rem;">
+                <button 
+                  class="btn btn-cyan btn-lg" 
+                  style="width: 100%; font-weight: 900; font-size: 1.05rem; padding: 0.85rem; border-radius: 14px; background: linear-gradient(135deg, #00f5d4, #0ea5e9); color: #020617 !important; box-shadow: 0 4px 20px rgba(0, 245, 212, 0.4);"
+                  onclick="window.LobbyView.openAvatarStudio()"
+                >
+                  <span>🎨</span> AVATAR STUDIO
+                </button>
+
+                <button 
+                  id="btn-ready-toggle"
+                  class="btn btn-lg" 
+                  style="width: 100%; font-weight: 900; font-size: 1.05rem; padding: 0.85rem; border-radius: 14px; transition: all 0.2s; ${p?.isReady ? 'background: #10b981; color: #ffffff !important; border: 2px solid #10b981; box-shadow: 0 0 25px rgba(16, 185, 129, 0.6);' : 'background: rgba(15, 23, 42, 0.8); color: #ffd166 !important; border: 2px solid #ffd166;'}"
+                  onclick="window.LobbyView.toggleReadyStatus()"
+                >
+                  ${p?.isReady ? '<span>🟢</span> ¡ESTOY LISTO!' : '<span>✏️</span> MARCAR COMO LISTO'}
+                </button>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- ==========================================
+               PANEL CENTRAL: MUNDO INTERACTIVO / MINIJUEGOS
+               ========================================== -->
+          <div class="gamified-panel-center ${this.waitingMobileTab !== 'minigames' ? 'mobile-hidden' : ''}" id="waiting-panel-minigames">
+            <div class="glass-panel" style="padding: 1.5rem 1.4rem; border-radius: 20px; border-color: rgba(0, 245, 212, 0.35); min-height: 480px; display: flex; flex-direction: column;">
+              
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.85rem; flex-wrap: wrap; gap: 0.5rem;">
+                <div>
+                  <div style="display: inline-flex; align-items: center; gap: 0.4rem; font-size: 0.78rem; font-weight: 900; color: #00f5d4; text-transform: uppercase;">
+                    <span>🎮</span> MUNDO INTERACTIVO & MINIJUEGOS
+                  </div>
+                  <h2 style="font-size: 1.35rem; font-weight: 900; margin: 0.2rem 0 0; color: #ffffff;">
+                    Zona de Calentamiento
+                  </h2>
+                </div>
+                <div style="display: inline-flex; align-items: center; gap: 0.45rem; background: rgba(255, 209, 102, 0.15); border: 1px solid #ffd166; padding: 0.3rem 0.75rem; border-radius: 9999px; font-size: 0.78rem; font-weight: 800; color: #ffd166;">
+                  <span>⏳</span> Esperando inicio por el docente
+                </div>
+              </div>
+
+              <!-- Contenedor Dinámico de Minijuegos de Espera -->
+              <div id="gamified-minigames-container" style="flex: 1; margin-bottom: 1.25rem;">
+                <!-- Minijuegos renderizados por window.LobbyMinigames.init(...) -->
+              </div>
+
+              <!-- Barra Inferior de Reacciones Flotantes a la Sala -->
+              <div style="background: rgba(10, 20, 45, 0.7); border: 1.5px solid rgba(255, 255, 255, 0.12); border-radius: 16px; padding: 0.85rem 1.15rem; display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; flex-wrap: wrap;">
+                <span style="font-size: 0.82rem; font-weight: 800; color: var(--text-secondary); display: flex; align-items: center; gap: 0.35rem;">
+                  <span>🔥</span> Reaccionar en vivo:
+                </span>
+                <div style="display: flex; gap: 0.45rem; flex-wrap: wrap;">
+                  ${['🔥', '🎉', '🚀', '💯', '👏', '👋'].map(em => `
+                    <button 
+                      class="btn btn-sm btn-outline" 
+                      style="font-size: 1.25rem; padding: 0.3rem 0.6rem; border-radius: 10px; background: rgba(15, 23, 42, 0.8);"
+                      onclick="window.LobbyView.sendLobbyReaction('${em}')"
+                      title="Enviar reacción"
+                    >
+                      ${em}
+                    </button>
+                  `).join('')}
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- ==========================================
+               PANEL DERECHO: SALA DE COMPAÑEROS
+               ========================================== -->
+          <div class="gamified-panel-right ${this.waitingMobileTab !== 'classmates' ? 'mobile-hidden' : ''}" id="waiting-panel-classmates">
+            <div class="glass-panel" style="padding: 1.5rem 1.25rem; border-radius: 20px; border-color: rgba(0, 245, 212, 0.35); min-height: 480px; display: flex; flex-direction: column;">
+              
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                <span style="font-size: 0.8rem; font-weight: 900; letter-spacing: 1px; color: var(--neon-cyan); text-transform: uppercase;">
+                  SALA DE COMPAÑEROS
+                </span>
+                <span class="badge-tag" style="background: rgba(0, 245, 212, 0.15); border: 1px solid var(--neon-cyan); color: var(--neon-cyan); font-size: 0.72rem; font-weight: 800; padding: 0.15rem 0.55rem; border-radius: 9999px;" id="waiting-classmates-badge">
+                  👤 ${classmates.length + 1}
+                </span>
+              </div>
+
+              <!-- Lista de Compañeros con Avatares Renderizados -->
+              <div id="waiting-classmates-list" style="display: flex; flex-direction: column; gap: 0.65rem; overflow-y: auto; max-height: 450px; flex: 1; padding-right: 0.25rem;">
+                ${this.renderClassmatesItems(classmates, p)}
+              </div>
+
+              <!-- Contenedor de Notificaciones Toast de Nuevas Llegadas -->
+              <div id="waiting-toasts-container" style="margin-top: 0.75rem;"></div>
+
+            </div>
           </div>
 
         </div>
+
+        <!-- ==========================================
+             MODAL: AVATAR STUDIO (EDITOR COMPLETO AAA)
+             ========================================== -->
+        <div id="avatar-studio-modal" class="avatar-studio-overlay" style="display: none;">
+          <div class="avatar-studio-container">
+            
+            <div class="avatar-studio-header">
+              <div style="display: flex; align-items: center; gap: 0.65rem;">
+                <span style="font-size: 1.8rem;">🎨</span>
+                <div>
+                  <h2 style="font-size: 1.35rem; font-weight: 900; margin: 0; color: #ffffff;">
+                    AVATAR STUDIO
+                  </h2>
+                  <span style="font-size: 0.78rem; color: #00f5d4; font-weight: 700;">
+                    Personaliza tu personaje • Estilo Videojuego AAA
+                  </span>
+                </div>
+              </div>
+              <button class="btn btn-outline btn-icon" onclick="window.LobbyView.closeAvatarStudio()" style="border-radius: 50%; width: 36px; height: 36px; font-weight: 900;">✕</button>
+            </div>
+
+            <div class="avatar-studio-body">
+              <!-- Columna Izquierda: Vista Previa en Vivo -->
+              <div class="avatar-studio-preview-col">
+                <div id="studio-avatar-preview-box" style="margin-bottom: 1rem;">
+                  <!-- Renderizado en vivo por updateStudioPreview -->
+                </div>
+                <div style="font-size: 0.75rem; color: rgba(255,255,255,0.7); font-weight: 700; margin-bottom: 1rem;">
+                  🔄 Arrastra para girar en 3D
+                </div>
+                <div style="display: flex; gap: 0.4rem; justify-content: center; flex-wrap: wrap;">
+                  <button class="btn btn-sm btn-outline" onclick="window.LobbyView.previewStudioEmote('wave')" style="border-radius: 9999px; font-size: 0.75rem; font-weight: 800;">👋 Saludo</button>
+                  <button class="btn btn-sm btn-outline" onclick="window.LobbyView.previewStudioEmote('celebrate')" style="border-radius: 9999px; font-size: 0.75rem; font-weight: 800;">🎉 Celebrar</button>
+                  <button class="btn btn-sm btn-outline" onclick="window.LobbyView.previewStudioEmote('victory')" style="border-radius: 9999px; font-size: 0.75rem; font-weight: 800;">✌️ Victoria</button>
+                </div>
+              </div>
+
+              <!-- Columna Derecha: Pestañas y Catálogo de Opciones -->
+              <div class="avatar-studio-controls-col">
+                <!-- Pestañas de Categoría -->
+                <div style="display: flex; gap: 0.45rem; overflow-x: auto; padding-bottom: 0.25rem;">
+                  <button class="studio-tab-btn active" id="stab-presets" onclick="window.LobbyView.setStudioTab('presets')">⚡ Estilos</button>
+                  <button class="studio-tab-btn" id="stab-appearance" onclick="window.LobbyView.setStudioTab('appearance')">👤 Rostro & Pelo</button>
+                  <button class="studio-tab-btn" id="stab-clothing" onclick="window.LobbyView.setStudioTab('clothing')">👕 Ropa</button>
+                  <button class="studio-tab-btn" id="stab-emotes" onclick="window.LobbyView.setStudioTab('emotes')">🎭 Gestos</button>
+                  <button class="studio-tab-btn" id="stab-alias" onclick="window.LobbyView.setStudioTab('alias')">🏷️ Alias & Escenario</button>
+                </div>
+
+                <!-- Panel dinámico de controles de la pestaña activa -->
+                <div id="studio-tab-content-panel" style="flex: 1;">
+                  <!-- Contenido inyectado por renderStudioTabContent -->
+                </div>
+
+                <!-- Botones de Guardar / Cancelar -->
+                <div style="display: flex; gap: 0.85rem; padding-top: 1rem; border-top: 1.5px solid rgba(255,255,255,0.1); margin-top: auto;">
+                  <button class="btn btn-outline" onclick="window.LobbyView.closeAvatarStudio()" style="flex: 1; font-weight: 800; border-radius: 12px;">
+                    Cancelar
+                  </button>
+                  <button class="btn btn-cyan btn-lg" onclick="window.LobbyView.saveAvatarStudio()" style="flex: 2; font-weight: 900; border-radius: 12px; background: linear-gradient(135deg, #00f5d4, #7928ca); color: #ffffff !important; box-shadow: 0 4px 20px rgba(0, 245, 212, 0.4);">
+                    💾 Guardar Personaje (+50 XP)
+                  </button>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
       </div>
     `;
+
+    // Inicializar visualización interactiva 3D
+    const viewportEl = document.getElementById('waiting-avatar-viewport-container');
+    if (viewportEl && window.AvatarEngine) {
+      window.AvatarEngine.attachInteractive3D(viewportEl, avatarConfig);
+    }
+
+    // Inicializar minijuegos en el panel central
+    const minigamesEl = document.getElementById('gamified-minigames-container');
+    if (minigamesEl && window.LobbyMinigames) {
+      window.LobbyMinigames.init(minigamesEl);
+    }
+  },
+
+  renderClassmatesItems(classmates, localPlayer) {
+    let html = '';
+    // Incluir al jugador local de primero
+    if (localPlayer) {
+      html += `
+        <div class="classmate-gamer-card ${localPlayer.isReady ? 'is-ready' : ''}" style="border-left: 4px solid var(--neon-cyan);">
+          <div style="width: 44px; height: 44px; border-radius: 10px; background: rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center; overflow: hidden; flex-shrink: 0; border: 1px solid rgba(255,255,255,0.15);">
+            ${localPlayer.avatarConfig && window.AvatarEngine ? window.AvatarEngine.renderSVG(localPlayer.avatarConfig, { size: 44 }) : `<span style="font-size: 1.6rem;">${localPlayer.avatar || '😎'}</span>`}
+          </div>
+          <div style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1;">
+            <div style="font-weight: 800; font-size: 0.92rem; color: #ffffff;">${localPlayer.nickname} <span style="font-size: 0.72rem; color: var(--neon-cyan);">(Tú)</span></div>
+            <div style="font-size: 0.7rem; color: #ffd166; font-weight: 700;">${localPlayer.title || 'Novato'} • Nvl ${localPlayer.level || 1}</div>
+          </div>
+          <span style="font-size: 0.68rem; padding: 0.15rem 0.5rem; border-radius: 9999px; background: ${localPlayer.isReady ? 'rgba(16,185,129,0.25)' : 'rgba(234,179,8,0.25)'}; color: ${localPlayer.isReady ? '#34d399' : '#fde047'}; font-weight: 800; border: 1px solid ${localPlayer.isReady ? '#10b981' : '#eab308'};">
+            ${localPlayer.isReady ? '🟢 Listo' : '✏️ Editando'}
+          </span>
+        </div>
+      `;
+    }
+
+    if (!classmates || classmates.length === 0) {
+      html += `
+        <div style="text-align: center; padding: 2rem 1rem; color: var(--text-muted);">
+          <div style="font-size: 2.2rem; margin-bottom: 0.4rem;">👥</div>
+          <p style="font-size: 0.85rem; font-weight: 700; margin: 0; color: var(--text-secondary);">
+            Esperando a que tus compañeros ingresen con el código...
+          </p>
+        </div>
+      `;
+      return html;
+    }
+
+    classmates.forEach(c => {
+      html += `
+        <div class="classmate-gamer-card ${c.isReady ? 'is-ready' : ''}">
+          <div style="width: 44px; height: 44px; border-radius: 10px; background: rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center; overflow: hidden; flex-shrink: 0; border: 1px solid rgba(255,255,255,0.15);">
+            ${c.avatarConfig && window.AvatarEngine ? window.AvatarEngine.renderSVG(c.avatarConfig, { size: 44 }) : `<span style="font-size: 1.6rem;">${c.avatar || '😎'}</span>`}
+          </div>
+          <div style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1;">
+            <div style="font-weight: 800; font-size: 0.92rem; color: #ffffff;">${c.nickname}</div>
+            <div style="font-size: 0.7rem; color: #ffd166; font-weight: 700;">${c.title || 'Gamer Pro'} • Nvl ${c.level || 1}</div>
+          </div>
+          <span style="font-size: 0.68rem; padding: 0.15rem 0.5rem; border-radius: 9999px; background: ${c.isReady ? 'rgba(16,185,129,0.25)' : 'rgba(234,179,8,0.25)'}; color: ${c.isReady ? '#34d399' : '#fde047'}; font-weight: 800; border: 1px solid ${c.isReady ? '#10b981' : '#eab308'};">
+            ${c.isReady ? '🟢 Listo' : '✏️ Editando'}
+          </span>
+        </div>
+      `;
+    });
+
+    return html;
+  },
+
+  updateClassmatesList() {
+    const listEl = document.getElementById('waiting-classmates-list');
+    const badgeEl = document.getElementById('waiting-classmates-badge');
+    const p = window.realtimeEngine.localPlayer;
+    const room = window.realtimeEngine.currentRoom;
+    const classmates = Array.isArray(room?.players) ? room.players.filter(pl => pl.id !== p?.id) : [];
+
+    if (badgeEl) badgeEl.textContent = `👤 ${classmates.length + 1}`;
+    if (listEl) {
+      listEl.innerHTML = this.renderClassmatesItems(classmates, p);
+    }
+  },
+
+  updateMyCharacterPanel() {
+    const p = window.realtimeEngine.localPlayer;
+    const av = window.AvatarEngine ? window.AvatarEngine.getSavedAvatar() : null;
+    if (!p || !av) return;
+
+    p.avatarConfig = av;
+    p.nickname = av.alias || p.nickname;
+    p.title = av.title || p.title;
+    p.xp = av.xp || p.xp;
+    p.level = av.level || p.level;
+
+    const nickEl = document.getElementById('waiting-my-nickname');
+    const titleEl = document.getElementById('waiting-my-title');
+    const xpEl = document.getElementById('waiting-my-xp');
+    const xpBar = document.getElementById('waiting-my-xp-bar');
+    const viewPort = document.getElementById('waiting-avatar-viewport');
+
+    if (nickEl) nickEl.textContent = p.nickname;
+    if (titleEl) titleEl.textContent = p.title;
+    if (xpEl) xpEl.textContent = `XP: ${p.xp}`;
+    if (xpBar) xpBar.style.width = `${Math.min(100, p.xp % 100)}%`;
+
+    if (viewPort && window.AvatarEngine) {
+      viewPort.innerHTML = window.AvatarEngine.renderSVG(av, { size: 230 });
+      const containerEl = document.getElementById('waiting-avatar-viewport-container');
+      if (containerEl) {
+        const bgObj = window.AvatarEngine.stageBackgrounds?.[av.stageBg || 'matrix_neon'];
+        if (bgObj) containerEl.style.background = bgObj.css;
+        window.AvatarEngine.attachInteractive3D(containerEl, av);
+      }
+    }
+  },
+
+  toggleReadyStatus() {
+    const p = window.realtimeEngine.localPlayer;
+    if (!p) return;
+    p.isReady = !p.isReady;
+    p.status = p.isReady ? 'ready' : 'customizing';
+
+    const btn = document.getElementById('btn-ready-toggle');
+    const stageContainer = document.getElementById('waiting-avatar-viewport-container');
+
+    if (btn) {
+      if (p.isReady) {
+        btn.innerHTML = `<span>🟢</span> ¡ESTOY LISTO!`;
+        btn.style.background = '#10b981';
+        btn.style.color = '#ffffff';
+        btn.style.borderColor = '#10b981';
+        btn.style.boxShadow = '0 0 25px rgba(16, 185, 129, 0.6)';
+      } else {
+        btn.innerHTML = `<span>✏️</span> CONTINUAR EDITANDO`;
+        btn.style.background = 'rgba(15, 23, 42, 0.8)';
+        btn.style.color = '#ffd166';
+        btn.style.borderColor = '#ffd166';
+        btn.style.boxShadow = 'none';
+      }
+    }
+
+    if (stageContainer) {
+      stageContainer.style.borderColor = p.isReady ? '#10b981' : 'rgba(0, 245, 212, 0.5)';
+      stageContainer.style.boxShadow = p.isReady ? '0 0 35px rgba(16, 185, 129, 0.45)' : '0 10px 30px rgba(0,0,0,0.5)';
+    }
+
+    if (window.soundEngine) {
+      p.isReady ? window.soundEngine.playPowerUp() : window.soundEngine.playTick();
+    }
+
+    this.broadcastAvatarUpdate();
+    this.updateClassmatesList();
+  },
+
+  triggerQuickEmote(eKey) {
+    if (window.AvatarEngine) {
+      const updated = window.AvatarEngine.saveAvatar({ emote: eKey });
+      window.AvatarEngine.awardXP(10, `Gesto: ${eKey}`);
+      this.updateMyCharacterPanel();
+      this.broadcastAvatarUpdate();
+      if (window.soundEngine) window.soundEngine.playClick();
+    }
+  },
+
+  sendLobbyReaction(emoji) {
+    const p = window.realtimeEngine.localPlayer;
+    const pin = String(window.realtimeEngine.currentRoom?.pin || this.joinPin || '').replace(/\D/g, '');
+    if (window.realtimeEngine) {
+      window.realtimeEngine.broadcast({
+        type: 'LOBBY_REACTION',
+        pin: pin,
+        sender: p?.nickname || 'Jugador',
+        emoji: emoji
+      });
+    }
+    this.spawnFloatingEmoji(emoji, p?.nickname);
+    if (window.AvatarEngine) window.AvatarEngine.awardXP(5, 'Reacción en sala');
+    if (window.soundEngine) window.soundEngine.playPop();
+  },
+
+  spawnFloatingEmoji(emoji, sender) {
+    const el = document.createElement('div');
+    el.className = 'floating-reaction-emoji';
+    el.textContent = emoji;
+    const randomLeft = 15 + Math.random() * 70;
+    el.style.left = `${randomLeft}vw`;
+    el.style.bottom = '15vh';
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 2200);
+  },
+
+  showJoinToast(nickname) {
+    const container = document.getElementById('waiting-toasts-container');
+    if (!container) return;
+    const toast = document.createElement('div');
+    toast.style.background = 'rgba(0, 245, 212, 0.15)';
+    toast.style.border = '1px solid #00f5d4';
+    toast.style.color = '#00f5d4';
+    toast.style.padding = '0.4rem 0.75rem';
+    toast.style.borderRadius = '10px';
+    toast.style.fontSize = '0.78rem';
+    toast.style.fontWeight = '800';
+    toast.style.marginBottom = '0.35rem';
+    toast.style.animation = 'anim-breathing 1.5s ease';
+    toast.innerHTML = `👋 ¡<strong>${nickname}</strong> se unió a la sala!`;
+    container.appendChild(toast);
+    setTimeout(() => toast.remove(), 4000);
+  },
+
+  showGameStartTransition(callback) {
+    const curtain = document.createElement('div');
+    curtain.className = 'game-start-transition-curtain';
+    curtain.innerHTML = `
+      <div style="font-size: 4.5rem; margin-bottom: 0.5rem; filter: drop-shadow(0 0 25px #00f5d4); animation: timer-pulse 0.6s infinite alternate;">🚀</div>
+      <h1 style="font-size: clamp(2.4rem, 6vw, 3.8rem); font-weight: 900; color: #ffffff; margin: 0 0 0.5rem; text-shadow: 0 0 35px #00f5d4; text-align: center;">
+        ¡EL EXAMEN INICIA AHORA!
+      </h1>
+      <p style="font-size: 1.3rem; color: #ffd166; font-weight: 800; margin: 0; text-align: center;">
+        ¡Prepárate para responder en tu dispositivo!
+      </p>
+    `;
+    document.body.appendChild(curtain);
+
+    setTimeout(() => {
+      curtain.remove();
+      if (typeof callback === 'function') callback();
+    }, 2600);
+  },
+
+  toggleHostMinigames() {
+    if (!this.currentRoom) return;
+    this.currentRoom.allowMinigames = this.currentRoom.allowMinigames === false ? true : false;
+    window.realtimeEngine.broadcast({
+      type: 'LOBBY_CONFIG_UPDATE',
+      pin: this.currentRoom.pin,
+      allowMinigames: this.currentRoom.allowMinigames,
+      allowCustomization: this.currentRoom.allowCustomization !== false
+    });
+    window.realtimeEngine.syncRoomState();
+    if (window.soundEngine) window.soundEngine.playClick();
+    this.render();
+  },
+
+  toggleHostCustomization() {
+    if (!this.currentRoom) return;
+    this.currentRoom.allowCustomization = this.currentRoom.allowCustomization === false ? true : false;
+    window.realtimeEngine.broadcast({
+      type: 'LOBBY_CONFIG_UPDATE',
+      pin: this.currentRoom.pin,
+      allowMinigames: this.currentRoom.allowMinigames !== false,
+      allowCustomization: this.currentRoom.allowCustomization
+    });
+    window.realtimeEngine.syncRoomState();
+    if (window.soundEngine) window.soundEngine.playClick();
+    this.render();
+  },
+
+  broadcastAvatarUpdate() {
+    const p = window.realtimeEngine.localPlayer;
+    const pin = String(window.realtimeEngine.currentRoom?.pin || this.joinPin || '').replace(/\D/g, '');
+    if (!p || !pin) return;
+
+    window.realtimeEngine.broadcast({
+      type: 'PLAYER_AVATAR_UPDATE',
+      pin: pin,
+      playerId: p.id,
+      avatarConfig: p.avatarConfig,
+      isReady: !!p.isReady,
+      status: p.status || 'ready',
+      nickname: p.nickname,
+      title: p.title,
+      xp: p.xp,
+      level: p.level
+    });
+
+    if (window.realtimeEngine.publishMqtt) {
+      window.realtimeEngine.publishMqtt(`mentix/rooms/${pin}/player_events`, {
+        type: 'PLAYER_AVATAR_UPDATE',
+        pin: pin,
+        playerId: p.id,
+        avatarConfig: p.avatarConfig,
+        isReady: !!p.isReady,
+        status: p.status || 'ready',
+        nickname: p.nickname,
+        title: p.title,
+        xp: p.xp,
+        level: p.level
+      });
+    }
+  },
+
+  // ==========================================
+  // 🎨 AVATAR STUDIO: MODAL Y FUNCIONES
+  // ==========================================
+  openAvatarStudio() {
+    const room = window.realtimeEngine.currentRoom;
+    if (room && room.allowCustomization === false) {
+      alert('🔒 El profesor ha cerrado la edición de avatares para comenzar la prueba.');
+      return;
+    }
+
+    const modal = document.getElementById('avatar-studio-modal');
+    if (!modal) return;
+
+    this.studioTempConfig = { ...window.AvatarEngine.getSavedAvatar() };
+    this.currentStudioTab = 'presets';
+    modal.style.display = 'flex';
+
+    this.setStudioTab('presets');
+    this.updateStudioPreview();
+    if (window.soundEngine) window.soundEngine.playClick();
+  },
+
+  closeAvatarStudio() {
+    const modal = document.getElementById('avatar-studio-modal');
+    if (modal) modal.style.display = 'none';
+  },
+
+  setStudioTab(tab) {
+    this.currentStudioTab = tab;
+    ['presets', 'appearance', 'clothing', 'emotes', 'alias'].forEach(t => {
+      const btn = document.getElementById(`stab-${t}`);
+      if (btn) btn.classList.toggle('active', t === tab);
+    });
+    this.renderStudioTabContent();
+  },
+
+  updateStudioPreview() {
+    const box = document.getElementById('studio-avatar-preview-box');
+    if (!box || !window.AvatarEngine) return;
+
+    box.innerHTML = window.AvatarEngine.renderSVG(this.studioTempConfig, { size: 240 });
+    const col = document.querySelector('.avatar-studio-preview-col');
+    if (col && this.studioTempConfig.stageBg) {
+      const bgObj = window.AvatarEngine.stageBackgrounds?.[this.studioTempConfig.stageBg];
+      if (bgObj) col.style.background = bgObj.css;
+    }
+    window.AvatarEngine.attachInteractive3D(box, this.studioTempConfig);
+  },
+
+  previewStudioEmote(eKey) {
+    this.studioTempConfig.emote = eKey;
+    this.updateStudioPreview();
+    if (window.soundEngine) window.soundEngine.playTick();
+  },
+
+  selectStudioPreset(key) {
+    const pr = window.AvatarEngine?.presets?.[key];
+    if (!pr) return;
+    this.studioTempConfig = { ...this.studioTempConfig, ...pr.config };
+    this.updateStudioPreview();
+    this.renderStudioTabContent();
+    if (window.soundEngine) window.soundEngine.playClick();
+  },
+
+  updateStudioProp(prop, val) {
+    this.studioTempConfig[prop] = val;
+    this.updateStudioPreview();
+  },
+
+  validateNickname(name) {
+    if (!name || name.trim().length < 3) {
+      return { valid: false, error: 'El alias debe tener al menos 3 caracteres.' };
+    }
+    if (name.trim().length > 20) {
+      return { valid: false, error: 'El alias no puede superar los 20 caracteres.' };
+    }
+    const forbidden = ['puta', 'puto', 'mierda', 'gonorrea', 'malparido', 'culo', 'estupido', 'idiota', 'pendejo', 'imbecil', 'marica'];
+    const lower = name.toLowerCase();
+    for (const word of forbidden) {
+      if (lower.includes(word)) {
+        return { valid: false, error: 'Por favor elige un alias respetuoso y amigable.' };
+      }
+    }
+    return { valid: true, cleanName: name.trim() };
+  },
+
+  renderStudioTabContent() {
+    const panel = document.getElementById('studio-tab-content-panel');
+    if (!panel) return;
+    const c = this.studioTempConfig || window.AvatarEngine.getSavedAvatar();
+
+    if (this.currentStudioTab === 'presets') {
+      const presets = window.AvatarEngine.presets || {};
+      panel.innerHTML = `
+        <div>
+          <label style="display: block; font-size: 0.85rem; font-weight: 800; color: #00f5d4; text-transform: uppercase; margin-bottom: 0.85rem;">
+            ⚡ Selecciona un Estilo Completo (1-Clic):
+          </label>
+          <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 0.75rem;">
+            ${Object.keys(presets).map(k => {
+              const p = presets[k];
+              return `
+                <div 
+                  class="studio-option-card ${c.preset === k ? 'active' : ''}"
+                  onclick="window.LobbyView.selectStudioPreset('${k}')"
+                >
+                  <span style="font-size: 1.8rem;">${p.icon}</span>
+                  <div>
+                    <div style="font-weight: 900; font-size: 0.92rem; color: #ffffff;">${p.name}</div>
+                    <div style="font-size: 0.74rem; color: var(--text-secondary); line-height: 1.25;">${p.desc}</div>
+                  </div>
+                </div>
+              `;
+            }).join('')}
+          </div>
+        </div>
+      `;
+    } else if (this.currentStudioTab === 'appearance') {
+      const skinColors = ['#ffd1a4', '#fcd5b5', '#e0ac69', '#c68642', '#8d5524', '#2d1e18', '#38bdf8', '#d946ef'];
+      const hairColors = ['#00f5d4', '#ff007f', '#ffd166', '#10b981', '#8b5cf6', '#111827', '#78350f', '#ffffff'];
+      const hairStyles = [
+        { id: 'spiky', label: 'Anime Spiky' },
+        { id: 'curly', label: 'Rizado' },
+        { id: 'short', label: 'Fade Corto' },
+        { id: 'afro', label: 'Afro' },
+        { id: 'long', label: 'Melena Larga' },
+        { id: 'cyber_fade', label: 'Cyber Fade' }
+      ];
+      const eyesStyles = [
+        { id: 'normal', label: 'Normal' },
+        { id: 'tech', label: 'Reflejos Tech' },
+        { id: 'anime', label: 'Anime' },
+        { id: 'shades', label: 'Gafas Oscuras' },
+        { id: 'cyber_visor', label: 'Visor Holográfico' }
+      ];
+      const faceStyles = [
+        { id: 'smile', label: 'Sonrisa' },
+        { id: 'confident', label: 'Confiado' },
+        { id: 'focused', label: 'Concentrado' },
+        { id: 'wink', label: 'Guiño' },
+        { id: 'cyber', label: 'Cibernético' }
+      ];
+
+      panel.innerHTML = `
+        <div style="display: flex; flex-direction: column; gap: 1.25rem;">
+          <!-- Tono de piel -->
+          <div>
+            <label style="display: block; font-size: 0.82rem; font-weight: 800; color: #ffffff; margin-bottom: 0.45rem;">
+              🎨 Tono de Piel:
+            </label>
+            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+              ${skinColors.map(color => `
+                <div 
+                  class="studio-color-swatch ${c.skinColor === color ? 'active' : ''}" 
+                  style="background: ${color};"
+                  onclick="window.LobbyView.updateStudioProp('skinColor', '${color}')"
+                ></div>
+              `).join('')}
+            </div>
+          </div>
+
+          <!-- Peinado -->
+          <div>
+            <label style="display: block; font-size: 0.82rem; font-weight: 800; color: #ffffff; margin-bottom: 0.45rem;">
+              ✂️ Estilo de Cabello:
+            </label>
+            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+              ${hairStyles.map(h => `
+                <button 
+                  class="btn btn-sm ${c.hairStyle === h.id ? 'btn-cyan' : 'btn-outline'}" 
+                  onclick="window.LobbyView.updateStudioProp('hairStyle', '${h.id}')"
+                  style="border-radius: 8px; font-weight: 800; font-size: 0.82rem;"
+                >${h.label}</button>
+              `).join('')}
+            </div>
+          </div>
+
+          <!-- Color de pelo -->
+          <div>
+            <label style="display: block; font-size: 0.82rem; font-weight: 800; color: #ffffff; margin-bottom: 0.45rem;">
+              🌈 Color de Cabello:
+            </label>
+            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+              ${hairColors.map(color => `
+                <div 
+                  class="studio-color-swatch ${c.hairColor === color ? 'active' : ''}" 
+                  style="background: ${color};"
+                  onclick="window.LobbyView.updateStudioProp('hairColor', '${color}')"
+                ></div>
+              `).join('')}
+            </div>
+          </div>
+
+          <!-- Ojos / Mirada -->
+          <div>
+            <label style="display: block; font-size: 0.82rem; font-weight: 800; color: #ffffff; margin-bottom: 0.45rem;">
+              👀 Mirada / Ojos:
+            </label>
+            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+              ${eyesStyles.map(e => `
+                <button 
+                  class="btn btn-sm ${c.eyesStyle === e.id ? 'btn-cyan' : 'btn-outline'}" 
+                  onclick="window.LobbyView.updateStudioProp('eyesStyle', '${e.id}')"
+                  style="border-radius: 8px; font-weight: 800; font-size: 0.82rem;"
+                >${e.label}</button>
+              `).join('')}
+            </div>
+          </div>
+
+          <!-- Expresión facial -->
+          <div>
+            <label style="display: block; font-size: 0.82rem; font-weight: 800; color: #ffffff; margin-bottom: 0.45rem;">
+              😄 Expresión de Rostro:
+            </label>
+            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+              ${faceStyles.map(f => `
+                <button 
+                  class="btn btn-sm ${c.faceStyle === f.id ? 'btn-cyan' : 'btn-outline'}" 
+                  onclick="window.LobbyView.updateStudioProp('faceStyle', '${f.id}')"
+                  style="border-radius: 8px; font-weight: 800; font-size: 0.82rem;"
+                >${f.label}</button>
+              `).join('')}
+            </div>
+          </div>
+        </div>
+      `;
+    } else if (this.currentStudioTab === 'clothing') {
+      const topTypes = [
+        { id: 'hoodie', label: 'Hoodie Gamer' },
+        { id: 'tshirt', label: 'Camiseta' },
+        { id: 'jacket', label: 'Chaqueta Bomber' },
+        { id: 'labcoat', label: 'Bata Científica' },
+        { id: 'cyber_suit', label: 'Traje Cyber' }
+      ];
+      const topColors = ['#7928ca', '#f72585', '#00f5d4', '#10b981', '#3b82f6', '#f59e0b', '#111827', '#ffffff'];
+      const bottomTypes = [
+        { id: 'cargo', label: 'Cargo Táctico' },
+        { id: 'jeans', label: 'Jeans' },
+        { id: 'joggers', label: 'Joggers' },
+        { id: 'cyber_pants', label: 'Cyber Pants' }
+      ];
+      const bottomColors = ['#1a1f36', '#0f172a', '#1e293b', '#2e1065', '#064e3b', '#451a03'];
+      const shoeTypes = [
+        { id: 'sneakers', label: 'Sneakers' },
+        { id: 'boots', label: 'Botas' },
+        { id: 'cyber_boots', label: 'Cyber Boots' }
+      ];
+      const accessories = [
+        { id: 'none', label: 'Ninguno' },
+        { id: 'headphones', label: 'Auriculares RGB' },
+        { id: 'cap', label: 'Gorra' },
+        { id: 'glasses', label: 'Gafas Pro' },
+        { id: 'mask', label: 'Mascarilla Táctica' },
+        { id: 'cyber_ear', label: 'Dispositivo Cyber' },
+        { id: 'backpack', label: 'Mochila' }
+      ];
+      const accColors = ['#ff007f', '#00f5d4', '#ffd166', '#a855f7', '#3b82f6', '#ffffff'];
+
+      panel.innerHTML = `
+        <div style="display: flex; flex-direction: column; gap: 1.25rem;">
+          <!-- Ropa Superior -->
+          <div>
+            <label style="display: block; font-size: 0.82rem; font-weight: 800; color: #ffffff; margin-bottom: 0.45rem;">
+              👕 Prenda Superior:
+            </label>
+            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 0.45rem;">
+              ${topTypes.map(t => `
+                <button 
+                  class="btn btn-sm ${c.topType === t.id ? 'btn-cyan' : 'btn-outline'}" 
+                  onclick="window.LobbyView.updateStudioProp('topType', '${t.id}')"
+                  style="border-radius: 8px; font-weight: 800; font-size: 0.82rem;"
+                >${t.label}</button>
+              `).join('')}
+            </div>
+            <div style="display: flex; gap: 0.4rem; flex-wrap: wrap;">
+              ${topColors.map(color => `
+                <div 
+                  class="studio-color-swatch ${c.topColor === color ? 'active' : ''}" 
+                  style="background: ${color}; width: 28px; height: 28px;"
+                  onclick="window.LobbyView.updateStudioProp('topColor', '${color}')"
+                ></div>
+              `).join('')}
+            </div>
+          </div>
+
+          <!-- Pantalones -->
+          <div>
+            <label style="display: block; font-size: 0.82rem; font-weight: 800; color: #ffffff; margin-bottom: 0.45rem;">
+              👖 Pantalones:
+            </label>
+            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 0.45rem;">
+              ${bottomTypes.map(b => `
+                <button 
+                  class="btn btn-sm ${c.bottomType === b.id ? 'btn-cyan' : 'btn-outline'}" 
+                  onclick="window.LobbyView.updateStudioProp('bottomType', '${b.id}')"
+                  style="border-radius: 8px; font-weight: 800; font-size: 0.82rem;"
+                >${b.label}</button>
+              `).join('')}
+            </div>
+            <div style="display: flex; gap: 0.4rem; flex-wrap: wrap;">
+              ${bottomColors.map(color => `
+                <div 
+                  class="studio-color-swatch ${c.bottomColor === color ? 'active' : ''}" 
+                  style="background: ${color}; width: 28px; height: 28px;"
+                  onclick="window.LobbyView.updateStudioProp('bottomColor', '${color}')"
+                ></div>
+              `).join('')}
+            </div>
+          </div>
+
+          <!-- Calzado -->
+          <div>
+            <label style="display: block; font-size: 0.82rem; font-weight: 800; color: #ffffff; margin-bottom: 0.45rem;">
+              👟 Calzado:
+            </label>
+            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+              ${shoeTypes.map(s => `
+                <button 
+                  class="btn btn-sm ${c.shoesType === s.id ? 'btn-cyan' : 'btn-outline'}" 
+                  onclick="window.LobbyView.updateStudioProp('shoesType', '${s.id}')"
+                  style="border-radius: 8px; font-weight: 800; font-size: 0.82rem;"
+                >${s.label}</button>
+              `).join('')}
+            </div>
+          </div>
+
+          <!-- Accesorios -->
+          <div>
+            <label style="display: block; font-size: 0.82rem; font-weight: 800; color: #ffffff; margin-bottom: 0.45rem;">
+              🎧 Accesorios:
+            </label>
+            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 0.45rem;">
+              ${accessories.map(a => `
+                <button 
+                  class="btn btn-sm ${c.accessory === a.id ? 'btn-cyan' : 'btn-outline'}" 
+                  onclick="window.LobbyView.updateStudioProp('accessory', '${a.id}')"
+                  style="border-radius: 8px; font-weight: 800; font-size: 0.82rem;"
+                >${a.label}</button>
+              `).join('')}
+            </div>
+            <div style="display: flex; gap: 0.4rem; flex-wrap: wrap;">
+              ${accColors.map(color => `
+                <div 
+                  class="studio-color-swatch ${c.accessoryColor === color ? 'active' : ''}" 
+                  style="background: ${color}; width: 28px; height: 28px;"
+                  onclick="window.LobbyView.updateStudioProp('accessoryColor', '${color}')"
+                ></div>
+              `).join('')}
+            </div>
+          </div>
+        </div>
+      `;
+    } else if (this.currentStudioTab === 'emotes') {
+      const emotes = window.AvatarEngine.emotes || {};
+      panel.innerHTML = `
+        <div>
+          <label style="display: block; font-size: 0.85rem; font-weight: 800; color: #00f5d4; text-transform: uppercase; margin-bottom: 0.85rem;">
+            🎭 Gestos y Animaciones:
+          </label>
+          <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 0.65rem;">
+            ${Object.keys(emotes).map(k => {
+              const e = emotes[k];
+              return `
+                <div 
+                  class="studio-option-card ${c.emote === k ? 'active' : ''}"
+                  onclick="window.LobbyView.updateStudioProp('emote', '${k}')"
+                >
+                  <span style="font-size: 1.6rem;">${e.icon}</span>
+                  <div>
+                    <div style="font-weight: 900; font-size: 0.9rem; color: #ffffff;">${e.name}</div>
+                    <div style="font-size: 0.72rem; color: var(--text-secondary); line-height: 1.2;">${e.desc}</div>
+                  </div>
+                </div>
+              `;
+            }).join('')}
+          </div>
+        </div>
+      `;
+    } else if (this.currentStudioTab === 'alias') {
+      const backgrounds = window.AvatarEngine.stageBackgrounds || {};
+      const titles = window.AvatarEngine.titles || [];
+
+      panel.innerHTML = `
+        <div style="display: flex; flex-direction: column; gap: 1.25rem;">
+          <!-- Alias del Jugador -->
+          <div>
+            <label style="display: block; font-size: 0.85rem; font-weight: 800; color: #00f5d4; text-transform: uppercase; margin-bottom: 0.45rem;">
+              🏷️ Alias Visible en la Sala:
+            </label>
+            <input 
+              type="text" 
+              id="studio-alias-input" 
+              value="${c.alias || ''}" 
+              placeholder="Ej: CyberPro" 
+              maxlength="20"
+              oninput="window.LobbyView.studioTempConfig.alias = this.value; window.LobbyView.updateStudioPreview();"
+              style="width: 100%; box-sizing: border-box; padding: 0.75rem 1rem; border-radius: 12px; background: rgba(15,23,42,0.8); border: 2px solid var(--neon-cyan); color: #ffffff; font-weight: 800; font-size: 1.05rem;"
+            />
+            <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.35rem;">
+              De 3 a 20 caracteres. Palabras ofensivas no están permitidas.
+            </div>
+          </div>
+
+          <!-- Fondo de Escenario -->
+          <div>
+            <label style="display: block; font-size: 0.85rem; font-weight: 800; color: #00f5d4; text-transform: uppercase; margin-bottom: 0.45rem;">
+              🌌 Fondo de Escenario Virtual:
+            </label>
+            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 0.65rem;">
+              ${Object.keys(backgrounds).map(k => {
+                const bg = backgrounds[k];
+                return `
+                  <div 
+                    class="studio-option-card ${c.stageBg === k ? 'active' : ''}"
+                    onclick="window.LobbyView.updateStudioProp('stageBg', '${k}')"
+                  >
+                    <span style="font-size: 1.5rem;">${bg.icon}</span>
+                    <span style="font-weight: 800; font-size: 0.88rem; color: #ffffff;">${bg.name}</span>
+                  </div>
+                `;
+              }).join('')}
+            </div>
+          </div>
+
+          <!-- Títulos Decorativos -->
+          <div>
+            <label style="display: block; font-size: 0.85rem; font-weight: 800; color: #00f5d4; text-transform: uppercase; margin-bottom: 0.45rem;">
+              👑 Título Decorativo del Personaje:
+            </label>
+            <select 
+              onchange="window.LobbyView.updateStudioProp('title', this.value)"
+              style="width: 100%; padding: 0.75rem; border-radius: 12px; background: rgba(15,23,42,0.8); border: 1.5px solid var(--neon-cyan); color: #ffffff; font-weight: 800; font-size: 0.95rem;"
+            >
+              ${titles.map(t => `
+                <option value="${t.name}" ${c.title === t.name ? 'selected' : ''}>
+                  ${t.icon} ${t.name} (Desbloqueado con ${t.xpReq} XP)
+                </option>
+              `).join('')}
+            </select>
+          </div>
+        </div>
+      `;
+    }
+  },
+
+  saveAvatarStudio() {
+    const input = document.getElementById('studio-alias-input');
+    const aliasToSave = (input ? input.value : this.studioTempConfig.alias) || 'Gamer Pro';
+    const validation = this.validateNickname(aliasToSave);
+
+    if (!validation.valid) {
+      alert(`⚠️ ${validation.error}`);
+      return;
+    }
+
+    this.studioTempConfig.alias = validation.cleanName;
+    const updated = window.AvatarEngine.saveAvatar(this.studioTempConfig);
+    window.AvatarEngine.awardXP(50, 'Personalización de Avatar guardada');
+
+    const p = window.realtimeEngine.localPlayer;
+    if (p) {
+      p.avatarConfig = updated;
+      p.nickname = updated.alias;
+      p.title = updated.title;
+      p.xp = updated.xp;
+      p.level = updated.level;
+    }
+
+    this.closeAvatarStudio();
+    this.updateMyCharacterPanel();
+    this.broadcastAvatarUpdate();
+    if (window.soundEngine) window.soundEngine.playPowerUp();
   },
 
   selectAvatar(avatar, btn) {

@@ -3854,5 +3854,422 @@ body.light-theme .dart-hit-badge {
   opacity: 1;
 }
 
+/* ==========================================================================
+   🎮 SALA DE ESPERA GAMIFICADA AAA CON AVATARES 2.5D/3D — MENTIX
+   ========================================================================== */
+
+/* Animaciones Procedurales de Emotes para el Avatar */
+@keyframes anim-breathing {
+  0%, 100% { transform: translateY(0px) scale(1); }
+  50% { transform: translateY(-4px) scale(1.015); }
+}
+
+@keyframes anim-wave {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(-5deg); }
+  75% { transform: rotate(5deg); }
+}
+
+@keyframes anim-wave-arm {
+  0%, 100% { transform: rotate(0deg); transform-origin: 150px 122px; }
+  25% { transform: rotate(-18deg); transform-origin: 150px 122px; }
+  75% { transform: rotate(18deg); transform-origin: 150px 122px; }
+}
+
+.arm-waving {
+  animation: anim-wave-arm 0.8s ease-in-out infinite alternate;
+}
+
+@keyframes anim-celebrate {
+  0%, 100% { transform: translateY(0px) scale(1); }
+  30% { transform: translateY(-16px) scale(1.05); }
+  60% { transform: translateY(-6px) scale(1.02); }
+}
+
+@keyframes anim-dance {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  25% { transform: translateY(-6px) rotate(-4deg); }
+  50% { transform: translateY(0px) rotate(0deg); }
+  75% { transform: translateY(-6px) rotate(4deg); }
+}
+
+@keyframes anim-laugh {
+  0%, 100% { transform: translateY(0px) scale(1); }
+  20% { transform: translateY(-4px) scale(1.02); }
+  40% { transform: translateY(0px) scale(1); }
+  60% { transform: translateY(-4px) scale(1.02); }
+  80% { transform: translateY(0px) scale(1); }
+}
+
+@keyframes anim-victory {
+  0%, 100% { transform: translateY(0px) scale(1); }
+  50% { transform: translateY(-12px) scale(1.04); filter: drop-shadow(0 0 16px rgba(0, 245, 212, 0.8)); }
+}
+
+@keyframes anim-focus {
+  0%, 100% { transform: scale(1); filter: drop-shadow(0 0 8px rgba(139, 92, 246, 0.4)); }
+  50% { transform: scale(1.02); filter: drop-shadow(0 0 22px rgba(139, 92, 246, 0.85)); }
+}
+
+@keyframes anim-clap {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.03); }
+}
+
+.anim-breathing { animation: anim-breathing 3.2s ease-in-out infinite; }
+.anim-wave { animation: anim-wave 1.6s ease-in-out infinite; }
+.anim-celebrate { animation: anim-celebrate 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) infinite; }
+.anim-dance { animation: anim-dance 1.4s ease-in-out infinite; }
+.anim-laugh { animation: anim-laugh 1s ease-in-out infinite; }
+.anim-victory { animation: anim-victory 1.8s ease-in-out infinite; }
+.anim-focus { animation: anim-focus 2.8s ease-in-out infinite; }
+.anim-clap { animation: anim-clap 0.7s ease-in-out infinite; }
+
+/* Contenedor del Avatar 3D */
+.mentix-avatar-wrapper {
+  user-select: none;
+  touch-action: none;
+  transform-style: preserve-3d;
+  transition: transform 0.2s ease-out;
+}
+
+.mentix-avatar-wrapper:active {
+  cursor: grabbing;
+}
+
+/* Layout Principal de la Sala de Espera Gamer (3 Columnas) */
+.gamified-lobby-container {
+  min-height: 100vh;
+  width: 100%;
+  box-sizing: border-box;
+  background: radial-gradient(circle at center, rgba(5, 12, 35, 0.45) 0%, rgba(3, 7, 24, 0.75) 100%), url('../assets/mentix_join_bg.jpg') center center / cover no-repeat fixed;
+  color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  padding: 1rem 1.25rem 3rem;
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* Barra Superior de la Sala */
+.gamified-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  background: rgba(10, 20, 45, 0.82);
+  backdrop-filter: blur(14px);
+  border: 1.5px solid rgba(0, 245, 212, 0.4);
+  border-radius: 18px;
+  padding: 0.85rem 1.4rem;
+  margin-bottom: 1.25rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  flex-wrap: wrap;
+}
+
+.gamified-topbar-pin {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  background: rgba(0, 245, 212, 0.12);
+  border: 2px solid #00f5d4;
+  padding: 0.45rem 1.1rem;
+  border-radius: 9999px;
+  color: #00f5d4;
+  font-weight: 900;
+  font-size: 1.1rem;
+  letter-spacing: 1px;
+  text-shadow: 0 0 12px rgba(0, 245, 212, 0.8);
+  box-shadow: 0 0 20px rgba(0, 245, 212, 0.25);
+}
+
+/* Grid de 3 Paneles estilo Videojuego AAA */
+.gamified-lobby-grid {
+  display: grid;
+  grid-template-columns: 340px 1fr 320px;
+  gap: 1.25rem;
+  align-items: start;
+  flex: 1;
+}
+
+@media (max-width: 1100px) {
+  .gamified-lobby-grid {
+    grid-template-columns: 300px 1fr 280px;
+    gap: 1rem;
+  }
+}
+
+@media (max-width: 920px) {
+  .gamified-lobby-grid {
+    display: flex;
+    flex-direction: column;
+  }
+  .gamified-panel-left,
+  .gamified-panel-center,
+  .gamified-panel-right {
+    width: 100% !important;
+  }
+  .gamified-panel-left.mobile-hidden,
+  .gamified-panel-center.mobile-hidden,
+  .gamified-panel-right.mobile-hidden {
+    display: none !important;
+  }
+}
+
+/* Pestañas de Navegación Móvil */
+.gamified-mobile-tabs {
+  display: none;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  overflow-x: auto;
+}
+
+@media (max-width: 920px) {
+  .gamified-mobile-tabs {
+    display: flex;
+  }
+}
+
+/* Escenario Virtual del Avatar */
+.avatar-stage-viewport {
+  border-radius: 20px;
+  border: 2px solid rgba(0, 245, 212, 0.45);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.65), inset 0 0 35px rgba(0, 245, 212, 0.15);
+  padding: 1.5rem 1rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.3s;
+}
+
+.avatar-stage-viewport::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at 50% 10%, rgba(255, 255, 255, 0.15) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+/* Barra de Progreso XP Gamer */
+.xp-progress-track {
+  width: 100%;
+  height: 10px;
+  background: rgba(15, 23, 42, 0.8);
+  border-radius: 9999px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  position: relative;
+}
+
+.xp-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #00f5d4, #7928ca, #f72585);
+  border-radius: 9999px;
+  transition: width 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: 0 0 12px rgba(0, 245, 212, 0.7);
+}
+
+/* Tarjetas de Compañeros en Vivo */
+.classmate-gamer-card {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 0.75rem 0.9rem;
+  border-radius: 14px;
+  background: rgba(15, 23, 42, 0.75);
+  border: 1.5px solid rgba(255, 255, 255, 0.12);
+  transition: transform 0.2s, border-color 0.2s;
+}
+
+.classmate-gamer-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(0, 245, 212, 0.5);
+}
+
+.classmate-gamer-card.is-ready {
+  border-color: rgba(16, 185, 129, 0.7);
+  background: rgba(16, 185, 129, 0.1);
+}
+
+/* Partículas de Reacciones Flotantes */
+@keyframes float-up-fade {
+  0% {
+    opacity: 1;
+    transform: translateY(0) scale(0.8) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-80px) scale(1.3) rotate(15deg);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-160px) scale(1.6) rotate(-10deg);
+  }
+}
+
+.floating-reaction-emoji {
+  position: fixed;
+  pointer-events: none;
+  font-size: 2.6rem;
+  z-index: 99999;
+  animation: float-up-fade 2.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+  filter: drop-shadow(0 4px 15px rgba(0, 0, 0, 0.8));
+}
+
+/* ==========================================================================
+   🎨 AVATAR STUDIO MODAL — ESTILO FORTNITE / XBOX CHARACTER CREATOR
+   ========================================================================== */
+.avatar-studio-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(2, 6, 23, 0.88);
+  backdrop-filter: blur(18px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  box-sizing: border-box;
+}
+
+.avatar-studio-container {
+  width: 100%;
+  max-width: 1100px;
+  max-height: 92vh;
+  background: rgba(10, 18, 42, 0.95);
+  border: 2px solid #00f5d4;
+  border-radius: 24px;
+  box-shadow: 0 25px 70px rgba(0, 0, 0, 0.85), 0 0 45px rgba(0, 245, 212, 0.35);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.avatar-studio-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem 2rem;
+  border-bottom: 1.5px solid rgba(255, 255, 255, 0.12);
+  background: rgba(15, 23, 42, 0.8);
+}
+
+.avatar-studio-body {
+  display: grid;
+  grid-template-columns: 360px 1fr;
+  flex: 1;
+  overflow: hidden;
+}
+
+@media (max-width: 860px) {
+  .avatar-studio-body {
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+  }
+}
+
+.avatar-studio-preview-col {
+  padding: 2rem 1.5rem;
+  border-right: 1.5px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle at center, rgba(0, 245, 212, 0.12) 0%, rgba(5, 10, 25, 0.9) 70%);
+}
+
+.avatar-studio-controls-col {
+  padding: 1.5rem 2rem;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.studio-tab-btn {
+  padding: 0.6rem 1.1rem;
+  border-radius: 9999px;
+  font-weight: 800;
+  font-size: 0.88rem;
+  border: 1.5px solid rgba(255, 255, 255, 0.2);
+  background: rgba(15, 23, 42, 0.6);
+  color: #ffffff;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.studio-tab-btn.active {
+  background: #00f5d4;
+  color: #050510;
+  border-color: #00f5d4;
+  box-shadow: 0 0 16px rgba(0, 245, 212, 0.6);
+}
+
+.studio-color-swatch {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  cursor: pointer;
+  border: 2.5px solid transparent;
+  transition: transform 0.15s, border-color 0.15s;
+}
+
+.studio-color-swatch:hover,
+.studio-color-swatch.active {
+  transform: scale(1.2);
+  border-color: #ffffff;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+}
+
+.studio-option-card {
+  padding: 0.75rem 1rem;
+  border-radius: 12px;
+  background: rgba(15, 23, 42, 0.7);
+  border: 1.5px solid rgba(255, 255, 255, 0.15);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  transition: all 0.2s;
+}
+
+.studio-option-card:hover {
+  border-color: #00f5d4;
+  transform: translateY(-2px);
+}
+
+.studio-option-card.active {
+  border-color: #00f5d4;
+  background: rgba(0, 245, 212, 0.15);
+  box-shadow: 0 0 14px rgba(0, 245, 212, 0.35);
+}
+
+/* Transición Cinemática de Inicio de Examen */
+@keyframes curtain-zoom {
+  0% { transform: scale(0.85); opacity: 0; }
+  20% { transform: scale(1); opacity: 1; }
+  80% { transform: scale(1.05); opacity: 1; }
+  100% { transform: scale(1.3); opacity: 0; }
+}
+
+.game-start-transition-curtain {
+  position: fixed;
+  inset: 0;
+  z-index: 999999;
+  background: radial-gradient(circle at center, #0a1128 0%, #030712 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  animation: curtain-zoom 2.8s ease-in-out forwards;
+}
+
 
 
