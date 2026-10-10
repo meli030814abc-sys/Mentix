@@ -75,13 +75,16 @@
         </button>
       </nav>
 
-      <!-- Controles de Audio, Tema y Usuario -->
+      <!-- Controles de Audio, Tema, Diseño de Interfaces y Usuario -->
       <div style="display: flex; align-items: center; gap: 0.6rem;">
         <button id="sound-toggle-btn" class="btn btn-outline btn-icon" title="Alternar Sonidos de Juego" onclick="window.appRouter.toggleSound()">
           🔊
         </button>
         <button id="theme-toggle-btn" class="btn btn-outline btn-icon" title="Modo Oscuro / Claro" onclick="window.appRouter.toggleTheme()">
           🌙
+        </button>
+        <button id="design-toggle-btn" class="btn btn-outline" style="padding: 0.45rem 0.75rem; font-size: 0.88rem; display: flex; align-items: center; gap: 0.35rem; border-color: rgba(255,255,255,0.25);" title="Personalizar diseño de interfaces, fondos, textos y colores" onclick="window.appRouter.openInterfaceDesignModal()">
+          <span>🎨</span> <span class="hide-on-mobile">Diseño</span>
         </button>
 
         <!-- Slot de Usuario Dinámico -->
@@ -913,6 +916,195 @@
           Cerrar
         </button>
       </div>
+    </div>
+  </div>
+
+  <!-- Modal de Personalización y Diseño de Interfaces (Móviles y PC) -->
+  <div id="interface-design-modal" class="modal-overlay">
+    <div class="modal-content glass-panel" style="max-width: 780px; max-height: 90vh; overflow-y: auto; padding: 2rem; border-radius: 20px; border: 2px solid var(--neon-cyan); box-shadow: 0 20px 60px rgba(0,0,0,0.7);">
+      
+      <!-- Encabezado del Modal -->
+      <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.5rem; gap: 1rem;">
+        <div>
+          <div style="display: inline-flex; align-items: center; gap: 0.4rem; background: rgba(0,245,212,0.15); border: 1px solid var(--neon-cyan); padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.8rem; font-weight: 800; color: var(--neon-cyan); margin-bottom: 0.4rem;">
+            <span>🎨</span> PERSONALIZADOR DE INTERFACES
+          </div>
+          <h2 style="font-size: 1.6rem; font-weight: 900; margin: 0; color: var(--text-primary);">
+            Diseño de Interfaces (Móviles y PC)
+          </h2>
+          <p style="font-size: 0.88rem; color: var(--text-secondary); margin: 0.35rem 0 0;">
+            Personaliza los fondos de la página, colores y estilo de textos en cualquier pantalla.
+          </p>
+        </div>
+        <button class="btn btn-outline btn-icon" onclick="window.appRouter.closeModal('interface-design-modal')" title="Cerrar">✕</button>
+      </div>
+
+      <!-- Sección 1: Estilo de Fondo de la Página -->
+      <div style="margin-bottom: 1.75rem;">
+        <label style="display: block; font-weight: 800; font-size: 0.95rem; margin-bottom: 0.75rem; color: var(--text-primary); display: flex; align-items: center; gap: 0.5rem;">
+          <span>🖼️</span> Fondos de la Página
+        </label>
+        <div class="design-modal-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 0.75rem;">
+          
+          <div class="design-theme-card" data-theme-val="mentix_official" onclick="window.appRouter.selectDesignTheme('mentix_official')">
+            <div style="font-size: 1.8rem; margin-bottom: 0.25rem;">🌌</div>
+            <div style="font-weight: 800; font-size: 0.88rem; color: var(--text-primary);">Mentix Oficial</div>
+            <div style="font-size: 0.72rem; color: var(--text-secondary);">Futurista Espacial</div>
+          </div>
+
+          <div class="design-theme-card" data-theme-val="cyberpunk" onclick="window.appRouter.selectDesignTheme('cyberpunk')">
+            <div style="font-size: 1.8rem; margin-bottom: 0.25rem;">⚡</div>
+            <div style="font-weight: 800; font-size: 0.88rem; color: var(--text-primary);">Cyberpunk</div>
+            <div style="font-size: 0.72rem; color: var(--text-secondary);">Neón Púrpura y Rosa</div>
+          </div>
+
+          <div class="design-theme-card" data-theme-val="galaxy" onclick="window.appRouter.selectDesignTheme('galaxy')">
+            <div style="font-size: 1.8rem; margin-bottom: 0.25rem;">🪐</div>
+            <div style="font-weight: 800; font-size: 0.88rem; color: var(--text-primary);">Galaxia</div>
+            <div style="font-size: 0.72rem; color: var(--text-secondary);">Cosmos Violeta y Azul</div>
+          </div>
+
+          <div class="design-theme-card" data-theme-val="matrix" onclick="window.appRouter.selectDesignTheme('matrix')">
+            <div style="font-size: 1.8rem; margin-bottom: 0.25rem;">💻</div>
+            <div style="font-weight: 800; font-size: 0.88rem; color: var(--text-primary);">Matrix Tech</div>
+            <div style="font-size: 0.72rem; color: var(--text-secondary);">Cian y Verde Código</div>
+          </div>
+
+          <div class="design-theme-card" data-theme-val="ocean" onclick="window.appRouter.selectDesignTheme('ocean')">
+            <div style="font-size: 1.8rem; margin-bottom: 0.25rem;">🌊</div>
+            <div style="font-weight: 800; font-size: 0.88rem; color: var(--text-primary);">Océano Profundo</div>
+            <div style="font-size: 0.72rem; color: var(--text-secondary);">Azul Marino Sereno</div>
+          </div>
+
+          <div class="design-theme-card" data-theme-val="sunset" onclick="window.appRouter.selectDesignTheme('sunset')">
+            <div style="font-size: 1.8rem; margin-bottom: 0.25rem;">🔥</div>
+            <div style="font-weight: 800; font-size: 0.88rem; color: var(--text-primary);">Atardecer Solar</div>
+            <div style="font-size: 0.72rem; color: var(--text-secondary);">Ámbar y Fuego Rubí</div>
+          </div>
+
+          <div class="design-theme-card" data-theme-val="amoled" onclick="window.appRouter.selectDesignTheme('amoled')">
+            <div style="font-size: 1.8rem; margin-bottom: 0.25rem;">🖤</div>
+            <div style="font-weight: 800; font-size: 0.88rem; color: var(--text-primary);">AMOLED Puro</div>
+            <div style="font-size: 0.72rem; color: var(--text-secondary);">Negro 100% Contraste</div>
+          </div>
+
+          <div class="design-theme-card" data-theme-val="grid" onclick="window.appRouter.selectDesignTheme('grid')">
+            <div style="font-size: 1.8rem; margin-bottom: 0.25rem;">📐</div>
+            <div style="font-weight: 800; font-size: 0.88rem; color: var(--text-primary);">Retícula Gamer</div>
+            <div style="font-size: 0.72rem; color: var(--text-secondary);">Cuadrícula Arcade</div>
+          </div>
+
+          <div class="design-theme-card" data-theme-val="light" onclick="window.appRouter.selectDesignTheme('light')">
+            <div style="font-size: 1.8rem; margin-bottom: 0.25rem;">☀️</div>
+            <div style="font-weight: 800; font-size: 0.88rem; color: var(--text-primary);">Estudio Claro</div>
+            <div style="font-size: 0.72rem; color: var(--text-secondary);">Luminoso para Aulas</div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Sección 2: Colores de Acento Neón -->
+      <div style="margin-bottom: 1.75rem;">
+        <label style="display: block; font-weight: 800; font-size: 0.95rem; margin-bottom: 0.75rem; color: var(--text-primary); display: flex; align-items: center; gap: 0.5rem;">
+          <span>✨</span> Colores de Acento y Neón
+        </label>
+        <div style="display: flex; gap: 0.85rem; flex-wrap: wrap; align-items: center;">
+          <div class="design-color-dot" data-accent-val="cyan" style="background: #00f5d4;" title="Cian Neón" onclick="window.appRouter.selectDesignAccent('cyan')"></div>
+          <div class="design-color-dot" data-accent-val="magenta" style="background: #f72585;" title="Magenta Neón" onclick="window.appRouter.selectDesignAccent('magenta')"></div>
+          <div class="design-color-dot" data-accent-val="gold" style="background: #ffb703;" title="Oro Radiante" onclick="window.appRouter.selectDesignAccent('gold')"></div>
+          <div class="design-color-dot" data-accent-val="emerald" style="background: #06d6a0;" title="Esmeralda Menta" onclick="window.appRouter.selectDesignAccent('emerald')"></div>
+          <div class="design-color-dot" data-accent-val="purple" style="background: #a855f7;" title="Violeta Cósmico" onclick="window.appRouter.selectDesignAccent('purple')"></div>
+          <div class="design-color-dot" data-accent-val="blue" style="background: #3b82f6;" title="Azul Eléctrico" onclick="window.appRouter.selectDesignAccent('blue')"></div>
+          <div class="design-color-dot" data-accent-val="orange" style="background: #fb5607;" title="Fuego Naranja" onclick="window.appRouter.selectDesignAccent('orange')"></div>
+        </div>
+      </div>
+
+      <!-- Sección 3: Textos, Tipografía y Legibilidad (Móvil y PC) -->
+      <div style="margin-bottom: 1.75rem; background: rgba(0,0,0,0.25); border-radius: 14px; padding: 1.25rem; border: 1px solid var(--border-color);">
+        <label style="display: block; font-weight: 800; font-size: 0.95rem; margin-bottom: 0.85rem; color: var(--text-primary); display: flex; align-items: center; gap: 0.5rem;">
+          <span>✍️</span> Textos y Tipografía en Móviles y PC
+        </label>
+        
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+          <!-- Tamaño de Fuente -->
+          <div>
+            <label style="display: block; font-size: 0.82rem; font-weight: 700; color: var(--text-secondary); margin-bottom: 0.35rem;">
+              Tamaño de Letras
+            </label>
+            <select id="design-fontsize-select" style="width: 100%; padding: 0.55rem; border-radius: 8px; background: #0b0f19; color: white; border: 1px solid var(--border-color); font-weight: 700;" onchange="window.appRouter.updateDesignTextPreview()">
+              <option value="small">🔤 Compacto (90%)</option>
+              <option value="normal" selected>🔤 Estándar (100%)</option>
+              <option value="large">🔤 Grande (+15%)</option>
+              <option value="xlarge">🔤 Muy Grande (+25% Proyector)</option>
+            </select>
+          </div>
+
+          <!-- Contraste de Texto -->
+          <div>
+            <label style="display: block; font-size: 0.82rem; font-weight: 700; color: var(--text-secondary); margin-bottom: 0.35rem;">
+              Contraste de Textos
+            </label>
+            <select id="design-contrast-select" style="width: 100%; padding: 0.55rem; border-radius: 8px; background: #0b0f19; color: white; border: 1px solid var(--border-color); font-weight: 700;" onchange="window.appRouter.updateDesignTextPreview()">
+              <option value="normal" selected>Estándar Suave</option>
+              <option value="high">👁️ Alto Contraste (Ultra Nítido y Brillante)</option>
+            </select>
+          </div>
+
+          <!-- Tipografía -->
+          <div>
+            <label style="display: block; font-size: 0.82rem; font-weight: 700; color: var(--text-secondary); margin-bottom: 0.35rem;">
+              Familia Tipográfica
+            </label>
+            <select id="design-fontfamily-select" style="width: 100%; padding: 0.55rem; border-radius: 8px; background: #0b0f19; color: white; border: 1px solid var(--border-color); font-weight: 700;" onchange="window.appRouter.updateDesignTextPreview()">
+              <option value="outfit" selected>Outfit / Inter (Moderna & Gamer)</option>
+              <option value="poppins">Poppins (Geométrica Redondeada)</option>
+              <option value="system">Sistema Sans (Clásica y Rápida)</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sección 4: Vista Previa en Vivo -->
+      <div style="margin-bottom: 1.75rem;">
+        <label style="display: block; font-weight: 800; font-size: 0.85rem; margin-bottom: 0.5rem; color: var(--text-secondary); text-transform: uppercase;">
+          👁️ Vista Previa en Tiempo Real
+        </label>
+        <div id="design-live-preview-box" style="padding: 1.25rem 1.5rem; border-radius: 14px; border: 2px solid var(--neon-cyan); background: rgba(15, 23, 42, 0.7); box-shadow: 0 0 25px rgba(0,0,0,0.5); transition: all 0.3s ease;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; flex-wrap: wrap; gap: 0.5rem;">
+            <span id="preview-tag" class="badge-tag" style="background: rgba(0,245,212,0.15); border: 1px solid var(--neon-cyan); color: var(--neon-cyan); font-weight: 800; padding: 0.25rem 0.75rem; border-radius: 999px;">
+              🏆 Pregunta #1
+            </span>
+            <span style="font-weight: 800; font-size: 0.85rem; color: #ffd166;">⏱️ 20 seg</span>
+          </div>
+          <h4 id="preview-heading" style="margin: 0 0 0.85rem; font-size: 1.15rem; font-weight: 900; color: var(--text-primary); line-height: 1.35;">
+            ¿Cómo luce este diseño en tus fondos, textos y colores?
+          </h4>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 0.6rem;">
+            <div id="preview-opt-1" style="padding: 0.65rem 0.9rem; border-radius: 10px; background: #f72585; color: white; font-weight: 800; font-size: 0.9rem; display: flex; align-items: center; gap: 0.5rem;">
+              <span>🔺</span> Opción A: Perfecta y clara
+            </div>
+            <div id="preview-opt-2" style="padding: 0.65rem 0.9rem; border-radius: 10px; background: #4361ee; color: white; font-weight: 800; font-size: 0.9rem; display: flex; align-items: center; gap: 0.5rem;">
+              <span>🔷</span> Opción B: Alta nitidez
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Botones de Acción -->
+      <div style="display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap;">
+        <button type="button" class="btn btn-outline" onclick="window.appRouter.resetInterfaceDesign()" style="font-size: 0.88rem;">
+          🔄 Restablecer Predeterminado
+        </button>
+        <div style="display: flex; gap: 0.75rem;">
+          <button type="button" class="btn btn-outline" onclick="window.appRouter.closeModal('interface-design-modal')">
+            Cancelar
+          </button>
+          <button type="button" class="btn btn-cyan" onclick="window.appRouter.saveInterfaceDesignModal()" style="font-weight: 900; padding: 0.65rem 1.4rem;">
+            ✅ Aplicar Diseño
+          </button>
+        </div>
+      </div>
+
     </div>
   </div>
 
