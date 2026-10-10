@@ -31,10 +31,10 @@
   --neon-blue: #4361ee;
   --neon-orange: #fb5607;
 
-  /* Variables de Temporizador Personalizable */
-  --timer-color: #00f5d4;
-  --timer-glow: rgba(0, 245, 212, 0.75);
-  --timer-bg: rgba(0, 245, 212, 0.15);
+  /* Variables de Temporizador Personalizable (Amarillo Neón) */
+  --timer-color: #ffe600;
+  --timer-glow: rgba(255, 230, 0, 0.9);
+  --timer-bg: rgba(255, 230, 0, 0.18);
 
   /* Colores de opciones de juego (Identidad Propia) */
   --opt-1: #f72585; /* Magenta Neón (Rombo) */
@@ -1473,40 +1473,40 @@ body.light-theme .student-feedback-card.is-wrong {
 
 /* ⏱️ Clases globales para temporizadores de cuenta regresiva, alumno y modo individual */
 #intro-countdown-num {
-  color: var(--timer-color, var(--neon-cyan)) !important;
-  text-shadow: 0 0 50px var(--timer-glow, rgba(0,245,212,0.8)), 0 0 90px var(--timer-glow, rgba(0,245,212,0.4)) !important;
+  color: var(--timer-color, #ffe600) !important;
+  text-shadow: 0 0 50px var(--timer-glow, rgba(255, 230, 0, 0.9)), 0 0 100px var(--timer-glow, rgba(255, 230, 0, 0.5)) !important;
   animation: timer-pulse 0.9s infinite alternate;
 }
 
 .countdown-banner {
-  background: var(--timer-bg, rgba(251, 86, 7, 0.25)) !important;
-  border: 2px solid var(--timer-color, #fb5607) !important;
-  color: var(--timer-color, #fb5607) !important;
-  box-shadow: 0 0 25px var(--timer-glow, rgba(251, 86, 7, 0.45)) !important;
-  text-shadow: 0 0 10px var(--timer-glow, rgba(251, 86, 7, 0.8)) !important;
+  background: var(--timer-bg, rgba(255, 230, 0, 0.18)) !important;
+  border: 2px solid var(--timer-color, #ffe600) !important;
+  color: var(--timer-color, #ffe600) !important;
+  box-shadow: 0 0 25px var(--timer-glow, rgba(255, 230, 0, 0.45)) !important;
+  text-shadow: 0 0 10px var(--timer-glow, rgba(255, 230, 0, 0.85)) !important;
 }
 
 .student-timer-badge {
   background: rgba(10, 20, 45, 0.9) !important;
-  border: 2px solid var(--timer-color, #00f5d4) !important;
-  color: var(--timer-color, #00f5d4) !important;
-  text-shadow: 0 0 10px var(--timer-glow, rgba(0, 245, 212, 0.8)) !important;
-  box-shadow: 0 0 18px var(--timer-glow, rgba(0, 245, 212, 0.35)) !important;
+  border: 2px solid var(--timer-color, #ffe600) !important;
+  color: var(--timer-color, #ffe600) !important;
+  text-shadow: 0 0 10px var(--timer-glow, rgba(255, 230, 0, 0.85)) !important;
+  box-shadow: 0 0 18px var(--timer-glow, rgba(255, 230, 0, 0.35)) !important;
 }
 
 .student-timer-badge #player-timer-num {
-  color: var(--timer-color, #00f5d4) !important;
+  color: var(--timer-color, #ffe600) !important;
 }
 
 .solo-timer-badge {
-  color: var(--timer-color, var(--neon-gold)) !important;
-  border: 2px solid var(--timer-color, var(--border-color)) !important;
-  box-shadow: 0 0 18px var(--timer-glow, rgba(255, 183, 3, 0.35)) !important;
-  text-shadow: 0 0 12px var(--timer-glow, rgba(255, 183, 3, 0.8)) !important;
+  color: var(--timer-color, #ffe600) !important;
+  border: 2px solid var(--timer-color, #ffe600) !important;
+  box-shadow: 0 0 18px var(--timer-glow, rgba(255, 230, 0, 0.35)) !important;
+  text-shadow: 0 0 12px var(--timer-glow, rgba(255, 230, 0, 0.85)) !important;
 }
 
 .solo-timer-badge #timer-text {
-  color: var(--timer-color, var(--neon-gold)) !important;
+  color: var(--timer-color, #ffe600) !important;
 }
 
 .kahoot-host-circle-badge.answers-badge {

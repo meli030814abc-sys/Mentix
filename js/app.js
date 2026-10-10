@@ -1190,9 +1190,10 @@ class AppRouter {
       if (res.ok) {
         const fileDesign = await res.json();
         const local = localStorage.getItem('mentix_admin_design');
-        if (!local && fileDesign) {
-          localStorage.setItem('mentix_admin_design', JSON.stringify(fileDesign));
-          if (window.AdminView) window.AdminView.applyDesign(fileDesign);
+        if (!local || JSON.parse(local)?.timerColor === 'cyan') {
+          const merged = local ? { ...JSON.parse(local), timerColor: fileDesign.timerColor || 'yellow' } : fileDesign;
+          localStorage.setItem('mentix_admin_design', JSON.stringify(merged));
+          if (window.AdminView) window.AdminView.applyDesign(merged);
         }
       }
     } catch(e) {}

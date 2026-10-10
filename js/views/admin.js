@@ -263,7 +263,7 @@ window.AdminView = {
     return {
       bgTheme: 'mentix_official',
       accentColor: 'cyan',
-      timerColor: 'cyan',
+      timerColor: 'yellow',
       fontSize: 'normal',
       contrast: 'normal'
     };
@@ -412,7 +412,7 @@ window.AdminView = {
     this.selectedDesign = {
       bgTheme: 'mentix_official',
       accentColor: 'cyan',
-      timerColor: 'cyan',
+      timerColor: 'yellow',
       fontSize: 'normal',
       contrast: 'normal',
       updatedAt: new Date().toISOString()
@@ -503,13 +503,13 @@ window.AdminView = {
         magenta: { color: '#f72585', glow: 'rgba(247, 37, 133, 0.85)', bg: 'rgba(247, 37, 133, 0.22)' },
         gold: { color: '#ffb703', glow: 'rgba(255, 183, 3, 0.85)', bg: 'rgba(255, 183, 3, 0.22)' },
         emerald: { color: '#06d6a0', glow: 'rgba(6, 214, 160, 0.85)', bg: 'rgba(6, 214, 160, 0.22)' },
-        yellow: { color: '#ffe600', glow: 'rgba(255, 230, 0, 0.85)', bg: 'rgba(255, 230, 0, 0.22)' },
+        yellow: { color: '#ffe600', glow: 'rgba(255, 230, 0, 0.95)', bg: 'rgba(255, 230, 0, 0.22)' },
         purple: { color: '#a855f7', glow: 'rgba(168, 85, 247, 0.85)', bg: 'rgba(168, 85, 247, 0.22)' },
         blue: { color: '#3b82f6', glow: 'rgba(59, 130, 246, 0.85)', bg: 'rgba(59, 130, 246, 0.22)' },
         red: { color: '#ef233c', glow: 'rgba(239, 35, 60, 0.85)', bg: 'rgba(239, 35, 60, 0.22)' }
       };
-      const tKey = s.timerColor || 'cyan';
-      const tCfg = timerColorsMap[tKey] || timerColorsMap.cyan;
+      const tKey = s.timerColor || 'yellow';
+      const tCfg = timerColorsMap[tKey] || timerColorsMap.yellow;
       document.documentElement.style.setProperty('--timer-color', tCfg.color);
       document.documentElement.style.setProperty('--timer-glow', tCfg.glow);
       document.documentElement.style.setProperty('--timer-bg', tCfg.bg);

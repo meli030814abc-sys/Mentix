@@ -298,13 +298,13 @@ window.GameView = {
 
     container.innerHTML = `
       <div style="min-height: 70vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 2rem;">
-        <span class="badge-tag tag-medium countdown-banner" style="margin-bottom: 1.5rem; font-size: 1.05rem; padding: 0.5rem 1.4rem; font-weight: 900; letter-spacing: 1px;">
+        <span class="badge-tag tag-medium countdown-banner" style="margin-bottom: 1.5rem; font-size: clamp(0.95rem, 3.2vw, 1.15rem); padding: 0.55rem 1.5rem; font-weight: 900; letter-spacing: 1.5px; border-radius: 9999px;">
           ¡EL RETO COMIENZA EN...
         </span>
-        <div id="intro-countdown-num" style="font-size: clamp(6rem, 18vw, 10rem); font-weight: 900; line-height: 1; color: var(--timer-color, var(--neon-cyan)); text-shadow: 0 0 50px var(--timer-glow, rgba(0,245,212,0.8)), 0 0 90px var(--timer-glow, rgba(0,245,212,0.4)); animation: timer-pulse 0.9s infinite alternate;">
+        <div id="intro-countdown-num" style="font-size: clamp(7rem, 24vw, 12rem); font-weight: 900; line-height: 1; color: var(--timer-color, #ffe600) !important; text-shadow: 0 0 50px var(--timer-glow, rgba(255,230,0,0.9)), 0 0 100px var(--timer-glow, rgba(255,230,0,0.5)) !important; animation: timer-pulse 0.9s infinite alternate;">
           ${count}
         </div>
-        <p style="color: var(--text-secondary); font-size: 1.3rem; margin-top: 1.5rem; font-weight: 700;">
+        <p style="color: var(--text-secondary); font-size: clamp(1.15rem, 3.8vw, 1.45rem); margin-top: 1.5rem; font-weight: 800; text-shadow: 0 2px 10px rgba(0,0,0,0.85);">
           ${this.challenge.title || 'Reto MENTIX'}
         </p>
       </div>
@@ -319,8 +319,8 @@ window.GameView = {
       } else if (count === 0) {
         if (el) {
           el.textContent = '¡A RETAR! 🔥';
-          el.style.color = 'var(--timer-color, var(--neon-magenta))';
-          el.style.textShadow = '0 0 50px var(--timer-glow, rgba(247,37,133,0.8))';
+          el.style.color = 'var(--timer-color, #ffe600)';
+          el.style.textShadow = '0 0 50px var(--timer-glow, rgba(255,230,0,0.95))';
         }
         window.soundEngine.playFanfare();
       } else {
