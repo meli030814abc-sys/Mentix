@@ -521,7 +521,7 @@ class RealtimeEngine {
   }
 
   // Crear sala como Anfitrión (Host)
-  createRoom(challenge, gameMode = 'clasico', modeConfig = {}, rosterConfig = null) {
+  createRoom(challenge, gameMode = 'clasico', modeConfig = {}, rosterConfig = null, roomType = 'presented') {
     const pin = this.generatePin();
     this.isHost = true;
     this.localPlayer = null; // El anfitrión es el profesor/presentador, no un jugador competidor
@@ -542,6 +542,7 @@ class RealtimeEngine {
       hostName: window.appState?.currentUser?.name || 'Profesor',
       status: 'lobby',
       gameMode: gameMode || 'clasico',
+      roomType: roomType || 'presented', // 'presented' | 'normal'
       modeConfig: modeConfig || {},
       rosterMode: rosterMode,
       rosterGroupName: rosterConfig?.groupName || (rosterMode === 'roster' ? 'Lista Oficial de Estudiantes' : ''),
@@ -566,6 +567,7 @@ class RealtimeEngine {
         pin: pin,
         title: safeChallenge.title,
         gameMode: gameMode,
+        roomType: roomType || 'presented',
         modeConfig: modeConfig,
         rosterMode: rosterMode,
         rosterCount: rosterList.length

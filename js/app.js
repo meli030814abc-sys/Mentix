@@ -194,7 +194,7 @@ class AppRouter {
       case 'select-experience':
         document.getElementById('view-experience')?.classList.add('active');
         if (params.challenge) {
-          window.ExperienceView.render(params.challenge, params.gameMode || 'clasico');
+          window.ExperienceView.render(params.challenge, params.gameMode || 'clasico', params.roomType || 'presented');
         }
         break;
 
@@ -202,7 +202,7 @@ class AppRouter {
         document.getElementById('view-lobby')?.classList.add('active');
         const hostChallenge = params.challenge || window.LobbyView?.pendingChallenge || window.ExperienceView?.currentChallenge || window.realtimeEngine?.currentRoom?.challenge || window.appState?.challenges?.[0];
         if (hostChallenge) {
-          window.LobbyView.initHost(hostChallenge, params.gameMode || 'clasico', params.modeConfig || {}, params.rosterConfig || null);
+          window.LobbyView.initHost(hostChallenge, params.gameMode || 'clasico', params.modeConfig || {}, params.rosterConfig || null, params.roomType || 'presented');
         } else {
           this.navigate('home');
         }
@@ -388,20 +388,20 @@ class AppRouter {
     window.GameView.initSolo(c);
   }
 
-  hostRoom(challengeId) {
+  hostRoom(challengeId, roomType = 'presented') {
     if (this.isGuest()) { this.guestBlocked(); return; }
     const c = window.appState.challenges.find(item => item.id === challengeId);
     if (!c) return;
-    this.selectExperience(challengeId);
+    this.selectExperience(challengeId, 'clasico', roomType);
   }
 
-  selectExperience(challengeId, defaultMode = 'clasico') {
+  selectExperience(challengeId, defaultMode = 'clasico', roomType = 'presented') {
     const c = window.appState.challenges.find(item => item.id === challengeId);
     if (!c) return;
-    this.navigate('select-experience', { challenge: c, gameMode: defaultMode });
+    this.navigate('select-experience', { challenge: c, gameMode: defaultMode, roomType: roomType });
   }
 
-  launchHostWithMode(challengeOrId, modeId = 'clasico', config = {}, rosterConfig = null) {
+  launchHostWithMode(challengeOrId, modeId = 'clasico', config = {}, rosterConfig = null, roomType = 'presented') {
     let c = null;
     if (challengeOrId && typeof challengeOrId === 'object') {
       c = challengeOrId;
@@ -427,7 +427,7 @@ class AppRouter {
       return;
     }
 
-    this.navigate('lobby-host', { challenge: c, gameMode: modeId, modeConfig: config, rosterConfig: rosterConfig });
+    this.navigate('lobby-host', { challenge: c, gameMode: modeId, modeConfig: config, rosterConfig: rosterConfig, roomType: roomType });
   }
 
   startLiveHostGame(room) {
@@ -564,15 +564,22 @@ class AppRouter {
           <button class="btn btn-outline" style="border-width: 2px;" onclick="window.appRouter.closeModal('preview-modal'); window.appRouter.startSinglePlayer('${c.id}')">
             <span style="font-size: 1.6rem;">🎯</span>
             <div style="text-align: left;">
-              <div style="font-size: 1.15rem; font-weight: 800;">Jugar Solo (Práctica)</div>
-              <div style="font-size: 0.8rem; font-weight: 400; opacity: 0.85;">Entrena y supera tu puntuación personal</div>
+              <div style="font-size: 1.1rem; font-weight: 800;">Jugar Solo (Práctica)</div>
+              <div style="font-size: 0.78rem; font-weight: 400; opacity: 0.85;">Entrena y supera tu puntuación personal</div>
             </div>
           </button>
-          <button class="btn btn-primary btn-lg" style="box-shadow: 0 0 25px rgba(0, 245, 212, 0.35);" onclick="window.appRouter.closeModal('preview-modal'); window.appRouter.hostRoom('${c.id}')">
-            <span style="font-size: 1.6rem;">🚀</span>
+          <button class="btn btn-primary btn-lg" style="box-shadow: 0 0 25px rgba(247, 37, 133, 0.45); background: linear-gradient(135deg, #7928ca, #f72585);" onclick="window.appRouter.closeModal('preview-modal'); window.appRouter.hostRoom('${c.id}', 'presented')">
+            <span style="font-size: 1.6rem;">📽️</span>
             <div style="text-align: left;">
-              <div style="font-size: 1.15rem; font-weight: 800;">Crear Sala Multijugador</div>
-              <div style="font-size: 0.8rem; font-weight: 400; opacity: 0.9;">Compite en vivo con amigos mediante código PIN</div>
+              <div style="font-size: 1.1rem; font-weight: 900;">Crear Sala con Preguntas Presentadas</div>
+              <div style="font-size: 0.78rem; font-weight: 400; opacity: 0.9;">Proyecta en pantalla gigante (Estilo Kahoot / TV)</div>
+            </div>
+          </button>
+          <button class="btn btn-cyan btn-lg" style="box-shadow: 0 0 25px rgba(0, 245, 212, 0.45); background: linear-gradient(135deg, #00b4d8, #0077b6); color: #ffffff;" onclick="window.appRouter.closeModal('preview-modal'); window.appRouter.hostRoom('${c.id}', 'normal')">
+            <span style="font-size: 1.6rem;">🎮</span>
+            <div style="text-align: left;">
+              <div style="font-size: 1.1rem; font-weight: 900;">Crear Sala Normal</div>
+              <div style="font-size: 0.78rem; font-weight: 400; opacity: 0.9;">Preguntas y respuestas en la pantalla de cada jugador</div>
             </div>
           </button>
         </div>

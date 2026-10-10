@@ -493,9 +493,12 @@ window.GameView = {
       <div style="max-width: 1100px; margin: 0 auto; padding: 1rem 1.25rem 4rem;">
         <!-- Barra Superior de Anfitrión / Profesor -->
         <div class="kahoot-host-topbar">
-          <div style="display: flex; align-items: center; gap: 0.75rem;">
+          <div style="display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;">
             <span class="kahoot-pin-pill">
               <span>📱</span> Únete con PIN: <strong style="color: var(--neon-cyan); letter-spacing: 1px;">${this.room.pin}</strong>
+            </span>
+            <span class="badge-tag" style="background:${this.room?.roomType === 'normal' ? 'rgba(14, 165, 233, 0.2)' : 'rgba(168, 85, 247, 0.2)'}; border: 1.5px solid ${this.room?.roomType === 'normal' ? '#0ea5e9' : '#a855f7'}; color: ${this.room?.roomType === 'normal' ? '#38bdf8' : '#d8b4fe'}; font-weight: 800; font-size: 0.85rem; padding: 0.25rem 0.65rem; border-radius: 9999px;">
+              ${this.room?.roomType === 'normal' ? '🎮 SALA NORMAL' : '📽️ PREGUNTAS PRESENTADAS'}
             </span>
             <span style="font-weight: 800; font-size: 1.1rem; color: var(--text-primary);">
               Pregunta ${this.currentQuestionIndex + 1} de ${this.challenge.questions.length}
@@ -647,6 +650,9 @@ window.GameView = {
           </div>
 
           <div style="display: flex; align-items: center; gap: 0.5rem;">
+            <div class="badge-tag" style="background: rgba(10, 20, 45, 0.85); border: 1.5px solid #00f5d4; color: #00f5d4 !important; font-weight: 900; font-size: 0.95rem; padding: 0.35rem 0.8rem; border-radius: 9999px; text-shadow: 0 0 10px rgba(0, 245, 212, 0.8); box-shadow: 0 4px 15px rgba(0,0,0,0.5);">
+              ⏱️ <span id="player-timer-num">${this.timeLeft}</span>s
+            </div>
             <div class="badge-tag" style="background: rgba(10, 20, 45, 0.85); border: 1.5px solid #ffd166; color: #ffd166 !important; font-weight: 900; font-size: 0.95rem; padding: 0.35rem 0.9rem; border-radius: 9999px; text-shadow: 0 0 10px rgba(255, 209, 102, 0.6); box-shadow: 0 4px 15px rgba(0,0,0,0.5);">
               🏆 <span id="player-score-val">${window.realtimeEngine.localPlayer?.score || 0}</span> PTS
             </div>
@@ -660,6 +666,13 @@ window.GameView = {
         <div class="kahoot-host-question-banner" style="font-size: clamp(1.05rem, 3.2vw, 1.35rem); margin: 0.4rem 0 0.85rem; padding: 0.75rem 1rem; border-radius: 14px; min-height: auto;">
           ${this.escapeHtml(q.text)}
         </div>
+
+        <!-- Media / Imagen si la pregunta tiene imagen -->
+        ${q.media && q.mediaType === 'image' ? `
+          <div style="text-align: center; margin: 0 0 0.85rem; max-height: 160px; overflow: hidden; border-radius: 12px; display: flex; justify-content: center; align-items: center;">
+            <img src="${q.media}" alt="Pregunta" style="max-height: 160px; max-width: 100%; border-radius: 12px; box-shadow: 0 6px 20px rgba(0,0,0,0.4); object-fit: contain;" />
+          </div>
+        ` : ''}
 
         ${isTextOrOpen ? `
           <!-- Entrada de Respuesta Corta o Abierta para el Estudiante -->
@@ -944,6 +957,7 @@ window.GameView = {
     if (this.timerInterval) clearInterval(this.timerInterval);
 
     const textEl = document.getElementById('timer-text');
+    const playerTimerNum = document.getElementById('player-timer-num');
     const hostTimerNum = document.getElementById('host-timer-num');
     const hostTimerCircle = document.getElementById('host-timer-circle');
 
@@ -951,6 +965,7 @@ window.GameView = {
       this.timeLeft--;
 
       if (textEl) textEl.textContent = Math.max(0, this.timeLeft);
+      if (playerTimerNum) playerTimerNum.textContent = Math.max(0, this.timeLeft);
       if (hostTimerNum) {
         hostTimerNum.textContent = Math.max(0, this.timeLeft);
         if (this.timeLeft <= 5 && hostTimerCircle) {

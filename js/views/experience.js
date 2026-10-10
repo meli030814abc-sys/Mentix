@@ -9,13 +9,15 @@ window.ExperienceView = {
   currentChallenge: null,
   selectedModeId: 'clasico',
   customConfig: {},
+  roomType: 'presented', // 'presented' | 'normal'
 
-  render(challenge, preselectedModeId = 'clasico') {
+  render(challenge, preselectedModeId = 'clasico', roomType = 'presented') {
     const container = document.getElementById('view-experience');
     if (!container) return;
 
     this.currentChallenge = challenge;
     this.selectedModeId = preselectedModeId;
+    this.roomType = roomType || 'presented';
     const modes = window.GameModes ? window.GameModes.modes : [];
     const selectedMode = window.GameModes ? window.GameModes.getMode(this.selectedModeId) : modes[0];
     this.customConfig = { ...(selectedMode?.config || {}) };
@@ -144,9 +146,9 @@ window.ExperienceView = {
           <button 
             class="btn btn-primary btn-lg experience-launch-btn" 
             onclick="window.ExperienceView.confirmAndLaunch()"
-            style="background: ${mode.gradient}; border: none; font-weight: 900; font-size: 1.15rem; padding: 0.9rem 2.2rem; box-shadow: 0 0 25px rgba(0, 245, 212, 0.4); border-radius: var(--border-radius-md); display: inline-flex; align-items: center; gap: 0.65rem;"
+            style="background: ${this.roomType === 'normal' ? 'linear-gradient(135deg, #00b4d8, #0077b6)' : mode.gradient}; border: none; font-weight: 900; font-size: 1.15rem; padding: 0.9rem 2.2rem; box-shadow: 0 0 25px rgba(0, 245, 212, 0.4); border-radius: var(--border-radius-md); display: inline-flex; align-items: center; gap: 0.65rem;"
           >
-            <span>🚀</span> <span>¡Crear Sala con este Modo!</span>
+            <span>${this.roomType === 'normal' ? '🎮' : '📽️'}</span> <span>${this.roomType === 'normal' ? '¡Crear Sala Normal!' : '¡Crear Sala con Preguntas Presentadas!'}</span>
           </button>
         </div>
       </div>
@@ -251,7 +253,8 @@ window.ExperienceView = {
     window.LobbyView.openCreateRoomRosterModal(
       this.currentChallenge,
       this.selectedModeId,
-      this.customConfig
+      this.customConfig,
+      this.roomType
     );
   },
 

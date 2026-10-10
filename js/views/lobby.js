@@ -15,11 +15,13 @@ window.LobbyView = {
   pendingChallenge: null,
   pendingModeId: 'clasico',
   pendingModeConfig: {},
+  pendingRoomType: 'presented', // 'presented' | 'normal'
 
-  initHost(challenge, gameMode = 'clasico', modeConfig = {}, rosterConfig = null) {
+  initHost(challenge, gameMode = 'clasico', modeConfig = {}, rosterConfig = null, roomType = 'presented') {
     this.mode = 'host';
+    this.pendingRoomType = roomType || 'presented';
     try {
-      this.currentRoom = window.realtimeEngine.createRoom(challenge, gameMode, modeConfig, rosterConfig);
+      this.currentRoom = window.realtimeEngine.createRoom(challenge, gameMode, modeConfig, rosterConfig, roomType);
     } catch (e) {
       console.error('Error inicializando sala de anfitrión:', e);
     }
@@ -141,6 +143,23 @@ window.LobbyView = {
       }
     });
 
+    // Detectar si el anfitrión cambió el tipo de sala en vivo (presentadas vs normal)
+    window.realtimeEngine.on('ROOM_TYPE_CHANGED', (data) => {
+      const myPin = String(window.realtimeEngine.currentRoom?.pin || this.joinPin || '').replace(/\D/g, '');
+      const dataPin = String(data?.pin || '').replace(/\D/g, '');
+      if ((!dataPin || dataPin === myPin) && data.roomType) {
+        if (window.realtimeEngine.currentRoom) {
+          window.realtimeEngine.currentRoom.roomType = data.roomType;
+        }
+        if (this.joinRoomData) {
+          this.joinRoomData.roomType = data.roomType;
+        }
+        if (this.mode === 'waiting') {
+          this.render();
+        }
+      }
+    });
+
     // Detectar si el anfitrión cambió el modo de juego en vivo desde el lobby
     window.realtimeEngine.on('MODE_CHANGED', (data) => {
       const myPin = window.realtimeEngine.currentRoom?.pin;
@@ -159,14 +178,15 @@ window.LobbyView = {
   // ==========================================
   // 🎓 MODAL DE ACCESO: LISTADO VS NICKNAMES
   // ==========================================
-  openCreateRoomRosterModal(challenge, gameMode = 'clasico', modeConfig = {}, preselectedGroupId = null) {
+  openCreateRoomRosterModal(challenge, gameMode = 'clasico', modeConfig = {}, roomType = 'presented', preselectedGroupId = null) {
     this.pendingChallenge = challenge;
     this.pendingModeId = gameMode;
     this.pendingModeConfig = modeConfig;
+    this.pendingRoomType = roomType || 'presented';
 
     const modal = document.getElementById('roster-config-modal');
     if (!modal) {
-      window.appRouter.launchHostWithMode(challenge, gameMode, modeConfig);
+      window.appRouter.launchHostWithMode(challenge, gameMode, modeConfig, null, this.pendingRoomType);
       return;
     }
 
@@ -337,7 +357,8 @@ window.LobbyView = {
       this.pendingChallenge,
       this.pendingModeId,
       this.pendingModeConfig,
-      rosterConfig
+      rosterConfig,
+      this.pendingRoomType || 'presented'
     );
   },
 
@@ -440,6 +461,29 @@ window.LobbyView = {
     this.render();
   },
 
+  toggleRoomType() {
+    if (!this.currentRoom) return;
+    this.currentRoom.roomType = (this.currentRoom.roomType === 'normal') ? 'presented' : 'normal';
+    this.pendingRoomType = this.currentRoom.roomType;
+    
+    if (this.currentRoom.pin) {
+      try {
+        localStorage.setItem(`te_reto_room_${this.currentRoom.pin}`, JSON.stringify(this.currentRoom));
+        localStorage.setItem(`mentix_room_${this.currentRoom.pin}`, JSON.stringify(this.currentRoom));
+      } catch (e) {}
+    }
+
+    window.realtimeEngine.syncRoomState();
+    window.realtimeEngine.broadcast({
+      type: 'ROOM_TYPE_CHANGED',
+      pin: this.currentRoom.pin,
+      roomType: this.currentRoom.roomType
+    });
+
+    if (window.soundEngine) window.soundEngine.playClick();
+    this.render();
+  },
+
   render() {
     const container = document.getElementById('view-lobby');
     if (!container) return;
@@ -511,6 +555,9 @@ window.LobbyView = {
           <div>
             <div style="display: flex; align-items: center; gap: 0.6rem; margin-bottom: 0.4rem; flex-wrap: wrap;">
               <span class="badge-tag tag-easy">PANTALLA DE PROFESOR</span>
+              <span class="badge-tag" style="background:${r.roomType === 'normal' ? 'rgba(14, 165, 233, 0.2)' : 'rgba(168, 85, 247, 0.2)'}; border: 1.5px solid ${r.roomType === 'normal' ? '#0ea5e9' : '#a855f7'}; color: ${r.roomType === 'normal' ? '#38bdf8' : '#d8b4fe'}; font-weight: 800; padding: 0.3rem 0.75rem; border-radius: 9999px;">
+                ${r.roomType === 'normal' ? '🎮 SALA NORMAL' : '📽️ PREGUNTAS PRESENTADAS'}
+              </span>
               <span class="badge-tag badge-mode-pill">
                 ${currentMode.icon} ${currentMode.name.toUpperCase()}
               </span>
@@ -528,10 +575,15 @@ window.LobbyView = {
             <h1 style="font-size: 2rem; margin: 0; color: var(--text-primary);">
               ${challengeTitle}
             </h1>
-            <p style="color: var(--text-secondary); margin-top: 0.25rem;">${questionsCount} preguntas • Tiempo estándar: ${timeLimit}s</p>
+            <p style="color: var(--text-secondary); margin-top: 0.25rem;">
+              ${questionsCount} preguntas • Tiempo estándar: ${timeLimit}s • Modo de sala: <strong style="color: ${r.roomType === 'normal' ? 'var(--neon-cyan)' : '#d8b4fe'};">${r.roomType === 'normal' ? '🎮 Preguntas y respuestas en cada dispositivo' : '📽️ Preguntas proyectadas en pantalla principal'}</strong>
+            </p>
           </div>
 
           <div style="display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap;">
+            <button class="btn btn-outline" onclick="window.LobbyView.toggleRoomType()" title="Cambiar si las preguntas se proyectan en pantalla grande o aparecen en cada celular">
+              <span>${r.roomType === 'normal' ? '📽️' : '🎮'}</span> ${r.roomType === 'normal' ? 'Cambiar a Preguntas Presentadas' : 'Cambiar a Sala Normal'}
+            </button>
             <button class="btn btn-outline btn-host-roster" onclick="window.LobbyView.openEditRosterModal()" title="Modificar o cargar lista de correos">
               <span>📋</span> ${r.rosterMode === 'roster' ? 'Gestionar Lista' : 'Activar Lista Correos'}
             </button>
