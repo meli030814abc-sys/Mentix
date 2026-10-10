@@ -765,6 +765,10 @@ window.GameView = {
         if (inp) inp.focus();
       }, 100);
     }
+
+    setTimeout(() => {
+      this.adjustCardAndBannerTextSizes();
+    }, 60);
   },
 
   /* ⚡ MODO SOLITARIO (PRÁCTICA CON FORMAS TE RETO) */
@@ -910,38 +914,71 @@ window.GameView = {
 
   adjustCardAndBannerTextSizes() {
     // 1. Ajustar banner si la pregunta es extensa para que se lea completa sin cortes
-    const banner = document.querySelector('.kahoot-host-question-banner');
-    if (banner) {
+    document.querySelectorAll('.kahoot-host-question-banner').forEach(banner => {
       const qLen = (banner.textContent || '').trim().length;
-      if (qLen > 180) {
-        banner.style.fontSize = '1.2rem';
+      banner.style.wordBreak = 'break-word';
+      banner.style.overflowWrap = 'break-word';
+      banner.style.whiteSpace = 'normal';
+      banner.style.height = 'auto';
+      if (qLen > 220) {
+        banner.style.fontSize = 'clamp(0.92rem, 2.2vw, 1.15rem)';
+        banner.style.lineHeight = '1.25';
+        banner.style.padding = '0.75rem 1rem';
+      } else if (qLen > 150) {
+        banner.style.fontSize = 'clamp(1.02rem, 2.5vw, 1.28rem)';
         banner.style.lineHeight = '1.3';
-        banner.style.padding = '1rem 1.25rem';
-      } else if (qLen > 110) {
-        banner.style.fontSize = '1.4rem';
+        banner.style.padding = '0.85rem 1.2rem';
+      } else if (qLen > 90) {
+        banner.style.fontSize = 'clamp(1.15rem, 2.8vw, 1.45rem)';
         banner.style.lineHeight = '1.35';
-        banner.style.padding = '1.15rem 1.5rem';
-      } else if (qLen > 65) {
-        banner.style.fontSize = '1.65rem';
+        banner.style.padding = '1rem 1.35rem';
+      } else if (qLen > 50) {
+        banner.style.fontSize = 'clamp(1.25rem, 3.2vw, 1.65rem)';
       }
-    }
+    });
 
-    // 2. Ajustar opciones para que se lean completas
+    // 2. Ajustar opciones de pantalla principal (host) y modo solitario
     document.querySelectorAll('.kahoot-card-text').forEach(el => {
       const len = (el.textContent || '').trim().length;
-      if (len > 120) {
-        el.style.fontSize = '0.85rem';
+      el.style.wordBreak = 'break-word';
+      el.style.overflowWrap = 'break-word';
+      el.style.whiteSpace = 'normal';
+      if (len > 140) {
+        el.style.fontSize = 'clamp(0.75rem, 1.6vw, 0.85rem)';
+        el.style.lineHeight = '1.2';
+      } else if (len > 90) {
+        el.style.fontSize = 'clamp(0.85rem, 1.8vw, 0.96rem)';
         el.style.lineHeight = '1.25';
-      } else if (len > 80) {
-        el.style.fontSize = '0.95rem';
+      } else if (len > 55) {
+        el.style.fontSize = 'clamp(0.95rem, 2vw, 1.08rem)';
         el.style.lineHeight = '1.3';
-      } else if (len > 50) {
-        el.style.fontSize = '1.08rem';
-        el.style.lineHeight = '1.32';
       } else if (len > 30) {
-        el.style.fontSize = '1.2rem';
+        el.style.fontSize = 'clamp(1.05rem, 2.2vw, 1.2rem)';
       } else {
-        el.style.fontSize = '1.35rem';
+        el.style.fontSize = 'clamp(1.15rem, 2.5vw, 1.35rem)';
+      }
+    });
+
+    // 3. Ajustar opciones en pads de jugadores (celulares / tablets / PC)
+    document.querySelectorAll('.pad-option-text').forEach(el => {
+      const len = (el.textContent || '').trim().length;
+      el.style.wordBreak = 'break-word';
+      el.style.overflowWrap = 'break-word';
+      el.style.whiteSpace = 'normal';
+      if (len > 140) {
+        el.style.fontSize = 'clamp(0.72rem, 1.6vw, 0.84rem)';
+        el.style.lineHeight = '1.18';
+      } else if (len > 90) {
+        el.style.fontSize = 'clamp(0.78rem, 1.8vw, 0.92rem)';
+        el.style.lineHeight = '1.22';
+      } else if (len > 55) {
+        el.style.fontSize = 'clamp(0.86rem, 2vw, 1.02rem)';
+        el.style.lineHeight = '1.25';
+      } else if (len > 25) {
+        el.style.fontSize = 'clamp(0.95rem, 2.2vw, 1.15rem)';
+        el.style.lineHeight = '1.28';
+      } else {
+        el.style.fontSize = 'clamp(1.05rem, 2.5vw, 1.3rem)';
       }
     });
   },

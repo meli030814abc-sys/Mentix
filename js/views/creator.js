@@ -26,22 +26,49 @@ window.CreatorView = {
       .replace(/>/g, '&gt;');
   },
 
-  cleanAIText(str) {
+  cleanAIText(str, isQuestion = false) {
     if (!str) return '';
-    return String(str)
+    let res = String(str)
       // 1. Quitar encabezados o separadores (ej: --- Gestión de datos --- o === ...)
       .replace(/^[-=~#*_]{2,}\s*[^-\n=]+\s*[-=~#*_]{2,}/g, '')
       .replace(/[-=~#*_]{2,}/g, ' ')
-      // 2. Quitar signos de puntuación (¿ ? ¡ ! " ' “ ” « » `)
-      .replace(/[¿?¡!""''“”«»`]/g, '')
-      // 3. Quitar guiones o decoraciones aisladas
-      .replace(/\s+[-–—]+\s+/g, ' ')
-      // 4. Quitar dos puntos, puntos, comas o guiones al inicio o final
-      .replace(/^[\s.,:;–—\-_]+/, '')
-      .replace(/[\s.,:;–—\-_]+$/, '')
-      // 5. Normalizar espacios
+      // 2. Quitar referencias bibliográficas tipo [1], [2], etc.
+      .replace(/\[\d+\]/g, '')
+      // 3. Quitar viñetas o prefijos redundantes de incisos (ej: "a) ", "1. ", "- ")
+      .replace(/^[\s•\-\*\>]+/, '')
+      .replace(/^[a-dA-D1-4]\)\s*/, '')
+      .replace(/^[1-4]\.\s*/, '')
+      // 4. Normalizar espacios sin cortar texto
       .replace(/\s+/g, ' ')
       .trim();
+
+    // 5. Para preguntas, asegurar que inicien y finalicen con signos interrogativos si corresponde
+    if (isQuestion && res) {
+      if (/^(¿|qué|cuál|cuáles|cómo|cuándo|dónde|por qué|quién|quiénes|en qué|de qué)/i.test(res) && !res.endsWith('?')) {
+        res = res + '?';
+      }
+      if (res.endsWith('?') && !res.startsWith('¿') && !res.includes(':')) {
+        res = '¿' + res;
+      }
+    }
+
+    return res;
+  },
+
+  autoResizeTextarea(el) {
+    if (!el) return;
+    el.style.height = 'auto';
+    const isQ = el.classList.contains('creator-question-textarea');
+    const minH = isQ ? 58 : 38;
+    const targetH = Math.max(minH, el.scrollHeight);
+    el.style.height = targetH + 'px';
+  },
+
+  autoResizeAllTextareas() {
+    setTimeout(() => {
+      const textareas = document.querySelectorAll('.creator-question-textarea, .creator-option-textarea');
+      textareas.forEach(el => this.autoResizeTextarea(el));
+    }, 40);
   },
 
   resetForm(existingChallenge = null) {
@@ -368,6 +395,8 @@ window.CreatorView = {
         </div>
       </div>
     `;
+
+    this.autoResizeAllTextareas();
   },
 
   renderPaginationControls(totalCount) {
@@ -492,13 +521,14 @@ window.CreatorView = {
           </div>
         </div>
 
-        <!-- Enunciado de la pregunta (Textarea multilínea para que preguntas extensas se lean completas) -->
+        <!-- Enunciado de la pregunta (Textarea autoexpandible para que preguntas extensas se lean completas) -->
         <div style="margin-bottom: 1rem;">
           <textarea 
+            class="creator-question-textarea"
             rows="2" 
             placeholder="Escribe aquí la pregunta..." 
-            style="width: 100%; padding: 0.85rem 1rem; border-radius: var(--border-radius-md); background: var(--bg-card); border: 2px solid var(--border-color); color: var(--text-primary); font-size: 1.05rem; font-weight: 700; outline: none; resize: vertical; line-height: 1.4; font-family: inherit;"
-            oninput="window.CreatorView.updateQuestionText(${idx}, this.value)"
+            style="width: 100%; min-height: 58px; padding: 0.85rem 1rem; border-radius: var(--border-radius-md); background: var(--bg-card); border: 2px solid var(--border-color); color: var(--text-primary); font-size: 1.05rem; font-weight: 700; outline: none; resize: vertical; line-height: 1.45; font-family: inherit; overflow: hidden; box-sizing: border-box;"
+            oninput="window.CreatorView.updateQuestionText(${idx}, this.value); window.CreatorView.autoResizeTextarea(this);"
             onfocus="this.style.borderColor='var(--neon-cyan)'"
             onblur="this.style.borderColor='var(--border-color)'"
           >${this.escapeHtml(q.text)}</textarea>
@@ -571,10 +601,11 @@ window.CreatorView = {
                 </div>
 
                 <textarea 
+                  class="creator-option-textarea"
                   rows="1"
                   placeholder="Opción ${optIdx + 1} de encuesta"
-                  style="flex: 1; min-height: 38px; padding: 0.45rem 0.6rem; border-radius: 6px; background: transparent; border: none; color: var(--text-primary); font-weight: 600; font-size: 0.95rem; outline: none; resize: vertical; font-family: inherit; line-height: 1.35; word-break: break-word;"
-                  oninput="window.CreatorView.updateOptionText(${idx}, ${optIdx}, this.value)"
+                  style="flex: 1; min-height: 38px; padding: 0.45rem 0.6rem; border-radius: 6px; background: transparent; border: none; color: var(--text-primary); font-weight: 600; font-size: 0.95rem; outline: none; resize: vertical; font-family: inherit; line-height: 1.35; word-break: break-word; overflow: hidden; box-sizing: border-box;"
+                  oninput="window.CreatorView.updateOptionText(${idx}, ${optIdx}, this.value); window.CreatorView.autoResizeTextarea(this);"
                 >${this.escapeHtml(opt.text)}</textarea>
               </div>
             `).join('')}
@@ -598,10 +629,11 @@ window.CreatorView = {
                 </button>
 
                 <textarea 
+                  class="creator-option-textarea"
                   rows="1"
                   placeholder="Opción ${optIdx + 1}"
-                  style="flex: 1; min-height: 38px; padding: 0.45rem 0.6rem; border-radius: 6px; background: transparent; border: none; color: var(--text-primary); font-weight: 600; font-size: 0.95rem; outline: none; resize: vertical; font-family: inherit; line-height: 1.35; word-break: break-word;"
-                  oninput="window.CreatorView.updateOptionText(${idx}, ${optIdx}, this.value)"
+                  style="flex: 1; min-height: 38px; padding: 0.45rem 0.6rem; border-radius: 6px; background: transparent; border: none; color: var(--text-primary); font-weight: 600; font-size: 0.95rem; outline: none; resize: vertical; font-family: inherit; line-height: 1.35; word-break: break-word; overflow: hidden; box-sizing: border-box;"
+                  oninput="window.CreatorView.updateOptionText(${idx}, ${optIdx}, this.value); window.CreatorView.autoResizeTextarea(this);"
                 >${this.escapeHtml(opt.text)}</textarea>
               </div>
             `}).join('')}
@@ -621,10 +653,11 @@ window.CreatorView = {
                 </button>
 
                 <textarea 
+                  class="creator-option-textarea"
                   rows="1"
                   placeholder="Opción ${optIdx + 1}"
-                  style="flex: 1; min-height: 38px; padding: 0.45rem 0.6rem; border-radius: 6px; background: transparent; border: none; color: var(--text-primary); font-weight: 600; font-size: 0.95rem; outline: none; resize: vertical; font-family: inherit; line-height: 1.35; word-break: break-word;"
-                  oninput="window.CreatorView.updateOptionText(${idx}, ${optIdx}, this.value)"
+                  style="flex: 1; min-height: 38px; padding: 0.45rem 0.6rem; border-radius: 6px; background: transparent; border: none; color: var(--text-primary); font-weight: 600; font-size: 0.95rem; outline: none; resize: vertical; font-family: inherit; line-height: 1.35; word-break: break-word; overflow: hidden; box-sizing: border-box;"
+                  oninput="window.CreatorView.updateOptionText(${idx}, ${optIdx}, this.value); window.CreatorView.autoResizeTextarea(this);"
                 >${this.escapeHtml(opt.text)}</textarea>
               </div>
             `).join('')}
@@ -2304,21 +2337,21 @@ d) Insulina`;
 
   cleanAIQuestionsList(questions) {
     return (questions || []).map(q => {
-      q.text = this.cleanAIText(q.text);
+      q.text = this.cleanAIText(q.text, true);
       if (Array.isArray(q.options)) {
         q.options = q.options.map(opt => {
-          if (typeof opt === 'string') return this.cleanAIText(opt);
+          if (typeof opt === 'string') return this.cleanAIText(opt, false);
           return {
             ...opt,
-            text: this.cleanAIText(opt.text)
+            text: this.cleanAIText(opt.text, false)
           };
         });
       }
       if (Array.isArray(q.acceptedAnswers)) {
-        q.acceptedAnswers = q.acceptedAnswers.map(ans => this.cleanAIText(ans));
+        q.acceptedAnswers = q.acceptedAnswers.map(ans => this.cleanAIText(ans, false));
       }
       if (typeof q.correctAnswer === 'string') {
-        q.correctAnswer = this.cleanAIText(q.correctAnswer);
+        q.correctAnswer = this.cleanAIText(q.correctAnswer, false);
       }
       return q;
     });
@@ -4204,5 +4237,11 @@ d) Insulina`;
     this.openFileImportModal();
   }
 };
+
+window.addEventListener('resize', () => {
+  if (window.CreatorView) {
+    window.CreatorView.autoResizeAllTextareas();
+  }
+});
 
 
