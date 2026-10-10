@@ -1243,26 +1243,35 @@ h1, h2, h3, h4, h5, h6 {
   animation: fadeInView 0.4s ease;
 }
 
-.student-feedback-card {
+.student-feedback-card,
+body.light-theme .student-feedback-card {
   width: 100%;
-  background: rgba(11, 15, 25, 0.92);
-  border: 2px solid var(--border-color);
-  border-radius: var(--border-radius-xl);
-  padding: 2.5rem 2rem;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.55);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  margin-bottom: 1.5rem;
+  max-width: 480px;
+  background: #060913 !important;
+  border: 2.5px solid rgba(0, 245, 212, 0.4) !important;
+  border-radius: 24px;
+  padding: 2.75rem 2rem;
+  box-shadow: 0 0 35px rgba(0, 245, 212, 0.2), 0 25px 60px rgba(0, 0, 0, 0.9) !important;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  margin: 0 auto 1.5rem auto;
+  color: #ffffff !important;
+  position: relative;
+  overflow: hidden;
 }
 
-.student-feedback-card.is-correct {
-  border-color: var(--neon-emerald);
-  box-shadow: 0 0 35px rgba(6, 214, 160, 0.25);
+.student-feedback-card.is-correct,
+body.light-theme .student-feedback-card.is-correct {
+  background: #060913 !important;
+  border-color: #00f5d4 !important;
+  box-shadow: 0 0 45px rgba(0, 245, 212, 0.45), 0 20px 60px rgba(0, 0, 0, 0.95), inset 0 0 20px rgba(0, 245, 212, 0.08) !important;
 }
 
-.student-feedback-card.is-wrong {
-  border-color: var(--neon-magenta);
-  box-shadow: 0 0 35px rgba(247, 37, 133, 0.25);
+.student-feedback-card.is-wrong,
+body.light-theme .student-feedback-card.is-wrong {
+  background: #060913 !important;
+  border-color: #f72585 !important;
+  box-shadow: 0 0 45px rgba(247, 37, 133, 0.45), 0 20px 60px rgba(0, 0, 0, 0.95), inset 0 0 20px rgba(247, 37, 133, 0.08) !important;
 }
 
 /* Animación de acumulación de puntos 🏆 */
@@ -2951,10 +2960,10 @@ body.light-theme .host-stats-table tr.correct-row {
   background: rgba(0, 245, 212, 0.08);
 }
 
+/* La tarjeta de retroalimentación del alumno siempre es negra y neón */
 body.light-theme .student-feedback-card {
-  background: #ffffff;
-  border-color: rgba(0, 0, 0, 0.12);
-  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.08);
+  background: #060913 !important;
+  color: #ffffff !important;
 }
 
 /* Creador de Quizzes en Modo Claro */
@@ -2979,7 +2988,9 @@ body.light-theme .creator-pagination-bar strong[style*="color: white"] {
   color: #0f172a !important;
 }
 
-/* Lobby, Sala de Espera, Leaderboard y Podio con Fondo Mentix (Modo Claro y Oscuro) */
+/* Juego, Lobby, Sala de Espera, Leaderboard y Podio con Fondo Mentix (Modo Claro y Oscuro) */
+#view-game,
+body.light-theme #view-game,
 #view-lobby,
 body.light-theme #view-lobby,
 #view-leaderboard,

@@ -2099,37 +2099,37 @@ window.GameView = {
     container.innerHTML = `
       <div class="student-feedback-container">
         <!-- Tarjeta de Resultado Individual del Alumno -->
-        <div class="student-feedback-card ${isPollOrOpen || isCorrect ? 'is-correct' : 'is-wrong'}">
-          <div style="font-size: 3.5rem; margin-bottom: 0.5rem; line-height: 1;">
+        <div class="student-feedback-card ${isPollOrOpen || isCorrect ? 'is-correct' : 'is-wrong'}" style="background: #060913 !important; border: 2.5px solid ${isPollOrOpen || isCorrect ? '#00f5d4' : '#f72585'} !important; box-shadow: 0 0 45px ${isPollOrOpen || isCorrect ? 'rgba(0, 245, 212, 0.45)' : 'rgba(247, 37, 133, 0.45)'}, 0 25px 60px rgba(0, 0, 0, 0.95), inset 0 0 20px ${isPollOrOpen || isCorrect ? 'rgba(0, 245, 212, 0.08)' : 'rgba(247, 37, 133, 0.08)'} !important; border-radius: 24px; padding: 2.5rem 1.75rem; color: #ffffff !important;">
+          <div style="font-size: 4rem; margin-bottom: 0.75rem; line-height: 1; filter: drop-shadow(0 0 20px ${isPollOrOpen || isCorrect ? 'rgba(0, 245, 212, 0.8)' : 'rgba(247, 37, 133, 0.8)'});">
             ${isPollOrOpen ? '📊' : (isCorrect ? '🎯' : (isTimeout ? '⏱️' : '❌'))}
           </div>
           
-          <h2 style="font-size: 1.85rem; font-weight: 900; margin-bottom: 0.5rem; color: ${isPollOrOpen || isCorrect ? 'var(--neon-emerald)' : 'var(--neon-magenta)'};">
+          <h2 style="font-size: 2.1rem; font-weight: 900; margin-bottom: 0.75rem; letter-spacing: -0.5px; color: ${isPollOrOpen || isCorrect ? '#00f5d4' : '#f72585'} !important; text-shadow: 0 0 20px ${isPollOrOpen || isCorrect ? 'rgba(0,245,212,0.85)' : 'rgba(247,37,133,0.85)'}, 0 0 40px ${isPollOrOpen || isCorrect ? 'rgba(0,245,212,0.45)' : 'rgba(247,37,133,0.45)'};">
             ${isPollOrOpen ? '¡Respuesta Registrada!' : (isCorrect ? '¡Respuesta Correcta!' : (isTimeout ? '¡Tiempo Agotado!' : '¡Respuesta Incorrecta!'))}
           </h2>
 
           ${localResp && localResp.pointsEarned ? `
-            <div style="display: inline-flex; align-items: center; gap: 0.5rem; background: rgba(0, 245, 212, 0.15); border: 1.5px solid var(--neon-cyan); padding: 0.45rem 1.25rem; border-radius: 9999px; margin-bottom: 1rem;">
-              <span style="font-weight: 900; font-size: 1.15rem; color: var(--neon-cyan);">+${localResp.pointsEarned} PTS</span>
-              ${localResp.comboMultiplier > 1 ? `<span style="font-weight: 800; font-size: 0.95rem; color: #ffb703;">🔥 Racha x${localResp.comboMultiplier}</span>` : ''}
+            <div style="display: inline-flex; align-items: center; gap: 0.65rem; background: rgba(0, 245, 212, 0.14) !important; border: 2px solid #00f5d4 !important; padding: 0.55rem 1.5rem; border-radius: 9999px; margin-bottom: 1.25rem; box-shadow: 0 0 25px rgba(0, 245, 212, 0.35), inset 0 0 12px rgba(0, 245, 212, 0.15);">
+              <span style="font-weight: 900; font-size: 1.25rem; color: #00f5d4 !important; text-shadow: 0 0 14px rgba(0, 245, 212, 0.9); letter-spacing: 0.5px;">+${localResp.pointsEarned} PTS</span>
+              ${localResp.comboMultiplier > 1 ? `<span style="font-weight: 900; font-size: 1rem; color: #ffb703 !important; text-shadow: 0 0 12px rgba(255, 183, 3, 0.9); background: rgba(255, 183, 3, 0.18); padding: 0.25rem 0.65rem; border-radius: 8px; border: 1.5px solid rgba(255, 183, 3, 0.5);">🔥 Racha x${localResp.comboMultiplier}</span>` : ''}
             </div>
           ` : ''}
 
           ${(!isCorrect && !isPollOrOpen && correctText) ? `
-            <div style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); border-radius: 12px; padding: 0.85rem 1.25rem; margin: 1rem auto; max-width: 480px; text-align: left;">
-              <div style="font-size: 0.78rem; text-transform: uppercase; font-weight: 800; color: var(--text-secondary); margin-bottom: 0.25rem;">
+            <div style="background: rgba(13, 20, 36, 0.95) !important; border: 1.5px solid rgba(0, 245, 212, 0.45) !important; border-radius: 14px; padding: 1rem 1.35rem; margin: 1.25rem auto; max-width: 480px; text-align: left; box-shadow: 0 10px 25px rgba(0,0,0,0.7);">
+              <div style="font-size: 0.8rem; text-transform: uppercase; font-weight: 800; color: #94a3b8 !important; margin-bottom: 0.35rem; letter-spacing: 0.5px;">
                 Respuesta correcta:
               </div>
-              <div style="font-size: 1.1rem; font-weight: 800; color: var(--neon-cyan);">
+              <div style="font-size: 1.2rem; font-weight: 800; color: #00f5d4 !important; text-shadow: 0 0 12px rgba(0, 245, 212, 0.8);">
                 ${this.escapeHtml(correctText)}
               </div>
             </div>
           ` : ''}
 
           <!-- Puntaje Acumulado -->
-          <div style="margin-top: 1.25rem; padding-top: 1.25rem; border-top: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; gap: 0.75rem;">
-            <span style="font-size: 0.9rem; font-weight: 800; color: var(--text-secondary); text-transform: uppercase;">Tu Puntaje Total:</span>
-            <span style="font-size: 1.4rem; font-weight: 900; color: #ffd166;">🏆 ${finalScore} PTS</span>
+          <div style="margin-top: 1.25rem; padding-top: 1.25rem; border-top: 1px solid rgba(255,255,255,0.15) !important; display: flex; align-items: center; justify-content: center; gap: 0.85rem; flex-wrap: wrap;">
+            <span style="font-size: 0.95rem; font-weight: 800; color: #f1f5f9 !important; text-transform: uppercase; letter-spacing: 1px; text-shadow: 0 2px 4px rgba(0,0,0,0.9);">Tu Puntaje Total:</span>
+            <span style="font-size: 1.55rem; font-weight: 900; color: #ffd166 !important; text-shadow: 0 0 18px rgba(255, 209, 102, 0.95), 0 0 35px rgba(255, 183, 3, 0.6);">🏆 ${finalScore} PTS</span>
           </div>
         </div>
       </div>
