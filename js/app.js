@@ -11,8 +11,13 @@ class AppRouter {
   }
 
   init() {
-    // Restaurar personalización completa de interfaces (fondos, colores y textos para móviles y PC)
-    this.applyInterfaceDesign(this.getInterfaceDesign());
+    // Restaurar tema guardado (claro u oscuro)
+    const savedTheme = localStorage.getItem('te_reto_theme');
+    if (savedTheme === 'light') {
+      document.body.classList.add('light-theme');
+      const btn = document.getElementById('theme-toggle-btn');
+      if (btn) btn.textContent = '☀️';
+    }
 
     // Cargar estado inicial
     window.appState = loadInitialState();
@@ -1188,228 +1193,13 @@ class AppRouter {
     if (closeBtn) closeBtn.style.display = 'none';
   }
 
-  // =========================================================================
-  // 🎨 Personalizador de Diseño de Interfaces (Fondos, Colores, Textos Móvil/PC)
-  // =========================================================================
-  getInterfaceDesign() {
-    try {
-      const saved = localStorage.getItem('mentix_interface_design');
-      if (saved) return JSON.parse(saved);
-    } catch (e) {}
-
-    const isLight = document.body.classList.contains('light-theme') || localStorage.getItem('te_reto_theme') === 'light';
-    return {
-      bgTheme: isLight ? 'light' : 'mentix_official',
-      accentColor: 'cyan',
-      fontSize: 'normal',
-      contrast: 'normal',
-      fontFamily: 'outfit'
-    };
-  },
-
-  applyInterfaceDesign(settings = {}) {
-    const s = {
-      bgTheme: settings.bgTheme || 'mentix_official',
-      accentColor: settings.accentColor || 'cyan',
-      fontSize: settings.fontSize || 'normal',
-      contrast: settings.contrast || 'normal',
-      fontFamily: settings.fontFamily || 'outfit'
-    };
-
-    document.body.setAttribute('data-bg-theme', s.bgTheme);
-    document.body.setAttribute('data-accent-color', s.accentColor);
-    document.body.setAttribute('data-font-size', s.fontSize);
-    document.body.setAttribute('data-contrast', s.contrast);
-    document.body.setAttribute('data-font-family', s.fontFamily);
-
-    if (s.bgTheme === 'light') {
-      document.body.classList.add('light-theme');
-      const btn = document.getElementById('theme-toggle-btn');
-      if (btn) btn.textContent = '☀️';
-    } else {
-      document.body.classList.remove('light-theme');
-      const btn = document.getElementById('theme-toggle-btn');
-      if (btn) btn.textContent = '🌙';
-    }
-
-    try {
-      localStorage.setItem('mentix_interface_design', JSON.stringify(s));
-      localStorage.setItem('te_reto_theme', s.bgTheme === 'light' ? 'light' : 'dark');
-    } catch (e) {}
-  },
-
   toggleTheme() {
-    const current = this.getInterfaceDesign();
-    current.bgTheme = current.bgTheme === 'light' ? 'mentix_official' : 'light';
-    this.applyInterfaceDesign(current);
-  },
-
-  openInterfaceDesignModal() {
-    const modal = document.getElementById('interface-design-modal');
-    if (!modal) return;
-
-    const current = this.getInterfaceDesign();
-    this.currentTempDesign = { ...current };
-
-    this.updateDesignModalUI(this.currentTempDesign);
-    modal.classList.add('active');
-  },
-
-  selectDesignTheme(themeVal) {
-    if (!this.currentTempDesign) this.currentTempDesign = this.getInterfaceDesign();
-    this.currentTempDesign.bgTheme = themeVal;
-    this.updateDesignModalUI(this.currentTempDesign);
-  },
-
-  selectDesignAccent(accentVal) {
-    if (!this.currentTempDesign) this.currentTempDesign = this.getInterfaceDesign();
-    this.currentTempDesign.accentColor = accentVal;
-    this.updateDesignModalUI(this.currentTempDesign);
-  },
-
-  updateDesignTextPreview() {
-    if (!this.currentTempDesign) this.currentTempDesign = this.getInterfaceDesign();
-    const sizeSelect = document.getElementById('design-fontsize-select');
-    const contrastSelect = document.getElementById('design-contrast-select');
-    const fontSelect = document.getElementById('design-fontfamily-select');
-
-    if (sizeSelect) this.currentTempDesign.fontSize = sizeSelect.value;
-    if (contrastSelect) this.currentTempDesign.contrast = contrastSelect.value;
-    if (fontSelect) this.currentTempDesign.fontFamily = fontSelect.value;
-
-    this.updateDesignPreviewBox(this.currentTempDesign);
-  },
-
-  updateDesignModalUI(design) {
-    // 1. Tarjetas de fondo
-    document.querySelectorAll('.design-theme-card').forEach(card => {
-      const val = card.getAttribute('data-theme-val');
-      if (val === design.bgTheme) {
-        card.classList.add('active');
-      } else {
-        card.classList.remove('active');
-      }
-    });
-
-    // 2. Colores de acento
-    document.querySelectorAll('.design-color-dot').forEach(dot => {
-      const val = dot.getAttribute('data-accent-val');
-      if (val === design.accentColor) {
-        dot.classList.add('active');
-        dot.textContent = '✓';
-      } else {
-        dot.classList.remove('active');
-        dot.textContent = '';
-      }
-    });
-
-    // 3. Selectores de texto
-    const sizeSelect = document.getElementById('design-fontsize-select');
-    const contrastSelect = document.getElementById('design-contrast-select');
-    const fontSelect = document.getElementById('design-fontfamily-select');
-
-    if (sizeSelect) sizeSelect.value = design.fontSize || 'normal';
-    if (contrastSelect) contrastSelect.value = design.contrast || 'normal';
-    if (fontSelect) fontSelect.value = design.fontFamily || 'outfit';
-
-    // 4. Vista previa en vivo
-    this.updateDesignPreviewBox(design);
-  },
-
-  updateDesignPreviewBox(design) {
-    const box = document.getElementById('design-live-preview-box');
-    const tag = document.getElementById('preview-tag');
-    const heading = document.getElementById('preview-heading');
-    if (!box) return;
-
-    const accentColors = {
-      cyan: '#00f5d4',
-      magenta: '#f72585',
-      gold: '#ffb703',
-      emerald: '#06d6a0',
-      purple: '#a855f7',
-      blue: '#3b82f6',
-      orange: '#fb5607'
-    };
-    const activeColor = accentColors[design.accentColor] || '#00f5d4';
-
-    box.style.borderColor = activeColor;
-    box.style.boxShadow = `0 0 25px ${activeColor}40`;
-
-    if (tag) {
-      tag.style.borderColor = activeColor;
-      tag.style.color = activeColor;
-      tag.style.background = `${activeColor}20`;
-    }
-
-    if (heading) {
-      if (design.fontSize === 'small') heading.style.fontSize = '1rem';
-      else if (design.fontSize === 'large') heading.style.fontSize = '1.28rem';
-      else if (design.fontSize === 'xlarge') heading.style.fontSize = '1.45rem';
-      else heading.style.fontSize = '1.15rem';
-
-      if (design.contrast === 'high') {
-        heading.style.color = '#ffffff';
-        heading.style.textShadow = '0 2px 6px rgba(0,0,0,0.95)';
-      } else {
-        heading.style.color = 'var(--text-primary)';
-        heading.style.textShadow = 'none';
-      }
-
-      if (design.fontFamily === 'poppins') heading.style.fontFamily = "'Poppins', 'Outfit', sans-serif";
-      else if (design.fontFamily === 'system') heading.style.fontFamily = "system-ui, -apple-system, sans-serif";
-      else heading.style.fontFamily = "'Outfit', 'Inter', sans-serif";
-    }
-
-    // Mini preview background color
-    if (design.bgTheme === 'amoled') {
-      box.style.background = '#000000';
-    } else if (design.bgTheme === 'light') {
-      box.style.background = '#f8fafc';
-      if (heading) heading.style.color = '#0f172a';
-    } else if (design.bgTheme === 'ocean') {
-      box.style.background = 'linear-gradient(135deg, #040d1a, #081e36)';
-    } else if (design.bgTheme === 'matrix') {
-      box.style.background = 'linear-gradient(135deg, #030d0a, #061814)';
-    } else if (design.bgTheme === 'sunset') {
-      box.style.background = 'linear-gradient(135deg, #180908, #290e18)';
-    } else if (design.bgTheme === 'cyberpunk') {
-      box.style.background = 'linear-gradient(135deg, #070913, #110d24)';
-    } else if (design.bgTheme === 'galaxy') {
-      box.style.background = 'linear-gradient(135deg, #02020a, #0b0726)';
-    } else {
-      box.style.background = 'rgba(15, 23, 42, 0.85)';
-    }
-  },
-
-  saveInterfaceDesignModal() {
-    if (!this.currentTempDesign) this.currentTempDesign = this.getInterfaceDesign();
-    const sizeSelect = document.getElementById('design-fontsize-select');
-    const contrastSelect = document.getElementById('design-contrast-select');
-    const fontSelect = document.getElementById('design-fontfamily-select');
-
-    if (sizeSelect) this.currentTempDesign.fontSize = sizeSelect.value;
-    if (contrastSelect) this.currentTempDesign.contrast = contrastSelect.value;
-    if (fontSelect) this.currentTempDesign.fontFamily = fontSelect.value;
-
-    this.applyInterfaceDesign(this.currentTempDesign);
-    this.closeModal('interface-design-modal');
-    if (window.soundEngine && window.soundEngine.playCorrect) {
-      window.soundEngine.playCorrect();
-    }
-  },
-
-  resetInterfaceDesign() {
-    this.currentTempDesign = {
-      bgTheme: 'mentix_official',
-      accentColor: 'cyan',
-      fontSize: 'normal',
-      contrast: 'normal',
-      fontFamily: 'outfit'
-    };
-    this.updateDesignModalUI(this.currentTempDesign);
-    this.applyInterfaceDesign(this.currentTempDesign);
-  },
+    document.body.classList.toggle('light-theme');
+    const isLight = document.body.classList.contains('light-theme');
+    localStorage.setItem('te_reto_theme', isLight ? 'light' : 'dark');
+    const btn = document.getElementById('theme-toggle-btn');
+    if (btn) btn.textContent = isLight ? '☀️' : '🌙';
+  }
 
   toggleSound() {
     const muted = window.soundEngine.toggleMute();
