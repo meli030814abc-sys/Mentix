@@ -1972,6 +1972,7 @@ d) Insulina`;
     const countInput = document.getElementById('ai-count-input') || document.getElementById('ai-count-select');
     const diffSelect = document.getElementById('ai-diff-select');
     const typeSelect = document.getElementById('ai-type-select');
+    const lengthSelect = document.getElementById('ai-length-select');
     const timeSelect = document.getElementById('ai-time-select');
     const replaceCheck = document.getElementById('ai-replace-check');
     const loader = document.getElementById('ai-loading-indicator');
@@ -1995,6 +1996,7 @@ d) Insulina`;
 
     const difficulty = diffSelect ? diffSelect.value : 'Medio';
     const type = typeSelect ? typeSelect.value : 'single';
+    const lengthMode = lengthSelect ? lengthSelect.value : 'balanced';
     const timeLimit = timeSelect ? parseInt(timeSelect.value) || 20 : 20;
     const replace = replaceCheck ? replaceCheck.checked : true;
 
@@ -2029,6 +2031,7 @@ d) Insulina`;
         count,
         difficulty,
         type,
+        lengthMode,
         timeLimit,
         onProgress: (current, total) => {
           if (loadText) {
@@ -2309,14 +2312,14 @@ d) Insulina`;
     return questions;
   },
 
-  async generateQuestionsWithAI({ topic, notes, webKnowledge, count, difficulty, type, timeLimit, onProgress }) {
+  async generateQuestionsWithAI({ topic, notes, webKnowledge, count, difficulty, type, lengthMode = 'balanced', timeLimit, onProgress }) {
     let questions = [];
 
     // 1. Si el usuario proporcionó notas o texto de base, extraer preguntas contextualmente
     if (notes && notes.length > 30) {
       const contextual = this.getContextualQuestionsFromNotes(notes, count, type, timeLimit);
       questions.push(...contextual);
-      if (questions.length >= count) return this.cleanAIQuestionsList(questions.slice(0, count));
+      if (questions.length >= count) return this.cleanAIQuestionsList(questions.slice(0, count), lengthMode, topic);
     }
 
     // 2. Si se obtuvo información de la búsqueda rápida en vivo en la web (Wikipedia / DuckDuckGo)
@@ -2324,7 +2327,7 @@ d) Insulina`;
       const remainder = count - questions.length;
       const webQuestions = this.extractQuestionsFromKnowledge(webKnowledge, topic, remainder, type, timeLimit);
       questions.push(...webQuestions);
-      if (questions.length >= count) return this.cleanAIQuestionsList(questions.slice(0, count));
+      if (questions.length >= count) return this.cleanAIQuestionsList(questions.slice(0, count), lengthMode, topic);
     }
 
     // 3. Complementar o generar a partir de la Ontología Académica Universal de Carreras y Especialidades
@@ -2332,26 +2335,139 @@ d) Insulina`;
     const topicQ = await this.getTopicQuestions(topic, remainder, difficulty, type, timeLimit, onProgress);
     questions.push(...topicQ);
 
-    return this.cleanAIQuestionsList(questions.slice(0, count));
+    return this.cleanAIQuestionsList(questions.slice(0, count), lengthMode, topic);
   },
 
-  cleanAIQuestionsList(questions) {
+  formatQuestionLength(text, mode = 'balanced', topic = '') {
+    if (!text) return '';
+    let res = String(text).trim();
+
+    // Quitar marcas de numeración interna tipo (#1) o (#12)
+    res = res.replace(/\s*\(#\d+\)/g, '');
+
+    if (mode === 'short') {
+      // 1. Quitar prefijos extensos de rondas y categorías
+      res = res.replace(/^(Pregunta\s*#?\d+\s*[-:–—]\s*)/i, '');
+      res = res.replace(/^(Área de [^:]+:\s*|Criterio [^:]+:\s*|Mejor práctica de [^:]+:\s*)/i, '');
+      res = res.replace(/^(En el marco (internacional\s*)?[^,:]*,\s*)/i, '');
+      res = res.replace(/^(De acuerdo con (la disciplina de\s*)?[^,:]*,\s*)/i, '');
+      res = res.replace(/^(Según (lo establecido en\s*)?[^,:]*,\s*)/i, '');
+      res = res.replace(/^(En el contexto (académico y aplicativo\s*|general\s*)?de[^,:]*,\s*)/i, '');
+      res = res.replace(/^(En la disciplina de[^,:]*,\s*)/i, '');
+      res = res.replace(/^(En el ámbito de\s*"?[^"]*"?:\s*)/i, '');
+      res = res.replace(/^(Respecto a\s*"?[^"]*"?,\s*selecciona[^:]*a:\s*)/i, '¿Cuál corresponde a: ');
+      res = res.replace(/^(Respecto a [^:]* es verdadera la siguiente afirmación:\s*)/i, '¿Es verdad que: ');
+      res = res.replace(/^(En [^:]* se descarta que:\s*)/i, '¿Se descarta que: ');
+      res = res.replace(/^(Afirmación sobre [^:]*:\s*)/i, 'Afirmación: ');
+      res = res.replace(/^(Cuál de los siguientes enunciados resume correctamente el concepto:\s*)/i, '¿Qué resume: ');
+      res = res.replace(/^De acuerdo con los fundamentos documentados de [^,:]*,\s*cuál de los siguientes enunciados es verdadero/i, '¿Cuál enunciado es verdadero?');
+
+      // 2. Extraer y simplificar núcleo de pregunta si contiene ¿ ... ?
+      const qMatch = res.match(/¿([^?]+)\?/);
+      if (qMatch && qMatch[1]) {
+        let coreQ = qMatch[1].trim();
+        coreQ = coreQ.replace(/^cuál de las siguientes opciones describe de manera integral y precisa\s*/i, 'qué describe ');
+        coreQ = coreQ.replace(/^cuál de las siguientes alternativas representa con mayor exactitud\s*/i, 'cuál representa ');
+        coreQ = coreQ.replace(/^cuál de los siguientes enunciados define de manera más adecuada\s*/i, 'cómo se define ');
+        coreQ = coreQ.replace(/^cuál es la razón primordial por la que\s*/i, 'por qué ');
+        coreQ = coreQ.replace(/^cuál es el motivo principal por el que\s*/i, 'por qué ');
+        coreQ = coreQ.replace(/,?\s+como función integradora y rectora/i, '');
+        coreQ = coreQ.replace(/\s*\([^)]*\)/g, '');
+        coreQ = coreQ.replace(/['"]/g, '');
+        res = '¿' + coreQ.trim() + '?';
+      }
+
+      if (/^(qué|cuál|cuáles|cómo|cuándo|dónde|por qué|quién|quiénes)/i.test(res)) {
+        if (!res.startsWith('¿')) res = '¿' + res;
+        if (!res.endsWith('?')) res = res + '?';
+      }
+    } else if (mode === 'long') {
+      const cleanLower = res.toLowerCase();
+      const hasAcademicFraming = /en el marco|de acuerdo|según|en el contexto|considerando|en la disciplina|respecto a/i.test(cleanLower);
+
+      if (!hasAcademicFraming && res.length < 90) {
+        const topicLabel = topic ? topic.trim() : 'la temática';
+        if (res.startsWith('¿') && res.endsWith('?')) {
+          const inner = res.slice(1, -1).trim();
+          res = `En el marco del estudio y análisis integral de ${topicLabel}, ¿cuál de las siguientes opciones explica con mayor rigor, profundidad y precisión: ${inner}?`;
+        } else if (res.length > 0) {
+          res = `Considerando los fundamentos teóricos y metodológicos de ${topicLabel}, ¿cuál de las siguientes opciones define o explica de manera más detallada: "${res}"?`;
+        }
+      }
+    }
+
+    return this.cleanAIText(res, true);
+  },
+
+  formatOptionLength(text, mode = 'balanced', topic = '') {
+    if (!text) return '';
+    let res = String(text).trim();
+
+    // Conservar opciones booleanas estándar
+    const lower = res.toLowerCase();
+    if (lower === 'verdadero' || lower === 'falso') {
+      return res.charAt(0).toUpperCase() + res.slice(1).toLowerCase();
+    }
+
+    if (mode === 'short') {
+      // 1. Quitar paréntesis o corchetes explicativos
+      const withoutParen = res.replace(/\s*\([^)]*\)/g, '').replace(/\s*\[[^\]]*\]/g, '').trim();
+      if (withoutParen.length >= 3) {
+        res = withoutParen;
+      }
+
+      // 2. Quitar cláusulas subordinadas explicativas largas
+      res = res.replace(/;\s*(es decir|por lo tanto|lo cual|de modo que|asegurando|permitiendo)[^.]*/gi, '');
+      res = res.replace(/,\s*(garantizando|permitiendo|asegurando|con el fin de|con el objetivo de|lo que significa que|lo cual implica que)[^.]*/gi, '');
+
+      // 3. Truncar en punto y coma o ", mientras "
+      if (res.includes(';')) {
+        const parts = res.split(';').map(p => p.trim()).filter(Boolean);
+        if (parts.length > 0 && parts[0].length >= 10) res = parts[0];
+      } else if (res.includes(', mientras ')) {
+        const parts = res.split(', mientras ');
+        if (parts[0] && parts[0].length >= 12) res = parts[0].trim();
+      }
+
+      res = res.replace(/^['"«]+|['"»]+$/g, '').trim();
+
+      const words = res.split(/\s+/);
+      if (words.length > 9) {
+        const cut = words.slice(0, 8).join(' ');
+        if (!/\b(de|la|el|los|las|un|una|en|con|por|para|que|y|o)\b$/i.test(cut)) {
+          res = cut;
+        } else {
+          res = words.slice(0, 7).join(' ');
+        }
+      }
+    } else if (mode === 'long') {
+      const words = res.split(/\s+/).filter(Boolean);
+      if (words.length <= 2 && res.length < 22 && !res.includes(':') && !res.includes('(')) {
+        const topicCtx = topic ? topic.trim() : 'la disciplina';
+        res = `${res}: concepto y aplicación directa en ${topicCtx}`;
+      }
+    }
+
+    return this.cleanAIText(res, false);
+  },
+
+  cleanAIQuestionsList(questions, lengthMode = 'balanced', topic = '') {
     return (questions || []).map(q => {
-      q.text = this.cleanAIText(q.text, true);
+      q.text = this.formatQuestionLength(q.text, lengthMode, topic);
       if (Array.isArray(q.options)) {
         q.options = q.options.map(opt => {
-          if (typeof opt === 'string') return this.cleanAIText(opt, false);
+          if (typeof opt === 'string') return this.formatOptionLength(opt, lengthMode, topic);
           return {
             ...opt,
-            text: this.cleanAIText(opt.text, false)
+            text: this.formatOptionLength(opt.text, lengthMode, topic)
           };
         });
       }
       if (Array.isArray(q.acceptedAnswers)) {
-        q.acceptedAnswers = q.acceptedAnswers.map(ans => this.cleanAIText(ans, false));
+        q.acceptedAnswers = q.acceptedAnswers.map(ans => this.formatOptionLength(ans, lengthMode, topic));
       }
       if (typeof q.correctAnswer === 'string') {
-        q.correctAnswer = this.cleanAIText(q.correctAnswer, false);
+        q.correctAnswer = this.formatOptionLength(q.correctAnswer, lengthMode, topic);
       }
       return q;
     });
