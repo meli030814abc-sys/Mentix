@@ -11,12 +11,22 @@ class AppRouter {
   }
 
   init() {
+    // Limpieza segura de residuos previos de caché
+    try {
+      localStorage.removeItem('mentix_interface_design');
+    } catch(e) {}
+
     // Restaurar tema guardado (claro u oscuro)
     const savedTheme = localStorage.getItem('te_reto_theme');
     if (savedTheme === 'light') {
       document.body.classList.add('light-theme');
       const btn = document.getElementById('theme-toggle-btn');
       if (btn) btn.textContent = '☀️';
+    }
+
+    // Aplicar diseño exclusivo de Administrador si está configurado
+    if (window.AdminView && window.AdminView.applySavedDesign) {
+      window.AdminView.applySavedDesign();
     }
 
     // Cargar estado inicial
