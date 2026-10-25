@@ -1007,12 +1007,9 @@ window.ProjectsView = {
     document.querySelectorAll('.plp-wrapper').forEach(w => {
       w.setAttribute('data-theme', validTheme);
     });
-    document.querySelectorAll('.plp-envelope-btn').forEach(btn => {
-      if (btn.classList.contains(validTheme)) {
-        btn.classList.add('active');
-      } else {
-        btn.classList.remove('active');
-      }
+    document.querySelectorAll('.inno-theme-btn').forEach(btn => {
+      if (btn.classList.contains(validTheme)) btn.classList.add('active');
+      else btn.classList.remove('active');
     });
   },
 
@@ -1037,89 +1034,34 @@ window.ProjectsView = {
     const brandTitle = this.escapeHtml((selected && (selected.categoryName || pub.visibleCategory)) || 'Gobierno de Datos e IA');
     const brandSubtitle = this.escapeHtml((selected && (pub.publicName || selected.title)) || 'Proyecto Innovatech');
     const selectedTitle = selected ? this.escapeHtml(pub.publicName || selected.title || 'Proyecto') : 'Proyecto Innovatech';
-    const heroEyebrow = this.escapeHtml((selected && (selected.subtitle || selected.categoryName)) || '🚀 Innovación Tecnológica & Gobernanza Inteligente');
-    const heroMainTitle = selected
-      ? `${this.escapeHtml(pub.landingTitle || selected.title || 'Proyecto Innovatech')}`
-      : `Transformando el Futuro: <span>Proyecto Innovatech</span>`;
+    const heroEyebrow = this.escapeHtml((selected && (selected.subtitle || selected.categoryName)) || '🚀 Ecosistema Tecnológico & Gobernanza Inteligente');
+    const heroMainTitle1 = selected ? this.escapeHtml(pub.landingTitle || selected.title || 'Gobierno de Datos e IA') : 'Gobierno de Datos e IA';
+    const heroMainTitle2 = selected ? this.escapeHtml(selected.subtitle || 'Proyecto Innovatech') : 'Proyecto Innovatech';
     const heroSubtitle = this.escapeHtml(
       (selected && (pub.publicDescription || selected.shortDescription || selected.description)) ||
-      'Plataforma integral de Gobierno de Datos e Inteligencia Artificial diseñada para impulsar decisiones estratégicas con ética, transparencia y alto impacto.'
+      'Impulsamos la transformación digital de las organizaciones mediante el gobierno de datos y la inteligencia artificial, para generar valor, transparencia y mejores decisiones.'
     );
 
     const ctaText = this.escapeHtml((selected && (pub.ctaText || selected.ctaText || vp.visitorAction)) || 'Unirse / Colaborar');
     const ctaUrl = (selected && (pub.ctaUrl || selected.ctaUrl)) || '';
-    const coverPoster = (selected && (pub.coverImage || selected.coverImage || selected.banner)) || 'https://images.unsplash.com/photo-1551434678-e076c223a692?auto=format&fit=crop&w=1200&q=80';
-
-    // Video público (respeta visibilidad independiente)
-    const isVideoPublic = vid.visibility ? (vid.visibility === 'public' && pub.featuredVideoPublic !== false) : true;
-    const videoTitle = this.escapeHtml((vid && vid.title) || (selected && selected.title ? `Video Explicativo: ${selected.title}` : 'Video Explicativo: Proyecto Innovatech'));
-    const videoDuration = this.escapeHtml((selected && selected.duration) || (vid && vid.verified ? 'Verificado • HD' : '03:45 min • Full HD'));
-
-    // Misión, Problema y Beneficios
-    const missionText = this.escapeHtml(
-      (selected && (selected.mainObjective || vp.problemSolved || selected.fullDescription || selected.description)) ||
-      'Estructurar un ecosistema de Gobierno de Datos e Inteligencia Artificial que garantice la calidad, seguridad e interoperabilidad de la información para potenciar la innovación educativa y empresarial.'
-    );
-    const visionText = this.escapeHtml(
-      (selected && (selected.userBenefits || vp.resultsOffered || vp.differentiator || selected.problemAddressed)) ||
-      'Convertirnos en el referente regional en analítica ética y automatización inteligente, reduciendo brechas tecnológicas y generando valor sostenible para toda la comunidad.'
-    );
-    const howItWorksText = selected && (vp.howItWorks || vp.keyFeatures)
-      ? `<p class="plp-hero-def-text"><strong>Cómo funciona y Funcionalidades:</strong> ${this.escapeHtml(vp.howItWorks || vp.keyFeatures)}</p>`
-      : '';
-
-    // Filtrar estrictamente recursos públicos (un proyecto publicado NUNCA expone archivos privados)
-    const publicResources = (selected && Array.isArray(selected.resources))
-      ? selected.resources.filter(r => r && r.visibility !== 'private').sort((a, b) => (a.order || 1) - (b.order || 1))
-      : [];
-
-    // Filtrar activos visuales públicos
-    const publicVisuals = (selected && Array.isArray(selected.visualAssets))
-      ? selected.visualAssets.filter(v => v && v.visibility !== 'private').sort((a, b) => (a.order || 1) - (b.order || 1))
-      : [];
-
-    // Filtrar enlaces externos públicos
-    const publicLinks = (selected && Array.isArray(selected.externalLinks))
-      ? selected.externalLinks.filter(l => l && l.visibility !== 'private').sort((a, b) => (a.order || 1) - (b.order || 1))
-      : [];
-
-    // FAQs públicas
-    const publicFaqs = (selected && Array.isArray(selected.faqs)) ? selected.faqs : [];
-
-    // Diapositivas para el carrusel (usa selected.slides si existen, o las 4 por defecto)
-    const customSlides = (selected && Array.isArray(selected.slides) && selected.slides.length > 0)
-      ? selected.slides
-      : null;
-    const totalCarouselSlides = customSlides ? customSlides.length : 4;
+    const mainObjective = this.escapeHtml((selected && (selected.mainObjective || vp.problemSolved)) || 'Fortalecimiento del gobierno de datos');
+    const targetAudience = this.escapeHtml((selected && (selected.targetAudience || vp.targetAudience)) || 'Entidades públicas y ciudadanía');
+    const visibleCategory = this.escapeHtml((selected && (selected.categoryName || pub.visibleCategory)) || 'Gobierno de Datos / IA');
+    const projectState = this.escapeHtml((selected && (selected.projectState || 'En ejecución')).toString().replace('_', ' '));
 
     const fullScreenHref = selected
       ? `proyecto-landing.html?id=${encodeURIComponent(selected.id)}${selected.slug ? '&slug=' + encodeURIComponent(selected.slug) : ''}`
       : 'proyecto-landing.html';
 
     container.innerHTML = `
-      <div style="max-width: 1340px; margin: 0 auto; padding: 1.25rem 1rem 4rem;">
+      <div style="max-width: 1400px; margin: 0 auto; padding: 1rem 0.5rem 4rem;">
         <div class="plp-wrapper animate-fade-in" data-theme="${currentTheme}">
-          
-          <!-- Barra superior de control Mentix (Volver a la lista de proyectos / Asistente / dos sobres) -->
+
+          <!-- Barra de Control Mentix -->
           <div class="plp-mentix-bar">
             <div class="plp-mentix-bar-left">
-              <span class="plp-mentix-badge">${this.isWizardPreview ? '👁️ Vista Previa del Asistente' : '✨ Landing Page del Proyecto'}</span>
+              <span class="plp-mentix-badge">${this.isWizardPreview ? '👁️ Vista Previa del Asistente' : '✨ Landing Page Oficial'}</span>
               <span style="font-weight: 700; color: #ffffff;">${selectedTitle}</span>
-
-              <!-- DOS SOBRES INTERACTIVOS PARA TEMA CLARO Y OSCURO -->
-              <div class="plp-envelopes-control" role="group" aria-label="Cambiar tema de la landing page con dos sobres">
-                <span class="plp-envelopes-title">✉️ Sobres:</span>
-                <button type="button" class="plp-envelope-btn light ${currentTheme === 'light' ? 'active' : ''}" onclick="window.ProjectsView.setLandingTheme('light')" title="Poner landing page en modo claro (Sobre Claro)">
-                  <span class="plp-envelope-icon">✉️</span>
-                  <span>Sobre Claro</span>
-                  <span class="plp-envelope-badge">☀️</span>
-                </button>
-                <button type="button" class="plp-envelope-btn dark ${currentTheme === 'dark' ? 'active' : ''}" onclick="window.ProjectsView.setLandingTheme('dark')" title="Poner landing page en modo oscuro (Sobre Oscuro)">
-                  <span class="plp-envelope-icon">✉️</span>
-                  <span>Sobre Oscuro</span>
-                  <span class="plp-envelope-badge">🌙</span>
-                </button>
-              </div>
             </div>
             <div class="plp-mentix-actions">
               ${this.isWizardPreview ? `
@@ -1148,66 +1090,49 @@ window.ProjectsView = {
           </div>
 
           <!-- ================================================================
-               1. BARRA DE NAVEGACIÓN (HEADER) - FIJA (STICKY)
+               1. HEADER / NAVEGACIÓN
                ================================================================ -->
-          <header class="plp-header" role="banner" aria-label="Navegación principal del proyecto">
-            <!-- Izquierda: Logotipo e Isotipo Moderno -->
-            <div class="plp-brand" onclick="window.ProjectsView.scrollToLandingSection('plp-sec-inicio')" role="button" tabindex="0" aria-label="${brandTitle} - Inicio">
-              <div class="plp-brand-isotipo" aria-hidden="true">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <header class="inno-header" role="banner">
+            <div class="inno-brand" onclick="window.ProjectsView.scrollToLandingSection('inno-sec-hero')">
+              <div class="inno-logo-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.3">
                   <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
                   <polyline points="2 17 12 22 22 17"></polyline>
                   <polyline points="2 12 12 17 22 12"></polyline>
                 </svg>
               </div>
-              <div class="plp-brand-text">
-                <span class="plp-brand-title">${brandTitle}</span>
-                <span class="plp-brand-subtitle">${brandSubtitle}</span>
+              <div>
+                <div class="inno-brand-title">${brandTitle}</div>
+                <div class="inno-brand-subtitle">${brandSubtitle}</div>
               </div>
             </div>
 
-            <!-- Centro: Enlaces de navegación rápida con efecto hover suave -->
-            <nav class="plp-nav" role="navigation" aria-label="Enlaces de navegación rápida">
-              <button type="button" class="plp-nav-link" onclick="window.ProjectsView.scrollToLandingSection('plp-sec-inicio')">Inicio</button>
-              <button type="button" class="plp-nav-link" onclick="window.ProjectsView.scrollToLandingSection('plp-sec-sobre')">Sobre el Proyecto</button>
-              <button type="button" class="plp-nav-link" onclick="window.ProjectsView.scrollToLandingSection('plp-sec-recursos')">Recursos</button>
-              <button type="button" class="plp-nav-link" onclick="window.ProjectsView.scrollToLandingSection('plp-sec-presentaciones')">Presentaciones</button>
-              <button type="button" class="plp-nav-link" onclick="window.ProjectsView.scrollToLandingSection('plp-sec-galeria')">Galería</button>
-              <button type="button" class="plp-nav-link" onclick="window.ProjectsView.scrollToLandingSection('plp-sec-contacto')">Contacto</button>
+            <nav class="inno-nav-links">
+              <button type="button" class="inno-nav-item active" onclick="window.ProjectsView.scrollToLandingSection('inno-sec-hero')">Inicio</button>
+              <button type="button" class="inno-nav-item" onclick="window.ProjectsView.scrollToLandingSection('inno-sec-why')">Sobre el Proyecto</button>
+              <button type="button" class="inno-nav-item" onclick="window.ProjectsView.scrollToLandingSection('inno-sec-resources')">Recursos</button>
+              <button type="button" class="inno-nav-item" onclick="window.ProjectsView.scrollToLandingSection('inno-sec-resources')">Presentaciones</button>
+              <button type="button" class="inno-nav-item" onclick="window.ProjectsView.scrollToLandingSection('inno-sec-resources')">Galería</button>
+              <button type="button" class="inno-nav-item" onclick="window.ProjectsView.scrollToLandingSection('inno-sec-timeline')">Contacto</button>
             </nav>
 
-            <!-- Derecha: Buscador funcional discreto + Dos sobres de acceso directo + Botón CTA -->
-            <div class="plp-header-right">
-              <!-- Dos sobres de acceso rápido en el header -->
-              <div class="plp-envelopes-control" style="background: var(--plp-bg-subtle); border-color: var(--plp-border);">
-                <button type="button" class="plp-envelope-btn light ${currentTheme === 'light' ? 'active' : ''}" onclick="window.ProjectsView.setLandingTheme('light')" title="Sobre Claro (Día)">
-                  <span class="plp-envelope-icon">✉️</span>
-                  <span class="plp-envelope-hide-mobile">Claro</span>
-                  <span class="plp-envelope-badge">☀️</span>
-                </button>
-                <button type="button" class="plp-envelope-btn dark ${currentTheme === 'dark' ? 'active' : ''}" onclick="window.ProjectsView.setLandingTheme('dark')" title="Sobre Oscuro (Noche)">
-                  <span class="plp-envelope-icon">✉️</span>
-                  <span class="plp-envelope-hide-mobile">Oscuro</span>
-                  <span class="plp-envelope-badge">🌙</span>
-                </button>
+            <div class="inno-header-right">
+              <div class="inno-theme-toggle" role="group" aria-label="Cambiar tema">
+                <button type="button" class="inno-theme-btn light ${currentTheme === 'light' ? 'active' : ''}" onclick="window.ProjectsView.setLandingTheme('light')" title="Modo Claro">☀️</button>
+                <button type="button" class="inno-theme-btn dark ${currentTheme === 'dark' ? 'active' : ''}" onclick="window.ProjectsView.setLandingTheme('dark')" title="Modo Oscuro">🌙</button>
               </div>
 
-              <div class="plp-search-box" role="search">
-                <span class="plp-search-icon" aria-hidden="true">🔍</span>
-                <input
-                  type="search"
-                  class="plp-search-input"
-                  placeholder="Buscar recurso o sección..."
-                  aria-label="Buscar en el proyecto"
-                  oninput="window.ProjectsView.filterLandingSearch(this.value)"
-                />
+              <div class="inno-search-box">
+                <span style="position:absolute; left:0.75rem; color:#94a3b8; font-size:0.85rem;">🔍</span>
+                <input type="search" class="inno-search-input" placeholder="Buscar en el proyecto..." oninput="window.ProjectsView.filterLandingSearch(this.value)" />
               </div>
+
               ${ctaUrl ? `
-                <a href="${this.escapeHtml(ctaUrl)}" target="_blank" rel="noopener noreferrer" class="plp-cta-btn" style="text-decoration:none;">
+                <a href="${this.escapeHtml(ctaUrl)}" target="_blank" rel="noopener noreferrer" class="inno-cta-pill" style="text-decoration:none;">
                   ${ctaText}
                 </a>
               ` : `
-                <button type="button" class="plp-cta-btn" onclick="window.ProjectsView.previewLandingDoc('${ctaText} — ${selectedTitle}')">
+                <button type="button" class="inno-cta-pill" onclick="window.ProjectsView.previewLandingDoc('${ctaText} — ${selectedTitle}')">
                   ${ctaText}
                 </button>
               `}
@@ -1215,254 +1140,95 @@ window.ProjectsView = {
           </header>
 
           <!-- ================================================================
-               2. SECCIÓN PRINCIPAL (HERO) - ESTILO PAWLY SMART CARE BENTO HUB
+               2. HERO SECTION
                ================================================================ -->
-          <section class="plp-hero" id="plp-sec-inicio" aria-labelledby="plp-hero-title">
-            <div class="plp-hero-heading-wrap" id="plp-sec-sobre">
-              <span class="plp-eyebrow">${heroEyebrow}</span>
-              <h1 class="plp-hero-main-title" id="plp-hero-title">
-                ${heroMainTitle}
-              </h1>
-              <p class="plp-section-subtitle">
-                ${heroSubtitle}
-              </p>
-            </div>
+          <section class="inno-hero" id="inno-sec-hero">
+            <div class="inno-hero-bg-overlay"></div>
+            <div class="inno-hero-bg-glow"></div>
 
-            <div class="plp-hero-grid">
-              <!-- Columna Izquierda: Video / Stream estilo Pawly Smart Care HUD -->
-              <div class="plp-video-card" id="plp-hero-video-box" aria-label="Smart Pet Care & Health Stream">
-                <!-- Barra HUD Superior de Telemetría estilo Pawly -->
-                <div class="plp-hud-stream-bar">
-                  <span class="plp-hud-chip live">● EN VIVO</span>
-                  <span class="plp-hud-chip">🔋 98% Batería • 🐾 Telemetría Activa</span>
+            <div class="inno-hero-grid">
+              <!-- Columna Izquierda: Información Principal -->
+              <div>
+                <div class="inno-eyebrow">
+                  <span>🚀</span> ${heroEyebrow}
                 </div>
 
-                ${isVideoPublic ? `
-                  <div
-                    class="plp-video-poster"
-                    style="background-image: url('${coverPoster}');"
-                    onclick="window.ProjectsView.playLandingVideo()"
-                    role="button"
-                    tabindex="0"
-                    aria-label="Reproducir ${videoTitle}"
-                  >
-                    <div class="plp-play-btn" aria-hidden="true">▶</div>
-                    <div class="plp-video-caption">
-                      <span>🎬 ${videoTitle}</span>
-                      <span>❤️ 78 BPM • 🌡️ 38.2°C • 📍 Telemetría</span>
-                    </div>
-                  </div>
-                ` : `
-                  <div class="plp-video-poster" style="background-image: url('${coverPoster}'); cursor: default;">
-                    <div class="plp-video-caption">
-                      <span>🖼️ ${selectedTitle}</span>
-                      <span>🐾 Dispositivo de Monitoreo Conectado</span>
-                    </div>
-                  </div>
-                `}
-              </div>
+                <h1 class="inno-hero-title">
+                  ${heroMainTitle1}
+                  <span class="inno-hero-title-gradient">${heroMainTitle2}</span>
+                </h1>
 
-              <!-- Columna Derecha: Pawly Smart Care & Health Monitoring Dashboard Hub -->
-              <article class="plp-bento-hero-panel">
-                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.15rem; gap: 0.5rem; flex-wrap: wrap;">
-                  <span class="plp-pawly-header-badge">
-                    <span>🐾</span> Pawly Smart Health Hub
-                  </span>
-                  <span style="font-size: 0.78rem; font-weight: 800; color: var(--plp-emerald-600); background: var(--plp-emerald-100); padding: 0.25rem 0.65rem; border-radius: 999px;">
-                    ● Dispositivo Sincronizado
-                  </span>
-                </div>
-
-                <!-- Score Circular de Vitalidad / Salud estilo Pawly Dribbble -->
-                <div class="plp-vitals-score-row">
-                  <div class="plp-vitals-ring-box">
-                    <svg viewBox="0 0 80 80">
-                      <circle class="plp-vitals-ring-bg" cx="40" cy="40" r="35"></circle>
-                      <circle class="plp-vitals-ring-fill" cx="40" cy="40" r="35"></circle>
-                    </svg>
-                    <div class="plp-vitals-ring-text">98%</div>
-                  </div>
-                  <div class="plp-vitals-score-info">
-                    <h4>❤️ Índice de Salud & Bienestar</h4>
-                    <p>Estado óptimo general. Signos vitales estables y actividad dentro del rango saludable.</p>
-                  </div>
-                </div>
-
-                <!-- Mini Bento Grid de 3 Indicadores Rápidos -->
-                <div class="plp-mini-bento-grid">
-                  <div class="plp-mini-bento-card">
-                    <span class="plp-mini-bento-icon">❤️</span>
-                    <strong class="plp-mini-bento-val">78 BPM</strong>
-                    <span class="plp-mini-bento-lbl">Frecuencia</span>
-                  </div>
-                  <div class="plp-mini-bento-card">
-                    <span class="plp-mini-bento-icon">🔥</span>
-                    <strong class="plp-mini-bento-val">8.4k</strong>
-                    <span class="plp-mini-bento-lbl">Actividad</span>
-                  </div>
-                  <div class="plp-mini-bento-card">
-                    <span class="plp-mini-bento-icon">💧</span>
-                    <strong class="plp-mini-bento-val">650 ml</strong>
-                    <span class="plp-mini-bento-lbl">Hidratación</span>
-                  </div>
-                </div>
-
-                <!-- Rutina Diaria de Cuidados y Telemetría -->
-                <div class="plp-care-checklist">
-                  <div class="plp-care-check-title">
-                    <span>📋</span> Rutina Diaria & Monitoreo Inteligente
-                  </div>
-                  <div class="plp-care-check-item">
-                    <span class="plp-care-check-icon">✔</span>
-                    <span>Revisión matutina y calibración de sensores</span>
-                  </div>
-                  <div class="plp-care-check-item">
-                    <span class="plp-care-check-icon">✔</span>
-                    <span>Sincronización de registros clínicos y métricas</span>
-                  </div>
-                  <div class="plp-care-check-item">
-                    <span class="plp-care-check-icon pending">⏳</span>
-                    <span>Sesión vespertina de actividad y suplementos</span>
-                  </div>
-                </div>
-
-                <p style="font-size: 0.9rem; color: var(--plp-text-body); margin: 0 0 1.25rem; line-height: 1.55;">
-                  <strong>Propósito del Proyecto:</strong> ${missionText}
+                <p class="inno-hero-desc">
+                  ${heroSubtitle}
                 </p>
 
-                <button type="button" class="plp-pawly-action-btn" onclick="window.ProjectsView.scrollToLandingSection('plp-sec-recursos')">
-                  <span>🐾 Ver Historial de Salud, Guías y Recursos (${publicResources.length || 3})</span>
-                  <span>→</span>
-                </button>
-              </article>
-            </div>
-          </section>
+                <div class="inno-hero-actions">
+                  <button type="button" class="inno-btn-cyan" onclick="window.ProjectsView.playLandingVideo()">
+                    <span>▶</span> Ver video del proyecto
+                  </button>
+                  <button type="button" class="inno-btn-ghost" onclick="window.ProjectsView.scrollToLandingSection('inno-sec-resources')">
+                    <span>📄</span> Explorar recursos
+                  </button>
+                </div>
 
-          <!-- ================================================================
-               3. SECCIÓN DE DOCUMENTOS Y RECURSOS (CARDS INTERACTIVOS)
-               ================================================================ -->
-          <section class="plp-section-alt" id="plp-sec-recursos" aria-labelledby="plp-docs-heading">
-            <div class="plp-section-alt-inner">
-              <div class="plp-section-header">
-                <span class="plp-eyebrow">📄 Documentación Oficial (Solo Recursos Públicos)</span>
-                <h2 class="plp-section-title" id="plp-docs-heading">Documentos, Guías y Recursos</h2>
-                <p class="plp-section-subtitle">
-                  Explora y descarga los informes estratégicos, guías de usuario, manuales técnicos y recursos autorizados para consulta pública.
-                </p>
+                <div class="inno-feature-pills">
+                  <div class="inno-feature-pill"><span>🏛️</span> Gobierno de Datos</div>
+                  <div class="inno-feature-pill"><span>🧠</span> Inteligencia Artificial</div>
+                  <div class="inno-feature-pill"><span>📊</span> Analítica Avanzada</div>
+                  <div class="inno-feature-pill"><span>⚙️</span> Transformación Digital</div>
+                </div>
               </div>
 
-              <div class="plp-docs-grid">
-                ${publicResources.length > 0 ? publicResources.map(res => `
-                  <article class="plp-doc-card" data-plp-search="${this.escapeHtml((res.name || '') + ' ' + (res.category || '') + ' ' + (res.format || '') + ' ' + (res.description || ''))}">
-                    <div>
-                      <div class="plp-doc-icon-wrap" aria-hidden="true">
-                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                          <polyline points="14 2 14 8 20 8"></polyline>
-                          <line x1="16" y1="13" x2="8" y2="13"></line>
-                          <line x1="16" y1="17" x2="8" y2="17"></line>
-                        </svg>
-                      </div>
-                      <span class="plp-doc-meta">${this.escapeHtml((res.format || 'DOC').toUpperCase())} • ${this.escapeHtml(res.sizeFormatted || 'Recurso Público')}</span>
-                      <h3 class="plp-doc-title">${this.escapeHtml(res.name || 'Recurso del Proyecto')}</h3>
-                      <p class="plp-doc-desc">
-                        ${this.escapeHtml(res.description || 'Recurso oficial verificado y habilitado para consulta y descarga pública.')}
-                      </p>
-                    </div>
-                    <div class="plp-doc-actions">
-                      <button type="button" class="plp-doc-btn outline" onclick="window.ProjectsView.previewCustomLandingResource('${res.id}')">
-                        👁️ Visualizar
-                      </button>
-                      <button type="button" class="plp-doc-btn" onclick="window.ProjectsView.downloadCustomLandingResource('${res.id}')">
-                        ⬇ Descargar
-                      </button>
-                    </div>
-                  </article>
-                `).join('') : `
-                  <!-- Card 1: Plan de Negocios -->
-                  <article class="plp-doc-card" data-plp-search="plan de negocios pdf estrategia modelo">
-                    <div>
-                      <div class="plp-doc-icon-wrap" aria-hidden="true">
-                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                          <polyline points="14 2 14 8 20 8"></polyline>
-                          <line x1="16" y1="13" x2="8" y2="13"></line>
-                          <line x1="16" y1="17" x2="8" y2="17"></line>
-                        </svg>
-                      </div>
-                      <span class="plp-doc-meta">DOCUMENTO PDF • 4.2 MB</span>
-                      <h3 class="plp-doc-title">Plan de Negocios</h3>
-                      <p class="plp-doc-desc">
-                        Arquitectura financiera, estrategia de adopción institucional, modelo de sostenibilidad y hoja de ruta 2026–2030.
-                      </p>
-                    </div>
-                    <div class="plp-doc-actions">
-                      <button type="button" class="plp-doc-btn outline" onclick="window.ProjectsView.previewLandingDoc('Plan de Negocios — ${selectedTitle}')">
-                        👁️ Visualizar
-                      </button>
-                      <button type="button" class="plp-doc-btn" onclick="window.ProjectsView.downloadLandingDoc('Plan_de_Negocios_Innovatech.pdf')">
-                        ⬇ Descargar
-                      </button>
-                    </div>
-                  </article>
-
-                  <!-- Card 2: Estudio de Impacto -->
-                  <article class="plp-doc-card" data-plp-search="estudio de impacto metricas resultados pdf">
-                    <div>
-                      <div class="plp-doc-icon-wrap" aria-hidden="true">
-                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                          <polyline points="14 2 14 8 20 8"></polyline>
-                          <path d="M8 17v-3"></path>
-                          <path d="M12 17v-6"></path>
-                          <path d="M16 17v-4"></path>
-                        </svg>
-                      </div>
-                      <span class="plp-doc-meta">DOCUMENTO PDF • 6.8 MB</span>
-                      <h3 class="plp-doc-title">Estudio de Impacto</h3>
-                      <p class="plp-doc-desc">
-                        Evaluación detallada de indicadores de desempeño (KPIs), optimización de procesos y auditoría de transparencia algorítmica.
-                      </p>
-                    </div>
-                    <div class="plp-doc-actions">
-                      <button type="button" class="plp-doc-btn outline" onclick="window.ProjectsView.previewLandingDoc('Estudio de Impacto — ${selectedTitle}')">
-                        👁️ Visualizar
-                      </button>
-                      <button type="button" class="plp-doc-btn" onclick="window.ProjectsView.downloadLandingDoc('Estudio_de_Impacto_Innovatech.pdf')">
-                        ⬇ Descargar
-                      </button>
-                    </div>
-                  </article>
-                `}
-
-                <!-- Card Descargar todo -->
-                <article class="plp-doc-card" data-plp-search="descargar todo paquete masivo zip recursos">
-                  <div>
-                    <div class="plp-doc-icon-wrap" aria-hidden="true">
-                      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                        <polyline points="7 10 12 15 17 10"></polyline>
-                        <line x1="12" y1="15" x2="12" y2="3"></line>
-                      </svg>
-                    </div>
-                    <span class="plp-doc-meta">DESCARGA MASIVA (.TXT / .ZIP) • ${publicResources.length || 2} RECURSOS</span>
-                    <h3 class="plp-doc-title">Descargar Resumen Completo</h3>
-                    <p class="plp-doc-desc">
-                      Ficha técnica consolidada del proyecto con su descripción ejecutiva, enlaces públicos y listado de recursos autorizados.
-                    </p>
+              <!-- Columna Derecha: Tarjeta Estado del Proyecto -->
+              <div>
+                <article class="inno-status-card">
+                  <div class="inno-status-header">
+                    <h3 class="inno-status-title">Estado del proyecto</h3>
+                    <span class="inno-status-badge">● ${projectState}</span>
                   </div>
-                  <div>
-                    <div class="plp-doc-actions">
-                      <button type="button" class="plp-doc-btn" onclick="window.ProjectsView.triggerLandingBulkDownload()">
-                        📦 Descargar todo
-                      </button>
+
+                  <p class="inno-status-desc">
+                    El proyecto avanza en la implementación de un ecosistema de datos e inteligencia artificial para fortalecer la gestión pública y la transparencia.
+                  </p>
+
+                  <div class="inno-progress-wrap">
+                    <div class="inno-progress-labels">
+                      <span>Avance general</span>
+                      <strong style="color:var(--inno-cyan-600);">68%</strong>
                     </div>
-                    <div class="plp-progress-wrap" id="plp-bulk-progress-wrap" aria-live="polite">
-                      <div class="plp-progress-track">
-                        <div class="plp-progress-fill" id="plp-bulk-progress-fill"></div>
+                    <div class="inno-progress-bar">
+                      <div class="inno-progress-fill"></div>
+                    </div>
+                  </div>
+
+                  <div class="inno-meta-rows">
+                    <div class="inno-meta-row">
+                      <div class="inno-meta-icon green">🎯</div>
+                      <div class="inno-meta-content">
+                        <strong>Objetivo principal</strong>
+                        <span>${mainObjective}</span>
                       </div>
-                      <span class="plp-progress-status" id="plp-bulk-progress-status">Preparando descarga... 0%</span>
                     </div>
+                    <div class="inno-meta-row">
+                      <div class="inno-meta-icon blue">👥</div>
+                      <div class="inno-meta-content">
+                        <strong>Público objetivo</strong>
+                        <span>${targetAudience}</span>
+                      </div>
+                    </div>
+                    <div class="inno-meta-row">
+                      <div class="inno-meta-icon purple">🏷️</div>
+                      <div class="inno-meta-content">
+                        <strong>Categoría</strong>
+                        <span>${visibleCategory}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="inno-status-footer">
+                    <button type="button" class="inno-status-link" onclick="window.ProjectsView.scrollToLandingSection('inno-sec-why')" style="background:none; border:none; padding:0;">
+                      <span>Ver más detalles</span> <span>→</span>
+                    </button>
                   </div>
                 </article>
               </div>
@@ -1470,291 +1236,304 @@ window.ProjectsView = {
           </section>
 
           <!-- ================================================================
-               4. SECCIÓN DE PRESENTACIONES (CARRUSEL INTERACTIVO)
+               3. SECCIÓN ¿POR QUÉ ES IMPORTANTE?
                ================================================================ -->
-          <section class="plp-section" id="plp-sec-presentaciones" aria-labelledby="plp-pres-heading">
-            <div class="plp-section-header">
-              <span class="plp-eyebrow">📊 Diapositivas Ejecutivas</span>
-              <h2 class="plp-section-title" id="plp-pres-heading">Presentaciones del Proyecto</h2>
-              <p class="plp-section-subtitle">
-                Recorre las diapositivas de la presentación utilizando las flechas laterales o los indicadores inferiores.
-              </p>
-            </div>
-
-            <div class="plp-carousel-container" role="region" aria-roledescription="carrusel" aria-label="Presentaciones del Proyecto">
-              <button type="button" class="plp-carousel-arrow prev" onclick="window.ProjectsView.moveLandingSlide(-1)" aria-label="Diapositiva anterior">❮</button>
-              <button type="button" class="plp-carousel-arrow next" onclick="window.ProjectsView.moveLandingSlide(1)" aria-label="Siguiente diapositiva">❯</button>
-
-              <div class="plp-carousel-viewport">
-                <div class="plp-carousel-track" id="plp-landing-carousel-track">
-                  ${customSlides ? customSlides.map((sl, idx) => `
-                    <div class="plp-slide-item">
-                      <div class="plp-slide-preview">
-                        <span class="plp-slide-badge">Diapositiva ${String(idx + 1).padStart(2, '0')} / ${String(customSlides.length).padStart(2, '0')}</span>
-                        <img src="${sl.image || sl.mediaUrl || coverPoster}" alt="${this.escapeHtml(sl.title || `Diapositiva ${idx + 1}`)}" loading="lazy" />
-                      </div>
-                      <div class="plp-slide-info">
-                        <h3>${idx + 1}. ${this.escapeHtml(sl.title || `Diapositiva ${idx + 1}`)}</h3>
-                        <p>${this.escapeHtml(sl.content || sl.text || heroSubtitle)}</p>
-                        <div class="plp-slide-kpis">
-                          <span class="plp-slide-kpi">✔ ${brandSubtitle}</span>
-                          <span class="plp-slide-kpi">✔ Lámina ${idx + 1}</span>
-                        </div>
-                      </div>
-                    </div>
-                  `).join('') : `
-                    <!-- Slide 1 -->
-                    <div class="plp-slide-item">
-                      <div class="plp-slide-preview">
-                        <span class="plp-slide-badge">Diapositiva 01 / 04</span>
-                        <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1000&q=80" alt="Arquitectura de Gobierno de Datos" loading="lazy" />
-                      </div>
-                      <div class="plp-slide-info">
-                        <h3>1. Arquitectura de Gobierno de Datos</h3>
-                        <p>Estructura centralizada de ingesta, catalogación inteligente y trazabilidad de extremo a extremo con estándares de seguridad corporativa.</p>
-                        <div class="plp-slide-kpis">
-                          <span class="plp-slide-kpi">✔ Catálogo Maestro</span>
-                          <span class="plp-slide-kpi">✔ Linaje Automatizado</span>
-                        </div>
-                      </div>
-                    </div>
-
-                    <!-- Slide 2 -->
-                    <div class="plp-slide-item">
-                      <div class="plp-slide-preview">
-                        <span class="plp-slide-badge">Diapositiva 02 / 04</span>
-                        <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1000&q=80" alt="Modelos de IA y Analítica Predictiva" loading="lazy" />
-                      </div>
-                      <div class="plp-slide-info">
-                        <h3>2. Modelos de IA y Analítica Predictiva</h3>
-                        <p>Despliegue de algoritmos auditables que transforman grandes volúmenes de datos en proyecciones accionables en tiempo real.</p>
-                        <div class="plp-slide-kpis">
-                          <span class="plp-slide-kpi">✔ +38% Precisión</span>
-                          <span class="plp-slide-kpi">✔ IA Explicable</span>
-                        </div>
-                      </div>
-                    </div>
-
-                    <!-- Slide 3 -->
-                    <div class="plp-slide-item">
-                      <div class="plp-slide-preview">
-                        <span class="plp-slide-badge">Diapositiva 03 / 04</span>
-                        <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=1000&q=80" alt="Ética y Privacidad por Diseño" loading="lazy" />
-                      </div>
-                      <div class="plp-slide-info">
-                        <h3>3. Ética, Privacidad y Cumplimiento</h3>
-                        <p>Protocolos de protección de datos personales, anonimización avanzada y comités de validación ética en cada ciclo de vida del modelo.</p>
-                        <div class="plp-slide-kpis">
-                          <span class="plp-slide-kpi">✔ Privacidad Total</span>
-                          <span class="plp-slide-kpi">✔ ISO/IEC 42001</span>
-                        </div>
-                      </div>
-                    </div>
-
-                    <!-- Slide 4 -->
-                    <div class="plp-slide-item">
-                      <div class="plp-slide-preview">
-                        <span class="plp-slide-badge">Diapositiva 04 / 04</span>
-                        <img src="https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=1000&q=80" alt="Escalabilidad e Impacto" loading="lazy" />
-                      </div>
-                      <div class="plp-slide-info">
-                        <h3>4. Escalabilidad e Impacto Regional</h3>
-                        <p>Resultados alcanzados en instituciones aliadas, transferencia tecnológica y próximos hitos de expansión del Proyecto Innovatech.</p>
-                        <div class="plp-slide-kpis">
-                          <span class="plp-slide-kpi">✔ 12 Nodos Activos</span>
-                          <span class="plp-slide-kpi">✔ Red Colaborativa</span>
-                        </div>
-                      </div>
-                    </div>
-                  `}
+          <section class="inno-why-section" id="inno-sec-why">
+            <div class="inno-why-grid">
+              <div class="inno-why-lead">
+                <div>
+                  <h2 class="inno-why-lead-title">¿Por qué es importante?</h2>
+                  <p class="inno-why-lead-text">
+                    El acceso, la calidad y el uso responsable de los datos, junto con la inteligencia artificial, permiten a las organizaciones tomar decisiones más informadas, mejorar la eficiencia y generar un mayor impacto social.
+                  </p>
                 </div>
+                <button type="button" class="inno-why-lead-btn" onclick="window.ProjectsView.previewLandingDoc('Sobre el Proyecto — ${selectedTitle}')">
+                  Conocer más sobre el proyecto →
+                </button>
               </div>
 
-              <!-- Dots inferiores -->
-              <div class="plp-carousel-thumbs" role="tablist">
-                ${Array.from({ length: totalCarouselSlides }).map((_, idx) => `
-                  <button type="button" class="plp-carousel-dot ${idx === 0 ? 'active' : ''}" onclick="window.ProjectsView.goToLandingSlide(${idx})" aria-label="Diapositiva ${idx + 1}"></button>
-                `).join('')}
-              </div>
-            </div>
+              <article class="inno-why-card" onclick="window.ProjectsView.previewLandingDoc('Problema / Oportunidad — ${selectedTitle}')" role="button" tabindex="0">
+                <div>
+                  <div class="inno-why-icon-circle" style="background:#e0f2fe; color:#0284c7;">📊</div>
+                  <h4>Problema / Oportunidad</h4>
+                  <p>La falta de datos confiables y la limitada analítica impiden una gestión pública más efectiva.</p>
+                </div>
+                <span class="inno-why-arrow">→</span>
+              </article>
 
-            <div class="plp-carousel-cta-wrap">
-              <button type="button" class="plp-btn-emerald-lg" onclick="${selected && selected.projectType === 'presentation' ? `window.ProjectsView.openSelectedProject()` : `window.ProjectsView.previewLandingDoc('Presentación Completa — ${selectedTitle}')`}">
-                <span>🖥️ Ver Presentación Completa</span>
-              </button>
+              <article class="inno-why-card" onclick="window.ProjectsView.previewLandingDoc('Propuesta de Valor — ${selectedTitle}')" role="button" tabindex="0">
+                <div>
+                  <div class="inno-why-icon-circle" style="background:#dcfce7; color:#16a34a;">💡</div>
+                  <h4>Propuesta de valor</h4>
+                  <p>Un ecosistema de datos e IA que facilita la toma de decisiones y la transparencia.</p>
+                </div>
+                <span class="inno-why-arrow">→</span>
+              </article>
+
+              <article class="inno-why-card" onclick="window.ProjectsView.previewLandingDoc('Metodología — ${selectedTitle}')" role="button" tabindex="0">
+                <div>
+                  <div class="inno-why-icon-circle" style="background:#f3e8ff; color:#7c3aed;">⚙️</div>
+                  <h4>Metodología</h4>
+                  <p>Gobierno de datos, analítica avanzada y tecnologías de IA aplicadas al sector público.</p>
+                </div>
+                <span class="inno-why-arrow">→</span>
+              </article>
+
+              <article class="inno-why-card" onclick="window.ProjectsView.previewLandingDoc('Impacto Esperado — ${selectedTitle}')" role="button" tabindex="0">
+                <div>
+                  <div class="inno-why-icon-circle" style="background:#ecfdf5; color:#059669;">🛡️</div>
+                  <h4>Impacto esperado</h4>
+                  <p>Más transparencia, eficiencia y participación ciudadana.</p>
+                </div>
+                <span class="inno-why-arrow">→</span>
+              </article>
             </div>
           </section>
 
           <!-- ================================================================
-               5. SECCIÓN DE GALERÍA DE IMÁGENES (GRID DINÁMICO / MASONRY)
+               4. SECCIÓN RECURSOS & GALERÍA MULTIMEDIA
                ================================================================ -->
-          <section class="plp-section-alt" id="plp-sec-galeria" aria-labelledby="plp-gallery-heading">
-            <div class="plp-section-alt-inner">
-              <div class="plp-section-header">
-                <span class="plp-eyebrow">📸 Galería Visual</span>
-                <h2 class="plp-section-title" id="plp-gallery-heading">Imágenes y Capturas del Proyecto</h2>
-                <p class="plp-section-subtitle">
-                  Cuadrícula visual con capturas, diagramas e infografías públicas del proyecto. Haz clic en cualquier imagen para abrir el visor Lightbox.
-                </p>
+          <section class="inno-resources-section" id="inno-sec-resources">
+            <div class="inno-resources-inner">
+              <div class="inno-resources-header">
+                <div class="inno-resources-title-wrap">
+                  <div class="inno-resources-icon">📁</div>
+                  <div>
+                    <h2 class="inno-resources-title">Recursos</h2>
+                    <p class="inno-resources-sub">Accede a todos los materiales del proyecto</p>
+                  </div>
+                </div>
+
+                <div style="display:flex; align-items:center; gap:0.75rem;">
+                  <div class="inno-search-box">
+                    <span style="position:absolute; left:0.75rem; color:#94a3b8; font-size:0.85rem;">🔍</span>
+                    <input type="search" class="inno-search-input" placeholder="Buscar recursos..." oninput="window.ProjectsView.filterLandingSearch(this.value)" />
+                  </div>
+                  <select style="background:#ffffff; border:1px solid #cbd5e1; border-radius:999px; padding:0.45rem 1rem; font-size:0.84rem; font-weight:700; color:#334155; outline:none; cursor:pointer;">
+                    <option>Más recientes ▾</option>
+                    <option>Más descargados</option>
+                    <option>Por categoría</option>
+                  </select>
+                </div>
               </div>
 
-              <div class="plp-masonry-grid">
-                ${publicVisuals.length > 0 ? publicVisuals.map((img, idx) => {
-                  const spanClass = idx === 0 ? 'span-7 row-2' : (idx < 3 ? 'span-5' : 'span-4');
-                  const safeUrl = img.url || coverPoster;
-                  const safeTitle = this.escapeHtml(img.title || 'Imagen del Proyecto');
-                  const safeCat = this.escapeHtml(img.category || 'Galería');
-                  return `
-                    <figure
-                      class="plp-gallery-item ${spanClass}"
-                      onclick="window.ProjectsView.openLandingLightbox('${safeUrl.replace(/'/g, "\\'")}', '${safeTitle.replace(/'/g, "\\'")}')"
-                    >
-                      <img src="${safeUrl}" alt="${safeTitle}" loading="lazy" />
-                      <figcaption class="plp-gallery-overlay">
-                        <span class="plp-gallery-tag">${safeCat}</span>
-                        <p class="plp-gallery-caption">${safeTitle}</p>
-                      </figcaption>
-                    </figure>
-                  `;
-                }).join('') : `
-                  <figure
-                    class="plp-gallery-item span-7 row-2"
-                    onclick="window.ProjectsView.openLandingLightbox('${coverPoster}', '${selectedTitle} — Portada Principal')"
-                  >
-                    <img src="${coverPoster}" alt="Portada del proyecto" loading="lazy" />
-                    <figcaption class="plp-gallery-overlay">
-                      <span class="plp-gallery-tag">Portada Principal</span>
-                      <p class="plp-gallery-caption">${selectedTitle}</p>
-                    </figcaption>
-                  </figure>
+              <!-- Filtros de categoría -->
+              <div class="inno-filter-tabs">
+                <button type="button" class="inno-filter-pill active">Todos</button>
+                <button type="button" class="inno-filter-pill">Videos</button>
+                <button type="button" class="inno-filter-pill">Documentos</button>
+                <button type="button" class="inno-filter-pill">Presentaciones</button>
+                <button type="button" class="inno-filter-pill">Guías</button>
+                <button type="button" class="inno-filter-pill">Imágenes</button>
+                <button type="button" class="inno-filter-pill">Enlaces</button>
+              </div>
 
-                  <figure
-                    class="plp-gallery-item span-5"
-                    onclick="window.ProjectsView.openLandingLightbox('https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1400&q=85', 'Prototipo de Dashboard Analítico en Tiempo Real')"
-                  >
-                    <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=80" alt="Prototipo de dashboard" loading="lazy" />
-                    <figcaption class="plp-gallery-overlay">
-                      <span class="plp-gallery-tag">Prototipo Funcional</span>
-                      <p class="plp-gallery-caption">Panel de monitoreo de modelos e indicadores</p>
-                    </figcaption>
-                  </figure>
+              <div class="inno-resources-main-grid">
+                <!-- 4 Tarjetas de Recursos -->
+                <div class="inno-cards-grid">
+                  <!-- Card 1: Video -->
+                  <article class="inno-resource-card" data-plp-search="video explicativo objetivos alcance">
+                    <div class="inno-card-thumb-wrap" style="background-image:url('https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=600&q=80'); cursor:pointer;" onclick="window.ProjectsView.playLandingVideo()">
+                      <span class="inno-card-tag" style="background:#0284c7;">▶ Video</span>
+                      <div class="inno-card-play-btn">▶</div>
+                    </div>
+                    <div class="inno-card-body">
+                      <div>
+                        <h4 class="inno-card-title">Video explicativo del proyecto</h4>
+                        <p class="inno-card-desc">Conoce los objetivos y el alcance de la iniciativa.</p>
+                      </div>
+                      <div class="inno-card-footer">
+                        <span>📅 12 abr 2025 • ⏱️ 03:45</span>
+                        <button type="button" class="inno-card-dl-btn" onclick="window.ProjectsView.playLandingVideo()" title="Reproducir">⬇</button>
+                      </div>
+                    </div>
+                  </article>
 
-                  <figure
-                    class="plp-gallery-item span-5"
-                    onclick="window.ProjectsView.openLandingLightbox('https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=1400&q=85', 'Validación experimental de algoritmos de IA')"
-                  >
-                    <img src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=800&q=80" alt="Laboratorio de IA" loading="lazy" />
-                    <figcaption class="plp-gallery-overlay">
-                      <span class="plp-gallery-tag">Laboratorio IA</span>
-                      <p class="plp-gallery-caption">Pruebas de rendimiento y calibración de modelos</p>
-                    </figcaption>
-                  </figure>
-                `}
+                  <!-- Card 2: Informe técnico -->
+                  <article class="inno-resource-card" data-plp-search="informe tecnico documento avances resultados pdf">
+                    <div class="inno-card-thumb-wrap" style="background-image:url('https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&w=600&q=80'); cursor:pointer;" onclick="window.ProjectsView.previewLandingDoc('Informe Técnico — ${selectedTitle}')">
+                      <span class="inno-card-tag" style="background:#ea580c;">📄 PDF</span>
+                    </div>
+                    <div class="inno-card-body">
+                      <div>
+                        <h4 class="inno-card-title">Informe técnico</h4>
+                        <p class="inno-card-desc">Documento con los avances y resultados del proyecto.</p>
+                      </div>
+                      <div class="inno-card-footer">
+                        <span>📅 10 abr 2025 • 💾 2.4 MB</span>
+                        <button type="button" class="inno-card-dl-btn" onclick="window.ProjectsView.downloadLandingDoc('Informe_Tecnico_Innovatech.pdf')" title="Descargar">⬇</button>
+                      </div>
+                    </div>
+                  </article>
+
+                  <!-- Card 3: Presentación -->
+                  <article class="inno-resource-card" data-plp-search="presentacion institucional resumen ejecutivo componentes">
+                    <div class="inno-card-thumb-wrap" style="background-image:url('https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=600&q=80'); cursor:pointer;" onclick="window.ProjectsView.previewLandingDoc('Presentación Institucional — ${selectedTitle}')">
+                      <span class="inno-card-tag" style="background:#7c3aed;">📊 Presentación</span>
+                    </div>
+                    <div class="inno-card-body">
+                      <div>
+                        <h4 class="inno-card-title">Presentación institucional</h4>
+                        <p class="inno-card-desc">Resumen ejecutivo del proyecto y sus componentes.</p>
+                      </div>
+                      <div class="inno-card-footer">
+                        <span>📅 08 abr 2025 • 💾 5.8 MB</span>
+                        <button type="button" class="inno-card-dl-btn" onclick="window.ProjectsView.downloadLandingDoc('Presentacion_Institucional_Innovatech.pdf')" title="Descargar">⬇</button>
+                      </div>
+                    </div>
+                  </article>
+
+                  <!-- Card 4: Guía de implementación -->
+                  <article class="inno-resource-card" data-plp-search="guia de implementacion adopcion gobierno de datos">
+                    <div class="inno-card-thumb-wrap" style="background-image:url('https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?auto=format&fit=crop&w=600&q=80'); cursor:pointer;" onclick="window.ProjectsView.previewLandingDoc('Guía de Implementación — ${selectedTitle}')">
+                      <span class="inno-card-tag" style="background:#059669;">📘 Guía</span>
+                    </div>
+                    <div class="inno-card-body">
+                      <div>
+                        <h4 class="inno-card-title">Guía de implementación</h4>
+                        <p class="inno-card-desc">Paso a paso para la adopción del gobierno de datos.</p>
+                      </div>
+                      <div class="inno-card-footer">
+                        <span>📅 05 abr 2025 • 💾 1.2 MB</span>
+                        <button type="button" class="inno-card-dl-btn" onclick="window.ProjectsView.downloadLandingDoc('Guia_Implementacion_Innovatech.pdf')" title="Descargar">⬇</button>
+                      </div>
+                    </div>
+                  </article>
+                </div>
+
+                <!-- Columna Derecha: Galería Multimedia Widget -->
+                <aside class="inno-gallery-box">
+                  <div class="inno-gallery-header">
+                    <div>
+                      <h3 style="margin:0 0 0.2rem; font-size:1.15rem; font-weight:800; color:#ffffff;">🖼️ Galería multimedia</h3>
+                      <p style="margin:0; font-size:0.8rem; color:#94a3b8;">Imágenes, videos y momentos del proyecto</p>
+                    </div>
+                    <button type="button" style="background:none; border:none; color:var(--inno-cyan-400); font-size:0.84rem; font-weight:700; cursor:pointer;" onclick="window.ProjectsView.openLandingLightbox('https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=1200&q=80', 'Centro de Monitoreo de Datos y Modelos IA')">
+                      Ver galería →
+                    </button>
+                  </div>
+
+                  <div class="inno-gallery-mosaic">
+                    <div class="inno-gallery-big" style="background-image:url('https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=800&q=80');" onclick="window.ProjectsView.playLandingVideo()">
+                      <div class="inno-card-play-btn" style="width:52px; height:52px; font-size:1.25rem;">▶</div>
+                    </div>
+                    <div class="inno-gallery-stack">
+                      <div class="inno-gallery-thumb" style="background-image:url('https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=400&q=80');" onclick="window.ProjectsView.openLandingLightbox('https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=1200&q=80', 'Sesión de trabajo en equipo')"></div>
+                      <div class="inno-gallery-thumb" style="background-image:url('https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=400&q=80');" onclick="window.ProjectsView.openLandingLightbox('https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=80', 'Analítica y métricas de desempeño')"></div>
+                      <div class="inno-gallery-thumb" style="background-image:url('https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=400&q=80');" onclick="window.ProjectsView.openLandingLightbox('https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=1200&q=80', 'Comunidad y colaboradores')">
+                        <div class="inno-gallery-overlay-badge">+12</div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div style="text-align:right;">
+                    <span style="font-size:0.75rem; color:#64748b;">Actualizado recientemente • 16 archivos multimedia</span>
+                  </div>
+                </aside>
               </div>
             </div>
           </section>
 
           <!-- ================================================================
-               6. SECCIÓN DE ENLACES DE INTERÉS Y PREGUNTAS FRECUENTES (FAQ)
+               5. SECCIÓN AVANCES E IMPACTO & SÉ PARTE DEL PROYECTO
                ================================================================ -->
-          <section class="plp-section" id="plp-sec-contacto" aria-labelledby="plp-links-heading">
-            <div class="plp-section-header">
-              <span class="plp-eyebrow">🔗 Accesos Directos & Preguntas Frecuentes</span>
-              <h2 class="plp-section-title" id="plp-links-heading">Enlaces Externos y Recursos Web</h2>
-              <p class="plp-section-subtitle">
-                Conecta con los enlaces oficiales públicos, demos interactivas, repositorios y preguntas frecuentes del proyecto.
-              </p>
-            </div>
-
-            <div class="plp-links-grid">
-              ${publicLinks.length > 0 ? publicLinks.map(lnk => `
-                <a href="${this.escapeHtml(lnk.url)}" target="_blank" rel="noopener noreferrer" class="plp-link-card" data-plp-search="${this.escapeHtml((lnk.name || '') + ' ' + (lnk.category || '') + ' ' + (lnk.description || ''))}">
-                  <div class="plp-link-icon" aria-hidden="true">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                      <circle cx="12" cy="12" r="10"></circle>
-                      <line x1="2" y1="12" x2="22" y2="12"></line>
-                      <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
-                    </svg>
-                  </div>
-                  <div>
-                    <h3 class="plp-link-title">${this.escapeHtml(lnk.name || 'Enlace Externo')} ${lnk.verified ? '<span style="font-size:0.7rem;color:#10b981;font-weight:800;">✔ Verificado</span>' : ''}</h3>
-                    <p class="plp-link-desc">${this.escapeHtml(lnk.description || lnk.url)}</p>
-                  </div>
-                </a>
-              `).join('') : `
-                <!-- Sitio Web Aliado -->
-                <a href="https://mentixs.vercel.app" target="_blank" rel="noopener noreferrer" class="plp-link-card" data-plp-search="sitio web aliado portal">
-                  <div class="plp-link-icon" aria-hidden="true">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                      <circle cx="12" cy="12" r="10"></circle>
-                      <line x1="2" y1="12" x2="22" y2="12"></line>
-                      <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
-                    </svg>
-                  </div>
-                  <div>
-                    <h3 class="plp-link-title">Plataforma Oficial Mentix</h3>
-                    <p class="plp-link-desc">Portal oficial de la red interinstitucional de innovación y proyectos.</p>
-                  </div>
-                </a>
-
-                <!-- Repositorio de Código -->
-                <a href="https://github.com/meli030814abc-sys/Mentix" target="_blank" rel="noopener noreferrer" class="plp-link-card" data-plp-search="repositorio de codigo github desarrollo">
-                  <div class="plp-link-icon" aria-hidden="true">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                      <polyline points="16 18 22 12 16 6"></polyline>
-                      <polyline points="8 6 2 12 8 18"></polyline>
-                    </svg>
-                  </div>
-                  <div>
-                    <h3 class="plp-link-title">Repositorio de Código</h3>
-                    <p class="plp-link-desc">Código fuente, arquitecturas de referencia y scripts en GitHub.</p>
-                  </div>
-                </a>
-              `}
-
-              <!-- Impactos y Beneficios -->
-              <div class="plp-link-card" role="button" tabindex="0" onclick="window.ProjectsView.previewLandingDoc('Impactos y Beneficios — ${selectedTitle}')" data-plp-search="impactos frecuentes metricas resultados">
-                <div class="plp-link-icon" aria-hidden="true">
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <line x1="18" y1="20" x2="18" y2="10"></line>
-                    <line x1="12" y1="20" x2="12" y2="4"></line>
-                    <line x1="6" y1="20" x2="6" y2="14"></line>
-                  </svg>
-                </div>
+          <section class="inno-bottom-section" id="inno-sec-timeline">
+            <div class="inno-bottom-grid">
+              <!-- Tarjeta Avances e Impacto -->
+              <article class="inno-timeline-card">
                 <div>
-                  <h3 class="plp-link-title">Impactos y Resultados</h3>
-                  <p class="plp-link-desc">Beneficios clave, alcance para usuarios y propuesta de valor del proyecto.</p>
+                  <div style="display:flex; align-items:center; gap:0.6rem; margin-bottom:0.35rem;">
+                    <span style="font-size:1.3rem;">📋</span>
+                    <h3 style="margin:0; font-size:1.25rem; font-weight:800; color:var(--inno-text-dark);">Avances e impacto</h3>
+                  </div>
+                  <p style="margin:0 0 1.5rem; font-size:0.86rem; color:var(--inno-text-muted);">Conoce los hitos y el progreso del proyecto</p>
                 </div>
-              </div>
 
-              <!-- Preguntas Frecuentes (FAQ) -->
-              <div class="plp-link-card" role="button" tabindex="0" onclick="window.ProjectsView.openProjectFaqModal()" data-plp-search="preguntas frecuentes faq soporte ayuda">
-                <div class="plp-link-icon" aria-hidden="true">
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <circle cx="12" cy="12" r="10"></circle>
-                    <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
-                    <line x1="12" y1="17" x2="12.01" y2="17"></line>
-                  </svg>
+                <div class="inno-timeline-stepper">
+                  <div class="inno-timeline-line"></div>
+                  <div class="inno-timeline-line-active"></div>
+
+                  <div class="inno-step-item active">
+                    <div class="inno-step-dot">●</div>
+                    <div class="inno-step-title">Inicio</div>
+                    <div class="inno-step-date">Ene 2025</div>
+                  </div>
+
+                  <div class="inno-step-item active">
+                    <div class="inno-step-dot">●</div>
+                    <div class="inno-step-title">Fase 1: Diagnóstico</div>
+                    <div class="inno-step-date">Mar 2025</div>
+                  </div>
+
+                  <div class="inno-step-item active">
+                    <div class="inno-step-dot">●</div>
+                    <div class="inno-step-title">Fase 2: Desarrollo</div>
+                    <div class="inno-step-date">May 2025</div>
+                  </div>
+
+                  <div class="inno-step-item active">
+                    <div class="inno-step-dot">●</div>
+                    <div class="inno-step-title">Fase 3: Implementación</div>
+                    <div class="inno-step-date">Ago 2025</div>
+                  </div>
+
+                  <div class="inno-step-item">
+                    <div class="inno-step-dot">○</div>
+                    <div class="inno-step-title">Resultados</div>
+                    <div class="inno-step-date">Dic 2025</div>
+                  </div>
                 </div>
-                <div>
-                  <h3 class="plp-link-title">Preguntas Frecuentes (FAQ)</h3>
-                  <p class="plp-link-desc">${publicFaqs.length > 0 ? `${publicFaqs.length} preguntas respondidas sobre el uso del proyecto.` : 'Respuestas rápidas sobre uso, gobernanza y soporte técnico.'}</p>
+              </article>
+
+              <!-- Banner Sé parte del proyecto -->
+              <article class="inno-join-banner">
+                <div class="inno-join-bg"></div>
+                <div class="inno-join-content">
+                  <div style="display:flex; align-items:center; gap:0.6rem; margin-bottom:0.5rem;">
+                    <span style="font-size:1.5rem;">👥</span>
+                    <h3 class="inno-join-title">¡Sé parte del proyecto!</h3>
+                  </div>
+                  <p class="inno-join-desc">
+                    Tu participación es clave para construir un futuro más transparente e inteligente.
+                  </p>
+                  <button type="button" class="inno-btn-cyan" onclick="window.ProjectsView.previewLandingDoc('Contacto y Alianzas — ${selectedTitle}')" style="box-shadow:none;">
+                    <span>Contactar al equipo</span> <span>→</span>
+                  </button>
                 </div>
-              </div>
+              </article>
             </div>
           </section>
 
-          <!-- Footer -->
-          <footer class="plp-footer">
-            <div>
-              <strong>${brandTitle} — ${brandSubtitle}</strong> • © 2026
+          <!-- ================================================================
+               6. FOOTER
+               ================================================================ -->
+          <footer class="inno-footer">
+            <div class="inno-footer-left">
+              <div class="inno-logo-icon" style="width:28px; height:28px; border-radius:8px;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.3">
+                  <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+                  <polyline points="2 17 12 22 22 17"></polyline>
+                  <polyline points="2 12 12 17 22 12"></polyline>
+                </svg>
+              </div>
+              <strong style="color:#ffffff;">${brandTitle}</strong> • <span style="color:var(--inno-cyan-400);">${brandSubtitle}</span>
             </div>
-            <div>
-              Experiencia UX/UI Corporativa • Accesibilidad & Diseño Responsivo
+
+            <nav class="inno-footer-links">
+              <a href="#inno-sec-hero" class="inno-footer-link">Inicio</a>
+              <a href="#inno-sec-why" class="inno-footer-link">Sobre el Proyecto</a>
+              <a href="#inno-sec-resources" class="inno-footer-link">Recursos</a>
+              <a href="#inno-sec-resources" class="inno-footer-link">Presentaciones</a>
+              <a href="#inno-sec-resources" class="inno-footer-link">Galería</a>
+              <a href="#inno-sec-timeline" class="inno-footer-link">Contacto</a>
+            </nav>
+
+            <div class="inno-footer-right">
+              <span style="font-size:0.8rem; color:#64748b;">Innovación • Datos • Personas</span>
             </div>
           </footer>
 
-          <!-- Lightbox / Modal Universal -->
+          <!-- Lightbox Modal Universal -->
           <div class="plp-lightbox" id="plp-inline-lightbox" role="dialog" aria-modal="true" onclick="if(event.target===this) window.ProjectsView.closeLandingLightbox()">
             <div class="plp-lightbox-content" id="plp-inline-lightbox-body"></div>
           </div>
@@ -1769,177 +1548,47 @@ window.ProjectsView = {
   },
 
   playLandingVideo() {
-    const box = document.getElementById('plp-hero-video-box');
-    if (!box) return;
+    const modal = document.getElementById('plp-inline-lightbox');
+    const body = document.getElementById('plp-inline-lightbox-body');
+    if (!modal || !body) return;
     const selected = (window.appState.challenges || []).find(x => x.id === this.selectedProjectId);
     const vid = (selected && selected.video) ? selected.video : {};
-    const rawUrl = vid.url || vid.embedUrl || (selected && selected.videoUrl) || '';
+    const rawUrl = vid.url || vid.embedUrl || (selected && selected.videoUrl) || 'https://www.youtube.com/embed/aircAruvnKk';
 
-    if (vid.sourceType === 'upload' && vid.fileDataUrl) {
-      box.innerHTML = `<video src="${vid.fileDataUrl}" controls autoplay style="width:100%; height:100%; display:block; background:#000;"></video>`;
-      return;
-    }
-
-    if (rawUrl) {
-      const ytMatch = rawUrl.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([A-Za-z0-9_-]{6,})/);
-      const vimeoMatch = rawUrl.match(/vimeo\.com\/(?:video\/)?(\d+)/);
-      if (ytMatch) {
-        box.innerHTML = `<iframe width="100%" height="100%" src="https://www.youtube.com/embed/${ytMatch[1]}?autoplay=1&rel=0" title="Video del Proyecto" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="border:0; width:100%; height:100%; display:block;"></iframe>`;
-        return;
-      }
-      if (vimeoMatch) {
-        box.innerHTML = `<iframe width="100%" height="100%" src="https://player.vimeo.com/video/${vimeoMatch[1]}?autoplay=1" title="Video del Proyecto" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen style="border:0; width:100%; height:100%; display:block;"></iframe>`;
-        return;
-      }
-      if (/\.(mp4|webm|ogg)(\?.*)?$/i.test(rawUrl) || rawUrl.startsWith('data:video/')) {
-        box.innerHTML = `<video src="${rawUrl}" controls autoplay style="width:100%; height:100%; display:block; background:#000;"></video>`;
-        return;
-      }
-    }
-
-    box.innerHTML = `
+    let videoHtml = `
       <iframe
         width="100%"
-        height="100%"
+        height="500px"
         src="https://www.youtube.com/embed/aircAruvnKk?autoplay=1&rel=0"
         title="Video Explicativo Proyecto Innovatech"
         frameborder="0"
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
         allowfullscreen
-        style="border:0; width:100%; height:100%; display:block;"
+        style="border:0; width:100%; height:500px; display:block; border-radius:12px;"
       ></iframe>
     `;
-  },
 
-  goToLandingSlide(index) {
-    const slides = document.querySelectorAll('#plp-landing-carousel-track .plp-slide-item');
-    const total = slides.length || 4;
-    this.currentSlideIndex = (index + total) % total;
-    const track = document.getElementById('plp-landing-carousel-track');
-    if (track) {
-      track.style.transform = `translateX(-${this.currentSlideIndex * 100}%)`;
-    }
-    document.querySelectorAll('#view-projects .plp-carousel-dot').forEach((dot, idx) => {
-      dot.classList.toggle('active', idx === this.currentSlideIndex);
-    });
-  },
-
-  moveLandingSlide(step) {
-    this.goToLandingSlide((this.currentSlideIndex || 0) + step);
-  },
-
-  previewCustomLandingResource(resId) {
-    const selected = (window.appState.challenges || []).find(x => x.id === this.selectedProjectId);
-    const res = ((selected && selected.resources) || []).find(r => r.id === resId && r.visibility !== 'private');
-    if (!res) return;
-    if (res.textExtract) {
-      this.previewLandingDoc(`${res.name} — Extracto:\n${res.textExtract.slice(0, 600)}`);
-      return;
-    }
-    const targetUrl = res.url || res.fileDataUrl;
-    if (targetUrl && (targetUrl.startsWith('http') || targetUrl.startsWith('data:image/'))) {
-      if (res.format === 'PNG' || res.format === 'JPG' || res.format === 'WEBP' || targetUrl.startsWith('data:image/')) {
-        this.openLandingLightbox(targetUrl, res.name || 'Recurso gráfico');
-      } else {
-        window.open(targetUrl, '_blank', 'noopener,noreferrer');
+    if (rawUrl) {
+      const ytMatch = rawUrl.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([A-Za-z0-9_-]{6,})/);
+      if (ytMatch) {
+        videoHtml = `<iframe width="100%" height="500px" src="https://www.youtube.com/embed/${ytMatch[1]}?autoplay=1&rel=0" frameborder="0" allowfullscreen style="border:0; width:100%; height:500px; display:block; border-radius:12px;"></iframe>`;
       }
-      return;
     }
-    this.previewLandingDoc(res.name || 'Recurso del Proyecto');
-  },
-
-  downloadCustomLandingResource(resId) {
-    const selected = (window.appState.challenges || []).find(x => x.id === this.selectedProjectId);
-    const res = ((selected && selected.resources) || []).find(r => r.id === resId && r.visibility !== 'private');
-    if (!res) return;
-    const targetUrl = res.fileDataUrl || res.url;
-    if (targetUrl) {
-      const a = document.createElement('a');
-      a.href = targetUrl;
-      a.download = res.fileName || `${(res.name || 'recurso').replace(/\s+/g, '_')}`;
-      a.target = '_blank';
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      return;
-    }
-    this.downloadLandingDoc(`${(res.name || 'Recurso').replace(/\s+/g, '_')}.txt`);
-  },
-
-  openProjectFaqModal() {
-    const selected = (window.appState.challenges || []).find(x => x.id === this.selectedProjectId);
-    const faqs = (selected && Array.isArray(selected.faqs) && selected.faqs.length > 0)
-      ? selected.faqs
-      : [
-          { question: '¿Cuál es el propósito principal de este proyecto?', answer: (selected && (selected.mainObjective || selected.description)) || 'Facilitar el acceso a recursos estructurados, documentación oficial y herramientas interactivas.' },
-          { question: '¿Qué recursos están disponibles públicamente?', answer: 'Todos los documentos, presentaciones y enlaces marcados como públicos por el equipo responsable.' }
-        ];
-    const modal = document.getElementById('plp-inline-lightbox');
-    const body = document.getElementById('plp-inline-lightbox-body');
-    if (!modal || !body) return;
-    const isDark = (document.querySelector('.plp-wrapper')?.getAttribute('data-theme') || this.getLandingTheme()) === 'dark';
-    const bg = isDark ? '#0f172a' : '#ffffff';
-    const titleColor = isDark ? '#ffffff' : '#0a192f';
-    const textColor = isDark ? '#e2e8f0' : '#334155';
 
     body.innerHTML = `
       <button class="plp-lightbox-close" onclick="window.ProjectsView.closeLandingLightbox()" aria-label="Cerrar">✕</button>
-      <div style="padding:2.25rem; background:${bg}; border-radius:var(--plp-radius-lg); max-height:80vh; overflow-y:auto;">
-        <span class="plp-eyebrow">❓ Preguntas Frecuentes (FAQ)</span>
-        <h2 style="margin:0.4rem 0 1.25rem; color:${titleColor};">${this.escapeHtml((selected && selected.title) || 'Proyecto Innovatech')}</h2>
-        <div style="display:flex; flex-direction:column; gap:1rem;">
-          ${faqs.map(f => `
-            <div style="padding:1rem 1.2rem; border-radius:12px; border:1px solid rgba(16,185,129,0.3); background:rgba(16,185,129,0.06);">
-              <strong style="display:block; color:${titleColor}; margin-bottom:0.35rem;">${this.escapeHtml(f.question || '')}</strong>
-              <p style="margin:0; color:${textColor}; line-height:1.55; font-size:0.94rem;">${this.escapeHtml(f.answer || '')}</p>
-            </div>
-          `).join('')}
-        </div>
-        <div style="margin-top:1.5rem; text-align:right;">
-          <button class="plp-btn-secondary" onclick="window.ProjectsView.closeLandingLightbox()">Cerrar</button>
-        </div>
+      <div style="background:#091e2d; padding:1.5rem; border-radius:16px;">
+        <h3 style="color:#ffffff; margin:0 0 1rem;">🎬 Video Explicativo: Proyecto Innovatech</h3>
+        ${videoHtml}
       </div>
     `;
     modal.classList.add('active');
   },
 
-  triggerLandingBulkDownload() {
-    const wrap = document.getElementById('plp-bulk-progress-wrap');
-    const fill = document.getElementById('plp-bulk-progress-fill');
-    const status = document.getElementById('plp-bulk-progress-status');
-    if (!wrap || !fill || !status) return;
-
-    const selected = (window.appState.challenges || []).find(x => x.id === this.selectedProjectId);
-    const safeSlug = (selected && selected.slug) ? selected.slug : 'Innovatech';
-
-    wrap.classList.add('active');
-    let progress = 0;
-    fill.style.width = '0%';
-    status.textContent = 'Empaquetando documentos públicos y ficha técnica... 0%';
-
-    const timer = setInterval(() => {
-      progress += 25;
-      if (progress >= 100) {
-        clearInterval(timer);
-        fill.style.width = '100%';
-        status.textContent = `✔ ¡Resumen público ${safeSlug}_Completo.txt descargado!`;
-        this.downloadLandingDoc(`${safeSlug}_Ficha_Publica.txt`);
-      } else {
-        fill.style.width = progress + '%';
-        status.textContent = `Descargando paquete... ${progress}%`;
-      }
-    }, 260);
-  },
-
   downloadLandingDoc(filename) {
     const selected = (window.appState.challenges || []).find(x => x.id === this.selectedProjectId);
-    const title = (selected && selected.title) || 'PROYECTO INNOVATECH - GOBIERNO DE DATOS E IA';
-    const desc = (selected && (selected.fullDescription || selected.description)) || 'Plataforma integral de Gobierno de Datos e Inteligencia Artificial.';
-    const obj = (selected && selected.mainObjective) || 'Definición Estratégica y Gobernanza de Datos.';
-    const ben = (selected && selected.userBenefits) || 'Indicadores de Impacto y Sostenibilidad.';
-    const pubRes = ((selected && selected.resources) || []).filter(r => r.visibility !== 'private').map((r, i) => `  ${i + 1}. ${r.name} (${r.format || 'DOC'})`).join('\n');
-
-    const content = `${title.toUpperCase()}\nDocumento: ${filename}\nFecha: ${new Date().toLocaleDateString()}\n\n1. DESCRIPCIÓN:\n${desc}\n\n2. OBJETIVO PRINCIPAL:\n${obj}\n\n3. BENEFICIOS:\n${ben}\n\n4. RECURSOS PÚBLICOS INCLUIDOS:\n${pubRes || '  - Documentación general del proyecto'}`;
+    const title = (selected && selected.title) || 'GOBIERNO DE DATOS E IA - PROYECTO INNOVATECH';
+    const content = `${title}\nDocumento: ${filename}\nFecha: ${new Date().toLocaleDateString()}\n\n1. RESUMEN EJECUTIVO:\nImpulsamos la transformación digital de las organizaciones mediante el gobierno de datos y la inteligencia artificial, para generar valor, transparencia y mejores decisiones.\n\n2. OBJETIVOS Y METAS:\n- Fortalecimiento institucional del gobierno de datos.\n- Implementación de analítica avanzada y modelos predictivos éticos.\n- Generación de impacto y trazabilidad pública.`;
     const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -1957,9 +1606,9 @@ window.ProjectsView = {
     if (!modal || !body) return;
     body.innerHTML = `
       <button class="plp-lightbox-close" onclick="window.ProjectsView.closeLandingLightbox()" aria-label="Cerrar">✕</button>
-      <img src="${imgUrl}" alt="${this.escapeHtml(caption)}" style="width:100%; max-height:75vh; object-fit:contain; background:#0a192f; display:block;" />
+      <img src="${imgUrl}" alt="${this.escapeHtml(caption)}" style="width:100%; max-height:75vh; object-fit:contain; background:#091e2d; display:block;" />
       <div style="padding:1.25rem 1.75rem; background:#ffffff;">
-        <h3 style="margin:0; font-size:1.15rem; color:#0a192f;">${this.escapeHtml(caption)}</h3>
+        <h3 style="margin:0; font-size:1.15rem; color:#091e2d;">${this.escapeHtml(caption)}</h3>
       </div>
     `;
     modal.classList.add('active');
@@ -1969,25 +1618,25 @@ window.ProjectsView = {
     const modal = document.getElementById('plp-inline-lightbox');
     const body = document.getElementById('plp-inline-lightbox-body');
     if (!modal || !body) return;
-    const selected = (window.appState.challenges || []).find(x => x.id === this.selectedProjectId);
     const isDark = (document.querySelector('.plp-wrapper')?.getAttribute('data-theme') || this.getLandingTheme()) === 'dark';
-    const bg = isDark ? '#0f172a' : '#ffffff';
-    const titleColor = isDark ? '#ffffff' : '#0a192f';
-    const textColor = isDark ? '#e2e8f0' : '#334155';
-    const border = isDark ? '1px solid #334155' : 'none';
-    const summaryText = (selected && (selected.fullDescription || selected.description)) || 'Recurso oficial del Proyecto Innovatech — Gobierno de Datos e IA. Incluye lineamientos estratégicos, protocolos de calidad de datos, arquitectura técnica y métricas de impacto verificadas.';
+    const bg = isDark ? '#091e2d' : '#ffffff';
+    const titleColor = isDark ? '#ffffff' : '#091e2d';
+    const textColor = isDark ? '#cbd5e1' : '#334155';
+    const border = isDark ? '1px solid #1e3a54' : 'none';
 
     body.innerHTML = `
       <button class="plp-lightbox-close" onclick="window.ProjectsView.closeLandingLightbox()" aria-label="Cerrar">✕</button>
-      <div style="padding:2.5rem; background:${bg}; border:${border}; border-radius:var(--plp-radius-lg);">
-        <span class="plp-eyebrow">Vista Previa Interactiva</span>
+      <div style="padding:2.5rem; background:${bg}; border:${border}; border-radius:20px;">
+        <span class="inno-eyebrow">Vista Previa Oficial</span>
         <h2 style="margin:0.5rem 0 1rem; color:${titleColor};">${this.escapeHtml(title)}</h2>
-        <p style="color:${textColor}; line-height:1.7; white-space:pre-line;">${this.escapeHtml(summaryText)}</p>
+        <p style="color:${textColor}; line-height:1.7;">
+          Recurso oficial de <strong>Gobierno de Datos e IA — Proyecto Innovatech</strong>. Diseñado para impulsar la modernización y toma de decisiones estratégicas basadas en analítica ética y transparencia.
+        </p>
         <div style="margin-top:1.5rem; display:flex; gap:0.75rem; flex-wrap:wrap;">
-          <button class="plp-cta-btn" onclick="window.ProjectsView.downloadLandingDoc('${this.escapeHtml(title.replace(/\s+/g, '_').slice(0, 40))}.txt'); window.ProjectsView.closeLandingLightbox();">
-            ⬇ Descargar Ficha
+          <button class="inno-btn-cyan" onclick="window.ProjectsView.downloadLandingDoc('${this.escapeHtml(title.replace(/\s+/g, '_').slice(0, 40))}.txt'); window.ProjectsView.closeLandingLightbox();">
+            ⬇ Descargar Ficha Oficial
           </button>
-          <button class="plp-btn-secondary" onclick="window.ProjectsView.closeLandingLightbox()">
+          <button class="inno-btn-ghost" style="color:${titleColor}; border-color:${titleColor};" onclick="window.ProjectsView.closeLandingLightbox()">
             Cerrar
           </button>
         </div>
@@ -1995,7 +1644,6 @@ window.ProjectsView = {
     `;
     modal.classList.add('active');
   },
-
 
   closeLandingLightbox() {
     const modal = document.getElementById('plp-inline-lightbox');
