@@ -5,7 +5,7 @@
 
 window.ProjectWizard = {
   currentStep: 1,
-  totalSteps: 8,
+  totalSteps: 13,
   activeDraftId: null,
   autoSaveTimer: null,
   lastSavedText: 'Guardado automático activo',
@@ -14,15 +14,20 @@ window.ProjectWizard = {
   defaultCoverImage: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80',
   defaultThumbImage: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&q=80',
 
-  stepsMeta: [
-    { step: 1, icon: '📋', shortTitle: 'Información básica', title: 'Paso 1. Información básica del proyecto', question: '¿Cómo se llama tu proyecto y cuál es su propósito principal?' },
-    { step: 2, icon: '💡', shortTitle: 'Propuesta de valor', title: 'Paso 2. Contenido y propuesta de valor', question: '¿Qué problema resuelve tu proyecto y por qué es valioso para la comunidad?' },
-    { step: 3, icon: '🎬', shortTitle: 'Video presentación', title: 'Paso 3. Video de presentación', question: '¿Tienes un video explicativo o demostrativo para presentar el proyecto?' },
-    { step: 4, icon: '📂', shortTitle: 'Documentos y guías', title: 'Paso 4. Documentos, guías y recursos descargables', question: '¿Qué documentos, manuales o archivos deseas organizar en el proyecto?' },
-    { step: 5, icon: '🖼️', shortTitle: 'Presentaciones e imágenes', title: 'Paso 5. Presentaciones e imágenes', question: '¿Qué imágenes, capturas, diagramas o diapositivas mostrarán tu proyecto?' },
-    { step: 6, icon: '🔗', shortTitle: 'Enlaces externos', title: 'Paso 6. Enlaces y recursos externos', question: '¿Qué sitios web, repositorios, demos o enlaces complementan el proyecto?' },
-    { step: 7, icon: '⚙️', shortTitle: 'Config. publicación', title: 'Paso 7. Configuración de publicación', question: '¿Cómo deseas que aparezca el proyecto y qué recursos serán públicos en la Landing Page?' },
-    { step: 8, icon: '🚀', shortTitle: 'Revisión y publicar', title: 'Paso 8. Revisión final y publicación', question: 'Revisa el resumen completo y la lista de comprobación antes de publicar.' }
+stepsMeta: [
+    { step: 1, icon: '🏷️', shortTitle: 'Nombre del proyecto', title: 'Paso 1. Nombre e identidad', question: '¿Cómo se llama tu proyecto y cuál es su subtítulo?' },
+    { step: 2, icon: '📝', shortTitle: 'Descripción', title: 'Paso 2. Descripción y resumen', question: '¿En qué consiste tu proyecto y cuál es su resumen ejecutivo?' },
+    { step: 3, icon: '📁', shortTitle: 'Clasificación', title: 'Paso 3. Categoría y público objetivo', question: '¿A qué categoría pertenece y para quién está diseñado?' },
+    { step: 4, icon: '🎯', shortTitle: 'Problema y objetivo', title: 'Paso 4. Problema, objetivo y beneficios', question: '¿Qué reto busca resolver y qué impacto generará?' },
+    { step: 5, icon: '👥', shortTitle: 'Equipo y fechas', title: 'Paso 5. Equipo responsable y cronograma', question: '¿Quién lidera el proyecto y cuáles son las fechas clave?' },
+    { step: 6, icon: '💡', shortTitle: 'Propuesta de valor', title: 'Paso 6. Propuesta de valor y funcionamiento', question: '¿Por qué este proyecto es valioso y cómo funciona?' },
+    { step: 7, icon: '❓', shortTitle: 'Preguntas frecuentes', title: 'Paso 7. Preguntas frecuentes (FAQ) y acción', question: '¿Cuáles son las preguntas frecuentes de los visitantes?' },
+    { step: 8, icon: '🎬', shortTitle: 'Video de presentación', title: 'Paso 8. Video de presentación', question: '¿Tienes un video explicativo o demostrativo del proyecto?' },
+    { step: 9, icon: '📄', shortTitle: 'Documentos y guías', title: 'Paso 9. Documentos, guías y recursos descargables', question: '¿Qué manuales o documentos deseas compartir?' },
+    { step: 10, icon: '🖼️', shortTitle: 'Imágenes y portada', title: 'Paso 10. Portada y activos visuales', question: '¿Qué imágenes o capturas mostrarán tu proyecto?' },
+    { step: 11, icon: '🔗', shortTitle: 'Enlaces externos', title: 'Paso 11. Enlaces y demos externas', question: '¿Qué sitios web, demos o repositorios complementan el proyecto?' },
+    { step: 12, icon: '⚙️', shortTitle: 'Config. publicación', title: 'Paso 12. Configuración en la Landing Page', question: '¿Cómo deseas que aparezca publicado en la Landing Page?' },
+    { step: 13, icon: '🚀', shortTitle: 'Revisión y publicación', title: 'Paso 13. Revisión final y publicación', question: 'Revisa el resumen completo antes de publicar tu proyecto.' }
   ],
 
   resourceCategories: [
@@ -405,7 +410,7 @@ window.ProjectWizard = {
     return '';
   },
 
-  collectCurrentStepInputs() {
+collectCurrentStepInputs() {
     if (!this.draft) return;
     const val = (id) => {
       const el = document.getElementById(id);
@@ -416,86 +421,69 @@ window.ProjectWizard = {
       return el ? el.checked : null;
     };
 
-    if (this.currentStep === 1) {
-      if (val('gdn-title') !== null) this.draft.title = val('gdn-title').trim();
-      if (val('gdn-subtitle') !== null) this.draft.subtitle = val('gdn-subtitle').trim();
-      if (val('gdn-short-desc') !== null) this.draft.shortDescription = val('gdn-short-desc').trim();
-      if (val('gdn-full-desc') !== null) this.draft.fullDescription = val('gdn-full-desc').trim();
-      if (val('gdn-category') !== null) {
-        this.draft.category = val('gdn-category');
-        const catObj = (window.appState?.categories || []).find(c => c.id === this.draft.category);
-        if (catObj) {
-          this.draft.categoryName = catObj.name;
-          this.draft.landingConfig.visibleCategory = catObj.name;
-        }
-      }
-      if (val('gdn-subtype') !== null) this.draft.projectSubtype = val('gdn-subtype').trim();
-      if (val('gdn-audience') !== null) this.draft.targetAudience = val('gdn-audience').trim();
-      if (val('gdn-problem') !== null) this.draft.problemStatement = val('gdn-problem').trim();
-      if (val('gdn-objective') !== null) this.draft.mainObjective = val('gdn-objective').trim();
-      if (val('gdn-benefits') !== null) this.draft.benefits = val('gdn-benefits').trim();
-      if (val('gdn-team') !== null) this.draft.teamLead = val('gdn-team').trim();
-      if (val('gdn-prep-status') !== null) this.draft.preparationStatus = val('gdn-prep-status');
-      if (val('gdn-start-date') !== null) this.draft.startDate = val('gdn-start-date');
-      if (val('gdn-end-date') !== null) this.draft.endDate = val('gdn-end-date');
-    } else if (this.currentStep === 2) {
-      if (val('gdn-vp-problem') !== null) this.draft.valueProp.problemSolved = val('gdn-vp-problem').trim();
-      if (val('gdn-vp-how') !== null) this.draft.valueProp.howItWorks = val('gdn-vp-how').trim();
-      if (val('gdn-vp-whom') !== null) this.draft.valueProp.forWhom = val('gdn-vp-whom').trim();
-      if (val('gdn-vp-diff') !== null) this.draft.valueProp.differentiator = val('gdn-vp-diff').trim();
-      if (val('gdn-vp-features') !== null) {
-        this.draft.valueProp.keyFeatures = val('gdn-vp-features')
-          .split('\n')
-          .map(s => s.trim())
-          .filter(Boolean);
-      }
-      if (val('gdn-vp-results') !== null) this.draft.valueProp.resultsAndBenefits = val('gdn-vp-results').trim();
-      if (val('gdn-vp-prereq') !== null) this.draft.valueProp.prerequisites = val('gdn-vp-prereq').trim();
-      if (val('gdn-vp-action') !== null) this.draft.valueProp.visitorAction = val('gdn-vp-action').trim();
-      if (val('gdn-vp-pitch') !== null) this.draft.valueProp.commercialPitch = val('gdn-vp-pitch').trim();
-    } else if (this.currentStep === 3) {
-      if (val('gdn-video-title') !== null) this.draft.videoConfig.title = val('gdn-video-title').trim();
-      if (val('gdn-video-desc') !== null) this.draft.videoConfig.description = val('gdn-video-desc').trim();
-      if (val('gdn-video-url') !== null) {
-        const newUrl = val('gdn-video-url').trim();
-        if (newUrl !== this.draft.videoConfig.url) {
-          this.draft.videoConfig.url = newUrl;
-          this.draft.videoConfig.verified = this.isValidVideoUrl(newUrl).valid;
-        }
-      }
-      if (checked('gdn-video-public') !== null) {
-        this.draft.videoConfig.isPublic = checked('gdn-video-public');
-      }
-    } else if (this.currentStep === 5) {
-      if (val('gdn-main-image') !== null) this.draft.mainImage = val('gdn-main-image').trim();
-      if (val('gdn-thumb-image') !== null) this.draft.thumbnailImage = val('gdn-thumb-image').trim();
-      if (checked('gdn-use-default-img') !== null) this.draft.useDefaultImage = checked('gdn-use-default-img');
-    } else if (this.currentStep === 7) {
-      if (val('gdn-pub-name') !== null) this.draft.landingConfig.publicName = val('gdn-pub-name').trim();
-      if (val('gdn-pub-slug') !== null) this.draft.landingConfig.slug = this.slugify(val('gdn-pub-slug'));
-      if (val('gdn-pub-title') !== null) this.draft.landingConfig.landingTitle = val('gdn-pub-title').trim();
-      if (val('gdn-pub-desc') !== null) this.draft.landingConfig.publicDescription = val('gdn-pub-desc').trim();
-      if (val('gdn-pub-cat') !== null) this.draft.landingConfig.visibleCategory = val('gdn-pub-cat').trim();
-      if (val('gdn-pub-tags') !== null) {
-        this.draft.landingConfig.tags = val('gdn-pub-tags').split(',').map(s => s.trim()).filter(Boolean);
-      }
-      if (val('gdn-pub-cta-text') !== null) this.draft.landingConfig.ctaText = val('gdn-pub-cta-text').trim();
-      if (val('gdn-pub-cta-url') !== null) this.draft.landingConfig.ctaUrl = val('gdn-pub-cta-url').trim();
-      if (val('gdn-pub-order') !== null) this.draft.landingConfig.displayOrder = Number(val('gdn-pub-order') || 1);
-      if (val('gdn-pub-status') !== null) this.draft.publicationStatus = val('gdn-pub-status');
-      if (checked('gdn-pub-video-toggle') !== null) {
-        this.draft.landingConfig.featuredVideoPublic = checked('gdn-pub-video-toggle');
-        this.draft.videoConfig.isPublic = checked('gdn-pub-video-toggle');
+    if (val('gdn-title') !== null) this.draft.title = val('gdn-title').trim();
+    if (val('gdn-subtitle') !== null) this.draft.subtitle = val('gdn-subtitle').trim();
+    if (val('gdn-short-desc') !== null) this.draft.shortDescription = val('gdn-short-desc').trim();
+    if (val('gdn-full-desc') !== null) this.draft.fullDescription = val('gdn-full-desc').trim();
+    if (val('gdn-category') !== null) {
+      this.draft.category = val('gdn-category');
+      const catObj = (window.appState?.categories || []).find(c => c.id === this.draft.category);
+      if (catObj) {
+        this.draft.categoryName = catObj.name;
+        this.draft.landingConfig.visibleCategory = catObj.name;
       }
     }
-  },
+    if (val('gdn-subtype') !== null) this.draft.projectSubtype = val('gdn-subtype').trim();
+    if (val('gdn-audience') !== null) this.draft.targetAudience = val('gdn-audience').trim();
+    if (val('gdn-problem') !== null) this.draft.problemStatement = val('gdn-problem').trim();
+    if (val('gdn-objective') !== null) this.draft.mainObjective = val('gdn-objective').trim();
+    if (val('gdn-benefits') !== null) this.draft.benefits = val('gdn-benefits').trim();
+    if (val('gdn-team') !== null) this.draft.teamLead = val('gdn-team').trim();
+    if (val('gdn-prep-status') !== null) this.draft.preparationStatus = val('gdn-prep-status');
+    if (val('gdn-start-date') !== null) this.draft.startDate = val('gdn-start-date');
+    if (val('gdn-end-date') !== null) this.draft.endDate = val('gdn-end-date');
 
-  triggerFieldAutoSave() {
-    clearTimeout(this.autoSaveTimer);
-    this.autoSaveTimer = setTimeout(() => {
-      this.collectCurrentStepInputs();
-      this.saveDraftToStorage(true);
-    }, 450);
+    if (val('gdn-vp-problem') !== null) this.draft.valueProp.problemSolved = val('gdn-vp-problem').trim();
+    if (val('gdn-vp-how') !== null) this.draft.valueProp.howItWorks = val('gdn-vp-how').trim();
+    if (val('gdn-vp-whom') !== null) this.draft.valueProp.forWhom = val('gdn-vp-whom').trim();
+    if (val('gdn-vp-diff') !== null) this.draft.valueProp.differentiator = val('gdn-vp-diff').trim();
+    if (val('gdn-vp-features') !== null) {
+      this.draft.valueProp.keyFeatures = val('gdn-vp-features').split('\n').map(s => s.trim()).filter(Boolean);
+    }
+    if (val('gdn-vp-results') !== null) this.draft.valueProp.resultsAndBenefits = val('gdn-vp-results').trim();
+    if (val('gdn-vp-prereq') !== null) this.draft.valueProp.prerequisites = val('gdn-vp-prereq').trim();
+    if (val('gdn-vp-action') !== null) this.draft.valueProp.visitorAction = val('gdn-vp-action').trim();
+    if (val('gdn-vp-pitch') !== null) this.draft.valueProp.commercialPitch = val('gdn-vp-pitch').trim();
+
+    if (val('gdn-video-title') !== null) this.draft.videoConfig.title = val('gdn-video-title').trim();
+    if (val('gdn-video-desc') !== null) this.draft.videoConfig.description = val('gdn-video-desc').trim();
+    if (val('gdn-video-url') !== null) {
+      const newUrl = val('gdn-video-url').trim();
+      if (newUrl !== this.draft.videoConfig.url) {
+        this.draft.videoConfig.url = newUrl;
+        this.draft.videoConfig.verified = this.isValidVideoUrl(newUrl).valid;
+      }
+    }
+    if (checked('gdn-video-public') !== null) {
+      this.draft.videoConfig.isPublic = checked('gdn-video-public');
+    }
+
+    if (val('gdn-main-image') !== null) this.draft.mainImage = val('gdn-main-image').trim();
+    if (val('gdn-thumb-image') !== null) this.draft.thumbnailImage = val('gdn-thumb-image').trim();
+    if (checked('gdn-use-default-img') !== null) this.draft.useDefaultImage = checked('gdn-use-default-img');
+
+    if (val('gdn-pub-name') !== null) this.draft.landingConfig.publicName = val('gdn-pub-name').trim();
+    if (val('gdn-pub-slug') !== null) this.draft.landingConfig.slug = this.slugify(val('gdn-pub-slug'));
+    if (val('gdn-pub-title') !== null) this.draft.landingConfig.landingTitle = val('gdn-pub-title').trim();
+    if (val('gdn-pub-desc') !== null) this.draft.landingConfig.publicDescription = val('gdn-pub-desc').trim();
+    if (val('gdn-pub-cat') !== null) this.draft.landingConfig.visibleCategory = val('gdn-pub-cat').trim();
+    if (val('gdn-pub-tags') !== null) {
+      this.draft.landingConfig.tags = val('gdn-pub-tags').split(',').map(s => s.trim()).filter(Boolean);
+    }
+    if (val('gdn-pub-cta-text') !== null) this.draft.landingConfig.ctaText = val('gdn-pub-cta-text').trim();
+    if (val('gdn-pub-cta-url') !== null) this.draft.landingConfig.ctaUrl = val('gdn-pub-cta-url').trim();
+    if (val('gdn-pub-order') !== null) this.draft.landingConfig.displayOrder = Number(val('gdn-pub-order') || 1);
+    if (val('gdn-pub-status') !== null) this.draft.publicationStatus = val('gdn-pub-status');
   },
 
   // =========================================================================
@@ -514,67 +502,24 @@ window.ProjectWizard = {
       <div style="max-width: 1440px; margin: 0 auto; padding: 0.5rem 1rem 4rem;">
         <div class="gdn-wizard-shell animate-fade-in" data-theme="${theme}">
           
-          <!-- Barra Superior del Asistente -->
-          <div class="gdn-wizard-topbar">
-            <div style="display: flex; align-items: center; gap: 0.85rem; flex-wrap: wrap;">
-              <button type="button" class="plp-mentix-btn" onclick="window.ProjectWizard.saveAndContinueLater()">
-                <span>←</span> Volver a Proyectos
-              </button>
-              <span class="plp-mentix-badge">✨ Asistente Inteligente GovData Nexus</span>
-              <strong style="font-size: 0.95rem; color: #ffffff;">
-                ${this.escapeHtml(d.title || 'Nuevo Proyecto en Preparación')}
-              </strong>
-            </div>
-
-            <div style="display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;">
-              <span id="gdn-autosave-indicator" style="font-size: 0.78rem; color: #a7f3d0; font-weight: 600;">
-                ${this.escapeHtml(this.lastSavedText)}
-              </span>
-              <button type="button" class="plp-mentix-btn" onclick="window.ProjectWizard.saveAndContinueLater()" title="Guarda tu avance actual para continuar en otro momento">
-                💾 Guardar y continuar después
-              </button>
-              <button type="button" class="plp-mentix-btn primary" onclick="window.ProjectWizard.previewInLandingPage()">
-                👁️ Vista previa Landing Page
-              </button>
-            </div>
-          </div>
-
-          <!-- Barra de Progreso Paso a Paso -->
+          <!-- Barra de Progreso Paso a Paso (Sin botones cortados, solo progreso limpio) -->
           <div class="gdn-wizard-progress-strip">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.6rem; flex-wrap: wrap; gap: 0.5rem;">
-              <div style="font-size: 0.84rem; font-weight: 800; color: var(--gdn-text);">
+              <div style="font-size: 0.92rem; font-weight: 800; color: var(--gdn-text); display: flex; align-items: center; gap: 0.5rem;">
+                <span style="display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: #10b981; box-shadow: 0 0 10px rgba(16, 185, 129, 0.6);"></span>
                 Progreso del Asistente: Paso ${this.currentStep} de ${this.totalSteps} (${progressPct}% completado)
               </div>
-              <div style="font-size: 0.78rem; color: var(--gdn-text-muted);">
-                Puedes avanzar o regresar en cualquier momento sin perder tus datos
+              <div style="font-size: 0.82rem; color: #10b981; font-weight: 700;">
+                ${currentMeta.icon} ${currentMeta.title}
               </div>
             </div>
 
-            <div style="width: 100%; height: 6px; background: var(--gdn-subtle); border-radius: 999px; overflow: hidden; margin-bottom: 0.85rem;">
-              <div style="width: ${Math.max(8, progressPct)}%; height: 100%; background: linear-gradient(90deg, #0a192f, #10b981); border-radius: 999px; transition: width 0.3s ease;"></div>
-            </div>
-
-            <div class="gdn-steps-nav" role="tablist" aria-label="Pasos del asistente de proyectos">
-              ${this.stepsMeta.map(s => {
-                const isDone = (d.completedSteps || []).includes(s.step) || s.step < this.currentStep;
-                const isCurrent = s.step === this.currentStep;
-                return `
-                  <button
-                    type="button"
-                    role="tab"
-                    aria-selected="${isCurrent}"
-                    class="gdn-step-pill ${isCurrent ? 'active' : ''} ${isDone ? 'completed' : ''}"
-                    onclick="window.ProjectWizard.goToStep(${s.step})"
-                  >
-                    <span class="gdn-step-num">${isDone && !isCurrent ? '✓' : s.step}</span>
-                    <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${s.shortTitle}</span>
-                  </button>
-                `;
-              }).join('')}
+            <div style="width: 100%; height: 8px; background: var(--gdn-subtle); border-radius: 999px; overflow: hidden;">
+              <div style="width: ${Math.max(6, progressPct)}%; height: 100%; background: linear-gradient(90deg, #0ea5e9, #10b981); border-radius: 999px; transition: width 0.35s ease;"></div>
             </div>
           </div>
 
-          <!-- Cuerpo Principal (Área de Paso + Panel Lateral de Asistencia IA y Resumen) -->
+<!-- Cuerpo Principal (Área de Paso + Panel Lateral de Asistencia IA y Resumen) -->
           <div class="gdn-wizard-body">
             
             <!-- Columna Principal del Paso Actual -->
@@ -635,23 +580,335 @@ window.ProjectWizard = {
     `;
   },
 
-  renderStepContent(step) {
+renderStepContent(step) {
     switch (step) {
-      case 1: return this.renderStep1BasicInfo();
-      case 2: return this.renderStep2ValueProp();
-      case 3: return this.renderStep3Video();
-      case 4: return this.renderStep4Resources();
-      case 5: return this.renderStep5Visuals();
-      case 6: return this.renderStep6ExternalLinks();
-      case 7: return this.renderStep7PublicationConfig();
-      case 8: return this.renderStep8FinalReview();
-      default: return this.renderStep1BasicInfo();
+      case 1: return this.renderStep1Name();
+      case 2: return this.renderStep2Desc();
+      case 3: return this.renderStep3Classification();
+      case 4: return this.renderStep4ProblemObjective();
+      case 5: return this.renderStep5TeamDates();
+      case 6: return this.renderStep6ValueProp();
+      case 7: return this.renderStep7Faqs();
+      case 8: return this.renderStep3Video();
+      case 9: return this.renderStep4Resources();
+      case 10: return this.renderStep5Visuals();
+      case 11: return this.renderStep6ExternalLinks();
+      case 12: return this.renderStep7PublicationConfig();
+      case 13: return this.renderStep8FinalReview();
+      default: return this.renderStep1Name();
     }
   },
 
   // =========================================================================
   // PASO 1: INFORMACIÓN BÁSICA DEL PROYECTO
   // =========================================================================
+// =========================================================================
+  // PASO 1: NOMBRE E IDENTIDAD BÁSICA (SIN SCROLL / NO QUE SE PUEDA BAJAR)
+  // =========================================================================
+  renderStep1Name() {
+    const d = this.draft;
+    return `
+      <div class="gdn-card">
+        <h3 style="margin: 0 0 0.35rem; font-size: 1.15rem; color: var(--gdn-text); font-weight: 800;">1. Identidad básica del proyecto</h3>
+        <p class="gdn-help" style="margin-bottom: 1.35rem; font-size: 0.88rem;">
+          Comencemos con el nombre y la frase clave que identificará tu proyecto ante toda la comunidad.
+        </p>
+
+        <div class="gdn-field" style="margin-bottom: 1.25rem;">
+          <label class="gdn-label" for="gdn-title" style="font-size: 0.95rem; font-weight: 700;">
+            <span>Nombre del proyecto <span style="color:#10b981;">*</span></span>
+            <button type="button" style="background:none; border:none; color:#10b981; font-weight:700; font-size:0.8rem; cursor:pointer;" onclick="window.ProjectWizard.aiProposeTitles()">
+              ✨ Sugerir nombres con IA
+            </button>
+          </label>
+          <input type="text" id="gdn-title" class="gdn-input" style="font-size: 1.05rem; padding: 0.75rem 1rem;" value="${this.escapeHtml(d.title)}" placeholder="Ej: Plataforma de Gobierno de Datos e IA" autofocus />
+          <div class="gdn-help">Nombre claro con el que se identificará el proyecto.</div>
+        </div>
+
+        <div class="gdn-field">
+          <label class="gdn-label" for="gdn-subtitle" style="font-size: 0.95rem; font-weight: 700;">
+            <span>Subtítulo o lema descriptivo</span>
+          </label>
+          <input type="text" id="gdn-subtitle" class="gdn-input" style="font-size: 0.95rem; padding: 0.7rem 1rem;" value="${this.escapeHtml(d.subtitle)}" placeholder="Ej: Decisiones estratégicas con ética, transparencia y alto impacto" />
+          <div class="gdn-help">Una frase breve que resuma la esencia o promesa principal del proyecto.</div>
+        </div>
+      </div>
+    `;
+  },
+
+  // =========================================================================
+  // PASO 2: DESCRIPCIÓN Y RESUMEN DEL PROYECTO
+  // =========================================================================
+  renderStep2Desc() {
+    const d = this.draft;
+    return `
+      <div class="gdn-card">
+        <h3 style="margin: 0 0 0.35rem; font-size: 1.15rem; color: var(--gdn-text); font-weight: 800;">2. Descripción y resumen ejecutivo</h3>
+        <p class="gdn-help" style="margin-bottom: 1.35rem; font-size: 0.88rem;">
+          Explica el alcance y contexto del proyecto. Puedes escribir una idea base y perfeccionarla con la IA.
+        </p>
+
+        <div class="gdn-field" style="margin-bottom: 1.25rem;">
+          <label class="gdn-label" for="gdn-short-desc">
+            <span>Descripción corta (Resumen ejecutivo)</span>
+            <button type="button" style="background:none; border:none; color:#10b981; font-weight:700; font-size:0.8rem; cursor:pointer;" onclick="window.ProjectWizard.aiGenerateShortDesc()">
+              ✨ Generar desde la descripción completa
+            </button>
+          </label>
+          <textarea id="gdn-short-desc" class="gdn-textarea" rows="2" placeholder="Ej: Ecosistema integral que estandariza la calidad de datos e impulsa modelos predictivos auditables para instituciones educativas y públicas.">${this.escapeHtml(d.shortDescription)}</textarea>
+          <div class="gdn-help">Se mostrará en el encabezado de la Landing Page y en las tarjetas de resumen (ideal entre 120 y 240 caracteres).</div>
+        </div>
+
+        <div class="gdn-field">
+          <label class="gdn-label" for="gdn-full-desc">
+            <span>Descripción completa del proyecto</span>
+            <button type="button" style="background:none; border:none; color:#10b981; font-weight:700; font-size:0.8rem; cursor:pointer;" onclick="window.ProjectWizard.aiImproveDescription()">
+              ✨ Mejorar redacción con IA
+            </button>
+          </label>
+          <textarea id="gdn-full-desc" class="gdn-textarea" rows="4" placeholder="Explica en qué consiste el proyecto, su contexto, alcance y cómo aporta valor...">${this.escapeHtml(d.fullDescription)}</textarea>
+        </div>
+      </div>
+    `;
+  },
+
+  // =========================================================================
+  // PASO 3: CATEGORÍA Y PÚBLICO OBJETIVO
+  // =========================================================================
+  renderStep3Classification() {
+    const d = this.draft;
+    const categories = (window.appState?.categories || []).filter(c => c && c.id && !['fhjr', 'kj'].includes(String(c.id).toLowerCase()));
+    return `
+      <div class="gdn-card">
+        <h3 style="margin: 0 0 0.35rem; font-size: 1.15rem; color: var(--gdn-text); font-weight: 800;">3. Categoría y público objetivo</h3>
+        <p class="gdn-help" style="margin-bottom: 1.35rem; font-size: 0.88rem;">
+          Selecciona la temática del proyecto y a quiénes va dirigido.
+        </p>
+
+        <div class="gdn-field-grid" style="margin-bottom: 1.25rem;">
+          <div class="gdn-field">
+            <label class="gdn-label" for="gdn-category">Categoría del proyecto</label>
+            <select id="gdn-category" class="gdn-select">
+              ${categories.map(cat => `
+                <option value="${this.escapeHtml(cat.id)}" ${d.category === cat.id ? 'selected' : ''}>
+                  ${cat.icon || '📁'} ${this.escapeHtml(cat.name)}
+                </option>
+              `).join('')}
+            </select>
+          </div>
+
+          <div class="gdn-field">
+            <label class="gdn-label" for="gdn-subtype">Tipo de proyecto</label>
+            <select id="gdn-subtype" class="gdn-select">
+              ${[
+                'Gobierno de Datos e IA',
+                'Analítica Predictiva y BI',
+                'Automatización y Transformación Digital',
+                'Plataforma Educativa / EdTech',
+                'Investigación Aplicada',
+                'Repositorio Normativo y Técnico',
+                'Simulador / Laboratorio Interactivo'
+              ].map(t => `<option value="${this.escapeHtml(t)}" ${d.projectSubtype === t ? 'selected' : ''}>${this.escapeHtml(t)}</option>`).join('')}
+            </select>
+          </div>
+        </div>
+
+        <div class="gdn-field">
+          <label class="gdn-label" for="gdn-audience">Público objetivo</label>
+          <input type="text" id="gdn-audience" class="gdn-input" value="${this.escapeHtml(d.targetAudience)}" placeholder="Ej: Directivos, docentes, equipos de tecnología y ciudadanía" />
+          <div class="gdn-help">Personas o entidades que se beneficiarán con este proyecto.</div>
+        </div>
+      </div>
+    `;
+  },
+
+  // =========================================================================
+  // PASO 4: PROBLEMA, OBJETIVO Y BENEFICIOS
+  // =========================================================================
+  renderStep4ProblemObjective() {
+    const d = this.draft;
+    return `
+      <div class="gdn-card">
+        <h3 style="margin: 0 0 0.35rem; font-size: 1.15rem; color: var(--gdn-text); font-weight: 800;">4. Problema, objetivo y beneficios</h3>
+        <p class="gdn-help" style="margin-bottom: 1.35rem; font-size: 0.88rem;">
+          Define qué reto resuelve el proyecto y el impacto positivo que aportará.
+        </p>
+
+        <div class="gdn-field" style="margin-bottom: 1.25rem;">
+          <label class="gdn-label" for="gdn-problem">Problema o necesidad que aborda</label>
+          <textarea id="gdn-problem" class="gdn-textarea" rows="2" placeholder="¿Qué dificultad o brecha actual motivó la creación de este proyecto?">${this.escapeHtml(d.problemStatement)}</textarea>
+        </div>
+
+        <div class="gdn-field-grid">
+          <div class="gdn-field">
+            <label class="gdn-label" for="gdn-objective">Objetivo principal (Misión)</label>
+            <textarea id="gdn-objective" class="gdn-textarea" rows="2" placeholder="¿Qué busca lograr el proyecto de forma concreta?">${this.escapeHtml(d.mainObjective)}</textarea>
+          </div>
+
+          <div class="gdn-field">
+            <label class="gdn-label" for="gdn-benefits">Beneficios para el usuario (Visión e impacto)</label>
+            <textarea id="gdn-benefits" class="gdn-textarea" rows="2" placeholder="¿Cómo mejora el trabajo o aprendizaje de quienes lo utilizan?">${this.escapeHtml(d.benefits)}</textarea>
+          </div>
+        </div>
+      </div>
+    `;
+  },
+
+  // =========================================================================
+  // PASO 5: EQUIPO RESPONSABLE Y CRONOGRAMA
+  // =========================================================================
+  renderStep5TeamDates() {
+    const d = this.draft;
+    return `
+      <div class="gdn-card">
+        <h3 style="margin: 0 0 0.35rem; font-size: 1.15rem; color: var(--gdn-text); font-weight: 800;">5. Equipo responsable y cronograma</h3>
+        <p class="gdn-help" style="margin-bottom: 1.35rem; font-size: 0.88rem;">
+          Registra el responsable o equipo a cargo y las fechas estimadas.
+        </p>
+
+        <div class="gdn-field-grid" style="margin-bottom: 1.25rem;">
+          <div class="gdn-field">
+            <label class="gdn-label" for="gdn-team">Responsable o equipo del proyecto</label>
+            <input type="text" id="gdn-team" class="gdn-input" value="${this.escapeHtml(d.teamLead)}" placeholder="Ej: Comité de Innovación GovData / Prof. Melisa" />
+          </div>
+
+          <div class="gdn-field">
+            <label class="gdn-label" for="gdn-prep-status">Estado actual del proyecto</label>
+            <select id="gdn-prep-status" class="gdn-select">
+              ${this.preparationStates.map(st => `
+                <option value="${st.id}" ${d.preparationStatus === st.id ? 'selected' : ''}>${st.label}</option>
+              `).join('')}
+            </select>
+          </div>
+        </div>
+
+        <div class="gdn-field-grid">
+          <div class="gdn-field">
+            <label class="gdn-label" for="gdn-start-date">Fecha de inicio</label>
+            <input type="date" id="gdn-start-date" class="gdn-input" value="${this.escapeHtml(d.startDate)}" />
+          </div>
+
+          <div class="gdn-field">
+            <label class="gdn-label" for="gdn-end-date">Fecha estimada de finalización</label>
+            <input type="date" id="gdn-end-date" class="gdn-input" value="${this.escapeHtml(d.endDate)}" />
+          </div>
+        </div>
+      </div>
+    `;
+  },
+
+  // =========================================================================
+  // PASO 6: PROPUESTA DE VALOR Y FUNCIONAMIENTO
+  // =========================================================================
+  renderStep6ValueProp() {
+    const vp = this.draft.valueProp || {};
+    const featuresText = Array.isArray(vp.keyFeatures) ? vp.keyFeatures.join('\n') : '';
+
+    return `
+      <div class="gdn-card">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem; margin-bottom:1rem;">
+          <div>
+            <h3 style="margin:0; font-size:1.15rem; color:var(--gdn-text); font-weight:800;">6. Propuesta de valor y funcionamiento</h3>
+            <p class="gdn-help" style="margin:0.2rem 0 0;">Responde con tus palabras para estructurar la Landing Page oficial.</p>
+          </div>
+          <button type="button" class="plp-doc-btn" style="width:auto; padding:0.45rem 0.9rem;" onclick="window.ProjectWizard.aiProposeValueProp()">
+            ✨ Autocompletar sugerencias con IA
+          </button>
+        </div>
+
+        <div class="gdn-field-grid" style="margin-bottom:1.25rem;">
+          <div class="gdn-field">
+            <label class="gdn-label" for="gdn-vp-problem">¿Qué problema resuelve?</label>
+            <textarea id="gdn-vp-problem" class="gdn-textarea" rows="2" placeholder="Ej: Elimina la dispersión de datos y la falta de trazabilidad en los reportes.">${this.escapeHtml(vp.problemSolved || this.draft.problemStatement || '')}</textarea>
+          </div>
+
+          <div class="gdn-field">
+            <label class="gdn-label" for="gdn-vp-how">¿Cómo funciona?</label>
+            <textarea id="gdn-vp-how" class="gdn-textarea" rows="2" placeholder="Ej: Centraliza las fuentes de información, valida su calidad y genera tableros interactivos.">${this.escapeHtml(vp.howItWorks)}</textarea>
+          </div>
+        </div>
+
+        <div class="gdn-field-grid" style="margin-bottom:1.25rem;">
+          <div class="gdn-field">
+            <label class="gdn-label" for="gdn-vp-whom">¿A quién está dirigido?</label>
+            <textarea id="gdn-vp-whom" class="gdn-textarea" rows="2" placeholder="Ej: Equipos directivos, docentes, investigadores y estudiantes.">${this.escapeHtml(vp.forWhom || this.draft.targetAudience || '')}</textarea>
+          </div>
+
+          <div class="gdn-field">
+            <label class="gdn-label" for="gdn-vp-diff">¿Qué lo hace diferente?</label>
+            <textarea id="gdn-vp-diff" class="gdn-textarea" rows="2" placeholder="Ej: Enfoque en gobernanza ética, facilidad de uso y recursos abiertos.">${this.escapeHtml(vp.differentiator)}</textarea>
+          </div>
+        </div>
+
+        <div class="gdn-field">
+          <label class="gdn-label" for="gdn-vp-features">Principales funcionalidades o pilares (Una por línea)</label>
+          <textarea id="gdn-vp-features" class="gdn-textarea" rows="3" placeholder="Catálogo maestro de datos verificados&#10;Modelos predictivos con IA explicable&#10;Protocolos de ética y privacidad por diseño">${this.escapeHtml(featuresText)}</textarea>
+          <div class="gdn-help">Se mostrarán como etiquetas destacadas (chips) en la Landing Page.</div>
+        </div>
+      </div>
+    `;
+  },
+
+  // =========================================================================
+  // PASO 7: PREGUNTAS FRECUENTES (FAQ) Y ACCIÓN DEL VISITANTE
+  // =========================================================================
+  renderStep7Faqs() {
+    const vp = this.draft.valueProp || {};
+    const faqs = Array.isArray(vp.faqs) ? vp.faqs : [];
+
+    return `
+      <div class="gdn-card">
+        <h3 style="margin:0 0 0.35rem; font-size:1.15rem; color:var(--gdn-text); font-weight:800;">7. Llamado a la acción y preguntas frecuentes</h3>
+        <p class="gdn-help" style="margin-bottom:1.25rem;">Define qué deseas que haga el visitante y aclara sus dudas más comunes.</p>
+
+        <div class="gdn-field-grid" style="margin-bottom:1.25rem;">
+          <div class="gdn-field">
+            <label class="gdn-label" for="gdn-vp-action">Acción principal esperada del visitante</label>
+            <input type="text" id="gdn-vp-action" class="gdn-input" value="${this.escapeHtml(vp.visitorAction)}" placeholder="Ej: Unirse al proyecto / Explorar recursos / Contactar" />
+          </div>
+
+          <div class="gdn-field">
+            <label class="gdn-label" for="gdn-vp-pitch">Lema o pitch de una línea</label>
+            <input type="text" id="gdn-vp-pitch" class="gdn-input" value="${this.escapeHtml(vp.commercialPitch)}" placeholder="Ej: Impulsando decisiones inteligentes con datos confiables" />
+          </div>
+        </div>
+
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem; margin-bottom:0.85rem; padding-top:1rem; border-top:1px solid var(--gdn-border);">
+          <div>
+            <strong style="font-size:0.95rem; color:var(--gdn-text);">❓ Preguntas Frecuentes (FAQ)</strong>
+            <p class="gdn-help" style="margin:0.15rem 0 0;">Respuestas claras para los visitantes del proyecto.</p>
+          </div>
+          <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
+            <button type="button" class="plp-doc-btn outline" style="width:auto; padding:0.4rem 0.85rem;" onclick="window.ProjectWizard.aiProposeFaqs()">
+              ✨ Sugerir FAQs con IA
+            </button>
+            <button type="button" class="plp-doc-btn" style="width:auto; padding:0.4rem 0.85rem;" onclick="window.ProjectWizard.addFaqItem()">
+              + Agregar pregunta
+            </button>
+          </div>
+        </div>
+
+        ${faqs.length === 0 ? `
+          <div style="padding:1rem; background:var(--gdn-subtle); border-radius:10px; font-size:0.85rem; color:var(--gdn-text-muted); text-align:center;">
+            Aún no has agregado preguntas frecuentes. Pulsa "+ Agregar pregunta" o usa el Copiloto IA para sugerirlas.
+          </div>
+        ` : `
+          <div style="display:flex; flex-direction:column; gap:0.75rem;">
+            ${faqs.map((f, idx) => `
+              <div style="padding:0.9rem; background:var(--gdn-bg); border:1px solid var(--gdn-border); border-radius:10px;">
+                <div style="display:flex; justify-content:space-between; gap:0.5rem; margin-bottom:0.45rem;">
+                  <input type="text" class="gdn-input" value="${this.escapeHtml(f.q)}" placeholder="Pregunta frecuente..." oninput="window.ProjectWizard.updateFaqItem(${idx}, 'q', this.value)" style="font-weight:700;" />
+                  <button type="button" style="background:none; border:none; color:#ef4444; font-size:1.1rem; cursor:pointer;" onclick="window.ProjectWizard.removeFaqItem(${idx})" title="Eliminar pregunta">✕</button>
+                </div>
+                <textarea class="gdn-textarea" rows="2" placeholder="Respuesta clara y concisa..." oninput="window.ProjectWizard.updateFaqItem(${idx}, 'a', this.value)">${this.escapeHtml(f.a)}</textarea>
+              </div>
+            `).join('')}
+          </div>
+        `}
+      </div>
+    `;
+  },
+
   renderStep1BasicInfo() {
     const d = this.draft;
     const categories = (window.appState?.categories || []).filter(c => c && c.id && !['fhjr', 'kj'].includes(String(c.id).toLowerCase()));
