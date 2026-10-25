@@ -317,6 +317,8 @@ window.ProjectWizard = {
     this.draft = this.createDefaultDraft(existing);
     this.activeDraftId = this.draft.id;
     this.currentStep = startStep || this.draft.currentStep || 1;
+    const navEl = document.getElementById('main-navbar');
+    if (navEl) navEl.style.display = 'none';
 
     if (window.ProjectsView) {
       window.ProjectsView.viewMode = 'wizard';
@@ -327,6 +329,8 @@ window.ProjectWizard = {
   },
 
   saveAndContinueLater() {
+    const navEl = document.getElementById('main-navbar');
+    if (navEl) navEl.style.display = '';
     this.collectCurrentStepInputs();
     this.saveDraftToStorage(false);
     this.syncProjectRecordToAppState(this.draft.publicationStatus || 'draft');
@@ -507,7 +511,7 @@ window.ProjectWizard = {
     const theme = (window.ProjectsView && window.ProjectsView.getLandingTheme) ? window.ProjectsView.getLandingTheme() : 'light';
 
     container.innerHTML = `
-      <div style="max-width: 1360px; margin: 0 auto; padding: 1.25rem 1rem 4rem;">
+      <div style="max-width: 1440px; margin: 0 auto; padding: 0.5rem 1rem 4rem;">
         <div class="gdn-wizard-shell animate-fade-in" data-theme="${theme}">
           
           <!-- Barra Superior del Asistente -->
@@ -2557,6 +2561,8 @@ window.ProjectWizard = {
   },
 
   previewInLandingPage() {
+    const navEl = document.getElementById('main-navbar');
+    if (navEl) navEl.style.display = '';
     const rec = this.syncProjectRecordToAppState(this.draft.publicationStatus || 'draft');
     this.saveDraftToStorage(true);
     if (window.ProjectsView) {
@@ -2599,6 +2605,8 @@ window.ProjectWizard = {
       alert(`🔎 ¡Proyecto "${rec.title}" enviado a revisión! Un docente o administrador podrá aprobar su publicación final.`);
     }
 
+    const navEl = document.getElementById('main-navbar');
+    if (navEl) navEl.style.display = '';
     if (window.ProjectsView) {
       window.ProjectsView.selectedProjectId = rec.id;
       window.ProjectsView.isWizardPreview = false;

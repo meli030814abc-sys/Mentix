@@ -210,7 +210,8 @@ class AppRouter {
     // Controlar visibilidad del navbar principal (ocultar en lobby-join, game, leaderboard y podium para diseño inmersivo con fondo Mentix completo)
     const navEl = document.getElementById('main-navbar');
     if (navEl) {
-      if (viewName === 'lobby-join' || viewName === 'game' || viewName === 'leaderboard' || viewName === 'podium') {
+      const isWizardActive = (viewName === 'projects' && window.ProjectsView && window.ProjectsView.viewMode === 'wizard');
+      if (viewName === 'lobby-join' || viewName === 'game' || viewName === 'leaderboard' || viewName === 'podium' || isWizardActive) {
         navEl.style.display = 'none';
       } else {
         navEl.style.display = '';

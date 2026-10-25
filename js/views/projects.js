@@ -279,9 +279,17 @@ window.ProjectsView = {
       c.projectType === 'presentation' || c.projectType === 'video' || c.projectType === 'document' || c.projectType === 'url' || c.isGovDataProject
     );
 
-    if (this.viewMode === 'wizard' && window.ProjectWizard) {
-      window.ProjectWizard.render(container);
-      return;
+    const navEl = document.getElementById('main-navbar');
+    if (this.viewMode === 'wizard') {
+      if (navEl) navEl.style.display = 'none';
+      if (window.ProjectWizard) {
+        window.ProjectWizard.render(container);
+        return;
+      }
+    } else {
+      if (navEl && (!window.appRouter || !['lobby-join', 'game', 'leaderboard', 'podium'].includes(window.appRouter.currentView))) {
+        navEl.style.display = '';
+      }
     }
 
     if (this.viewMode === 'selector') {
@@ -946,6 +954,14 @@ window.ProjectsView = {
 
   switchViewMode(mode) {
     this.viewMode = mode;
+    const navEl = document.getElementById('main-navbar');
+    if (navEl) {
+      if (mode === 'wizard') {
+        navEl.style.display = 'none';
+      } else if (!window.appRouter || !['lobby-join', 'game', 'leaderboard', 'podium'].includes(window.appRouter.currentView)) {
+        navEl.style.display = '';
+      }
+    }
     if (window.soundEngine) window.soundEngine.playClick();
     this.render();
     window.scrollTo({ top: 0, behavior: 'smooth' });

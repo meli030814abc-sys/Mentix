@@ -1652,6 +1652,9 @@ body[data-theme="dark"] .plp-lightbox-content {
 }
 
 .gdn-wizard-topbar {
+  position: sticky;
+  top: 0;
+  z-index: 40;
   background: #0a192f;
   color: #ffffff;
   padding: 0.9rem 1.75rem;
