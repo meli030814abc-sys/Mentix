@@ -387,6 +387,9 @@ window.ProjectsView = {
             <button class="btn btn-lg" onclick="window.ProjectWizard.openWizard()" style="background: linear-gradient(135deg, #10b981, #059669); color: #ffffff; border: none; box-shadow: 0 8px 24px rgba(16, 185, 129, 0.35); font-weight: 900; padding: 0.85rem 1.45rem; font-size: 1rem; border-radius: 12px; display: inline-flex; align-items: center; gap: 0.5rem; cursor: pointer;">
               <span>✨</span> <span>Asistente Inteligente de Proyecto</span>
             </button>
+            <button class="btn btn-primary btn-lg" onclick="window.ProjectsView.openJoinProjectModal()" style="font-weight: 900; padding: 0.85rem 1.45rem; font-size: 1rem; border-radius: 12px; display: inline-flex; align-items: center; gap: 0.5rem; cursor: pointer; box-shadow: 0 8px 24px rgba(247, 37, 133, 0.45); border: none; background: linear-gradient(135deg, #f72585, #7209b7); color: #ffffff; transition: transform 0.2s, box-shadow 0.2s;">
+              <span style="font-size: 1.15rem;">🎮</span> <span>Unirse a un código</span>
+            </button>
             ${isTeacherOrAdmin ? `
             <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 0.4rem;">
               <button class="btn btn-cyan btn-lg" onclick="window.ProjectsView.openCreateProjectModal()" style="box-shadow: 0 6px 24px rgba(0,245,212,0.4); font-weight: 900; padding: 0.85rem 1.65rem; font-size: 1.05rem;">
@@ -989,6 +992,214 @@ window.ProjectsView = {
     if (window.soundEngine) window.soundEngine.playClick();
     this.render();
   },
+
+  openJoinProjectModal(prefillCode = '') {
+    if (window.soundEngine && window.soundEngine.playClick) window.soundEngine.playClick();
+    const existing = document.getElementById('project-join-modal');
+    if (existing) existing.remove();
+
+    const savedCodes = this.getSavedProjectCodes();
+
+    const modalHtml = `
+      <div id="project-join-modal" style="position: fixed; inset: 0; z-index: 999999; display: flex; align-items: center; justify-content: center; background: rgba(5, 7, 15, 0.88); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); padding: 1.25rem;" onclick="if(event.target === this) window.ProjectsView.closeJoinProjectModal();">
+        <div class="glass-panel" style="width: 100%; max-width: 520px; background: linear-gradient(145deg, rgba(15, 23, 42, 0.98), rgba(24, 18, 43, 0.98)); border: 2.5px solid #f72585; box-shadow: 0 20px 60px rgba(247, 37, 133, 0.35), 0 0 40px rgba(114, 9, 183, 0.3); border-radius: 24px; padding: 2.25rem 2rem; position: relative; text-align: center; animation: fadeIn 0.25s ease-out;">
+          
+          <button type="button" onclick="window.ProjectsView.closeJoinProjectModal()" title="Cerrar" style="position: absolute; top: 1rem; right: 1rem; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); color: #fff; width: 36px; height: 36px; border-radius: 50%; font-size: 1.1rem; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s;" onmouseenter="this.style.background='rgba(247, 37, 133, 0.35)'; this.style.borderColor='#f72585';" onmouseleave="this.style.background='rgba(255,255,255,0.08)'; this.style.borderColor='rgba(255,255,255,0.15)';">
+            ✕
+          </button>
+
+          <div style="display: inline-flex; align-items: center; gap: 0.5rem; background: rgba(247, 37, 133, 0.16); color: #f72585; font-weight: 900; font-size: 0.82rem; text-transform: uppercase; padding: 0.4rem 1.1rem; border-radius: 9999px; letter-spacing: 0.6px; margin-bottom: 1.25rem; border: 1.5px solid rgba(247, 37, 133, 0.5);">
+            <span>🎮</span> Acceso a Proyectos por PIN
+          </div>
+
+          <h2 style="font-size: clamp(1.6rem, 3.2vw, 2.1rem); font-weight: 900; color: #ffffff; margin: 0 0 0.5rem; line-height: 1.25;">
+            Unirse a un Proyecto
+          </h2>
+
+          <p style="color: var(--text-secondary); font-size: 0.95rem; margin: 0 auto 1.6rem; max-width: 440px; line-height: 1.5;">
+            Ingresa el código o PIN que te compartió tu docente o equipo para entrar directamente a la lección o landing page.
+          </p>
+
+          <form id="project-join-form" onsubmit="event.preventDefault(); window.ProjectsView.submitJoinProjectCode();" style="display: flex; flex-direction: column; gap: 1rem;">
+            <div>
+              <input
+                type="text"
+                id="project-join-code-input"
+                placeholder="CÓDIGO O PIN"
+                value="${this.escapeHtml(prefillCode)}"
+                autocomplete="off"
+                maxlength="32"
+                style="width: 100%; box-sizing: border-box; text-align: center; font-size: clamp(1.5rem, 3.5vw, 2rem); font-weight: 900; padding: 1.1rem 1.25rem; border-radius: 16px; background: rgba(10, 15, 30, 0.95) !important; border: 2.5px solid #f72585 !important; color: #ffffff !important; outline: none; letter-spacing: 2px; text-transform: uppercase; box-shadow: 0 8px 30px rgba(247, 37, 133, 0.3) !important; transition: border-color 0.2s, box-shadow 0.2s;"
+                onfocus="this.style.borderColor='#00f5d4'; this.style.boxShadow='0 0 30px rgba(0, 245, 212, 0.5)';"
+                onblur="this.style.borderColor='#f72585'; this.style.boxShadow='0 8px 30px rgba(247, 37, 133, 0.3)';"
+                oninput="const e = document.getElementById('project-join-error'); if(e) e.style.display='none';"
+              />
+              <div id="project-join-error" style="display: none; color: #ff4d6d; background: rgba(255, 77, 109, 0.12); border: 1px solid rgba(255, 77, 109, 0.35); border-radius: 12px; padding: 0.75rem 1rem; font-size: 0.9rem; font-weight: 700; margin-top: 0.85rem; text-align: center;"></div>
+            </div>
+
+            <div style="display: flex; gap: 0.75rem; justify-content: center; margin-top: 0.5rem; flex-wrap: wrap;">
+              <button type="button" class="btn btn-outline" onclick="window.ProjectsView.closeJoinProjectModal()" style="padding: 0.85rem 1.4rem; font-weight: 800; border-radius: 12px;">
+                Cancelar
+              </button>
+              <button type="submit" id="project-join-submit-btn" class="btn" style="background: linear-gradient(135deg, #f72585, #7209b7); color: #ffffff; border: none; font-weight: 900; padding: 0.85rem 2rem; font-size: 1.05rem; border-radius: 12px; box-shadow: 0 8px 25px rgba(247, 37, 133, 0.5); cursor: pointer; min-width: 190px;">
+                <span>🚀</span> Entrar al Proyecto
+              </button>
+            </div>
+          </form>
+
+          ${savedCodes && savedCodes.length > 0 ? `
+            <div style="margin-top: 1.75rem; padding-top: 1.25rem; border-top: 1px solid rgba(255,255,255,0.1); text-align: left;">
+              <div style="font-size: 0.78rem; font-weight: 800; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.65rem; display: flex; align-items: center; gap: 0.4rem;">
+                <span>💡</span> Códigos de proyectos activos:
+              </div>
+              <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                ${savedCodes.slice(0, 6).map(sc => `
+                  <button type="button" onclick="document.getElementById('project-join-code-input').value='${this.escapeHtml(sc.code)}'; window.ProjectsView.submitJoinProjectCode();" style="background: rgba(247, 37, 133, 0.12); border: 1px solid rgba(247, 37, 133, 0.35); color: #fff; padding: 0.38rem 0.85rem; border-radius: 9999px; font-weight: 800; font-size: 0.85rem; cursor: pointer; transition: all 0.15s; letter-spacing: 0.5px;" onmouseenter="this.style.background='rgba(247, 37, 133, 0.28)'; this.style.borderColor='#f72585';" onmouseleave="this.style.background='rgba(247, 37, 133, 0.12)'; this.style.borderColor='rgba(247, 37, 133, 0.35)';">
+                    #${this.escapeHtml(sc.code)}
+                  </button>
+                `).join('')}
+              </div>
+            </div>
+          ` : ''}
+
+        </div>
+      </div>
+    `;
+
+    document.body.insertAdjacentHTML('beforeend', modalHtml);
+
+    // Escape listener
+    const escHandler = (evt) => {
+      if (evt.key === 'Escape') {
+        window.ProjectsView.closeJoinProjectModal();
+        document.removeEventListener('keydown', escHandler);
+      }
+    };
+    document.addEventListener('keydown', escHandler);
+
+    setTimeout(() => {
+      const input = document.getElementById('project-join-code-input');
+      if (input) {
+        input.focus();
+        input.select();
+      }
+    }, 60);
+  },
+
+  closeJoinProjectModal() {
+    const modal = document.getElementById('project-join-modal');
+    if (modal) modal.remove();
+  },
+
+  submitJoinProjectCode() {
+    const input = document.getElementById('project-join-code-input');
+    const errEl = document.getElementById('project-join-error');
+    const raw = input ? input.value.trim() : '';
+
+    if (errEl) errEl.style.display = 'none';
+
+    if (!raw) {
+      if (errEl) {
+        errEl.textContent = '⚠️ Por favor escribe el código o PIN del proyecto.';
+        errEl.style.display = 'block';
+      }
+      if (input) input.focus();
+      return;
+    }
+
+    const clean = raw.trim();
+    const lower = clean.toLowerCase();
+    const cleanDigits = clean.replace(/\D/g, '');
+
+    const challenges = window.appState?.challenges || [];
+    const projectItems = challenges.filter(c => 
+      c.projectType === 'presentation' || c.projectType === 'video' || c.projectType === 'document' || c.projectType === 'url' || c.isGovDataProject || c.isProject
+    );
+
+    // 1. Buscar en mentix_custom_project_codes
+    const savedCodes = this.getSavedProjectCodes();
+    const matchedCustom = savedCodes.find(sc => String(sc.code || '').trim().toLowerCase() === lower);
+
+    let matchedProject = null;
+
+    if (matchedCustom && matchedCustom.projectId) {
+      matchedProject = challenges.find(c => String(c.id).trim() === String(matchedCustom.projectId).trim());
+    }
+
+    // 2. Buscar en proyectos por id, pin, slug, code o título
+    if (!matchedProject) {
+      matchedProject = projectItems.find(c => {
+        const cId = String(c.id || '').trim().toLowerCase();
+        const cPin = String(c.pin || '').trim().toLowerCase();
+        const cCode = String(c.code || '').trim().toLowerCase();
+        const cSlug = String(c.slug || '').trim().toLowerCase();
+        const cTitle = String(c.title || '').trim().toLowerCase();
+
+        if (cId === lower || cPin === lower || cCode === lower || cSlug === lower) return true;
+        if (cleanDigits && cPin && cPin.replace(/\D/g, '') === cleanDigits) return true;
+        if (cTitle === lower) return true;
+        return false;
+      });
+    }
+
+    // 3. Si coincide con un código de maestro pero sin projectId explícito, abrir el proyecto asociado o destacado
+    if (!matchedProject && matchedCustom) {
+      matchedProject = projectItems.find(c => c.isGovDataProject || c.slug === 'innovatech-nexus') || projectItems[0];
+    }
+
+    // 4. Buscar en todos los retos
+    if (!matchedProject) {
+      matchedProject = challenges.find(c => {
+        const cId = String(c.id || '').trim().toLowerCase();
+        const cPin = String(c.pin || '').trim().toLowerCase();
+        const cCode = String(c.code || '').trim().toLowerCase();
+        const cSlug = String(c.slug || '').trim().toLowerCase();
+        if (cId === lower || cPin === lower || cCode === lower || cSlug === lower) return true;
+        if (cleanDigits && cPin && cPin.replace(/\D/g, '') === cleanDigits) return true;
+        return false;
+      });
+    }
+
+    // 5. Buscar en borradores del asistente de proyectos
+    if (!matchedProject && window.ProjectWizard && window.ProjectWizard.getAllSavedDrafts) {
+      const drafts = window.ProjectWizard.getAllSavedDrafts();
+      const matchedDraft = drafts.find(d => {
+        const dId = String(d.id || '').trim().toLowerCase();
+        const dTitle = String(d.title || '').trim().toLowerCase();
+        return dId === lower || (d.code && String(d.code).toLowerCase() === lower) || dTitle === lower;
+      });
+      if (matchedDraft) {
+        if (window.soundEngine && window.soundEngine.playSuccess) window.soundEngine.playSuccess();
+        this.closeJoinProjectModal();
+        window.ProjectWizard.resumeDraft(matchedDraft.id);
+        return;
+      }
+    }
+
+    if (matchedProject) {
+      if (window.soundEngine && window.soundEngine.playSuccess) {
+        window.soundEngine.playSuccess();
+      } else if (window.soundEngine && window.soundEngine.playClick) {
+        window.soundEngine.playClick();
+      }
+      this.closeJoinProjectModal();
+      this.openProjectLanding(matchedProject.id);
+      return;
+    }
+
+    // Código no encontrado
+    if (window.soundEngine && window.soundEngine.playError) {
+      window.soundEngine.playError();
+    }
+    if (errEl) {
+      errEl.innerHTML = `❌ Código <strong>${this.escapeHtml(clean)}</strong> no encontrado.<br><span style="font-weight: 500; font-size: 0.82rem; opacity: 0.9;">Verifica que el código esté bien escrito o consulta con tu docente.</span>`;
+      errEl.style.display = 'block';
+    } else {
+      alert(`Código "${clean}" no encontrado.`);
+    }
+    if (input) input.select();
+  },
+
 
   // Al hacer clic en un proyecto se muestra su landing page
   openProjectLanding(projectId) {
