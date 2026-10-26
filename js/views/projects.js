@@ -1741,15 +1741,15 @@ window.ProjectsView = {
     const vp = (selected && selected.valueProposition) ? selected.valueProposition : {};
     const vid = (selected && selected.video) ? selected.video : {};
 
-    const brandTitle = this.escapeHtml((selected && (selected.categoryName || pub.visibleCategory)) || 'Gobierno de Datos e IA');
-    const brandSubtitle = this.escapeHtml((selected && (pub.publicName || selected.title)) || 'Proyecto Innovatech');
-    const selectedTitle = selected ? this.escapeHtml(pub.publicName || selected.title || 'Proyecto') : 'Proyecto Innovatech';
-    const heroEyebrow = this.escapeHtml((selected && (selected.subtitle || selected.categoryName)) || '🚀 Ecosistema Tecnológico & Gobernanza Inteligente');
-    const heroMainTitle1 = selected ? this.escapeHtml(pub.landingTitle || selected.title || 'Gobierno de Datos e IA') : 'Gobierno de Datos e IA';
-    const heroMainTitle2 = selected ? this.escapeHtml(selected.subtitle || 'Proyecto Innovatech') : 'Proyecto Innovatech';
+    const brandTitle = this.escapeHtml((selected && (selected.categoryName || pub.visibleCategory)) || 'Proyecto');
+    const brandSubtitle = this.escapeHtml((selected && (pub.publicName || selected.title)) || '');
+    const selectedTitle = selected ? this.escapeHtml(pub.publicName || selected.title || 'Proyecto') : 'Proyecto';
+    const heroEyebrow = this.escapeHtml((selected && (selected.subtitle || selected.categoryName)) || '🚀 Proyecto Educativo & Didáctico');
+    const heroMainTitle1 = selected ? this.escapeHtml(pub.landingTitle || selected.title || 'Proyecto') : 'Proyecto';
+    const heroMainTitle2 = (selected && selected.subtitle) ? this.escapeHtml(selected.subtitle) : '';
     const heroSubtitle = this.escapeHtml(
       (selected && (pub.publicDescription || selected.shortDescription || selected.description)) ||
-      'Impulsamos la transformación digital de las organizaciones mediante el gobierno de datos y la inteligencia artificial, para generar valor, transparencia y mejores decisiones.'
+      'Explora los objetivos, recursos y detalles de este proyecto educativo.'
     );
 
     const ctaText = this.escapeHtml((selected && (pub.ctaText || selected.ctaText || vp.visitorAction)) || 'Unirse / Colaborar');
@@ -1886,7 +1886,7 @@ window.ProjectsView = {
 
                 <h1 class="inno-hero-title" style="color: ${contrast.titleColor}; ${contrast.titleShadow}">
                   ${heroMainTitle1}
-                  <span class="inno-hero-title-gradient" style="${contrast.gradientSpanStyle}">${heroMainTitle2}</span>
+                  ${heroMainTitle2 ? `<span class="inno-hero-title-gradient" style="${contrast.gradientSpanStyle}">${heroMainTitle2}</span>` : ''}
                 </h1>
 
                 <p class="inno-hero-desc" style="color: ${contrast.textColor}; ${contrast.descShadow}">
@@ -1919,7 +1919,7 @@ window.ProjectsView = {
                   </div>
 
                   <p class="inno-status-desc">
-                    El proyecto avanza en la implementación de un ecosistema de datos e inteligencia artificial para fortalecer la gestión pública y la transparencia.
+                    ${this.escapeHtml(selected?.description || selected?.shortDescription || vp?.problemSolved || 'El proyecto avanza en su desarrollo e implementación para generar valor, aprendizaje e impacto.')}
                   </p>
 
                   <div class="inno-progress-wrap">
@@ -2092,7 +2092,7 @@ window.ProjectsView = {
                       </div>
                       <div class="inno-card-footer">
                         <span>📅 10 abr 2025 • 💾 2.4 MB</span>
-                        <button type="button" class="inno-card-dl-btn" onclick="window.ProjectsView.downloadLandingDoc('Informe_Tecnico_Innovatech.pdf')" title="Descargar">⬇</button>
+                        <button type="button" class="inno-card-dl-btn" onclick="window.ProjectsView.downloadLandingDoc('Informe_Tecnico.pdf')" title="Descargar">⬇</button>
                       </div>
                     </div>
                   </article>
@@ -2109,7 +2109,7 @@ window.ProjectsView = {
                       </div>
                       <div class="inno-card-footer">
                         <span>📅 08 abr 2025 • 💾 5.8 MB</span>
-                        <button type="button" class="inno-card-dl-btn" onclick="window.ProjectsView.downloadLandingDoc('Presentacion_Institucional_Innovatech.pdf')" title="Descargar">⬇</button>
+                        <button type="button" class="inno-card-dl-btn" onclick="window.ProjectsView.downloadLandingDoc('Presentacion_Institucional.pdf')" title="Descargar">⬇</button>
                       </div>
                     </div>
                   </article>
@@ -2126,7 +2126,7 @@ window.ProjectsView = {
                       </div>
                       <div class="inno-card-footer">
                         <span>📅 05 abr 2025 • 💾 1.2 MB</span>
-                        <button type="button" class="inno-card-dl-btn" onclick="window.ProjectsView.downloadLandingDoc('Guia_Implementacion_Innovatech.pdf')" title="Descargar">⬇</button>
+                        <button type="button" class="inno-card-dl-btn" onclick="window.ProjectsView.downloadLandingDoc('Guia_Implementacion.pdf')" title="Descargar">⬇</button>
                       </div>
                     </div>
                   </article>
@@ -2305,7 +2305,7 @@ window.ProjectsView = {
         width="100%"
         height="500px"
         src="https://www.youtube.com/embed/aircAruvnKk?autoplay=1&rel=0"
-        title="Video Explicativo Proyecto Innovatech"
+        title="Video Explicativo del Proyecto"
         frameborder="0"
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
         allowfullscreen
@@ -2320,10 +2320,13 @@ window.ProjectsView = {
       }
     }
 
+    const selected = (window.appState.challenges || []).find(x => x.id === this.selectedProjectId);
+    const projTitle = this.escapeHtml((selected && selected.title) || 'Proyecto');
+
     body.innerHTML = `
       <button class="plp-lightbox-close" onclick="window.ProjectsView.closeLandingLightbox()" aria-label="Cerrar">✕</button>
       <div style="background:#091e2d; padding:1.5rem; border-radius:16px;">
-        <h3 style="color:#ffffff; margin:0 0 1rem;">🎬 Video Explicativo: Proyecto Innovatech</h3>
+        <h3 style="color:#ffffff; margin:0 0 1rem;">🎬 Video Explicativo: ${projTitle}</h3>
         ${videoHtml}
       </div>
     `;
@@ -2332,8 +2335,8 @@ window.ProjectsView = {
 
   downloadLandingDoc(filename) {
     const selected = (window.appState.challenges || []).find(x => x.id === this.selectedProjectId);
-    const title = (selected && selected.title) || 'GOBIERNO DE DATOS E IA - PROYECTO INNOVATECH';
-    const content = `${title}\nDocumento: ${filename}\nFecha: ${new Date().toLocaleDateString()}\n\n1. RESUMEN EJECUTIVO:\nImpulsamos la transformación digital de las organizaciones mediante el gobierno de datos y la inteligencia artificial, para generar valor, transparencia y mejores decisiones.\n\n2. OBJETIVOS Y METAS:\n- Fortalecimiento institucional del gobierno de datos.\n- Implementación de analítica avanzada y modelos predictivos éticos.\n- Generación de impacto y trazabilidad pública.`;
+    const title = (selected && selected.title) || 'PROYECTO EDUCATIVO';
+    const content = `${title}\nDocumento: ${filename}\nFecha: ${new Date().toLocaleDateString()}\n\n1. RESUMEN:\n${(selected && (selected.description || selected.shortDescription)) || 'Documento y material didáctico oficial del proyecto.'}\n\n2. RECURSOS:\n- Material pedagógico y conceptual.\n- Implementación y aplicación práctica.`;
     const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -2363,6 +2366,8 @@ window.ProjectsView = {
     const modal = document.getElementById('plp-inline-lightbox');
     const body = document.getElementById('plp-inline-lightbox-body');
     if (!modal || !body) return;
+    const selected = (window.appState.challenges || []).find(x => x.id === this.selectedProjectId);
+    const projTitle = this.escapeHtml((selected && selected.title) || 'Proyecto');
     const isDark = (document.querySelector('.plp-wrapper')?.getAttribute('data-theme') || this.getLandingTheme()) === 'dark';
     const bg = isDark ? '#091e2d' : '#ffffff';
     const titleColor = isDark ? '#ffffff' : '#091e2d';
@@ -2375,7 +2380,7 @@ window.ProjectsView = {
         <span class="inno-eyebrow">Vista Previa Oficial</span>
         <h2 style="margin:0.5rem 0 1rem; color:${titleColor};">${this.escapeHtml(title)}</h2>
         <p style="color:${textColor}; line-height:1.7;">
-          Recurso oficial de <strong>Gobierno de Datos e IA — Proyecto Innovatech</strong>. Diseñado para impulsar la modernización y toma de decisiones estratégicas basadas en analítica ética y transparencia.
+          Recurso oficial de <strong>${projTitle}</strong>. Diseñado para impulsar el aprendizaje, la experimentación y el desarrollo de competencias.
         </p>
         <div style="margin-top:1.5rem; display:flex; gap:0.75rem; flex-wrap:wrap;">
           <button class="inno-btn-cyan" onclick="window.ProjectsView.downloadLandingDoc('${this.escapeHtml(title.replace(/\s+/g, '_').slice(0, 40))}.txt'); window.ProjectsView.closeLandingLightbox();">

@@ -2571,7 +2571,7 @@ collectCurrentStepInputs() {
 
         <div class="gdn-field">
           <label class="gdn-label" for="gdn-pub-title">Título principal para el Hero de la Landing Page</label>
-          <input type="text" id="gdn-pub-title" class="gdn-input" value="${this.escapeHtml(lc.landingTitle || d.title)}" placeholder="Ej: Transformando el Futuro: Proyecto Innovatech" />
+          <input type="text" id="gdn-pub-title" class="gdn-input" value="${this.escapeHtml(lc.landingTitle || d.title)}" placeholder="Ej: Transformando el Aprendizaje: Nombre de tu Proyecto" />
         </div>
 
         <div class="gdn-field">
