@@ -2320,7 +2320,6 @@ window.ProjectsView = {
       }
     }
 
-    const selected = (window.appState.challenges || []).find(x => x.id === this.selectedProjectId);
     const projTitle = this.escapeHtml((selected && selected.title) || 'Proyecto');
 
     body.innerHTML = `
