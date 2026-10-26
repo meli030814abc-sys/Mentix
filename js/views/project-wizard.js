@@ -564,7 +564,7 @@ collectCurrentStepInputs() {
                 💾 Guardar avance
               </button>
               ${this.currentStep < this.totalSteps ? `
-                <button type="button" class="plp-cta-btn" onclick="window.ProjectWizard.nextStep()" style="padding: 0.75rem 1.6rem; font-size: 0.95rem;">
+                <button type="button" class="plp-cta-btn" onclick="window.ProjectWizard.nextStep()" style="padding: 0.75rem 1.6rem; font-size: 0.95rem; background: linear-gradient(135deg, #10b981, #059669) !important; color: #ffffff !important; font-weight: 800 !important; border: none !important; box-shadow: 0 4px 18px rgba(16, 185, 129, 0.45) !important;">
                   Continuar al Paso ${this.currentStep + 1} →
                 </button>
               ` : `

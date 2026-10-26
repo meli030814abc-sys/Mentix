@@ -1171,10 +1171,7 @@ window.ProjectsView = {
       if (matchedDraft) {
         if (window.soundEngine && window.soundEngine.playSuccess) window.soundEngine.playSuccess();
         this.closeJoinProjectModal();
-        window.ProjectWizard.resumeDraft(matchedDraft.id);
-        setTimeout(() => {
-          this.showProjectAgent(matchedDraft);
-        }, 350);
+        window.ProjectWizard.openWizard(matchedDraft.id, 1);
         return;
       }
     }
@@ -1186,22 +1183,37 @@ window.ProjectsView = {
         window.soundEngine.playClick();
       }
       this.closeJoinProjectModal();
-      this.openProjectLanding(matchedProject.id);
-      setTimeout(() => {
-        this.showProjectAgent(matchedProject);
-      }, 350);
+      window.ProjectWizard.openWizard(matchedProject.id, 1);
       return;
     }
 
-    // Código no encontrado
+    // Si coincide con código personalizado creado por el profesor
+    if (matchedCustom) {
+      if (window.soundEngine && window.soundEngine.playSuccess) window.soundEngine.playSuccess();
+      this.closeJoinProjectModal();
+      window.ProjectWizard.openWizard(matchedCustom.projectId || null, 1);
+      return;
+    }
+
+    // Código no encontrado: dar opción directa de crear proyecto con este código
     if (window.soundEngine && window.soundEngine.playError) {
       window.soundEngine.playError();
     }
     if (errEl) {
-      errEl.innerHTML = `❌ Código <strong>${this.escapeHtml(clean)}</strong> no encontrado.<br><span style="font-weight: 500; font-size: 0.82rem; opacity: 0.9;">Verifica que el código esté bien escrito o consulta con tu docente.</span>`;
+      errEl.innerHTML = `
+        <div style="margin-bottom: 0.5rem;">❌ Código <strong>${this.escapeHtml(clean)}</strong> no encontrado.</div>
+        <div style="font-weight: 500; font-size: 0.82rem; opacity: 0.9; margin-bottom: 0.65rem;">Puedes verificarlo con tu docente o iniciar un nuevo proyecto con este código:</div>
+        <button type="button" onclick="window.ProjectsView.closeJoinProjectModal(); window.ProjectWizard.openWizard(null, 1);" style="background: linear-gradient(135deg, #10b981, #059669); color: #fff; border: none; padding: 0.45rem 1rem; border-radius: 8px; font-weight: 800; font-size: 0.85rem; cursor: pointer; box-shadow: 0 4px 12px rgba(16,185,129,0.35);">
+          ✨ Crear Proyecto Ahora
+        </button>
+      `;
       errEl.style.display = 'block';
     } else {
-      alert(`Código "${clean}" no encontrado.`);
+      if (confirm(`El código "${clean}" no existe aún. ¿Deseas iniciar la creación de un nuevo proyecto?`)) {
+        this.closeJoinProjectModal();
+        window.ProjectWizard.openWizard(null, 1);
+        return;
+      }
     }
     if (input) input.select();
   },
