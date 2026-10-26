@@ -1172,6 +1172,9 @@ window.ProjectsView = {
         if (window.soundEngine && window.soundEngine.playSuccess) window.soundEngine.playSuccess();
         this.closeJoinProjectModal();
         window.ProjectWizard.resumeDraft(matchedDraft.id);
+        setTimeout(() => {
+          this.showProjectAgent(matchedDraft);
+        }, 350);
         return;
       }
     }
@@ -1184,6 +1187,9 @@ window.ProjectsView = {
       }
       this.closeJoinProjectModal();
       this.openProjectLanding(matchedProject.id);
+      setTimeout(() => {
+        this.showProjectAgent(matchedProject);
+      }, 350);
       return;
     }
 
@@ -1227,6 +1233,199 @@ window.ProjectsView = {
     else if (t === 'url') window.appRouter.openUrl(c.id);
     else window.appRouter.openPresentation(c.id);
   },
+
+  showProjectAgent(project = null) {
+    const existing = document.getElementById('mentix-project-agent-modal');
+    if (existing) existing.remove();
+
+    const proj = project || (window.appState?.challenges || []).find(c => c.id === this.selectedProjectId) || {};
+    const title = this.escapeHtml(proj.title || 'Proyecto Educativo');
+    const desc = this.escapeHtml(proj.description || proj.shortDescription || 'Explora lecciones interactivas, recursos didácticos y actividades guiadas.');
+    const obj = this.escapeHtml(proj.mainObjective || proj.valueProposition?.problemSolved || 'Impulsar el aprendizaje práctico y colaborativo.');
+    const cat = this.escapeHtml(proj.categoryName || 'Ciencia y Tecnología');
+    const projId = proj.id || this.selectedProjectId || '';
+
+    const agentHtml = `
+      <div id="mentix-project-agent-modal" style="position: fixed; inset: 0; z-index: 1000000; display: flex; align-items: flex-end; justify-content: flex-end; padding: 1.5rem; pointer-events: none; animation: fadeIn 0.25s ease-out;">
+        <div class="glass-panel" style="pointer-events: auto; width: 100%; max-width: 480px; max-height: 85vh; display: flex; flex-direction: column; background: linear-gradient(150deg, rgba(10, 16, 32, 0.98), rgba(22, 12, 38, 0.98)); border: 2px solid #00f5d4; box-shadow: 0 20px 60px rgba(0, 245, 212, 0.3), 0 0 40px rgba(247, 37, 133, 0.25); border-radius: 24px; overflow: hidden; transform: translateY(0); transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);">
+          
+          <!-- Encabezado del Agente -->
+          <div style="padding: 1.15rem 1.4rem; background: linear-gradient(135deg, rgba(0, 245, 212, 0.15), rgba(247, 37, 133, 0.15)); border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: space-between;">
+            <div style="display: flex; align-items: center; gap: 0.75rem;">
+              <div style="position: relative; width: 44px; height: 44px; border-radius: 14px; background: linear-gradient(135deg, #00f5d4, #7209b7); display: flex; align-items: center; justify-content: center; font-size: 1.4rem; box-shadow: 0 0 20px rgba(0,245,212,0.4);">
+                🤖
+                <span style="position: absolute; bottom: -2px; right: -2px; width: 12px; height: 12px; border-radius: 50%; background: #10b981; border: 2px solid #0a1020; box-shadow: 0 0 8px #10b981;"></span>
+              </div>
+              <div>
+                <h3 style="margin: 0; font-size: 1.05rem; font-weight: 900; color: #ffffff; display: flex; align-items: center; gap: 0.4rem;">
+                  <span>Agente Inteligente</span>
+                  <span style="font-size: 0.7rem; background: rgba(0,245,212,0.2); color: #00f5d4; border: 1px solid rgba(0,245,212,0.4); padding: 0.15rem 0.5rem; border-radius: 9999px; font-weight: 800; text-transform: uppercase;">En línea</span>
+                </h3>
+                <span style="font-size: 0.78rem; color: #94a3b8; display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 260px;">
+                  Copiloto Oficial • ${title}
+                </span>
+              </div>
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 0.4rem;">
+              <button type="button" onclick="window.ProjectsView.closeProjectAgent()" title="Cerrar agente" style="background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); color: #fff; width: 32px; height: 32px; border-radius: 50%; font-size: 1rem; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s;" onmouseenter="this.style.background='rgba(255, 77, 109, 0.4)'; this.style.borderColor='#ff4d6d';" onmouseleave="this.style.background='rgba(255,255,255,0.08)'; this.style.borderColor='rgba(255,255,255,0.15)';">
+                ✕
+              </button>
+            </div>
+          </div>
+
+          <!-- Historial de Conversación / Mensajes -->
+          <div id="mentix-agent-chat-stream" style="flex: 1; padding: 1.25rem; overflow-y: auto; max-height: 380px; display: flex; flex-direction: column; gap: 0.85rem;">
+            
+            <!-- Mensaje Inicial del Agente -->
+            <div style="display: flex; gap: 0.65rem; align-items: flex-start;">
+              <div style="width: 30px; height: 30px; border-radius: 10px; background: rgba(0, 245, 212, 0.2); color: #00f5d4; display: flex; align-items: center; justify-content: center; font-size: 1rem; flex-shrink: 0; border: 1px solid rgba(0,245,212,0.4);">
+                🤖
+              </div>
+              <div style="background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(0, 245, 212, 0.3); border-radius: 16px; border-top-left-radius: 4px; padding: 0.95rem 1.15rem; color: #e2e8f0; font-size: 0.9rem; line-height: 1.5; box-shadow: 0 4px 15px rgba(0,0,0,0.3);">
+                ¡Hola! 🎉 Te has unido exitosamente al proyecto <strong>${title}</strong>.<br><br>
+                Soy tu <strong>Agente Inteligente de Proyecto</strong>. Estoy aquí para acompañarte paso a paso. ¿Cómo prefieres comenzar?
+              </div>
+            </div>
+
+            <!-- Accesos Rápidos del Agente -->
+            <div style="display: flex; flex-direction: column; gap: 0.5rem; margin-top: 0.25rem;">
+              <button type="button" onclick="window.ProjectWizard.openWizard('${projId}'); window.ProjectsView.closeProjectAgent();" style="display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; background: linear-gradient(135deg, rgba(16, 185, 129, 0.25), rgba(6, 78, 59, 0.35)); border: 1.5px solid #10b981; color: #ffffff; padding: 0.75rem 1rem; border-radius: 14px; font-weight: 800; font-size: 0.88rem; cursor: pointer; text-align: left; transition: all 0.2s;" onmouseenter="this.style.background='linear-gradient(135deg, #10b981, #059669)'; this.style.boxShadow='0 0 20px rgba(16,185,129,0.5)';" onmouseleave="this.style.background='linear-gradient(135deg, rgba(16, 185, 129, 0.25), rgba(6, 78, 59, 0.35))'; this.style.boxShadow='none';">
+                <span>✨ Abrir en el Asistente por Pasos</span>
+                <span>→</span>
+              </button>
+
+              <button type="button" onclick="window.ProjectsView.openProjectLanding('${projId}'); window.ProjectsView.closeProjectAgent();" style="display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; background: rgba(0, 245, 212, 0.12); border: 1.5px solid rgba(0, 245, 212, 0.45); color: #ffffff; padding: 0.75rem 1rem; border-radius: 14px; font-weight: 800; font-size: 0.88rem; cursor: pointer; text-align: left; transition: all 0.2s;" onmouseenter="this.style.background='rgba(0, 245, 212, 0.25)'; this.style.borderColor='#00f5d4';" onmouseleave="this.style.background='rgba(0, 245, 212, 0.12)'; this.style.borderColor='rgba(0, 245, 212, 0.45)';">
+                <span>📑 Explorar la Landing Page del Proyecto</span>
+                <span>→</span>
+              </button>
+
+              <div style="display: flex; gap: 0.45rem; flex-wrap: wrap; margin-top: 0.25rem;">
+                <button type="button" onclick="window.ProjectsView.askAgentPredefined('objetivo')" style="background: rgba(247, 37, 133, 0.12); border: 1px solid rgba(247, 37, 133, 0.4); color: #f72585; padding: 0.35rem 0.75rem; border-radius: 9999px; font-size: 0.78rem; font-weight: 800; cursor: pointer;">
+                  🎯 ¿Cuál es el objetivo?
+                </button>
+                <button type="button" onclick="window.ProjectsView.askAgentPredefined('resumen')" style="background: rgba(0, 245, 212, 0.12); border: 1px solid rgba(0, 245, 212, 0.4); color: #00f5d4; padding: 0.35rem 0.75rem; border-radius: 9999px; font-size: 0.78rem; font-weight: 800; cursor: pointer;">
+                  💡 ¿De qué trata?
+                </button>
+                <button type="button" onclick="window.ProjectsView.askAgentPredefined('recursos')" style="background: rgba(168, 85, 247, 0.12); border: 1px solid rgba(168, 85, 247, 0.4); color: #c084fc; padding: 0.35rem 0.75rem; border-radius: 9999px; font-size: 0.78rem; font-weight: 800; cursor: pointer;">
+                  📚 ¿Qué recursos tiene?
+                </button>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Barra de Entrada de Chat con el Agente -->
+          <form onsubmit="event.preventDefault(); window.ProjectsView.sendAgentUserMessage();" style="padding: 0.85rem 1rem; background: rgba(5, 10, 22, 0.95); border-top: 1px solid rgba(255,255,255,0.08); display: flex; gap: 0.5rem; align-items: center;">
+            <input
+              type="text"
+              id="mentix-agent-user-input"
+              placeholder="Hazle una pregunta al Agente..."
+              autocomplete="off"
+              style="flex: 1; padding: 0.75rem 1rem; border-radius: 12px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.15); color: #ffffff; font-size: 0.88rem; outline: none;"
+              onfocus="this.style.borderColor='#00f5d4';"
+              onblur="this.style.borderColor='rgba(255,255,255,0.15)';"
+            />
+            <button type="submit" style="background: linear-gradient(135deg, #00f5d4, #059669); color: #050510; border: none; font-weight: 900; width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; cursor: pointer; transition: transform 0.15s;" onmouseenter="this.style.transform='scale(1.08)'" onmouseleave="this.style.transform='scale(1)'">
+              ➤
+            </button>
+          </form>
+
+        </div>
+      </div>
+    `;
+
+    document.body.insertAdjacentHTML('beforeend', agentHtml);
+    if (window.soundEngine && window.soundEngine.playSuccess) window.soundEngine.playSuccess();
+  },
+
+  closeProjectAgent() {
+    const el = document.getElementById('mentix-project-agent-modal');
+    if (el) el.remove();
+  },
+
+  askAgentPredefined(type) {
+    const proj = (window.appState?.challenges || []).find(c => c.id === this.selectedProjectId) || {};
+    let q = '';
+    let a = '';
+
+    if (type === 'objetivo') {
+      q = '🎯 ¿Cuál es el objetivo principal de este proyecto?';
+      a = `El objetivo principal de <strong>${this.escapeHtml(proj.title || 'este proyecto')}</strong> es: <br><br><em>«${this.escapeHtml(proj.mainObjective || proj.valueProposition?.problemSolved || 'Fortalecer el aprendizaje y la aplicación práctica de los conocimientos en el aula')}»</em>.`;
+    } else if (type === 'resumen') {
+      q = '💡 ¿De qué trata este proyecto?';
+      a = `Este proyecto corresponde a la categoría <strong>${this.escapeHtml(proj.categoryName || 'General')}</strong>.<br><br>${this.escapeHtml(proj.description || proj.shortDescription || 'Diseñado para impulsar habilidades mediante recursos interactivos, presentaciones y guías prácticas.')}`;
+    } else if (type === 'recursos') {
+      q = '📚 ¿Qué recursos didácticos incluye?';
+      const slides = proj.slides ? proj.slides.length : 0;
+      const vid = proj.video?.url || proj.videoUrl ? '1 Video Clase' : 'Video explicativo';
+      a = `Este proyecto didáctico cuenta con:<br>• <strong>${slides > 0 ? slides + ' Diapositivas interactivas' : 'Presentación didáctica'}</strong>.<br>• <strong>${vid}</strong>.<br>• <strong>Documentos didácticos descargables</strong> y fichas de trabajo oficiales.<br><br>Puedes explorarlos en la Landing Page o paso a paso con el Asistente.`;
+    }
+
+    this.appendAgentChatMessage(q, 'user');
+    setTimeout(() => {
+      this.appendAgentChatMessage(a, 'agent');
+    }, 300);
+  },
+
+  sendAgentUserMessage() {
+    const input = document.getElementById('mentix-agent-user-input');
+    const text = input ? input.value.trim() : '';
+    if (!text) return;
+    input.value = '';
+
+    this.appendAgentChatMessage(this.escapeHtml(text), 'user');
+
+    const proj = (window.appState?.challenges || []).find(c => c.id === this.selectedProjectId) || {};
+    const t = text.toLowerCase();
+    let reply = '';
+
+    if (t.includes('objetivo') || t.includes('meta') || t.includes('proposito')) {
+      reply = `El objetivo de <strong>${this.escapeHtml(proj.title || 'este proyecto')}</strong> es: <br><br><em>«${this.escapeHtml(proj.mainObjective || proj.valueProposition?.problemSolved || 'Impulsar el aprendizaje guiado y colaborativo')}»</em>.`;
+    } else if (t.includes('como empiezo') || t.includes('inicio') || t.includes('pasos') || t.includes('asistente') || t.includes('que hago')) {
+      reply = `¡Es muy fácil! Puedes hacer clic en el botón verde <strong>«Abrir en el Asistente por Pasos»</strong> para completar la lección etapa por etapa, o explorar la <strong>Landing Page</strong> para ver los documentos y videos.`;
+    } else if (t.includes('recurso') || t.includes('video') || t.includes('presentacion') || t.includes('doc') || t.includes('ficha')) {
+      reply = `El proyecto tiene recursos interactivos cargados (presentaciones, video clases y material de lectura). Puedes acceder a ellos desde la sección de recursos de la portada.`;
+    } else {
+      reply = `Entendido. Como tu <strong>Agente de Proyecto</strong> para <em>${this.escapeHtml(proj.title || 'esta lección')}</em>, te recomiendo revisar los objetivos principales y luego avanzar en el Asistente por pasos o explorar la Landing Page oficial. ¡Cuentas conmigo para cualquier consulta!`;
+    }
+
+    setTimeout(() => {
+      this.appendAgentChatMessage(reply, 'agent');
+    }, 400);
+  },
+
+  appendAgentChatMessage(html, sender) {
+    const stream = document.getElementById('mentix-agent-chat-stream');
+    if (!stream) return;
+
+    const isUser = sender === 'user';
+    const msg = document.createElement('div');
+    msg.style.display = 'flex';
+    msg.style.gap = '0.65rem';
+    msg.style.alignItems = 'flex-start';
+    if (isUser) msg.style.justifyContent = 'flex-end';
+
+    msg.innerHTML = isUser ? `
+      <div style="background: linear-gradient(135deg, #7209b7, #f72585); color: #ffffff; border-radius: 16px; border-top-right-radius: 4px; padding: 0.8rem 1.1rem; font-size: 0.88rem; max-width: 80%; line-height: 1.45; box-shadow: 0 4px 15px rgba(247,37,133,0.3);">
+        ${html}
+      </div>
+      <div style="width: 28px; height: 28px; border-radius: 8px; background: rgba(247, 37, 133, 0.25); color: #f72585; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; flex-shrink: 0; font-weight: 800;">
+        👤
+      </div>
+    ` : `
+      <div style="width: 28px; height: 28px; border-radius: 8px; background: rgba(0, 245, 212, 0.2); color: #00f5d4; display: flex; align-items: center; justify-content: center; font-size: 0.95rem; flex-shrink: 0; border: 1px solid rgba(0,245,212,0.4);">
+        🤖
+      </div>
+      <div style="background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(0, 245, 212, 0.3); border-radius: 16px; border-top-left-radius: 4px; padding: 0.85rem 1.1rem; color: #e2e8f0; font-size: 0.88rem; max-width: 82%; line-height: 1.5; box-shadow: 0 4px 15px rgba(0,0,0,0.3);">
+        ${html}
+      </div>
+    `;
+
+    stream.appendChild(msg);
+    stream.scrollTop = stream.scrollHeight;
+  },
+
 
   setLandingTheme(theme) {
     const validTheme = theme === 'dark' ? 'dark' : 'light';
@@ -1764,6 +1963,20 @@ window.ProjectsView = {
           <div class="plp-lightbox" id="plp-inline-lightbox" role="dialog" aria-modal="true" onclick="if(event.target===this) window.ProjectsView.closeLandingLightbox()">
             <div class="plp-lightbox-content" id="plp-inline-lightbox-body"></div>
           </div>
+
+          <!-- Botón Flotante para Invocar al Agente Inteligente de Proyecto -->
+          <button 
+            type="button" 
+            onclick="window.ProjectsView.showProjectAgent()" 
+            title="Abrir Agente Inteligente del Proyecto"
+            style="position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 99999; background: linear-gradient(135deg, #0f172a, #1e1136); color: #ffffff; border: 2px solid #00f5d4; border-radius: 9999px; padding: 0.75rem 1.35rem; font-weight: 900; font-size: 0.92rem; box-shadow: 0 10px 30px rgba(0, 245, 212, 0.35), 0 0 20px rgba(247, 37, 133, 0.3); cursor: pointer; display: flex; align-items: center; gap: 0.6rem; transition: transform 0.2s, box-shadow 0.2s;"
+            onmouseenter="this.style.transform='scale(1.06)'; this.style.borderColor='#f72585';"
+            onmouseleave="this.style.transform='scale(1)'; this.style.borderColor='#00f5d4';"
+          >
+            <span style="font-size: 1.35rem;">🤖</span>
+            <span style="letter-spacing: 0.4px;">Agente IA</span>
+            <span style="width: 8px; height: 8px; border-radius: 50%; background: #00f5d4; box-shadow: 0 0 8px #00f5d4; display: inline-block;"></span>
+          </button>
         </div>
       </div>
     `;
