@@ -5,7 +5,7 @@
 
 window.ProjectWizard = {
   currentStep: 1,
-  totalSteps: 13,
+  totalSteps: 15,
   activeDraftId: null,
   autoSaveTimer: null,
   lastSavedText: 'Guardado automático activo',
@@ -14,20 +14,40 @@ window.ProjectWizard = {
   defaultCoverImage: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80',
   defaultThumbImage: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&q=80',
 
-stepsMeta: [
+  SLIDE_THEMES: [
+    { id: 'cosmos', name: 'Cosmos Neón', icon: '🌌', bg: 'linear-gradient(135deg, #0b091a 0%, #171033 50%, #200f40 100%)', titleColor: '#ffffff', subtitleColor: '#00f5d4', contentColor: '#cbd5e1', accent: '#00f5d4' },
+    { id: 'cyberpunk', name: 'Cyberpunk Magenta', icon: '⚡', bg: 'linear-gradient(135deg, #0f051d 0%, #290833 50%, #15002b 100%)', titleColor: '#ff007f', subtitleColor: '#00f0ff', contentColor: '#f5d0fe', accent: '#ff007f' },
+    { id: 'esmeralda', name: 'Selva Esmeralda', icon: '🌿', bg: 'linear-gradient(135deg, #041f17 0%, #06382b 50%, #021a13 100%)', titleColor: '#34d399', subtitleColor: '#fbbf24', contentColor: '#d1fae5', accent: '#34d399' },
+    { id: 'atardecer', name: 'Atardecer Dorado', icon: '🌅', bg: 'linear-gradient(135deg, #2b0e1e 0%, #4a1525 50%, #682312 100%)', titleColor: '#fbbf24', subtitleColor: '#fb7185', contentColor: '#fed7aa', accent: '#fbbf24' },
+    { id: 'obsidiana', name: 'Obsidiana Minimalista', icon: '🖤', bg: 'linear-gradient(135deg, #0a0a0c 0%, #141418 50%, #070709 100%)', titleColor: '#f8fafc', subtitleColor: '#94a3b8', contentColor: '#cbd5e1', accent: '#38bdf8' },
+    { id: 'oceano', name: 'Océano Abisal', icon: '🌊', bg: 'linear-gradient(135deg, #05162a 0%, #08294d 50%, #041224 100%)', titleColor: '#38bdf8', subtitleColor: '#2dd4bf', contentColor: '#bae6fd', accent: '#2dd4bf' },
+    { id: 'volcan', name: 'Volcán Carmesí', icon: '🌋', bg: 'linear-gradient(135deg, #2a0808 0%, #450a0a 50%, #1f0505 100%)', titleColor: '#f87171', subtitleColor: '#fb923c', contentColor: '#fecaca', accent: '#f87171' },
+    { id: 'pizarra', name: 'Pizarra Escolar', icon: '🎓', bg: 'linear-gradient(135deg, #10261e 0%, #17382d 50%, #0c1c16 100%)', titleColor: '#fef08a', subtitleColor: '#86efac', contentColor: '#f1f5f9', accent: '#86efac' },
+    { id: 'pergamino', name: 'Pergamino & Café', icon: '☕', bg: 'linear-gradient(135deg, #231710 0%, #362216 50%, #1a110a 100%)', titleColor: '#fcd34d', subtitleColor: '#fdba74', contentColor: '#fed7aa', accent: '#fdba74' },
+    { id: 'glaciar', name: 'Glaciar Ártico', icon: '🧊', bg: 'linear-gradient(135deg, #0c1e28 0%, #133345 50%, #091720 100%)', titleColor: '#7dd3fc', subtitleColor: '#a5f3fc', contentColor: '#e0f2fe', accent: '#7dd3fc' },
+    { id: 'amatista', name: 'Amatista Real', icon: '🔮', bg: 'linear-gradient(135deg, #1b0a2a 0%, #2e1047 50%, #140620 100%)', titleColor: '#c084fc', subtitleColor: '#f472b6', contentColor: '#f3e8ff', accent: '#c084fc' },
+    { id: 'ambar', name: 'Miel y Ámbar', icon: '☀️', bg: 'linear-gradient(135deg, #271a06 0%, #3d2808 50%, #1c1203 100%)', titleColor: '#f59e0b', subtitleColor: '#fde047', contentColor: '#fef3c7', accent: '#f59e0b' },
+    { id: 'menta', name: 'Menta & Neón', icon: '🍃', bg: 'linear-gradient(135deg, #062224 0%, #0b383b 50%, #041719 100%)', titleColor: '#2dd4bf', subtitleColor: '#a7f3d0', contentColor: '#ccfbf1', accent: '#2dd4bf' },
+    { id: 'zafiro', name: 'Zafiro & Plata', icon: '💎', bg: 'linear-gradient(135deg, #0c153b 0%, #15245c 50%, #080f2d 100%)', titleColor: '#93c5fd', subtitleColor: '#e2e8f0', contentColor: '#dbeafe', accent: '#93c5fd' },
+    { id: 'sakura', name: 'Cerezo Sakura', icon: '🌸', bg: 'linear-gradient(135deg, #2b0c1e 0%, #40122e 50%, #200716 100%)', titleColor: '#f472b6', subtitleColor: '#fbcfe8', contentColor: '#fce7f3', accent: '#f472b6' }
+  ],
+
+  stepsMeta: [
     { step: 1, icon: '🏷️', shortTitle: 'Nombre del proyecto', title: 'Paso 1. Nombre e identidad', question: '¿Cómo se llama tu proyecto y cuál es su subtítulo?' },
     { step: 2, icon: '📝', shortTitle: 'Descripción', title: 'Paso 2. Descripción y resumen', question: '¿En qué consiste tu proyecto y cuál es su resumen ejecutivo?' },
     { step: 3, icon: '📁', shortTitle: 'Clasificación', title: 'Paso 3. Categoría y público objetivo', question: '¿A qué categoría pertenece y para quién está diseñado?' },
-    { step: 4, icon: '🎯', shortTitle: 'Problema y objetivo', title: 'Paso 4. Problema, objetivo y beneficios', question: '¿Qué reto busca resolver y qué impacto generará?' },
-    { step: 5, icon: '👥', shortTitle: 'Equipo y fechas', title: 'Paso 5. Equipo responsable y cronograma', question: '¿Quién lidera el proyecto y cuáles son las fechas clave?' },
-    { step: 6, icon: '💡', shortTitle: 'Propuesta de valor', title: 'Paso 6. Propuesta de valor y funcionamiento', question: '¿Por qué este proyecto es valioso y cómo funciona?' },
-    { step: 7, icon: '❓', shortTitle: 'Preguntas frecuentes', title: 'Paso 7. Preguntas frecuentes (FAQ) y acción', question: '¿Cuáles son las preguntas frecuentes de los visitantes?' },
-    { step: 8, icon: '🎬', shortTitle: 'Video de presentación', title: 'Paso 8. Video de presentación', question: '¿Tienes un video explicativo o demostrativo del proyecto?' },
-    { step: 9, icon: '📄', shortTitle: 'Documentos y guías', title: 'Paso 9. Documentos, guías y recursos descargables', question: '¿Qué manuales o documentos deseas compartir?' },
-    { step: 10, icon: '🖼️', shortTitle: 'Imágenes y portada', title: 'Paso 10. Portada y activos visuales', question: '¿Qué imágenes o capturas mostrarán tu proyecto?' },
-    { step: 11, icon: '🔗', shortTitle: 'Enlaces externos', title: 'Paso 11. Enlaces y demos externas', question: '¿Qué sitios web, demos o repositorios complementan el proyecto?' },
-    { step: 12, icon: '⚙️', shortTitle: 'Config. publicación', title: 'Paso 12. Configuración en la Landing Page', question: '¿Cómo deseas que aparezca publicado en la Landing Page?' },
-    { step: 13, icon: '🚀', shortTitle: 'Revisión y publicación', title: 'Paso 13. Revisión final y publicación', question: 'Revisa el resumen completo antes de publicar tu proyecto.' }
+    { step: 4, icon: '🎨', shortTitle: 'Diseño y estilo', title: 'Paso 4. Configuración del diseño y banner', question: '¿Qué estilo visual, tipo de letra, colores y banner llevará la Landing Page?' },
+    { step: 5, icon: '👥', shortTitle: 'Autores y correos', title: 'Paso 5. Autores y correos del proyecto', question: '¿Quiénes crearon el proyecto y cuáles son sus correos de contacto?' },
+    { step: 6, icon: '🎯', shortTitle: 'Problema y objetivo', title: 'Paso 6. Problema, objetivo y beneficios', question: '¿Qué reto busca resolver y qué impacto generará?' },
+    { step: 7, icon: '💡', shortTitle: 'Propuesta de valor', title: 'Paso 7. Propuesta de valor y funcionamiento', question: '¿Por qué este proyecto es valioso y cómo funciona?' },
+    { step: 8, icon: '📅', shortTitle: 'Cronograma y fechas', title: 'Paso 8. Cronograma y fechas clave', question: '¿Cuáles son los hitos y fechas importantes del proyecto?' },
+    { step: 9, icon: '❓', shortTitle: 'Preguntas frecuentes', title: 'Paso 9. Preguntas frecuentes (FAQ) y acción', question: '¿Cuáles son las preguntas frecuentes de los visitantes?' },
+    { step: 10, icon: '🎬', shortTitle: 'Video de presentación', title: 'Paso 10. Video de presentación', question: '¿Tienes un video explicativo o demostrativo del proyecto?' },
+    { step: 11, icon: '📄', shortTitle: 'Documentos y guías', title: 'Paso 11. Documentos, guías y recursos descargables', question: '¿Qué manuales o documentos deseas compartir?' },
+    { step: 12, icon: '🖼️', shortTitle: 'Imágenes y portada', title: 'Paso 12. Portada y activos visuales', question: '¿Qué imágenes o capturas mostrarán tu proyecto?' },
+    { step: 13, icon: '🔗', shortTitle: 'Enlaces externos', title: 'Paso 13. Enlaces y demos externas', question: '¿Qué sitios web, demos o repositorios complementan el proyecto?' },
+    { step: 14, icon: '⚙️', shortTitle: 'Config. publicación', title: 'Paso 14. Configuración en la Landing Page', question: '¿Cómo deseas que aparezca publicado en la Landing Page?' },
+    { step: 15, icon: '🚀', shortTitle: 'Revisión y publicación', title: 'Paso 15. Revisión final y publicación', question: 'Revisa el resumen completo antes de publicar tu proyecto.' }
   ],
 
   resourceCategories: [
@@ -153,6 +173,22 @@ stepsMeta: [
         authorEmail: existingProject.authorEmail || u.email || '',
         authorAvatar: existingProject.authorAvatar || u.avatar || '👨‍🏫',
         authorRole: existingProject.authorRole || u.role || 'teacher',
+        designConfig: existingProject.designConfig || gp.designConfig || {
+          themeId: 'cosmos',
+          fontFamily: 'Montserrat',
+          titleColor: '#ffffff',
+          textColor: '#cbd5e1',
+          accentColor: '#00f5d4',
+          bannerStyle: 'gradient-cosmos',
+          bannerUrl: ''
+        },
+        authorsConfig: existingProject.authorsConfig || gp.authorsConfig || {
+          authorsList: existingProject.author || u.name || u.username || '',
+          authorsEmails: existingProject.authorEmail || u.email || '',
+          authorsRole: existingProject.authorRole || 'Líder del Proyecto',
+          authorsInstitution: '',
+          collaborators: ''
+        },
         createdAt: existingProject.createdAt || nowIso,
         updatedAt: nowIso
       };
@@ -223,6 +259,22 @@ stepsMeta: [
       authorEmail: u.email || '',
       authorAvatar: u.avatar || '👨‍🏫',
       authorRole: u.role || 'teacher',
+      designConfig: {
+        themeId: 'cosmos',
+        fontFamily: 'Montserrat',
+        titleColor: '#ffffff',
+        textColor: '#cbd5e1',
+        accentColor: '#00f5d4',
+        bannerStyle: 'gradient-cosmos',
+        bannerUrl: ''
+      },
+      authorsConfig: {
+        authorsList: u.name || u.username || 'Estudiante / Creador',
+        authorsEmails: u.email || '',
+        authorsRole: 'Líder del Proyecto',
+        authorsInstitution: '',
+        collaborators: ''
+      },
       createdAt: nowIso,
       updatedAt: nowIso
     };
@@ -435,6 +487,31 @@ collectCurrentStepInputs() {
     }
     if (val('gdn-subtype') !== null) this.draft.projectSubtype = val('gdn-subtype').trim();
     if (val('gdn-audience') !== null) this.draft.targetAudience = val('gdn-audience').trim();
+
+    if (!this.draft.designConfig) this.draft.designConfig = {};
+    if (val('gdn-design-theme') !== null) this.draft.designConfig.themeId = val('gdn-design-theme');
+    if (val('gdn-design-font') !== null) this.draft.designConfig.fontFamily = val('gdn-design-font');
+    if (val('gdn-design-title-color') !== null) this.draft.designConfig.titleColor = val('gdn-design-title-color');
+    if (val('gdn-design-text-color') !== null) this.draft.designConfig.textColor = val('gdn-design-text-color');
+    if (val('gdn-design-accent-color') !== null) this.draft.designConfig.accentColor = val('gdn-design-accent-color');
+    if (val('gdn-design-banner-style') !== null) this.draft.designConfig.bannerStyle = val('gdn-design-banner-style');
+    if (val('gdn-design-banner-url') !== null) this.draft.designConfig.bannerUrl = val('gdn-design-banner-url').trim();
+
+    if (!this.draft.authorsConfig) this.draft.authorsConfig = {};
+    if (val('gdn-authors-names') !== null) {
+      this.draft.authorsConfig.authorsList = val('gdn-authors-names').trim();
+      this.draft.author = val('gdn-authors-names').trim();
+    }
+    if (val('gdn-authors-emails') !== null) {
+      this.draft.authorsConfig.authorsEmails = val('gdn-authors-emails').trim();
+      this.draft.authorEmail = val('gdn-authors-emails').trim();
+    }
+    if (val('gdn-authors-role') !== null) {
+      this.draft.authorsConfig.authorsRole = val('gdn-authors-role').trim();
+      this.draft.authorRole = val('gdn-authors-role').trim();
+    }
+    if (val('gdn-authors-institution') !== null) this.draft.authorsConfig.authorsInstitution = val('gdn-authors-institution').trim();
+    if (val('gdn-authors-collaborators') !== null) this.draft.authorsConfig.collaborators = val('gdn-authors-collaborators').trim();
     if (val('gdn-problem') !== null) this.draft.problemStatement = val('gdn-problem').trim();
     if (val('gdn-objective') !== null) this.draft.mainObjective = val('gdn-objective').trim();
     if (val('gdn-benefits') !== null) this.draft.benefits = val('gdn-benefits').trim();
@@ -580,21 +657,23 @@ collectCurrentStepInputs() {
     `;
   },
 
-renderStepContent(step) {
+  renderStepContent(step) {
     switch (step) {
       case 1: return this.renderStep1Name();
       case 2: return this.renderStep2Desc();
       case 3: return this.renderStep3Classification();
-      case 4: return this.renderStep4ProblemObjective();
-      case 5: return this.renderStep5TeamDates();
-      case 6: return this.renderStep6ValueProp();
-      case 7: return this.renderStep7Faqs();
-      case 8: return this.renderStep3Video();
-      case 9: return this.renderStep4Resources();
-      case 10: return this.renderStep5Visuals();
-      case 11: return this.renderStep6ExternalLinks();
-      case 12: return this.renderStep7PublicationConfig();
-      case 13: return this.renderStep8FinalReview();
+      case 4: return this.renderStep4Design();
+      case 5: return this.renderStep5Authors();
+      case 6: return this.renderStep4ProblemObjective();
+      case 7: return this.renderStep6ValueProp();
+      case 8: return this.renderStep5TeamDates();
+      case 9: return this.renderStep7Faqs();
+      case 10: return this.renderStep3Video();
+      case 11: return this.renderStep4Resources();
+      case 12: return this.renderStep5Visuals();
+      case 13: return this.renderStep6ExternalLinks();
+      case 14: return this.renderStep7PublicationConfig();
+      case 15: return this.renderStep8FinalReview();
       default: return this.renderStep1Name();
     }
   },
@@ -721,6 +800,320 @@ renderStepContent(step) {
       </div>
     `;
   },
+
+  // =========================================================================
+  // PASO 4: CONFIGURACIÓN DEL DISEÑO Y ESTILO VISUAL DE LA LANDING PAGE
+  // =========================================================================
+  renderStep4Design() {
+    const d = this.draft;
+    if (!d.designConfig) {
+      d.designConfig = {
+        themeId: 'cosmos',
+        fontFamily: 'Montserrat',
+        titleColor: '#ffffff',
+        textColor: '#cbd5e1',
+        accentColor: '#00f5d4',
+        bannerStyle: 'gradient-cosmos',
+        bannerUrl: ''
+      };
+    }
+    const dc = d.designConfig;
+    const themes = this.SLIDE_THEMES || [];
+    const selectedTheme = themes.find(t => t.id === dc.themeId) || themes[0];
+
+    const fonts = [
+      { id: 'Montserrat', name: 'Montserrat', desc: 'Moderna, sólida y corporativa' },
+      { id: 'Plus Jakarta Sans', name: 'Plus Jakarta Sans', desc: 'Tecnológica, limpia y moderna' },
+      { id: 'Inter', name: 'Inter', desc: 'Minimalista, alta legibilidad' },
+      { id: 'Poppins', name: 'Poppins', desc: 'Amigable, redondeada y juvenil' },
+      { id: 'Outfit', name: 'Outfit', desc: 'Vanguardista, elegante y creativa' },
+      { id: 'Space Grotesk', name: 'Space Grotesk', desc: 'Cyberpunk, futurista y técnica' }
+    ];
+
+    const banners = [
+      { id: 'gradient-cosmos', name: '🌌 Degradado Cósmico Neón' },
+      { id: 'cyberpunk-magenta', name: '⚡ Malla Cyberpunk Magenta' },
+      { id: 'esmeralda-deep', name: '🌿 Esmeralda Inteligente' },
+      { id: 'ocean-abyssal', name: '🌊 Océano Tecnológico' },
+      { id: 'obsidian-clean', name: '🖤 Obsidiana Minimalista' },
+      { id: 'custom-url', name: '🖼️ Imagen / URL Personalizada' }
+    ];
+
+    return `
+      <div class="gdn-card">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:1rem; flex-wrap:wrap; margin-bottom:1.25rem;">
+          <div>
+            <h3 style="margin: 0 0 0.35rem; font-size: 1.15rem; color: var(--gdn-text); font-weight: 800;">
+              4. Configuración del diseño y estilo visual de la Landing Page
+            </h3>
+            <p class="gdn-help" style="margin: 0; font-size: 0.88rem;">
+              Personaliza el estilo gráfico, la tipografía, los colores y el encabezado o banner principal.
+            </p>
+          </div>
+          <span style="font-size:0.8rem; background:rgba(0,245,212,0.15); color:#00f5d4; border:1px solid rgba(0,245,212,0.4); padding:0.25rem 0.75rem; border-radius:9999px; font-weight:800;">
+            🎨 15 Estilos de Diseño
+          </span>
+        </div>
+
+        <!-- 1. Cuadrícula de 15 Estilos de Diseño (Opciones como en las Presentaciones) -->
+        <div style="margin-bottom: 2rem;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.75rem;">
+            <label class="gdn-label" style="font-size:0.95rem; font-weight:800; color:var(--gdn-text); margin:0;">
+              🎨 Diseños disponibles (${themes.length} Estilos como en presentaciones):
+            </label>
+            <span style="font-size:0.8rem; color:#10b981; font-weight:700;">
+              Estilo actual: ${this.escapeHtml(selectedTheme ? selectedTheme.name : 'Cosmos Neón')}
+            </span>
+          </div>
+
+          <input type="hidden" id="gdn-design-theme" value="${this.escapeHtml(dc.themeId)}" />
+
+          <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(215px, 1fr)); gap: 0.85rem; max-height: 440px; overflow-y: auto; padding: 0.25rem; border-radius: 12px; background: rgba(0,0,0,0.25); border: 1px solid var(--gdn-border);">
+            ${themes.map(t => {
+              const isSel = dc.themeId === t.id;
+              return `
+                <div 
+                  onclick="window.ProjectWizard.selectDesignTheme('${t.id}')"
+                  style="cursor: pointer; border-radius: 14px; padding: 0.95rem; background: ${t.bg}; border: ${isSel ? '2.5px solid #00f5d4' : '1.5px solid rgba(255,255,255,0.12)'}; box-shadow: ${isSel ? '0 0 25px rgba(0, 245, 212, 0.45), 0 8px 20px rgba(0,0,0,0.6)' : '0 4px 12px rgba(0,0,0,0.3)'}; transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1); transform: ${isSel ? 'scale(1.02)' : 'none'}; position: relative;"
+                  onmouseenter="if(!${isSel}) this.style.borderColor='rgba(0,245,212,0.6)';"
+                  onmouseleave="if(!${isSel}) this.style.borderColor='rgba(255,255,255,0.12)';"
+                >
+                  <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.65rem;">
+                    <span style="font-size: 0.92rem; font-weight: 800; color: ${t.titleColor}; display: flex; align-items: center; gap: 0.4rem;">
+                      <span>${t.icon}</span> <span>${this.escapeHtml(t.name)}</span>
+                    </span>
+                    ${isSel ? '<span style="font-size:0.68rem; background:#00f5d4; color:#050510; font-weight:900; padding:0.12rem 0.45rem; border-radius:9999px;">ACTIVO</span>' : ''}
+                  </div>
+
+                  <div style="margin-bottom: 0.75rem; padding: 0.45rem 0.6rem; background: rgba(0,0,0,0.4); border-radius: 8px;">
+                    <div style="font-size: 0.74rem; font-weight: 800; color: ${t.subtitleColor}; text-transform: uppercase; letter-spacing: 0.5px;">SUBTÍTULO</div>
+                    <div style="font-size: 0.74rem; color: ${t.contentColor}; line-height: 1.3;">Texto y viñetas</div>
+                  </div>
+
+                  <div style="display: flex; align-items: center; justify-content: space-between;">
+                    <div style="display: flex; gap: 0.35rem;">
+                      <span style="width: 12px; height: 12px; border-radius: 50%; background: ${t.titleColor}; display: inline-block;"></span>
+                      <span style="width: 12px; height: 12px; border-radius: 50%; background: ${t.subtitleColor}; display: inline-block;"></span>
+                      <span style="width: 12px; height: 12px; border-radius: 50%; background: ${t.contentColor}; display: inline-block;"></span>
+                    </div>
+                    <span style="font-size: 0.72rem; color: ${isSel ? '#00f5d4' : '#94a3b8'}; font-weight: 700;">
+                      ${isSel ? '✓ Seleccionado' : 'Elegir diseño'}
+                    </span>
+                  </div>
+                </div>
+              `;
+            }).join('')}
+          </div>
+        </div>
+
+        <!-- 2. Tipografía & Color de Acentos -->
+        <div class="gdn-field-grid" style="margin-bottom: 1.5rem;">
+          <div class="gdn-field">
+            <label class="gdn-label" for="gdn-design-font">
+              <span>✍️ Tipo de letra (Tipografía)</span>
+            </label>
+            <select id="gdn-design-font" class="gdn-select" onchange="window.ProjectWizard.updateDesignFontPreview(this.value)">
+              ${fonts.map(f => `
+                <option value="${this.escapeHtml(f.id)}" ${dc.fontFamily === f.id ? 'selected' : ''}>
+                  ${this.escapeHtml(f.name)} — (${this.escapeHtml(f.desc)})
+                </option>
+              `).join('')}
+            </select>
+            <div id="gdn-font-sample-preview" style="margin-top:0.5rem; padding:0.6rem 0.9rem; background:rgba(0,0,0,0.25); border-radius:8px; font-family:'${dc.fontFamily}', sans-serif; font-size:0.95rem; color:#fff;">
+              Vista previa: Proyecto Didáctico con Innovación y Ciencia
+            </div>
+          </div>
+
+          <div class="gdn-field">
+            <label class="gdn-label" for="gdn-design-accent-color">
+              <span>🌟 Color de Acento y Botones Neón</span>
+            </label>
+            <div style="display:flex; gap:0.6rem; align-items:center;">
+              <input type="color" id="gdn-design-accent-color" value="${dc.accentColor || '#00f5d4'}" style="width:48px; height:42px; border-radius:8px; border:none; cursor:pointer; background:transparent;" onchange="document.getElementById('gdn-accent-text').value=this.value;" />
+              <input type="text" id="gdn-accent-text" class="gdn-input" value="${this.escapeHtml(dc.accentColor || '#00f5d4')}" style="flex:1;" oninput="document.getElementById('gdn-design-accent-color').value=this.value;" />
+            </div>
+            <div class="gdn-help">Color neón para los botones principales y elementos destacados de la landing page.</div>
+          </div>
+        </div>
+
+        <!-- 3. Colores de Texto (Título y Cuerpo) -->
+        <div class="gdn-field-grid" style="margin-bottom: 1.5rem;">
+          <div class="gdn-field">
+            <label class="gdn-label" for="gdn-design-title-color">Color de Títulos</label>
+            <div style="display:flex; gap:0.6rem; align-items:center;">
+              <input type="color" id="gdn-design-title-color" value="${dc.titleColor || '#ffffff'}" style="width:48px; height:42px; border-radius:8px; border:none; cursor:pointer; background:transparent;" onchange="document.getElementById('gdn-title-color-text').value=this.value;" />
+              <input type="text" id="gdn-title-color-text" class="gdn-input" value="${this.escapeHtml(dc.titleColor || '#ffffff')}" style="flex:1;" oninput="document.getElementById('gdn-design-title-color').value=this.value;" />
+            </div>
+          </div>
+
+          <div class="gdn-field">
+            <label class="gdn-label" for="gdn-design-text-color">Color de Textos Secundarios</label>
+            <div style="display:flex; gap:0.6rem; align-items:center;">
+              <input type="color" id="gdn-design-text-color" value="${dc.textColor || '#cbd5e1'}" style="width:48px; height:42px; border-radius:8px; border:none; cursor:pointer; background:transparent;" onchange="document.getElementById('gdn-text-color-text').value=this.value;" />
+              <input type="text" id="gdn-text-color-text" class="gdn-input" value="${this.escapeHtml(dc.textColor || '#cbd5e1')}" style="flex:1;" oninput="document.getElementById('gdn-design-text-color').value=this.value;" />
+            </div>
+          </div>
+        </div>
+
+        <!-- 4. Encabezado o Banner de la Landing Page -->
+        <div class="gdn-field" style="margin-bottom: 1.25rem;">
+          <label class="gdn-label" for="gdn-design-banner-style">
+            <span>🖼️ Encabezado o Banner en la pestaña de la Landing Page</span>
+          </label>
+          <select id="gdn-design-banner-style" class="gdn-select" onchange="const u = document.getElementById('gdn-banner-url-box'); if(u) u.style.display = (this.value==='custom-url') ? 'block' : 'none';">
+            ${banners.map(b => `
+              <option value="${b.id}" ${dc.bannerStyle === b.id ? 'selected' : ''}>
+                ${b.name}
+              </option>
+            `).join('')}
+          </select>
+        </div>
+
+        <div id="gdn-banner-url-box" class="gdn-field" style="margin-bottom:1.25rem; display:${dc.bannerStyle === 'custom-url' ? 'block' : 'none'};">
+          <label class="gdn-label" for="gdn-design-banner-url">URL de Imagen para el Banner / Encabezado</label>
+          <input type="url" id="gdn-design-banner-url" class="gdn-input" value="${this.escapeHtml(dc.bannerUrl || '')}" placeholder="https://ejemplo.com/mi-banner-educativo.jpg" />
+          <div class="gdn-help">Pega el enlace directo a una imagen horizontal en alta definición (1920x600 px recomendado).</div>
+        </div>
+
+        <!-- Mini Preview del Banner en tiempo real -->
+        <div style="border-radius:14px; padding:1.5rem; background: ${selectedTheme ? selectedTheme.bg : 'linear-gradient(135deg, #0b091a, #200f40)'}; border: 1.5px solid ${dc.accentColor || '#00f5d4'}; box-shadow: 0 10px 30px rgba(0,0,0,0.5); margin-top:1.25rem;">
+          <div style="font-size:0.75rem; font-weight:800; color:${dc.accentColor || '#00f5d4'}; text-transform:uppercase; letter-spacing:1px; margin-bottom:0.35rem;">
+            Vista previa del Encabezado (Hero Banner de la Landing Page)
+          </div>
+          <h2 style="margin:0 0 0.4rem; font-size:1.35rem; color:${dc.titleColor || '#ffffff'}; font-family:'${dc.fontFamily || 'Montserrat'}', sans-serif;">
+            ${this.escapeHtml(d.title || 'Nombre de tu Proyecto')}
+          </h2>
+          <p style="margin:0; font-size:0.88rem; color:${dc.textColor || '#cbd5e1'}; font-family:'${dc.fontFamily || 'Montserrat'}', sans-serif;">
+            ${this.escapeHtml(d.subtitle || 'Subtítulo o lema descriptivo del proyecto')}
+          </p>
+        </div>
+
+      </div>
+    `;
+  },
+
+  selectDesignTheme(themeId) {
+    if (!this.draft) return;
+    if (!this.draft.designConfig) this.draft.designConfig = {};
+    this.draft.designConfig.themeId = themeId;
+    const th = (this.SLIDE_THEMES || []).find(t => t.id === themeId);
+    if (th) {
+      this.draft.designConfig.titleColor = th.titleColor;
+      this.draft.designConfig.textColor = th.contentColor;
+      this.draft.designConfig.accentColor = th.accent || th.subtitleColor;
+      this.draft.designConfig.bannerStyle = themeId;
+    }
+    if (window.soundEngine && window.soundEngine.playClick) window.soundEngine.playClick();
+    if (window.ProjectsView) window.ProjectsView.render();
+  },
+
+  updateDesignFontPreview(fontFamily) {
+    if (!this.draft) return;
+    if (!this.draft.designConfig) this.draft.designConfig = {};
+    this.draft.designConfig.fontFamily = fontFamily;
+    const box = document.getElementById('gdn-font-sample-preview');
+    if (box) {
+      box.style.fontFamily = `'${fontFamily}', sans-serif`;
+    }
+  },
+
+  // =========================================================================
+  // PASO 5: AUTORES, EQUIPO Y CORREOS DE CONTACTO DEL PROYECTO
+  // =========================================================================
+  renderStep5Authors() {
+    const d = this.draft;
+    if (!d.authorsConfig) {
+      d.authorsConfig = {
+        authorsList: d.author || '',
+        authorsEmails: d.authorEmail || '',
+        authorsRole: d.authorRole || 'Líder del Proyecto',
+        authorsInstitution: '',
+        collaborators: ''
+      };
+    }
+    const ac = d.authorsConfig;
+
+    return `
+      <div class="gdn-card">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:1rem; flex-wrap:wrap; margin-bottom:1.25rem;">
+          <div>
+            <h3 style="margin: 0 0 0.35rem; font-size: 1.15rem; color: var(--gdn-text); font-weight: 800;">
+              5. Autores, equipo y correos de contacto del proyecto
+            </h3>
+            <p class="gdn-help" style="margin: 0; font-size: 0.88rem;">
+              Escribe los nombres y correos de contacto de quienes realizaron este proyecto para su crédito oficial en la Landing Page.
+            </p>
+          </div>
+          <span style="font-size:0.8rem; background:rgba(114,9,183,0.15); color:#c084fc; border:1px solid rgba(168,85,247,0.4); padding:0.25rem 0.75rem; border-radius:9999px; font-weight:800;">
+            👥 Créditos & Autores
+          </span>
+        </div>
+
+        <div class="gdn-field" style="margin-bottom: 1.35rem;">
+          <label class="gdn-label" for="gdn-authors-names" style="font-size:0.95rem; font-weight:800;">
+            <span>Nombres de quienes hicieron el proyecto <span style="color:#10b981;">*</span></span>
+          </label>
+          <input 
+            type="text" 
+            id="gdn-authors-names" 
+            class="gdn-input" 
+            value="${this.escapeHtml(ac.authorsList || d.author || '')}" 
+            placeholder="Ej: Sofía Mendoza, Alejandro Ruiz, Mateo Vargas" 
+          />
+          <div class="gdn-help">Nombres de los estudiantes, docentes o equipo que diseñó e implementó este proyecto.</div>
+        </div>
+
+        <div class="gdn-field" style="margin-bottom: 1.35rem;">
+          <label class="gdn-label" for="gdn-authors-emails" style="font-size:0.95rem; font-weight:800;">
+            <span>Correos electrónicos de los creadores / contacto <span style="color:#10b981;">*</span></span>
+          </label>
+          <input 
+            type="text" 
+            id="gdn-authors-emails" 
+            class="gdn-input" 
+            value="${this.escapeHtml(ac.authorsEmails || d.authorEmail || '')}" 
+            placeholder="Ej: sofia.mendoza@colegio.edu, equipo.innovatech@mentix.edu" 
+          />
+          <div class="gdn-help">Correos oficiales para que los visitantes puedan enviar dudas, felicitaciones o propuestas de colaboración.</div>
+        </div>
+
+        <div class="gdn-field-grid" style="margin-bottom: 1.35rem;">
+          <div class="gdn-field">
+            <label class="gdn-label" for="gdn-authors-role">Rol o Función en el Proyecto</label>
+            <input 
+              type="text" 
+              id="gdn-authors-role" 
+              class="gdn-input" 
+              value="${this.escapeHtml(ac.authorsRole || 'Creadores del Proyecto')}" 
+              placeholder="Ej: Desarrolladores, Investigadores, Docente y Estudiantes" 
+            />
+          </div>
+
+          <div class="gdn-field">
+            <label class="gdn-label" for="gdn-authors-institution">Institución Educativa, Colegio o Curso</label>
+            <input 
+              type="text" 
+              id="gdn-authors-institution" 
+              class="gdn-input" 
+              value="${this.escapeHtml(ac.authorsInstitution || '')}" 
+              placeholder="Ej: Colegio San Agustín - Grado 10°A" 
+            />
+          </div>
+        </div>
+
+        <div class="gdn-field">
+          <label class="gdn-label" for="gdn-authors-collaborators">Colaboradores adicionales o Agradecimientos (Opcional)</label>
+          <textarea 
+            id="gdn-authors-collaborators" 
+            class="gdn-textarea" 
+            rows="2" 
+            placeholder="Menciones a tutores, mentores, laboratorios o instituciones aliadas..."
+          >${this.escapeHtml(ac.collaborators || '')}</textarea>
+        </div>
+      </div>
+    `;
+  },
+
 
   // =========================================================================
   // PASO 4: PROBLEMA, OBJETIVO Y BENEFICIOS
@@ -2239,12 +2632,13 @@ renderStepContent(step) {
 
     return [
       { label: 'Información obligatoria completada (Nombre y descripción del proyecto)', ok: hasBasicInfo, step: 1 },
-      { label: 'Imagen principal configurada (o portada institucional predeterminada activa)', ok: hasMainImage, step: 5 },
-      { label: `Recursos cargados correctamente (${(d.resources || []).length} archivos registrados)`, ok: allResourcesValid, step: 4 },
-      { label: `Enlaces externos verificados (${(d.externalLinks || []).filter(l => l.verified).length}/${(d.externalLinks || []).length} comprobados)`, ok: linksVerified, step: 6 },
-      { label: 'Recursos públicos y privados diferenciados de forma segura', ok: true, step: 7 },
-      { label: `URL pública preparada (slug: ${d.landingConfig?.slug || this.slugify(d.title || 'proyecto')})`, ok: hasSlug, step: 7 },
-      { label: 'Contenido listo para vista previa, revisión o publicación en la Landing Page', ok: hasBasicInfo && hasMainImage, step: 8 }
+      { label: 'Estilo de diseño, tipografía y banner configurados', ok: Boolean(d.designConfig?.themeId), step: 4 },
+      { label: 'Autores y correos de contacto registrados', ok: Boolean(d.authorsConfig?.authorsList || d.author), step: 5 },
+      { label: 'Imagen principal configurada (o portada predeterminada activa)', ok: hasMainImage, step: 12 },
+      { label: `Recursos y documentos cargados (${(d.resources || []).length} archivos registrados)`, ok: allResourcesValid, step: 11 },
+      { label: `Enlaces externos comprobados (${(d.externalLinks || []).filter(l => l.verified).length}/${(d.externalLinks || []).length})`, ok: linksVerified, step: 13 },
+      { label: `URL pública preparada (slug: ${d.landingConfig?.slug || this.slugify(d.title || 'proyecto')})`, ok: hasSlug, step: 14 },
+      { label: 'Contenido listo para publicación en la Landing Page', ok: hasBasicInfo && hasMainImage, step: 15 }
     ];
   },
 
@@ -2766,12 +3160,14 @@ renderStepContent(step) {
       ],
       externalLinks: d.externalLinks || [],
       landingConfig: d.landingConfig || {},
+      designConfig: d.designConfig || { themeId: 'cosmos', fontFamily: 'Montserrat', titleColor: '#ffffff', textColor: '#cbd5e1', accentColor: '#00f5d4', bannerStyle: 'gradient-cosmos', bannerUrl: '' },
+      authorsConfig: d.authorsConfig || { authorsList: d.author || '', authorsEmails: d.authorEmail || '', authorsRole: 'Líder del Proyecto', authorsInstitution: '', collaborators: '' },
       tags: d.landingConfig?.tags || ['Gobierno de Datos', 'IA'],
       displayOrder: Number(d.landingConfig?.displayOrder || 1),
       govdata: JSON.parse(JSON.stringify(d)),
-      author: d.author || 'Docente',
+      author: d.authorsConfig?.authorsList || d.author || 'Docente',
       authorId: d.authorId || '',
-      authorEmail: d.authorEmail || '',
+      authorEmail: d.authorsConfig?.authorsEmails || d.authorEmail || '',
       authorAvatar: d.authorAvatar || '👨‍🏫',
       authorRole: d.authorRole || 'teacher',
       createdAt: d.createdAt || new Date().toISOString(),

@@ -1487,13 +1487,23 @@ window.ProjectsView = {
     const visibleCategory = this.escapeHtml((selected && (selected.categoryName || pub.visibleCategory)) || 'Gobierno de Datos / IA');
     const projectState = this.escapeHtml((selected && (selected.projectState || 'En ejecución')).toString().replace('_', ' '));
 
+    const des = (selected && (selected.designConfig || selected.govdata?.designConfig)) || {};
+    const aut = (selected && (selected.authorsConfig || selected.govdata?.authorsConfig)) || {};
+    const customFont = des.fontFamily || 'Montserrat';
+    const customTheme = (window.ProjectWizard?.SLIDE_THEMES || []).find(t => t.id === des.themeId);
+    const heroBgStyle = des.bannerUrl
+      ? `background-image: linear-gradient(rgba(5, 10, 24, 0.82), rgba(8, 14, 30, 0.92)), url('${this.escapeHtml(des.bannerUrl)}'); background-size: cover; background-position: center;`
+      : (customTheme ? `background: ${customTheme.bg};` : '');
+    const authorDisplayName = this.escapeHtml(aut.authorsList || selected?.author || 'Equipo del Proyecto');
+    const authorDisplayEmail = this.escapeHtml(aut.authorsEmails || selected?.authorEmail || '');
+
     const fullScreenHref = selected
       ? `proyecto-landing.html?id=${encodeURIComponent(selected.id)}${selected.slug ? '&slug=' + encodeURIComponent(selected.slug) : ''}`
       : 'proyecto-landing.html';
 
     container.innerHTML = `
       <div style="max-width: 1400px; margin: 0 auto; padding: 0.25rem 0.5rem 3rem;">
-        <div class="plp-wrapper animate-fade-in" data-theme="${currentTheme}">
+        <div class="plp-wrapper animate-fade-in" data-theme="${currentTheme}" style="font-family: '${customFont}', sans-serif;">
 
           <!-- Barra de Control Mentix -->
           <div class="plp-mentix-bar">
@@ -1580,7 +1590,7 @@ window.ProjectsView = {
           <!-- ================================================================
                2. HERO SECTION
                ================================================================ -->
-          <section class="inno-hero" id="inno-sec-hero">
+          <section class="inno-hero" id="inno-sec-hero" style="${heroBgStyle}">
             <div class="inno-hero-bg-overlay"></div>
             <div class="inno-hero-bg-glow"></div>
 
@@ -1932,7 +1942,7 @@ window.ProjectsView = {
                     <h3 class="inno-join-title">¡Sé parte del proyecto!</h3>
                   </div>
                   <p class="inno-join-desc">
-                    Tu participación es clave para construir un futuro más transparente e inteligente.
+                    Proyecto creado por <strong>${authorDisplayName}</strong>${authorDisplayEmail ? ` • Contacto: <span style="color:var(--inno-cyan-400); font-weight:700;">${authorDisplayEmail}</span>` : ''}. Tu participación es clave para colaborar en este proyecto.
                   </p>
                   <button type="button" class="inno-btn-cyan" onclick="window.ProjectsView.previewLandingDoc('Contacto y Alianzas — ${selectedTitle}')" style="box-shadow:none;">
                     <span>Contactar al equipo</span> <span>→</span>
