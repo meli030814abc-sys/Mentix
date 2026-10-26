@@ -619,6 +619,176 @@
       });
     }
 
+    function getHexLuminance(hex) {
+      if (!hex || typeof hex !== 'string') return 0;
+      let clean = hex.replace('#', '').trim();
+      if (clean.length === 3) {
+        clean = clean.split('').map(c => c + c).join('');
+      }
+      if (clean.length !== 6) return 0.5;
+      const r = parseInt(clean.substring(0, 2), 16) / 255;
+      const g = parseInt(clean.substring(2, 4), 16) / 255;
+      const b = parseInt(clean.substring(4, 6), 16) / 255;
+      const toLinear = c => (c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4));
+      return 0.2126 * toLinear(r) + 0.7152 * toLinear(g) + 0.0722 * toLinear(b);
+    }
+
+    function getColorLuminance(colorStr) {
+      if (!colorStr || typeof colorStr !== 'string') return 0.2;
+      const str = colorStr.trim().toLowerCase();
+      if (str.startsWith('#')) return getHexLuminance(str);
+      const rgbMatch = str.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/i);
+      if (rgbMatch) {
+        const r = parseInt(rgbMatch[1], 10) / 255;
+        const g = parseInt(rgbMatch[2], 10) / 255;
+        const b = parseInt(rgbMatch[3], 10) / 255;
+        const toLinear = c => (c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4));
+        return 0.2126 * toLinear(r) + 0.7152 * toLinear(g) + 0.0722 * toLinear(b);
+      }
+      const hexes = str.match(/#[0-9a-f]{3,6}/gi);
+      if (hexes && hexes.length > 0) {
+        const sum = hexes.reduce((acc, h) => acc + getHexLuminance(h), 0);
+        return sum / hexes.length;
+      }
+      if (str.includes('white') || str.includes('light') || str.includes('fff') || str.includes('f8fafc') || str.includes('f1f5f9')) return 0.95;
+      if (str.includes('black') || str.includes('dark') || str.includes('000') || str.includes('091e2d') || str.includes('050510')) return 0.05;
+      return 0.2;
+    }
+
+    function getBannerStyleCss(styleId) {
+      switch (styleId) {
+        case 'gradient-cosmos':
+        case 'cosmos':
+          return 'linear-gradient(135deg, #0b091a 0%, #171033 50%, #200f40 100%)';
+        case 'cyberpunk-magenta':
+        case 'cyberpunk':
+          return 'linear-gradient(135deg, #0f051d 0%, #290833 50%, #15002b 100%)';
+        case 'esmeralda-deep':
+        case 'esmeralda':
+          return 'linear-gradient(135deg, #041f17 0%, #06382b 50%, #021a13 100%)';
+        case 'ocean-abyssal':
+        case 'oceano':
+          return 'linear-gradient(135deg, #05162a 0%, #08294d 50%, #041224 100%)';
+        case 'obsidian-clean':
+        case 'obsidiana':
+          return 'linear-gradient(135deg, #0a0a0c 0%, #141418 50%, #070709 100%)';
+        case 'marfil-light':
+        case 'marfil':
+          return 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 50%, #cbd5e1 100%)';
+        case 'aurora-clean':
+        case 'aurora-clara':
+          return 'linear-gradient(135deg, #ffffff 0%, #f0fdf4 50%, #e0f2fe 100%)';
+        case 'coral-suave':
+          return 'linear-gradient(135deg, #fff7ed 0%, #fed7aa 50%, #fef3c7 100%)';
+        default:
+          return 'linear-gradient(135deg, #091e2d 0%, #06131f 65%, #051d28 100%)';
+      }
+    }
+
+    function resolveBannerContrast({ bgValue, bannerUrl, titleColor, textColor, accentColor, currentTheme }) {
+      let isDarkBg = true;
+      if (bannerUrl) {
+        isDarkBg = currentTheme !== 'light';
+      } else if (bgValue) {
+        const lum = getColorLuminance(bgValue);
+        isDarkBg = lum < 0.48;
+      } else {
+        isDarkBg = currentTheme === 'dark';
+      }
+
+      let finalTitle = titleColor;
+      let finalText = textColor;
+      let finalAccent = accentColor || (isDarkBg ? '#00f5d4' : '#0284c7');
+
+      const titleLum = finalTitle ? getColorLuminance(finalTitle) : (isDarkBg ? 1 : 0);
+      const textLum = finalText ? getColorLuminance(finalText) : (isDarkBg ? 0.8 : 0.2);
+
+      if (isDarkBg) {
+        if (!finalTitle || titleLum < 0.45) finalTitle = '#ffffff';
+        if (!finalText || textLum < 0.38) finalText = '#cbd5e1';
+      } else {
+        if (!finalTitle || titleLum >= 0.45) finalTitle = '#091e2d';
+        if (!finalText || textLum >= 0.45) finalText = '#334155';
+      }
+
+      return {
+        isDarkBg,
+        titleColor: finalTitle,
+        textColor: finalText,
+        accentColor: finalAccent,
+        bannerUrlGradient: isDarkBg
+          ? 'linear-gradient(rgba(5, 10, 24, 0.82), rgba(8, 14, 30, 0.92))'
+          : 'linear-gradient(rgba(255, 255, 255, 0.86), rgba(241, 245, 249, 0.94))',
+        titleShadow: isDarkBg
+          ? 'text-shadow: 0 2px 14px rgba(0,0,0,0.85), 0 0 4px rgba(0,0,0,0.9);'
+          : 'text-shadow: 0 1px 3px rgba(255,255,255,0.8);',
+        descShadow: isDarkBg
+          ? 'text-shadow: 0 1px 8px rgba(0,0,0,0.75);'
+          : '',
+        gradientSpanStyle: isDarkBg
+          ? 'background: linear-gradient(135deg, #00f5d4 0%, #00e5be 60%, #38bdf8 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;'
+          : 'background: linear-gradient(135deg, #0284c7 0%, #2563eb 60%, #4338ca 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;',
+        eyebrowStyle: isDarkBg
+          ? 'background: rgba(0, 245, 212, 0.15); border: 1px solid rgba(0, 245, 212, 0.45); color: #00f5d4;'
+          : 'background: rgba(2, 132, 199, 0.12); border: 1px solid rgba(2, 132, 199, 0.35); color: #0369a1;'
+      };
+    }
+
+    function calculateProjectProgress(p) {
+      if (!p) return 0;
+      let score = 0;
+
+      const title = (p.title || '').trim();
+      if (title.length >= 3) score += 5;
+
+      const subtitle = (p.subtitle || '').trim();
+      if (subtitle.length >= 3) score += 5;
+
+      const desc = (p.description || p.shortDescription || '').trim();
+      if (desc.length >= 15) score += 10;
+      else if (desc.length > 0) score += 5;
+
+      if (p.category || p.categoryName || p.categoryId) score += 5;
+
+      const des = p.designConfig || p.govdata?.designConfig;
+      if (des && (des.themeId || des.bannerUrl || des.bannerStyle)) score += 10;
+
+      const aut = p.authorsConfig || p.govdata?.authorsConfig;
+      if (aut && (aut.authorsList || aut.authorsEmails || p.authorEmail)) score += 10;
+      else if (p.author && p.author !== 'Docente' && p.author !== 'Estudiante') score += 5;
+
+      const obj = (p.mainObjective || p.govdata?.problemSolved || p.valueProposition?.problemSolved || '').trim();
+      if (obj.length >= 10) score += 10;
+      else if (obj.length > 0) score += 5;
+
+      const aud = (p.targetAudience || p.valueProposition?.targetAudience || '').trim();
+      if (aud.length >= 5) score += 5;
+
+      const timeline = p.timeline || p.govdata?.timeline || [];
+      if ((Array.isArray(timeline) && timeline.length > 0) || p.startDate || p.endDate) score += 5;
+
+      const resources = p.resources || p.govdata?.resources || p.documents || [];
+      const resCount = Array.isArray(resources) ? resources.length : 0;
+      if (resCount >= 3) score += 15;
+      else if (resCount >= 2) score += 12;
+      else if (resCount === 1) score += 8;
+
+      const vid = p.video || p.govdata?.video;
+      const vidUrl = (typeof vid === 'string' ? vid : (vid?.youtubeUrl || vid?.url || p.videoUrl || '')).trim();
+      if (vidUrl.length >= 8) score += 5;
+
+      const slides = p.slides || [];
+      const visuals = p.visualAssets || p.govdata?.visualAssets || [];
+      if (slides.length >= 2 || visuals.length >= 1) score += 5;
+
+      const isPublished = p.publicationStatus === 'published' || p.isPublished === true || p.projectState === 'publicado' || p.projectState === 'en_ejecucion';
+      if (isPublished) score += 10;
+
+      if (!isPublished && score >= 95) score = 90;
+
+      return Math.min(100, Math.max(score, (title.length >= 3 ? 5 : 0)));
+    }
+
     // Inicialización del tema guardado
     (function initTheme() {
       const saved = localStorage.getItem('mentix_landing_theme') || 'light';
@@ -655,21 +825,65 @@
 
         const pub = activeProject.publication || {};
         const vp = activeProject.valueProposition || {};
+        const des = activeProject.designConfig || activeProject.govdata?.designConfig || {};
+
+        // Actualización dinámica de avance general
+        const progressPercent = calculateProjectProgress(activeProject);
+        const cardProgNum = document.getElementById('inno-card-progress-num');
+        if (cardProgNum) cardProgNum.textContent = `${progressPercent}%`;
+        const cardProgBar = document.getElementById('inno-card-progress-bar');
+        if (cardProgBar) cardProgBar.style.width = `${progressPercent}%`;
+
+        // Contraste automático inteligente en Banner y Encabezado
+        const currentTheme = document.body.getAttribute('data-theme') || 'light';
+        const contrast = resolveBannerContrast({
+          bgValue: des.bannerStyle,
+          bannerUrl: des.bannerUrl,
+          titleColor: des.titleColor,
+          textColor: des.textColor,
+          accentColor: des.accentColor,
+          currentTheme: currentTheme
+        });
+
+        const heroSec = document.getElementById('inno-sec-hero');
+        if (heroSec) {
+          if (des.bannerUrl) {
+            heroSec.style.backgroundImage = `${contrast.bannerUrlGradient}, url('${des.bannerUrl}')`;
+            heroSec.style.backgroundSize = 'cover';
+            heroSec.style.backgroundPosition = 'center';
+          } else if (des.bannerStyle) {
+            heroSec.style.background = getBannerStyleCss(des.bannerStyle);
+          }
+        }
+
+        const heroEyebrow = document.getElementById('inno-hero-eyebrow');
+        if (heroEyebrow) heroEyebrow.style.cssText = contrast.eyebrowStyle;
 
         if (activeProject.title || pub.landingTitle) {
           document.title = `${pub.landingTitle || activeProject.title} | Gobierno de Datos e IA`;
           const titleMain = document.getElementById('inno-hero-title-main');
-          if (titleMain) titleMain.textContent = pub.landingTitle || activeProject.title;
+          if (titleMain) {
+            titleMain.textContent = pub.landingTitle || activeProject.title;
+            titleMain.style.color = contrast.titleColor;
+            titleMain.style.cssText += ';' + contrast.titleShadow;
+          }
         }
 
         if (activeProject.subtitle) {
           const titleSub = document.getElementById('inno-hero-title-sub');
-          if (titleSub) titleSub.textContent = activeProject.subtitle;
+          if (titleSub) {
+            titleSub.textContent = activeProject.subtitle;
+            titleSub.style.cssText = contrast.gradientSpanStyle;
+          }
         }
 
         if (pub.publicDescription || activeProject.description || activeProject.shortDescription) {
           const heroDesc = document.getElementById('inno-hero-desc');
-          if (heroDesc) heroDesc.textContent = pub.publicDescription || activeProject.description || activeProject.shortDescription;
+          if (heroDesc) {
+            heroDesc.textContent = pub.publicDescription || activeProject.description || activeProject.shortDescription;
+            heroDesc.style.color = contrast.textColor;
+            if (contrast.descShadow) heroDesc.style.cssText += ';' + contrast.descShadow;
+          }
         }
 
         if (activeProject.mainObjective || vp.problemSolved) {

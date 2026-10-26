@@ -29,7 +29,10 @@ window.ProjectWizard = {
     { id: 'ambar', name: 'Miel y Ámbar', icon: '☀️', bg: 'linear-gradient(135deg, #271a06 0%, #3d2808 50%, #1c1203 100%)', titleColor: '#f59e0b', subtitleColor: '#fde047', contentColor: '#fef3c7', accent: '#f59e0b' },
     { id: 'menta', name: 'Menta & Neón', icon: '🍃', bg: 'linear-gradient(135deg, #062224 0%, #0b383b 50%, #041719 100%)', titleColor: '#2dd4bf', subtitleColor: '#a7f3d0', contentColor: '#ccfbf1', accent: '#2dd4bf' },
     { id: 'zafiro', name: 'Zafiro & Plata', icon: '💎', bg: 'linear-gradient(135deg, #0c153b 0%, #15245c 50%, #080f2d 100%)', titleColor: '#93c5fd', subtitleColor: '#e2e8f0', contentColor: '#dbeafe', accent: '#93c5fd' },
-    { id: 'sakura', name: 'Cerezo Sakura', icon: '🌸', bg: 'linear-gradient(135deg, #2b0c1e 0%, #40122e 50%, #200716 100%)', titleColor: '#f472b6', subtitleColor: '#fbcfe8', contentColor: '#fce7f3', accent: '#f472b6' }
+    { id: 'sakura', name: 'Cerezo Sakura', icon: '🌸', bg: 'linear-gradient(135deg, #2b0c1e 0%, #40122e 50%, #200716 100%)', titleColor: '#f472b6', subtitleColor: '#fbcfe8', contentColor: '#fce7f3', accent: '#f472b6' },
+    { id: 'marfil', name: 'Marfil & Platino', icon: '☀️', bg: 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 50%, #cbd5e1 100%)', titleColor: '#091e2d', subtitleColor: '#0284c7', contentColor: '#334155', accent: '#0284c7' },
+    { id: 'aurora-clara', name: 'Nieve & Aurora', icon: '🏔️', bg: 'linear-gradient(135deg, #ffffff 0%, #f0fdf4 50%, #e0f2fe 100%)', titleColor: '#064e3b', subtitleColor: '#059669', contentColor: '#1e293b', accent: '#059669' },
+    { id: 'coral-suave', name: 'Crema & Coral', icon: '🎨', bg: 'linear-gradient(135deg, #fff7ed 0%, #fed7aa 50%, #fef3c7 100%)', titleColor: '#7c2d12', subtitleColor: '#ea580c', contentColor: '#431407', accent: '#ea580c' }
   ],
 
   stepsMeta: [
@@ -329,6 +332,11 @@ window.ProjectWizard = {
     }
     if (!this.draft.landingConfig.publicDescription && this.draft.shortDescription) {
       this.draft.landingConfig.publicDescription = this.draft.shortDescription;
+    }
+
+    if (window.ProjectsView && typeof window.ProjectsView.calculateProjectProgress === 'function') {
+      this.draft.progress = window.ProjectsView.calculateProjectProgress(this.draft);
+      this.draft.calculatedProgress = this.draft.progress;
     }
 
     try {
@@ -831,13 +839,26 @@ collectCurrentStepInputs() {
     ];
 
     const banners = [
-      { id: 'gradient-cosmos', name: '🌌 Degradado Cósmico Neón' },
-      { id: 'cyberpunk-magenta', name: '⚡ Malla Cyberpunk Magenta' },
-      { id: 'esmeralda-deep', name: '🌿 Esmeralda Inteligente' },
-      { id: 'ocean-abyssal', name: '🌊 Océano Tecnológico' },
-      { id: 'obsidian-clean', name: '🖤 Obsidiana Minimalista' },
+      { id: 'gradient-cosmos', name: '🌌 Degradado Cósmico Neón (Oscuro)' },
+      { id: 'cyberpunk-magenta', name: '⚡ Malla Cyberpunk Magenta (Oscuro)' },
+      { id: 'esmeralda-deep', name: '🌿 Esmeralda Inteligente (Oscuro)' },
+      { id: 'ocean-abyssal', name: '🌊 Océano Tecnológico (Oscuro)' },
+      { id: 'obsidian-clean', name: '🖤 Obsidiana Minimalista (Oscuro)' },
+      { id: 'marfil-light', name: '☀️ Marfil & Platino Minimalista (Claro)' },
+      { id: 'aurora-clean', name: '🏔️ Nieve & Aurora Cristalina (Claro)' },
+      { id: 'coral-suave', name: '🎨 Crema & Coral Suave (Claro)' },
       { id: 'custom-url', name: '🖼️ Imagen / URL Personalizada' }
     ];
+
+    const bgVal = selectedTheme ? selectedTheme.bg : dc.bannerStyle;
+    const contrastPreview = window.ProjectsView
+      ? window.ProjectsView.getBannerAutoContrast(bgVal, dc.titleColor, dc.textColor, dc.accentColor, dc.bannerUrl)
+      : {
+          titleColor: dc.titleColor || '#ffffff',
+          textColor: dc.textColor || '#cbd5e1',
+          isDarkBg: true,
+          titleShadow: 'text-shadow: 0 2px 10px rgba(0,0,0,0.8);'
+        };
 
     return `
       <div class="gdn-card">
@@ -851,7 +872,7 @@ collectCurrentStepInputs() {
             </p>
           </div>
           <span style="font-size:0.8rem; background:rgba(0,245,212,0.15); color:#00f5d4; border:1px solid rgba(0,245,212,0.4); padding:0.25rem 0.75rem; border-radius:9999px; font-weight:800;">
-            🎨 15 Estilos de Diseño
+            🎨 ${themes.length} Estilos de Diseño
           </span>
         </div>
 
@@ -975,15 +996,26 @@ collectCurrentStepInputs() {
           <div class="gdn-help">Pega el enlace directo a una imagen horizontal en alta definición (1920x600 px recomendado).</div>
         </div>
 
-        <!-- Mini Preview del Banner en tiempo real -->
-        <div style="border-radius:14px; padding:1.5rem; background: ${selectedTheme ? selectedTheme.bg : 'linear-gradient(135deg, #0b091a, #200f40)'}; border: 1.5px solid ${dc.accentColor || '#00f5d4'}; box-shadow: 0 10px 30px rgba(0,0,0,0.5); margin-top:1.25rem;">
-          <div style="font-size:0.75rem; font-weight:800; color:${dc.accentColor || '#00f5d4'}; text-transform:uppercase; letter-spacing:1px; margin-bottom:0.35rem;">
+        <!-- Indicador de Contraste Inteligente Automático -->
+        <div style="background: rgba(0, 245, 212, 0.08); border: 1.5px solid rgba(0, 245, 212, 0.35); border-radius: 12px; padding: 0.85rem 1.15rem; margin-top: 1.25rem; margin-bottom: 0.85rem; display: flex; align-items: center; gap: 0.75rem;">
+          <span style="font-size: 1.4rem;">🛡️</span>
+          <div>
+            <strong style="color: #00f5d4; font-size: 0.9rem; display: block;">Contraste Inteligente Automático Activo</strong>
+            <span style="font-size: 0.82rem; color: #cbd5e1; line-height: 1.35; display: block;">
+              ${contrastPreview.isDarkBg ? 'Detectado fondo oscuro: los textos se ajustan a tonos claros y legibles.' : 'Detectado fondo claro: los textos se ajustan a tonos oscuros de alto contraste.'}
+            </span>
+          </div>
+        </div>
+
+        <!-- Mini Preview del Banner en tiempo real con Contraste Automático -->
+        <div style="border-radius:14px; padding:1.5rem; background: ${dc.bannerUrl ? "linear-gradient(rgba(5, 10, 24, 0.8), rgba(8, 14, 30, 0.9)), url('" + this.escapeHtml(dc.bannerUrl) + "') center/cover" : (selectedTheme ? selectedTheme.bg : 'linear-gradient(135deg, #0b091a, #200f40)')}; border: 1.5px solid ${contrastPreview.accentColor || dc.accentColor || '#00f5d4'}; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+          <div style="font-size:0.75rem; font-weight:800; color:${contrastPreview.accentColor || dc.accentColor || '#00f5d4'}; text-transform:uppercase; letter-spacing:1px; margin-bottom:0.35rem;">
             Vista previa del Encabezado (Hero Banner de la Landing Page)
           </div>
-          <h2 style="margin:0 0 0.4rem; font-size:1.35rem; color:${dc.titleColor || '#ffffff'}; font-family:'${dc.fontFamily || 'Montserrat'}', sans-serif;">
+          <h2 style="margin:0 0 0.4rem; font-size:1.35rem; color:${contrastPreview.titleColor}; ${contrastPreview.titleShadow || ''}; font-family:'${dc.fontFamily || 'Montserrat'}', sans-serif;">
             ${this.escapeHtml(d.title || 'Nombre de tu Proyecto')}
           </h2>
-          <p style="margin:0; font-size:0.88rem; color:${dc.textColor || '#cbd5e1'}; font-family:'${dc.fontFamily || 'Montserrat'}', sans-serif;">
+          <p style="margin:0; font-size:0.88rem; color:${contrastPreview.textColor}; ${contrastPreview.descShadow || ''}; font-family:'${dc.fontFamily || 'Montserrat'}', sans-serif;">
             ${this.escapeHtml(d.subtitle || 'Subtítulo o lema descriptivo del proyecto')}
           </p>
         </div>

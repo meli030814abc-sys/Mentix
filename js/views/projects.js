@@ -405,6 +405,9 @@ window.ProjectsView = {
             <button class="btn btn-outline" onclick="window.appRouter.openCategoryModal()" style="padding: 0.8rem 1.2rem; font-weight: 800;">
               <span>🏷️</span> Categorías
             </button>
+            <button class="btn btn-outline" onclick="window.ProjectsView.toggleTheme()" style="padding: 0.8rem 1.2rem; font-weight: 800; display: inline-flex; align-items: center; gap: 0.5rem;" title="Alternar modo claro / oscuro">
+              <span>${this.getLandingTheme() === 'dark' ? '☀️ Modo Claro' : '🌙 Modo Oscuro'}</span>
+            </button>
           </div>
         </div>
 
@@ -762,6 +765,7 @@ window.ProjectsView = {
 
   renderProjectCard(c, currentUser) {
     const isAuthor = window.appRouter ? window.appRouter.isChallengeOwner(c) : false;
+    const cardProgress = this.calculateProjectProgress(c);
 
     const diffBadge = c.difficulty === 'Difícil' || c.difficulty === 'hard'
       ? '<span class="badge-tag tag-hard">Difícil</span>'
@@ -833,6 +837,21 @@ window.ProjectsView = {
           <p style="color: var(--text-secondary); font-size: 0.88rem; margin: 0 0 1.25rem; flex: 1; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.45;">
             ${this.escapeHtml(c.description || 'Proyecto interactivo para aprendizaje de clase.')}
           </p>
+
+          <!-- Barra y porcentaje de avance real del proyecto -->
+          <div style="margin-bottom: 0.95rem; background: rgba(0,0,0,0.22); border-radius: 8px; padding: 0.5rem 0.65rem; border: 1px solid rgba(255,255,255,0.08);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.35rem; font-size: 0.76rem;">
+              <span style="font-weight: 700; color: var(--text-muted); display: flex; align-items: center; gap: 0.35rem;">
+                <span>📈</span> Avance del proyecto
+              </span>
+              <strong style="color: ${cardProgress === 100 ? '#10b981' : (cardProgress > 50 ? '#00e5be' : '#f59e0b')}; font-weight: 900;">
+                ${cardProgress}%
+              </strong>
+            </div>
+            <div style="height: 6px; background: rgba(255,255,255,0.12); border-radius: 9999px; overflow: hidden;">
+              <div style="height: 100%; width: ${cardProgress}%; background: ${cardProgress === 100 ? 'linear-gradient(90deg, #10b981, #059669)' : 'linear-gradient(90deg, #00e5be, #0ea5e9)'}; border-radius: 9999px; transition: width 0.4s ease;"></div>
+            </div>
+          </div>
 
           <div style="display: flex; align-items: center; justify-content: space-between; border-top: 1px solid var(--border-color); padding-top: 1rem; gap: 0.5rem; flex-wrap: wrap;">
             <div style="display: flex; align-items: center; gap: 0.45rem; font-size: 0.82rem; color: var(--text-muted);">
@@ -1442,9 +1461,20 @@ window.ProjectsView = {
   setLandingTheme(theme) {
     const validTheme = theme === 'dark' ? 'dark' : 'light';
     localStorage.setItem('mentix_landing_theme', validTheme);
+    localStorage.setItem('te_reto_theme', validTheme);
+    if (validTheme === 'light') {
+      document.body.classList.add('light-theme');
+    } else {
+      document.body.classList.remove('light-theme');
+    }
+    document.body.setAttribute('data-theme', validTheme);
     document.querySelectorAll('.plp-wrapper').forEach(w => {
       w.setAttribute('data-theme', validTheme);
     });
+    const pvc = document.getElementById('projects-view-container');
+    if (pvc) {
+      pvc.setAttribute('data-theme', validTheme);
+    }
     document.querySelectorAll('.inno-theme-btn').forEach(btn => {
       if (btn.classList.contains(validTheme)) btn.classList.add('active');
       else btn.classList.remove('active');
@@ -1452,7 +1482,249 @@ window.ProjectsView = {
   },
 
   getLandingTheme() {
-    return localStorage.getItem('mentix_landing_theme') || 'light';
+    if (document.body.classList.contains('light-theme')) return 'light';
+    return localStorage.getItem('mentix_landing_theme') || localStorage.getItem('te_reto_theme') || 'dark';
+  },
+
+  toggleTheme() {
+    const current = this.getLandingTheme();
+    const next = current === 'dark' ? 'light' : 'dark';
+    this.setLandingTheme(next);
+    const container = document.getElementById('projects-view-container') || document.getElementById('view-container');
+    if (container) {
+      if (this.currentViewMode === 'landing') {
+        this.renderLandingPageView(container, window.appState?.challenges || []);
+      } else {
+        this.renderProjects(container);
+      }
+    }
+  },
+
+  getHexLuminance(hex) {
+    if (!hex || typeof hex !== 'string') return 0;
+    let clean = hex.replace('#', '').trim();
+    if (clean.length === 3) {
+      clean = clean.split('').map(c => c + c).join('');
+    }
+    if (clean.length !== 6) return 0.5;
+    const r = parseInt(clean.substring(0, 2), 16) / 255;
+    const g = parseInt(clean.substring(2, 4), 16) / 255;
+    const b = parseInt(clean.substring(4, 6), 16) / 255;
+    const toLinear = c => (c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4));
+    return 0.2126 * toLinear(r) + 0.7152 * toLinear(g) + 0.0722 * toLinear(b);
+  },
+
+  getColorLuminance(colorStr) {
+    if (!colorStr || typeof colorStr !== 'string') return 0.2;
+    const str = colorStr.trim().toLowerCase();
+    if (str.startsWith('#')) return this.getHexLuminance(str);
+    const rgbMatch = str.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/i);
+    if (rgbMatch) {
+      const r = parseInt(rgbMatch[1], 10) / 255;
+      const g = parseInt(rgbMatch[2], 10) / 255;
+      const b = parseInt(rgbMatch[3], 10) / 255;
+      const toLinear = c => (c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4));
+      return 0.2126 * toLinear(r) + 0.7152 * toLinear(g) + 0.0722 * toLinear(b);
+    }
+    const hexes = str.match(/#[0-9a-f]{3,6}/gi);
+    if (hexes && hexes.length > 0) {
+      const sum = hexes.reduce((acc, h) => acc + this.getHexLuminance(h), 0);
+      return sum / hexes.length;
+    }
+    if (str.includes('white') || str.includes('light') || str.includes('fff') || str.includes('f8fafc') || str.includes('f1f5f9')) return 0.95;
+    if (str.includes('black') || str.includes('dark') || str.includes('000') || str.includes('091e2d') || str.includes('050510')) return 0.05;
+    return 0.2;
+  },
+
+  getBannerStyleCss(styleId) {
+    switch (styleId) {
+      case 'gradient-cosmos':
+      case 'cosmos':
+        return 'linear-gradient(135deg, #0b091a 0%, #171033 50%, #200f40 100%)';
+      case 'cyberpunk-magenta':
+      case 'cyberpunk':
+        return 'linear-gradient(135deg, #0f051d 0%, #290833 50%, #15002b 100%)';
+      case 'esmeralda-deep':
+      case 'esmeralda':
+        return 'linear-gradient(135deg, #041f17 0%, #06382b 50%, #021a13 100%)';
+      case 'ocean-abyssal':
+      case 'oceano':
+        return 'linear-gradient(135deg, #05162a 0%, #08294d 50%, #041224 100%)';
+      case 'obsidian-clean':
+      case 'obsidiana':
+        return 'linear-gradient(135deg, #0a0a0c 0%, #141418 50%, #070709 100%)';
+      case 'marfil-light':
+      case 'marfil':
+        return 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 50%, #cbd5e1 100%)';
+      case 'aurora-clean':
+      case 'aurora-clara':
+        return 'linear-gradient(135deg, #ffffff 0%, #f0fdf4 50%, #e0f2fe 100%)';
+      case 'coral-suave':
+        return 'linear-gradient(135deg, #fff7ed 0%, #fed7aa 50%, #fef3c7 100%)';
+      default:
+        return 'linear-gradient(135deg, #091e2d 0%, #06131f 65%, #051d28 100%)';
+    }
+  },
+
+  getBannerAutoContrast(bgValue, titleColor, textColor, accentColor, bannerUrl = '', currentTheme = 'dark') {
+    let isDarkBg = true;
+    if (bannerUrl) {
+      isDarkBg = currentTheme !== 'light';
+    } else if (bgValue) {
+      const lum = this.getColorLuminance(bgValue);
+      isDarkBg = lum < 0.48;
+    } else {
+      isDarkBg = currentTheme === 'dark';
+    }
+
+    let finalTitle = titleColor;
+    let finalText = textColor;
+    let finalAccent = accentColor || (isDarkBg ? '#00f5d4' : '#0284c7');
+
+    const titleLum = finalTitle ? this.getColorLuminance(finalTitle) : (isDarkBg ? 1 : 0);
+    const textLum = finalText ? this.getColorLuminance(finalText) : (isDarkBg ? 0.8 : 0.2);
+
+    if (isDarkBg) {
+      // Fondo oscuro: el texto DEBE ser claro
+      if (!finalTitle || titleLum < 0.45) {
+        finalTitle = '#ffffff';
+      }
+      if (!finalText || textLum < 0.38) {
+        finalText = '#cbd5e1';
+      }
+    } else {
+      // Fondo claro: el texto DEBE ser oscuro
+      if (!finalTitle || titleLum >= 0.45) {
+        finalTitle = '#091e2d';
+      }
+      if (!finalText || textLum >= 0.45) {
+        finalText = '#334155';
+      }
+    }
+
+    return {
+      isDarkBg,
+      titleColor: finalTitle,
+      textColor: finalText,
+      accentColor: finalAccent,
+      bannerUrlGradient: isDarkBg
+        ? 'linear-gradient(rgba(5, 10, 24, 0.82), rgba(8, 14, 30, 0.92))'
+        : 'linear-gradient(rgba(255, 255, 255, 0.86), rgba(241, 245, 249, 0.94))',
+      titleShadow: isDarkBg
+        ? 'text-shadow: 0 2px 14px rgba(0,0,0,0.85), 0 0 4px rgba(0,0,0,0.9);'
+        : 'text-shadow: 0 1px 3px rgba(255,255,255,0.8);',
+      descShadow: isDarkBg
+        ? 'text-shadow: 0 1px 8px rgba(0,0,0,0.75);'
+        : '',
+      gradientSpanStyle: isDarkBg
+        ? 'background: linear-gradient(135deg, #00f5d4 0%, #00e5be 60%, #38bdf8 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;'
+        : 'background: linear-gradient(135deg, #0284c7 0%, #2563eb 60%, #4338ca 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;',
+      eyebrowStyle: isDarkBg
+        ? 'background: rgba(0, 245, 212, 0.15); border: 1px solid rgba(0, 245, 212, 0.45); color: #00f5d4;'
+        : 'background: rgba(2, 132, 199, 0.12); border: 1px solid rgba(2, 132, 199, 0.35); color: #0369a1;'
+    };
+  },
+
+  calculateProjectProgress(p) {
+    if (!p) return 0;
+    let score = 0;
+
+    // 1. Nombre / Título del proyecto (base 5% si solo puso el nombre)
+    const title = (p.title || '').trim();
+    if (title.length >= 3) {
+      score += 5;
+    }
+
+    // 2. Subtítulo o lema descriptivo
+    const subtitle = (p.subtitle || '').trim();
+    if (subtitle.length >= 3) {
+      score += 5;
+    }
+
+    // 3. Descripción (corta o general)
+    const desc = (p.description || p.shortDescription || '').trim();
+    if (desc.length >= 15) {
+      score += 10;
+    } else if (desc.length > 0) {
+      score += 5;
+    }
+
+    // 4. Categoría y clasificación
+    if (p.category || p.categoryName || p.categoryId) {
+      score += 5;
+    }
+
+    // 5. Configuración de diseño y banner (Paso 4)
+    const des = p.designConfig || p.govdata?.designConfig;
+    if (des && (des.themeId || des.bannerUrl || des.bannerStyle)) {
+      score += 10;
+    }
+
+    // 6. Autores y correos de contacto (Paso 5)
+    const aut = p.authorsConfig || p.govdata?.authorsConfig;
+    if (aut && (aut.authorsList || aut.authorsEmails || p.authorEmail)) {
+      score += 10;
+    } else if (p.author && p.author !== 'Docente' && p.author !== 'Estudiante') {
+      score += 5;
+    }
+
+    // 7. Problema y objetivo principal (Paso 6)
+    const obj = (p.mainObjective || p.govdata?.problemSolved || p.valueProposition?.problemSolved || '').trim();
+    if (obj.length >= 10) {
+      score += 10;
+    } else if (obj.length > 0) {
+      score += 5;
+    }
+
+    // 8. Público objetivo y propuesta de valor (Paso 7)
+    const aud = (p.targetAudience || p.valueProposition?.targetAudience || '').trim();
+    if (aud.length >= 5) {
+      score += 5;
+    }
+
+    // 9. Cronograma / fechas clave (Paso 8)
+    const timeline = p.timeline || p.govdata?.timeline || [];
+    if ((Array.isArray(timeline) && timeline.length > 0) || p.startDate || p.endDate) {
+      score += 5;
+    }
+
+    // 10. Recursos y documentos adjuntos (Paso 11) - hasta 15%
+    const resources = p.resources || p.govdata?.resources || p.documents || [];
+    const resCount = Array.isArray(resources) ? resources.length : 0;
+    if (resCount >= 3) {
+      score += 15;
+    } else if (resCount >= 2) {
+      score += 12;
+    } else if (resCount === 1) {
+      score += 8;
+    }
+
+    // 11. Video explicativo o demostrativo (Paso 10)
+    const vid = p.video || p.govdata?.video;
+    const vidUrl = (typeof vid === 'string' ? vid : (vid?.youtubeUrl || vid?.url || p.videoUrl || '')).trim();
+    if (vidUrl.length >= 8) {
+      score += 5;
+    }
+
+    // 12. Activos visuales o diapositivas (Paso 12)
+    const slides = p.slides || [];
+    const visuals = p.visualAssets || p.govdata?.visualAssets || [];
+    if (slides.length >= 2 || visuals.length >= 1) {
+      score += 5;
+    }
+
+    // 13. Publicación oficial (Paso 14-15) - 10%
+    const isPublished = p.publicationStatus === 'published' || p.isPublished === true || p.projectState === 'publicado' || p.projectState === 'en_ejecucion';
+    if (isPublished) {
+      score += 10;
+    }
+
+    // Borradores no alcanzan el 100% hasta ser publicados oficialmente
+    if (!isPublished && score >= 95) {
+      score = 90;
+    }
+
+    return Math.min(100, Math.max(score, (title.length >= 3 ? 5 : 0)));
   },
 
   renderLandingPageView(container, allProjects = []) {
@@ -1491,9 +1763,20 @@ window.ProjectsView = {
     const aut = (selected && (selected.authorsConfig || selected.govdata?.authorsConfig)) || {};
     const customFont = des.fontFamily || 'Montserrat';
     const customTheme = (window.ProjectWizard?.SLIDE_THEMES || []).find(t => t.id === des.themeId);
+
+    const progressPercent = this.calculateProjectProgress(selected);
+    const contrast = this.getBannerAutoContrast(
+      customTheme ? customTheme.bg : des.bannerStyle,
+      des.titleColor,
+      des.textColor,
+      des.accentColor,
+      des.bannerUrl,
+      currentTheme
+    );
+
     const heroBgStyle = des.bannerUrl
-      ? `background-image: linear-gradient(rgba(5, 10, 24, 0.82), rgba(8, 14, 30, 0.92)), url('${this.escapeHtml(des.bannerUrl)}'); background-size: cover; background-position: center;`
-      : (customTheme ? `background: ${customTheme.bg};` : '');
+      ? `background-image: ${contrast.bannerUrlGradient}, url('${this.escapeHtml(des.bannerUrl)}'); background-size: cover; background-position: center;`
+      : (customTheme ? `background: ${customTheme.bg};` : (des.bannerStyle ? `background: ${this.getBannerStyleCss(des.bannerStyle)};` : ''));
     const authorDisplayName = this.escapeHtml(aut.authorsList || selected?.author || 'Equipo del Proyecto');
     const authorDisplayEmail = this.escapeHtml(aut.authorsEmails || selected?.authorEmail || '');
 
@@ -1597,16 +1880,16 @@ window.ProjectsView = {
             <div class="inno-hero-grid">
               <!-- Columna Izquierda: Información Principal -->
               <div>
-                <div class="inno-eyebrow">
+                <div class="inno-eyebrow" style="${contrast.eyebrowStyle}">
                   <span>🚀</span> ${heroEyebrow}
                 </div>
 
-                <h1 class="inno-hero-title">
+                <h1 class="inno-hero-title" style="color: ${contrast.titleColor}; ${contrast.titleShadow}">
                   ${heroMainTitle1}
-                  <span class="inno-hero-title-gradient">${heroMainTitle2}</span>
+                  <span class="inno-hero-title-gradient" style="${contrast.gradientSpanStyle}">${heroMainTitle2}</span>
                 </h1>
 
-                <p class="inno-hero-desc">
+                <p class="inno-hero-desc" style="color: ${contrast.textColor}; ${contrast.descShadow}">
                   ${heroSubtitle}
                 </p>
 
@@ -1642,10 +1925,10 @@ window.ProjectsView = {
                   <div class="inno-progress-wrap">
                     <div class="inno-progress-labels">
                       <span>Avance general</span>
-                      <strong style="color:var(--inno-cyan-600);">68%</strong>
+                      <strong style="color:var(--inno-cyan-600);">${progressPercent}%</strong>
                     </div>
                     <div class="inno-progress-bar">
-                      <div class="inno-progress-fill"></div>
+                      <div class="inno-progress-fill" style="width: ${progressPercent}%;"></div>
                     </div>
                   </div>
 
