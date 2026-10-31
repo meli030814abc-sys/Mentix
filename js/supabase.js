@@ -5,12 +5,24 @@
 
 class SupabaseService {
   constructor() {
-    this.url = 'https://ihtsinxgimbsaljpzxcl.supabase.co';
+    this.url = localStorage.getItem('supabase_url') || 'https://ihtsinxgimbsaljpzxcl.supabase.co';
     this.anonKey = localStorage.getItem('supabase_anon_key') || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlodHNpbnhnaW1ic2FsalB6eGNsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA1MjM3MDUsImV4cCI6MjEwNjA5OTcwNX0.Y9pgB4c3y2t0KPeZVdAqrGBbsnPMDabQCl1KUaUpLF4';
     this.client = null;
     this.isConnected = false;
     this.activeRealtimeChannel = null;
 
+    this.initClient();
+  }
+
+  setCredentials(url, key) {
+    if (url) {
+      this.url = url.trim().replace(/\/+$/, '');
+      localStorage.setItem('supabase_url', this.url);
+    }
+    if (key) {
+      this.anonKey = key.trim();
+      localStorage.setItem('supabase_anon_key', this.anonKey);
+    }
     this.initClient();
   }
 
@@ -160,11 +172,14 @@ class SupabaseService {
     }
   }
 
-  // Guardar borrador progresivo del asistente en Supabase
+  // Guardar borrador progresivo del asistente en Supabase (en tabla govdata_wizard_drafts y respaldo en challenges)
   async saveWizardDraft(draftId, projectId, userId, currentStep, completedSteps, draftData) {
-    if (!this.client || !this.isConnected) return false;
+    if (!this.client) return false;
+    let saved = false;
+
+    // 1. Guardar en govdata_wizard_drafts
     try {
-      const { error } = await this.client.from('govdata_wizard_drafts').upsert({
+      const { error: draftErr } = await this.client.from('govdata_wizard_drafts').upsert({
         id: draftId,
         project_id: projectId,
         user_id: userId || 'anon',
@@ -173,15 +188,92 @@ class SupabaseService {
         draft_data: draftData || {},
         updated_at: new Date().toISOString()
       });
-      return !error;
-    } catch (e) {
-      return false;
-    }
+      if (!draftErr) saved = true;
+    } catch (e) {}
+
+    // 2. Guardar en la tabla challenges (que siempre existe en Supabase) para asegurar persistencia real
+    try {
+      const safeTitle = (draftData && draftData.title) ? draftData.title.trim() : '';
+      const challengeRow = {
+        id: projectId,
+        title: safeTitle || 'Borrador de Proyecto',
+        description: draftData.shortDescription || draftData.description || 'Proyecto documentado en el Asistente.',
+        category: draftData.category || 'tecnologia',
+        category_name: draftData.categoryName || 'Tecnología & Programación',
+        author: draftData.author || userId || 'Profesor',
+        author_avatar: draftData.authorAvatar || '👨‍🏫',
+        banner: draftData.mainImage || '',
+        project_type: 'presentation',
+        is_public: draftData.publicationStatus === 'published',
+        publication_status: draftData.publicationStatus || 'draft',
+        preparation_status: draftData.preparationStatus || 'en_desarrollo',
+        govdata_payload: draftData,
+        questions: [],
+        updated_at: new Date().toISOString()
+      };
+      const { error: chErr } = await this.client.from('challenges').upsert(challengeRow);
+      if (!chErr) saved = true;
+    } catch (e2) {}
+
+    return saved;
+  }
+
+  // Cargar borrador guardado en Supabase (desde govdata_wizard_drafts, challenges o govdata_projects)
+  async loadWizardDraft(projectId) {
+    if (!this.client || !projectId) return null;
+
+    // 1. Intentar cargar desde govdata_wizard_drafts
+    try {
+      const { data, error } = await this.client
+        .from('govdata_wizard_drafts')
+        .select('*')
+        .or(`id.eq.draft_${projectId},project_id.eq.${projectId}`)
+        .order('updated_at', { ascending: false })
+        .limit(1);
+
+      if (!error && data && data.length > 0 && data[0].draft_data) {
+        return data[0].draft_data;
+      }
+    } catch (e) {}
+
+    // 2. Intentar cargar desde challenges
+    try {
+      const { data: cData, error: cErr } = await this.client
+        .from('challenges')
+        .select('*')
+        .eq('id', projectId)
+        .limit(1);
+
+      if (!cErr && cData && cData.length > 0) {
+        if (cData[0].govdata_payload && Object.keys(cData[0].govdata_payload).length > 0) {
+          return cData[0].govdata_payload;
+        }
+        return cData[0];
+      }
+    } catch (e) {}
+
+    // 3. Intentar cargar desde govdata_projects
+    try {
+      const { data: pData, error: pErr } = await this.client
+        .from('govdata_projects')
+        .select('*')
+        .eq('id', projectId)
+        .limit(1);
+
+      if (!pErr && pData && pData.length > 0) {
+        return pData[0];
+      }
+    } catch (e) {}
+
+    return null;
   }
 
   // Guardar proyecto completo de GovData Nexus y sus recursos en Supabase
   async saveGovDataProject(projectObj) {
-    if (!this.client || !this.isConnected || !projectObj || !projectObj.id) return false;
+    if (!this.client || !projectObj || !projectObj.id) return false;
+    let saved = false;
+
+    // 1. Guardar en govdata_projects
     try {
       const row = {
         id: projectObj.id,
@@ -216,7 +308,8 @@ class SupabaseService {
         author_role: projectObj.authorRole || 'teacher',
         updated_at: new Date().toISOString()
       };
-      await this.client.from('govdata_projects').upsert(row);
+      const { error: pErr } = await this.client.from('govdata_projects').upsert(row);
+      if (!pErr) saved = true;
 
       if (Array.isArray(projectObj.resources) && projectObj.resources.length > 0) {
         const resRows = projectObj.resources.map((r, idx) => ({
@@ -238,11 +331,34 @@ class SupabaseService {
         }));
         await this.client.from('govdata_project_resources').upsert(resRows);
       }
-      return true;
     } catch (e) {
-      console.warn('Aviso al sincronizar proyecto en tabla govdata_projects:', e);
-      return false;
+      console.warn('Aviso al sincronizar en tabla govdata_projects:', e);
     }
+
+    // 2. Guardar en tabla challenges (para que aparezca en el explorador de retos y sincronización)
+    try {
+      const challengeRow = {
+        id: projectObj.id,
+        title: projectObj.title || 'Proyecto Sin Título',
+        description: projectObj.shortDescription || projectObj.description || '',
+        category: projectObj.category || 'tecnologia',
+        category_name: projectObj.categoryName || 'Tecnología & Programación',
+        author: projectObj.author || 'Profesor',
+        author_avatar: projectObj.authorAvatar || '👨‍🏫',
+        banner: projectObj.mainImage || projectObj.banner || '',
+        project_type: 'presentation',
+        is_public: projectObj.publicationStatus === 'published',
+        publication_status: projectObj.publicationStatus || 'draft',
+        preparation_status: projectObj.preparationStatus || 'en_desarrollo',
+        govdata_payload: projectObj.govdata || projectObj,
+        questions: [],
+        updated_at: new Date().toISOString()
+      };
+      const { error: chErr } = await this.client.from('challenges').upsert(challengeRow);
+      if (!chErr) saved = true;
+    } catch (e2) {}
+
+    return saved;
   }
 
   // Subir archivo a Supabase Storage separando buckets públicos y privados

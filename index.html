@@ -958,6 +958,59 @@
     </div>
   </div>
 
+  <!-- Modal: Conexión y Configuración de Supabase -->
+  <div id="supabase-modal" class="modal-overlay">
+    <div class="modal-content glass-panel" style="max-width: 560px; padding: 2.25rem 2rem; border-radius: 20px; border: 2px solid var(--neon-cyan); background: rgba(10, 20, 42, 0.98); box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7), 0 0 35px rgba(0, 245, 212, 0.3);">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+        <div style="display: flex; align-items: center; gap: 0.65rem;">
+          <span style="font-size: 1.8rem;">⚡</span>
+          <div>
+            <h2 style="font-size: 1.35rem; font-weight: 900; margin: 0; color: #ffffff;">Base de Datos Supabase</h2>
+            <p style="font-size: 0.82rem; color: var(--text-secondary); margin: 0.2rem 0 0;">Guarda los proyectos y avances del asistente en la nube sin pérdida de datos</p>
+          </div>
+        </div>
+        <button class="btn btn-outline btn-icon" onclick="window.appRouter.closeModal('supabase-modal')">✕</button>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 1.1rem; margin-bottom: 1.5rem;">
+        <div>
+          <label style="display: block; font-size: 0.82rem; font-weight: 800; color: #00f5d4; text-transform: uppercase; margin-bottom: 0.4rem;">
+            URL del Proyecto Supabase:
+          </label>
+          <input 
+            type="text" 
+            id="supabase-url-input" 
+            placeholder="https://xyz.supabase.co" 
+            style="width: 100%; box-sizing: border-box; padding: 0.75rem 1rem; border-radius: 12px; background: rgba(15, 23, 42, 0.9); border: 1.5px solid rgba(0, 245, 212, 0.4); color: #fff; font-size: 0.95rem; outline: none;"
+          />
+        </div>
+
+        <div>
+          <label style="display: block; font-size: 0.82rem; font-weight: 800; color: #00f5d4; text-transform: uppercase; margin-bottom: 0.4rem;">
+            Clave Pública Anon Key:
+          </label>
+          <textarea 
+            id="supabase-key-input" 
+            rows="3" 
+            placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." 
+            style="width: 100%; box-sizing: border-box; padding: 0.75rem 1rem; border-radius: 12px; background: rgba(15, 23, 42, 0.9); border: 1.5px solid rgba(0, 245, 212, 0.4); color: #fff; font-size: 0.82rem; outline: none; resize: vertical;"
+          ></textarea>
+        </div>
+
+        <div id="supabase-modal-status" style="font-size: 0.85rem; font-weight: 700; padding: 0.65rem 0.85rem; border-radius: 10px; background: rgba(255, 255, 255, 0.05); color: var(--text-secondary); text-align: center;">
+          Estado: Verificando conexión...
+        </div>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: 0.75rem;">
+        <button type="button" class="btn btn-outline" onclick="window.appRouter.closeModal('supabase-modal')">Cancelar</button>
+        <button type="button" class="btn btn-cyan" onclick="window.appRouter.saveSupabaseCredentials()">
+          ⚡ Guardar y Conectar
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- PDF.js para soporte de extracción de documentos PDF (Carga diferida para agilizar móviles) -->
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
   <script>

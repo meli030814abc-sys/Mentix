@@ -1,4 +1,4 @@
-﻿/**
+/**
  * 🔥 TE RETO - Orquestador Principal y Enrutador SPA (app.js)
  * Conecta todas las vistas, modales, autenticación, experiencia XP y sonido.
  */
@@ -1560,33 +1560,53 @@ class AppRouter {
 
   openSupabaseModal() {
     const modal = document.getElementById('supabase-modal');
+    const urlInput = document.getElementById('supabase-url-input');
     const keyInput = document.getElementById('supabase-key-input');
-    if (keyInput && window.supabaseService) {
-      keyInput.value = window.supabaseService.anonKey || '';
+    const statusBox = document.getElementById('supabase-modal-status');
+    if (window.supabaseService) {
+      if (urlInput) urlInput.value = window.supabaseService.url || '';
+      if (keyInput) keyInput.value = window.supabaseService.anonKey || '';
+      if (statusBox) {
+        if (window.supabaseService.isConnected) {
+          statusBox.textContent = '⚡ Estado: Conectado con éxito a Supabase Cloud';
+          statusBox.style.color = '#10b981';
+          statusBox.style.background = 'rgba(16, 185, 129, 0.12)';
+        } else {
+          statusBox.textContent = '🟡 Estado: Clave configurada. Haz clic en "Guardar y Conectar"';
+          statusBox.style.color = '#f59e0b';
+          statusBox.style.background = 'rgba(245, 158, 11, 0.1)';
+        }
+      }
     }
     if (modal) modal.classList.add('active');
   }
 
-  async saveSupabaseKey() {
+  async saveSupabaseCredentials() {
+    const urlInput = document.getElementById('supabase-url-input');
     const keyInput = document.getElementById('supabase-key-input');
-    if (!keyInput) return;
-    const key = keyInput.value.trim();
+    const url = urlInput ? urlInput.value.trim() : '';
+    const key = keyInput ? keyInput.value.trim() : '';
+
     if (!key) {
       alert('⚠️ Por favor ingresa la clave pública (anon key) de tu proyecto de Supabase.');
       return;
     }
 
     if (window.supabaseService) {
-      window.supabaseService.setAnonKey(key);
+      window.supabaseService.setCredentials(url, key);
       const ok = await window.supabaseService.testConnection();
       if (ok) {
-        alert('🎉 ¡Conectado con éxito a Supabase!');
+        alert('🎉 ¡Conectado con éxito a la base de datos de Supabase! Tus proyectos y avances del asistente se guardarán en la nube.');
         this.closeModal('supabase-modal');
       } else {
-        alert('🟡 Clave guardada. Si aún no has ejecutado el script "supabase_schema.sql" en el SQL Editor de Supabase, ejecútalo para crear las tablas necesarias.');
+        alert('🟡 Credenciales guardadas correctamente. Si estás usando una base de datos nueva, recuerda ejecutar el script "supabase_schema.sql" en el SQL Editor de Supabase para habilitar las tablas de proyectos.');
         this.closeModal('supabase-modal');
       }
     }
+  }
+
+  async saveSupabaseKey() {
+    return this.saveSupabaseCredentials();
   }
 }
 

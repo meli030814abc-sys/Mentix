@@ -314,11 +314,26 @@ window.ProjectWizard = {
     return [];
   },
 
-  saveDraftToStorage(silent = true) {
+  triggerFieldAutoSave() {
+    this.collectCurrentStepInputs();
+    const badge = document.getElementById('gdn-autosave-indicator');
+    if (badge) {
+      badge.textContent = '⏳ Guardando en base de datos...';
+      badge.style.color = '#f59e0b';
+    }
+    if (this.autoSaveTimer) clearTimeout(this.autoSaveTimer);
+    this.autoSaveTimer = setTimeout(() => {
+      this.saveDraftToStorage(true);
+    }, 600);
+  },
+
+  async saveDraftToStorage(silent = true) {
     if (!this.draft) return;
+    this.collectCurrentStepInputs();
     this.draft.currentStep = this.currentStep;
     this.draft.updatedAt = new Date().toISOString();
 
+    if (!this.draft.landingConfig) this.draft.landingConfig = {};
     if (!this.draft.landingConfig.publicName && this.draft.title) {
       this.draft.landingConfig.publicName = this.draft.title;
     }
@@ -339,6 +354,7 @@ window.ProjectWizard = {
       this.draft.calculatedProgress = this.draft.progress;
     }
 
+    // 1. Guardar en almacenamiento local
     try {
       const all = this.getAllSavedDrafts().filter(d => d && d.id !== this.draft.id);
       all.unshift(this.draft);
@@ -347,29 +363,53 @@ window.ProjectWizard = {
       console.warn('Aviso al guardar borrador local:', e);
     }
 
-    if (window.supabaseService && typeof window.supabaseService.saveWizardDraft === 'function') {
+    // 2. Guardar en Supabase (base de datos en la nube sin inventar datos)
+    let supabaseSaved = false;
+    if (window.supabaseService) {
       const u = window.appState?.currentUser || {};
-      window.supabaseService.saveWizardDraft(
-        `draft_${this.draft.id}`,
-        this.draft.id,
-        u.id || u.username || 'anon',
-        this.currentStep,
-        this.draft.completedSteps || [],
-        this.draft
-      );
+      const draftRecord = JSON.parse(JSON.stringify(this.draft));
+      try {
+        supabaseSaved = await window.supabaseService.saveWizardDraft(
+          `draft_${this.draft.id}`,
+          this.draft.id,
+          u.id || u.username || 'anon',
+          this.currentStep,
+          this.draft.completedSteps || [],
+          draftRecord
+        );
+      } catch (err) {
+        console.warn('Aviso al respaldar borrador en Supabase:', err);
+      }
+
+      // Si el proyecto ya tiene título, sincronizar también el registro en challenges / govdata_projects
+      if (this.draft.title && this.draft.title.trim()) {
+        try {
+          const fullRecord = this.buildChallengeCompatibleRecord();
+          window.supabaseService.saveGovDataProject(fullRecord);
+        } catch (err) {}
+      }
     }
 
     const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-    this.lastSavedText = `☁️ Guardado automáticamente a las ${timeStr}`;
+    this.lastSavedText = supabaseSaved
+      ? `⚡ Guardado en Supabase (${timeStr})`
+      : `☁️ Guardado local (${timeStr})`;
+
     const badge = document.getElementById('gdn-autosave-indicator');
-    if (badge) badge.textContent = this.lastSavedText;
+    if (badge) {
+      badge.textContent = this.lastSavedText;
+      badge.style.color = supabaseSaved ? '#10b981' : '#38bdf8';
+    }
 
     if (!silent) {
-      alert('✅ Tu progreso se ha guardado correctamente. Puedes retomar este proyecto en el Paso ' + this.currentStep + ' cuando quieras.');
+      const msg = supabaseSaved
+        ? `✅ Tu proyecto y avances del Paso ${this.currentStep} se han guardado con éxito en la base de datos de Supabase.`
+        : `✅ Tu progreso se ha guardado correctamente. Puedes retomar este proyecto en el Paso ${this.currentStep} cuando quieras.`;
+      alert(msg);
     }
   },
 
-  openWizard(projectId = null, startStep = null) {
+  async openWizard(projectId = null, startStep = null) {
     this.pendingAiProposal = null;
     let existing = null;
 
@@ -377,6 +417,18 @@ window.ProjectWizard = {
       const savedDraft = this.getAllSavedDrafts().find(d => d.id === projectId);
       const savedChallenge = (window.appState?.challenges || []).find(c => c.id === projectId);
       existing = savedDraft || savedChallenge || null;
+
+      // Buscar datos reales guardados en Supabase
+      if (window.supabaseService && window.supabaseService.client) {
+        try {
+          const cloudDraft = await window.supabaseService.loadWizardDraft(projectId);
+          if (cloudDraft) {
+            existing = { ...(existing || {}), ...cloudDraft };
+          }
+        } catch (e) {
+          console.warn('Aviso cargando borrador de Supabase:', e);
+        }
+      }
     }
 
     this.draft = this.createDefaultDraft(existing);
@@ -598,9 +650,12 @@ collectCurrentStepInputs() {
           <!-- Barra de Progreso Paso a Paso (Sin botones cortados, solo progreso limpio) -->
           <div class="gdn-wizard-progress-strip">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.6rem; flex-wrap: wrap; gap: 0.5rem;">
-              <div style="font-size: 0.92rem; font-weight: 800; color: var(--gdn-text); display: flex; align-items: center; gap: 0.5rem;">
+              <div style="font-size: 0.92rem; font-weight: 800; color: var(--gdn-text); display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
                 <span style="display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: #10b981; box-shadow: 0 0 10px rgba(16, 185, 129, 0.6);"></span>
                 Progreso del Asistente: Paso ${this.currentStep} de ${this.totalSteps} (${progressPct}% completado)
+                <span id="gdn-autosave-indicator" style="font-size: 0.78rem; font-weight: 800; color: #10b981; background: rgba(16, 185, 129, 0.12); padding: 0.22rem 0.65rem; border-radius: 999px; margin-left: 0.4rem; border: 1px solid rgba(16, 185, 129, 0.3); cursor: pointer;" onclick="if(window.appRouter) window.appRouter.openSupabaseModal();" title="Clic para ver/configurar conexión a Supabase">
+                  ${this.lastSavedText || '⚡ Conexión a Supabase Activa'}
+                </span>
               </div>
               <div style="font-size: 0.82rem; color: #10b981; font-weight: 700;">
                 ${currentMeta.icon} ${currentMeta.title}
