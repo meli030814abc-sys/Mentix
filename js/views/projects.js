@@ -400,11 +400,11 @@ window.ProjectsView = {
           }
         </style>
 
-        <div class="mentix-project-banner-wrapper animate-fade-in">
+        <div class="mentix-project-banner-wrapper animate-fade-in" style="max-width: 1100px; margin: 0 auto 2.25rem;">
           <img 
-            src="assets/projects_banner.png" 
+            src="assets/projects_banner.png?v=2" 
             alt="Mis Proyectos Educativos - Panel de Proyectos Didácticos" 
-            style="width: 100%; height: auto; display: block;"
+            style="width: 100%; height: auto; display: block; image-rendering: -webkit-optimize-contrast; image-rendering: high-quality; transform: translateZ(0); backface-visibility: hidden;"
           />
 
           <!-- Selector de Modo Claro / Oscuro -->
