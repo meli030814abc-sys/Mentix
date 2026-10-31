@@ -463,39 +463,7 @@ window.ProjectsView = {
           </div>
         </div>
 
-        ${(() => {
-          const drafts = window.ProjectWizard ? window.ProjectWizard.getAllSavedDrafts() : [];
-          if (!drafts.length) return '';
-          return `
-            <div class="glass-panel animate-fade-in" style="padding: 1.15rem 1.4rem; margin-bottom: 1.65rem; border: 1.5px solid rgba(16, 185, 129, 0.45); background: linear-gradient(135deg, rgba(6, 78, 59, 0.35), rgba(15, 23, 42, 0.9)); border-radius: 16px;">
-              <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem; margin-bottom: 0.75rem;">
-                <div style="display: flex; align-items: center; gap: 0.6rem;">
-                  <span style="font-size: 1.35rem;">🧭</span>
-                  <div>
-                    <strong style="color: #10b981; font-size: 0.95rem; display: block;">Asistente Inteligente de Proyectos — Borradores Guardados (${drafts.length})</strong>
-                    <span style="font-size: 0.8rem; color: var(--text-secondary);">Retoma la creación de tu proyecto exactamente en el paso donde quedaste.</span>
-                  </div>
-                </div>
-                <button class="btn btn-sm" onclick="window.ProjectWizard.startNewWizard()" style="background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4); font-weight: 800; padding: 0.4rem 0.85rem; border-radius: 8px; cursor: pointer;">
-                  + Nuevo Proyecto Guiado
-                </button>
-              </div>
-              <div style="display: flex; gap: 0.65rem; flex-wrap: wrap;">
-                ${drafts.slice(0, 4).map(dr => `
-                  <div style="display: inline-flex; align-items: center; gap: 0.6rem; background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(255,255,255,0.12); padding: 0.45rem 0.85rem; border-radius: 10px;">
-                    <div>
-                      <div style="font-weight: 800; font-size: 0.85rem; color: #fff;">${this.escapeHtml(dr.title || 'Proyecto sin título')}</div>
-                      <div style="font-size: 0.72rem; color: #94a3b8;">Paso ${dr.currentStep || 1} de 8 • ${dr.lastSavedAt ? new Date(dr.lastSavedAt).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) : 'Guardado'}</div>
-                    </div>
-                    <button class="btn btn-cyan btn-sm" onclick="window.ProjectWizard.openWizard('${dr.id}')" style="padding: 0.3rem 0.65rem; font-size: 0.76rem; font-weight: 800;">
-                      Continuar →
-                    </button>
-                  </div>
-                `).join('')}
-              </div>
-            </div>
-          `;
-        })()}
+
 
 
 
