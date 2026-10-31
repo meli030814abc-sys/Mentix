@@ -368,46 +368,98 @@ window.ProjectsView = {
     container.innerHTML = `
       <div style="max-width: 1200px; margin: 0 auto; padding: 2.5rem 1.25rem 5rem;">
         
-        <!-- Header Principal de Proyectos -->
-        <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 1.5rem; margin-bottom: 2rem;">
-          <div>
-            <div style="display: inline-flex; align-items: center; gap: 0.5rem; background: rgba(0, 245, 212, 0.12); border: 1px solid var(--neon-cyan); padding: 0.35rem 0.95rem; border-radius: 9999px; margin-bottom: 0.75rem;">
-              <span>📁</span>
-              <span style="font-weight: 800; font-size: 0.85rem; color: var(--neon-cyan); text-transform: uppercase; letter-spacing: 0.5px;">Panel de Proyectos Didácticos</span>
-            </div>
-            <h1 style="font-size: clamp(2rem, 4vw, 2.8rem); font-weight: 900; margin: 0 0 0.5rem;">
-              <span class="gradient-title">Mis Proyectos Educativos</span>
-            </h1>
-            <p style="color: var(--text-secondary); font-size: 1.05rem; margin: 0; max-width: 650px;">
-              Diseña lecciones completas con presentaciones, video clases, documentos didácticos o enlaces web y simuladores.
-            </p>
-          </div>
+        <!-- Header Principal de Proyectos con Banner Gráfico -->
+        <style>
+          .mentix-project-banner-wrapper {
+            position: relative;
+            width: 100%;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45), 0 0 30px rgba(0, 245, 212, 0.2);
+            border: 2px solid rgba(0, 245, 212, 0.35);
+            margin-bottom: 2rem;
+            background: #0b1120;
+          }
+          .mentix-banner-hotspot {
+            position: absolute;
+            cursor: pointer;
+            border-radius: 9999px;
+            background: transparent;
+            border: none;
+            outline: none;
+            pointer-events: auto;
+            transition: all 0.15s ease;
+          }
+          .mentix-banner-hotspot:hover {
+            background: rgba(255, 255, 255, 0.16) !important;
+            box-shadow: 0 0 18px rgba(255, 255, 255, 0.45);
+            transform: scale(1.02);
+          }
+          .mentix-banner-hotspot:active {
+            transform: scale(0.97);
+          }
+        </style>
 
-          <div style="display: flex; gap: 0.75rem; flex-wrap: wrap; align-items: flex-start;">
-            <button class="btn btn-lg" onclick="window.ProjectWizard.openWizard()" style="background: linear-gradient(135deg, #10b981, #059669); color: #ffffff; border: none; box-shadow: 0 8px 24px rgba(16, 185, 129, 0.35); font-weight: 900; padding: 0.85rem 1.45rem; font-size: 1rem; border-radius: 12px; display: inline-flex; align-items: center; gap: 0.5rem; cursor: pointer;">
-              <span>✨</span> <span>Asistente Inteligente de Proyecto</span>
-            </button>
-            <button class="btn btn-primary btn-lg" onclick="window.ProjectsView.openJoinProjectModal()" style="font-weight: 900; padding: 0.85rem 1.45rem; font-size: 1rem; border-radius: 12px; display: inline-flex; align-items: center; gap: 0.5rem; cursor: pointer; box-shadow: 0 8px 24px rgba(247, 37, 133, 0.45); border: none; background: linear-gradient(135deg, #f72585, #7209b7); color: #ffffff; transition: transform 0.2s, box-shadow 0.2s;">
-              <span style="font-size: 1.15rem;">🎮</span> <span>Unirse a un código</span>
-            </button>
-            ${isTeacherOrAdmin ? `
-            <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 0.4rem;">
-              <button class="btn btn-cyan btn-lg" onclick="window.ProjectsView.openCreateProjectModal()" style="box-shadow: 0 6px 24px rgba(0,245,212,0.4); font-weight: 900; padding: 0.85rem 1.65rem; font-size: 1.05rem;">
-                <span>➕</span> <span>Crear Proyecto</span>
-              </button>
-              
-                <div style="display: inline-flex; align-items: center; gap: 0.4rem; background: rgba(0, 245, 212, 0.12); border: 1px solid rgba(0, 245, 212, 0.4); padding: 0.35rem 0.75rem; border-radius: 8px; font-size: 0.8rem; font-weight: 800; color: var(--neon-cyan); max-width: 300px; line-height: 1.3; text-shadow: 0 0 10px rgba(0,245,212,0.3);">
-                  <span>📢</span> Enviar un código o crear un código de proyecto para estudiantes
-                </div>
-              
-            </div>
-            ` : ''}
-            <button class="btn btn-outline" onclick="window.appRouter.openCategoryModal()" style="padding: 0.8rem 1.2rem; font-weight: 800;">
-              <span>🏷️</span> Categorías
-            </button>
-            <button class="btn btn-outline" onclick="window.ProjectsView.toggleTheme()" style="padding: 0.8rem 1.2rem; font-weight: 800; display: inline-flex; align-items: center; gap: 0.5rem;" title="Alternar modo claro / oscuro">
-              <span>${this.getLandingTheme() === 'dark' ? '☀️ Modo Claro' : '🌙 Modo Oscuro'}</span>
-            </button>
+        <div class="mentix-project-banner-wrapper animate-fade-in">
+          <img 
+            src="assets/projects_banner.png" 
+            alt="Mis Proyectos Educativos - Panel de Proyectos Didácticos" 
+            style="width: 100%; height: auto; display: block;"
+          />
+
+          <!-- Selector de Modo Claro / Oscuro -->
+          <button 
+            onclick="window.ProjectsView.toggleTheme()" 
+            class="btn btn-outline"
+            style="position: absolute; top: 12px; right: 12px; z-index: 10; padding: 0.4rem 0.8rem; font-size: 0.8rem; font-weight: 800; background: rgba(11, 17, 32, 0.85); backdrop-filter: blur(8px); border: 1.5px solid rgba(255,255,255,0.25); border-radius: 10px; color: #fff; cursor: pointer;"
+            title="Alternar modo claro / oscuro"
+          >
+            <span>${this.getLandingTheme() === 'dark' ? '☀️ Modo Claro' : '🌙 Modo Oscuro'}</span>
+          </button>
+
+          <!-- Hotspots Interactivos Superpuestos en los botones del Banner -->
+          <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none;">
+            
+            <!-- Botón 1: Asistente Inteligente de Proyecto -->
+            <button 
+              onclick="window.ProjectWizard.openWizard()" 
+              title="Asistente Inteligente de Proyecto" 
+              class="mentix-banner-hotspot"
+              style="left: 10.2%; top: 64.5%; width: 20.3%; height: 20%;"
+            ></button>
+
+            <!-- Botón 2: Unirse a un código -->
+            <button 
+              onclick="window.ProjectsView.openJoinProjectModal()" 
+              title="Unirse a un código" 
+              class="mentix-banner-hotspot"
+              style="left: 30.8%; top: 64.5%; width: 19.2%; height: 20%;"
+            ></button>
+
+            <!-- Botón 3: Crear Proyecto -->
+            <button 
+              onclick="window.ProjectsView.openCreateProjectModal()" 
+              title="Crear Proyecto" 
+              class="mentix-banner-hotspot"
+              style="left: 50.3%; top: 64.5%; width: 19.2%; height: 20%;"
+            ></button>
+
+            <!-- Botón 4: Categorías -->
+            <button 
+              onclick="window.appRouter.openCategoryModal()" 
+              title="Categorías" 
+              class="mentix-banner-hotspot"
+              style="left: 70.0%; top: 64.5%; width: 19.0%; height: 20%;"
+            ></button>
+
+            <!-- Sub-Badge: Enviar código para estudiantes -->
+            <button 
+              onclick="window.ProjectsView.openCreateProjectModal()" 
+              title="Enviar un código o crear un código de proyecto para estudiantes" 
+              class="mentix-banner-hotspot"
+              style="left: 34%; top: 87%; width: 32%; height: 11%;"
+            ></button>
+
           </div>
         </div>
 
