@@ -299,6 +299,21 @@ window.ProjectsView = {
       return;
     }
 
+    if (this.viewMode === 'join') {
+      const navEl = document.getElementById('main-navbar');
+      if (navEl) navEl.style.display = 'none';
+      document.body.classList.remove('projects-pure-white-theme');
+      container.style.padding = '0';
+      container.style.margin = '0';
+      container.style.background = 'transparent';
+      this.renderProjectJoinView(container);
+      return;
+    } else {
+      container.style.padding = '';
+      container.style.margin = '';
+      container.style.background = '';
+    }
+
     if (this.viewMode === 'landing') {
       this.renderLandingPageView(container, rawProjects);
       return;
@@ -787,98 +802,35 @@ window.ProjectsView = {
     if (window.soundEngine && window.soundEngine.playClick) window.soundEngine.playClick();
     const existing = document.getElementById('project-join-modal');
     if (existing) existing.remove();
-
-    const savedCodes = this.getSavedProjectCodes();
-
-    const modalHtml = `
-      <div id="project-join-modal" style="position: fixed; inset: 0; z-index: 999999; display: flex; align-items: center; justify-content: center; background: rgba(5, 7, 15, 0.88); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); padding: 1.25rem;" onclick="if(event.target === this) window.ProjectsView.closeJoinProjectModal();">
-        <div class="glass-panel" style="width: 100%; max-width: 520px; background: linear-gradient(145deg, rgba(15, 23, 42, 0.98), rgba(24, 18, 43, 0.98)); border: 2.5px solid #f72585; box-shadow: 0 20px 60px rgba(247, 37, 133, 0.35), 0 0 40px rgba(114, 9, 183, 0.3); border-radius: 24px; padding: 2.25rem 2rem; position: relative; text-align: center; animation: fadeIn 0.25s ease-out;">
-          
-          <button type="button" onclick="window.ProjectsView.closeJoinProjectModal()" title="Cerrar" style="position: absolute; top: 1rem; right: 1rem; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); color: #fff; width: 36px; height: 36px; border-radius: 50%; font-size: 1.1rem; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s;" onmouseenter="this.style.background='rgba(247, 37, 133, 0.35)'; this.style.borderColor='#f72585';" onmouseleave="this.style.background='rgba(255,255,255,0.08)'; this.style.borderColor='rgba(255,255,255,0.15)';">
-            ✕
-          </button>
-
-          <div style="display: inline-flex; align-items: center; gap: 0.5rem; background: rgba(247, 37, 133, 0.16); color: #f72585; font-weight: 900; font-size: 0.82rem; text-transform: uppercase; padding: 0.4rem 1.1rem; border-radius: 9999px; letter-spacing: 0.6px; margin-bottom: 1.25rem; border: 1.5px solid rgba(247, 37, 133, 0.5);">
-            <span>🎮</span> Acceso a Proyectos por PIN
-          </div>
-
-          <h2 style="font-size: clamp(1.6rem, 3.2vw, 2.1rem); font-weight: 900; color: #ffffff; margin: 0 0 0.5rem; line-height: 1.25;">
-            Unirse a un Proyecto
-          </h2>
-
-          <p style="color: var(--text-secondary); font-size: 0.95rem; margin: 0 auto 1.6rem; max-width: 440px; line-height: 1.5;">
-            Ingresa el código o PIN que te compartió tu docente o equipo para entrar directamente a la lección o landing page.
-          </p>
-
-          <form id="project-join-form" onsubmit="event.preventDefault(); window.ProjectsView.submitJoinProjectCode();" style="display: flex; flex-direction: column; gap: 1rem;">
-            <div>
-              <input
-                type="text"
-                id="project-join-code-input"
-                placeholder="CÓDIGO O PIN"
-                value="${this.escapeHtml(prefillCode)}"
-                autocomplete="off"
-                maxlength="32"
-                style="width: 100%; box-sizing: border-box; text-align: center; font-size: clamp(1.5rem, 3.5vw, 2rem); font-weight: 900; padding: 1.1rem 1.25rem; border-radius: 16px; background: rgba(10, 15, 30, 0.95) !important; border: 2.5px solid #f72585 !important; color: #ffffff !important; outline: none; letter-spacing: 2px; text-transform: uppercase; box-shadow: 0 8px 30px rgba(247, 37, 133, 0.3) !important; transition: border-color 0.2s, box-shadow 0.2s;"
-                onfocus="this.style.borderColor='#00f5d4'; this.style.boxShadow='0 0 30px rgba(0, 245, 212, 0.5)';"
-                onblur="this.style.borderColor='#f72585'; this.style.boxShadow='0 8px 30px rgba(247, 37, 133, 0.3)';"
-                oninput="const e = document.getElementById('project-join-error'); if(e) e.style.display='none';"
-              />
-              <div id="project-join-error" style="display: none; color: #ff4d6d; background: rgba(255, 77, 109, 0.12); border: 1px solid rgba(255, 77, 109, 0.35); border-radius: 12px; padding: 0.75rem 1rem; font-size: 0.9rem; font-weight: 700; margin-top: 0.85rem; text-align: center;"></div>
-            </div>
-
-            <div style="display: flex; gap: 0.75rem; justify-content: center; margin-top: 0.5rem; flex-wrap: wrap;">
-              <button type="button" class="btn btn-outline" onclick="window.ProjectsView.closeJoinProjectModal()" style="padding: 0.85rem 1.4rem; font-weight: 800; border-radius: 12px;">
-                Cancelar
-              </button>
-              <button type="submit" id="project-join-submit-btn" class="btn" style="background: linear-gradient(135deg, #f72585, #7209b7); color: #ffffff; border: none; font-weight: 900; padding: 0.85rem 2rem; font-size: 1.05rem; border-radius: 12px; box-shadow: 0 8px 25px rgba(247, 37, 133, 0.5); cursor: pointer; min-width: 190px;">
-                <span>🚀</span> Entrar al Proyecto
-              </button>
-            </div>
-          </form>
-
-          ${savedCodes && savedCodes.length > 0 ? `
-            <div style="margin-top: 1.75rem; padding-top: 1.25rem; border-top: 1px solid rgba(255,255,255,0.1); text-align: left;">
-              <div style="font-size: 0.78rem; font-weight: 800; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.65rem; display: flex; align-items: center; gap: 0.4rem;">
-                <span>💡</span> Códigos de proyectos activos:
-              </div>
-              <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-                ${savedCodes.slice(0, 6).map(sc => `
-                  <button type="button" onclick="document.getElementById('project-join-code-input').value='${this.escapeHtml(sc.code)}'; window.ProjectsView.submitJoinProjectCode();" style="background: rgba(247, 37, 133, 0.12); border: 1px solid rgba(247, 37, 133, 0.35); color: #fff; padding: 0.38rem 0.85rem; border-radius: 9999px; font-weight: 800; font-size: 0.85rem; cursor: pointer; transition: all 0.15s; letter-spacing: 0.5px;" onmouseenter="this.style.background='rgba(247, 37, 133, 0.28)'; this.style.borderColor='#f72585';" onmouseleave="this.style.background='rgba(247, 37, 133, 0.12)'; this.style.borderColor='rgba(247, 37, 133, 0.35)';">
-                    #${this.escapeHtml(sc.code)}
-                  </button>
-                `).join('')}
-              </div>
-            </div>
-          ` : ''}
-
-        </div>
-      </div>
-    `;
-
-    document.body.insertAdjacentHTML('beforeend', modalHtml);
-
-    // Escape listener
-    const escHandler = (evt) => {
-      if (evt.key === 'Escape') {
-        window.ProjectsView.closeJoinProjectModal();
-        document.removeEventListener('keydown', escHandler);
-      }
-    };
-    document.addEventListener('keydown', escHandler);
-
+    this.viewMode = 'join';
+    this.prefillJoinCode = prefillCode;
+    this.render();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
     setTimeout(() => {
       const input = document.getElementById('project-join-code-input');
       if (input) {
         input.focus();
         input.select();
       }
-    }, 60);
+    }, 80);
   },
 
   closeJoinProjectModal() {
-    const modal = document.getElementById('project-join-modal');
-    if (modal) modal.remove();
+    this.viewMode = 'list';
+    const existing = document.getElementById('project-join-modal');
+    if (existing) existing.remove();
+    document.body.classList.add('projects-pure-white-theme');
+    const navEl = document.getElementById('main-navbar');
+    if (navEl) navEl.style.display = '';
+    const container = document.getElementById('view-projects');
+    if (container) {
+      container.style.padding = '';
+      container.style.margin = '';
+      container.style.background = '';
+    }
+    if (window.soundEngine && window.soundEngine.playClick) window.soundEngine.playClick();
+    this.render();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   },
 
   submitJoinProjectCode() {
@@ -2691,6 +2643,106 @@ window.ProjectsView = {
 
       </div>
     `;
+  },
+
+  renderProjectJoinView(container) {
+    const savedCodes = this.getSavedProjectCodes();
+    const prefillCode = this.prefillJoinCode || '';
+
+    container.innerHTML = `
+      <div style="min-height: 100vh; min-height: 100dvh; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2rem 1.5rem; box-sizing: border-box; background: #0c0410 url('assets/mentix_project_join_bg.jpg') center center / cover no-repeat; position: relative; overflow-x: hidden; -webkit-text-size-adjust: 100%;">
+        
+        <!-- Overlay sutil para legibilidad perfecta conservando todo el brillo y geometrías -->
+        <div style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: radial-gradient(circle at center, rgba(30, 5, 25, 0.42) 0%, rgba(12, 4, 16, 0.78) 100%); pointer-events: none; z-index: 0;"></div>
+
+        <!-- Contenido principal interactivo sobre el fondo -->
+        <div style="position: relative; z-index: 2; width: 100%; max-width: 680px; text-align: center; margin: 0 auto;">
+          
+          <!-- Nombre de la Página / Logotipo Destacado -->
+          <a href="javascript:void(0)" onclick="window.ProjectsView.closeJoinProjectModal()" style="text-decoration: none; display: inline-flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 0.5rem 0.75rem; margin-bottom: 1.5rem; cursor: pointer;">
+            <span style="font-size: clamp(2rem, 9vw, 2.8rem); filter: drop-shadow(0 0 16px rgba(247,37,133,0.85));">🧠</span>
+            <span style="font-size: clamp(1.9rem, 8.5vw, 2.6rem); font-weight: 900; letter-spacing: -0.02em; color: #ffffff !important; text-shadow: 0 4px 20px rgba(0,0,0,0.95);">
+              MEN<span style="color: #ffd166 !important; text-shadow: 0 0 25px rgba(255,209,102,0.95), 0 2px 10px rgba(0,0,0,0.9);">TIX</span>
+            </span>
+          </a>
+
+          <h1 style="font-size: clamp(1.4rem, 5.5vw, 2.5rem); line-height: 1.2; font-weight: 900; margin: 0 0 0.6rem; color: #ffffff !important; letter-spacing: -0.02em; text-shadow: 0 4px 24px rgba(0,0,0,0.95), 0 0 30px rgba(247,37,133,0.5); padding: 0 0.5rem;">
+            Ingresa el código para unirte
+          </h1>
+          
+          <p style="color: #ffffff !important; font-size: clamp(1.05rem, 2.5vw, 1.25rem); font-weight: 700; margin: 0 0 2.25rem; text-shadow: 0 2px 12px rgba(0,0,0,0.95);">
+            Está en la pantalla frente a ti
+          </p>
+
+          <form id="project-join-form" onsubmit="event.preventDefault(); window.ProjectsView.submitJoinProjectCode();" style="width: 100%;">
+            <div style="margin-bottom: 1.75rem; width: 100%;">
+              <input 
+                type="text" 
+                id="project-join-code-input" 
+                placeholder="1234 5678" 
+                maxlength="24" 
+                value="${this.escapeHtml(prefillCode)}"
+                required
+                autocomplete="off"
+                style="width: 100%; box-sizing: border-box; text-align: center; font-size: clamp(1.8rem, 4vw, 2.4rem); font-weight: 900; padding: 1.15rem 1.5rem; border-radius: 18px; background: rgba(22, 8, 28, 0.94) !important; border: 2.5px solid #f72585 !important; color: #ffffff !important; outline: none; transition: all 0.2s; box-shadow: 0 10px 35px rgba(0,0,0,0.6), 0 0 25px rgba(247, 37, 133, 0.35) !important; letter-spacing: 2px; text-shadow: 0 0 15px rgba(247, 37, 133, 0.7), 0 2px 8px rgba(0,0,0,0.9);"
+                onfocus="this.style.borderColor='#ffd166'; this.style.boxShadow='0 0 35px rgba(255,209,102,0.8)';"
+                onblur="this.style.borderColor='#f72585'; this.style.boxShadow='0 10px 35px rgba(0,0,0,0.6), 0 0 25px rgba(247, 37, 133, 0.35)';"
+                oninput="const e = document.getElementById('project-join-error'); if(e) e.style.display='none';"
+              />
+              <div id="project-join-error" style="color: #ff4d6d; font-size: 1rem; font-weight: 800; margin-top: 0.75rem; display: none; text-align: center; text-shadow: 0 2px 8px rgba(0,0,0,0.95);"></div>
+            </div>
+
+            <button 
+              type="submit" 
+              class="btn" 
+              style="padding: 0.9rem 3.5rem; font-size: 1.25rem; font-weight: 900; border-radius: 9999px; background: #ffd166; color: #1a0b22 !important; border: 2px solid #ffd166; cursor: pointer; transition: all 0.2s; box-shadow: 0 8px 30px rgba(255, 209, 102, 0.55), 0 0 20px rgba(247, 37, 133, 0.4); min-width: 220px; letter-spacing: 0.5px;"
+              onmouseenter="this.style.background='#ffffff'; this.style.color='#1a0b22'; this.style.borderColor='#ffffff'; this.style.boxShadow='0 0 35px rgba(255,255,255,0.9)';"
+              onmouseleave="this.style.background='#ffd166'; this.style.color='#1a0b22'; this.style.borderColor='#ffd166'; this.style.boxShadow='0 8px 30px rgba(255, 209, 102, 0.55), 0 0 20px rgba(247, 37, 133, 0.4)';"
+            >
+              Unirse
+            </button>
+          </form>
+
+          ${savedCodes && savedCodes.length > 0 ? `
+            <!-- Códigos Activos Sugeridos (Pills) -->
+            <div style="margin-top: 2rem; display: flex; flex-direction: column; align-items: center; gap: 0.65rem;">
+              <span style="font-size: 0.85rem; font-weight: 700; color: rgba(255,255,255,0.7); text-shadow: 0 1px 4px rgba(0,0,0,0.8);">
+                Códigos disponibles:
+              </span>
+              <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; justify-content: center; max-width: 520px;">
+                ${savedCodes.slice(0, 6).map(sc => `
+                  <button 
+                    type="button" 
+                    onclick="document.getElementById('project-join-code-input').value='${this.escapeHtml(sc.code)}'; window.ProjectsView.submitJoinProjectCode();" 
+                    style="background: rgba(247, 37, 133, 0.2); border: 1.5px solid rgba(255, 209, 102, 0.6); color: #ffffff !important; padding: 0.45rem 1rem; border-radius: 9999px; font-weight: 800; font-size: 0.92rem; cursor: pointer; transition: all 0.2s; letter-spacing: 0.8px; text-shadow: 0 1px 3px rgba(0,0,0,0.8);" 
+                    onmouseenter="this.style.background='rgba(255, 209, 102, 0.35)'; this.style.borderColor='#ffd166'; this.style.transform='scale(1.05)';" 
+                    onmouseleave="this.style.background='rgba(247, 37, 133, 0.2)'; this.style.borderColor='rgba(255, 209, 102, 0.6)'; this.style.transform='scale(1)';"
+                  >
+                    #${this.escapeHtml(sc.code)}
+                  </button>
+                `).join('')}
+              </div>
+            </div>
+          ` : ''}
+
+          <!-- Enlace para volver -->
+          <div style="margin-top: 2.75rem;">
+            <a href="javascript:void(0)" onclick="window.ProjectsView.closeJoinProjectModal()" style="font-size: 1rem; font-weight: 700; color: #ffffff !important; text-decoration: none; transition: color 0.2s; text-shadow: 0 2px 10px rgba(0,0,0,0.95);" onmouseenter="this.style.color='#ffd166'" onmouseleave="this.style.color='#ffffff'">
+              ← Volver a Proyectos
+            </a>
+          </div>
+
+        </div>
+      </div>
+    `;
+
+    setTimeout(() => {
+      const input = document.getElementById('project-join-code-input');
+      if (input) {
+        input.focus();
+        input.select();
+      }
+    }, 100);
   },
 
   renderProjectModeCard(mode, isSelected) {

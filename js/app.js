@@ -209,7 +209,12 @@ class AppRouter {
 
     // Control de tema totalmente blanco exclusivo para la vista de proyectos
     if (viewName === 'projects') {
-      document.body.classList.add('projects-pure-white-theme');
+      const isProjectFullActive = (window.ProjectsView && (window.ProjectsView.viewMode === 'wizard' || window.ProjectsView.viewMode === 'join'));
+      if (isProjectFullActive) {
+        document.body.classList.remove('projects-pure-white-theme');
+      } else {
+        document.body.classList.add('projects-pure-white-theme');
+      }
     } else {
       document.body.classList.remove('projects-pure-white-theme');
     }
@@ -217,8 +222,8 @@ class AppRouter {
     // Controlar visibilidad del navbar principal (ocultar en lobby-join, game, leaderboard y podium para diseño inmersivo con fondo Mentix completo)
     const navEl = document.getElementById('main-navbar');
     if (navEl) {
-      const isWizardActive = (viewName === 'projects' && window.ProjectsView && window.ProjectsView.viewMode === 'wizard');
-      if (viewName === 'lobby-join' || viewName === 'game' || viewName === 'leaderboard' || viewName === 'podium' || isWizardActive) {
+      const isProjectFullActive = (viewName === 'projects' && window.ProjectsView && (window.ProjectsView.viewMode === 'wizard' || window.ProjectsView.viewMode === 'join'));
+      if (viewName === 'lobby-join' || viewName === 'game' || viewName === 'leaderboard' || viewName === 'podium' || isProjectFullActive) {
         navEl.style.display = 'none';
       } else {
         navEl.style.display = '';

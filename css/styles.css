@@ -5040,3 +5040,10 @@ body.light-theme .project-code-fullpage input {
   border-color: #0e7490 !important;
 }
 
+
+/* Pantalla inmersiva de Unirse a Proyecto (Fondo Rosa/Amarillo Futurista) */
+#view-projects:has(#project-join-form) {
+  padding: 0 !important;
+  margin: 0 !important;
+  background: transparent !important;
+}
