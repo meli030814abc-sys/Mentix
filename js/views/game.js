@@ -741,6 +741,34 @@ window.GameView = {
         <!-- Overlay Dinámico del Modo de Juego Seleccionado -->
         ${window.GameModes ? window.GameModes.renderHostQuestionOverlay(this.gameMode, this) : ''}
 
+        ${(q.type === 'case' || q.caseContext) ? `
+          <!-- Tarjeta de Caso Práctico / Situacional para el Proyector / Pantalla Grande -->
+          <div class="case-study-hero-card" style="margin-bottom: 1.25rem; background: rgba(11, 19, 43, 0.96); border: 2.5px solid #00f5d4; border-radius: 18px; padding: 1.35rem 1.8rem; text-align: left; box-shadow: 0 10px 30px rgba(0, 245, 212, 0.2); max-height: 400px; overflow-y: auto;">
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; margin-bottom: 0.85rem; border-bottom: 1.5px solid rgba(0,245,212,0.3); padding-bottom: 0.7rem; flex-wrap: wrap;">
+              <div style="display: flex; align-items: center; gap: 0.6rem;">
+                <span style="font-size: 1.4rem;">📁</span>
+                <span style="font-size: 0.85rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: #00f5d4; background: rgba(0,245,212,0.14); padding: 0.25rem 0.65rem; border-radius: 6px;">
+                  Caso Práctico / Análisis Situacional
+                </span>
+              </div>
+              ${q.caseTitle ? `
+                <div style="font-weight: 900; font-size: 1.15rem; color: #ffffff;">
+                  ${this.escapeHtml(q.caseTitle)}
+                </div>
+              ` : ''}
+            </div>
+            <div style="color: #f1f5f9; font-size: 1rem; line-height: 1.7; white-space: pre-wrap; font-family: inherit;">
+              ${this.escapeHtml(q.caseContext || '')}
+            </div>
+            ${q.referenceNorm ? `
+              <div style="margin-top: 1rem; padding-top: 0.75rem; border-top: 1px dashed rgba(255,255,255,0.18); display: flex; align-items: center; gap: 0.5rem; font-size: 0.88rem; color: #ffd166;">
+                <span>⚖️ Marco normativo:</span>
+                <span style="font-weight: 700; color: #ffffff;">${this.escapeHtml(q.referenceNorm)}</span>
+              </div>
+            ` : ''}
+          </div>
+        ` : ''}
+
         <!-- Banner de Pregunta Estilo TE RETO -->
         <div class="kahoot-host-question-banner">
           ${q.text}
@@ -892,6 +920,21 @@ window.GameView = {
           </div>
         </div>
 
+        ${(q.type === 'case' || q.caseContext) ? `
+          <!-- Tarjeta del Caso Práctico para el Estudiante -->
+          <div class="case-study-hero-card" style="margin: 0.5rem 0 1rem; background: rgba(11, 19, 43, 0.96); border: 2px solid #00f5d4; border-radius: 16px; padding: 1.15rem 1.35rem; text-align: left; box-shadow: 0 8px 24px rgba(0, 245, 212, 0.18); max-height: 280px; overflow-y: auto;">
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; margin-bottom: 0.6rem; border-bottom: 1px solid rgba(0,245,212,0.3); padding-bottom: 0.5rem;">
+              <span style="font-size: 0.78rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: #00f5d4; background: rgba(0,245,212,0.14); padding: 0.2rem 0.6rem; border-radius: 6px;">
+                📁 Caso Práctico
+              </span>
+              <span style="font-weight: 800; font-size: 0.95rem; color: #ffffff;">${this.escapeHtml(q.caseTitle || 'Análisis Situacional')}</span>
+            </div>
+            <div style="color: #f1f5f9; font-size: 0.92rem; line-height: 1.65; white-space: pre-wrap; font-family: inherit;">
+              ${this.escapeHtml(q.caseContext || '')}
+            </div>
+          </div>
+        ` : ''}
+
         ${isNormalRoom ? `
           <!-- Enunciado de la Pregunta para el Estudiante (Solo en Sala Normal) -->
           <div class="kahoot-host-question-banner" style="font-size: clamp(1.4rem, 3.4vw, 2.2rem); font-weight: 900; margin: 0.5rem 0 1.15rem; padding: 1.1rem 1.6rem; border-radius: 18px; min-height: auto;">
@@ -974,7 +1017,22 @@ window.GameView = {
                   onclick="${isMulti ? `window.GameView.toggleMultiOption(${displayIdx})` : `window.GameView.handleSelectAnswer(${displayIdx})`}"
                   style="cursor: pointer;"
                 >
-                  ${isNormalRoom ? `
+                  ${(q.type === 'case' || q.caseContext) ? `
+          <!-- Tarjeta del Caso Práctico para el Estudiante -->
+          <div class="case-study-hero-card" style="margin: 0.5rem 0 1rem; background: rgba(11, 19, 43, 0.96); border: 2px solid #00f5d4; border-radius: 16px; padding: 1.15rem 1.35rem; text-align: left; box-shadow: 0 8px 24px rgba(0, 245, 212, 0.18); max-height: 280px; overflow-y: auto;">
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; margin-bottom: 0.6rem; border-bottom: 1px solid rgba(0,245,212,0.3); padding-bottom: 0.5rem;">
+              <span style="font-size: 0.78rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: #00f5d4; background: rgba(0,245,212,0.14); padding: 0.2rem 0.6rem; border-radius: 6px;">
+                📁 Caso Práctico
+              </span>
+              <span style="font-weight: 800; font-size: 0.95rem; color: #ffffff;">${this.escapeHtml(q.caseTitle || 'Análisis Situacional')}</span>
+            </div>
+            <div style="color: #f1f5f9; font-size: 0.92rem; line-height: 1.65; white-space: pre-wrap; font-family: inherit;">
+              ${this.escapeHtml(q.caseContext || '')}
+            </div>
+          </div>
+        ` : ''}
+
+        ${isNormalRoom ? `
                     <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.45rem; width: 100%; height: 100%; padding: 0.85rem; text-align: center; box-sizing: border-box;">
                       <div class="pad-shape" style="height: auto; width: auto;">${shapeDef.svg}</div>
                       <div class="pad-option-text" style="color: #ffffff; font-weight: 800; font-size: clamp(0.95rem, 2.5vw, 1.3rem); line-height: 1.25; text-shadow: 0 2px 10px rgba(0,0,0,0.85); max-width: 95%; word-break: break-word;">
@@ -1060,6 +1118,34 @@ window.GameView = {
           </div>
         </div>
 
+        ${(q.type === 'case' || q.caseContext) ? `
+          <!-- Tarjeta de Caso Práctico / Situacional Extenso -->
+          <div class="case-study-hero-card" style="margin-bottom: 1.25rem; background: rgba(11, 19, 43, 0.96); border: 2px solid #00f5d4; border-radius: 18px; padding: 1.35rem 1.6rem; text-align: left; box-shadow: 0 10px 30px rgba(0, 245, 212, 0.18); max-height: 420px; overflow-y: auto;">
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; margin-bottom: 0.85rem; border-bottom: 1.5px solid rgba(0,245,212,0.3); padding-bottom: 0.7rem; flex-wrap: wrap;">
+              <div style="display: flex; align-items: center; gap: 0.6rem;">
+                <span style="font-size: 1.35rem;">📁</span>
+                <span style="font-size: 0.82rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: #00f5d4; background: rgba(0,245,212,0.14); padding: 0.25rem 0.65rem; border-radius: 6px;">
+                  Caso Práctico / Situacional
+                </span>
+              </div>
+              ${q.caseTitle ? `
+                <div style="font-weight: 900; font-size: 1.05rem; color: #ffffff;">
+                  ${this.escapeHtml(q.caseTitle)}
+                </div>
+              ` : ''}
+            </div>
+            <div style="color: #f1f5f9; font-size: 0.96rem; line-height: 1.7; white-space: pre-wrap; font-family: inherit;">
+              ${this.escapeHtml(q.caseContext || '')}
+            </div>
+            ${q.referenceNorm ? `
+              <div style="margin-top: 1rem; padding-top: 0.75rem; border-top: 1px dashed rgba(255,255,255,0.18); display: flex; align-items: center; gap: 0.5rem; font-size: 0.84rem; color: #ffd166;">
+                <span>⚖️ Marco normativo:</span>
+                <span style="font-weight: 700; color: #ffffff;">${this.escapeHtml(q.referenceNorm)}</span>
+              </div>
+            ` : ''}
+          </div>
+        ` : ''}
+
         <div class="kahoot-host-question-banner">
           ${q.text}
         </div>
@@ -1125,16 +1211,26 @@ window.GameView = {
           <div class="kahoot-answers-grid ${isTwoOptions ? 'two-options' : ''}" id="solo-answers-grid">
             ${displayOptions.map((opt, displayIdx) => {
               const shapeDef = this.getShapeDef(displayIdx);
+              const isCase = q.type === 'case';
+              const caseLetters = ['A', 'B', 'C', 'D', 'E', 'F'];
               return `
                 <button 
                   type="button" 
                   class="kahoot-answer-card ${shapeDef.colorClass}" 
                   id="opt-btn-${displayIdx}"
-                  style="cursor: pointer; width: 100%;"
+                  style="cursor: pointer; width: 100%; text-align: left; justify-content: flex-start; padding: 1.1rem 1.4rem;"
                   onclick="${isMulti ? `window.GameView.toggleMultiOption(${displayIdx})` : `window.GameView.handleSelectAnswer(${displayIdx})`}"
                 >
-                  <span class="kahoot-shape">${shapeDef.svg}</span>
-                  <span class="kahoot-card-text">${this.escapeHtml(this.getOptionText(opt))}</span>
+                  ${isCase ? `
+                    <span style="display: inline-flex; align-items: center; justify-content: center; width: 34px; height: 34px; font-size: 1.15rem; font-weight: 900; background: rgba(0,0,0,0.45); border-radius: 10px; margin-right: 0.85rem; flex-shrink: 0; border: 1.5px solid rgba(255,255,255,0.4); color: #ffffff;">
+                      ${caseLetters[displayIdx] || (displayIdx + 1)}
+                    </span>
+                  ` : `
+                    <span class="kahoot-shape">${shapeDef.svg}</span>
+                  `}
+                  <span class="kahoot-card-text" style="font-size: ${isCase ? '0.98rem' : '1.15rem'}; line-height: 1.4; font-weight: 700;">
+                    ${this.escapeHtml(this.getOptionText(opt))}
+                  </span>
                 </button>
               `;
             }).join('')}
@@ -2592,6 +2688,29 @@ window.GameView = {
             </div>
           ` : ''}
 
+          ${(q.explanation || q.referenceNorm) ? `
+            <!-- Justificación Pedagógica y Normativa de Referencia para el Alumno -->
+            <div style="background: rgba(8, 20, 52, 0.94) !important; border: 1.5px solid #00f5d4 !important; border-radius: 16px; padding: 1.2rem 1.5rem; margin: 1.25rem auto; max-width: 580px; text-align: left; box-shadow: 0 10px 30px rgba(0,0,0,0.7), 0 0 20px rgba(0, 245, 212, 0.2);">
+              ${q.explanation ? `
+                <div style="font-size: 0.8rem; text-transform: uppercase; font-weight: 800; color: #00f5d4 !important; margin-bottom: 0.45rem; letter-spacing: 0.5px; display: flex; align-items: center; gap: 0.4rem;">
+                  <span>💡</span> Justificación Pedagógica:
+                </div>
+                <div style="font-size: 0.95rem; color: #f1f5f9 !important; line-height: 1.6; white-space: pre-wrap;">
+                  ${this.escapeHtml(q.explanation)}
+                </div>
+              ` : ''}
+              ${q.referenceNorm ? `
+                <div style="margin-top: 0.85rem; padding-top: 0.65rem; border-top: 1px dashed rgba(255,255,255,0.18); display: flex; align-items: flex-start; gap: 0.55rem; font-size: 0.86rem;">
+                  <span style="font-size: 1.15rem; line-height: 1;">⚖️</span>
+                  <div>
+                    <span style="font-weight: 800; color: #ffd166 !important; text-transform: uppercase; letter-spacing: 0.5px; display: block; font-size: 0.76rem;">Normativa de referencia:</span>
+                    <span style="color: #ffffff !important; font-weight: 600;">${this.escapeHtml(q.referenceNorm)}</span>
+                  </div>
+                </div>
+              ` : ''}
+            </div>
+          ` : ''}
+
           <!-- Puntaje Acumulado -->
           <div style="margin-top: 1.25rem; padding-top: 1.25rem; border-top: 1px solid rgba(0, 255, 136, 0.25) !important; display: flex; align-items: center; justify-content: center; gap: 0.85rem; flex-wrap: wrap;">
             <span style="font-size: 0.95rem; font-weight: 800; color: #f1f5f9 !important; text-transform: uppercase; letter-spacing: 1px; text-shadow: 0 2px 4px rgba(0,0,0,0.9);">Tu Puntaje Total:</span>
@@ -3076,6 +3195,37 @@ window.GameView = {
               <div style="font-size: 1.8rem; font-weight: 900; color: var(--neon-cyan);">${q.correctAnswer || (q.acceptedAnswers && q.acceptedAnswers[0]) || ''}</div>
             </div>
           `}
+
+          ${(q.explanation || q.referenceNorm) ? `
+            <!-- Panel de Justificación Pedagógica y Normativa de Referencia para el Docente y Grupo -->
+            <div style="background: rgba(11, 24, 56, 0.96); border: 2px solid #00f5d4; border-radius: 18px; padding: 1.4rem 1.8rem; margin: 1.75rem auto 0; text-align: left; box-shadow: 0 12px 35px rgba(0,0,0,0.7), 0 0 25px rgba(0, 245, 212, 0.2); max-width: 850px;">
+              <div style="display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; margin-bottom: 0.85rem; border-bottom: 1.5px solid rgba(0,245,212,0.3); padding-bottom: 0.65rem;">
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                  <span style="font-size: 1.3rem;">💡</span>
+                  <span style="font-size: 0.88rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.8px; color: #00f5d4;">
+                    Justificación Pedagógica del Caso
+                  </span>
+                </div>
+                ${q.caseTitle ? `
+                  <span style="font-size: 0.95rem; font-weight: 800; color: #ffffff;">${this.escapeHtml(q.caseTitle)}</span>
+                ` : ''}
+              </div>
+              ${q.explanation ? `
+                <div style="font-size: 1rem; color: #f1f5f9; line-height: 1.65; white-space: pre-wrap; margin-bottom: 0.75rem;">
+                  ${this.escapeHtml(q.explanation)}
+                </div>
+              ` : ''}
+              ${q.referenceNorm ? `
+                <div style="margin-top: 1rem; padding: 0.85rem 1.1rem; background: rgba(0, 245, 212, 0.08); border-radius: 10px; border-left: 4px solid #ffd166; display: flex; align-items: flex-start; gap: 0.6rem;">
+                  <span style="font-size: 1.2rem; line-height: 1;">⚖️</span>
+                  <div>
+                    <span style="font-size: 0.78rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; color: #ffd166; display: block; margin-bottom: 0.2rem;">Normativa / Marco de Referencia:</span>
+                    <span style="font-size: 0.95rem; font-weight: 700; color: #ffffff;">${this.escapeHtml(q.referenceNorm)}</span>
+                  </div>
+                </div>
+              ` : ''}
+            </div>
+          ` : ''}
 
           <!-- Botón de avance inferior para el profesor -->
           ${(this.isHost || this.isSolo) ? `

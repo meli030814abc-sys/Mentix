@@ -1265,20 +1265,212 @@ window.ProjectsView = {
     else window.appRouter.openPresentation(c.id);
   },
 
+  // ==========================================
+  // AGENTE INTELIGENTE DE PROYECTO (IA PERSISTENTE)
+  // ==========================================
+  getAgentSavedData(projId) {
+    if (!projId) return [];
+    try {
+      const raw = localStorage.getItem('mentix_agent_memory_' + projId);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed)) return parsed;
+      }
+    } catch (e) {}
+    return [];
+  },
+
+  saveAgentDataItem(projId, text) {
+    if (!projId || !text) return;
+    const clean = String(text).trim();
+    if (!clean) return;
+
+    let items = this.getAgentSavedData(projId);
+    items = items.filter(x => x.toLowerCase() !== clean.toLowerCase());
+    items.unshift(clean);
+    if (items.length > 25) items = items.slice(0, 25);
+
+    try {
+      localStorage.setItem('mentix_agent_memory_' + projId, JSON.stringify(items));
+    } catch (e) {}
+
+    this.renderAgentSavedDataBar(projId);
+  },
+
+  deleteAgentDataItem(projId, itemText) {
+    if (!projId) return;
+    let items = this.getAgentSavedData(projId);
+    items = items.filter(x => x !== itemText);
+    try {
+      localStorage.setItem('mentix_agent_memory_' + projId, JSON.stringify(items));
+    } catch (e) {}
+    this.renderAgentSavedDataBar(projId);
+  },
+
+  clearAgentHistory(projId) {
+    if (!confirm('¿Deseas reiniciar la memoria y el historial del Agente para este proyecto?')) return;
+    try {
+      localStorage.removeItem('mentix_agent_chat_' + projId);
+      localStorage.removeItem('mentix_agent_memory_' + projId);
+    } catch (e) {}
+    const proj = (window.appState?.challenges || []).find(c => c.id === projId);
+    this.showProjectAgent(proj);
+  },
+
+  getAgentChatHistory(projId) {
+    if (!projId) return [];
+    try {
+      const raw = localStorage.getItem('mentix_agent_chat_' + projId);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed)) return parsed;
+      }
+    } catch (e) {}
+    return [];
+  },
+
+  saveAgentChatMessage(projId, html, sender) {
+    if (!projId) return;
+    try {
+      let list = this.getAgentChatHistory(projId);
+      list.push({ html, sender, timestamp: Date.now() });
+      if (list.length > 60) list = list.slice(list.length - 60);
+      localStorage.setItem('mentix_agent_chat_' + projId, JSON.stringify(list));
+    } catch (e) {}
+  },
+
+  applyAgentDataToProject(projId, field, value) {
+    if (!value) return;
+    const cleanVal = String(value).trim();
+    if (!cleanVal) return;
+
+    const challenges = window.appState?.challenges || [];
+    let proj = challenges.find(c => c.id === projId);
+    if (!proj && challenges.length > 0) proj = challenges[0];
+    if (!proj) return;
+
+    if (field === 'title') {
+      proj.title = cleanVal;
+      if (!proj.publication) proj.publication = {};
+      proj.publication.publicName = cleanVal;
+      proj.publication.landingTitle = cleanVal;
+
+      const subtitleEl = document.getElementById('mentix-agent-project-subtitle');
+      if (subtitleEl) {
+        subtitleEl.textContent = `Copiloto Oficial • ${cleanVal}`;
+      }
+      const titleDisplay = document.getElementById('mentix-agent-title-display');
+      if (titleDisplay) {
+        titleDisplay.textContent = cleanVal;
+      }
+    } else if (field === 'objective') {
+      proj.mainObjective = cleanVal;
+      if (!proj.valueProposition) proj.valueProposition = {};
+      proj.valueProposition.problemSolved = cleanVal;
+    } else if (field === 'description') {
+      proj.description = cleanVal;
+      proj.shortDescription = cleanVal;
+      proj.fullDescription = cleanVal;
+      if (!proj.publication) proj.publication = {};
+      proj.publication.publicDescription = cleanVal;
+    }
+
+    try {
+      localStorage.setItem('mentix_challenges', JSON.stringify(challenges));
+      localStorage.setItem('mentix_active_landing_project', JSON.stringify(proj));
+
+      const rawDrafts = localStorage.getItem('mentix_govdata_wizard_drafts');
+      if (rawDrafts) {
+        const drafts = JSON.parse(rawDrafts);
+        const match = drafts.find(d => d.id === proj.id);
+        if (match) {
+          if (field === 'title') match.title = cleanVal;
+          if (field === 'objective') match.mainObjective = cleanVal;
+          if (field === 'description') {
+            match.shortDescription = cleanVal;
+            match.fullDescription = cleanVal;
+          }
+          localStorage.setItem('mentix_govdata_wizard_drafts', JSON.stringify(drafts));
+        }
+      }
+    } catch (e) {
+      console.warn('Error saving updated project data:', e);
+    }
+
+    const fieldLabel = field === 'title' ? 'Título' : (field === 'objective' ? 'Objetivo principal' : 'Descripción');
+    const msg = `✨ <strong>¡Dato aplicado al proyecto!</strong> El campo <strong>${fieldLabel}</strong> se ha actualizado a: <strong>«${this.escapeHtml(cleanVal)}»</strong>.`;
+    this.appendAgentChatMessage(msg, 'agent', true);
+
+    if (this.viewMode === 'landing') {
+      const container = document.getElementById('app');
+      if (container) this.renderLandingPageView(container, challenges);
+    }
+  },
+
+  renderAgentSavedDataBar(projId) {
+    const bar = document.getElementById('mentix-agent-saved-data-bar');
+    if (!bar) return;
+
+    const items = this.getAgentSavedData(projId);
+    if (!items || items.length === 0) {
+      bar.innerHTML = `
+        <div style="font-size: 0.74rem; color: #64748b; font-style: italic; display: flex; align-items: center; gap: 0.35rem;">
+          <span>💡</span> Los datos, notas o textos que escribas (como títulos o ideas) se guardarán automáticamente aquí.
+        </div>
+      `;
+      return;
+    }
+
+    bar.innerHTML = `
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.35rem;">
+        <span style="font-size: 0.72rem; font-weight: 800; color: #00f5d4; text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; gap: 0.3rem;">
+          <span>💾</span> Datos guardados en memoria (${items.length}):
+        </span>
+        <button type="button" onclick="window.ProjectsView.clearAgentHistory('${projId}')" title="Limpiar historial y memoria" style="background: none; border: none; color: #94a3b8; font-size: 0.7rem; cursor: pointer; text-decoration: underline; padding: 0;">
+          Limpiar
+        </button>
+      </div>
+      <div style="display: flex; gap: 0.4rem; overflow-x: auto; padding-bottom: 0.25rem; scrollbar-width: thin;">
+        ${items.map(it => {
+          const esc = this.escapeHtml(it);
+          const safeJs = esc.replace(/'/g, "\\'");
+          return `
+            <div style="display: inline-flex; align-items: center; gap: 0.35rem; background: rgba(0, 245, 212, 0.12); border: 1px solid rgba(0, 245, 212, 0.35); border-radius: 9999px; padding: 0.2rem 0.6rem; font-size: 0.76rem; color: #ffffff; white-space: nowrap; box-shadow: 0 2px 6px rgba(0,0,0,0.2);">
+              <span title="Dato guardado" style="font-weight: 700; max-width: 140px; overflow: hidden; text-overflow: ellipsis;">«${esc}»</span>
+              <button type="button" onclick="window.ProjectsView.applyAgentDataToProject('${projId}', 'title', '${safeJs}')" title="Aplicar como Título" style="background: rgba(16, 185, 129, 0.3); border: none; color: #10b981; border-radius: 4px; padding: 0 0.25rem; font-size: 0.68rem; font-weight: 800; cursor: pointer;">
+                🏷️ Título
+              </button>
+              <button type="button" onclick="window.ProjectsView.deleteAgentDataItem('${projId}', '${safeJs}')" title="Eliminar este dato" style="background: none; border: none; color: #ff4d6d; font-size: 0.75rem; cursor: pointer; padding: 0 0.15rem;">
+                ✕
+              </button>
+            </div>
+          `;
+        }).join('')}
+      </div>
+    `;
+  },
+
   showProjectAgent(project = null) {
     const existing = document.getElementById('mentix-project-agent-modal');
     if (existing) existing.remove();
 
-    const proj = project || (window.appState?.challenges || []).find(c => c.id === this.selectedProjectId) || {};
+    const challenges = window.appState?.challenges || [];
+    const proj = project || 
+                 challenges.find(c => c.id === this.selectedProjectId) || 
+                 (challenges.length > 0 ? challenges[0] : null) || 
+                 {};
     const title = this.escapeHtml(proj.title || 'Proyecto Educativo');
     const desc = this.escapeHtml(proj.description || proj.shortDescription || 'Explora lecciones interactivas, recursos didácticos y actividades guiadas.');
     const obj = this.escapeHtml(proj.mainObjective || proj.valueProposition?.problemSolved || 'Impulsar el aprendizaje práctico y colaborativo.');
     const cat = this.escapeHtml(proj.categoryName || 'Ciencia y Tecnología');
-    const projId = proj.id || this.selectedProjectId || '';
+    const projId = proj.id || this.selectedProjectId || 'default_proj';
+    this.activeAgentProjectId = projId;
+
+    const history = this.getAgentChatHistory(projId);
 
     const agentHtml = `
       <div id="mentix-project-agent-modal" style="position: fixed; inset: 0; z-index: 1000000; display: flex; align-items: flex-end; justify-content: flex-end; padding: 1.5rem; pointer-events: none; animation: fadeIn 0.25s ease-out;">
-        <div class="glass-panel" style="pointer-events: auto; width: 100%; max-width: 480px; max-height: 85vh; display: flex; flex-direction: column; background: linear-gradient(150deg, rgba(10, 16, 32, 0.98), rgba(22, 12, 38, 0.98)); border: 2px solid #00f5d4; box-shadow: 0 20px 60px rgba(0, 245, 212, 0.3), 0 0 40px rgba(247, 37, 133, 0.25); border-radius: 24px; overflow: hidden; transform: translateY(0); transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);">
+        <div class="glass-panel" style="pointer-events: auto; width: 100%; max-width: 490px; max-height: 88vh; display: flex; flex-direction: column; background: linear-gradient(150deg, rgba(10, 16, 32, 0.98), rgba(22, 12, 38, 0.98)); border: 2px solid #00f5d4; box-shadow: 0 20px 60px rgba(0, 245, 212, 0.3), 0 0 40px rgba(247, 37, 133, 0.25); border-radius: 24px; overflow: hidden; transform: translateY(0); transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);">
           
           <!-- Encabezado del Agente -->
           <div style="padding: 1.15rem 1.4rem; background: linear-gradient(135deg, rgba(0, 245, 212, 0.15), rgba(247, 37, 133, 0.15)); border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: space-between;">
@@ -1292,7 +1484,7 @@ window.ProjectsView = {
                   <span>Agente Inteligente</span>
                   <span style="font-size: 0.7rem; background: rgba(0,245,212,0.2); color: #00f5d4; border: 1px solid rgba(0,245,212,0.4); padding: 0.15rem 0.5rem; border-radius: 9999px; font-weight: 800; text-transform: uppercase;">En línea</span>
                 </h3>
-                <span style="font-size: 0.78rem; color: #94a3b8; display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 260px;">
+                <span id="mentix-agent-project-subtitle" style="font-size: 0.78rem; color: #94a3b8; display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 270px;">
                   Copiloto Oficial • ${title}
                 </span>
               </div>
@@ -1305,8 +1497,12 @@ window.ProjectsView = {
             </div>
           </div>
 
+          <!-- Barra de Datos Guardados en Memoria por el Agente -->
+          <div id="mentix-agent-saved-data-bar" style="padding: 0.65rem 1.25rem; background: rgba(15, 23, 42, 0.75); border-bottom: 1px solid rgba(255,255,255,0.06);">
+          </div>
+
           <!-- Historial de Conversación / Mensajes -->
-          <div id="mentix-agent-chat-stream" style="flex: 1; padding: 1.25rem; overflow-y: auto; max-height: 380px; display: flex; flex-direction: column; gap: 0.85rem;">
+          <div id="mentix-agent-chat-stream" style="flex: 1; padding: 1.15rem 1.25rem; overflow-y: auto; max-height: 380px; display: flex; flex-direction: column; gap: 0.85rem;">
             
             <!-- Mensaje Inicial del Agente -->
             <div style="display: flex; gap: 0.65rem; align-items: flex-start;">
@@ -1314,8 +1510,8 @@ window.ProjectsView = {
                 🤖
               </div>
               <div style="background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(0, 245, 212, 0.3); border-radius: 16px; border-top-left-radius: 4px; padding: 0.95rem 1.15rem; color: #e2e8f0; font-size: 0.9rem; line-height: 1.5; box-shadow: 0 4px 15px rgba(0,0,0,0.3);">
-                ¡Hola! 🎉 Te has unido exitosamente al proyecto <strong>${title}</strong>.<br><br>
-                Soy tu <strong>Agente Inteligente de Proyecto</strong>. Estoy aquí para acompañarte paso a paso. ¿Cómo prefieres comenzar?
+                ¡Hola! 🎉 Estás trabajando en el proyecto <strong id="mentix-agent-title-display">${title}</strong>.<br><br>
+                Soy tu <strong>Agente Inteligente</strong>. Todo dato, nota o texto que escribas (como títulos, objetivos o ideas) se guardará automáticamente en la memoria del proyecto.
               </div>
             </div>
 
@@ -1351,13 +1547,13 @@ window.ProjectsView = {
             <input
               type="text"
               id="mentix-agent-user-input"
-              placeholder="Hazle una pregunta al Agente..."
+              placeholder="Escribe datos, título, notas o preguntas..."
               autocomplete="off"
               style="flex: 1; padding: 0.75rem 1rem; border-radius: 12px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.15); color: #ffffff; font-size: 0.88rem; outline: none;"
               onfocus="this.style.borderColor='#00f5d4';"
               onblur="this.style.borderColor='rgba(255,255,255,0.15)';"
             />
-            <button type="submit" style="background: linear-gradient(135deg, #00f5d4, #059669); color: #050510; border: none; font-weight: 900; width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; cursor: pointer; transition: transform 0.15s;" onmouseenter="this.style.transform='scale(1.08)'" onmouseleave="this.style.transform='scale(1)'">
+            <button type="submit" title="Enviar al Agente" style="background: linear-gradient(135deg, #00f5d4, #059669); color: #050510; border: none; font-weight: 900; width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; cursor: pointer; transition: transform 0.15s;" onmouseenter="this.style.transform='scale(1.08)'" onmouseleave="this.style.transform='scale(1)'">
               ➤
             </button>
           </form>
@@ -1367,6 +1563,15 @@ window.ProjectsView = {
     `;
 
     document.body.insertAdjacentHTML('beforeend', agentHtml);
+    this.renderAgentSavedDataBar(projId);
+
+    // Cargar historial previo de mensajes persistente
+    if (history && history.length > 0) {
+      history.forEach(item => {
+        this.appendAgentChatMessage(item.html, item.sender, false);
+      });
+    }
+
     if (window.soundEngine && window.soundEngine.playSuccess) window.soundEngine.playSuccess();
   },
 
@@ -1376,13 +1581,14 @@ window.ProjectsView = {
   },
 
   askAgentPredefined(type) {
-    const proj = (window.appState?.challenges || []).find(c => c.id === this.selectedProjectId) || {};
+    const projId = this.activeAgentProjectId || this.selectedProjectId || (window.appState?.challenges?.[0]?.id) || 'default_proj';
+    const proj = (window.appState?.challenges || []).find(c => c.id === projId) || {};
     let q = '';
     let a = '';
 
     if (type === 'objetivo') {
       q = '🎯 ¿Cuál es el objetivo principal de este proyecto?';
-      a = `El objetivo principal de <strong>${this.escapeHtml(proj.title || 'este proyecto')}</strong> es: <br><br><em>«${this.escapeHtml(proj.mainObjective || proj.valueProposition?.problemSolved || 'Fortalecer el aprendizaje y la aplicación práctica de los conocimientos en el aula')}»</em>.`;
+      a = `El objetivo principal de <strong>${this.escapeHtml(proj.title || 'este proyecto')}</strong> es: <br><br><em>«${this.escapeHtml(proj.mainObjective || proj.valueProposition?.problemSolved || 'Impulsar el aprendizaje guiado y práctico')}»</em>.`;
     } else if (type === 'resumen') {
       q = '💡 ¿De qué trata este proyecto?';
       a = `Este proyecto corresponde a la categoría <strong>${this.escapeHtml(proj.categoryName || 'General')}</strong>.<br><br>${this.escapeHtml(proj.description || proj.shortDescription || 'Diseñado para impulsar habilidades mediante recursos interactivos, presentaciones y guías prácticas.')}`;
@@ -1393,9 +1599,9 @@ window.ProjectsView = {
       a = `Este proyecto didáctico cuenta con:<br>• <strong>${slides > 0 ? slides + ' Diapositivas interactivas' : 'Presentación didáctica'}</strong>.<br>• <strong>${vid}</strong>.<br>• <strong>Documentos didácticos descargables</strong> y fichas de trabajo oficiales.<br><br>Puedes explorarlos en la Landing Page o paso a paso con el Asistente.`;
     }
 
-    this.appendAgentChatMessage(q, 'user');
+    this.appendAgentChatMessage(q, 'user', true);
     setTimeout(() => {
-      this.appendAgentChatMessage(a, 'agent');
+      this.appendAgentChatMessage(a, 'agent', true);
     }, 300);
   },
 
@@ -1405,11 +1611,33 @@ window.ProjectsView = {
     if (!text) return;
     input.value = '';
 
-    this.appendAgentChatMessage(this.escapeHtml(text), 'user');
+    const projId = this.activeAgentProjectId || this.selectedProjectId || (window.appState?.challenges?.[0]?.id) || 'default_proj';
+    const proj = (window.appState?.challenges || []).find(c => c.id === projId) || {};
 
-    const proj = (window.appState?.challenges || []).find(c => c.id === this.selectedProjectId) || {};
+    const escText = this.escapeHtml(text);
+    this.appendAgentChatMessage(escText, 'user', true);
+
+    // Guardar inmediatamente en la memoria persistente del agente
+    this.saveAgentDataItem(projId, text);
+
     const t = text.toLowerCase();
+    const safeJs = escText.replace(/'/g, "\\'");
     let reply = '';
+
+    // Detección de comandos directos para título / objetivo / descripción
+    if (t.startsWith('titulo ') || t.startsWith('nombre ') || t.includes('cambiar titulo a ') || t.includes('cambiar nombre a ') || t.includes('ponle de titulo ') || t.includes('ponle como titulo ')) {
+      let val = text.replace(/^(titulo\s*[:=]?|nombre\s*[:=]?|cambiar\s+titulo\s+a\s*[:=]?|cambiar\s+nombre\s+a\s*[:=]?|ponle\s+de\s+titulo\s*[:=]?|ponle\s+como\s+titulo\s*[:=]?)/i, '').trim();
+      if (!val) val = text;
+      this.applyAgentDataToProject(projId, 'title', val);
+      return;
+    }
+
+    if (t.startsWith('objetivo ') || t.includes('cambiar objetivo a ') || t.includes('pon de objetivo ')) {
+      let val = text.replace(/^(objetivo\s*[:=]?|cambiar\s+objetivo\s+a\s*[:=]?|pon\s+de\s+objetivo\s*[:=]?)/i, '').trim();
+      if (!val) val = text;
+      this.applyAgentDataToProject(projId, 'objective', val);
+      return;
+    }
 
     if (t.includes('objetivo') || t.includes('meta') || t.includes('proposito')) {
       reply = `El objetivo de <strong>${this.escapeHtml(proj.title || 'este proyecto')}</strong> es: <br><br><em>«${this.escapeHtml(proj.mainObjective || proj.valueProposition?.problemSolved || 'Impulsar el aprendizaje guiado y colaborativo')}»</em>.`;
@@ -1418,43 +1646,65 @@ window.ProjectsView = {
     } else if (t.includes('recurso') || t.includes('video') || t.includes('presentacion') || t.includes('doc') || t.includes('ficha')) {
       reply = `El proyecto tiene recursos interactivos cargados (presentaciones, video clases y material de lectura). Puedes acceder a ellos desde la sección de recursos de la portada.`;
     } else {
-      reply = `Entendido. Como tu <strong>Agente de Proyecto</strong> para <em>${this.escapeHtml(proj.title || 'esta lección')}</em>, te recomiendo revisar los objetivos principales y luego avanzar en el Asistente por pasos o explorar la Landing Page oficial. ¡Cuentas conmigo para cualquier consulta!`;
+      // Reconocimiento fiel de lo escrito por el usuario (ej: "nhh")
+      reply = `
+        <div>
+          ✅ <strong>Dato registrado:</strong> He guardado <strong>«${escText}»</strong> en la memoria del proyecto.<br><br>
+          Se mantendrá guardado permanentemente para este proyecto. ¿Deseas aplicarlo directamente como configuración?
+          <div style="display: flex; gap: 0.45rem; flex-wrap: wrap; margin-top: 0.75rem;">
+            <button type="button" onclick="window.ProjectsView.applyAgentDataToProject('${projId}', 'title', '${safeJs}')" style="background: linear-gradient(135deg, #00f5d4, #059669); color: #022; border: none; border-radius: 8px; padding: 0.35rem 0.7rem; font-size: 0.78rem; font-weight: 800; cursor: pointer; box-shadow: 0 2px 6px rgba(0,245,212,0.3);">
+              🏷️ Usar como Título
+            </button>
+            <button type="button" onclick="window.ProjectsView.applyAgentDataToProject('${projId}', 'objective', '${safeJs}')" style="background: rgba(247, 37, 133, 0.2); border: 1px solid #f72585; color: #ffffff; border-radius: 8px; padding: 0.35rem 0.7rem; font-size: 0.78rem; font-weight: 800; cursor: pointer;">
+              🎯 Usar como Objetivo
+            </button>
+            <button type="button" onclick="window.ProjectsView.applyAgentDataToProject('${projId}', 'description', '${safeJs}')" style="background: rgba(168, 85, 247, 0.2); border: 1px solid #a855f7; color: #ffffff; border-radius: 8px; padding: 0.35rem 0.7rem; font-size: 0.78rem; font-weight: 800; cursor: pointer;">
+              📝 Usar como Descripción
+            </button>
+          </div>
+        </div>
+      `;
     }
 
     setTimeout(() => {
-      this.appendAgentChatMessage(reply, 'agent');
-    }, 400);
+      this.appendAgentChatMessage(reply, 'agent', true);
+    }, 350);
   },
 
-  appendAgentChatMessage(html, sender) {
+  appendAgentChatMessage(html, sender, saveToStorage = true) {
     const stream = document.getElementById('mentix-agent-chat-stream');
-    if (!stream) return;
+    if (stream) {
+      const isUser = sender === 'user';
+      const msg = document.createElement('div');
+      msg.style.display = 'flex';
+      msg.style.gap = '0.65rem';
+      msg.style.alignItems = 'flex-start';
+      if (isUser) msg.style.justifyContent = 'flex-end';
 
-    const isUser = sender === 'user';
-    const msg = document.createElement('div');
-    msg.style.display = 'flex';
-    msg.style.gap = '0.65rem';
-    msg.style.alignItems = 'flex-start';
-    if (isUser) msg.style.justifyContent = 'flex-end';
+      msg.innerHTML = isUser ? `
+        <div style="background: linear-gradient(135deg, #7209b7, #f72585); color: #ffffff; border-radius: 16px; border-top-right-radius: 4px; padding: 0.8rem 1.1rem; font-size: 0.88rem; max-width: 80%; line-height: 1.45; box-shadow: 0 4px 15px rgba(247,37,133,0.3); word-break: break-word;">
+          ${html}
+        </div>
+        <div style="width: 28px; height: 28px; border-radius: 8px; background: rgba(247, 37, 133, 0.25); color: #f72585; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; flex-shrink: 0; font-weight: 800;">
+          👤
+        </div>
+      ` : `
+        <div style="width: 28px; height: 28px; border-radius: 8px; background: rgba(0, 245, 212, 0.2); color: #00f5d4; display: flex; align-items: center; justify-content: center; font-size: 0.95rem; flex-shrink: 0; border: 1px solid rgba(0,245,212,0.4);">
+          🤖
+        </div>
+        <div style="background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(0, 245, 212, 0.3); border-radius: 16px; border-top-left-radius: 4px; padding: 0.85rem 1.1rem; color: #e2e8f0; font-size: 0.88rem; max-width: 82%; line-height: 1.5; box-shadow: 0 4px 15px rgba(0,0,0,0.3); word-break: break-word;">
+          ${html}
+        </div>
+      `;
 
-    msg.innerHTML = isUser ? `
-      <div style="background: linear-gradient(135deg, #7209b7, #f72585); color: #ffffff; border-radius: 16px; border-top-right-radius: 4px; padding: 0.8rem 1.1rem; font-size: 0.88rem; max-width: 80%; line-height: 1.45; box-shadow: 0 4px 15px rgba(247,37,133,0.3);">
-        ${html}
-      </div>
-      <div style="width: 28px; height: 28px; border-radius: 8px; background: rgba(247, 37, 133, 0.25); color: #f72585; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; flex-shrink: 0; font-weight: 800;">
-        👤
-      </div>
-    ` : `
-      <div style="width: 28px; height: 28px; border-radius: 8px; background: rgba(0, 245, 212, 0.2); color: #00f5d4; display: flex; align-items: center; justify-content: center; font-size: 0.95rem; flex-shrink: 0; border: 1px solid rgba(0,245,212,0.4);">
-        🤖
-      </div>
-      <div style="background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(0, 245, 212, 0.3); border-radius: 16px; border-top-left-radius: 4px; padding: 0.85rem 1.1rem; color: #e2e8f0; font-size: 0.88rem; max-width: 82%; line-height: 1.5; box-shadow: 0 4px 15px rgba(0,0,0,0.3);">
-        ${html}
-      </div>
-    `;
+      stream.appendChild(msg);
+      stream.scrollTop = stream.scrollHeight;
+    }
 
-    stream.appendChild(msg);
-    stream.scrollTop = stream.scrollHeight;
+    if (saveToStorage) {
+      const projId = this.activeAgentProjectId || this.selectedProjectId || (window.appState?.challenges?.[0]?.id) || 'default_proj';
+      this.saveAgentChatMessage(projId, html, sender);
+    }
   },
 
 
@@ -1754,9 +2004,9 @@ window.ProjectsView = {
 
     const ctaText = this.escapeHtml((selected && (pub.ctaText || selected.ctaText || vp.visitorAction)) || 'Unirse / Colaborar');
     const ctaUrl = (selected && (pub.ctaUrl || selected.ctaUrl)) || '';
-    const mainObjective = this.escapeHtml((selected && (selected.mainObjective || vp.problemSolved)) || 'Fortalecimiento del gobierno de datos');
-    const targetAudience = this.escapeHtml((selected && (selected.targetAudience || vp.targetAudience)) || 'Entidades públicas y ciudadanía');
-    const visibleCategory = this.escapeHtml((selected && (selected.categoryName || pub.visibleCategory)) || 'Gobierno de Datos / IA');
+    const mainObjective = this.escapeHtml((selected && (selected.mainObjective || vp.problemSolved)) || 'Objetivo en desarrollo');
+    const targetAudience = this.escapeHtml((selected && (selected.targetAudience || vp.targetAudience)) || 'Comunidad educativa y participantes');
+    const visibleCategory = this.escapeHtml((selected && (selected.categoryName || pub.visibleCategory)) || 'General');
     const projectState = this.escapeHtml((selected && (selected.projectState || 'En ejecución')).toString().replace('_', ' '));
 
     const des = (selected && (selected.designConfig || selected.govdata?.designConfig)) || {};
@@ -1903,10 +2153,10 @@ window.ProjectsView = {
                 </div>
 
                 <div class="inno-feature-pills">
-                  <div class="inno-feature-pill"><span>🏛️</span> Gobierno de Datos</div>
-                  <div class="inno-feature-pill"><span>🧠</span> Inteligencia Artificial</div>
-                  <div class="inno-feature-pill"><span>📊</span> Analítica Avanzada</div>
-                  <div class="inno-feature-pill"><span>⚙️</span> Transformación Digital</div>
+                  <div class="inno-feature-pill"><span>🏛️</span> ${visibleCategory}</div>
+                  <div class="inno-feature-pill"><span>🧠</span> ${(selected && selected.projectSubtype) ? this.escapeHtml(selected.projectSubtype) : 'Innovación'}</div>
+                  <div class="inno-feature-pill"><span>📊</span> ${(selected && selected.difficulty) ? this.escapeHtml(selected.difficulty) : 'Didáctico'}</div>
+                  <div class="inno-feature-pill"><span>⚙️</span> ${(selected && selected.projectType) ? this.escapeHtml(selected.projectType).toUpperCase() : 'PROYECTO'}</div>
                 </div>
               </div>
 

@@ -2848,6 +2848,9 @@ collectCurrentStepInputs() {
         <button type="button" class="plp-doc-btn outline" style="justify-content:flex-start; font-size:0.8rem; padding:0.5rem 0.75rem;" onclick="window.ProjectWizard.aiSuggestPresentationStructure()">
           📊 Sugerir diapositivas para la Landing
         </button>
+        <button type="button" class="plp-doc-btn outline" style="justify-content:flex-start; font-size:0.8rem; padding:0.5rem 0.75rem;" onclick="window.ProjectWizard.aiProposeCaseStudy()">
+          📁 Proponer Caso Práctico situacional
+        </button>
         <button type="button" class="plp-doc-btn outline" style="justify-content:flex-start; font-size:0.8rem; padding:0.5rem 0.75rem;" onclick="window.ProjectWizard.aiSynthesizeAuthorizedMaterials()">
           📑 Sintetizar materiales autorizados
         </button>
@@ -3025,6 +3028,87 @@ collectCurrentStepInputs() {
     if (window.ProjectsView) window.ProjectsView.render();
   },
 
+  aiProposeCaseStudy() {
+    this.collectCurrentStepInputs();
+    const d = this.draft;
+    const title = d.title || 'Proyecto Institucional';
+    const obj = d.mainObjective || 'Gestión y control de procesos estratégicos';
+    const prob = d.problemStatement || 'Inconsistencias documentales y riesgos de incumplimiento normativo';
+
+    let caseText = '';
+    if (/(?:aduana|tributari|dian|arancel|comercio\s+exterior|importac)/i.test(`${title} ${prob} ${obj}`)) {
+      caseText = [
+        'Caso práctico: Control aduanero y evasión de obligaciones tributarias',
+        'Una empresa colombiana denominada TecnoImport S. A. S., dedicada a la comercialización de computadores, celulares y dispositivos electrónicos, realiza operaciones de importación desde diferentes países. Durante los últimos meses, la empresa ha incrementado considerablemente el volumen de sus importaciones, pero sus declaraciones aduaneras presentan valores inferiores a los registrados en las facturas comerciales y documentos de transporte.',
+        '',
+        'Ante esta situación, la Dirección de Impuestos y Aduanas Nacionales (DIAN), en desarrollo de sus actividades de fiscalización y control aduanero, decide realizar una inspección documental y física de varias mercancías que se encuentran pendientes de nacionalización.',
+        '',
+        'Durante la revisión, los funcionarios identifican las siguientes situaciones:',
+        '- Diferencias entre el valor declarado de las mercancías y el valor consignado en las facturas comerciales.',
+        '- Documentos que no coinciden con la información suministrada por el proveedor extranjero.',
+        '- Posibles inconsistencias en la clasificación arancelaria de algunos productos.',
+        '- Indicios de que la empresa podría estar pagando menos tributos aduaneros de los legalmente correspondientes.',
+        '- Ausencia de algunos documentos exigidos para acreditar el cumplimiento de las obligaciones aduaneras.',
+        '',
+        'El representante legal de la empresa manifiesta que las diferencias se deben a errores administrativos de su departamento de comercio exterior y solicita que la DIAN permita continuar con el proceso de nacionalización mientras se corrigen los documentos.',
+        '',
+        'Sin embargo, los funcionarios consideran que existen elementos suficientes para continuar con las actuaciones de control y determinar si se han configurado infracciones aduaneras.',
+        '',
+        'Pregunta',
+        'Teniendo en cuenta las competencias de la DIAN en materia de fiscalización, control aduanero y recaudo de los tributos, ¿cuál sería la actuación más adecuada frente a los hechos identificados?',
+        '',
+        'A. Autorizar inmediatamente el levante de las mercancías, teniendo en cuenta que la empresa reconoce la existencia de errores administrativos y manifiesta su intención de corregirlos posteriormente.',
+        '',
+        'B. Iniciar las actuaciones de verificación correspondientes, contrastar la información documental y comercial, establecer si existen incumplimientos de las obligaciones aduaneras y adoptar las medidas legalmente procedentes, garantizando el debido proceso.',
+        '',
+        'C. Ordenar el cierre definitivo de la empresa y cancelar su matrícula mercantil, debido a que cualquier inconsistencia documental constituye automáticamente un delito tributario.',
+        '',
+        'D. Trasladar toda la responsabilidad a los proveedores extranjeros, debido a que la información sobre el valor y las características de las mercancías proviene del exterior.',
+        '',
+        'Respuesta correcta: B',
+        '',
+        'Justificación',
+        'La DIAN tiene facultades de fiscalización y control para verificar que las operaciones de comercio exterior se desarrollen conforme a las disposiciones legales. Ante posibles inconsistencias, debe adelantar las verificaciones correspondientes, establecer los hechos, determinar las responsabilidades y aplicar las medidas que correspondan según la normativa vigente.\n\nNo puede presumirse automáticamente la existencia de una infracción o un delito por la sola presencia de inconsistencias documentales. Las decisiones deben estar debidamente fundamentadas y respetar el debido proceso.',
+        '',
+        'Normativa de referencia: Decreto 1165 de 2019, sus modificaciones y la regulación aduanera vigente.'
+      ].join('\n');
+    } else {
+      caseText = [
+        `Caso práctico: ${title} - Análisis Situacional y Gobernanza`,
+        `En el marco de la implementación y supervisión de ${title}, el equipo de control identifica los siguientes hechos:`,
+        `- ${prob}`,
+        `- Documentos presentados con discrepancias respecto a la línea base aprobada.`,
+        `- Omisión de controles de validación en la fase de entrega preliminar.`,
+        `- Petición del ejecutor de dar por cumplida la fase argumentando falta de tiempo para subsanar los soportes.`,
+        '',
+        'Pregunta',
+        `¿Cuál es la actuación más adecuada para tutelar el objetivo general ("${obj}") garantizando el cumplimiento normativo y el debido proceso?`,
+        '',
+        'A. Aprobar sin verificación las entregas para no impactar los indicadores de cumplimiento temporal.',
+        '',
+        'B. Iniciar las actuaciones de verificación correspondientes, contrastar los informes con los documentos de soporte, evaluar posibles incumplimientos y adoptar las medidas legalmente procedentes, asegurando el debido proceso.',
+        '',
+        'C. Declarar la caducidad y cancelación automática del proyecto sin permitir explicaciones ni revisión técnica.',
+        '',
+        'D. Endilgar la totalidad de las fallas a terceros proveedores sin abrir expediente administrativo.',
+        '',
+        'Respuesta correcta: B',
+        '',
+        'Justificación',
+        'Todo proceso de gobernanza y supervisión técnica exige contrastar los hallazgos con las fuentes oficiales y adoptar decisiones proporcionales, fundadas y con estricto apego al debido proceso y las normas aplicables.',
+        '',
+        'Normativa de referencia: Normas técnicas de calidad institucional y marco regulatorio vigente.'
+      ].join('\n');
+    }
+
+    this.pendingAiProposal = {
+      type: 'case_study',
+      title: 'Caso Práctico Situacional Estructurado',
+      text: caseText
+    };
+    if (window.ProjectsView) window.ProjectsView.render();
+  },
+
   aiSynthesizeAuthorizedMaterials() {
     this.collectCurrentStepInputs();
     const d = this.draft;
@@ -3120,6 +3204,15 @@ collectCurrentStepInputs() {
     } else if (type === 'synthesis') {
       this.draft.fullDescription = editedText;
       if (!this.draft.shortDescription) this.draft.shortDescription = editedText.slice(0, 200);
+    } else if (type === 'case_study') {
+      if (window.CreatorView) {
+        const parsed = window.CreatorView.parseCaseStudyFromText(editedText);
+        if (parsed && parsed.length > 0) {
+          if (!Array.isArray(this.draft.evaluationQuestions)) this.draft.evaluationQuestions = [];
+          this.draft.evaluationQuestions.push(...parsed);
+        }
+      }
+      this.draft.caseStudyProposal = editedText;
     }
 
     this.pendingAiProposal = null;

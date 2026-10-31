@@ -132,6 +132,40 @@ window.CreatorView = {
       points: 1000
     };
 
+    if (type === 'case') {
+      return {
+        ...base,
+        type: 'case',
+        timeLimit: 60,
+        points: 1000,
+        caseTitle: 'Caso práctico: Control aduanero y evasión de obligaciones tributarias',
+        caseContext: `Una empresa colombiana denominada TecnoImport S. A. S., dedicada a la comercialización de computadores, celulares y dispositivos electrónicos, realiza operaciones de importación desde diferentes países. Durante los últimos meses, la empresa ha incrementado considerablemente el volumen de sus importaciones, pero sus declaraciones aduaneras presentan valores inferiores a los registrados en las facturas comerciales y documentos de transporte.
+
+Ante esta situación, la Dirección de Impuestos y Aduanas Nacionales (DIAN), en desarrollo de sus actividades de fiscalización y control aduanero, decide realizar una inspección documental y física de varias mercancías que se encuentran pendientes de nacionalización.
+
+Durante la revisión, los funcionarios identifican las siguientes situaciones:
+- Diferencias entre el valor declarado de las mercancías y el valor consignado en las facturas comerciales.
+- Documentos que no coinciden con la información suministrada por el proveedor extranjero.
+- Posibles inconsistencias en la clasificación arancelaria de algunos productos.
+- Indicios de que la empresa podría estar pagando menos tributos aduaneros de los legalmente correspondientes.
+- Ausencia de algunos documentos exigidos para acreditar el cumplimiento de las obligaciones aduaneras.
+
+El representante legal de la empresa manifiesta que las diferencias se deben a errores administrativos de su departamento de comercio exterior y solicita que la DIAN permita continuar con el proceso de nacionalización mientras se corrigen los documentos.
+
+Sin embargo, los funcionarios consideran que existen elementos suficientes para continuar con las actuaciones de control y determinar si se han configurado infracciones aduaneras.`,
+        text: 'Teniendo en cuenta las competencias de la DIAN en materia de fiscalización, control aduanero y recaudo de los tributos, ¿cuál sería la actuación más adecuada frente a los hechos identificados?',
+        options: [
+          { text: 'Autorizar inmediatamente el levante de las mercancías, teniendo en cuenta que la empresa reconoce la existencia de errores administrativos y manifiesta su intención de corregirlos posteriormente.', shape: '✦', color: 'opt-1' },
+          { text: 'Iniciar las actuaciones de verificación correspondientes, contrastar la información documental y comercial, establecer si existen incumplimientos de las obligaciones aduaneras y adoptar las medidas legalmente procedentes, garantizando el debido proceso.', shape: '⬢', color: 'opt-2' },
+          { text: 'Ordenar el cierre definitivo de la empresa y cancelar su matrícula mercantil, debido a que cualquier inconsistencia documental constituye automáticamente un delito tributario.', shape: '⚡', color: 'opt-3' },
+          { text: 'Trasladar toda la responsabilidad a los proveedores extranjeros, debido a que la información sobre el valor y las características de las mercancías proviene del exterior.', shape: '🛡️', color: 'opt-4' }
+        ],
+        correctAnswer: 1, // B
+        explanation: `La DIAN tiene facultades de fiscalización y control para verificar que las operaciones de comercio exterior se desarrollen conforme a las disposiciones legales. Ante posibles inconsistencias, debe adelantar las verificaciones correspondientes, establecer los hechos, determinar las responsabilidades y aplicar las medidas que correspondan según la normativa vigente.\n\nNo puede presumirse automáticamente la existencia de una infracción o un delito por la sola presencia de inconsistencias documentales. Las decisiones deben estar debidamente fundamentadas y respetar el debido proceso.`,
+        referenceNorm: 'Decreto 1165 de 2019, sus modificaciones y la regulación aduanera vigente.'
+      };
+    }
+
     if (type === 'boolean') {
       return {
         ...base,
@@ -630,6 +664,9 @@ window.CreatorView = {
             <span>📋</span> Preguntas del Reto (<span id="question-count">${totalCount.toLocaleString()}</span>)
           </h2>
           <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center;">
+            <button class="btn btn-outline" onclick="window.CreatorView.addQuestion('case')" style="border-color: #00f5d4; color: #00f5d4; font-weight: 800; box-shadow: 0 0 10px rgba(0,245,212,0.25);">
+              <span>📁</span> + Caso Práctico
+            </button>
             <button class="btn btn-outline" onclick="window.CreatorView.addQuestion('boolean')">
               <span>⚖️</span> + V / F
             </button>
@@ -709,6 +746,7 @@ window.CreatorView = {
   },
 
   renderQuestionCard(q, idx) {
+    const isCase = q.type === 'case';
     const isText = q.type === 'text';
     const isOpen = q.type === 'open';
     const isMulti = q.type === 'multi';
@@ -732,11 +770,12 @@ window.CreatorView = {
               title="Cambiar formato de esta pregunta"
             >
               <option value="single" ${q.type === 'single' || !q.type ? 'selected' : ''} style="background: var(--bg-card); color: var(--text-primary);">🔘 Selección Múltiple</option>
-              <option value="boolean" ${q.type === 'boolean' ? 'selected' : ''} style="background: var(--bg-card); color: var(--text-primary);">⚖️ Verdadero / Falso</option>
-              <option value="multi" ${q.type === 'multi' ? 'selected' : ''} style="background: var(--bg-card); color: var(--text-primary);">☑️ Varias Respuestas</option>
-              <option value="text" ${q.type === 'text' ? 'selected' : ''} style="background: var(--bg-card); color: var(--text-primary);">✍️ Respuesta Corta</option>
-              <option value="open" ${q.type === 'open' ? 'selected' : ''} style="background: var(--bg-card); color: var(--text-primary);">💬 Respuesta Abierta</option>
-              <option value="poll" ${q.type === 'poll' ? 'selected' : ''} style="background: var(--bg-card); color: var(--text-primary);">📊 Encuesta / Votación</option>
+              <option value="case" ${isCase ? 'selected' : ''} style="background: var(--bg-card); color: var(--text-primary);">📁 Caso Práctico / Situacional</option>
+              <option value="boolean" ${isBool ? 'selected' : ''} style="background: var(--bg-card); color: var(--text-primary);">⚖️ Verdadero / Falso</option>
+              <option value="multi" ${isMulti ? 'selected' : ''} style="background: var(--bg-card); color: var(--text-primary);">☑️ Varias Respuestas</option>
+              <option value="text" ${isText ? 'selected' : ''} style="background: var(--bg-card); color: var(--text-primary);">✍️ Respuesta Corta</option>
+              <option value="open" ${isOpen ? 'selected' : ''} style="background: var(--bg-card); color: var(--text-primary);">💬 Respuesta Abierta</option>
+              <option value="poll" ${isPoll ? 'selected' : ''} style="background: var(--bg-card); color: var(--text-primary);">📊 Encuesta / Votación</option>
             </select>
           </div>
 
@@ -752,6 +791,8 @@ window.CreatorView = {
                 <option value="20" ${q.timeLimit === 20 ? 'selected' : ''}>20s</option>
                 <option value="30" ${q.timeLimit === 30 ? 'selected' : ''}>30s</option>
                 <option value="60" ${q.timeLimit === 60 ? 'selected' : ''}>60s</option>
+                <option value="90" ${q.timeLimit === 90 ? 'selected' : ''}>90s</option>
+                <option value="120" ${q.timeLimit === 120 ? 'selected' : ''}>120s (Caso extenso)</option>
               </select>
             </div>
 
@@ -776,12 +817,67 @@ window.CreatorView = {
           </div>
         </div>
 
+        ${isCase ? `
+          <!-- Bloque de Caso Práctico (Situacional) -->
+          <div style="background: linear-gradient(145deg, rgba(15, 23, 42, 0.95), rgba(30, 27, 75, 0.5)); border: 2px solid #00f5d4; border-radius: var(--border-radius-md); padding: 1.25rem; margin-bottom: 1.25rem; box-shadow: 0 8px 30px rgba(0, 245, 212, 0.15);">
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 0.9rem; border-bottom: 1px solid rgba(0,245,212,0.25); padding-bottom: 0.65rem;">
+              <div style="display: flex; align-items: center; gap: 0.5rem;">
+                <span style="font-size: 1.25rem;">📁</span>
+                <span style="font-weight: 900; font-size: 1rem; color: #00f5d4; text-transform: uppercase; letter-spacing: 0.5px;">Estructura del Caso Práctico</span>
+              </div>
+              <button type="button" class="btn btn-outline btn-sm" onclick="window.CreatorView.loadCaseStudyExample(${idx})" style="border-color: #00f5d4; color: #00f5d4; font-size: 0.78rem; font-weight: 800; padding: 0.3rem 0.75rem; background: rgba(0,245,212,0.12); border-radius: 8px;" title="Cargar caso práctico de ejemplo">
+                📋 Cargar Ejemplo DIAN (Aduanas)
+              </button>
+            </div>
+
+            <!-- Título del Caso -->
+            <div style="margin-bottom: 0.9rem;">
+              <label style="display: block; font-weight: 800; font-size: 0.85rem; color: var(--neon-cyan); margin-bottom: 0.35rem;">
+                🏷️ Título del Caso Práctico:
+              </label>
+              <input 
+                type="text" 
+                placeholder="Ej: Caso práctico: Control aduanero y evasión de obligaciones tributarias"
+                value="${this.escapeAttr(q.caseTitle || '')}"
+                style="width: 100%; padding: 0.65rem 0.85rem; border-radius: 8px; background: rgba(0,0,0,0.45); border: 1.5px solid var(--border-color); color: #ffffff; font-weight: 700; font-size: 0.95rem; outline: none; box-sizing: border-box;"
+                oninput="window.CreatorView.updateQuestionCaseTitle(${idx}, this.value)"
+                onfocus="this.style.borderColor='var(--neon-cyan)'"
+                onblur="this.style.borderColor='var(--border-color)'"
+              />
+            </div>
+
+            <!-- Contexto y Hechos -->
+            <div>
+              <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.35rem;">
+                <label style="font-weight: 800; font-size: 0.85rem; color: #cbd5e1;">
+                  📖 Hechos, antecedentes y descripción de la situación (Contexto del caso):
+                </label>
+                <span style="font-size: 0.74rem; color: var(--text-secondary);">Soporta párrafos y viñetas (-)</span>
+              </div>
+              <textarea 
+                class="creator-case-context-textarea"
+                rows="6"
+                placeholder="Describe aquí la situación, hechos ocurridos, personas o entidades involucradas, viñetas de hallazgos..."
+                style="width: 100%; min-height: 120px; padding: 0.75rem 0.9rem; border-radius: 8px; background: rgba(0,0,0,0.45); border: 1.5px solid var(--border-color); color: #ffffff; font-size: 0.9rem; line-height: 1.55; outline: none; resize: vertical; font-family: inherit; box-sizing: border-box;"
+                oninput="window.CreatorView.updateQuestionCaseContext(${idx}, this.value)"
+                onfocus="this.style.borderColor='var(--neon-cyan)'"
+                onblur="this.style.borderColor='var(--border-color)'"
+              >${this.escapeHtml(q.caseContext || '')}</textarea>
+            </div>
+          </div>
+        ` : ''}
+
         <!-- Enunciado de la pregunta (Textarea autoexpandible para que preguntas extensas se lean completas) -->
         <div style="margin-bottom: 1rem;">
+          ${isCase ? `
+            <label style="display: block; font-weight: 800; font-size: 0.88rem; color: #00f5d4; margin-bottom: 0.4rem;">
+              ❓ Pregunta derivada del caso práctico:
+            </label>
+          ` : ''}
           <textarea 
             class="creator-question-textarea"
             rows="2" 
-            placeholder="Escribe aquí la pregunta..." 
+            placeholder="${isCase ? 'Escribe aquí la pregunta basada en el caso...' : 'Escribe aquí la pregunta...'}" 
             style="width: 100%; min-height: 58px; padding: 0.85rem 1rem; border-radius: var(--border-radius-md); background: var(--bg-card); border: 2px solid var(--border-color); color: var(--text-primary); font-size: 1.05rem; font-weight: 700; outline: none; resize: vertical; line-height: 1.45; font-family: inherit; overflow: hidden; box-sizing: border-box;"
             oninput="window.CreatorView.updateQuestionText(${idx}, this.value); window.CreatorView.autoResizeTextarea(this);"
             onfocus="this.style.borderColor='var(--neon-cyan)'"
@@ -893,6 +989,45 @@ window.CreatorView = {
               </div>
             `}).join('')}
           </div>
+        ` : isCase ? `
+          <!-- Opciones A, B, C, D para Caso Práctico (Verticales y cómodas para textos extensos) -->
+          <div style="margin-bottom: 0.65rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem;">
+            <span style="font-weight: 800; font-size: 0.88rem; color: #00f5d4;">
+              🔘 Alternativas de actuación / decisión (A, B, C, D) — Haz clic en una letra para marcarla como correcta:
+            </span>
+            <span style="font-size: 0.82rem; font-weight: 900; color: #10b981; background: rgba(16, 185, 129, 0.16); padding: 0.25rem 0.75rem; border-radius: 9999px; border: 1px solid rgba(16, 185, 129, 0.45);">
+              Respuesta correcta: Opción ${['A', 'B', 'C', 'D'][q.correctAnswer !== undefined ? q.correctAnswer : 0]}
+            </span>
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+            ${(q.options || []).map((opt, optIdx) => {
+              const letter = ['A', 'B', 'C', 'D'][optIdx] || (optIdx + 1);
+              const isCorr = q.correctAnswer === optIdx;
+              return `
+                <div style="display: flex; align-items: flex-start; gap: 0.75rem; background: rgba(0,0,0,0.35); border-radius: 12px; padding: 0.75rem 0.95rem; border: 2px solid ${isCorr ? '#10b981' : 'rgba(255,255,255,0.1)'}; box-shadow: ${isCorr ? '0 0 15px rgba(16,185,129,0.25)' : 'none'}; transition: all 0.2s;">
+                  <button 
+                    type="button" 
+                    title="${isCorr ? 'Opción correcta' : 'Marcar como opción correcta'}"
+                    onclick="window.CreatorView.setCorrectAnswer(${idx}, ${optIdx})"
+                    style="width: 42px; height: 42px; border-radius: 10px; border: 2px solid ${isCorr ? '#10b981' : 'rgba(255,255,255,0.25)'}; background: ${isCorr ? '#10b981' : 'rgba(255,255,255,0.06)'}; color: ${isCorr ? '#0b0f19' : '#ffffff'}; display: flex; align-items: center; justify-content: center; font-size: 1.05rem; font-weight: 900; cursor: pointer; flex-shrink: 0; margin-top: 2px; transition: transform 0.15s;"
+                    onmouseenter="this.style.transform='scale(1.08)'"
+                    onmouseleave="this.style.transform='scale(1)'"
+                  >
+                    ${isCorr ? '✓ ' + letter : letter}
+                  </button>
+
+                  <textarea 
+                    class="creator-option-textarea"
+                    rows="2"
+                    placeholder="Opción ${letter}..."
+                    style="flex: 1; min-height: 50px; padding: 0.45rem 0.6rem; border-radius: 6px; background: transparent; border: none; color: var(--text-primary); font-weight: 600; font-size: 0.92rem; outline: none; resize: vertical; font-family: inherit; line-height: 1.45; word-break: break-word; box-sizing: border-box;"
+                    oninput="window.CreatorView.updateOptionText(${idx}, ${optIdx}, this.value); window.CreatorView.autoResizeTextarea(this);"
+                  >${this.escapeHtml(opt.text)}</textarea>
+                </div>
+              `;
+            }).join('')}
+          </div>
         ` : `
           <!-- Selección Múltiple o Verdadero/Falso (1 correcta) -->
           <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 0.75rem;">
@@ -918,8 +1053,99 @@ window.CreatorView = {
             `).join('')}
           </div>
         `}
+
+        ${isCase ? `
+          <!-- Justificación y Normativa de Referencia para Caso Práctico -->
+          <div style="background: rgba(16, 185, 129, 0.08); border: 1.5px solid rgba(16, 185, 129, 0.4); border-radius: var(--border-radius-md); padding: 1.15rem 1.25rem; margin-top: 1.25rem;">
+            <div style="margin-bottom: 0.85rem;">
+              <label style="display: block; font-weight: 800; font-size: 0.88rem; color: #10b981; margin-bottom: 0.35rem;">
+                💡 Justificación de la respuesta correcta y análisis de las demás:
+              </label>
+              <textarea 
+                rows="4"
+                placeholder="Explica detalladamente por qué la opción seleccionada es la correcta y el fundamento de la decisión legal/analítica..."
+                style="width: 100%; min-height: 75px; padding: 0.65rem 0.85rem; border-radius: 8px; background: rgba(0,0,0,0.35); border: 1px solid rgba(16,185,129,0.35); color: #ffffff; font-size: 0.88rem; line-height: 1.5; outline: none; resize: vertical; font-family: inherit; box-sizing: border-box;"
+                oninput="window.CreatorView.updateQuestionExplanation(${idx}, this.value)"
+                onfocus="this.style.borderColor='#10b981'"
+                onblur="this.style.borderColor='rgba(16,185,129,0.35)'"
+              >${this.escapeHtml(q.explanation || '')}</textarea>
+            </div>
+
+            <div>
+              <label style="display: block; font-weight: 800; font-size: 0.88rem; color: #94a3b8; margin-bottom: 0.35rem;">
+                📜 Normativa de referencia / Marco legal / Fuente:
+              </label>
+              <input 
+                type="text" 
+                placeholder="Ej: Decreto 1165 de 2019, sus modificaciones y la regulación aduanera vigente."
+                value="${this.escapeAttr(q.referenceNorm || '')}"
+                style="width: 100%; padding: 0.65rem 0.85rem; border-radius: 8px; background: rgba(0,0,0,0.35); border: 1px solid rgba(255,255,255,0.15); color: #ffffff; font-size: 0.88rem; outline: none; box-sizing: border-box;"
+                oninput="window.CreatorView.updateQuestionReferenceNorm(${idx}, this.value)"
+                onfocus="this.style.borderColor='var(--neon-cyan)'"
+                onblur="this.style.borderColor='rgba(255,255,255,0.15)'"
+              />
+            </div>
+          </div>
+        ` : ''}
       </div>
     `;
+  },
+
+  updateQuestionCaseTitle(idx, val) {
+    if (this.currentChallenge?.questions?.[idx]) {
+      this.currentChallenge.questions[idx].caseTitle = val;
+    }
+  },
+
+  updateQuestionCaseContext(idx, val) {
+    if (this.currentChallenge?.questions?.[idx]) {
+      this.currentChallenge.questions[idx].caseContext = val;
+    }
+  },
+
+  updateQuestionExplanation(idx, val) {
+    if (this.currentChallenge?.questions?.[idx]) {
+      this.currentChallenge.questions[idx].explanation = val;
+    }
+  },
+
+  updateQuestionReferenceNorm(idx, val) {
+    if (this.currentChallenge?.questions?.[idx]) {
+      this.currentChallenge.questions[idx].referenceNorm = val;
+    }
+  },
+
+  loadCaseStudyExample(idx) {
+    const q = this.currentChallenge?.questions?.[idx];
+    if (!q) return;
+    q.type = 'case';
+    q.caseTitle = 'Caso práctico: Control aduanero y evasión de obligaciones tributarias';
+    q.caseContext = `Una empresa colombiana denominada TecnoImport S. A. S., dedicada a la comercialización de computadores, celulares y dispositivos electrónicos, realiza operaciones de importación desde diferentes países. Durante los últimos meses, la empresa ha incrementado considerablemente el volumen de sus importaciones, pero sus declaraciones aduaneras presentan valores inferiores a los registrados en las facturas comerciales y documentos de transporte.
+
+Ante esta situación, la Dirección de Impuestos y Aduanas Nacionales (DIAN), en desarrollo de sus actividades de fiscalización y control aduanero, decide realizar una inspección documental y física de varias mercancías que se encuentran pendientes de nacionalización.
+
+Durante la revisión, los funcionarios identifican las siguientes situaciones:
+- Diferencias entre el valor declarado de las mercancías y el valor consignado en las facturas comerciales.
+- Documentos que no coinciden con la información suministrada por el proveedor extranjero.
+- Posibles inconsistencias en la clasificación arancelaria de algunos productos.
+- Indicios de que la empresa podría estar pagando menos tributos aduaneros de los legalmente correspondientes.
+- Ausencia de algunos documentos exigidos para acreditar el cumplimiento de las obligaciones aduaneras.
+
+El representante legal de la empresa manifiesta que las diferencias se deben a errores administrativos de su departamento de comercio exterior y solicita que la DIAN permita continuar con el proceso de nacionalización mientras se corrigen los documentos.
+
+Sin embargo, los funcionarios consideran que existen elementos suficientes para continuar con las actuaciones de control y determinar si se han configurado infracciones aduaneras.`;
+    q.text = 'Teniendo en cuenta las competencias de la DIAN en materia de fiscalización, control aduanero y recaudo de los tributos, ¿cuál sería la actuación más adecuada frente a los hechos identificados?';
+    q.options = [
+      { text: 'Autorizar inmediatamente el levante de las mercancías, teniendo en cuenta que la empresa reconoce la existencia de errores administrativos y manifiesta su intención de corregirlos posteriormente.', shape: '✦', color: 'opt-1' },
+      { text: 'Iniciar las actuaciones de verificación correspondientes, contrastar la información documental y comercial, establecer si existen incumplimientos de las obligaciones aduaneras y adoptar las medidas legalmente procedentes, garantizando el debido proceso.', shape: '⬢', color: 'opt-2' },
+      { text: 'Ordenar el cierre definitivo de la empresa y cancelar su matrícula mercantil, debido a que cualquier inconsistencia documental constituye automáticamente un delito tributario.', shape: '⚡', color: 'opt-3' },
+      { text: 'Trasladar toda la responsabilidad a los proveedores extranjeros, debido a que la información sobre el valor y las características de las mercancías proviene del exterior.', shape: '🛡️', color: 'opt-4' }
+    ];
+    q.correctAnswer = 1; // B
+    q.explanation = `La DIAN tiene facultades de fiscalización y control para verificar que las operaciones de comercio exterior se desarrollen conforme a las disposiciones legales. Ante posibles inconsistencias, debe adelantar las verificaciones correspondientes, establecer los hechos, determinar las responsabilidades y aplicar las medidas que correspondan según la normativa vigente.\n\nNo puede presumirse automáticamente la existencia de una infracción o un delito por la sola presencia de inconsistencias documentales. Las decisiones deben estar debidamente fundamentadas y respetar el debido proceso.`;
+    q.referenceNorm = 'Decreto 1165 de 2019, sus modificaciones y la regulación aduanera vigente.';
+    q.timeLimit = 60;
+    this.render();
   },
 
   changeQuestionType(qIdx, newType) {
@@ -930,7 +1156,44 @@ window.CreatorView = {
     const shapes = ['✦', '⬢', '⚡', '🛡️'];
     const colors = ['opt-1', 'opt-2', 'opt-3', 'opt-4'];
 
-    if (newType === 'boolean') {
+    if (newType === 'case') {
+      if (!q.caseTitle) q.caseTitle = 'Caso práctico: Control aduanero y evasión de obligaciones tributarias';
+      if (!q.caseContext) {
+        q.caseContext = `Una empresa colombiana denominada TecnoImport S. A. S., dedicada a la comercialización de computadores, celulares y dispositivos electrónicos, realiza operaciones de importación desde diferentes países. Durante los últimos meses, la empresa ha incrementado considerablemente el volumen de sus importaciones, pero sus declaraciones aduaneras presentan valores inferiores a los registrados en las facturas comerciales y documentos de transporte.
+
+Ante esta situación, la Dirección de Impuestos y Aduanas Nacionales (DIAN), en desarrollo de sus actividades de fiscalización y control aduanero, decide realizar una inspección documental y física de varias mercancías que se encuentran pendientes de nacionalización.
+
+Durante la revisión, los funcionarios identifican las siguientes situaciones:
+- Diferencias entre el valor declarado de las mercancías y el valor consignado en las facturas comerciales.
+- Documentos que no coinciden con la información suministrada por el proveedor extranjero.
+- Posibles inconsistencias en la clasificación arancelaria de algunos productos.
+- Indicios de que la empresa podría estar pagando menos tributos aduaneros de los legalmente correspondientes.
+- Ausencia de algunos documentos exigidos para acreditar el cumplimiento de las obligaciones aduaneras.
+
+El representante legal de la empresa manifiesta que las diferencias se deben a errores administrativos de su departamento de comercio exterior y solicita que la DIAN permita continuar con el proceso de nacionalización mientras se corrigen los documentos.
+
+Sin embargo, los funcionarios consideran que existen elementos suficientes para continuar con las actuaciones de control y determinar si se han configurado infracciones aduaneras.`;
+      }
+      if (!q.text) {
+        q.text = 'Teniendo en cuenta las competencias de la DIAN en materia de fiscalización, control aduanero y recaudo de los tributos, ¿cuál sería la actuación más adecuada frente a los hechos identificados?';
+      }
+      if (!q.options || q.options.length < 4) {
+        q.options = [
+          { text: 'Autorizar inmediatamente el levante de las mercancías, teniendo en cuenta que la empresa reconoce la existencia de errores administrativos y manifiesta su intención de corregirlos posteriormente.', shape: '✦', color: 'opt-1' },
+          { text: 'Iniciar las actuaciones de verificación correspondientes, contrastar la información documental y comercial, establecer si existen incumplimientos de las obligaciones aduaneras y adoptar las medidas legalmente procedentes, garantizando el debido proceso.', shape: '⬢', color: 'opt-2' },
+          { text: 'Ordenar el cierre definitivo de la empresa y cancelar su matrícula mercantil, debido a que cualquier inconsistencia documental constituye automáticamente un delito tributario.', shape: '⚡', color: 'opt-3' },
+          { text: 'Trasladar toda la responsabilidad a los proveedores extranjeros, debido a que la información sobre el valor y las características de las mercancías proviene del exterior.', shape: '🛡️', color: 'opt-4' }
+        ];
+      }
+      if (typeof q.correctAnswer !== 'number') q.correctAnswer = 1;
+      if (!q.explanation) {
+        q.explanation = `La DIAN tiene facultades de fiscalización y control para verificar que las operaciones de comercio exterior se desarrollen conforme a las disposiciones legales. Ante posibles inconsistencias, debe adelantar las verificaciones correspondientes, establecer los hechos, determinar las responsabilidades y aplicar las medidas que correspondan según la normativa vigente.\n\nNo puede presumirse automáticamente la existencia de una infracción o un delito por la sola presencia de inconsistencias documentales. Las decisiones deben estar debidamente fundamentadas y respetar el debido proceso.`;
+      }
+      if (!q.referenceNorm) {
+        q.referenceNorm = 'Decreto 1165 de 2019, sus modificaciones y la regulación aduanera vigente.';
+      }
+      if (!q.timeLimit || q.timeLimit < 45) q.timeLimit = 60;
+    } else if (newType === 'boolean') {
       q.options = [
         { text: 'Verdadero', shape: '✦', color: 'opt-1' },
         { text: 'Falso', shape: '⬢', color: 'opt-2' }
@@ -1936,9 +2199,133 @@ d) Insulina`;
     return cols.map(c => c.replace(/^["']|["']$/g, '').trim());
   },
 
+  parseCaseStudyFromText(rawText) {
+    if (!rawText || typeof rawText !== 'string') return [];
+    const text = rawText.trim();
+    if (!text) return [];
+
+    // Dividir en bloques si hay múltiples casos prácticos
+    const blocks = text.split(/(?=\n\s*(?:Caso\s+pr[aá]ctico|Caso\s*#?\d+|Caso\s+situacional)\b)/i)
+      .map(b => b.trim())
+      .filter(Boolean);
+
+    const questions = [];
+
+    for (const block of blocks) {
+      // 1. Extraer título del caso
+      let caseTitle = '';
+      const titleMatch = block.match(/^(?:Caso\s+pr[aá]ctico|Caso\s*#?\d*|Caso\s+situacional|Situaci[oó]n|An[aá]lisis)[\:\s\-]+([^\n]+)/i);
+      if (titleMatch) {
+        caseTitle = titleMatch[1].trim();
+      } else {
+        caseTitle = 'Caso práctico: Control aduanero y evasión de obligaciones tributarias';
+      }
+
+      // 2. Extraer partes delimitadas por Pregunta / Opciones / Respuesta / Justificación / Normativa
+      let caseContext = '';
+      let qText = '';
+      let options = [];
+      let correctAnswer = 0;
+      let explanation = '';
+      let referenceNorm = '';
+
+      // Normativa de referencia
+      const normMatch = block.match(/(?:^|\n)\s*Normativa(?:\s+de\s+referencia)?[\:\s\-]+([\s\S]+?)$/i);
+      if (normMatch) {
+        referenceNorm = normMatch[1].trim();
+      }
+
+      // Justificación pedagógica
+      const justMatch = block.match(/(?:^|\n)\s*Justificaci[oó]n[\:\s\-]+([\s\S]+?)(?=\n\s*Normativa|$)/i);
+      if (justMatch) {
+        explanation = justMatch[1].trim();
+      }
+
+      // Respuesta correcta
+      const ansMatch = block.match(/Respuesta\s+correcta[\:\s]+([A-Da-d1-4])/i);
+      if (ansMatch) {
+        const val = ansMatch[1].trim().toUpperCase();
+        const map = { 'A': 0, 'B': 1, 'C': 2, 'D': 3, '1': 0, '2': 1, '3': 2, '4': 3 };
+        if (map[val] !== undefined) correctAnswer = map[val];
+      }
+
+      // Encontrar las opciones A, B, C, D
+      const optRegex = /^[A-D][\.\)\-]\s+([\s\S]+?)(?=\n\s*[A-D][\.\)\-]|\n\s*Respuesta|\n\s*Justificaci[oó]n|\n\s*Normativa|$)/gim;
+      const optMatches = [...block.matchAll(optRegex)];
+      if (optMatches && optMatches.length >= 2) {
+        options = optMatches.map(m => m[1].trim().replace(/\n+/g, ' '));
+      }
+
+      // Contexto y Enunciado de Pregunta
+      const pregSplit = block.split(/\n\s*Pregunta\b[\:\s]*/i);
+      if (pregSplit.length > 1) {
+        let rawContext = pregSplit[0].replace(/^(?:Caso\s+pr[aá]ctico|Caso\s*#?\d*|Caso\s+situacional|Situaci[oó]n|An[aá]lisis)[\:\s\-]+[^\n]+\n*/i, '').trim();
+        caseContext = rawContext;
+
+        const postPreg = pregSplit[1];
+        const firstOptIndex = postPreg.search(/\n\s*[A-D][\.\)\-]\s+/i);
+        if (firstOptIndex !== -1) {
+          qText = postPreg.substring(0, firstOptIndex).trim();
+        } else {
+          qText = postPreg.split(/\n/)[0].trim();
+        }
+      } else {
+        const firstOptIndex = block.search(/\n\s*[A-D][\.\)\-]\s+/i);
+        if (firstOptIndex !== -1) {
+          const preOpts = block.substring(0, firstOptIndex)
+            .replace(/^(?:Caso\s+pr[aá]ctico|Caso\s*#?\d*|Caso\s+situacional|Situaci[oó]n|An[aá]lisis)[\:\s\-]+[^\n]+\n*/i, '')
+            .trim();
+          
+          const qMarkIdx = preOpts.lastIndexOf('¿');
+          if (qMarkIdx !== -1) {
+            caseContext = preOpts.substring(0, qMarkIdx).trim();
+            qText = preOpts.substring(qMarkIdx).trim();
+          } else {
+            const paragraphs = preOpts.split(/\n\s*\n/).map(p => p.trim()).filter(Boolean);
+            if (paragraphs.length > 1) {
+              qText = paragraphs.pop();
+              caseContext = paragraphs.join('\n\n');
+            } else {
+              caseContext = preOpts;
+              qText = '¿Cuál sería la actuación más adecuada frente a los hechos identificados?';
+            }
+          }
+        }
+      }
+
+      if (options.length >= 2 || caseContext.length > 20) {
+        questions.push(this.buildQuestionItem(
+          qText || '¿Cuál sería la actuación más adecuada frente a los hechos identificados?',
+          options.length >= 2 ? options : ['Opción A', 'Opción B', 'Opción C', 'Opción D'],
+          correctAnswer,
+          'case',
+          90,
+          1500,
+          {
+            caseTitle,
+            caseContext,
+            explanation,
+            referenceNorm
+          }
+        ));
+      }
+    }
+
+    return questions;
+  },
+
   parseQuestions(rawText) {
     if (!rawText || !rawText.trim()) return [];
     let text = rawText.trim();
+
+    // 0. Detectar si es un Caso Práctico / Situacional estructurado
+    if (/(?:caso\s+pr[aá]ctico|caso\s+situacional|situaci[oó]n\s+problem[aá]tica)/i.test(text) || 
+        (/\bPregunta\b/i.test(text) && /\bRespuesta\s+correcta\b/i.test(text) && /\b(?:Justificaci[oó]n|Normativa)\b/i.test(text))) {
+      const caseQuestions = this.parseCaseStudyFromText(text);
+      if (caseQuestions && caseQuestions.length > 0) {
+        return caseQuestions;
+      }
+    }
 
     // 1. Detectar si es formato JSON (.json / .mentix)
     if (text.startsWith('[') || text.startsWith('{')) {
@@ -1959,7 +2346,25 @@ d) Insulina`;
                 else correct = parseInt(correct) || 0;
               }
             }
-            return this.buildQuestionItem(qText, rawOpts, correct, q.type || (rawOpts.length === 2 ? 'boolean' : 'single'), q.timeLimit || 20, q.points || 1000);
+            const item = this.buildQuestionItem(
+              qText,
+              rawOpts,
+              correct,
+              q.type || (rawOpts.length === 2 ? 'boolean' : 'single'),
+              q.timeLimit || (q.type === 'case' ? 90 : 20),
+              q.points || (q.type === 'case' ? 1500 : 1000),
+              {
+                caseTitle: q.caseTitle,
+                caseContext: q.caseContext,
+                explanation: q.explanation,
+                referenceNorm: q.referenceNorm
+              }
+            );
+            if (q.caseTitle) item.caseTitle = q.caseTitle;
+            if (q.caseContext) item.caseContext = q.caseContext;
+            if (q.explanation) item.explanation = q.explanation;
+            if (q.referenceNorm) item.referenceNorm = q.referenceNorm;
+            return item;
           });
         }
       } catch (e) {}
@@ -2182,7 +2587,7 @@ d) Insulina`;
     return parsedQuestions;
   },
 
-  buildQuestionItem(text, optionsArray, correctAnswerIndex = 0, type = 'single', timeLimit = 20, points = 1000) {
+  buildQuestionItem(text, optionsArray, correctAnswerIndex = 0, type = 'single', timeLimit = 20, points = 1000, extra = {}) {
     const isBool = type === 'boolean' || (Array.isArray(optionsArray) && optionsArray.length === 2 && (
       (optionsArray[0].toLowerCase?.().includes('verdadero') || optionsArray[0].toLowerCase?.().includes('true')) ||
       (optionsArray[1].toLowerCase?.().includes('verdadero') || optionsArray[1].toLowerCase?.().includes('true'))
@@ -2191,8 +2596,10 @@ d) Insulina`;
     const isOpen = type === 'open';
     const isPoll = type === 'poll';
     const isMulti = type === 'multi';
+    const isCase = type === 'case';
 
     const shapes = ['✦', '⬢', '⚡', '🛡️', '⬟', '💎'];
+    const caseShapes = ['A', 'B', 'C', 'D', 'E', 'F'];
     const colors = ['opt-1', 'opt-2', 'opt-3', 'opt-4', 'opt-1', 'opt-2'];
 
     if (isOpen) {
@@ -2222,6 +2629,40 @@ d) Insulina`;
         options: [],
         acceptedAnswers: [String(ans).trim()],
         correctAnswer: String(ans).trim()
+      };
+    }
+
+    if (isCase) {
+      const opts = (optionsArray || []).map((o, idx) => {
+        const txt = typeof o === 'string' ? o : (o.text || '');
+        return {
+          text: txt.trim(),
+          shape: caseShapes[idx] || shapes[idx % shapes.length],
+          color: colors[idx % colors.length]
+        };
+      });
+      while (opts.length < 4) {
+        const idx = opts.length;
+        opts.push({
+          text: `Opción ${caseShapes[idx] || (idx + 1)}`,
+          shape: caseShapes[idx] || shapes[idx % shapes.length],
+          color: colors[idx % colors.length]
+        });
+      }
+      return {
+        id: 'q_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
+        text: (text || '').trim(),
+        type: 'case',
+        caseTitle: extra.caseTitle || 'Caso práctico: Análisis situacional',
+        caseContext: extra.caseContext || '',
+        explanation: extra.explanation || '',
+        referenceNorm: extra.referenceNorm || '',
+        media: '',
+        mediaType: 'none',
+        timeLimit: timeLimit || 90,
+        points: points || 1500,
+        options: opts,
+        correctAnswer: Math.max(0, Math.min(parseInt(correctAnswerIndex) || 0, opts.length - 1))
       };
     }
 
@@ -2686,8 +3127,118 @@ d) Insulina`;
     return questions;
   },
 
+  generateCaseStudiesList(topic, count = 1, timeLimit = 90) {
+    const list = [];
+    const t = (topic || '').toLowerCase().trim();
+
+    // Banco de Casos Prácticos Estructurados
+    const bank = [
+      {
+        caseTitle: 'Control aduanero y evasión de obligaciones tributarias',
+        caseContext: `Una empresa colombiana denominada TecnoImport S. A. S., dedicada a la comercialización de computadores, celulares y dispositivos electrónicos, realiza operaciones de importación desde diferentes países. Durante los últimos meses, la empresa ha incrementado considerablemente el volumen de sus importaciones, pero sus declaraciones aduaneras presentan valores inferiores a los registrados en las facturas comerciales y documentos de transporte.
+
+Ante esta situación, la Dirección de Impuestos y Aduanas Nacionales (DIAN), en desarrollo de sus actividades de fiscalización y control aduanero, decide realizar una inspección documental y física de varias mercancías que se encuentran pendientes de nacionalización.
+
+Durante la revisión, los funcionarios identifican las siguientes situaciones:
+- Diferencias entre el valor declarado de las mercancías y el valor consignado en las facturas comerciales.
+- Documentos que no coinciden con la información suministrada por el proveedor extranjero.
+- Posibles inconsistencias en la clasificación arancelaria de algunos productos.
+- Indicios de que la empresa podría estar pagando menos tributos aduaneros de los legalmente correspondientes.
+- Ausencia de algunos documentos exigidos para acreditar el cumplimiento de las obligaciones aduaneras.
+
+El representante legal de la empresa manifiesta que las diferencias se deben a errores administrativos de su departamento de comercio exterior y solicita que la DIAN permita continuar con el proceso de nacionalización mientras se corrigen los documentos.
+
+Sin embargo, los funcionarios consideran que existen elementos suficientes para continuar con las actuaciones de control y determinar si se han configurado infracciones aduaneras.`,
+        text: 'Teniendo en cuenta las competencias de la DIAN en materia de fiscalización, control aduanero y recaudo de los tributos, ¿cuál sería la actuación más adecuada frente a los hechos identificados?',
+        options: [
+          'Autorizar inmediatamente el levante de las mercancías, teniendo en cuenta que la empresa reconoce la existencia de errores administrativos y manifiesta su intención de corregirlos posteriormente.',
+          'Iniciar las actuaciones de verificación correspondientes, contrastar la información documental y comercial, establecer si existen incumplimientos de las obligaciones aduaneras y adoptar las medidas legalmente procedentes, garantizando el debido proceso.',
+          'Ordenar el cierre definitivo de la empresa y cancelar su matrícula mercantil, debido a que cualquier inconsistencia documental constituye automáticamente un delito tributario.',
+          'Trasladar toda la responsabilidad a los proveedores extranjeros, debido a que la información sobre el valor y las características de las mercancías proviene del exterior.'
+        ],
+        correctAnswer: 1,
+        explanation: `La DIAN tiene facultades de fiscalización y control para verificar que las operaciones de comercio exterior se desarrollen conforme a las disposiciones legales. Ante posibles inconsistencias, debe adelantar las verificaciones correspondientes, establecer los hechos, determinar las responsabilidades y aplicar las medidas que correspondan según la normativa vigente.
+
+No puede presumirse automáticamente la existencia de una infracción o un delito por la sola presencia de inconsistencias documentales. Las decisiones deben estar debidamente fundamentadas y respetar el debido proceso.`,
+        referenceNorm: 'Decreto 1165 de 2019, sus modificaciones y la regulación aduanera vigente.'
+      },
+      {
+        caseTitle: 'Ciberseguridad y filtración de bases de datos financieras',
+        caseContext: `Una entidad financiera tecnológica detecta un acceso no autorizado a uno de sus servidores en la nube durante la madrugada. El equipo de auditoría interna recopila los siguientes indicios:
+- Descarga anómala de 45.000 registros con nombres, números de identificación y saldos bancarios.
+- La llave API comprometida pertenecía a un ex desarrollador cuya cuenta no fue revocada tras su retiro.
+- Los clientes afectados aún no han sido notificados para evitar pánico comercial.
+- La gerencia de tecnología propone parchar la vulnerabilidad internamente sin registrar bitácora ante la autoridad de vigilancia.
+
+El oficial de cumplimiento normativo advierte que omitir el reporte vulnera el principio de responsabilidad demostrada (Accountability).`,
+        text: 'Con base en las mejores prácticas de gobernanza de datos y el régimen de protección de información, ¿cuál es la conducta inmediata que debe adoptar la organización?',
+        options: [
+          'Ocultar el incidente de manera indefinida mientras se realiza el parche de seguridad para preservar la reputación institucional.',
+          'Notificar formalmente a la autoridad de control de protección de datos y a los titulares afectados dentro de los plazos legales, activar el protocolo forense y adoptar medidas correctivas verificables.',
+          'Culpar exclusivamente al proveedor de infraestructura en la nube y eximir a la empresa de cualquier responsabilidad administrativa.',
+          'Borrar los registros de auditoría y servidores afectados para evitar que inspectores externos encuentren evidencia del acceso.'
+        ],
+        correctAnswer: 1,
+        explanation: 'Frente a una brecha de seguridad que involucre datos sensibles, el estándar internacional (ISO/IEC 27001) y las leyes de protección de datos exigen notificación oportuna a las autoridades y a los titulares de la información, garantizando transparencia, mitigación del daño y debida diligencia.',
+        referenceNorm: 'Ley Estatutaria 1581 de 2012, Circular Externa SIC y Estándar ISO/IEC 27001:2022.'
+      },
+      {
+        caseTitle: 'Contratación pública y evaluación de ofertas con conflicto de interés',
+        caseContext: `En el marco de una licitación pública para la modernización de la infraestructura tecnológica de un municipio, el comité evaluador identifica la siguiente situación:
+- El oferente con mayor puntaje preliminar tiene como accionista mayoritario al cónyuge de una de las funcionarias del comité técnico estructurador.
+- Dicha funcionaria no declaró impedimento previo ni se apartó de la etapa de elaboración de pliegos de condiciones definitivos.
+- Los demás proponentes interponen observaciones exigiendo el rechazo inmediato o la suspensión del proceso.
+
+El ordenador del gasto debe tomar una decisión jurídica antes de la audiencia de adjudicación definitiva.`,
+        text: '¿Cuál es la actuación en derecho que debe tomar el ordenador del gasto para salvaguardar los principios de la función administrativa y el deber de selección objetiva?',
+        options: [
+          'Adjudicar directamente el contrato para no retrasar el cronograma presupuestal y archivar las observaciones sin respuesta.',
+          'Aceptar el impedimento o recusación sobreviniente, apartar a la funcionaria, ordenar la revisión técnica independiente de los pliegos y evaluar la causal de inhabilidad o conflicto de interés conforme a la ley.',
+          'Cancelar todo el presupuesto municipal y suspender indefinidamente cualquier proceso de contratación tecnológica en la región.',
+          'Sancionar penalmente de manera inmediata a todos los oferentes que presentaron observaciones al proceso de adjudicación.'
+        ],
+        correctAnswer: 1,
+        explanation: 'En la contratación estatal, la transparencia, la moralidad y la selección objetiva obligan a tramitar de inmediato cualquier conflicto de interés o impedimento, garantizando que quien estructuró pliegos no favorezca indebidamente a partes vinculadas, respetando el debido proceso de los proponentes.',
+        referenceNorm: 'Ley 80 de 1993, Ley 1150 de 2007 y Ley 1437 de 2011 (CPACA).'
+      }
+    ];
+
+    for (let i = 0; i < count; i++) {
+      const template = bank[i % bank.length];
+      list.push(this.buildQuestionItem(
+        template.text,
+        template.options,
+        template.correctAnswer,
+        'case',
+        timeLimit || 90,
+        1500,
+        {
+          caseTitle: template.caseTitle,
+          caseContext: template.caseContext,
+          explanation: template.explanation,
+          referenceNorm: template.referenceNorm
+        }
+      ));
+    }
+
+    return list;
+  },
+
   async generateQuestionsWithAI({ topic, notes, webKnowledge, count, difficulty, type, lengthMode = 'balanced', timeLimit, onProgress }) {
     let questions = [];
+
+    // Si el tipo es 'case', priorizar la generación de casos prácticos situacionales
+    if (type === 'case') {
+      if (notes && notes.length > 20) {
+        const contextual = this.getContextualQuestionsFromNotes(notes, count, 'case', timeLimit || 90);
+        questions.push(...contextual);
+      }
+      if (questions.length < count) {
+        const caseList = this.generateCaseStudiesList(topic, count - questions.length, timeLimit || 90);
+        questions.push(...caseList);
+      }
+      return questions.slice(0, count);
+    }
 
     // 1. Si el usuario proporcionó notas o texto de base, extraer preguntas contextualmente
     if (notes && notes.length > 30) {
@@ -2827,6 +3378,10 @@ d) Insulina`;
 
   cleanAIQuestionsList(questions, lengthMode = 'balanced', topic = '') {
     return (questions || []).map(q => {
+      if (q.type === 'case') {
+        // Preservar íntegra la narrativa, el caso situacional, la justificación y la normativa
+        return q;
+      }
       q.text = this.formatQuestionLength(q.text, lengthMode, topic);
       if (Array.isArray(q.options)) {
         q.options = q.options.map(opt => {
@@ -2848,6 +3403,13 @@ d) Insulina`;
   },
 
   getContextualQuestionsFromNotes(notes, count, type, timeLimit) {
+    if (type === 'case' || /(?:caso\s+pr[aá]ctico|caso\s+situacional|situaci[oó]n|dian|control\s+aduanero)/i.test(notes)) {
+      const parsedCases = this.parseCaseStudyFromText(notes);
+      if (parsedCases && parsedCases.length > 0) {
+        return parsedCases.slice(0, count);
+      }
+    }
+
     const sentences = notes
       .split(/[.\n;]+/)
       .map(s => s.trim())
