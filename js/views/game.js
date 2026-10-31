@@ -704,8 +704,225 @@ window.GameView = {
     return this.escapeHtml(str);
   },
 
+  /* 🏛️ MODO CASOS PEDAGÓGICOS SITUACIONALES (CELULAR Y COMPUTADOR) */
+  renderPedagogicalCaseQuestion(container, q, opts = {}) {
+    const isHost = !!opts.isHost;
+    const isSolo = !!opts.isSolo;
+    const isPlayer = !!opts.isPlayer;
+
+    this.selectedCaseOption = null;
+    this.caseSubmitted = false;
+
+    const totalQuestions = this.challenge?.questions?.length || 1;
+    const questionNumber = this.currentQuestionIndex + 1;
+    const challengeTitle = this.challenge?.title || 'CONCURSO DE MÉRITOS DOCENTES - CNSC';
+    const themeTitle = q.caseTitle || q.competence || q.theme || 'EVALUACIÓN FORMATIVA';
+
+    const localPlayer = isSolo
+      ? this.room?.players?.[0]
+      : (window.realtimeEngine ? window.realtimeEngine.localPlayer : null);
+    const currentScore = localPlayer?.score || 0;
+    const totalPlayers = this.room?.players?.length || 0;
+
+    const rawOptions = q.options || [];
+    let displayOptions = rawOptions;
+    this.playerOptionMapping = null;
+
+    if (rawOptions.length > 1) {
+      this.playerOptionMapping = rawOptions.map((_, i) => i);
+      displayOptions = rawOptions;
+    }
+
+    const letters = ['A', 'B', 'C', 'D', 'E', 'F'];
+
+    container.innerHTML = `
+      <div class="pedagogical-case-wrapper">
+        <div class="pedagogical-case-card">
+          <!-- 1. Cabecera Superior: Subtítulo con Barra Roja y Estadísticas -->
+          <div class="pedagogical-case-top-bar">
+            <span class="pedagogical-case-subtitle">${this.escapeHtml(challengeTitle)}</span>
+            <div class="pedagogical-case-red-line"></div>
+            <div class="pedagogical-case-top-stats">
+              <div class="pedagogical-case-timer-pill">
+                ⏱️ <span id="timer-text">${this.timeLeft}</span>s
+              </div>
+              ${!isHost ? `
+                <div class="pedagogical-case-score-pill">
+                  🏆 <span id="player-score-val">${currentScore}</span> PTS
+                </div>
+              ` : `
+                <div class="pedagogical-case-score-pill" style="background:#eff6ff; border-color:#bfdbfe; color:#1d4ed8;">
+                  👥 <span id="host-responses-num">0</span>/${totalPlayers} Respuestas
+                </div>
+              `}
+              <button 
+                type="button" 
+                class="btn btn-outline" 
+                style="padding: 0.2rem 0.55rem; font-size: 0.85rem; border-radius: 8px; border: 1px solid #cbd5e1; background: #ffffff; color: #64748b; cursor: pointer;" 
+                onclick="if(confirm('¿Deseas salir del examen?')) window.appRouter.navigate('home');" 
+                title="Salir del examen"
+              >
+                🚪
+              </button>
+            </div>
+          </div>
+
+          <!-- 2. Fila Principal: Número Rojo Gigante | Título del Caso / Competencia -->
+          <div class="pedagogical-case-title-row">
+            <div class="pedagogical-case-number">${questionNumber}</div>
+            <div class="pedagogical-case-vertical-divider"></div>
+            <div class="pedagogical-case-theme">${this.escapeHtml(themeTitle)}</div>
+          </div>
+
+          <!-- 3. Grilla de Contenido: 2 Columnas en Computador, 1 Columna en Celular -->
+          <div class="pedagogical-case-grid">
+            <!-- Columna Izquierda: Situación del Caso y Pregunta en Negrita -->
+            <div class="pedagogical-case-left">
+              <div class="pedagogical-case-context-text">${this.escapeHtml(q.caseContext || '')}</div>
+
+              ${q.media && q.mediaType === 'image' ? `
+                <div style="text-align: center; margin: 0.5rem 0;">
+                  <img src="${q.media}" alt="Pregunta" style="max-height: 220px; max-width: 100%; border-radius: 12px; object-fit: contain; box-shadow: 0 4px 15px rgba(0,0,0,0.08);" />
+                </div>
+              ` : ''}
+
+              <div class="pedagogical-case-question-statement">${this.escapeHtml(q.text || '')}</div>
+
+              ${q.referenceNorm ? `
+                <div class="pedagogical-case-norm-box">
+                  <strong>⚖️ Marco normativo:</strong> ${this.escapeHtml(q.referenceNorm)}
+                </div>
+              ` : ''}
+
+              <!-- Contenedor Dinámico para Feedback y Justificación -->
+              <div id="pedagogical-feedback-container" style="display: none;"></div>
+            </div>
+
+            <!-- Columna Derecha: Tarjetas de Opciones A, B, C... -->
+            <div class="pedagogical-case-right">
+              <div class="pedagogical-case-options-list" id="pedagogical-options-grid">
+                ${displayOptions.map((opt, displayIdx) => {
+                  const letter = letters[displayIdx] || String.fromCharCode(65 + displayIdx);
+                  const optText = this.getOptionText(opt);
+                  const isClickable = !isHost;
+                  return `
+                    <button
+                      type="button"
+                      class="pedagogical-case-option-card"
+                      id="pedagogical-opt-${displayIdx}"
+                      data-index="${displayIdx}"
+                      ${isClickable ? `onclick="window.GameView.onSelectCaseOption(${displayIdx})"` : 'disabled'}
+                    >
+                      <span class="pedagogical-case-badge-circle">${letter}</span>
+                      <span class="pedagogical-case-option-text">${this.escapeHtml(optText)}</span>
+                    </button>
+                  `;
+                }).join('')}
+              </div>
+
+              <!-- Botones de Acción (Enviar Respuestas y Siguiente) -->
+              <div class="pedagogical-case-actions-bar">
+                ${!isHost ? `
+                  <button
+                    type="button"
+                    class="pedagogical-btn-submit"
+                    id="btn-case-submit"
+                    onclick="window.GameView.onSubmitCaseAnswer()"
+                  >
+                    <span>Enviar Respuestas</span>
+                  </button>
+                  <button
+                    type="button"
+                    class="pedagogical-btn-next"
+                    id="btn-case-next"
+                    onclick="window.GameView.onNextCaseQuestion()"
+                  >
+                    <span>Siguiente</span>
+                  </button>
+                ` : `
+                  <button
+                    type="button"
+                    class="pedagogical-btn-next"
+                    id="btn-case-host-next"
+                    onclick="window.GameView.finishQuestionHost()"
+                  >
+                    <span>Mostrar Resultados ⏩</span>
+                  </button>
+                `}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+
+    this.startQuestionTimer();
+  },
+
+  onSelectCaseOption(displayIdx) {
+    if (this.hasAnswered || this.caseSubmitted || this.questionFinished) return;
+    this.selectedCaseOption = displayIdx;
+
+    document.querySelectorAll('.pedagogical-case-option-card').forEach(btn => {
+      btn.classList.remove('is-selected');
+    });
+
+    const activeBtn = document.getElementById(`pedagogical-opt-${displayIdx}`);
+    if (activeBtn) {
+      activeBtn.classList.add('is-selected');
+    }
+
+    if (window.soundEngine && window.soundEngine.playClick) {
+      window.soundEngine.playClick();
+    }
+  },
+
+  onSubmitCaseAnswer() {
+    if (this.hasAnswered || this.caseSubmitted || this.questionFinished) return;
+
+    if (this.selectedCaseOption === null || this.selectedCaseOption === undefined) {
+      if (window.showToast) {
+        window.showToast('Por favor selecciona una opción (A, B, C...) antes de enviar.', 'info');
+      } else {
+        alert('Por favor selecciona una opción (A, B, C...) antes de enviar.');
+      }
+      return;
+    }
+
+    this.caseSubmitted = true;
+    const submitBtn = document.getElementById('btn-case-submit');
+    if (submitBtn) {
+      submitBtn.setAttribute('disabled', 'true');
+      submitBtn.style.opacity = '0.65';
+      submitBtn.innerHTML = `<span>✓ Enviada</span>`;
+    }
+
+    this.handleSelectAnswer(this.selectedCaseOption);
+  },
+
+  onNextCaseQuestion() {
+    if (!this.caseSubmitted && !this.hasAnswered && this.selectedCaseOption !== null && this.selectedCaseOption !== undefined) {
+      this.onSubmitCaseAnswer();
+    }
+
+    const isLastQuestion = this.currentQuestionIndex >= this.challenge.questions.length - 1;
+    if (isLastQuestion) {
+      if (this.isSelfPaced() && !this.isSolo) {
+        this.finishSelfPacedStudentExam();
+      } else {
+        this.finishGame();
+      }
+    } else {
+      this.nextQuestion();
+    }
+  },
+
   /* 🎓 PANTALLA DEL PROFESOR / HOST (PROYECCIÓN EN VIVO CON FORMAS Y COLORES TE RETO) */
   renderKahootHostQuestion(container, q) {
+    if (q.type === 'case' || q.caseContext) {
+      this.renderPedagogicalCaseQuestion(container, q, { isHost: true });
+      return;
+    }
     const totalPlayers = this.room?.players?.length || 0;
     const isTwoOptions = (q.options || []).length === 2;
     const isTextOrOpen = q.type === 'text' || q.type === 'open';
@@ -869,13 +1086,16 @@ window.GameView = {
 
   /* 📱 PANTALLA DEL ALUMNO / JUGADOR */
   renderKahootPlayerQuestion(container, q) {
+    const isNormalRoom = this.room?.roomType === 'normal';
+    if (q.type === 'case' || q.caseContext) {
+      this.renderPedagogicalCaseQuestion(container, q, { isPlayer: true, isSolo: false, isNormalRoom });
+      return;
+    }
+
     const isTwoOptions = (q.options || []).length === 2;
     const isTextOrOpen = q.type === 'text' || q.type === 'open';
     const isMulti = q.type === 'multi' || (Array.isArray(q.correctAnswer) && !isTextOrOpen);
     this.multiSelected = [];
-
-    // Determinar si es Sala Normal (examen individual en cada dispositivo) o Preguntas Presentadas
-    const isNormalRoom = this.room?.roomType === 'normal';
 
     // 🎲 En Sala Normal los alumnos leen la pregunta y opciones en su propia pantalla (se pueden aleatorizar opciones)
     // 📽️ En Sala con Preguntas Presentadas: el alumno mira la pantalla del profesor/anfitrión,
@@ -1017,22 +1237,7 @@ window.GameView = {
                   onclick="${isMulti ? `window.GameView.toggleMultiOption(${displayIdx})` : `window.GameView.handleSelectAnswer(${displayIdx})`}"
                   style="cursor: pointer;"
                 >
-                  ${(q.type === 'case' || q.caseContext) ? `
-          <!-- Tarjeta del Caso Práctico para el Estudiante -->
-          <div class="case-study-hero-card" style="margin: 0.5rem 0 1rem; background: rgba(11, 19, 43, 0.96); border: 2px solid #00f5d4; border-radius: 16px; padding: 1.15rem 1.35rem; text-align: left; box-shadow: 0 8px 24px rgba(0, 245, 212, 0.18); max-height: 280px; overflow-y: auto;">
-            <div style="display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; margin-bottom: 0.6rem; border-bottom: 1px solid rgba(0,245,212,0.3); padding-bottom: 0.5rem;">
-              <span style="font-size: 0.78rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: #00f5d4; background: rgba(0,245,212,0.14); padding: 0.2rem 0.6rem; border-radius: 6px;">
-                📁 Caso Práctico
-              </span>
-              <span style="font-weight: 800; font-size: 0.95rem; color: #ffffff;">${this.escapeHtml(q.caseTitle || 'Análisis Situacional')}</span>
-            </div>
-            <div style="color: #f1f5f9; font-size: 0.92rem; line-height: 1.65; white-space: pre-wrap; font-family: inherit;">
-              ${this.escapeHtml(q.caseContext || '')}
-            </div>
-          </div>
-        ` : ''}
-
-        ${isNormalRoom ? `
+                  ${isNormalRoom ? `
                     <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.45rem; width: 100%; height: 100%; padding: 0.85rem; text-align: center; box-sizing: border-box;">
                       <div class="pad-shape" style="height: auto; width: auto;">${shapeDef.svg}</div>
                       <div class="pad-option-text" style="color: #ffffff; font-weight: 800; font-size: clamp(0.95rem, 2.5vw, 1.3rem); line-height: 1.25; text-shadow: 0 2px 10px rgba(0,0,0,0.85); max-width: 95%; word-break: break-word;">
@@ -1074,6 +1279,11 @@ window.GameView = {
 
   /* ⚡ MODO SOLITARIO (PRÁCTICA CON FORMAS TE RETO) */
   renderSoloQuestion(container, q) {
+    if (q.type === 'case' || q.caseContext) {
+      this.renderPedagogicalCaseQuestion(container, q, { isSolo: true });
+      return;
+    }
+
     const isTwoOptions = (q.options || []).length === 2;
     const isTextOrOpen = q.type === 'text' || q.type === 'open';
     const isMulti = q.type === 'multi' || (Array.isArray(q.correctAnswer) && !isTextOrOpen);
@@ -2598,6 +2808,62 @@ window.GameView = {
       scoreValEl.classList.remove('score-bump');
       void scoreValEl.offsetWidth; // trigger reflow
       scoreValEl.classList.add('score-bump');
+    }
+
+    if (q.type === 'case' || q.caseContext) {
+      // 🏛️ RETROALIMENTACIÓN IN-SITU EN FORMATO PEDAGÓGICO OFICIAL
+      const pickedDisplay = this.selectedCaseOption !== null && this.selectedCaseOption !== undefined 
+        ? this.selectedCaseOption 
+        : (this.playerOptionMapping ? this.playerOptionMapping.indexOf(this.selectedAnswer) : this.selectedAnswer);
+
+      (q.options || []).forEach((opt, idx) => {
+        const btn = document.getElementById(`pedagogical-opt-${idx}`);
+        if (btn) {
+          btn.setAttribute('disabled', 'true');
+          if (idx === correctIdx) {
+            btn.classList.add('is-correct');
+            btn.classList.remove('is-wrong');
+          } else if (idx === pickedDisplay && !isCorrect) {
+            btn.classList.add('is-wrong');
+          }
+        }
+      });
+
+      const feedbackContainer = document.getElementById('pedagogical-feedback-container');
+      if (feedbackContainer) {
+        const letters = ['A', 'B', 'C', 'D', 'E', 'F'];
+        const correctLetter = letters[correctIdx] || (correctIdx + 1);
+        const correctText = this.getOptionText(q.options?.[correctIdx]);
+        feedbackContainer.innerHTML = `
+          <div class="pedagogical-feedback-box">
+            <div style="font-weight: 800; color: ${isCorrect ? '#15803d' : '#b91c1c'}; font-size: 1.05rem; margin-bottom: 0.65rem; display: flex; align-items: center; gap: 0.45rem;">
+              <span>${isCorrect ? '✅ ¡Respuesta Correcta!' : (isTimeout ? '⏱️ ¡Tiempo Agotado!' : '❌ Respuesta Incorrecta')}</span>
+              ${!isCorrect ? `<span style="font-size: 0.92rem; color: #475569; font-weight: 600;">(Opción clave: <strong>${correctLetter} - ${this.escapeHtml(correctText)}</strong>)</span>` : ''}
+            </div>
+            ${q.explanation ? `
+              <div style="font-size: 0.82rem; font-weight: 800; text-transform: uppercase; color: #0284c7; margin-bottom: 0.35rem; display: flex; align-items: center; gap: 0.35rem;">
+                <span>💡</span> Justificación Pedagógica:
+              </div>
+              <div style="color: #334155; font-size: 0.95rem; line-height: 1.65; white-space: pre-wrap;">
+                ${this.escapeHtml(q.explanation)}
+              </div>
+            ` : ''}
+            ${q.referenceNorm ? `
+              <div style="margin-top: 0.75rem; padding-top: 0.6rem; border-top: 1px dashed #cbd5e1; font-size: 0.88rem; color: #b91c1c;">
+                <strong>⚖️ Marco normativo:</strong> <span style="color: #1e293b; font-weight: 600;">${this.escapeHtml(q.referenceNorm)}</span>
+              </div>
+            ` : ''}
+          </div>
+        `;
+        feedbackContainer.style.display = 'block';
+      }
+
+      const nextBtn = document.getElementById('btn-case-next');
+      if (nextBtn) {
+        nextBtn.style.boxShadow = '0 0 20px rgba(2, 132, 199, 0.7)';
+        nextBtn.style.transform = 'scale(1.03)';
+      }
+      return;
     }
 
     // 4. Mostrar BANDA DIAGONAL EN TODA LA PÁGINA (en document.body para abarcar toda la pantalla)
