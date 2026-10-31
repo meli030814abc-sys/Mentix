@@ -5047,3 +5047,17 @@ body.light-theme .project-code-fullpage input {
   margin: 0 !important;
   background: transparent !important;
 }
+
+
+/* Pantalla inmersiva de Unirse a Proyecto y Asistente (Fondo Rosa/Amarillo Futurista) */
+#view-projects:has(#project-join-form),
+#view-projects:has(.gdn-wizard-shell) {
+  padding: 0 !important;
+  margin: 0 !important;
+  background: transparent !important;
+}
+
+body.projects-pure-white-theme #view-projects:has(.gdn-wizard-shell) {
+  background: transparent !important;
+  background-image: none !important;
+}

@@ -272,8 +272,6 @@ window.ProjectsView = {
     const container = document.getElementById('view-projects');
     if (!container) return;
 
-    document.body.classList.add('projects-pure-white-theme');
-
     const u = window.appState.currentUser;
     const isTeacherOrAdmin = this.isTeacherOrAdmin();
     // En MENTIX, los proyectos abarcan: Presentaciones, Video Clases, Documentos Didácticos, Enlaces Web/URL y Proyectos GovData Nexus
@@ -284,23 +282,15 @@ window.ProjectsView = {
     const navEl = document.getElementById('main-navbar');
     if (this.viewMode === 'wizard') {
       if (navEl) navEl.style.display = 'none';
+      document.body.classList.remove('projects-pure-white-theme');
+      container.style.padding = '0';
+      container.style.margin = '0';
+      container.style.background = 'transparent';
       if (window.ProjectWizard) {
         window.ProjectWizard.render(container);
         return;
       }
-    } else {
-      if (navEl && (!window.appRouter || !['lobby-join', 'game', 'leaderboard', 'podium'].includes(window.appRouter.currentView))) {
-        navEl.style.display = '';
-      }
-    }
-
-    if (this.viewMode === 'selector') {
-      this.renderProjectSelectorView(container);
-      return;
-    }
-
-    if (this.viewMode === 'join') {
-      const navEl = document.getElementById('main-navbar');
+    } else if (this.viewMode === 'join') {
       if (navEl) navEl.style.display = 'none';
       document.body.classList.remove('projects-pure-white-theme');
       container.style.padding = '0';
@@ -309,9 +299,18 @@ window.ProjectsView = {
       this.renderProjectJoinView(container);
       return;
     } else {
+      document.body.classList.add('projects-pure-white-theme');
+      if (navEl && (!window.appRouter || !['lobby-join', 'game', 'leaderboard', 'podium'].includes(window.appRouter.currentView))) {
+        navEl.style.display = '';
+      }
       container.style.padding = '';
       container.style.margin = '';
       container.style.background = '';
+    }
+
+    if (this.viewMode === 'selector') {
+      this.renderProjectSelectorView(container);
+      return;
     }
 
     if (this.viewMode === 'landing') {
@@ -912,7 +911,6 @@ window.ProjectsView = {
       });
       if (matchedDraft) {
         if (window.soundEngine && window.soundEngine.playSuccess) window.soundEngine.playSuccess();
-        this.closeJoinProjectModal();
         window.ProjectWizard.openWizard(matchedDraft.id, 1);
         return;
       }
@@ -924,7 +922,6 @@ window.ProjectsView = {
       } else if (window.soundEngine && window.soundEngine.playClick) {
         window.soundEngine.playClick();
       }
-      this.closeJoinProjectModal();
       window.ProjectWizard.openWizard(matchedProject.id, 1);
       return;
     }
@@ -932,7 +929,6 @@ window.ProjectsView = {
     // Si coincide con código personalizado creado por el profesor
     if (matchedCustom) {
       if (window.soundEngine && window.soundEngine.playSuccess) window.soundEngine.playSuccess();
-      this.closeJoinProjectModal();
       window.ProjectWizard.openWizard(matchedCustom.projectId || null, 1);
       return;
     }
@@ -945,14 +941,13 @@ window.ProjectsView = {
       errEl.innerHTML = `
         <div style="margin-bottom: 0.5rem;">❌ Código <strong>${this.escapeHtml(clean)}</strong> no encontrado.</div>
         <div style="font-weight: 500; font-size: 0.82rem; opacity: 0.9; margin-bottom: 0.65rem;">Puedes verificarlo con tu docente o iniciar un nuevo proyecto con este código:</div>
-        <button type="button" onclick="window.ProjectsView.closeJoinProjectModal(); window.ProjectWizard.openWizard(null, 1);" style="background: linear-gradient(135deg, #10b981, #059669); color: #fff; border: none; padding: 0.45rem 1rem; border-radius: 8px; font-weight: 800; font-size: 0.85rem; cursor: pointer; box-shadow: 0 4px 12px rgba(16,185,129,0.35);">
+        <button type="button" onclick="window.ProjectWizard.openWizard(null, 1);" style="background: linear-gradient(135deg, #10b981, #059669); color: #fff; border: none; padding: 0.45rem 1rem; border-radius: 8px; font-weight: 800; font-size: 0.85rem; cursor: pointer; box-shadow: 0 4px 12px rgba(16,185,129,0.35);">
           ✨ Crear Proyecto Ahora
         </button>
       `;
       errEl.style.display = 'block';
     } else {
       if (confirm(`El código "${clean}" no existe aún. ¿Deseas iniciar la creación de un nuevo proyecto?`)) {
-        this.closeJoinProjectModal();
         window.ProjectWizard.openWizard(null, 1);
         return;
       }

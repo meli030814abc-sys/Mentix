@@ -384,6 +384,7 @@ window.ProjectWizard = {
     this.currentStep = startStep || this.draft.currentStep || 1;
     const navEl = document.getElementById('main-navbar');
     if (navEl) navEl.style.display = 'none';
+    document.body.classList.remove('projects-pure-white-theme');
 
     if (window.ProjectsView) {
       window.ProjectsView.viewMode = 'wizard';
@@ -401,7 +402,9 @@ window.ProjectWizard = {
     this.syncProjectRecordToAppState(this.draft.publicationStatus || 'draft');
     if (window.ProjectsView) {
       window.ProjectsView.viewMode = 'list';
+      document.body.classList.add('projects-pure-white-theme');
       window.ProjectsView.render();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   },
 
@@ -584,8 +587,13 @@ collectCurrentStepInputs() {
     const theme = (window.ProjectsView && window.ProjectsView.getLandingTheme) ? window.ProjectsView.getLandingTheme() : 'light';
 
     container.innerHTML = `
-      <div style="max-width: 1440px; margin: 0 auto; padding: 0.5rem 1rem 4rem;">
-        <div class="gdn-wizard-shell animate-fade-in" data-theme="${theme}">
+      <div style="min-height: 100vh; min-height: 100dvh; width: 100%; box-sizing: border-box; background: #0c0410 url('assets/mentix_project_join_bg.jpg') center center / cover no-repeat fixed; position: relative; padding: 2rem 1rem 5rem; overflow-x: hidden;">
+        
+        <!-- Overlay sutil para legibilidad perfecta conservando todo el brillo y geometrías rosa/amarillo -->
+        <div style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: radial-gradient(circle at center, rgba(30, 5, 25, 0.42) 0%, rgba(12, 4, 16, 0.78) 100%); pointer-events: none; z-index: 0;"></div>
+
+        <div style="position: relative; z-index: 2; max-width: 1360px; margin: 0 auto;">
+          <div class="gdn-wizard-shell animate-fade-in" data-theme="${theme}" style="box-shadow: 0 25px 65px rgba(0, 0, 0, 0.65), 0 0 40px rgba(247, 37, 133, 0.25); border: 2px solid rgba(247, 37, 133, 0.4);">
           
           <!-- Barra de Progreso Paso a Paso (Sin botones cortados, solo progreso limpio) -->
           <div class="gdn-wizard-progress-strip">
@@ -661,6 +669,7 @@ collectCurrentStepInputs() {
           </div>
 
         </div>
+      </div>
       </div>
     `;
   },
@@ -3334,7 +3343,9 @@ collectCurrentStepInputs() {
     alert(`💾 El proyecto "${rec.title}" se ha guardado como Borrador privado. No aparecerá públicamente hasta que decidas publicarlo.`);
     if (window.ProjectsView) {
       window.ProjectsView.viewMode = 'list';
+      document.body.classList.add('projects-pure-white-theme');
       window.ProjectsView.render();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   },
 
