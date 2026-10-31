@@ -138,31 +138,18 @@ window.CreatorView = {
         type: 'case',
         timeLimit: 60,
         points: 1000,
-        caseTitle: 'Caso práctico: Control aduanero y evasión de obligaciones tributarias',
-        caseContext: `Una empresa colombiana denominada TecnoImport S. A. S., dedicada a la comercialización de computadores, celulares y dispositivos electrónicos, realiza operaciones de importación desde diferentes países. Durante los últimos meses, la empresa ha incrementado considerablemente el volumen de sus importaciones, pero sus declaraciones aduaneras presentan valores inferiores a los registrados en las facturas comerciales y documentos de transporte.
-
-Ante esta situación, la Dirección de Impuestos y Aduanas Nacionales (DIAN), en desarrollo de sus actividades de fiscalización y control aduanero, decide realizar una inspección documental y física de varias mercancías que se encuentran pendientes de nacionalización.
-
-Durante la revisión, los funcionarios identifican las siguientes situaciones:
-- Diferencias entre el valor declarado de las mercancías y el valor consignado en las facturas comerciales.
-- Documentos que no coinciden con la información suministrada por el proveedor extranjero.
-- Posibles inconsistencias en la clasificación arancelaria de algunos productos.
-- Indicios de que la empresa podría estar pagando menos tributos aduaneros de los legalmente correspondientes.
-- Ausencia de algunos documentos exigidos para acreditar el cumplimiento de las obligaciones aduaneras.
-
-El representante legal de la empresa manifiesta que las diferencias se deben a errores administrativos de su departamento de comercio exterior y solicita que la DIAN permita continuar con el proceso de nacionalización mientras se corrigen los documentos.
-
-Sin embargo, los funcionarios consideran que existen elementos suficientes para continuar con las actuaciones de control y determinar si se han configurado infracciones aduaneras.`,
-        text: 'Teniendo en cuenta las competencias de la DIAN en materia de fiscalización, control aduanero y recaudo de los tributos, ¿cuál sería la actuación más adecuada frente a los hechos identificados?',
+        caseTitle: '',
+        caseContext: '',
+        text: '',
         options: [
-          { text: 'Autorizar inmediatamente el levante de las mercancías, teniendo en cuenta que la empresa reconoce la existencia de errores administrativos y manifiesta su intención de corregirlos posteriormente.', shape: '✦', color: 'opt-1' },
-          { text: 'Iniciar las actuaciones de verificación correspondientes, contrastar la información documental y comercial, establecer si existen incumplimientos de las obligaciones aduaneras y adoptar las medidas legalmente procedentes, garantizando el debido proceso.', shape: '⬢', color: 'opt-2' },
-          { text: 'Ordenar el cierre definitivo de la empresa y cancelar su matrícula mercantil, debido a que cualquier inconsistencia documental constituye automáticamente un delito tributario.', shape: '⚡', color: 'opt-3' },
-          { text: 'Trasladar toda la responsabilidad a los proveedores extranjeros, debido a que la información sobre el valor y las características de las mercancías proviene del exterior.', shape: '🛡️', color: 'opt-4' }
+          { text: '', shape: '✦', color: 'opt-1' },
+          { text: '', shape: '⬢', color: 'opt-2' },
+          { text: '', shape: '⚡', color: 'opt-3' },
+          { text: '', shape: '🛡️', color: 'opt-4' }
         ],
-        correctAnswer: 1, // B
-        explanation: `La DIAN tiene facultades de fiscalización y control para verificar que las operaciones de comercio exterior se desarrollen conforme a las disposiciones legales. Ante posibles inconsistencias, debe adelantar las verificaciones correspondientes, establecer los hechos, determinar las responsabilidades y aplicar las medidas que correspondan según la normativa vigente.\n\nNo puede presumirse automáticamente la existencia de una infracción o un delito por la sola presencia de inconsistencias documentales. Las decisiones deben estar debidamente fundamentadas y respetar el debido proceso.`,
-        referenceNorm: 'Decreto 1165 de 2019, sus modificaciones y la regulación aduanera vigente.'
+        correctAnswer: 0,
+        explanation: '',
+        referenceNorm: ''
       };
     }
 
@@ -1157,42 +1144,24 @@ Sin embargo, los funcionarios consideran que existen elementos suficientes para 
     const colors = ['opt-1', 'opt-2', 'opt-3', 'opt-4'];
 
     if (newType === 'case') {
-      if (!q.caseTitle) q.caseTitle = 'Caso práctico: Control aduanero y evasión de obligaciones tributarias';
-      if (!q.caseContext) {
-        q.caseContext = `Una empresa colombiana denominada TecnoImport S. A. S., dedicada a la comercialización de computadores, celulares y dispositivos electrónicos, realiza operaciones de importación desde diferentes países. Durante los últimos meses, la empresa ha incrementado considerablemente el volumen de sus importaciones, pero sus declaraciones aduaneras presentan valores inferiores a los registrados en las facturas comerciales y documentos de transporte.
-
-Ante esta situación, la Dirección de Impuestos y Aduanas Nacionales (DIAN), en desarrollo de sus actividades de fiscalización y control aduanero, decide realizar una inspección documental y física de varias mercancías que se encuentran pendientes de nacionalización.
-
-Durante la revisión, los funcionarios identifican las siguientes situaciones:
-- Diferencias entre el valor declarado de las mercancías y el valor consignado en las facturas comerciales.
-- Documentos que no coinciden con la información suministrada por el proveedor extranjero.
-- Posibles inconsistencias en la clasificación arancelaria de algunos productos.
-- Indicios de que la empresa podría estar pagando menos tributos aduaneros de los legalmente correspondientes.
-- Ausencia de algunos documentos exigidos para acreditar el cumplimiento de las obligaciones aduaneras.
-
-El representante legal de la empresa manifiesta que las diferencias se deben a errores administrativos de su departamento de comercio exterior y solicita que la DIAN permita continuar con el proceso de nacionalización mientras se corrigen los documentos.
-
-Sin embargo, los funcionarios consideran que existen elementos suficientes para continuar con las actuaciones de control y determinar si se han configurado infracciones aduaneras.`;
-      }
-      if (!q.text) {
-        q.text = 'Teniendo en cuenta las competencias de la DIAN en materia de fiscalización, control aduanero y recaudo de los tributos, ¿cuál sería la actuación más adecuada frente a los hechos identificados?';
-      }
-      if (!q.options || q.options.length < 4) {
+      if (q.caseTitle === undefined) q.caseTitle = '';
+      if (q.caseContext === undefined) q.caseContext = '';
+      if (!q.options || q.options.length < 2) {
         q.options = [
-          { text: 'Autorizar inmediatamente el levante de las mercancías, teniendo en cuenta que la empresa reconoce la existencia de errores administrativos y manifiesta su intención de corregirlos posteriormente.', shape: '✦', color: 'opt-1' },
-          { text: 'Iniciar las actuaciones de verificación correspondientes, contrastar la información documental y comercial, establecer si existen incumplimientos de las obligaciones aduaneras y adoptar las medidas legalmente procedentes, garantizando el debido proceso.', shape: '⬢', color: 'opt-2' },
-          { text: 'Ordenar el cierre definitivo de la empresa y cancelar su matrícula mercantil, debido a que cualquier inconsistencia documental constituye automáticamente un delito tributario.', shape: '⚡', color: 'opt-3' },
-          { text: 'Trasladar toda la responsabilidad a los proveedores extranjeros, debido a que la información sobre el valor y las características de las mercancías proviene del exterior.', shape: '🛡️', color: 'opt-4' }
+          { text: '', shape: '✦', color: 'opt-1' },
+          { text: '', shape: '⬢', color: 'opt-2' },
+          { text: '', shape: '⚡', color: 'opt-3' },
+          { text: '', shape: '🛡️', color: 'opt-4' }
         ];
       }
-      if (typeof q.correctAnswer !== 'number') q.correctAnswer = 1;
-      if (!q.explanation) {
-        q.explanation = `La DIAN tiene facultades de fiscalización y control para verificar que las operaciones de comercio exterior se desarrollen conforme a las disposiciones legales. Ante posibles inconsistencias, debe adelantar las verificaciones correspondientes, establecer los hechos, determinar las responsabilidades y aplicar las medidas que correspondan según la normativa vigente.\n\nNo puede presumirse automáticamente la existencia de una infracción o un delito por la sola presencia de inconsistencias documentales. Las decisiones deben estar debidamente fundamentadas y respetar el debido proceso.`;
+      while (q.options.length < 4) {
+        const idx = q.options.length;
+        q.options.push({ text: '', shape: shapes[idx % shapes.length], color: colors[idx % colors.length] });
       }
-      if (!q.referenceNorm) {
-        q.referenceNorm = 'Decreto 1165 de 2019, sus modificaciones y la regulación aduanera vigente.';
-      }
-      if (!q.timeLimit || q.timeLimit < 45) q.timeLimit = 60;
+      if (typeof q.correctAnswer !== 'number') q.correctAnswer = 0;
+      if (q.explanation === undefined) q.explanation = '';
+      if (q.referenceNorm === undefined) q.referenceNorm = '';
+      if (!q.timeLimit || q.timeLimit < 30) q.timeLimit = 60;
     } else if (newType === 'boolean') {
       q.options = [
         { text: 'Verdadero', shape: '✦', color: 'opt-1' },
@@ -2218,7 +2187,7 @@ d) Insulina`;
       if (titleMatch) {
         caseTitle = titleMatch[1].trim();
       } else {
-        caseTitle = 'Caso práctico: Control aduanero y evasión de obligaciones tributarias';
+        caseTitle = 'Caso práctico';
       }
 
       // 2. Extraer partes delimitadas por Pregunta / Opciones / Respuesta / Justificación / Normativa
@@ -2653,7 +2622,7 @@ d) Insulina`;
         id: 'q_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
         text: (text || '').trim(),
         type: 'case',
-        caseTitle: extra.caseTitle || 'Caso práctico: Análisis situacional',
+        caseTitle: extra.caseTitle || '',
         caseContext: extra.caseContext || '',
         explanation: extra.explanation || '',
         referenceNorm: extra.referenceNorm || '',
