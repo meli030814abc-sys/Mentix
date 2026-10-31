@@ -2781,14 +2781,21 @@ d) Insulina`;
     const difficulty = diffSelect ? diffSelect.value : 'Medio';
     const type = typeSelect ? typeSelect.value : 'single';
     const lengthMode = lengthSelect ? lengthSelect.value : 'balanced';
-    const timeLimit = timeSelect ? parseInt(timeSelect.value) || 20 : 20;
+    let timeLimit = timeSelect ? parseInt(timeSelect.value) || 20 : 20;
+    if (type === 'case' && timeLimit < 45) {
+      timeLimit = 60; // Dar suficiente tiempo para lectura de casos situacionales
+    }
     const replace = replaceCheck ? replaceCheck.checked : true;
 
     // Feedback visual animado
     if (loader) loader.style.display = 'block';
     if (submitBtn) submitBtn.disabled = true;
 
-    if (loadText) loadText.textContent = `🔍 Búsqueda rápida en vivo: Consultando conocimientos sobre "${topic}"...`;
+    if (loadText) {
+      loadText.textContent = type === 'case'
+        ? `🔍 Búsqueda en vivo: Analizando casos y literatura técnica sobre "${topic}"...`
+        : `🔍 Búsqueda rápida en vivo: Consultando conocimientos sobre "${topic}"...`;
+    }
 
     // 1. Realizar búsqueda rápida enciclopédica en la web (Wikipedia / DuckDuckGo)
     let webKnowledge = null;
@@ -2799,15 +2806,23 @@ d) Insulina`;
     }
 
     if (webKnowledge && loadText) {
-      loadText.textContent = `🌐 Búsqueda completada (${webKnowledge.source}: "${webKnowledge.title}"). Sintetizando preguntas académicas...`;
+      loadText.textContent = type === 'case'
+        ? `🌐 Base de conocimiento obtenida (${webKnowledge.source}: "${webKnowledge.title}"). Diseñando casos prácticos situacionales...`
+        : `🌐 Búsqueda completada (${webKnowledge.source}: "${webKnowledge.title}"). Sintetizando preguntas académicas...`;
     } else if (loadText) {
-      loadText.textContent = `📚 Consultando base de conocimientos de carreras universitarias y escolares...`;
+      loadText.textContent = type === 'case'
+        ? `📚 Consultando marcos normativos y metodológicos para "${topic}"...`
+        : `📚 Consultando base de conocimientos de carreras universitarias y escolares...`;
     }
 
     await new Promise(resolve => setTimeout(resolve, 350));
 
     try {
-      if (loadText) loadText.textContent = `✨ Formulando ${count.toLocaleString()} preguntas pedagógicas...`;
+      if (loadText) {
+        loadText.textContent = type === 'case'
+          ? `✨ Estructurando ${count.toLocaleString()} casos prácticos contextualizados sobre "${topic}"...`
+          : `✨ Formulando ${count.toLocaleString()} preguntas pedagógicas...`;
+      }
       const generatedQuestions = await this.generateQuestionsWithAI({
         topic,
         notes,
@@ -2819,7 +2834,9 @@ d) Insulina`;
         timeLimit,
         onProgress: (current, total) => {
           if (loadText) {
-            loadText.textContent = `✨ Formulando preguntas pedagógicas (${current.toLocaleString()} de ${total.toLocaleString()})...`;
+            loadText.textContent = type === 'case'
+              ? `✨ Estructurando casos prácticos situacionales (${current.toLocaleString()} de ${total.toLocaleString()})...`
+              : `✨ Formulando preguntas pedagógicas (${current.toLocaleString()} de ${total.toLocaleString()})...`;
           }
         }
       });
@@ -2841,8 +2858,8 @@ d) Insulina`;
       // Configurar título y metadatos limpios sin signos de puntuación según lo solicitado
       const cleanTopicClean = this.cleanAIText(topic.trim());
       const cleanTitle = cleanTopicClean.charAt(0).toUpperCase() + cleanTopicClean.slice(1);
-      this.currentChallenge.title = this.cleanAIText(`Reto de ${cleanTitle}`);
-      this.currentChallenge.description = this.cleanAIText(`Cuestionario interactivo de evaluación y destreza sobre ${cleanTopicClean.toLowerCase()}`);
+      this.currentChallenge.title = this.cleanAIText(type === 'case' ? `Casos Prácticos de ${cleanTitle}` : `Reto de ${cleanTitle}`);
+      this.currentChallenge.description = this.cleanAIText(type === 'case' ? `Evaluación de análisis situacional y toma de decisiones sobre ${cleanTopicClean.toLowerCase()}` : `Cuestionario interactivo de evaluación y destreza sobre ${cleanTopicClean.toLowerCase()}`);
       this.currentChallenge.difficulty = difficulty;
       this.currentChallenge.timePerQuestion = timeLimit;
       this.currentChallenge.banner = this.getTopicBanner(topic);
@@ -3096,15 +3113,19 @@ d) Insulina`;
     return questions;
   },
 
-  generateCaseStudiesList(topic, count = 1, timeLimit = 90) {
+  generateCaseStudiesList(topic, count = 1, timeLimit = 90, webKnowledge = null, notes = '') {
     const list = [];
-    const t = (topic || '').toLowerCase().trim();
+    const rawTopic = (topic || '').trim();
+    const cleanTopic = rawTopic ? (rawTopic.charAt(0).toUpperCase() + rawTopic.slice(1)) : 'Análisis Profesional';
+    const t = rawTopic.toLowerCase();
 
-    // Banco de Casos Prácticos Estructurados
-    const bank = [
-      {
-        caseTitle: 'Control aduanero y evasión de obligaciones tributarias',
-        caseContext: `Una empresa colombiana denominada TecnoImport S. A. S., dedicada a la comercialización de computadores, celulares y dispositivos electrónicos, realiza operaciones de importación desde diferentes países. Durante los últimos meses, la empresa ha incrementado considerablemente el volumen de sus importaciones, pero sus declaraciones aduaneras presentan valores inferiores a los registrados en las facturas comerciales y documentos de transporte.
+    // 1. Bancos Especializados por Disciplinas y Áreas del Conocimiento
+    const domainBanks = {
+      // --- ADUANAS, COMERCIO EXTERIOR Y RÉGIMEN TRIBUTARIO ---
+      aduanas: [
+        {
+          caseTitle: 'Control aduanero y evasión de obligaciones tributarias',
+          caseContext: `Una empresa colombiana denominada TecnoImport S. A. S., dedicada a la comercialización de computadores, celulares y dispositivos electrónicos, realiza operaciones de importación desde diferentes países. Durante los últimos meses, la empresa ha incrementado considerablemente el volumen de sus importaciones, pero sus declaraciones aduaneras presentan valores inferiores a los registrados en las facturas comerciales y documentos de transporte.
 
 Ante esta situación, la Dirección de Impuestos y Aduanas Nacionales (DIAN), en desarrollo de sus actividades de fiscalización y control aduanero, decide realizar una inspección documental y física de varias mercancías que se encuentran pendientes de nacionalización.
 
@@ -3118,74 +3139,343 @@ Durante la revisión, los funcionarios identifican las siguientes situaciones:
 El representante legal de la empresa manifiesta que las diferencias se deben a errores administrativos de su departamento de comercio exterior y solicita que la DIAN permita continuar con el proceso de nacionalización mientras se corrigen los documentos.
 
 Sin embargo, los funcionarios consideran que existen elementos suficientes para continuar con las actuaciones de control y determinar si se han configurado infracciones aduaneras.`,
-        text: 'Teniendo en cuenta las competencias de la DIAN en materia de fiscalización, control aduanero y recaudo de los tributos, ¿cuál sería la actuación más adecuada frente a los hechos identificados?',
-        options: [
-          'Autorizar inmediatamente el levante de las mercancías, teniendo en cuenta que la empresa reconoce la existencia de errores administrativos y manifiesta su intención de corregirlos posteriormente.',
-          'Iniciar las actuaciones de verificación correspondientes, contrastar la información documental y comercial, establecer si existen incumplimientos de las obligaciones aduaneras y adoptar las medidas legalmente procedentes, garantizando el debido proceso.',
-          'Ordenar el cierre definitivo de la empresa y cancelar su matrícula mercantil, debido a que cualquier inconsistencia documental constituye automáticamente un delito tributario.',
-          'Trasladar toda la responsabilidad a los proveedores extranjeros, debido a que la información sobre el valor y las características de las mercancías proviene del exterior.'
-        ],
-        correctAnswer: 1,
-        explanation: `La DIAN tiene facultades de fiscalización y control para verificar que las operaciones de comercio exterior se desarrollen conforme a las disposiciones legales. Ante posibles inconsistencias, debe adelantar las verificaciones correspondientes, establecer los hechos, determinar las responsabilidades y aplicar las medidas que correspondan según la normativa vigente.
+          text: 'Teniendo en cuenta las competencias de la DIAN en materia de fiscalización, control aduanero y recaudo de los tributos, ¿cuál sería la actuación más adecuada frente a los hechos identificados?',
+          options: [
+            'Autorizar inmediatamente el levante de las mercancías, teniendo en cuenta que la empresa reconoce la existencia de errores administrativos y manifiesta su intención de corregirlos posteriormente.',
+            'Iniciar las actuaciones de verificación correspondientes, contrastar la información documental y comercial, establecer si existen incumplimientos de las obligaciones aduaneras y adoptar las medidas legalmente procedentes, garantizando el debido proceso.',
+            'Ordenar el cierre definitivo de la empresa y cancelar su matrícula mercantil, debido a que cualquier inconsistencia documental constituye automáticamente un delito tributario.',
+            'Trasladar toda la responsabilidad a los proveedores extranjeros, debido a que la información sobre el valor y las características de las mercancías proviene del exterior.'
+          ],
+          correctAnswer: 1,
+          explanation: `La DIAN tiene facultades de fiscalización y control para verificar que las operaciones de comercio exterior se desarrollen conforme a las disposiciones legales. Ante posibles inconsistencias, debe adelantar las verificaciones correspondientes, establecer los hechos, determinar las responsabilidades y aplicar las medidas que correspondan según la normativa vigente.\n\nNo puede presumirse automáticamente la existencia de una infracción o un delito por la sola presencia de inconsistencias documentales. Las decisiones deben estar debidamente fundamentadas y respetar el debido proceso.`,
+          referenceNorm: 'Decreto 1165 de 2019, sus modificaciones y la regulación aduanera vigente.'
+        },
+        {
+          caseTitle: 'Clasificación arancelaria y presunto dumping en importaciones siderúrgicas',
+          caseContext: `Una comercializadora internacional declara la importación de 120 toneladas de perfiles de acero aleado bajo una subpartida arancelaria exenta de aranceles de salvaguardia. No obstante, el laboratorio químico de aduanas toma muestras aleatorias durante la inspección física y encuentra:
+- El porcentaje de carbono y manganeso no corresponde al acero aleado sino a perfiles de acero al carbono común sujetos a medidas antidumping del 35%.
+- El certificado de calidad emitido por el molino de origen presenta enmiendas y sellos no concordantes con los registros oficiales.
+- El importador alega buena fe y sostiene que el error fue de despacho por parte del fabricante asiático.
+- La mercancía permanece en zona primaria aduanera con vencimiento próximo del término de almacenamiento.`,
+          text: '¿Cuál es el procedimiento legal y técnico que debe aplicar la autoridad aduanera para salvaguardar el recaudo tributario y la industria nacional?',
+          options: [
+            'Nacionalizar la mercancía con la subpartida declarada por el importador para evitar sobrecostos de bodegaje en el puerto.',
+            'Reclasificar provisionalmente la mercancía con base en el dictamen técnico del laboratorio oficial, liquidar los gravámenes y derechos antidumping correspondientes y conceder término legal al declarante para presentar controversia arancelaria garantizada.',
+            'Confiscar y fundir inmediatamente el material sin permitir pruebas de descargo ni apelación.',
+            'Devolver la mercancía a altamar sin iniciar expediente administrativo sancionatorio ni registro de antecedentes.'
+          ],
+          correctAnswer: 1,
+          explanation: 'El dictamen del laboratorio aduanero prevalece como prueba técnica sobre la clasificación arancelaria. La autoridad debe aplicar la subpartida real, cobrar los derechos omitidos y garantizar el derecho de defensa mediante garantías aduaneras.',
+          referenceNorm: 'Arancel de Aduanas de Colombia, Reglas Generales de Interpretación del Sistema Armonizado y Decreto 1165 de 2019.'
+        }
+      ],
 
-No puede presumirse automáticamente la existencia de una infracción o un delito por la sola presencia de inconsistencias documentales. Las decisiones deben estar debidamente fundamentadas y respetar el debido proceso.`,
-        referenceNorm: 'Decreto 1165 de 2019, sus modificaciones y la regulación aduanera vigente.'
-      },
-      {
-        caseTitle: 'Ciberseguridad y filtración de bases de datos financieras',
-        caseContext: `Una entidad financiera tecnológica detecta un acceso no autorizado a uno de sus servidores en la nube durante la madrugada. El equipo de auditoría interna recopila los siguientes indicios:
+      // --- MEDICINA, CIENCIAS DE LA SALUD Y ENFERMERÍA ---
+      salud: [
+        {
+          caseTitle: 'Manejo de crisis hipertensiva con sospecha de daño en órgano blanco',
+          caseContext: `Ingresa al servicio de urgencias un paciente masculino de 58 años con cifras tensionales de 210/125 mmHg, cefalea pulsátil intensa, visión borrosa y diaforesis profusa. En el triaje y evaluación inicial se registran los siguientes hallazgos:
+- Fondo de ojo revela exudados algodonosos y edema papilar incipiente.
+- Electrocardiograma muestra sobrecarga ventricular izquierda con cambios del segmento ST.
+- Creatinina sérica elevada a 2.4 mg/dL sin antecedentes de nefropatía previa conocida.
+- El familiar acompañante solicita administrar nifedipino sublingual de acción inmediata de forma insistente para bajar la presión rápido.
+
+El médico de guardia debe definir la conducta terapéutica inmediata en la unidad de reanimación.`,
+          text: 'Frente al cuadro clínico de emergencia hipertensiva (con daño agudo de órgano blanco), ¿cuál es la conducta médica farmacológica adecuada según los protocolos internacionales?',
+          options: [
+            'Administrar nifedipino sublingual para descender la presión arterial a valores normales (<120/80 mmHg) en menos de 15 minutos.',
+            'Iniciar infusión endovenosa continua de antihipertensivo titulable (ej. labetalol o nitroprusiato) en UCI monitorizada, buscando reducir la presión arterial media entre 15% y 25% en la primera hora para prevenir isquemia cerebral o miocárdica.',
+            'Dar de alta al paciente con prescripción oral y cita de control ambulatorio en una semana.',
+            'Indicar reposo en cama sin medicamentos y esperar a que los niveles tensionales desciendan espontáneamente.'
+          ],
+          correctAnswer: 1,
+          explanation: 'En emergencias hipertensivas con daño de órgano blanco, el descenso de la presión arterial debe ser controlado y paulatino (15-25% de la PAM en la 1ra hora) con fármacos endovenosos titulables. Desensos bruscos con nifedipino sublingual causan hipoperfusión cerebral, ACV o infarto.',
+          referenceNorm: 'Guías de Práctica Clínica del American College of Cardiology / AHA y Guía Europea de Hipertensión (ESC/ESH).'
+        },
+        {
+          caseTitle: 'Dilema de consentimiento informado y transfusión en paciente crítico',
+          caseContext: `Un paciente de 26 años ingresa inconsciente a quirófano por trauma cerrado de abdomen en shock hipovolémico severo secundario a ruptura esplénica. Durante la preparación quirúrgica se identifica lo siguiente:
+- Hemoglobina de 5.2 g/dL con sangrado activo intraperitoneal masivo.
+- En sus pertenencias personales porta un documento autenticado de directiva anticipada que rechaza transfusiones sanguíneas por convicciones religiosas.
+- Los familiares directos presentes suplican a los cirujanos transfundir sangre para salvarle la vida.
+- El equipo quirúrgico se debate entre la directiva previa documentada y el deber de preservación de la vida ante inminente paro cardiorrespiratorio.`,
+          text: 'En el marco de la bioética clínica y el régimen del consentimiento informado y voluntades anticipadas, ¿cuál es la decisión ético-jurídica preponderante?',
+          options: [
+            'Ignorar por completo la voluntad anticipada del paciente por considerar que la vida biológica prima sobre la autonomía individual en cualquier circunstancia.',
+            'Respetar la voluntad anticipada válidamente manifestada por el paciente, agotar alternativas de soporte hemodinámico no sanguíneas (expansores, recuperador celular si está permitido, hemostasia quirúrgica precoz) documentando rigurosamente la deliberación médica en la historia clínica.',
+            'Transferir al paciente a otro hospital para eludir la toma de decisiones clínicas difíciles.',
+            'Suspender la intervención quirúrgica y abandonar la atención del paciente por objeción institucional de conciencia.'
+          ],
+          correctAnswer: 1,
+          explanation: 'El derecho fundamental a la autonomía personal y la libertad de conciencia amparan el rechazo terapéutico mediante directivas anticipadas legalmente válidas. El equipo médico debe respetar la voluntad y agotar todas las técnicas alternativas disponibles.',
+          referenceNorm: 'Resolución 2665 de 2018 del Ministerio de Salud (Voluntades Anticipadas), Ley 23 de 1981 de Ética Médica y jurisprudencia constitucional.'
+        }
+      ],
+
+      // --- DERECHO, LEYES Y CIENCIAS JURÍDICAS ---
+      derecho: [
+        {
+          caseTitle: 'Exclusión de prueba ilícita y cláusula de exclusión en proceso penal',
+          caseContext: `En el desarrollo de una audiencia preparatoria dentro de un proceso penal por delitos contra la administración pública, la defensa técnica solicita la exclusión de una grabación magnetofónica clave aportada por la fiscalía:
+- La grabación contiene una conversación privada telefónica entre el imputado y su asesor contable.
+- La interceptación fue realizada por investigadores de policía judicial sin orden previa de interceptación expedida por el fiscal ni control posterior de legalidad ante el Juez de Control de Garantías.
+- La fiscalía argumenta que la conversación es de trascendental interés público para esclarecer el desfalco patrimonial.
+- El juez de conocimiento debe resolver la solicitud de nulidad y exclusión probatoria.`,
+          text: 'De acuerdo con el debido proceso probatorio y el artículo 29 de la Constitución, ¿cuál debe ser la decisión del Juez de Conocimiento?',
+          options: [
+            'Admitir la grabación porque la gravedad del delito investigado justifica prescindir de autorizaciones judiciales.',
+            'Decretar la exclusión probatoria de la grabación magnetofónica y de todas las pruebas derivadas de manera directa de ella (fruto del árbol ponzoñoso), por haber sido obtenida con violación flagrante de derechos fundamentales y sin orden judicial previa.',
+            'Suspender el proceso y solicitar al Ministerio Público que valide la grabación retroactivamente.',
+            'Condenar de plano al acusado utilizando la grabación antes de iniciar el juicio oral.'
+          ],
+          correctAnswer: 1,
+          explanation: 'Toda prueba obtenida con vulneración de las garantías fundamentales (en este caso la intimidad e inviolabilidad de las comunicaciones sin orden judicial) es nula de pleno derecho según el Art. 29 Superior y la regla de exclusión de la Ley 906 de 2004.',
+          referenceNorm: 'Artículo 29 de la Constitución Política de Colombia y Artículos 23 y 455 de la Ley 906 de 2004 (Código de Procedimiento Penal).'
+        },
+        {
+          caseTitle: 'Despido con presunto fuero de estabilidad laboral reforzada',
+          caseContext: `Una compañía desvincula sin justa causa y con indemnización ordinaria a un analista operativo. Posteriormente, la empresa es notificada de una acción de tutela donde se alegan los siguientes antecedentes:
+- Tres semanas antes de la terminación del contrato, el trabajador fue diagnosticado con una enfermedad degenerativa incapacitante que afectaba sustancialmente su rendimiento.
+- El trabajador había radicado copia de los conceptos médicos ante el departamento de Gestión Humana.
+- La empresa no solicitó autorización previa ante el Ministerio del Trabajo antes de emitir la carta de terminación.
+- La empresa sostiene que el despido obedeció a una reorganización de nómina y no a un acto de discriminación.`,
+          text: '¿Cuál es la consecuencia jurídica que la jurisprudencia constitucional impone frente al despido de una persona con afectación seria de salud sin permiso ministerial?',
+          options: [
+            'Se valida el despido porque la empresa canceló la indemnización por despido sin justa causa.',
+            'Se presume la discriminación por motivos de salud; el despido se declara ineficaz, ordenando el reintegro al cargo, el pago de salarios y prestaciones dejados de percibir y la sanción de 180 días de salario.',
+            'Se ordena el traslado definitivo del trabajador a otra ciudad con reducción de salario.',
+            'Se condena al trabajador por no haber informado su enfermedad antes de firmar el contrato original.'
+          ],
+          correctAnswer: 1,
+          explanation: 'La estabilidad laboral reforzada protege a los trabajadores con afectaciones de salud. Despedirlos sin autorización del Ministerio del Trabajo genera presunción de discriminación, tornando el despido ineficaz con derecho a reintegro e indemnización especial.',
+          referenceNorm: 'Artículo 26 de la Ley 361 de 1997 y Sentencias de Unificación de la Corte Constitucional (SU-049/17 y SU-087/22).'
+        }
+      ],
+
+      // --- INTELIGENCIA ARTIFICIAL, MACHINE LEARNING Y CIENCIA DE DATOS ---
+      ia: [
+        {
+          caseTitle: 'Sesgo algorítmico y discriminación sistemática en modelo de contratación',
+          caseContext: `Una empresa global de tecnología implementa un modelo de Machine Learning para preseleccionar a los mejores candidatos a puestos directivos de ingeniería. A los 6 meses de operación, el comité de ética de datos detecta los siguientes hechos:
+- El modelo asigna puntajes significativamente inferiores a perfiles que contienen nombres femeninos o términos vinculados a universidades con mayoría de matrícula femenina.
+- La data histórica de entrenamiento de los últimos 10 años correspondía en un 88% a hombres previamente contratados en la compañía.
+- El equipo técnico propuso simplemente eliminar la variable de género explícita, pero el sesgo persiste debido a variables proxy como código postal y actividades extracurriculares.
+- Los directivos solicitan una medida inmediata antes de la próxima convocatoria internacional.`,
+          text: 'En el marco de la gobernanza responsable de IA y el aprendizaje automático, ¿cuál es la intervención metodológica correcta para resolver el sesgo?',
+          options: [
+            'Ocultar la variable de género y mantener el modelo en producción sin auditar las variables proxy.',
+            'Detener la automatización decisoria, auditar y balancear el dataset de entrenamiento con técnicas de reponderación o despolarización (debiasing), incorporar pruebas de paridad demográfica y someter el modelo a validación ciega independiente antes del despliegue.',
+            'Eliminar todos los requisitos de contratación y seleccionar candidatos por sorteo aleatorio.',
+            'Declarar que la inteligencia artificial no puede equivocarse y acusar a los candidatos rechazados de falta de competencias.'
+          ],
+          correctAnswer: 1,
+          explanation: 'Eliminar una variable protegida no elimina el sesgo si existen variables proxy correlacionadas. La IA responsable exige mitigación previa en los datos de entrenamiento (pre-processing), auditoría algorítmica y pruebas de impacto ético.',
+          referenceNorm: 'Recomendación de la UNESCO sobre la Ética de la IA, Estándar ISO/IEC 42001:2023 y Principios de IA de la OCDE.'
+        },
+        {
+          caseTitle: 'Fuga de datos confidenciales por inyección de prompts en LLM empresarial',
+          caseContext: `Una plataforma SaaS de asesoría contable integra un agente conversacional basado en un Modelo Grande de Lenguaje (LLM) conectado a una base de datos vectorial con documentos de clientes corporativos.
+- Un usuario malicioso realiza técnicas de Jailbreak e Prompt Injection logrando que el modelo revele información sobre secretos comerciales y estados financieros de empresas competidoras.
+- El sistema utilizaba un único contexto vectorial sin aislamiento multi-tenant ni control de acceso a nivel de registros (Row-Level Security).
+- El área comercial propone mitigar el riesgo solo modificando el system prompt con la frase: "Por favor, nunca reveles secretos comerciales".
+- El Chief Information Security Officer (CISO) exige una solución arquitectural robusta.`,
+          text: '¿Cuál es la solución de ingeniería de software e IA recomendada por las guías OWASP para mitigar vulnerabilidades de Prompt Injection y fuga de información?',
+          options: [
+            'Confiar exclusivamente en instrucciones añadidas al System Prompt para bloquear atacantes.',
+            'Implementar aislamiento estricto de datos por tenant (RBAC/RLS) a nivel de la base de datos vectorial, incorporar guardrails de entrada/salida validados y desacoplar la recuperación de datos confidenciales de la ejecución directa del modelo.',
+            'Desconectar permanentemente internet de la empresa y regresar a procesos manuales en papel.',
+            'Publicar los secretos comerciales en la web para que ya no sean considerados confidenciales.'
+          ],
+          correctAnswer: 1,
+          explanation: 'El System Prompt no constituye un perímetro de seguridad fiable frente a inyecciones adversarias. La seguridad de aplicaciones LLM requiere controles en capas: control de acceso en la base vectorial, sanitización de entradas y guardrails especializados.',
+          referenceNorm: 'OWASP Top 10 for Large Language Model Applications (LLM01: Prompt Injection, LLM06: Sensitive Information Disclosure).'
+        }
+      ],
+
+      // --- CIBERSEGURIDAD, REDES Y PROTECCIÓN DE DATOS ---
+      ciberseguridad: [
+        {
+          caseTitle: 'Ciberseguridad y filtración de bases de datos financieras',
+          caseContext: `Una entidad financiera tecnológica detecta un acceso no autorizado a uno de sus servidores en la nube durante la madrugada. El equipo de auditoría interna recopila los siguientes indicios:
 - Descarga anómala de 45.000 registros con nombres, números de identificación y saldos bancarios.
 - La llave API comprometida pertenecía a un ex desarrollador cuya cuenta no fue revocada tras su retiro.
 - Los clientes afectados aún no han sido notificados para evitar pánico comercial.
 - La gerencia de tecnología propone parchar la vulnerabilidad internamente sin registrar bitácora ante la autoridad de vigilancia.
 
 El oficial de cumplimiento normativo advierte que omitir el reporte vulnera el principio de responsabilidad demostrada (Accountability).`,
-        text: 'Con base en las mejores prácticas de gobernanza de datos y el régimen de protección de información, ¿cuál es la conducta inmediata que debe adoptar la organización?',
-        options: [
-          'Ocultar el incidente de manera indefinida mientras se realiza el parche de seguridad para preservar la reputación institucional.',
-          'Notificar formalmente a la autoridad de control de protección de datos y a los titulares afectados dentro de los plazos legales, activar el protocolo forense y adoptar medidas correctivas verificables.',
-          'Culpar exclusivamente al proveedor de infraestructura en la nube y eximir a la empresa de cualquier responsabilidad administrativa.',
-          'Borrar los registros de auditoría y servidores afectados para evitar que inspectores externos encuentren evidencia del acceso.'
-        ],
-        correctAnswer: 1,
-        explanation: 'Frente a una brecha de seguridad que involucre datos sensibles, el estándar internacional (ISO/IEC 27001) y las leyes de protección de datos exigen notificación oportuna a las autoridades y a los titulares de la información, garantizando transparencia, mitigación del daño y debida diligencia.',
-        referenceNorm: 'Ley Estatutaria 1581 de 2012, Circular Externa SIC y Estándar ISO/IEC 27001:2022.'
-      },
-      {
-        caseTitle: 'Contratación pública y evaluación de ofertas con conflicto de interés',
-        caseContext: `En el marco de una licitación pública para la modernización de la infraestructura tecnológica de un municipio, el comité evaluador identifica la siguiente situación:
-- El oferente con mayor puntaje preliminar tiene como accionista mayoritario al cónyuge de una de las funcionarias del comité técnico estructurador.
-- Dicha funcionaria no declaró impedimento previo ni se apartó de la etapa de elaboración de pliegos de condiciones definitivos.
-- Los demás proponentes interponen observaciones exigiendo el rechazo inmediato o la suspensión del proceso.
+          text: 'Con base en las mejores prácticas de gobernanza de datos y el régimen de protección de información, ¿cuál es la conducta inmediata que debe adoptar la organización?',
+          options: [
+            'Ocultar el incidente de manera indefinida mientras se realiza el parche de seguridad para preservar la reputación institucional.',
+            'Notificar formalmente a la autoridad de control de protección de datos y a los titulares afectados dentro de los plazos legales, activar el protocolo forense y adoptar medidas correctivas verificables.',
+            'Culpar exclusivamente al proveedor de infraestructura en la nube y eximir a la empresa de cualquier responsabilidad administrativa.',
+            'Borrar los registros de auditoría y servidores afectados para evitar que inspectores externos encuentren evidencia del acceso.'
+          ],
+          correctAnswer: 1,
+          explanation: 'Frente a una brecha de seguridad que involucre datos sensibles, el estándar internacional (ISO/IEC 27001) y las leyes de protección de datos exigen notificación oportuna a las autoridades y a los titulares de la información, garantizando transparencia, mitigación del daño y debida diligencia.',
+          referenceNorm: 'Ley Estatutaria 1581 de 2012, Circular Externa SIC y Estándar ISO/IEC 27001:2022.'
+        }
+      ],
 
-El ordenador del gasto debe tomar una decisión jurídica antes de la audiencia de adjudicación definitiva.`,
-        text: '¿Cuál es la actuación en derecho que debe tomar el ordenador del gasto para salvaguardar los principios de la función administrativa y el deber de selección objetiva?',
-        options: [
-          'Adjudicar directamente el contrato para no retrasar el cronograma presupuestal y archivar las observaciones sin respuesta.',
-          'Aceptar el impedimento o recusación sobreviniente, apartar a la funcionaria, ordenar la revisión técnica independiente de los pliegos y evaluar la causal de inhabilidad o conflicto de interés conforme a la ley.',
-          'Cancelar todo el presupuesto municipal y suspender indefinidamente cualquier proceso de contratación tecnológica en la región.',
-          'Sancionar penalmente de manera inmediata a todos los oferentes que presentaron observaciones al proceso de adjudicación.'
-        ],
-        correctAnswer: 1,
-        explanation: 'En la contratación estatal, la transparencia, la moralidad y la selección objetiva obligan a tramitar de inmediato cualquier conflicto de interés o impedimento, garantizando que quien estructuró pliegos no favorezca indebidamente a partes vinculadas, respetando el debido proceso de los proponentes.',
-        referenceNorm: 'Ley 80 de 1993, Ley 1150 de 2007 y Ley 1437 de 2011 (CPACA).'
+      // --- FINANZAS, CONTABILIDAD Y NIIF ---
+      contabilidad: [
+        {
+          caseTitle: 'Reconocimiento prematuro de ingresos en contratos plurianuales (NIIF 15)',
+          caseContext: `Una compañía desarrolladora de software empresarial firma un contrato por $1.200 millones a 3 años para implantar un ERP personalizado que incluye licencias, consultoría y soporte post-implementación. Al cierre del ejercicio contable del primer año:
+- El software apenas alcanza un grado de avance del 35% en las pruebas de aceptación técnica.
+- La dirección comercial presiona para registrar el 100% del valor total facturado como ingreso ordinario del año 1 para alcanzar las metas de bonos ejecutivos.
+- El revisor fiscal objeta el registro y advierte que no se han cumplido las obligaciones de desempeño estipuladas.
+- La gerencia argumenta que como el cliente ya desembolsó un anticipo del 60%, el dinero ya pertenece a la entidad.`,
+          text: 'Conforme a la Norma Internacional de Información Financiera NIIF 15 (Ingresos de Actividades Ordinarias procedentes de Contratos con Clientes), ¿cuál es el tratamiento contable correcto?',
+          options: [
+            'Reconocer el 100% del contrato como ingreso en el año 1 porque el contrato ya fue firmado legalmente.',
+            'Identificar las distintas obligaciones de desempeño del contrato y reconocer los ingresos únicamente a medida que se satisfagan dichas obligaciones (por ejemplo, a lo largo del tiempo según el porcentaje de terminación verificable), reconociendo el excedente como un pasivo del contrato.',
+            'No contabilizar ninguna operación hasta que pasen los 3 años del contrato.',
+            'Registrar todo el dinero recibido como donación extraordinaria no gravable.'
+          ],
+          correctAnswer: 1,
+          explanation: 'La NIIF 15 establece el modelo de los cinco pasos: los ingresos se reconocen cuando o a medida que la entidad satisface una obligación de desempeño transfiriendo el control de los bienes o servicios prometidos al cliente.',
+          referenceNorm: 'NIIF 15 (Ingresos de Actividades Ordinarias procedentes de Contratos con Clientes) y Marco Conceptual de las NIIF.'
+        }
+      ],
+
+      // --- EDUCACIÓN, PEDAGOGÍA Y DOCENCIA ---
+      educacion: [
+        {
+          caseTitle: 'Ajustes Razonables (PIAR) y diseño universal para el aprendizaje (DUA)',
+          caseContext: `En una institución educativa de educación secundaria, un estudiante diagnosticado con trastorno del espectro autista (TEA) y dificultades de procesamiento sensorial ingresa al grado octavo:
+- El estudiante presenta crisis de ansiedad recurrentes durante evaluaciones escritas tradicionales con límite de tiempo estricto en aulas con alta saturación acústica.
+- Dos docentes de asignaturas troncales argumentan que evaluar al estudiante de forma diferenciada "vulnera la igualdad frente a sus compañeros" y le asignan calificación reprobatoria.
+- La familia solicita la formulación y ejecución inmediata del Plan Individual de Ajustes Razonables (PIAR).
+- El comité de convivencia y el consejo académico deben resolver el conflicto pedagógico.`,
+          text: 'De acuerdo con los lineamientos de educación inclusiva y el marco normativo pedagógico, ¿cuál es la obligación directiva y docente frente a la situación del estudiante?',
+          options: [
+            'Exigir que el estudiante se adapte al sistema general de evaluación escrita tradicional sin ninguna consideración especial.',
+            'Construir y aplicar de forma concertada el PIAR, flexibilizando tiempos, escenarios sensoriales y formatos de evaluación bajo el enfoque DUA, garantizando el derecho a la educación inclusiva sin que ello signifique rebajar la calidad de los aprendizajes esperados.',
+            'Sugerir a la familia retirar al estudiante y matricularlo en un centro no escolarizado.',
+            'Exonerar al estudiante de asistir a clases y otorgarle la aprobación automática sin mediación pedagógica.'
+          ],
+          correctAnswer: 1,
+          explanation: 'La educación inclusiva exige garantizar ajustes razonables individualizados (PIAR) y barreras mínimas de acceso al conocimiento (DUA). La verdadera equidad radica en ofrecer apoyos acordes a las particularidades de cada estudiante.',
+          referenceNorm: 'Decreto 1421 de 2017 (Educación Inclusiva en Colombia), Convención sobre los Derechos de las Personas con Discapacidad y Ley 115 de 1994.'
+        }
+      ],
+
+      // --- PSICOLOGÍA Y SALUD MENTAL ---
+      psicologia: [
+        {
+          caseTitle: 'Secreto profesional clínico frente al deber de protección de terceros',
+          caseContext: `Durante una sesión de psicoterapia privada, un paciente adulto con diagnóstico de trastorno de personalidad limítrofe y antecedentes de impulsividad manifiesta a su terapeuta:
+- Planes concretos, detallados y con medios adquiridos (arma blanca) para atentar contra la integridad física de su expareja en las próximas 48 horas.
+- El paciente prohíbe taxativamente al psicólogo revelar lo conversado, recordando la inviolabilidad del secreto profesional bajo sanción deontológica.
+- El psicólogo evalúa que la amenaza es inminente, creíble y con víctima identificable.
+- El profesional debe decidir su actuación en el marco de la ética y la legislación vigente.`,
+          text: 'Frente al conflicto entre el secreto profesional y el riesgo inminente de daño grave o muerte a terceros (Doctrina Tarasoff y Código Deontológico), ¿cuál es la conducta ético-legal apropiada?',
+          options: [
+            'Guardar silencio absoluto en cualquier circunstancia, pues el secreto profesional nunca puede levantarse bajo ninguna hipótesis.',
+            'Quebrantar justificadamente el secreto profesional en la medida estrictamente necesaria para advertir a las autoridades competentes y a la víctima en riesgo inminente, documentando el estado de necesidad y las evidencias clínicas en la historia clínica.',
+            'Publicar la confesión del paciente en redes sociales para advertir a la comunidad.',
+            'Abandonar el tratamiento del paciente sin realizar ninguna notificación de seguridad.'
+          ],
+          correctAnswer: 1,
+          explanation: 'El secreto profesional en psicología encuentra su límite ético y legal ante el peligro real, grave e inminente contra la vida o integridad física del propio consultante o de terceras personas (principio de mal menor y deber de protección).',
+          referenceNorm: 'Ley 1090 de 2006 (Código Deontológico y Bioético del Psicólogo en Colombia) y Criterio Jurisprudencial Tarasoff.'
+        }
+      ]
+    };
+
+    // 2. Determinar si el tema coincide con alguno de los dominios estructurados
+    let matchedBank = null;
+    if (/aduana|tributari|dian|arancel|comercio\s+exterior|importac|exportac|impuesto/i.test(t)) {
+      matchedBank = domainBanks.aduanas;
+    } else if (/salud|m[eé]dic|medicina|enferm|farmac|hospital|quir|urgencia|paciente|cl[ií]nic/i.test(t)) {
+      matchedBank = domainBanks.salud;
+    } else if (/derecho|ley|leyes|jur[ií]dic|penal|civil|laboral|abogad|juez|fiscal|constituc|tribunal/i.test(t)) {
+      matchedBank = domainBanks.derecho;
+    } else if (/inteligencia\s+artificial|\bia\b|\bai\b|machine\s+learning|llm|deep\s+learning|algoritmo|data\s+science/i.test(t)) {
+      matchedBank = domainBanks.ia;
+    } else if (/ciberseguridad|seguridad\s+de\s+la\s+informaci[oó]n|hacker|ransomware|firewall|brecha|malware|pentest/i.test(t)) {
+      matchedBank = domainBanks.ciberseguridad;
+    } else if (/contab|finanz|niif|auditor|tribut|balance|ingreso|costo|activo|fiscalidad/i.test(t)) {
+      matchedBank = domainBanks.contabilidad;
+    } else if (/educa|pedagog|docen|maestr|colegio|escuela|evaluaci[oó]n|aula|estudiante|curricular/i.test(t)) {
+      matchedBank = domainBanks.educacion;
+    } else if (/psicol|terapia|salud\s+mental|conduct|emocion|psiquiatr|cogniti/i.test(t)) {
+      matchedBank = domainBanks.psicologia;
+    }
+
+    // 3. Si coincide con un banco temático, tomar preguntas de dicho banco
+    if (matchedBank && matchedBank.length > 0) {
+      for (let i = 0; i < count; i++) {
+        const item = matchedBank[i % matchedBank.length];
+        list.push(this.buildQuestionItem(
+          item.text,
+          item.options,
+          item.correctAnswer,
+          'case',
+          timeLimit || 90,
+          1500,
+          {
+            caseTitle: item.caseTitle,
+            caseContext: item.caseContext,
+            explanation: item.explanation,
+            referenceNorm: item.referenceNorm
+          }
+        ));
       }
-    ];
+      return list;
+    }
+
+    // 4. SINTETIZADOR DINÁMICO UNIVERSAL: Para cualquier otro tema específico que escriba el usuario
+    // Extrae conceptos del tema, de webKnowledge (Wikipedia / DuckDuckGo) o de notas
+    const contentCorpus = (webKnowledge?.content || notes || '').trim();
+    const sentences = contentCorpus
+      .split(/[.\n;]+/)
+      .map(s => s.trim())
+      .filter(s => s.length > 30 && !/^(categoría|ver también|referencias|enlaces externos)/i.test(s));
 
     for (let i = 0; i < count; i++) {
-      const template = bank[i % bank.length];
+      const caseNumber = i + 1;
+      const fact1 = sentences[i * 3] || `La disciplina de ${cleanTopic} opera bajo principios teóricos y metodológicos rigurosos orientados a la optimización de procesos y la toma de decisiones basada en evidencia.`;
+      const fact2 = sentences[i * 3 + 1] || `Durante la última evaluación de desempeño, se detectaron discrepancias significativas entre los resultados proyectados y los datos reales obtenidos en la implementación.`;
+      const fact3 = sentences[i * 3 + 2] || `Existen presiones operativas y limitaciones de tiempo que han llevado a miembros del equipo a proponer atajos procedimentales no validados.`;
+
+      const dynamicTitle = `Caso práctico: Aplicación crítica y resolución situacional en ${cleanTopic} (Escenario ${caseNumber})`;
+      const dynamicContext = `En una organización y equipo profesional especializado en **${cleanTopic}**, se presenta una situación crítica durante la fase de ejecución y control operativo.
+
+Durante el diagnóstico técnico y la revisión de evidencias, se identifican los siguientes hechos y hallazgos relevantes:
+- ${fact1.replace(/^[•\-\s]+/, '')}
+- ${fact2.replace(/^[•\-\s]+/, '')}
+- ${fact3.replace(/^[•\-\s]+/, '')}
+- Se identifican indicios de vulnerabilidad metodológica que podrían comprometer la validez y sostenibilidad de los resultados finales.
+- Los líderes del proyecto solicitan una intervención inmediata antes de autorizar el cierre formal de la fase.
+
+El equipo directivo y los especialistas técnicos deben definir la actuación técnica más rigurosa y justificada conforme a las mejores prácticas de la disciplina.`;
+
+      const dynamicText = `Teniendo en cuenta los fundamentos teóricos, normativos y procedimentales de ${cleanTopic}, ¿cuál es la actuación más adecuada frente a los hechos identificados?`;
+
+      const dynamicOptions = [
+        `Omitir las discrepancias detectadas y autorizar inmediatamente la continuidad del proyecto para evitar retrasos en los cronogramas comerciales.`,
+        `Iniciar las actuaciones de verificación técnica correspondientes, contrastar las evidencias con los estándares de ${cleanTopic}, subsanar las inconsistencias detectadas y adoptar las medidas correctivas pertinentes garantizando el rigor metodológico.`,
+        `Suspender de forma permanente e irrevocable todas las operaciones de la entidad y descartar todo el trabajo previo sin realizar análisis causal.`,
+        `Trasladar toda la responsabilidad de las fallas a factores externos imprevistos sin formular ningún plan de mitigación interno.`
+      ];
+
+      const dynamicExplanation = `En el ámbito de ${cleanTopic}, las decisiones profesionales deben sustentarse en evidencia empírica contrastada y en el apego a los estándares metodológicos. Ante la presencia de inconsistencias, el deber técnico exige investigar la causa raíz, subsanar las desviaciones y aplicar controles proporcionales, descartando atajos negligentes o reacciones desmedidas.`;
+
+      const dynamicNorm = `Marco de referencia profesional, estándares metodológicos internacionales y mejores prácticas vigentes en ${cleanTopic}.`;
+
       list.push(this.buildQuestionItem(
-        template.text,
-        template.options,
-        template.correctAnswer,
+        dynamicText,
+        dynamicOptions,
+        1,
         'case',
         timeLimit || 90,
         1500,
         {
-          caseTitle: template.caseTitle,
-          caseContext: template.caseContext,
-          explanation: template.explanation,
-          referenceNorm: template.referenceNorm
+          caseTitle: dynamicTitle,
+          caseContext: dynamicContext,
+          explanation: dynamicExplanation,
+          referenceNorm: dynamicNorm
         }
       ));
     }
@@ -3203,7 +3493,7 @@ El ordenador del gasto debe tomar una decisión jurídica antes de la audiencia 
         questions.push(...contextual);
       }
       if (questions.length < count) {
-        const caseList = this.generateCaseStudiesList(topic, count - questions.length, timeLimit || 90);
+        const caseList = this.generateCaseStudiesList(topic, count - questions.length, timeLimit || 90, webKnowledge, notes);
         questions.push(...caseList);
       }
       return questions.slice(0, count);
