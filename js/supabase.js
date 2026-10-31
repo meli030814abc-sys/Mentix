@@ -5,8 +5,19 @@
 
 class SupabaseService {
   constructor() {
-    this.url = localStorage.getItem('supabase_url') || 'https://ihtsinxgimbsaljpzxcl.supabase.co';
-    this.anonKey = localStorage.getItem('supabase_anon_key') || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlodHNpbnhnaW1ic2FsalB6eGNsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA1MjM3MDUsImV4cCI6MjEwNjA5OTcwNX0.Y9pgB4c3y2t0KPeZVdAqrGBbsnPMDabQCl1KUaUpLF4';
+    const defaultUrl = 'https://ihtsinxgimbsaljpzxcl.supabase.co';
+    const defaultKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlodHNpbnhnaW1ic2FsalB6eGNsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA1MjM3MDUsImV4cCI6MjEwNjA5OTcwNX0.Y9pgB4c3y2t0KPeZVdAqrGBbsnPMDabQCl1KUaUpLF4';
+
+    this.url = (localStorage.getItem('supabase_url') || defaultUrl).trim();
+    const storedKey = (localStorage.getItem('supabase_anon_key') || '').trim();
+    this.anonKey = storedKey || defaultKey;
+
+    // Asegurar que quede registrada la clave activa
+    try {
+      localStorage.setItem('supabase_url', this.url);
+      localStorage.setItem('supabase_anon_key', this.anonKey);
+    } catch (e) {}
+
     this.client = null;
     this.isConnected = false;
     this.activeRealtimeChannel = null;

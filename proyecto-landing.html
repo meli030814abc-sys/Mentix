@@ -191,47 +191,47 @@
         <div class="inno-why-lead">
           <div>
             <h2 class="inno-why-lead-title">¿Por qué es importante?</h2>
-            <p class="inno-why-lead-text">
+            <p class="inno-why-lead-text" id="inno-why-lead-desc">
               El acceso, la calidad y el uso responsable de los datos, junto con la inteligencia artificial, permiten a las organizaciones tomar decisiones más informadas, mejorar la eficiencia y generar un mayor impacto social.
             </p>
           </div>
-          <button type="button" class="inno-why-lead-btn" onclick="previewLandingDoc('Sobre el Proyecto — Gobierno de Datos e IA')">
+          <button type="button" class="inno-why-lead-btn" onclick="previewLandingDoc('Sobre el Proyecto', 'about')">
             Conocer más sobre el proyecto →
           </button>
         </div>
 
-        <article class="inno-why-card" onclick="previewLandingDoc('Problema / Oportunidad — Gobierno de Datos e IA')" role="button" tabindex="0">
+        <article class="inno-why-card" onclick="previewLandingDoc('Problema / Oportunidad', 'problem')" role="button" tabindex="0">
           <div>
             <div class="inno-why-icon-circle" style="background:#e0f2fe; color:#0284c7;">📊</div>
             <h4>Problema / Oportunidad</h4>
-            <p>La falta de datos confiables y la limitada analítica impiden una gestión pública más efectiva.</p>
+            <p id="inno-why-card-problem">La falta de datos confiables y la limitada analítica impiden una gestión pública más efectiva.</p>
           </div>
           <span class="inno-why-arrow">→</span>
         </article>
 
-        <article class="inno-why-card" onclick="previewLandingDoc('Propuesta de Valor — Gobierno de Datos e IA')" role="button" tabindex="0">
+        <article class="inno-why-card" onclick="previewLandingDoc('Propuesta de Valor', 'valueProp')" role="button" tabindex="0">
           <div>
             <div class="inno-why-icon-circle" style="background:#dcfce7; color:#16a34a;">💡</div>
             <h4>Propuesta de valor</h4>
-            <p>Un ecosistema de datos e IA que facilita la toma de decisiones y la transparencia.</p>
+            <p id="inno-why-card-valueprop">Un ecosistema de datos e IA que facilita la toma de decisiones y la transparencia.</p>
           </div>
           <span class="inno-why-arrow">→</span>
         </article>
 
-        <article class="inno-why-card" onclick="previewLandingDoc('Metodología — Gobierno de Datos e IA')" role="button" tabindex="0">
+        <article class="inno-why-card" onclick="previewLandingDoc('Metodología', 'methodology')" role="button" tabindex="0">
           <div>
             <div class="inno-why-icon-circle" style="background:#f3e8ff; color:#7c3aed;">⚙️</div>
             <h4>Metodología</h4>
-            <p>Gobierno de datos, analítica avanzada y tecnologías de IA aplicadas al sector público.</p>
+            <p id="inno-why-card-methodology">Gobierno de datos, analítica avanzada y tecnologías de IA aplicadas al sector público.</p>
           </div>
           <span class="inno-why-arrow">→</span>
         </article>
 
-        <article class="inno-why-card" onclick="previewLandingDoc('Impacto Esperado — Gobierno de Datos e IA')" role="button" tabindex="0">
+        <article class="inno-why-card" onclick="previewLandingDoc('Impacto Esperado', 'impact')" role="button" tabindex="0">
           <div>
             <div class="inno-why-icon-circle" style="background:#ecfdf5; color:#059669;">🛡️</div>
             <h4>Impacto esperado</h4>
-            <p>Más transparencia, eficiencia y participación ciudadana en todos los niveles.</p>
+            <p id="inno-why-card-impact">Más transparencia, eficiencia y participación ciudadana en todos los niveles.</p>
           </div>
           <span class="inno-why-arrow">→</span>
         </article>
@@ -521,13 +521,13 @@
       const modal = document.getElementById('plp-standalone-lightbox');
       const body = document.getElementById('plp-standalone-lightbox-body');
       if (!modal || !body) return;
-      body.innerHTML = `
-        <button class="plp-lightbox-close" onclick="closeLandingLightbox()" aria-label="Cerrar">✕</button>
+      body.innerHTML = 
+        <button class="plp-lightbox-close" onclick="closeLandingLightbox()" aria-label="Cerrar">âœ•</button>
         <img src="${imgUrl}" alt="${caption}" style="width:100%; max-height:75vh; object-fit:contain; background:#091e2d; display:block;" />
         <div style="padding:1.25rem 1.75rem; background:#ffffff;">
           <h3 style="margin:0; font-size:1.15rem; color:#091e2d;">${caption}</h3>
         </div>
-      `;
+      ;
       modal.classList.add('active');
     }
 
@@ -535,26 +535,34 @@
       const modal = document.getElementById('plp-standalone-lightbox');
       const body = document.getElementById('plp-standalone-lightbox-body');
       if (!modal || !body) return;
-      body.innerHTML = `
-        <button class="plp-lightbox-close" onclick="closeLandingLightbox()" aria-label="Cerrar">✕</button>
+      const p = currentActiveProject || {};
+      const vid = p.videoConfig || p.video || (p.govdata && p.govdata.videoConfig) || {};
+      let videoUrl = (vid.url && String(vid.url).trim()) ? String(vid.url).trim() : 'https://www.youtube.com/embed/aircAruvnKk?autoplay=1&rel=0';
+      if (videoUrl.includes('youtube.com/watch?v=')) {
+        videoUrl = videoUrl.replace('watch?v=', 'embed/') + '?autoplay=1&rel=0';
+      } else if (videoUrl.includes('youtu.be/')) {
+        videoUrl = videoUrl.replace('youtu.be/', 'youtube.com/embed/') + '?autoplay=1&rel=0';
+      }
+      body.innerHTML = 
+        <button class="plp-lightbox-close" onclick="closeLandingLightbox()" aria-label="Cerrar">âœ•</button>
         <div style="background:#091e2d; padding:1.5rem; border-radius:16px;">
-          <h3 style="color:#ffffff; margin:0 0 1rem;">🎬 Video Explicativo del Proyecto</h3>
+          <h3 style="color:#ffffff; margin:0 0 1rem;">ðŸŽ¬ Video del Proyecto</h3>
           <iframe
             width="100%"
             height="500px"
-            src="https://www.youtube.com/embed/aircAruvnKk?autoplay=1&rel=0"
-            title="Video Explicativo del Proyecto"
+            src="${videoUrl}"
+            title="Video del Proyecto"
             frameborder="0"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
             allowfullscreen
             style="border:0; width:100%; height:500px; display:block; border-radius:12px;"
           ></iframe>
         </div>
-      `;
+      ;
       modal.classList.add('active');
     }
-
-    function previewLandingDoc(title) {
+    let currentActiveProject = null;
+    function previewLandingDoc(title, cardType = '') {
       const modal = document.getElementById('plp-standalone-lightbox');
       const body = document.getElementById('plp-standalone-lightbox-body');
       if (!modal || !body) return;
@@ -564,6 +572,55 @@
       const textColor = isDark ? '#cbd5e1' : '#334155';
       const border = isDark ? '1px solid #1e3a54' : 'none';
 
+      const p = currentActiveProject || {};
+      const gp = p.govdata || {};
+      const vp = p.valueProp || p.valueProposition || gp.valueProp || {};
+      const cleanTitle = (title || '').toLowerCase();
+
+      let detailHtml = '';
+      let docBadge = 'Documento Oficial';
+
+      if (cardType === 'problem' || cleanTitle.includes('problema') || cleanTitle.includes('oportunidad')) {
+        docBadge = 'Problema / Oportunidad';
+        const prob = p.problemStatement || gp.problemStatement || vp.problemSolved || p.shortDescription || 'Sin problema documentado aún.';
+        detailHtml = '<div style="background:rgba(2,132,199,0.08); border-left:4px solid #0284c7; padding:1.25rem; border-radius:12px; margin-bottom:1.25rem;"><h4 style="margin:0 0 0.5rem; color:#0284c7; font-size:0.95rem; font-weight:800;">Problema y Reto que aborda el proyecto:</h4><p style="margin:0; color:' + textColor + '; line-height:1.75; font-size:1.02rem; white-space:pre-wrap;">' + prob + '</p></div>' + (p.targetAudience ? '<div style="font-size:0.9rem; color:' + textColor + ';"><strong>Público o Comunidad afectada:</strong> ' + p.targetAudience + '</div>' : '');
+      } else if (cardType === 'valueProp' || cleanTitle.includes('propuesta') || cleanTitle.includes('valor')) {
+        docBadge = 'Propuesta de Valor';
+        const how = vp.howItWorks || p.mainObjective || gp.mainObjective || 'En desarrollo.';
+        const diff = vp.differentiator || '';
+        detailHtml = '<div style="background:rgba(22,163,74,0.08); border-left:4px solid #16a34a; padding:1.25rem; border-radius:12px; margin-bottom:1.25rem;"><h4 style="margin:0 0 0.5rem; color:#16a34a; font-size:0.95rem; font-weight:800;">Cómo funciona la solución propuesta:</h4><p style="margin:0; color:' + textColor + '; line-height:1.75; font-size:1.02rem; white-space:pre-wrap;">' + how + '</p></div>' + (diff ? '<div style="padding:1rem; background:rgba(22,163,74,0.08); border-radius:10px; font-size:0.92rem; color:' + textColor + '; margin-bottom:0.75rem;"><strong style="color:#16a34a;">Factor Diferenciador:</strong> ' + diff + '</div>' : '');
+      } else if (cardType === 'methodology' || cleanTitle.includes('metodolog') || cleanTitle.includes('enfoque')) {
+        docBadge = 'Metodología & Ejecución';
+        const full = p.fullDescription || gp.fullDescription || (Array.isArray(vp.keyFeatures) && vp.keyFeatures.length ? vp.keyFeatures.map(f => '• ' + f).join('\n') : '') || p.projectSubtype || 'Metodología en desarrollo.';
+        detailHtml = '<div style="background:rgba(124,58,237,0.08); border-left:4px solid #7c3aed; padding:1.25rem; border-radius:12px; margin-bottom:1.25rem;"><h4 style="margin:0 0 0.5rem; color:#7c3aed; font-size:0.95rem; font-weight:800;">Metodología y Alcance Técnico:</h4><p style="margin:0; color:' + textColor + '; line-height:1.75; font-size:1.02rem; white-space:pre-wrap;">' + full + '</p></div>' + (p.preparationStatus ? '<div style="font-size:0.9rem; color:' + textColor + ';"><strong>Estado de desarrollo:</strong> ' + p.preparationStatus.replace(/_/g, ' ') + '</div>' : '');
+      } else if (cardType === 'impact' || cleanTitle.includes('impacto') || cleanTitle.includes('beneficio')) {
+        docBadge = 'Impacto & Resultados';
+        const ben = p.benefits || gp.benefits || vp.resultsAndBenefits || 'Impacto social y beneficios en desarrollo.';
+        detailHtml = '<div style="background:rgba(5,150,105,0.08); border-left:4px solid #059669; padding:1.25rem; border-radius:12px; margin-bottom:1.25rem;"><h4 style="margin:0 0 0.5rem; color:#059669; font-size:0.95rem; font-weight:800;">Beneficios e impacto generado:</h4><p style="margin:0; color:' + textColor + '; line-height:1.75; font-size:1.02rem; white-space:pre-wrap;">' + ben + '</p></div>';
+      } else {
+        docBadge = 'Visión General';
+        const desc = p.fullDescription || p.shortDescription || p.description || gp.shortDescription || 'Información oficial del proyecto.';
+        detailHtml = '<div style="padding:1.25rem; background:rgba(15,23,42,0.04); border-radius:12px; margin-bottom:1.25rem;"><p style="margin:0; color:' + textColor + '; line-height:1.75; font-size:1.02rem; white-space:pre-wrap;">' + desc + '</p></div><div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:0.75rem; font-size:0.88rem; color:' + textColor + ';">' + (p.targetAudience ? '<div><strong>Público:</strong> ' + p.targetAudience + '</div>' : '') + (p.categoryName ? '<div><strong>Categoría:</strong> ' + p.categoryName + '</div>' : '') + (p.author ? '<div><strong>Responsable:</strong> ' + p.author + '</div>' : '') + '</div>';
+      }
+
+      body.innerHTML = `
+        <button class="plp-lightbox-close" onclick="closeLandingLightbox()" aria-label="Cerrar">✕</button>
+        <div style="padding:2.5rem; background:${bg}; border:${border}; border-radius:20px; max-width:680px; margin:0 auto;">
+          <span class="inno-eyebrow" style="font-size:0.78rem; text-transform:uppercase; letter-spacing:0.05em; font-weight:800; color:#10b981; margin-bottom:0.5rem; display:inline-block;">${docBadge}</span>
+          <h2 style="margin:0.25rem 0 1.25rem; color:${titleColor}; font-size:1.4rem; font-weight:800;">${title}</h2>
+          ${detailHtml}
+          <div style="margin-top:1.5rem; display:flex; gap:0.75rem; flex-wrap:wrap;">
+            <button class="inno-btn-cyan" onclick="downloadLandingDoc('${title.replace(/\s+/g, '_').slice(0, 40)}.txt'); closeLandingLightbox();">
+              ⬇ Descargar Resumen
+            </button>
+            <button class="inno-btn-ghost" style="color:${titleColor}; border-color:${titleColor};" onclick="closeLandingLightbox()">
+              Cerrar
+            </button>
+          </div>
+        </div>
+      `;
+      modal.classList.add('active');
+      return;
       body.innerHTML = `
         <button class="plp-lightbox-close" onclick="closeLandingLightbox()" aria-label="Cerrar">✕</button>
         <div style="padding:2.5rem; background:${bg}; border:${border}; border-radius:20px;">
@@ -822,6 +879,35 @@
         }
 
         if (!activeProject) return;
+        currentActiveProject = activeProject;
+
+        const gp = activeProject.govdata || {};
+        const vp = activeProject.valueProp || activeProject.valueProposition || gp.valueProp || {};
+
+        const whyLeadP = document.getElementById('inno-why-lead-desc');
+        if (whyLeadP) {
+          whyLeadP.textContent = activeProject.shortDescription || gp.shortDescription || activeProject.description || activeProject.mainObjective || 'Conoce los objetivos y justificación del proyecto.';
+        }
+
+        const whyCardProblem = document.getElementById('inno-why-card-problem');
+        if (whyCardProblem) {
+          whyCardProblem.textContent = activeProject.problemStatement || gp.problemStatement || vp.problemSolved || activeProject.shortDescription || 'Problema o reto abordado por el proyecto.';
+        }
+
+        const whyCardValueProp = document.getElementById('inno-why-card-valueprop');
+        if (whyCardValueProp) {
+          whyCardValueProp.textContent = vp.howItWorks || activeProject.mainObjective || gp.mainObjective || 'Solución y propuesta de valor.';
+        }
+
+        const whyCardMethodology = document.getElementById('inno-why-card-methodology');
+        if (whyCardMethodology) {
+          whyCardMethodology.textContent = activeProject.fullDescription || gp.fullDescription || (Array.isArray(vp.keyFeatures) && vp.keyFeatures.length ? vp.keyFeatures.join(', ') : '') || activeProject.projectSubtype || 'Metodología y etapas del proyecto.';
+        }
+
+        const whyCardImpact = document.getElementById('inno-why-card-impact');
+        if (whyCardImpact) {
+          whyCardImpact.textContent = activeProject.benefits || gp.benefits || vp.resultsAndBenefits || 'Beneficios e impacto esperados.';
+        }
 
         const pub = activeProject.publication || {};
         const vp = activeProject.valueProposition || {};

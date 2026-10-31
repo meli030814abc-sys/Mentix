@@ -1698,16 +1698,26 @@ window.ProjectsView = {
   renderLandingPageView(container, allProjects = []) {
     this.currentSlideIndex = 0;
     const currentTheme = this.getLandingTheme();
-    const selected = allProjects.find(x => x.id === this.selectedProjectId) || (window.appState.challenges || []).find(x => x.id === this.selectedProjectId);
+    let selected = allProjects.find(x => x.id === this.selectedProjectId) || (window.appState.challenges || []).find(x => x.id === this.selectedProjectId);
+    if (!selected) {
+      try {
+        const drafts = JSON.parse(localStorage.getItem('mentix_govdata_wizard_drafts') || '[]');
+        selected = drafts.find(d => d && d.id === this.selectedProjectId);
+      } catch (e) {}
+    }
+    if (!selected && window.ProjectWizard?.draft && window.ProjectWizard.draft.id === this.selectedProjectId) {
+      selected = window.ProjectWizard.draft;
+    }
     if (selected) {
       try {
         localStorage.setItem('mentix_active_landing_project', JSON.stringify(selected));
       } catch (e) {}
     }
 
-    const pub = (selected && selected.publication) ? selected.publication : {};
-    const vp = (selected && selected.valueProposition) ? selected.valueProposition : {};
-    const vid = (selected && selected.video) ? selected.video : {};
+    const gp = (selected && selected.govdata) ? selected.govdata : {};
+    const vp = (selected && (selected.valueProp || selected.valueProposition)) ? (selected.valueProp || selected.valueProposition) : (gp.valueProp || {});
+    const pub = (selected && (selected.landingConfig || selected.publication)) ? (selected.landingConfig || selected.publication) : {};
+    const vid = (selected && (selected.videoConfig || selected.video)) ? (selected.videoConfig || selected.video) : {};
 
     const brandTitle = this.escapeHtml((selected && (selected.categoryName || pub.visibleCategory)) || 'Proyecto');
     const brandSubtitle = this.escapeHtml((selected && (pub.publicName || selected.title)) || '');
@@ -1716,16 +1726,38 @@ window.ProjectsView = {
     const heroMainTitle1 = selected ? this.escapeHtml(pub.landingTitle || selected.title || 'Proyecto') : 'Proyecto';
     const heroMainTitle2 = (selected && selected.subtitle) ? this.escapeHtml(selected.subtitle) : '';
     const heroSubtitle = this.escapeHtml(
-      (selected && (pub.publicDescription || selected.shortDescription || selected.description)) ||
+      (selected && (pub.publicDescription || selected.shortDescription || selected.description || gp.shortDescription)) ||
       'Explora los objetivos, recursos y detalles de este proyecto educativo.'
     );
 
     const ctaText = this.escapeHtml((selected && (pub.ctaText || selected.ctaText || vp.visitorAction)) || 'Unirse / Colaborar');
     const ctaUrl = (selected && (pub.ctaUrl || selected.ctaUrl)) || '';
-    const mainObjective = this.escapeHtml((selected && (selected.mainObjective || vp.problemSolved)) || 'Objetivo en desarrollo');
-    const targetAudience = this.escapeHtml((selected && (selected.targetAudience || vp.targetAudience)) || 'Comunidad educativa y participantes');
+    const mainObjective = this.escapeHtml((selected && (selected.mainObjective || gp.mainObjective || vp.problemSolved)) || 'Objetivo en desarrollo');
+    const targetAudience = this.escapeHtml((selected && (selected.targetAudience || gp.targetAudience || vp.targetAudience || vp.forWhom)) || 'Comunidad educativa y participantes');
     const visibleCategory = this.escapeHtml((selected && (selected.categoryName || pub.visibleCategory)) || 'General');
-    const projectState = this.escapeHtml((selected && (selected.projectState || 'En ejecución')).toString().replace('_', ' '));
+    const projectState = this.escapeHtml((selected && (selected.preparationStatus || selected.projectState || 'En desarrollo')).toString().replace(/_/g, ' '));
+
+    const cardProblem = this.escapeHtml(
+      (selected && (selected.problemStatement || gp.problemStatement || vp.problemSolved)) ||
+      (selected && (selected.shortDescription || gp.shortDescription)) ||
+      'Definición y planteamiento del reto o necesidad abordada por el proyecto.'
+    );
+    const cardValueProp = this.escapeHtml(
+      (selected && (vp.howItWorks || selected.mainObjective || gp.mainObjective)) ||
+      'Solución propuesta y enfoque central para resolver el reto planteado.'
+    );
+    const cardMethodology = this.escapeHtml(
+      (selected && (selected.fullDescription || gp.fullDescription || (Array.isArray(vp.keyFeatures) && vp.keyFeatures.length ? vp.keyFeatures.join(', ') : '') || selected.projectSubtype)) ||
+      'Metodología, etapas y procesos clave de ejecución del proyecto.'
+    );
+    const cardImpact = this.escapeHtml(
+      (selected && (selected.benefits || gp.benefits || vp.resultsAndBenefits)) ||
+      'Resultados tangibles, beneficios directos y alcance esperado para la comunidad.'
+    );
+    const leadWhyText = this.escapeHtml(
+      (selected && (selected.shortDescription || gp.shortDescription || selected.description || selected.mainObjective)) ||
+      'Conoce los objetivos, el problema identificado y el impacto positivo de este proyecto.'
+    );
 
     const des = (selected && (selected.designConfig || selected.govdata?.designConfig)) || {};
     const aut = (selected && (selected.authorsConfig || selected.govdata?.authorsConfig)) || {};
@@ -1935,7 +1967,7 @@ window.ProjectsView = {
           </section>
 
           <!-- ================================================================
-               3. SECCIÓN ¿POR QUÉ ES IMPORTANTE?
+               3. SECCIÓN ¿POR QUÉ ES IMPORTANTE? (DATOS REALES DEL PROYECTO)
                ================================================================ -->
           <section class="inno-why-section" id="inno-sec-why">
             <div class="inno-why-grid">
@@ -1943,46 +1975,46 @@ window.ProjectsView = {
                 <div>
                   <h2 class="inno-why-lead-title">¿Por qué es importante?</h2>
                   <p class="inno-why-lead-text">
-                    El acceso, la calidad y el uso responsable de los datos, junto con la inteligencia artificial, permiten a las organizaciones tomar decisiones más informadas, mejorar la eficiencia y generar un mayor impacto social.
+                    ${leadWhyText}
                   </p>
                 </div>
-                <button type="button" class="inno-why-lead-btn" onclick="window.ProjectsView.previewLandingDoc('Sobre el Proyecto — ${selectedTitle}')">
+                <button type="button" class="inno-why-lead-btn" onclick="window.ProjectsView.previewLandingDoc('Sobre el Proyecto — ${selectedTitle}', 'about')">
                   Conocer más sobre el proyecto →
                 </button>
               </div>
 
-              <article class="inno-why-card" onclick="window.ProjectsView.previewLandingDoc('Problema / Oportunidad — ${selectedTitle}')" role="button" tabindex="0">
+              <article class="inno-why-card" onclick="window.ProjectsView.previewLandingDoc('Problema / Oportunidad — ${selectedTitle}', 'problem')" role="button" tabindex="0">
                 <div>
                   <div class="inno-why-icon-circle" style="background:#e0f2fe; color:#0284c7;">📊</div>
                   <h4>Problema / Oportunidad</h4>
-                  <p>La falta de datos confiables y la limitada analítica impiden una gestión pública más efectiva.</p>
+                  <p>${cardProblem}</p>
                 </div>
                 <span class="inno-why-arrow">→</span>
               </article>
 
-              <article class="inno-why-card" onclick="window.ProjectsView.previewLandingDoc('Propuesta de Valor — ${selectedTitle}')" role="button" tabindex="0">
+              <article class="inno-why-card" onclick="window.ProjectsView.previewLandingDoc('Propuesta de Valor — ${selectedTitle}', 'valueProp')" role="button" tabindex="0">
                 <div>
                   <div class="inno-why-icon-circle" style="background:#dcfce7; color:#16a34a;">💡</div>
                   <h4>Propuesta de valor</h4>
-                  <p>Un ecosistema de datos e IA que facilita la toma de decisiones y la transparencia.</p>
+                  <p>${cardValueProp}</p>
                 </div>
                 <span class="inno-why-arrow">→</span>
               </article>
 
-              <article class="inno-why-card" onclick="window.ProjectsView.previewLandingDoc('Metodología — ${selectedTitle}')" role="button" tabindex="0">
+              <article class="inno-why-card" onclick="window.ProjectsView.previewLandingDoc('Metodología — ${selectedTitle}', 'methodology')" role="button" tabindex="0">
                 <div>
                   <div class="inno-why-icon-circle" style="background:#f3e8ff; color:#7c3aed;">⚙️</div>
                   <h4>Metodología</h4>
-                  <p>Gobierno de datos, analítica avanzada y tecnologías de IA aplicadas al sector público.</p>
+                  <p>${cardMethodology}</p>
                 </div>
                 <span class="inno-why-arrow">→</span>
               </article>
 
-              <article class="inno-why-card" onclick="window.ProjectsView.previewLandingDoc('Impacto Esperado — ${selectedTitle}')" role="button" tabindex="0">
+              <article class="inno-why-card" onclick="window.ProjectsView.previewLandingDoc('Impacto Esperado — ${selectedTitle}', 'impact')" role="button" tabindex="0">
                 <div>
                   <div class="inno-why-icon-circle" style="background:#ecfdf5; color:#059669;">🛡️</div>
                   <h4>Impacto esperado</h4>
-                  <p>Más transparencia, eficiencia y participación ciudadana.</p>
+                  <p>${cardImpact}</p>
                 </div>
                 <span class="inno-why-arrow">→</span>
               </article>
@@ -2301,9 +2333,39 @@ window.ProjectsView = {
   },
 
   downloadLandingDoc(filename) {
-    const selected = (window.appState.challenges || []).find(x => x.id === this.selectedProjectId);
-    const title = (selected && selected.title) || 'PROYECTO EDUCATIVO';
-    const content = `${title}\nDocumento: ${filename}\nFecha: ${new Date().toLocaleDateString()}\n\n1. RESUMEN:\n${(selected && (selected.description || selected.shortDescription)) || 'Documento y material didáctico oficial del proyecto.'}\n\n2. RECURSOS:\n- Material pedagógico y conceptual.\n- Implementación y aplicación práctica.`;
+    let selected = (window.appState.challenges || []).find(x => x.id === this.selectedProjectId);
+    if (!selected) {
+      try {
+        const drafts = JSON.parse(localStorage.getItem('mentix_govdata_wizard_drafts') || '[]');
+        selected = drafts.find(d => d && d.id === this.selectedProjectId);
+      } catch (e) {}
+    }
+    if (!selected && window.ProjectWizard?.draft) selected = window.ProjectWizard.draft;
+
+    const gp = selected?.govdata || {};
+    const vp = selected?.valueProp || selected?.valueProposition || gp.valueProp || {};
+
+    const title = (selected && (selected.landingConfig?.publicName || selected.title)) || 'PROYECTO';
+    const subtitle = selected?.subtitle || '';
+    const desc = selected?.fullDescription || selected?.shortDescription || selected?.description || '';
+    const prob = selected?.problemStatement || gp.problemStatement || vp.problemSolved || '';
+    const obj = selected?.mainObjective || gp.mainObjective || '';
+    const ben = selected?.benefits || gp.benefits || vp.resultsAndBenefits || '';
+    const author = selected?.author || '';
+
+    const content = `=======================================================
+${title.toUpperCase()}
+${subtitle ? subtitle + '\n' : ''}=======================================================
+Fecha: ${new Date().toLocaleDateString()}
+Documento: ${filename}
+Autor / Líder: ${author || 'Equipo del Proyecto'}
+
+1. DESCRIPCIÓN:
+${desc || 'Información del proyecto.'}
+
+${prob ? `2. PROBLEMA O RETO:\n${prob}\n\n` : ''}${obj ? `3. OBJETIVO PRINCIPAL:\n${obj}\n\n` : ''}${ben ? `4. BENEFICIOS E IMPACTO ESPERADO:\n${ben}\n\n` : ''}=======================================================
+Generado por Mentix - Plataforma de Proyectos y Retos
+`;
     const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -2329,29 +2391,112 @@ window.ProjectsView = {
     modal.classList.add('active');
   },
 
-  previewLandingDoc(title) {
+  previewLandingDoc(title, cardType = '') {
     const modal = document.getElementById('plp-inline-lightbox');
     const body = document.getElementById('plp-inline-lightbox-body');
     if (!modal || !body) return;
-    const selected = (window.appState.challenges || []).find(x => x.id === this.selectedProjectId);
-    const projTitle = this.escapeHtml((selected && selected.title) || 'Proyecto');
+
+    let selected = (window.appState.challenges || []).find(x => x.id === this.selectedProjectId);
+    if (!selected) {
+      try {
+        const drafts = JSON.parse(localStorage.getItem('mentix_govdata_wizard_drafts') || '[]');
+        selected = drafts.find(d => d && d.id === this.selectedProjectId);
+      } catch (e) {}
+    }
+    if (!selected && window.ProjectWizard?.draft) {
+      selected = window.ProjectWizard.draft;
+    }
+
+    const projTitle = this.escapeHtml((selected && (selected.landingConfig?.publicName || selected.title)) || 'Proyecto');
     const isDark = (document.querySelector('.plp-wrapper')?.getAttribute('data-theme') || this.getLandingTheme()) === 'dark';
     const bg = isDark ? '#091e2d' : '#ffffff';
     const titleColor = isDark ? '#ffffff' : '#091e2d';
     const textColor = isDark ? '#cbd5e1' : '#334155';
     const border = isDark ? '1px solid #1e3a54' : 'none';
 
+    const gp = selected?.govdata || {};
+    const vp = selected?.valueProp || selected?.valueProposition || gp.valueProp || {};
+    const cleanTitle = (title || '').toLowerCase();
+
+    let detailHtml = '';
+    let docBadge = 'Documento Oficial';
+
+    if (cardType === 'problem' || cleanTitle.includes('problema') || cleanTitle.includes('oportunidad')) {
+      docBadge = 'Problema / Oportunidad';
+      const prob = selected?.problemStatement || gp.problemStatement || vp.problemSolved || selected?.shortDescription || 'Sin problema documentado aún.';
+      detailHtml = `
+        <div style="background:rgba(2,132,199,0.08); border-left:4px solid #0284c7; padding:1.25rem; border-radius:12px; margin-bottom:1.25rem;">
+          <h4 style="margin:0 0 0.5rem; color:#0284c7; font-size:0.95rem; font-weight:800;">Problema o reto que aborda el proyecto:</h4>
+          <p style="margin:0; color:${textColor}; line-height:1.75; font-size:1.02rem; white-space:pre-wrap;">${this.escapeHtml(prob)}</p>
+        </div>
+        ${selected?.targetAudience ? `
+          <div style="font-size:0.9rem; color:${textColor};">
+            <strong>Público o Comunidad afectada:</strong> ${this.escapeHtml(selected.targetAudience)}
+          </div>
+        ` : ''}
+      `;
+    } else if (cardType === 'valueProp' || cleanTitle.includes('propuesta') || cleanTitle.includes('valor')) {
+      docBadge = 'Propuesta de Valor';
+      const how = vp.howItWorks || selected?.mainObjective || gp.mainObjective || 'En desarrollo.';
+      const diff = vp.differentiator || '';
+      detailHtml = `
+        <div style="background:rgba(22,163,74,0.08); border-left:4px solid #16a34a; padding:1.25rem; border-radius:12px; margin-bottom:1.25rem;">
+          <h4 style="margin:0 0 0.5rem; color:#16a34a; font-size:0.95rem; font-weight:800;">Cómo funciona la solución propuesta:</h4>
+          <p style="margin:0; color:${textColor}; line-height:1.75; font-size:1.02rem; white-space:pre-wrap;">${this.escapeHtml(how)}</p>
+        </div>
+        ${diff ? `
+          <div style="padding:1rem; background:rgba(22,163,74,0.08); border-radius:10px; font-size:0.92rem; color:${textColor}; margin-bottom:0.75rem;">
+            <strong style="color:#16a34a;">Factor Diferenciador:</strong> ${this.escapeHtml(diff)}
+          </div>
+        ` : ''}
+      `;
+    } else if (cardType === 'methodology' || cleanTitle.includes('metodolog') || cleanTitle.includes('enfoque')) {
+      docBadge = 'Metodología & Ejecución';
+      const full = selected?.fullDescription || gp.fullDescription || (Array.isArray(vp.keyFeatures) && vp.keyFeatures.length ? vp.keyFeatures.map(f => '• ' + f).join('\n') : '') || selected?.projectSubtype || 'Metodología en desarrollo.';
+      detailHtml = `
+        <div style="background:rgba(124,58,237,0.08); border-left:4px solid #7c3aed; padding:1.25rem; border-radius:12px; margin-bottom:1.25rem;">
+          <h4 style="margin:0 0 0.5rem; color:#7c3aed; font-size:0.95rem; font-weight:800;">Metodología y Alcance Técnico:</h4>
+          <p style="margin:0; color:${textColor}; line-height:1.75; font-size:1.02rem; white-space:pre-wrap;">${this.escapeHtml(full)}</p>
+        </div>
+        ${selected?.preparationStatus ? `
+          <div style="font-size:0.9rem; color:${textColor};">
+            <strong>Estado de desarrollo:</strong> ${this.escapeHtml(selected.preparationStatus.replace(/_/g, ' '))}
+          </div>
+        ` : ''}
+      `;
+    } else if (cardType === 'impact' || cleanTitle.includes('impacto') || cleanTitle.includes('beneficio')) {
+      docBadge = 'Impacto & Resultados';
+      const ben = selected?.benefits || gp.benefits || vp.resultsAndBenefits || 'Impacto social y beneficios en desarrollo.';
+      detailHtml = `
+        <div style="background:rgba(5,150,105,0.08); border-left:4px solid #059669; padding:1.25rem; border-radius:12px; margin-bottom:1.25rem;">
+          <h4 style="margin:0 0 0.5rem; color:#059669; font-size:0.95rem; font-weight:800;">Beneficios e impacto generado:</h4>
+          <p style="margin:0; color:${textColor}; line-height:1.75; font-size:1.02rem; white-space:pre-wrap;">${this.escapeHtml(ben)}</p>
+        </div>
+      `;
+    } else {
+      docBadge = 'Visión General';
+      const desc = selected?.fullDescription || selected?.shortDescription || selected?.description || gp.shortDescription || 'Información oficial del proyecto.';
+      detailHtml = `
+        <div style="padding:1.25rem; background:rgba(15,23,42,0.04); border-radius:12px; margin-bottom:1.25rem;">
+          <p style="margin:0; color:${textColor}; line-height:1.75; font-size:1.02rem; white-space:pre-wrap;">${this.escapeHtml(desc)}</p>
+        </div>
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:0.75rem; font-size:0.88rem; color:${textColor};">
+          ${selected?.targetAudience ? `<div><strong>Público:</strong> ${this.escapeHtml(selected.targetAudience)}</div>` : ''}
+          ${selected?.categoryName ? `<div><strong>Categoría:</strong> ${this.escapeHtml(selected.categoryName)}</div>` : ''}
+          ${selected?.author ? `<div><strong>Responsable:</strong> ${this.escapeHtml(selected.author)}</div>` : ''}
+        </div>
+      `;
+    }
+
     body.innerHTML = `
       <button class="plp-lightbox-close" onclick="window.ProjectsView.closeLandingLightbox()" aria-label="Cerrar">✕</button>
-      <div style="padding:2.5rem; background:${bg}; border:${border}; border-radius:20px;">
-        <span class="inno-eyebrow">Vista Previa Oficial</span>
-        <h2 style="margin:0.5rem 0 1rem; color:${titleColor};">${this.escapeHtml(title)}</h2>
-        <p style="color:${textColor}; line-height:1.7;">
-          Recurso oficial de <strong>${projTitle}</strong>. Diseñado para impulsar el aprendizaje, la experimentación y el desarrollo de competencias.
-        </p>
+      <div style="padding:2.5rem; background:${bg}; border:${border}; border-radius:20px; max-width:680px; margin:0 auto;">
+        <span class="inno-eyebrow" style="font-size:0.78rem; text-transform:uppercase; letter-spacing:0.05em; font-weight:800; color:#10b981; margin-bottom:0.5rem; display:inline-block;">${docBadge}</span>
+        <h2 style="margin:0.25rem 0 1.25rem; color:${titleColor}; font-size:1.4rem; font-weight:800;">${this.escapeHtml(title)}</h2>
+        ${detailHtml}
         <div style="margin-top:1.5rem; display:flex; gap:0.75rem; flex-wrap:wrap;">
           <button class="inno-btn-cyan" onclick="window.ProjectsView.downloadLandingDoc('${this.escapeHtml(title.replace(/\s+/g, '_').slice(0, 40))}.txt'); window.ProjectsView.closeLandingLightbox();">
-            ⬇ Descargar Ficha Oficial
+            ⬇ Descargar Resumen
           </button>
           <button class="inno-btn-ghost" style="color:${titleColor}; border-color:${titleColor};" onclick="window.ProjectsView.closeLandingLightbox()">
             Cerrar

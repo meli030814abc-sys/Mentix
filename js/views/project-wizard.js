@@ -2456,73 +2456,98 @@ collectCurrentStepInputs() {
   // PASO 6: ENLACES Y RECURSOS EXTERNOS
   // =========================================================================
   renderStep6ExternalLinks() {
-    const links = Array.isArray(this.draft.externalLinks) ? this.draft.externalLinks : [];
+    if (!Array.isArray(this.draft.externalLinks)) {
+      this.draft.externalLinks = [];
+    }
+    const links = this.draft.externalLinks;
 
     return `
       <div class="gdn-card">
-        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.75rem; margin-bottom:1rem;">
-          <div>
-            <h3 style="margin:0; font-size:1.08rem; color:var(--gdn-text);">🔗 Enlaces y recursos web externos (${links.length})</h3>
-            <p class="gdn-help" style="margin:0.2rem 0 0;">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem; margin-bottom:1.25rem;">
+          <div style="flex:1; min-width:260px;">
+            <h3 style="margin:0; font-size:1.1rem; color:var(--gdn-text, #0f172a); font-weight:800; display:flex; align-items:center; gap:0.5rem;">
+              <span>🔗</span> Enlaces y recursos web externos (${links.length})
+            </h3>
+            <p class="gdn-help" style="margin:0.25rem 0 0; color:var(--gdn-text-muted, #64748b); font-size:0.84rem;">
               Conecta la página web oficial, demos interactivos, repositorios de código (GitHub/GitLab), cursos, formularios o artículos.
             </p>
           </div>
-          <button type="button" class="plp-doc-btn" style="width:auto; padding:0.5rem 1.05rem;" onclick="window.ProjectWizard.addExternalLinkItem()">
-            + Agregar nuevo enlace
+          <button type="button" class="btn" style="background: linear-gradient(135deg, #059669 0%, #10b981 100%) !important; color: #ffffff !important; font-weight: 800 !important; font-size: 0.88rem !important; padding: 0.65rem 1.25rem !important; border-radius: 10px !important; border: none !important; cursor: pointer !important; box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35) !important; display: inline-flex !important; align-items: center !important; gap: 0.5rem !important; white-space: nowrap !important; transition: transform 0.2s, box-shadow 0.2s;" onclick="window.ProjectWizard.addExternalLinkItem()">
+            <span style="font-size:1.1rem;">➕</span> Agregar nuevo enlace
           </button>
         </div>
 
         ${links.length === 0 ? `
-          <div style="padding:1.8rem 1rem; text-align:center; background:var(--gdn-subtle); border-radius:12px; color:var(--gdn-text-muted); font-size:0.88rem;">
-            Aún no has agregado enlaces externos. Haz clic en <strong>+ Agregar nuevo enlace</strong> para incorporar sitios aliados, repositorios o demos.
+          <div style="padding: 2.2rem 1.25rem; text-align: center; background: #f8fafc; border: 2px dashed #cbd5e1; border-radius: 14px; margin-top: 0.5rem;">
+            <div style="font-size: 2.6rem; margin-bottom: 0.5rem;">🌐</div>
+            <div style="font-weight: 800; font-size: 1.05rem; color: #0f172a; margin-bottom: 0.35rem;">
+              Aún no has agregado enlaces ni repositorios
+            </div>
+            <p style="color: #64748b; font-size: 0.86rem; max-width: 480px; margin: 0 auto 1.35rem; line-height: 1.5;">
+              Haz clic en el botón para incorporar sitios aliados, repositorios de código, demos en vivo o documentación en la nube.
+            </p>
+            <div style="display: flex; justify-content: center; gap: 0.75rem; flex-wrap: wrap;">
+              <button type="button" class="btn btn-primary" onclick="window.ProjectWizard.addExternalLinkItem()" style="background: linear-gradient(135deg, #059669, #10b981) !important; color: #ffffff !important; font-weight: 800 !important; border: none !important; padding: 0.75rem 1.5rem !important; border-radius: 12px !important; cursor: pointer !important; box-shadow: 0 6px 20px rgba(16, 185, 129, 0.35) !important; font-size: 0.92rem; display: inline-flex; align-items: center; gap: 0.5rem;">
+                <span>➕</span> Agregar primer enlace
+              </button>
+              <button type="button" class="btn btn-outline" onclick="window.ProjectWizard.addExternalLinkItem('Repositorio GitHub', 'https://github.com/')" style="background: #ffffff !important; color: #0f172a !important; border: 1.5px solid #cbd5e1 !important; font-weight: 700 !important; padding: 0.75rem 1.15rem !important; border-radius: 12px !important; cursor: pointer !important; font-size: 0.88rem;">
+                ⭐ GitHub
+              </button>
+              <button type="button" class="btn btn-outline" onclick="window.ProjectWizard.addExternalLinkItem('Demo Interactiva', 'https://')" style="background: #ffffff !important; color: #0f172a !important; border: 1.5px solid #cbd5e1 !important; font-weight: 700 !important; padding: 0.75rem 1.15rem !important; border-radius: 12px !important; cursor: pointer !important; font-size: 0.88rem;">
+                🚀 Demo Online
+              </button>
+              <button type="button" class="btn btn-outline" onclick="window.ProjectWizard.addExternalLinkItem('Página Web Oficial', 'https://')" style="background: #ffffff !important; color: #0f172a !important; border: 1.5px solid #cbd5e1 !important; font-weight: 700 !important; padding: 0.75rem 1.15rem !important; border-radius: 12px !important; cursor: pointer !important; font-size: 0.88rem;">
+                🌐 Web Oficial
+              </button>
+            </div>
           </div>
         ` : `
-          <div style="display:flex; flex-direction:column; gap:0.85rem;">
+          <div style="display:flex; flex-direction:column; gap:0.95rem;">
             ${links.map((lnk, idx) => `
-              <div style="padding:1rem; background:var(--gdn-bg); border:1.5px solid var(--gdn-border); border-radius:12px;">
+              <div style="padding:1.15rem; background:#ffffff; border:1.5px solid #cbd5e1; border-radius:14px; box-shadow:0 3px 10px rgba(15,23,42,0.03);">
                 <div class="gdn-field-grid">
                   <div>
-                    <label class="gdn-label" style="font-size:0.76rem;">Nombre del enlace</label>
-                    <input type="text" class="gdn-input" style="padding:0.45rem 0.7rem; font-weight:700;" value="${this.escapeHtml(lnk.title)}" placeholder="Ej: Repositorio de Código en GitHub" oninput="window.ProjectWizard.updateExternalLink(${idx}, 'title', this.value)" />
+                    <label class="gdn-label" style="font-size:0.78rem; font-weight:800; color:#0f172a; margin-bottom:0.35rem;">Nombre o Título del Enlace</label>
+                    <input type="text" class="gdn-input" style="padding:0.55rem 0.8rem; font-weight:700;" value="${this.escapeHtml(lnk.title)}" placeholder="Ej: Repositorio Oficial en GitHub" oninput="window.ProjectWizard.updateExternalLink(${idx}, 'title', this.value)" />
                   </div>
 
                   <div>
-                    <label class="gdn-label" style="font-size:0.76rem;">
-                      <span>Dirección web (URL)</span>
-                      <span style="color:${lnk.verified ? '#10b981' : '#64748b'}; font-weight:800;">
+                    <label class="gdn-label" style="font-size:0.78rem; font-weight:800; color:#0f172a; margin-bottom:0.35rem; display:flex; justify-content:space-between;">
+                      <span>Dirección Web (URL)</span>
+                      <span style="color:${lnk.verified ? '#10b981' : '#64748b'}; font-weight:800; font-size:0.75rem;">
                         ${lnk.verified ? '✔ Enlace comprobado' : '⏳ Sin comprobar'}
                       </span>
                     </label>
-                    <div style="display:flex; gap:0.4rem;">
-                      <input type="url" class="gdn-input" style="padding:0.45rem 0.7rem;" value="${this.escapeHtml(lnk.url)}" placeholder="https://..." oninput="window.ProjectWizard.updateExternalLink(${idx}, 'url', this.value)" />
-                      <button type="button" class="plp-doc-btn outline" style="width:auto; padding:0.4rem 0.7rem; font-size:0.76rem;" onclick="window.ProjectWizard.verifyExternalLink(${idx})">Comprobar</button>
+                    <div style="display:flex; gap:0.45rem;">
+                      <input type="url" class="gdn-input" style="padding:0.55rem 0.8rem; flex:1;" value="${this.escapeHtml(lnk.url)}" placeholder="https://..." oninput="window.ProjectWizard.updateExternalLink(${idx}, 'url', this.value)" />
+                      <button type="button" class="btn" style="background:#0f172a !important; color:#ffffff !important; border:none !important; padding:0.55rem 0.95rem !important; font-size:0.78rem !important; font-weight:700 !important; border-radius:8px !important; cursor:pointer !important; white-space:nowrap !important;" onclick="window.ProjectWizard.verifyExternalLink(${idx})">Comprobar</button>
                     </div>
                   </div>
                 </div>
 
-                <div class="gdn-field-grid" style="margin-top:0.55rem;">
+                <div class="gdn-field-grid" style="margin-top:0.75rem;">
                   <div>
-                    <label class="gdn-label" style="font-size:0.76rem;">Categoría del enlace</label>
-                    <select class="gdn-select" style="padding:0.4rem 0.65rem; font-size:0.82rem;" onchange="window.ProjectWizard.updateExternalLink(${idx}, 'category', this.value)">
+                    <label class="gdn-label" style="font-size:0.78rem; font-weight:800; color:#0f172a; margin-bottom:0.35rem;">Categoría del Enlace</label>
+                    <select class="gdn-select" style="padding:0.5rem 0.75rem; font-size:0.84rem;" onchange="window.ProjectWizard.updateExternalLink(${idx}, 'category', this.value)">
                       ${this.linkCategories.map(c => `<option value="${this.escapeHtml(c)}" ${lnk.category === c ? 'selected' : ''}>${this.escapeHtml(c)}</option>`).join('')}
                     </select>
                   </div>
 
                   <div>
-                    <label class="gdn-label" style="font-size:0.76rem;">Visibilidad</label>
-                    <select class="gdn-select" style="padding:0.4rem 0.65rem; font-size:0.82rem; font-weight:700;" onchange="window.ProjectWizard.updateExternalLink(${idx}, 'visibility', this.value)">
+                    <label class="gdn-label" style="font-size:0.78rem; font-weight:800; color:#0f172a; margin-bottom:0.35rem;">Visibilidad</label>
+                    <select class="gdn-select" style="padding:0.5rem 0.75rem; font-size:0.84rem; font-weight:700;" onchange="window.ProjectWizard.updateExternalLink(${idx}, 'visibility', this.value)">
                       <option value="public" ${lnk.visibility !== 'private' ? 'selected' : ''}>🌐 Público en Landing Page</option>
                       <option value="private" ${lnk.visibility === 'private' ? 'selected' : ''}>🔒 Privado (Solo equipo interno)</option>
                     </select>
                   </div>
                 </div>
 
-                <div style="display:flex; justify-content:space-between; align-items:center; gap:0.65rem; margin-top:0.55rem; flex-wrap:wrap;">
-                  <input type="text" class="gdn-input" style="flex:1; min-width:200px; padding:0.4rem 0.65rem; font-size:0.82rem;" value="${this.escapeHtml(lnk.description || '')}" placeholder="Descripción opcional del enlace..." oninput="window.ProjectWizard.updateExternalLink(${idx}, 'description', this.value)" />
-                  <div style="display:flex; gap:0.35rem;">
-                    <button type="button" class="plp-doc-btn outline" style="width:auto; padding:0.3rem 0.55rem; font-size:0.75rem;" onclick="window.ProjectWizard.moveExternalLink(${idx}, -1)">↑</button>
-                    <button type="button" class="plp-doc-btn outline" style="width:auto; padding:0.3rem 0.55rem; font-size:0.75rem;" onclick="window.ProjectWizard.moveExternalLink(${idx}, 1)">↓</button>
-                    <button type="button" class="plp-doc-btn outline" style="width:auto; padding:0.3rem 0.65rem; font-size:0.75rem; color:#ef4444; border-color:#fca5a5;" onclick="window.ProjectWizard.deleteExternalLink(${idx})">🗑️ Eliminar</button>
+                <div style="display:flex; justify-content:space-between; align-items:center; gap:0.75rem; margin-top:0.75rem; flex-wrap:wrap;">
+                  <input type="text" class="gdn-input" style="flex:1; min-width:220px; padding:0.5rem 0.75rem; font-size:0.84rem;" value="${this.escapeHtml(lnk.description || '')}" placeholder="Descripción opcional (ej: Código fuente y arquitectura)..." oninput="window.ProjectWizard.updateExternalLink(${idx}, 'description', this.value)" />
+                  <div style="display:flex; gap:0.4rem;">
+                    <button type="button" class="btn" style="background:#f1f5f9 !important; color:#0f172a !important; border:1px solid #cbd5e1 !important; padding:0.45rem 0.75rem !important; font-size:0.82rem !important; font-weight:800 !important; border-radius:8px !important; cursor:pointer !important;" onclick="window.ProjectWizard.moveExternalLink(${idx}, -1)" title="Mover arriba">↑</button>
+                    <button type="button" class="btn" style="background:#f1f5f9 !important; color:#0f172a !important; border:1px solid #cbd5e1 !important; padding:0.45rem 0.75rem !important; font-size:0.82rem !important; font-weight:800 !important; border-radius:8px !important; cursor:pointer !important;" onclick="window.ProjectWizard.moveExternalLink(${idx}, 1)" title="Mover abajo">↓</button>
+                    <button type="button" class="btn" style="background:#fee2e2 !important; color:#dc2626 !important; border:1px solid #fca5a5 !important; padding:0.45rem 0.85rem !important; font-size:0.8rem !important; font-weight:800 !important; border-radius:8px !important; cursor:pointer !important;" onclick="window.ProjectWizard.deleteExternalLink(${idx})">🗑️ Eliminar</button>
                   </div>
                 </div>
               </div>
@@ -2533,14 +2558,22 @@ collectCurrentStepInputs() {
     `;
   },
 
-  addExternalLinkItem() {
+  addExternalLinkItem(presetTitle = '', presetUrl = '') {
     this.collectCurrentStepInputs();
+    if (!Array.isArray(this.draft.externalLinks)) {
+      this.draft.externalLinks = [];
+    }
+    let cat = 'Página web oficial';
+    const lowTitle = (presetTitle || '').toLowerCase();
+    if (lowTitle.includes('github') || lowTitle.includes('repositorio')) cat = 'Repositorio de código';
+    else if (lowTitle.includes('demo')) cat = 'Demostración interactiva';
+
     this.draft.externalLinks.push({
       id: 'lnk_' + Date.now(),
-      title: '',
-      url: 'https://',
+      title: presetTitle || '',
+      url: presetUrl || '',
       description: '',
-      category: 'Página web oficial',
+      category: cat,
       visibility: 'public',
       verified: false
     });
@@ -2549,10 +2582,19 @@ collectCurrentStepInputs() {
   },
 
   updateExternalLink(idx, field, val) {
-    const item = this.draft?.externalLinks?.[idx];
+    if (!Array.isArray(this.draft?.externalLinks)) return;
+    const item = this.draft.externalLinks[idx];
     if (!item) return;
-    item[field] = val;
-    if (field === 'url') item.verified = false;
+    if (field === 'url') {
+      let cleanUrl = String(val || '').trim();
+      if (cleanUrl.startsWith('https://https://')) cleanUrl = cleanUrl.replace('https://https://', 'https://');
+      if (cleanUrl.startsWith('http://http://')) cleanUrl = cleanUrl.replace('http://http://', 'http://');
+      if (cleanUrl.startsWith('https://http://')) cleanUrl = cleanUrl.replace('https://http://', 'http://');
+      item.url = cleanUrl;
+      item.verified = false;
+    } else {
+      item[field] = val;
+    }
     this.triggerFieldAutoSave();
   },
 
