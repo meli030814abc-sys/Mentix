@@ -470,113 +470,18 @@ window.ProjectsView = {
           </div>
         ` : ''}
 
-        <!-- Barra de Estadísticas Resumen -->
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2.25rem;">
-          <div class="glass-panel" style="padding: 1.25rem; display: flex; align-items: center; gap: 1rem;">
-            <div style="width: 48px; height: 48px; border-radius: 12px; background: rgba(0, 245, 212, 0.15); display: flex; align-items: center; justify-content: center; font-size: 1.6rem; color: var(--neon-cyan);">
-              📁
-            </div>
-            <div>
-              <div style="font-size: 1.7rem; font-weight: 900; color: var(--text-primary); line-height: 1;">${totalProjects}</div>
-              <div style="font-size: 0.82rem; color: var(--text-secondary); margin-top: 0.2rem;">Total Proyectos</div>
-            </div>
-          </div>
-
-          <div class="glass-panel" style="padding: 1.25rem; display: flex; align-items: center; gap: 1rem;">
-            <div style="width: 48px; height: 48px; border-radius: 12px; background: rgba(124, 58, 237, 0.15); display: flex; align-items: center; justify-content: center; font-size: 1.6rem; color: #a78bfa;">
-              📊
-            </div>
-            <div>
-              <div style="font-size: 1.7rem; font-weight: 900; color: var(--text-primary); line-height: 1;">${totalSlides}</div>
-              <div style="font-size: 0.82rem; color: var(--text-secondary); margin-top: 0.2rem;">Diapositivas</div>
-            </div>
-          </div>
-
-          <div class="glass-panel" style="padding: 1.25rem; display: flex; align-items: center; gap: 1rem;">
-            <div style="width: 48px; height: 48px; border-radius: 12px; background: rgba(239, 68, 68, 0.15); display: flex; align-items: center; justify-content: center; font-size: 1.6rem; color: #f87171;">
-              🎬
-            </div>
-            <div>
-              <div style="font-size: 1.7rem; font-weight: 900; color: var(--text-primary); line-height: 1;">${totalVideos}</div>
-              <div style="font-size: 0.82rem; color: var(--text-secondary); margin-top: 0.2rem;">Video Clases</div>
-            </div>
-          </div>
-
-          <div class="glass-panel" style="padding: 1.25rem; display: flex; align-items: center; gap: 1rem;">
-            <div style="width: 48px; height: 48px; border-radius: 12px; background: rgba(59, 130, 246, 0.15); display: flex; align-items: center; justify-content: center; font-size: 1.6rem; color: #60a5fa;">
-              📄
-            </div>
-            <div>
-              <div style="font-size: 1.7rem; font-weight: 900; color: var(--text-primary); line-height: 1;">${totalDocs}</div>
-              <div style="font-size: 0.82rem; color: var(--text-secondary); margin-top: 0.2rem;">Documentos</div>
-            </div>
-          </div>
-
-          <div class="glass-panel" style="padding: 1.25rem; display: flex; align-items: center; gap: 1rem;">
-            <div style="width: 48px; height: 48px; border-radius: 12px; background: rgba(16, 185, 129, 0.15); display: flex; align-items: center; justify-content: center; font-size: 1.6rem; color: #34d399;">
-              🌐
-            </div>
-            <div>
-              <div style="font-size: 1.7rem; font-weight: 900; color: var(--text-primary); line-height: 1;">${totalUrls}</div>
-              <div style="font-size: 0.82rem; color: var(--text-secondary); margin-top: 0.2rem;">Enlaces Web</div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Filtros de Tipo de Proyecto y Buscador -->
+        <!-- Buscador y Filtros de Categoría -->
         <div class="glass-panel" style="padding: 1.25rem; margin-bottom: 2rem;">
-          <div style="display: flex; flex-wrap: wrap; gap: 1rem; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
-            
-            <!-- Selector de Tipo de Proyecto -->
-            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-              <button 
-                onclick="window.ProjectsView.filterType('all')" 
-                class="btn ${this.currentTypeFilter === 'all' ? 'btn-cyan' : 'btn-outline'}"
-                style="padding: 0.45rem 0.9rem; font-size: 0.85rem; font-weight: 700;"
-              >
-                🌟 Todos (${allProjects.length})
-              </button>
-              <button 
-                onclick="window.ProjectsView.filterType('presentation')" 
-                class="btn ${this.currentTypeFilter === 'presentation' ? 'btn-cyan' : 'btn-outline'}"
-                style="padding: 0.45rem 0.9rem; font-size: 0.85rem; font-weight: 700;"
-              >
-                📊 Diapositivas
-              </button>
-              <button 
-                onclick="window.ProjectsView.filterType('video')" 
-                class="btn ${this.currentTypeFilter === 'video' ? 'btn-cyan' : 'btn-outline'}"
-                style="padding: 0.45rem 0.9rem; font-size: 0.85rem; font-weight: 700;"
-              >
-                🎬 Videos
-              </button>
-              <button 
-                onclick="window.ProjectsView.filterType('document')" 
-                class="btn ${this.currentTypeFilter === 'document' ? 'btn-cyan' : 'btn-outline'}"
-                style="padding: 0.45rem 0.9rem; font-size: 0.85rem; font-weight: 700;"
-              >
-                📄 Documentos
-              </button>
-              <button 
-                onclick="window.ProjectsView.filterType('url')" 
-                class="btn ${this.currentTypeFilter === 'url' ? 'btn-cyan' : 'btn-outline'}"
-                style="padding: 0.45rem 0.9rem; font-size: 0.85rem; font-weight: 700;"
-              >
-                🌐 Enlaces / URL
-              </button>
-            </div>
-
-            <!-- Buscador -->
-            <div style="flex: 1; min-width: 240px; position: relative;">
-              <input 
-                type="text" 
-                id="projects-search-input"
-                placeholder="🔍 Buscar por título o tema..." 
-                value="${this.escapeHtml(this.searchQuery)}"
-                oninput="window.ProjectsView.handleSearch(this.value)"
-                style="width: 100%; padding: 0.7rem 1rem; border-radius: var(--border-radius-md); background: rgba(0,0,0,0.3); border: 1.5px solid var(--border-color); color: var(--text-primary); font-size: 0.95rem; outline: none;"
-              />
-            </div>
+          <!-- Buscador -->
+          <div style="position: relative; margin-bottom: 1.25rem;">
+            <input 
+              type="text" 
+              id="projects-search-input"
+              placeholder="🔍 Buscar por título o tema..." 
+              value="${this.escapeHtml(this.searchQuery)}"
+              oninput="window.ProjectsView.handleSearch(this.value)"
+              style="width: 100%; padding: 0.75rem 1.1rem; border-radius: var(--border-radius-md); background: rgba(0,0,0,0.3); border: 1.5px solid var(--border-color); color: var(--text-primary); font-size: 0.95rem; outline: none;"
+            />
           </div>
 
           <!-- Filtros de Categoría -->
