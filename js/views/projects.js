@@ -445,30 +445,7 @@ window.ProjectsView = {
           `;
         })()}
 
-        ${isTeacherOrAdmin ? `
-          <!-- Banner Exclusivo para Profesores y Administradores -->
-          <div class="teacher-admin-project-notice animate-fade-in" style="background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(20, 35, 65, 0.92)); border: 1.5px solid var(--neon-cyan); border-radius: 16px; padding: 1.15rem 1.5rem; margin-bottom: 2rem; display: flex; align-items: center; justify-content: space-between; gap: 1.25rem; flex-wrap: wrap; box-shadow: 0 8px 30px rgba(0, 245, 212, 0.18);">
-            <div style="display: flex; align-items: center; gap: 1rem;">
-              <div style="width: 48px; height: 48px; border-radius: 12px; background: rgba(0, 245, 212, 0.15); border: 1.5px solid var(--neon-cyan); display: flex; align-items: center; justify-content: center; font-size: 1.75rem; flex-shrink: 0; box-shadow: 0 0 15px rgba(0,245,212,0.3);">
-                👨‍🏫
-              </div>
-              <div>
-                <div style="display: inline-flex; align-items: center; gap: 0.4rem; background: rgba(0, 245, 212, 0.18); color: var(--neon-cyan); font-weight: 900; font-size: 0.75rem; text-transform: uppercase; padding: 0.2rem 0.65rem; border-radius: 9999px; letter-spacing: 0.5px; margin-bottom: 0.35rem; border: 1px solid rgba(0,245,212,0.35);">
-                  <span>🛡️</span> Solo para Maestros y Administradores
-                </div>
-                <h3 style="font-size: 1.15rem; font-weight: 900; color: #ffffff; margin: 0 0 0.2rem; text-shadow: 0 2px 8px rgba(0,0,0,0.8); line-height: 1.35;">
-                  Enviar un código o crear un código de proyecto para estudiantes
-                </h3>
-                <p style="font-size: 0.88rem; color: var(--text-secondary); margin: 0; line-height: 1.4;">
-                  Como maestro o administrador, puedes crear un código de proyecto o enviar el código a tus estudiantes para que se unan a la sesión.
-                </p>
-              </div>
-            </div>
-            <button class="btn btn-cyan btn-sm" onclick="window.ProjectsView.openCreateProjectModal()" style="font-weight: 900; padding: 0.65rem 1.25rem; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,245,212,0.35); white-space: nowrap; font-size: 0.9rem;">
-              <span>🔑</span> Crear Código de Proyecto
-            </button>
-          </div>
-        ` : ''}
+
 
         <!-- Buscador y Filtros de Categoría -->
         <div class="glass-panel" style="padding: 1.25rem; margin-bottom: 2rem;">
