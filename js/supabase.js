@@ -16,7 +16,11 @@ class SupabaseService {
 
   setCredentials(url, key) {
     if (url) {
-      this.url = url.trim().replace(/\/+$/, '');
+      let cleanUrl = url.trim().replace(/\/+$/, '');
+      if (!cleanUrl.startsWith('http')) {
+        cleanUrl = `https://${cleanUrl}.supabase.co`.replace('.supabase.co.supabase.co', '.supabase.co');
+      }
+      this.url = cleanUrl;
       localStorage.setItem('supabase_url', this.url);
     }
     if (key) {
