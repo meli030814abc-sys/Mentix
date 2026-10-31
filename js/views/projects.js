@@ -1780,6 +1780,274 @@ window.ProjectsView = {
     const authorDisplayName = this.escapeHtml(aut.authorsList || selected?.author || 'Equipo del Proyecto');
     const authorDisplayEmail = this.escapeHtml(aut.authorsEmails || selected?.authorEmail || '');
 
+    // Video dinámico del proyecto
+    const vc = (selected && (selected.videoConfig || selected.video)) ? (selected.videoConfig || selected.video) : (gp.videoConfig || gp.video || {});
+    const videoUrl = (typeof vc === 'string' ? vc : (vc.url || vc.embedUrl || selected?.videoUrl || '')).trim();
+    const hasVideo = Boolean(videoUrl && videoUrl.length >= 6);
+
+    // Recursos, enlaces y activos visuales reales del proyecto (sin inventar datos ficticios)
+    const userResources = (Array.isArray(selected?.resources) ? selected.resources : (Array.isArray(gp.resources) ? gp.resources : [])).filter(r => r && r.visibility !== 'private');
+    const userLinks = (Array.isArray(selected?.externalLinks) ? selected.externalLinks : (Array.isArray(gp.externalLinks) ? gp.externalLinks : [])).filter(l => l && l.visibility !== 'private');
+    const userVisuals = (Array.isArray(selected?.visualAssets) ? selected.visualAssets : (Array.isArray(gp.visualAssets) ? gp.visualAssets : [])).filter(v => v && v.visibility !== 'private');
+    const mainCover = selected?.mainImage || gp.mainImage || '';
+
+    let cardsHtml = '';
+    let totalCardsCount = 0;
+
+    // 1. Tarjeta de Video Real (si el usuario lo configuró)
+    if (hasVideo) {
+      totalCardsCount++;
+      let videoThumb = '';
+      const ytMatch = videoUrl.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([A-Za-z0-9_-]{6,})/);
+      if (ytMatch) {
+        videoThumb = `https://img.youtube.com/vi/${ytMatch[1]}/hqdefault.jpg`;
+      } else if (mainCover) {
+        videoThumb = mainCover;
+      }
+      const vTitle = vc.title || 'Video explicativo del proyecto';
+      const vDesc = vc.description || 'Conoce los objetivos y el alcance de la iniciativa.';
+      const vSearch = (vTitle + ' ' + vDesc + ' video explicativo multimedia').toLowerCase();
+      const vFile = vc.fileName || 'Video oficial';
+
+      cardsHtml += `
+        <article class="inno-resource-card" data-category="video" data-plp-search="${this.escapeHtml(vSearch)}">
+          <div class="inno-card-thumb-wrap" style="${videoThumb ? `background-image:url('${this.escapeHtml(videoThumb)}'); background-size:cover; background-position:center;` : 'background:linear-gradient(135deg, #091e2d 0%, #0284c7 100%);'} cursor:pointer;" onclick="window.ProjectsView.playLandingVideo()">
+            <span class="inno-card-tag" style="background:#0284c7;">▶ Video</span>
+            <div class="inno-card-play-btn">▶</div>
+          </div>
+          <div class="inno-card-body">
+            <div>
+              <h4 class="inno-card-title">${this.escapeHtml(vTitle)}</h4>
+              <p class="inno-card-desc">${this.escapeHtml(vDesc)}</p>
+            </div>
+            <div class="inno-card-footer">
+              <span>🎬 ${this.escapeHtml(vFile)}</span>
+              <button type="button" class="inno-card-dl-btn" onclick="window.ProjectsView.playLandingVideo()" title="Reproducir">▶</button>
+            </div>
+          </div>
+        </article>
+      `;
+    }
+
+    // 2. Tarjetas de Documentos Reales
+    userResources.forEach((res, idx) => {
+      totalCardsCount++;
+      const name = res.name || res.title || `Documento ${idx + 1}`;
+      const desc = res.description || 'Material oficial y recurso de apoyo del proyecto.';
+      const type = (res.type || '').toLowerCase();
+      const fmt = (res.format || '').toUpperCase();
+      const cat = (res.category || '').toLowerCase();
+
+      let dataCat = 'doc';
+      let tagColor = '#ea580c';
+      let tagLabel = '📄 ' + (fmt || 'DOC');
+
+      if (type === 'ppt' || fmt.includes('PPT') || cat.includes('presentac')) {
+        dataCat = 'pres';
+        tagColor = '#7c3aed';
+        tagLabel = '📽️ Presentación';
+      } else if (type === 'guide' || type === 'manual' || cat.includes('gu') || cat.includes('manual')) {
+        dataCat = 'guide';
+        tagColor = '#059669';
+        tagLabel = '📘 Guía';
+      } else if (type === 'image' || fmt.match(/PNG|JPG|JPEG|WEBP|SVG/)) {
+        dataCat = 'img';
+        tagColor = '#0284c7';
+        tagLabel = '🖼️ Imagen';
+      } else if (type === 'excel' || fmt.match(/XLS|CSV/)) {
+        dataCat = 'doc';
+        tagColor = '#16a34a';
+        tagLabel = '📊 Excel';
+      } else if (type === 'word' || fmt.match(/DOC|DOCX/)) {
+        dataCat = 'doc';
+        tagColor = '#2563eb';
+        tagLabel = '📝 Word';
+      } else if (type === 'zip' || fmt.includes('ZIP')) {
+        dataCat = 'doc';
+        tagColor = '#d97706';
+        tagLabel = '📦 ZIP';
+      }
+
+      const thumbUrl = res.thumbnailUrl || res.previewUrl || ((res.url && res.url.startsWith('data:image/')) ? res.url : '');
+      const rSearch = (name + ' ' + desc + ' ' + tagLabel + ' ' + (res.category || '')).toLowerCase();
+      const dateStr = res.date || res.updatedAt || 'Reciente';
+      const sizeStr = res.sizeLabel || (res.sizeBytes ? (res.sizeBytes / 1024 / 1024).toFixed(1) + ' MB' : 'Archivo');
+
+      const actionFn = res.url
+        ? `window.ProjectsView.openOrDownloadResource('${this.escapeHtml(res.url)}', '${this.escapeHtml(name)}')`
+        : `window.ProjectsView.downloadLandingDoc('${this.escapeHtml(name)}')`;
+
+      cardsHtml += `
+        <article class="inno-resource-card" data-category="${dataCat}" data-plp-search="${this.escapeHtml(rSearch)}">
+          <div class="inno-card-thumb-wrap" style="${thumbUrl ? `background-image:url('${this.escapeHtml(thumbUrl)}'); background-size:cover; background-position:center;` : 'background:linear-gradient(135deg, #091e2d 0%, #1e293b 100%);'} cursor:pointer;" onclick="${actionFn}">
+            <span class="inno-card-tag" style="background:${tagColor};">${tagLabel}</span>
+          </div>
+          <div class="inno-card-body">
+            <div>
+              <h4 class="inno-card-title">${this.escapeHtml(name)}</h4>
+              <p class="inno-card-desc">${this.escapeHtml(desc)}</p>
+            </div>
+            <div class="inno-card-footer">
+              <span>📅 ${this.escapeHtml(dateStr)} • 💾 ${this.escapeHtml(sizeStr)}</span>
+              <button type="button" class="inno-card-dl-btn" onclick="${actionFn}" title="Abrir o Descargar">⬇</button>
+            </div>
+          </div>
+        </article>
+      `;
+    });
+
+    // 3. Tarjetas de Enlaces Externos Reales
+    userLinks.forEach((lnk, idx) => {
+      totalCardsCount++;
+      const lTitle = lnk.title || `Enlace ${idx + 1}`;
+      const lDesc = lnk.description || lnk.url || 'Enlace externo';
+      const lCat = lnk.category || 'Enlace Web';
+      const lSearch = (lTitle + ' ' + lDesc + ' ' + lCat + ' enlace link').toLowerCase();
+      const domain = lnk.url ? lnk.url.replace(/^https?:\/\//i, '').split('/')[0] : 'Web';
+
+      cardsHtml += `
+        <article class="inno-resource-card" data-category="link" data-plp-search="${this.escapeHtml(lSearch)}">
+          <div class="inno-card-thumb-wrap" style="background:linear-gradient(135deg, #064e3b 0%, #091e2d 100%); cursor:pointer;" onclick="window.open('${this.escapeHtml(lnk.url)}', '_blank')">
+            <span class="inno-card-tag" style="background:#10b981;">🔗 ${this.escapeHtml(lCat)}</span>
+          </div>
+          <div class="inno-card-body">
+            <div>
+              <h4 class="inno-card-title">${this.escapeHtml(lTitle)}</h4>
+              <p class="inno-card-desc">${this.escapeHtml(lDesc)}</p>
+            </div>
+            <div class="inno-card-footer">
+              <span>🌐 ${this.escapeHtml(domain)}</span>
+              <button type="button" class="inno-card-dl-btn" onclick="window.open('${this.escapeHtml(lnk.url)}', '_blank')" title="Visitar enlace">↗</button>
+            </div>
+          </div>
+        </article>
+      `;
+    });
+
+    if (totalCardsCount === 0) {
+      cardsHtml = `
+        <div style="grid-column: 1 / -1; padding: 3rem 1.5rem; text-align: center; background: rgba(255,255,255,0.03); border: 2px dashed rgba(148, 163, 184, 0.3); border-radius: 16px;">
+          <div style="font-size: 2.5rem; margin-bottom: 0.6rem;">📂</div>
+          <h4 style="margin: 0 0 0.35rem; color: var(--inno-text-dark, #091e2d); font-weight: 700; font-size: 1.1rem;">No hay recursos adicionales registrados</h4>
+          <p style="margin: 0; color: var(--inno-text-muted, #64748b); font-size: 0.88rem;">El autor aún no ha adjuntado documentos descargables, videos o enlaces para este proyecto.</p>
+        </div>
+      `;
+    }
+
+    // Galería Multimedia Real
+    let galleryHtml = '';
+    if (userVisuals.length > 0) {
+      const bigVis = userVisuals[0];
+      const thumbs = userVisuals.slice(1, 4);
+      const remainingCount = userVisuals.length - 4;
+
+      galleryHtml = `
+        <div class="inno-gallery-header">
+          <div>
+            <h3 style="margin:0 0 0.2rem; font-size:1.15rem; font-weight:800; color:#ffffff;">🖼️ Galería multimedia</h3>
+            <p style="margin:0; font-size:0.8rem; color:#94a3b8;">Imágenes y momentos del proyecto</p>
+          </div>
+          <button type="button" style="background:none; border:none; color:var(--inno-cyan-400); font-size:0.84rem; font-weight:700; cursor:pointer;" onclick="window.ProjectsView.openLandingLightbox('${this.escapeHtml(bigVis.url)}', '${this.escapeHtml(bigVis.title || 'Galería del Proyecto')}')">
+            Ver galería ➔
+          </button>
+        </div>
+
+        <div class="inno-gallery-mosaic">
+          <div class="inno-gallery-big" style="background-image:url('${this.escapeHtml(bigVis.url)}'); cursor:pointer;" onclick="window.ProjectsView.openLandingLightbox('${this.escapeHtml(bigVis.url)}', '${this.escapeHtml(bigVis.title || 'Imagen Principal')}')">
+          </div>
+          ${thumbs.length > 0 ? `
+            <div class="inno-gallery-stack">
+              ${thumbs.map((item, idx) => `
+                <div class="inno-gallery-thumb" style="background-image:url('${this.escapeHtml(item.url)}'); cursor:pointer;" onclick="window.ProjectsView.openLandingLightbox('${this.escapeHtml(item.url)}', '${this.escapeHtml(item.title || 'Galería')}')">
+                  ${idx === 2 && remainingCount > 0 ? `<div class="inno-gallery-overlay-badge">+${remainingCount}</div>` : ''}
+                </div>
+              `).join('')}
+            </div>
+          ` : ''}
+        </div>
+
+        <div style="text-align:right;">
+          <span style="font-size:0.75rem; color:#64748b;">${userVisuals.length} archivo${userVisuals.length === 1 ? '' : 's'} multimedia en galería</span>
+        </div>
+      `;
+    } else if (mainCover) {
+      galleryHtml = `
+        <div class="inno-gallery-header">
+          <div>
+            <h3 style="margin:0 0 0.2rem; font-size:1.15rem; font-weight:800; color:#ffffff;">🖼️ Galería multimedia</h3>
+            <p style="margin:0; font-size:0.8rem; color:#94a3b8;">Imagen oficial del proyecto</p>
+          </div>
+          <button type="button" style="background:none; border:none; color:var(--inno-cyan-400); font-size:0.84rem; font-weight:700; cursor:pointer;" onclick="window.ProjectsView.openLandingLightbox('${this.escapeHtml(mainCover)}', '${this.escapeHtml(selectedTitle)}')">
+            Ver imagen ➔
+          </button>
+        </div>
+
+        <div class="inno-gallery-mosaic">
+          <div class="inno-gallery-big" style="background-image:url('${this.escapeHtml(mainCover)}'); cursor:pointer; width:100%;" onclick="window.ProjectsView.openLandingLightbox('${this.escapeHtml(mainCover)}', '${this.escapeHtml(selectedTitle)}')">
+          </div>
+        </div>
+
+        <div style="text-align:right;">
+          <span style="font-size:0.75rem; color:#64748b;">1 imagen principal registrada</span>
+        </div>
+      `;
+    } else {
+      galleryHtml = `
+        <div class="inno-gallery-header">
+          <div>
+            <h3 style="margin:0 0 0.2rem; font-size:1.15rem; font-weight:800; color:#ffffff;">🖼️ Galería multimedia</h3>
+            <p style="margin:0; font-size:0.8rem; color:#94a3b8;">Imágenes y momentos del proyecto</p>
+          </div>
+        </div>
+
+        <div style="padding: 2.8rem 1.25rem; text-align: center; border: 2px dashed rgba(148,163,184,0.3); border-radius: 14px; background: rgba(255,255,255,0.03); margin: 1rem 0;">
+          <div style="font-size: 2.2rem; margin-bottom: 0.5rem;">🖼️</div>
+          <h4 style="margin: 0 0 0.35rem; font-size: 0.95rem; font-weight: 700; color: #cbd5e1;">Galería sin imágenes</h4>
+          <p style="margin: 0; font-size: 0.82rem; color: #94a3b8;">Aún no se han adjuntado imágenes o capturas para este proyecto.</p>
+        </div>
+
+        <div style="text-align:right;">
+          <span style="font-size:0.75rem; color:#64748b;">0 imágenes</span>
+        </div>
+      `;
+    }
+
+    // Cronograma / Timeline Real
+    let timelineStepsHtml = '';
+    const hasTimelineArray = Array.isArray(selected?.timeline) && selected.timeline.length > 0;
+    if (hasTimelineArray) {
+      timelineStepsHtml = selected.timeline.map((st, i) => `
+        <div class="inno-step-item ${st.completed ? 'active' : ''}">
+          <div class="inno-step-dot">${st.completed ? '✓' : '➔'}</div>
+          <div class="inno-step-title">${this.escapeHtml(st.title || `Fase ${i + 1}`)}</div>
+          <div class="inno-step-date">${this.escapeHtml(st.date || '')}</div>
+        </div>
+      `).join('');
+    } else {
+      const startFmt = selected?.startDate ? new Date(selected.startDate + 'T00:00:00').toLocaleDateString('es-ES', { month: 'short', year: 'numeric' }) : 'Inicio';
+      const endFmt = selected?.endDate ? new Date(selected.endDate + 'T00:00:00').toLocaleDateString('es-ES', { month: 'short', year: 'numeric' }) : 'Meta';
+      const prepStatus = (selected?.preparationStatus || selected?.projectState || 'En desarrollo').toString().replace(/_/g, ' ');
+      const isDone = selected?.preparationStatus === 'completado' || selected?.projectState === 'completado';
+
+      timelineStepsHtml = `
+        <div class="inno-step-item active">
+          <div class="inno-step-dot">✓</div>
+          <div class="inno-step-title">Inicio</div>
+          <div class="inno-step-date">${this.escapeHtml(startFmt)}</div>
+        </div>
+        <div class="inno-step-item active">
+          <div class="inno-step-dot">✓</div>
+          <div class="inno-step-title">${this.escapeHtml(prepStatus)}</div>
+          <div class="inno-step-date">En progreso</div>
+        </div>
+        <div class="inno-step-item ${isDone ? 'active' : ''}">
+          <div class="inno-step-dot">${isDone ? '✓' : '➔'}</div>
+          <div class="inno-step-title">Resultados</div>
+          <div class="inno-step-date">${this.escapeHtml(endFmt)}</div>
+        </div>
+      `;
+    }
+
     const fullScreenHref = selected
       ? `proyecto-landing.html?id=${encodeURIComponent(selected.id)}${selected.slug ? '&slug=' + encodeURIComponent(selected.slug) : ''}`
       : 'proyecto-landing.html';
@@ -2040,126 +2308,29 @@ window.ProjectsView = {
                     <span style="position:absolute; left:0.75rem; color:#94a3b8; font-size:0.85rem;">🔍</span>
                     <input type="search" class="inno-search-input" placeholder="Buscar recursos..." oninput="window.ProjectsView.filterLandingSearch(this.value)" />
                   </div>
-                  <select style="background:#ffffff; border:1px solid #cbd5e1; border-radius:999px; padding:0.45rem 1rem; font-size:0.84rem; font-weight:700; color:#334155; outline:none; cursor:pointer;">
-                    <option>Más recientes ▾</option>
-                    <option>Más descargados</option>
-                    <option>Por categoría</option>
-                  </select>
                 </div>
               </div>
 
               <!-- Filtros de categoría -->
               <div class="inno-filter-tabs">
-                <button type="button" class="inno-filter-pill active">Todos</button>
-                <button type="button" class="inno-filter-pill">Videos</button>
-                <button type="button" class="inno-filter-pill">Documentos</button>
-                <button type="button" class="inno-filter-pill">Presentaciones</button>
-                <button type="button" class="inno-filter-pill">Guías</button>
-                <button type="button" class="inno-filter-pill">Imágenes</button>
-                <button type="button" class="inno-filter-pill">Enlaces</button>
+                <button type="button" class="inno-filter-pill active" onclick="window.ProjectsView.filterResourceCategory('all', this)">Todos</button>
+                <button type="button" class="inno-filter-pill" onclick="window.ProjectsView.filterResourceCategory('video', this)">Videos</button>
+                <button type="button" class="inno-filter-pill" onclick="window.ProjectsView.filterResourceCategory('doc', this)">Documentos</button>
+                <button type="button" class="inno-filter-pill" onclick="window.ProjectsView.filterResourceCategory('pres', this)">Presentaciones</button>
+                <button type="button" class="inno-filter-pill" onclick="window.ProjectsView.filterResourceCategory('guide', this)">Guías</button>
+                <button type="button" class="inno-filter-pill" onclick="window.ProjectsView.filterResourceCategory('img', this)">Imágenes</button>
+                <button type="button" class="inno-filter-pill" onclick="window.ProjectsView.filterResourceCategory('link', this)">Enlaces</button>
               </div>
 
               <div class="inno-resources-main-grid">
-                <!-- 4 Tarjetas de Recursos -->
-                <div class="inno-cards-grid">
-                  <!-- Card 1: Video -->
-                  <article class="inno-resource-card" data-plp-search="video explicativo objetivos alcance">
-                    <div class="inno-card-thumb-wrap" style="background-image:url('https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=600&q=80'); cursor:pointer;" onclick="window.ProjectsView.playLandingVideo()">
-                      <span class="inno-card-tag" style="background:#0284c7;">▶ Video</span>
-                      <div class="inno-card-play-btn">▶</div>
-                    </div>
-                    <div class="inno-card-body">
-                      <div>
-                        <h4 class="inno-card-title">Video explicativo del proyecto</h4>
-                        <p class="inno-card-desc">Conoce los objetivos y el alcance de la iniciativa.</p>
-                      </div>
-                      <div class="inno-card-footer">
-                        <span>📅 12 abr 2025 • ⏱️ 03:45</span>
-                        <button type="button" class="inno-card-dl-btn" onclick="window.ProjectsView.playLandingVideo()" title="Reproducir">⬇</button>
-                      </div>
-                    </div>
-                  </article>
-
-                  <!-- Card 2: Informe técnico -->
-                  <article class="inno-resource-card" data-plp-search="informe tecnico documento avances resultados pdf">
-                    <div class="inno-card-thumb-wrap" style="background-image:url('https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&w=600&q=80'); cursor:pointer;" onclick="window.ProjectsView.previewLandingDoc('Informe Técnico — ${selectedTitle}')">
-                      <span class="inno-card-tag" style="background:#ea580c;">📄 PDF</span>
-                    </div>
-                    <div class="inno-card-body">
-                      <div>
-                        <h4 class="inno-card-title">Informe técnico</h4>
-                        <p class="inno-card-desc">Documento con los avances y resultados del proyecto.</p>
-                      </div>
-                      <div class="inno-card-footer">
-                        <span>📅 10 abr 2025 • 💾 2.4 MB</span>
-                        <button type="button" class="inno-card-dl-btn" onclick="window.ProjectsView.downloadLandingDoc('Informe_Tecnico.pdf')" title="Descargar">⬇</button>
-                      </div>
-                    </div>
-                  </article>
-
-                  <!-- Card 3: Presentación -->
-                  <article class="inno-resource-card" data-plp-search="presentacion institucional resumen ejecutivo componentes">
-                    <div class="inno-card-thumb-wrap" style="background-image:url('https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=600&q=80'); cursor:pointer;" onclick="window.ProjectsView.previewLandingDoc('Presentación Institucional — ${selectedTitle}')">
-                      <span class="inno-card-tag" style="background:#7c3aed;">📊 Presentación</span>
-                    </div>
-                    <div class="inno-card-body">
-                      <div>
-                        <h4 class="inno-card-title">Presentación institucional</h4>
-                        <p class="inno-card-desc">Resumen ejecutivo del proyecto y sus componentes.</p>
-                      </div>
-                      <div class="inno-card-footer">
-                        <span>📅 08 abr 2025 • 💾 5.8 MB</span>
-                        <button type="button" class="inno-card-dl-btn" onclick="window.ProjectsView.downloadLandingDoc('Presentacion_Institucional.pdf')" title="Descargar">⬇</button>
-                      </div>
-                    </div>
-                  </article>
-
-                  <!-- Card 4: Guía de implementación -->
-                  <article class="inno-resource-card" data-plp-search="guia de implementacion adopcion gobierno de datos">
-                    <div class="inno-card-thumb-wrap" style="background-image:url('https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?auto=format&fit=crop&w=600&q=80'); cursor:pointer;" onclick="window.ProjectsView.previewLandingDoc('Guía de Implementación — ${selectedTitle}')">
-                      <span class="inno-card-tag" style="background:#059669;">📘 Guía</span>
-                    </div>
-                    <div class="inno-card-body">
-                      <div>
-                        <h4 class="inno-card-title">Guía de implementación</h4>
-                        <p class="inno-card-desc">Paso a paso para la adopción del gobierno de datos.</p>
-                      </div>
-                      <div class="inno-card-footer">
-                        <span>📅 05 abr 2025 • 💾 1.2 MB</span>
-                        <button type="button" class="inno-card-dl-btn" onclick="window.ProjectsView.downloadLandingDoc('Guia_Implementacion.pdf')" title="Descargar">⬇</button>
-                      </div>
-                    </div>
-                  </article>
+                <!-- Tarjetas de Recursos Dinámicas -->
+                <div class="inno-cards-grid" id="inno-resource-cards-container">
+                  ${cardsHtml}
                 </div>
 
-                <!-- Columna Derecha: Galería Multimedia Widget -->
-                <aside class="inno-gallery-box">
-                  <div class="inno-gallery-header">
-                    <div>
-                      <h3 style="margin:0 0 0.2rem; font-size:1.15rem; font-weight:800; color:#ffffff;">🖼️ Galería multimedia</h3>
-                      <p style="margin:0; font-size:0.8rem; color:#94a3b8;">Imágenes, videos y momentos del proyecto</p>
-                    </div>
-                    <button type="button" style="background:none; border:none; color:var(--inno-cyan-400); font-size:0.84rem; font-weight:700; cursor:pointer;" onclick="window.ProjectsView.openLandingLightbox('https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=1200&q=80', 'Centro de Monitoreo de Datos y Modelos IA')">
-                      Ver galería →
-                    </button>
-                  </div>
-
-                  <div class="inno-gallery-mosaic">
-                    <div class="inno-gallery-big" style="background-image:url('https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=800&q=80');" onclick="window.ProjectsView.playLandingVideo()">
-                      <div class="inno-card-play-btn" style="width:52px; height:52px; font-size:1.25rem;">▶</div>
-                    </div>
-                    <div class="inno-gallery-stack">
-                      <div class="inno-gallery-thumb" style="background-image:url('https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=400&q=80');" onclick="window.ProjectsView.openLandingLightbox('https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=1200&q=80', 'Sesión de trabajo en equipo')"></div>
-                      <div class="inno-gallery-thumb" style="background-image:url('https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=400&q=80');" onclick="window.ProjectsView.openLandingLightbox('https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=80', 'Analítica y métricas de desempeño')"></div>
-                      <div class="inno-gallery-thumb" style="background-image:url('https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=400&q=80');" onclick="window.ProjectsView.openLandingLightbox('https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=1200&q=80', 'Comunidad y colaboradores')">
-                        <div class="inno-gallery-overlay-badge">+12</div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div style="text-align:right;">
-                    <span style="font-size:0.75rem; color:#64748b;">Actualizado recientemente • 16 archivos multimedia</span>
-                  </div>
+                <!-- Columna Derecha: Galería Multimedia Widget Dinámica -->
+                <aside class="inno-gallery-box" id="inno-gallery-box-container">
+                  ${galleryHtml}
                 </aside>
               </div>
             </div>
@@ -2183,36 +2354,7 @@ window.ProjectsView = {
                 <div class="inno-timeline-stepper">
                   <div class="inno-timeline-line"></div>
                   <div class="inno-timeline-line-active"></div>
-
-                  <div class="inno-step-item active">
-                    <div class="inno-step-dot">●</div>
-                    <div class="inno-step-title">Inicio</div>
-                    <div class="inno-step-date">Ene 2025</div>
-                  </div>
-
-                  <div class="inno-step-item active">
-                    <div class="inno-step-dot">●</div>
-                    <div class="inno-step-title">Fase 1: Diagnóstico</div>
-                    <div class="inno-step-date">Mar 2025</div>
-                  </div>
-
-                  <div class="inno-step-item active">
-                    <div class="inno-step-dot">●</div>
-                    <div class="inno-step-title">Fase 2: Desarrollo</div>
-                    <div class="inno-step-date">May 2025</div>
-                  </div>
-
-                  <div class="inno-step-item active">
-                    <div class="inno-step-dot">●</div>
-                    <div class="inno-step-title">Fase 3: Implementación</div>
-                    <div class="inno-step-date">Ago 2025</div>
-                  </div>
-
-                  <div class="inno-step-item">
-                    <div class="inno-step-dot">○</div>
-                    <div class="inno-step-title">Resultados</div>
-                    <div class="inno-step-date">Dic 2025</div>
-                  </div>
+                  ${timelineStepsHtml}
                 </div>
               </article>
 
@@ -2296,40 +2438,83 @@ window.ProjectsView = {
     const modal = document.getElementById('plp-inline-lightbox');
     const body = document.getElementById('plp-inline-lightbox-body');
     if (!modal || !body) return;
-    const selected = (window.appState.challenges || []).find(x => x.id === this.selectedProjectId);
-    const vid = (selected && selected.video) ? selected.video : {};
-    const rawUrl = vid.url || vid.embedUrl || (selected && selected.videoUrl) || 'https://www.youtube.com/embed/aircAruvnKk';
+    let selected = (window.appState.challenges || []).find(x => x.id === this.selectedProjectId);
+    if (!selected) {
+      try {
+        const drafts = JSON.parse(localStorage.getItem('mentix_govdata_wizard_drafts') || '[]');
+        selected = drafts.find(d => d && d.id === this.selectedProjectId);
+      } catch (e) {}
+    }
+    if (!selected && window.ProjectWizard?.draft) selected = window.ProjectWizard.draft;
 
-    let videoHtml = `
-      <iframe
-        width="100%"
-        height="500px"
-        src="https://www.youtube.com/embed/aircAruvnKk?autoplay=1&rel=0"
-        title="Video Explicativo del Proyecto"
-        frameborder="0"
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-        allowfullscreen
-        style="border:0; width:100%; height:500px; display:block; border-radius:12px;"
-      ></iframe>
-    `;
+    const gp = selected?.govdata || {};
+    const vc = (selected && (selected.videoConfig || selected.video)) ? (selected.videoConfig || selected.video) : (gp.videoConfig || gp.video || {});
+    const rawUrl = (typeof vc === 'string' ? vc : (vc.url || vc.embedUrl || selected?.videoUrl || '')).trim();
+    const projTitle = this.escapeHtml(vc.title || selected?.title || 'Proyecto');
 
-    if (rawUrl) {
-      const ytMatch = rawUrl.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([A-Za-z0-9_-]{6,})/);
-      if (ytMatch) {
-        videoHtml = `<iframe width="100%" height="500px" src="https://www.youtube.com/embed/${ytMatch[1]}?autoplay=1&rel=0" frameborder="0" allowfullscreen style="border:0; width:100%; height:500px; display:block; border-radius:12px;"></iframe>`;
-      }
+    if (!rawUrl) {
+      body.innerHTML = `
+        <button class="plp-lightbox-close" onclick="window.ProjectsView.closeLandingLightbox()" aria-label="Cerrar">✕</button>
+        <div style="background:#091e2d; padding:2.5rem 1.75rem; border-radius:16px; text-align:center;">
+          <div style="font-size:3rem; margin-bottom:0.75rem;">🎬</div>
+          <h3 style="color:#ffffff; margin:0 0 0.5rem; font-size:1.3rem;">Sin Video Disponible</h3>
+          <p style="color:#94a3b8; font-size:0.95rem; margin:0 0 1.5rem; line-height:1.6;">Este proyecto aún no tiene un video configurado por su creador.</p>
+          <button class="inno-btn-cyan" onclick="window.ProjectsView.closeLandingLightbox()">Entendido</button>
+        </div>
+      `;
+      modal.classList.add('active');
+      return;
     }
 
-    const projTitle = this.escapeHtml((selected && selected.title) || 'Proyecto');
+    let videoHtml = '';
+    const ytMatch = rawUrl.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([A-Za-z0-9_-]{6,})/);
+    const vimeoMatch = rawUrl.match(/vimeo\.com\/(?:video\/)?(\d+)/);
+
+    if (ytMatch) {
+      videoHtml = `<iframe width="100%" height="500px" src="https://www.youtube.com/embed/${ytMatch[1]}?autoplay=1&rel=0" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="border:0; width:100%; height:500px; display:block; border-radius:12px;"></iframe>`;
+    } else if (vimeoMatch) {
+      videoHtml = `<iframe width="100%" height="500px" src="https://player.vimeo.com/video/${vimeoMatch[1]}?autoplay=1" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen style="border:0; width:100%; height:500px; display:block; border-radius:12px;"></iframe>`;
+    } else if (rawUrl.startsWith('data:video/') || rawUrl.match(/\.(mp4|webm|ogg)($|\?)/i)) {
+      videoHtml = `<video controls autoplay style="width:100%; max-height:500px; border-radius:12px; background:#000;"><source src="${rawUrl}" type="video/mp4">Tu navegador no soporta reproducción de video.</video>`;
+    } else {
+      videoHtml = `<iframe width="100%" height="500px" src="${rawUrl}" frameborder="0" allowfullscreen style="border:0; width:100%; height:500px; display:block; border-radius:12px;"></iframe>`;
+    }
 
     body.innerHTML = `
       <button class="plp-lightbox-close" onclick="window.ProjectsView.closeLandingLightbox()" aria-label="Cerrar">✕</button>
       <div style="background:#091e2d; padding:1.5rem; border-radius:16px;">
-        <h3 style="color:#ffffff; margin:0 0 1rem;">🎬 Video Explicativo: ${projTitle}</h3>
+        <h3 style="color:#ffffff; margin:0 0 1rem; font-size:1.2rem;">🎬 ${projTitle}</h3>
         ${videoHtml}
       </div>
     `;
     modal.classList.add('active');
+  },
+
+  openOrDownloadResource(url, filename) {
+    if (!url) return;
+    if (url.startsWith('data:') || url.startsWith('blob:')) {
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename || 'recurso';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    } else {
+      window.open(url, '_blank');
+    }
+  },
+
+  filterResourceCategory(cat, btn) {
+    document.querySelectorAll('#view-projects .inno-filter-pill').forEach(b => b.classList.remove('active'));
+    if (btn) btn.classList.add('active');
+
+    document.querySelectorAll('#view-projects #inno-resource-cards-container article').forEach(el => {
+      if (cat === 'all') {
+        el.style.display = 'flex';
+      } else {
+        el.style.display = el.getAttribute('data-category') === cat ? 'flex' : 'none';
+      }
+    });
   },
 
   downloadLandingDoc(filename) {
@@ -2514,9 +2699,9 @@ Generado por Mentix - Plataforma de Proyectos y Retos
 
   filterLandingSearch(query) {
     const q = (query || '').toLowerCase().trim();
-    document.querySelectorAll('#view-projects [data-plp-search]').forEach((el) => {
+    document.querySelectorAll('#view-projects #inno-resource-cards-container article').forEach((el) => {
       const text = (el.getAttribute('data-plp-search') + ' ' + el.innerText).toLowerCase();
-      el.style.opacity = !q || text.includes(q) ? '1' : '0.25';
+      el.style.display = !q || text.includes(q) ? 'flex' : 'none';
     });
   },
 
