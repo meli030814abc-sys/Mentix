@@ -1,4 +1,4 @@
-/**
+﻿/**
  * 🔥 TE RETO - Orquestador Principal y Enrutador SPA (app.js)
  * Conecta todas las vistas, modales, autenticación, experiencia XP y sonido.
  */
@@ -206,6 +206,13 @@ class AppRouter {
     document.querySelectorAll('.app-view').forEach(v => {
       v.classList.remove('active');
     });
+
+    // Control de tema totalmente blanco exclusivo para la vista de proyectos
+    if (viewName === 'projects') {
+      document.body.classList.add('projects-pure-white-theme');
+    } else {
+      document.body.classList.remove('projects-pure-white-theme');
+    }
 
     // Controlar visibilidad del navbar principal (ocultar en lobby-join, game, leaderboard y podium para diseño inmersivo con fondo Mentix completo)
     const navEl = document.getElementById('main-navbar');

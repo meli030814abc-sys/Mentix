@@ -4890,3 +4890,123 @@ button, input, select, textarea, a, .btn, .challenge-card, .game-answer-btn {
     max-width: 100vw;
   }
 }
+
+/* =========================================================================
+   🤍 MODO BLANCO TOTAL EXCLUSIVO PARA PROYECTOS (body.projects-pure-white-theme)
+   ========================================================================= */
+body.projects-pure-white-theme {
+  background-color: #ffffff !important;
+  background-image: none !important;
+  color: #0f172a !important;
+  --bg-primary: #ffffff !important;
+  --bg-secondary: #f8fafc !important;
+  --bg-card: #ffffff !important;
+  --bg-glass: rgba(255, 255, 255, 0.98) !important;
+  --border-color: rgba(0, 0, 0, 0.1) !important;
+  --border-glow: rgba(0, 180, 216, 0.35) !important;
+  --text-primary: #0f172a !important;
+  --text-secondary: #334155 !important;
+  --text-muted: #64748b !important;
+}
+
+body.projects-pure-white-theme #main-navbar {
+  background: rgba(255, 255, 255, 0.96) !important;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08) !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04) !important;
+  backdrop-filter: blur(12px) !important;
+}
+
+body.projects-pure-white-theme #main-navbar .nav-link {
+  color: #334155 !important;
+}
+
+body.projects-pure-white-theme #main-navbar .nav-link:hover,
+body.projects-pure-white-theme #main-navbar .nav-link.active {
+  color: #0f172a !important;
+  background: rgba(0, 0, 0, 0.05) !important;
+}
+
+body.projects-pure-white-theme #main-navbar .logo-text,
+body.projects-pure-white-theme #main-navbar .user-name {
+  color: #0f172a !important;
+}
+
+body.projects-pure-white-theme #main-navbar .user-role {
+  color: #64748b !important;
+}
+
+body.projects-pure-white-theme #view-projects {
+  background-color: #ffffff !important;
+  background-image: none !important;
+  min-height: 100vh;
+}
+
+body.projects-pure-white-theme #view-projects .glass-panel {
+  background: #ffffff !important;
+  border: 1.5px solid rgba(0, 0, 0, 0.08) !important;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.05) !important;
+  color: #0f172a !important;
+}
+
+body.projects-pure-white-theme #view-projects .challenge-card {
+  background: #ffffff !important;
+  border: 1.5px solid rgba(0, 0, 0, 0.09) !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06) !important;
+  color: #0f172a !important;
+}
+
+body.projects-pure-white-theme #view-projects .challenge-card:hover {
+  border-color: #00b4d8 !important;
+  box-shadow: 0 12px 30px rgba(0, 180, 216, 0.16) !important;
+}
+
+body.projects-pure-white-theme #view-projects .challenge-card h3 {
+  color: #0f172a !important;
+}
+
+body.projects-pure-white-theme #view-projects .challenge-card p {
+  color: #475569 !important;
+}
+
+body.projects-pure-white-theme #view-projects .challenge-card div[style*="background: rgba(0,0,0,0.22)"] {
+  background: #f1f5f9 !important;
+  border-color: rgba(0, 0, 0, 0.08) !important;
+}
+
+body.projects-pure-white-theme #view-projects .challenge-card div[style*="background: rgba(255,255,255,0.12)"] {
+  background: rgba(0, 0, 0, 0.1) !important;
+}
+
+body.projects-pure-white-theme #view-projects #projects-search-input {
+  background: #f8fafc !important;
+  border: 1.5px solid #cbd5e1 !important;
+  color: #0f172a !important;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.02) !important;
+}
+
+body.projects-pure-white-theme #view-projects #projects-search-input:focus {
+  border-color: #00f5d4 !important;
+  background: #ffffff !important;
+  box-shadow: 0 0 0 3px rgba(0, 245, 212, 0.25) !important;
+}
+
+body.projects-pure-white-theme #view-projects #projects-search-input::placeholder {
+  color: #94a3b8 !important;
+}
+
+body.projects-pure-white-theme #view-projects .btn-outline {
+  border: 1.5px solid #cbd5e1 !important;
+  color: #334155 !important;
+  background: #ffffff !important;
+}
+
+body.projects-pure-white-theme #view-projects .btn-outline:hover {
+  background: #f1f5f9 !important;
+  color: #0f172a !important;
+  border-color: #94a3b8 !important;
+}
+
+body.projects-pure-white-theme #view-projects .btn-primary {
+  background: linear-gradient(135deg, #7c3aed, #4f46e5) !important;
+  color: #ffffff !important;
+}

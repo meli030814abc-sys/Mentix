@@ -272,6 +272,8 @@ window.ProjectsView = {
     const container = document.getElementById('view-projects');
     if (!container) return;
 
+    document.body.classList.add('projects-pure-white-theme');
+
     const u = window.appState.currentUser;
     const isTeacherOrAdmin = this.isTeacherOrAdmin();
     // En MENTIX, los proyectos abarcan: Presentaciones, Video Clases, Documentos Didácticos, Enlaces Web/URL y Proyectos GovData Nexus
@@ -406,16 +408,6 @@ window.ProjectsView = {
             alt="Mis Proyectos Educativos - Panel de Proyectos Didácticos" 
             style="width: 100%; height: auto; display: block; image-rendering: -webkit-optimize-contrast; image-rendering: high-quality; transform: translateZ(0); backface-visibility: hidden;"
           />
-
-          <!-- Selector de Modo Claro / Oscuro -->
-          <button 
-            onclick="window.ProjectsView.toggleTheme()" 
-            class="btn btn-outline"
-            style="position: absolute; top: 12px; right: 12px; z-index: 10; padding: 0.4rem 0.8rem; font-size: 0.8rem; font-weight: 800; background: rgba(11, 17, 32, 0.85); backdrop-filter: blur(8px); border: 1.5px solid rgba(255,255,255,0.25); border-radius: 10px; color: #fff; cursor: pointer;"
-            title="Alternar modo claro / oscuro"
-          >
-            <span>${this.getLandingTheme() === 'dark' ? '☀️ Modo Claro' : '🌙 Modo Oscuro'}</span>
-          </button>
 
           <!-- Hotspots Interactivos Superpuestos en los botones del Banner -->
           <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none;">
