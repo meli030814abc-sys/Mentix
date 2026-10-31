@@ -5065,35 +5065,31 @@ body.projects-pure-white-theme #view-projects:has(.gdn-wizard-shell) {
 
 /* ==============================================================
    🏛️ DISEÑO PEDAGÓGICO DE PRUEBAS DE CASOS (COMPUTADOR Y CELULAR)
-   Inspirado en Concurso de Méritos Docentes - CNSC / ICFES
+   Mantiene el fondo original y la identidad visual de la app
+   pero con el orden/formato del examen situacional
    ============================================================== */
-
-/* Fondo general cuando se muestra una prueba pedagógica de casos */
-#view-game:has(.pedagogical-case-wrapper),
-body:has(.pedagogical-case-wrapper) #view-game {
-  background: #f1f5f9 !important;
-  background-image: none !important;
-}
 
 .pedagogical-case-wrapper {
   width: 100%;
   max-width: 1320px;
   margin: 0 auto;
-  padding: 1.5rem 1.25rem 2.5rem;
+  padding: 1.25rem 1.25rem 2.5rem;
   box-sizing: border-box;
   animation: fadeIn 0.25s ease-out;
 }
 
 .pedagogical-case-card {
-  background: #ffffff !important;
-  color: #1e293b !important;
-  border-radius: 20px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08), 0 2px 10px rgba(0, 0, 0, 0.04);
+  background: rgba(11, 19, 43, 0.92) !important;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  color: #f8fafc !important;
+  border-radius: 22px;
+  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.7), 0 0 30px rgba(0, 245, 212, 0.12);
   padding: 2.2rem 3rem 2.2rem;
   box-sizing: border-box;
   position: relative;
   overflow: hidden;
-  border: 1px solid #e2e8f0;
+  border: 1.5px solid rgba(0, 245, 212, 0.35);
 }
 
 /* Header superior: Subtítulo con barra horizontal roja */
@@ -5109,17 +5105,18 @@ body:has(.pedagogical-case-wrapper) #view-game {
   font-size: 0.95rem;
   font-weight: 800;
   text-transform: uppercase;
-  letter-spacing: 0.8px;
-  color: #1e293b;
+  letter-spacing: 1px;
+  color: var(--neon-cyan, #00f5d4);
   white-space: nowrap;
 }
 
 .pedagogical-case-red-line {
   flex: 1;
-  height: 5px;
-  background: #c5221f; /* Rojo institucional exacto a la imagen */
+  height: 4.5px;
+  background: linear-gradient(90deg, #dc2626, #ef4444);
   border-radius: 3px;
   min-width: 40px;
+  box-shadow: 0 0 10px rgba(239, 68, 68, 0.45);
 }
 
 .pedagogical-case-top-stats {
@@ -5131,29 +5128,31 @@ body:has(.pedagogical-case-wrapper) #view-game {
 }
 
 .pedagogical-case-timer-pill {
-  background: #fef2f2;
-  border: 1.5px solid #fecaca;
-  color: #b91c1c;
-  font-size: 0.9rem;
-  font-weight: 800;
-  padding: 0.25rem 0.8rem;
+  background: rgba(255, 230, 0, 0.14);
+  border: 1.5px solid var(--timer-color, #ffe600);
+  color: var(--timer-color, #ffe600) !important;
+  font-size: 0.92rem;
+  font-weight: 900;
+  padding: 0.28rem 0.85rem;
   border-radius: 9999px;
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
+  text-shadow: 0 0 10px rgba(255, 230, 0, 0.6);
 }
 
 .pedagogical-case-score-pill {
-  background: #f0fdf4;
-  border: 1.5px solid #bbf7d0;
-  color: #15803d;
-  font-size: 0.9rem;
-  font-weight: 800;
-  padding: 0.25rem 0.8rem;
+  background: rgba(255, 183, 3, 0.14);
+  border: 1.5px solid #ffb703;
+  color: #ffd166 !important;
+  font-size: 0.92rem;
+  font-weight: 900;
+  padding: 0.28rem 0.85rem;
   border-radius: 9999px;
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
+  text-shadow: 0 0 10px rgba(255, 183, 3, 0.5);
 }
 
 /* Fila principal del caso: Número Rojo Gigante | Título de la Competencia / Caso */
@@ -5167,28 +5166,31 @@ body:has(.pedagogical-case-wrapper) #view-game {
 .pedagogical-case-number {
   font-size: clamp(3.2rem, 5.8vw, 4.8rem);
   font-weight: 900;
-  color: #c5221f;
+  color: #ef4444;
   line-height: 0.92;
   letter-spacing: -2px;
   flex-shrink: 0;
   font-family: inherit;
+  text-shadow: 0 0 18px rgba(239, 68, 68, 0.5);
 }
 
 .pedagogical-case-vertical-divider {
   width: 3.5px;
   height: clamp(2.8rem, 5vw, 4.2rem);
-  background: #c5221f;
+  background: #ef4444;
   border-radius: 2px;
   flex-shrink: 0;
+  box-shadow: 0 0 10px rgba(239, 68, 68, 0.45);
 }
 
 .pedagogical-case-theme {
   font-size: clamp(1.4rem, 2.9vw, 2.45rem);
   font-weight: 900;
-  color: #0f172a;
+  color: #ffffff;
   text-transform: uppercase;
   letter-spacing: -0.5px;
   line-height: 1.15;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.6);
 }
 
 /* Grilla de Contenido: 2 Columnas en Computador, 1 Columna en Celular */
@@ -5208,10 +5210,10 @@ body:has(.pedagogical-case-wrapper) #view-game {
 }
 
 .pedagogical-case-context-text {
-  font-size: clamp(1.05rem, 1.25vw, 1.22rem);
+  font-size: clamp(1.02rem, 1.25vw, 1.2rem);
   line-height: 1.72;
-  color: #1e293b;
-  font-weight: 450;
+  color: #f1f5f9;
+  font-weight: 400;
   white-space: pre-wrap;
   text-align: justify;
 }
@@ -5219,19 +5221,25 @@ body:has(.pedagogical-case-wrapper) #view-game {
 .pedagogical-case-question-statement {
   font-size: clamp(1.18rem, 1.45vw, 1.38rem);
   font-weight: 900;
-  color: #0f172a;
+  color: var(--neon-cyan, #00f5d4);
   line-height: 1.4;
   margin-top: 0.2rem;
+  text-shadow: 0 0 16px rgba(0, 245, 212, 0.25);
 }
 
 .pedagogical-case-norm-box {
-  background: #f8fafc;
-  border-left: 3.5px solid #c5221f;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-left: 3.5px solid #ef4444;
   padding: 0.75rem 1rem;
   border-radius: 8px;
   font-size: 0.88rem;
-  color: #475569;
+  color: #cbd5e1;
   line-height: 1.45;
+}
+
+.pedagogical-case-norm-box strong {
+  color: #ffd166;
 }
 
 /* Columna Derecha: Opciones de Respuesta A, B, C... */
@@ -5253,8 +5261,8 @@ body:has(.pedagogical-case-wrapper) #view-game {
   gap: 1.1rem;
   width: 100%;
   padding: 0.95rem 1.25rem;
-  background: #f8fafc;
-  border: 1.5px solid #e2e8f0;
+  background: rgba(15, 23, 42, 0.82);
+  border: 1.5px solid rgba(255, 255, 255, 0.14);
   border-radius: 14px;
   cursor: pointer;
   text-align: left;
@@ -5262,12 +5270,14 @@ body:has(.pedagogical-case-wrapper) #view-game {
   box-sizing: border-box;
   font-family: inherit;
   outline: none;
+  color: #f1f5f9;
 }
 
 .pedagogical-case-option-card:hover:not(:disabled) {
-  background: #f1f5f9;
-  border-color: #cbd5e1;
-  transform: translateY(-1px);
+  background: rgba(23, 32, 54, 0.95);
+  border-color: rgba(0, 245, 212, 0.5);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 18px rgba(0, 245, 212, 0.15);
 }
 
 .pedagogical-case-badge-circle {
@@ -5278,9 +5288,9 @@ body:has(.pedagogical-case-wrapper) #view-game {
   height: 38px;
   min-width: 38px;
   border-radius: 50%;
-  background: #ffffff;
-  border: 2px solid #cbd5e1;
-  color: #334155;
+  background: rgba(255, 255, 255, 0.08);
+  border: 2px solid rgba(255, 255, 255, 0.25);
+  color: #ffffff;
   font-size: 1.15rem;
   font-weight: 800;
   transition: all 0.2s ease;
@@ -5288,7 +5298,7 @@ body:has(.pedagogical-case-wrapper) #view-game {
 }
 
 .pedagogical-case-option-text {
-  color: #1e293b;
+  color: #f1f5f9;
   font-size: clamp(0.96rem, 1.15vw, 1.08rem);
   font-weight: 600;
   line-height: 1.4;
@@ -5297,36 +5307,38 @@ body:has(.pedagogical-case-wrapper) #view-game {
 
 /* Estado SELECCIONADO (exacto como la opción A en la imagen) */
 .pedagogical-case-option-card.is-selected {
-  background: #fee2e2 !important; /* Suave rojo rosado */
+  background: rgba(220, 38, 38, 0.24) !important;
   border: 2px solid #ef4444 !important;
-  box-shadow: 0 4px 14px rgba(220, 38, 38, 0.15);
+  box-shadow: 0 0 20px rgba(239, 68, 68, 0.35);
 }
 
 .pedagogical-case-option-card.is-selected .pedagogical-case-badge-circle {
-  background: #c5221f !important;
-  border-color: #c5221f !important;
+  background: #dc2626 !important;
+  border-color: #dc2626 !important;
   color: #ffffff !important;
-  box-shadow: 0 2px 8px rgba(197, 34, 31, 0.4);
+  box-shadow: 0 0 12px rgba(220, 38, 38, 0.7);
 }
 
 .pedagogical-case-option-card.is-selected .pedagogical-case-option-text {
-  color: #0f172a !important;
-  font-weight: 700;
+  color: #ffffff !important;
+  font-weight: 800;
 }
 
 /* Estados de Verificación / Resultados */
 .pedagogical-case-option-card.is-correct {
-  background: #ecfdf5 !important;
+  background: rgba(16, 185, 129, 0.24) !important;
   border: 2px solid #10b981 !important;
+  box-shadow: 0 0 20px rgba(16, 185, 129, 0.35);
 }
 .pedagogical-case-option-card.is-correct .pedagogical-case-badge-circle {
   background: #10b981 !important;
   border-color: #10b981 !important;
   color: #ffffff !important;
+  box-shadow: 0 0 12px rgba(16, 185, 129, 0.7);
 }
 
 .pedagogical-case-option-card.is-wrong {
-  background: #fef2f2 !important;
+  background: rgba(239, 68, 68, 0.2) !important;
   border: 2px solid #ef4444 !important;
   opacity: 0.85;
 }
@@ -5344,20 +5356,20 @@ body:has(.pedagogical-case-wrapper) #view-game {
   gap: 0.85rem;
   margin-top: 2rem;
   padding-top: 1.35rem;
-  border-top: 1px solid #f1f5f9;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .pedagogical-btn-submit {
-  background: #0284c7;
-  color: #ffffff !important;
-  font-weight: 800;
-  font-size: 0.96rem;
-  padding: 0.65rem 1.45rem;
-  border-radius: 10px;
+  background: linear-gradient(135deg, var(--neon-cyan, #00f5d4), #0077b6);
+  color: #041230 !important;
+  font-weight: 900;
+  font-size: 0.98rem;
+  padding: 0.7rem 1.6rem;
+  border-radius: 12px;
   border: none;
   cursor: pointer;
   transition: all 0.2s ease;
-  box-shadow: 0 2px 8px rgba(2, 132, 199, 0.3);
+  box-shadow: 0 4px 18px rgba(0, 245, 212, 0.4);
   font-family: inherit;
   display: inline-flex;
   align-items: center;
@@ -5365,8 +5377,8 @@ body:has(.pedagogical-case-wrapper) #view-game {
 }
 
 .pedagogical-btn-submit:hover:not(:disabled) {
-  background: #0369a1;
-  transform: translateY(-1px);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 22px rgba(0, 245, 212, 0.55);
 }
 
 .pedagogical-btn-submit:disabled {
@@ -5376,16 +5388,16 @@ body:has(.pedagogical-case-wrapper) #view-game {
 }
 
 .pedagogical-btn-next {
-  background: #0284c7;
+  background: linear-gradient(135deg, #0284c7, #2563eb);
   color: #ffffff !important;
-  font-weight: 800;
-  font-size: 0.96rem;
-  padding: 0.65rem 1.45rem;
-  border-radius: 10px;
+  font-weight: 900;
+  font-size: 0.98rem;
+  padding: 0.7rem 1.6rem;
+  border-radius: 12px;
   border: none;
   cursor: pointer;
   transition: all 0.2s ease;
-  box-shadow: 0 2px 8px rgba(2, 132, 199, 0.3);
+  box-shadow: 0 4px 18px rgba(2, 132, 199, 0.4);
   font-family: inherit;
   display: inline-flex;
   align-items: center;
@@ -5393,24 +5405,51 @@ body:has(.pedagogical-case-wrapper) #view-game {
 }
 
 .pedagogical-btn-next:hover:not(:disabled) {
-  background: #0369a1;
-  transform: translateY(-1px);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 22px rgba(2, 132, 199, 0.55);
 }
 
 /* Feedback Pedagógico (Justificación tras responder) */
 .pedagogical-feedback-box {
   margin-top: 1.25rem;
   padding: 1.2rem 1.4rem;
-  background: #f8fafc;
+  background: rgba(11, 19, 43, 0.96);
   border-radius: 14px;
-  border: 1.5px solid #e2e8f0;
+  border: 1.5px solid rgba(0, 245, 212, 0.4);
   animation: fadeIn 0.3s ease;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+}
+
+/* Modo Claro Adaptativo */
+body.light-theme .pedagogical-case-card {
+  background: #ffffff !important;
+  color: #1e293b !important;
+  border: 1.5px solid #e2e8f0;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+}
+body.light-theme .pedagogical-case-theme {
+  color: #0f172a !important;
+}
+body.light-theme .pedagogical-case-context-text {
+  color: #334155 !important;
+}
+body.light-theme .pedagogical-case-question-statement {
+  color: #0f172a !important;
+}
+body.light-theme .pedagogical-case-option-card {
+  background: #f8fafc !important;
+  border-color: #e2e8f0 !important;
+  color: #1e293b !important;
+}
+body.light-theme .pedagogical-case-option-card .pedagogical-case-badge-circle {
+  background: #ffffff !important;
+  border-color: #cbd5e1 !important;
+  color: #334155 !important;
 }
 
 /* ==============================================================
    📱 ADAPTACIÓN RESPONSIVE PARA CELULARES (max-width: 768px)
-   Como se aprecia en los 2 smartphones de la foto
+   Formato exacto de los teléfonos en la foto con colores Mentix
    ============================================================== */
 @media (max-width: 768px) {
   .pedagogical-case-wrapper {

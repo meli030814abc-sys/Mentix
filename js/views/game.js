@@ -751,14 +751,14 @@ window.GameView = {
                   🏆 <span id="player-score-val">${currentScore}</span> PTS
                 </div>
               ` : `
-                <div class="pedagogical-case-score-pill" style="background:#eff6ff; border-color:#bfdbfe; color:#1d4ed8;">
+                <div class="pedagogical-case-score-pill" style="background: rgba(14, 165, 233, 0.18); border-color: #0ea5e9; color: #38bdf8 !important;">
                   👥 <span id="host-responses-num">0</span>/${totalPlayers} Respuestas
                 </div>
               `}
               <button 
                 type="button" 
                 class="btn btn-outline" 
-                style="padding: 0.2rem 0.55rem; font-size: 0.85rem; border-radius: 8px; border: 1px solid #cbd5e1; background: #ffffff; color: #64748b; cursor: pointer;" 
+                style="padding: 0.25rem 0.65rem; font-size: 0.9rem; border-radius: 8px; border: 1.5px solid rgba(255,255,255,0.25); background: rgba(10,20,45,0.7); color: #ffffff !important; cursor: pointer;" 
                 onclick="if(confirm('¿Deseas salir del examen?')) window.appRouter.navigate('home');" 
                 title="Salir del examen"
               >
@@ -2836,21 +2836,21 @@ window.GameView = {
         const correctText = this.getOptionText(q.options?.[correctIdx]);
         feedbackContainer.innerHTML = `
           <div class="pedagogical-feedback-box">
-            <div style="font-weight: 800; color: ${isCorrect ? '#15803d' : '#b91c1c'}; font-size: 1.05rem; margin-bottom: 0.65rem; display: flex; align-items: center; gap: 0.45rem;">
+            <div style="font-weight: 800; color: ${isCorrect ? '#00ff88' : '#ff4d6d'}; font-size: 1.05rem; margin-bottom: 0.65rem; display: flex; align-items: center; gap: 0.45rem;">
               <span>${isCorrect ? '✅ ¡Respuesta Correcta!' : (isTimeout ? '⏱️ ¡Tiempo Agotado!' : '❌ Respuesta Incorrecta')}</span>
-              ${!isCorrect ? `<span style="font-size: 0.92rem; color: #475569; font-weight: 600;">(Opción clave: <strong>${correctLetter} - ${this.escapeHtml(correctText)}</strong>)</span>` : ''}
+              ${!isCorrect ? `<span style="font-size: 0.92rem; color: #cbd5e1; font-weight: 600;">(Opción clave: <strong style="color: #00f5d4;">${correctLetter} - ${this.escapeHtml(correctText)}</strong>)</span>` : ''}
             </div>
             ${q.explanation ? `
-              <div style="font-size: 0.82rem; font-weight: 800; text-transform: uppercase; color: #0284c7; margin-bottom: 0.35rem; display: flex; align-items: center; gap: 0.35rem;">
+              <div style="font-size: 0.82rem; font-weight: 800; text-transform: uppercase; color: var(--neon-cyan, #00f5d4); margin-bottom: 0.35rem; display: flex; align-items: center; gap: 0.35rem;">
                 <span>💡</span> Justificación Pedagógica:
               </div>
-              <div style="color: #334155; font-size: 0.95rem; line-height: 1.65; white-space: pre-wrap;">
+              <div style="color: #f1f5f9; font-size: 0.95rem; line-height: 1.65; white-space: pre-wrap;">
                 ${this.escapeHtml(q.explanation)}
               </div>
             ` : ''}
             ${q.referenceNorm ? `
-              <div style="margin-top: 0.75rem; padding-top: 0.6rem; border-top: 1px dashed #cbd5e1; font-size: 0.88rem; color: #b91c1c;">
-                <strong>⚖️ Marco normativo:</strong> <span style="color: #1e293b; font-weight: 600;">${this.escapeHtml(q.referenceNorm)}</span>
+              <div style="margin-top: 0.75rem; padding-top: 0.6rem; border-top: 1px dashed rgba(255,255,255,0.18); font-size: 0.88rem; color: #ffd166;">
+                <strong>⚖️ Marco normativo:</strong> <span style="color: #ffffff; font-weight: 600;">${this.escapeHtml(q.referenceNorm)}</span>
               </div>
             ` : ''}
           </div>
