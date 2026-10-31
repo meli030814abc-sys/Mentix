@@ -2513,101 +2513,182 @@ window.ProjectsView = {
       return;
     }
 
+    const isLight = document.body.classList.contains('projects-pure-white-theme') || 
+                    document.body.classList.contains('light-theme') || 
+                    (this.getLandingTheme && this.getLandingTheme() === 'light');
+
     const savedCodes = this.getSavedProjectCodes();
     const recentCode = this.lastCreatedCode || (savedCodes[0] ? savedCodes[0].code : '');
 
+    // Variables de estilo adaptativas 100% legibles para modo claro y modo oscuro
+    const cardBg = isLight ? '#ffffff' : 'linear-gradient(145deg, rgba(15, 23, 42, 0.96), rgba(19, 27, 46, 0.96))';
+    const cardBorder = isLight ? '1.5px solid rgba(0, 0, 0, 0.12)' : '2px solid var(--neon-cyan)';
+    const cardShadow = isLight ? '0 10px 40px rgba(0, 0, 0, 0.08)' : '0 15px 45px rgba(0, 245, 212, 0.2)';
+    const titleColor = isLight ? '#0f172a' : '#ffffff';
+    const textColor = isLight ? '#334155' : '#cbd5e1';
+    const inputBg = isLight ? '#f8fafc' : 'rgba(8, 13, 26, 0.9)';
+    const inputColor = isLight ? '#0f172a' : '#ffffff';
+    const inputBorder = isLight ? '2px solid #0e7490' : '2px solid rgba(0, 245, 212, 0.6)';
+    const itemBg = isLight ? '#f8fafc' : 'rgba(255, 255, 255, 0.05)';
+    const itemBorder = isLight ? '1px solid #e2e8f0' : '1px solid rgba(255, 255, 255, 0.08)';
+    const itemText = isLight ? '#0f172a' : '#ffffff';
+    const itemSub = isLight ? '#64748b' : 'rgba(255, 255, 255, 0.6)';
+    const cancelBtnBg = isLight ? '#f1f5f9' : 'transparent';
+    const cancelBtnColor = isLight ? '#334155' : '#ffffff';
+    const cancelBtnBorder = isLight ? '1.5px solid #cbd5e1' : '1.5px solid rgba(255, 255, 255, 0.2)';
+
     container.innerHTML = `
-      <div class="experience-screen-container animate-fade-in" style="min-height: 80vh; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding: 2rem 1.25rem 4rem;">
-        <!-- Header -->
-        <div class="experience-header" style="width: 100%; max-width: 680px; margin-bottom: 1.5rem;">
-          <button class="experience-back-btn" onclick="ProjectsView.closeCreateProjectModal()">
+      <div class="project-code-fullpage animate-fade-in" style="width: 100%; max-width: 1200px; margin: 0 auto; padding: 2rem 1.25rem 5rem; min-height: 85vh;">
+        
+        <!-- Barra Superior con Botón Volver -->
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem; gap: 1rem; flex-wrap: wrap;">
+          <button 
+            class="btn btn-outline" 
+            onclick="ProjectsView.closeCreateProjectModal()"
+            style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.65rem 1.25rem; font-weight: 800; border-radius: 12px; background: ${cancelBtnBg}; color: ${cancelBtnColor}; border: ${cancelBtnBorder}; cursor: pointer; font-size: 0.95rem;"
+          >
             ← Volver a Proyectos
           </button>
+          
+          <div style="display: inline-flex; align-items: center; gap: 0.5rem; background: ${isLight ? 'rgba(14, 116, 144, 0.1)' : 'rgba(0, 245, 212, 0.15)'}; color: ${isLight ? '#0e7490' : 'var(--neon-cyan)'}; font-weight: 900; font-size: 0.82rem; text-transform: uppercase; padding: 0.4rem 1rem; border-radius: 9999px; letter-spacing: 0.6px; border: 1px solid ${isLight ? 'rgba(14, 116, 144, 0.3)' : 'rgba(0,245,212,0.4)'};">
+            <span>🛡️</span> Panel Docente Exclusivo
+          </div>
         </div>
 
-        <!-- Tarjeta única para que el profesor escriba el código que él elija -->
-        <div class="glass-panel" style="width: 100%; max-width: 640px; padding: 2.5rem 2rem; border-radius: 22px; border: 2px solid var(--neon-cyan); background: linear-gradient(145deg, rgba(15, 23, 42, 0.96), rgba(19, 27, 46, 0.96)); box-shadow: 0 15px 45px rgba(0, 245, 212, 0.2); text-align: center;">
+        <!-- Layout en Toda la Página (Grid de 2 Columnas) -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 2rem; align-items: start;">
           
-          <div style="display: inline-flex; align-items: center; gap: 0.45rem; background: rgba(0, 245, 212, 0.15); color: var(--neon-cyan); font-weight: 900; font-size: 0.8rem; text-transform: uppercase; padding: 0.35rem 0.9rem; border-radius: 9999px; letter-spacing: 0.6px; margin-bottom: 1rem; border: 1px solid rgba(0,245,212,0.4);">
-            <span>👨‍🏫</span> Solo para Maestros y Administradores
-          </div>
-
-          <h1 style="font-size: clamp(1.6rem, 3.5vw, 2.2rem); font-weight: 900; color: #ffffff; margin: 0 0 0.5rem; line-height: 1.25;">
-            🔑 Crear Código de Proyecto
-          </h1>
-
-          <p style="color: var(--text-secondary); font-size: 1rem; margin: 0 auto 1.75rem; max-width: 500px; line-height: 1.5;">
-            Escribe tú mismo el código que elijas para este proyecto y compártelo con tus estudiantes.
-          </p>
-
-          <form onsubmit="event.preventDefault(); window.ProjectsView.saveCustomProjectCode();" style="max-width: 460px; margin: 0 auto;">
-            <label for="custom-project-code-input" style="display: block; text-align: left; font-size: 0.85rem; font-weight: 900; color: var(--neon-cyan); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 0.6rem;">
-              ✏️ Escribe el código que tú elijas:
-            </label>
-
-            <input
-              type="text"
-              id="custom-project-code-input"
-              placeholder="Ej: PROYECTO1, 2026, CLASE10..."
-              autocomplete="off"
-              maxlength="24"
-              style="width: 100%; box-sizing: border-box; padding: 1.1rem 1.25rem; font-size: 1.5rem; font-weight: 900; text-align: center; letter-spacing: 2px; color: #ffffff; background: rgba(8, 13, 26, 0.9); border: 2px solid rgba(0, 245, 212, 0.6); border-radius: 14px; outline: none; box-shadow: inset 0 2px 10px rgba(0,0,0,0.6), 0 0 20px rgba(0,245,212,0.15); margin-bottom: 1rem;"
-            />
-
-            <div id="custom-code-error" style="display: none; color: #ff6b6b; background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.4); border-radius: 10px; padding: 0.65rem 1rem; font-size: 0.9rem; font-weight: 700; margin-bottom: 1rem;"></div>
-
-            <div style="display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap; margin-top: 0.5rem;">
-              <button type="button" class="btn btn-outline" onclick="window.ProjectsView.closeCreateProjectModal()" style="padding: 0.85rem 1.4rem; font-weight: 800; border-radius: 12px;">
-                Cancelar
-              </button>
-              <button type="submit" class="btn btn-cyan btn-lg" style="padding: 0.85rem 2rem; font-weight: 900; font-size: 1.05rem; border-radius: 12px; box-shadow: 0 6px 24px rgba(0,245,212,0.4);">
-                <span>✅</span> Guardar Mi Código
-              </button>
+          <!-- Columna Principal: Creación y Código Activo -->
+          <div class="glass-panel" style="padding: 2.5rem 2.25rem; border-radius: 22px; border: ${cardBorder}; background: ${cardBg}; box-shadow: ${cardShadow}; text-align: left;">
+            
+            <div style="display: inline-flex; align-items: center; gap: 0.45rem; background: ${isLight ? 'rgba(14, 116, 144, 0.12)' : 'rgba(0, 245, 212, 0.15)'}; color: ${isLight ? '#0e7490' : 'var(--neon-cyan)'}; font-weight: 900; font-size: 0.8rem; text-transform: uppercase; padding: 0.35rem 0.9rem; border-radius: 9999px; letter-spacing: 0.6px; margin-bottom: 1.25rem; border: 1px solid ${isLight ? 'rgba(14, 116, 144, 0.3)' : 'rgba(0,245,212,0.4)'};">
+              <span>👨‍🏫</span> Generador de Código de Acceso
             </div>
-          </form>
 
-          ${recentCode ? `
-            <div style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid rgba(255,255,255,0.1);">
-              <div style="font-size: 0.82rem; font-weight: 800; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 0.5rem;">
-                Código activo elegido por el profesor:
-              </div>
-              <div style="display: inline-flex; align-items: center; gap: 0.85rem; background: rgba(0, 245, 212, 0.12); border: 1.5px solid var(--neon-cyan); padding: 0.75rem 1.4rem; border-radius: 14px; margin-bottom: 0.75rem; flex-wrap: wrap; justify-content: center;">
-                <span style="font-size: 1.75rem; font-weight: 900; color: var(--neon-cyan); letter-spacing: 3px; text-shadow: 0 0 15px rgba(0,245,212,0.5);">
-                  ${this.escapeHtml(recentCode)}
-                </span>
-                <button type="button" class="btn btn-cyan btn-sm" onclick="window.ProjectsView.copyCustomProjectCode('${this.escapeHtml(recentCode)}')" style="font-weight: 800; padding: 0.45rem 0.9rem; border-radius: 8px;">
-                  📋 Copiar para enviar
+            <h1 style="font-size: clamp(1.8rem, 3.2vw, 2.4rem); font-weight: 900; color: ${titleColor} !important; margin: 0 0 0.6rem; line-height: 1.2;">
+              🔑 Crear Código de Proyecto
+            </h1>
+
+            <p style="color: ${textColor} !important; font-size: 1rem; margin: 0 0 2rem; line-height: 1.55;">
+              Escribe tú mismo el código personalizado que elijas para tu proyecto didáctico y compártelo con tus estudiantes para que se unan a la sesión.
+            </p>
+
+            <form onsubmit="event.preventDefault(); window.ProjectsView.saveCustomProjectCode();">
+              <label for="custom-project-code-input" style="display: block; text-align: left; font-size: 0.88rem; font-weight: 900; color: ${isLight ? '#0e7490' : 'var(--neon-cyan)'} !important; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 0.75rem;">
+                ✏️ Escribe el código que tú elijas:
+              </label>
+
+              <input
+                type="text"
+                id="custom-project-code-input"
+                placeholder="Ej: PROYECTO1, 2026, CLASE10..."
+                autocomplete="off"
+                maxlength="24"
+                style="width: 100%; box-sizing: border-box; padding: 1.15rem 1.25rem; font-size: 1.6rem; font-weight: 900; text-align: center; letter-spacing: 2px; color: ${inputColor} !important; background: ${inputBg} !important; border: ${inputBorder} !important; border-radius: 14px; outline: none; box-shadow: ${isLight ? '0 4px 15px rgba(0,0,0,0.04)' : 'inset 0 2px 10px rgba(0,0,0,0.6)'}; margin-bottom: 1.25rem;"
+              />
+
+              <div id="custom-code-error" style="display: none; color: #ff4d6d; background: rgba(239, 68, 68, 0.12); border: 1px solid rgba(239, 68, 68, 0.35); border-radius: 10px; padding: 0.75rem 1rem; font-size: 0.9rem; font-weight: 700; margin-bottom: 1.25rem;"></div>
+
+              <div style="display: flex; gap: 0.85rem; align-items: center; flex-wrap: wrap;">
+                <button type="submit" class="btn btn-cyan btn-lg" style="flex: 1; min-width: 200px; padding: 0.95rem 2rem; font-weight: 900; font-size: 1.05rem; border-radius: 12px; box-shadow: 0 6px 24px rgba(0,245,212,0.4); display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+                  <span>✅</span> Guardar Mi Código
+                </button>
+                <button type="button" class="btn btn-outline" onclick="window.ProjectsView.closeCreateProjectModal()" style="padding: 0.95rem 1.5rem; font-weight: 800; border-radius: 12px; background: ${cancelBtnBg}; color: ${cancelBtnColor}; border: ${cancelBtnBorder};">
+                  Cancelar
                 </button>
               </div>
-            </div>
-          ` : ''}
+            </form>
 
-          ${savedCodes.length > 0 ? `
-            <div style="margin-top: 1.25rem; text-align: left;">
-              <div style="font-size: 0.8rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 0.5rem;">
-                Mis códigos creados (${savedCodes.length}):
-              </div>
-              <div style="display: flex; flex-direction: column; gap: 0.45rem; max-height: 180px; overflow-y: auto;">
-                ${savedCodes.map(item => `
-                  <div style="display: flex; align-items: center; justify-content: space-between; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); padding: 0.5rem 0.85rem; border-radius: 10px;">
-                    <div>
-                      <span style="font-weight: 900; color: #ffffff; font-size: 1rem; letter-spacing: 1px;">${this.escapeHtml(item.code)}</span>
-                      <span style="font-size: 0.75rem; color: var(--text-muted); margin-left: 0.5rem;">• ${this.escapeHtml(item.author || 'Profesor')}</span>
-                    </div>
-                    <div style="display: flex; gap: 0.4rem;">
-                      <button type="button" class="btn btn-outline btn-sm" onclick="window.ProjectsView.copyCustomProjectCode('${this.escapeHtml(item.code)}')" style="padding: 0.25rem 0.6rem; font-size: 0.78rem;">
-                        📋 Copiar
-                      </button>
-                      <button type="button" class="btn btn-danger btn-sm" onclick="window.ProjectsView.deleteCustomProjectCode('${this.escapeHtml(item.code)}')" style="padding: 0.25rem 0.55rem; font-size: 0.78rem;">
-                        🗑️
-                      </button>
+            ${recentCode ? `
+              <div style="margin-top: 2.25rem; padding-top: 1.75rem; border-top: 1px solid ${isLight ? 'rgba(0,0,0,0.08)' : 'rgba(255,255,255,0.1)'};">
+                <div style="font-size: 0.85rem; font-weight: 800; color: ${textColor} !important; text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 0.75rem;">
+                  📢 Código activo elegido para tus estudiantes:
+                </div>
+                <div style="display: flex; align-items: center; justify-content: space-between; gap: 1rem; background: ${isLight ? 'rgba(14, 116, 144, 0.08)' : 'rgba(0, 245, 212, 0.12)'}; border: 2px solid ${isLight ? '#0e7490' : 'var(--neon-cyan)'}; padding: 1rem 1.4rem; border-radius: 14px; flex-wrap: wrap;">
+                  <div>
+                    <span style="font-size: 2rem; font-weight: 900; color: ${isLight ? '#0e7490' : 'var(--neon-cyan)'} !important; letter-spacing: 3px; line-height: 1;">
+                      ${this.escapeHtml(recentCode)}
+                    </span>
+                    <div style="font-size: 0.78rem; color: ${textColor}; margin-top: 0.25rem;">
+                      Comparte este código para que tus estudiantes se unan al proyecto.
                     </div>
                   </div>
-                `).join('')}
+                  <button type="button" class="btn btn-cyan" onclick="window.ProjectsView.copyCustomProjectCode('${this.escapeHtml(recentCode)}')" style="font-weight: 800; padding: 0.65rem 1.25rem; border-radius: 10px; font-size: 0.9rem;">
+                    📋 Copiar para enviar
+                  </button>
+                </div>
               </div>
+            ` : ''}
+
+          </div>
+
+          <!-- Columna Secundaria: Lista de Códigos y Guía Rápida -->
+          <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+            
+            <!-- Tarjeta de Códigos Guardados -->
+            <div class="glass-panel" style="padding: 2rem; border-radius: 22px; border: ${cardBorder}; background: ${cardBg}; box-shadow: ${cardShadow};">
+              <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem; gap: 0.5rem; flex-wrap: wrap;">
+                <div>
+                  <h3 style="font-size: 1.15rem; font-weight: 900; color: ${titleColor} !important; margin: 0 0 0.2rem;">
+                    🗂️ Mis Códigos Creados
+                  </h3>
+                  <div style="font-size: 0.8rem; color: ${textColor} !important;">
+                    ${savedCodes.length} código(s) disponible(s)
+                  </div>
+                </div>
+                ${savedCodes.length > 0 ? `
+                  <span class="badge-tag" style="background: rgba(0, 245, 212, 0.2); color: ${isLight ? '#0e7490' : 'var(--neon-cyan)'}; font-weight: 800; padding: 0.35rem 0.75rem; border-radius: 8px;">
+                    Activos
+                  </span>
+                ` : ''}
+              </div>
+
+              ${savedCodes.length === 0 ? `
+                <div style="text-align: center; padding: 2.5rem 1rem; color: ${textColor};">
+                  <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">🏷️</div>
+                  <div style="font-weight: 800; margin-bottom: 0.25rem; color: ${titleColor};">Aún no has creado ningún código</div>
+                  <div style="font-size: 0.85rem;">Escribe uno en el formulario de la izquierda para comenzar.</div>
+                </div>
+              ` : `
+                <div style="display: flex; flex-direction: column; gap: 0.65rem; max-height: 380px; overflow-y: auto; padding-right: 0.25rem;">
+                  ${savedCodes.map(item => `
+                    <div style="display: flex; align-items: center; justify-content: space-between; background: ${itemBg}; border: ${itemBorder}; padding: 0.75rem 1rem; border-radius: 12px; gap: 0.75rem; transition: transform 0.15s, border-color 0.15s;">
+                      <div>
+                        <div style="font-weight: 900; color: ${itemText} !important; font-size: 1.1rem; letter-spacing: 1.5px;">
+                          ${this.escapeHtml(item.code)}
+                        </div>
+                        <div style="font-size: 0.76rem; color: ${itemSub} !important; margin-top: 0.15rem;">
+                          Creado por: ${this.escapeHtml(item.author || 'Profesor')}
+                        </div>
+                      </div>
+                      <div style="display: flex; gap: 0.45rem; align-items: center;">
+                        <button type="button" class="btn btn-outline btn-sm" onclick="window.ProjectsView.copyCustomProjectCode('${this.escapeHtml(item.code)}')" style="padding: 0.4rem 0.75rem; font-size: 0.8rem; font-weight: 800; background: ${isLight ? '#ffffff' : 'transparent'}; color: ${isLight ? '#0f172a' : '#fff'}; border-color: ${isLight ? '#cbd5e1' : 'rgba(255,255,255,0.2)'};" title="Copiar código">
+                          📋 Copiar
+                        </button>
+                        <button type="button" class="btn btn-danger btn-sm" onclick="window.ProjectsView.deleteCustomProjectCode('${this.escapeHtml(item.code)}')" style="padding: 0.4rem 0.65rem; font-size: 0.8rem;" title="Eliminar código">
+                          🗑️
+                        </button>
+                      </div>
+                    </div>
+                  `).join('')}
+                </div>
+              `}
             </div>
-          ` : ''}
+
+            <!-- Tarjeta de Instrucciones para el Docente -->
+            <div class="glass-panel" style="padding: 1.5rem 1.75rem; border-radius: 18px; border: ${cardBorder}; background: ${isLight ? '#f8fafc' : 'rgba(15, 23, 42, 0.7)'}; box-shadow: ${cardShadow};">
+              <h4 style="font-size: 0.95rem; font-weight: 900; color: ${titleColor} !important; margin: 0 0 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+                <span>💡</span> ¿Cómo lo usan tus estudiantes?
+              </h4>
+              <p style="font-size: 0.84rem; color: ${textColor} !important; margin: 0; line-height: 1.5;">
+                Tus alumnos solo deben ingresar a la plataforma y hacer clic en el botón <strong>"🎮 Unirse a un código"</strong>. Al escribir tu código, entrarán automáticamente a tus materiales y lecciones.
+              </p>
+            </div>
+
+          </div>
+
         </div>
+
       </div>
     `;
   },

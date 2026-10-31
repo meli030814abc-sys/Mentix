@@ -5010,3 +5010,33 @@ body.projects-pure-white-theme #view-projects .btn-primary {
   background: linear-gradient(135deg, #7c3aed, #4f46e5) !important;
   color: #ffffff !important;
 }
+
+/* Pantalla completa de Creación de Código de Proyecto */
+body.projects-pure-white-theme .project-code-fullpage h1,
+body.projects-pure-white-theme .project-code-fullpage h2,
+body.projects-pure-white-theme .project-code-fullpage h3,
+body.projects-pure-white-theme .project-code-fullpage h4,
+body.light-theme .project-code-fullpage h1,
+body.light-theme .project-code-fullpage h2,
+body.light-theme .project-code-fullpage h3,
+body.light-theme .project-code-fullpage h4 {
+  color: #0f172a !important;
+}
+
+body.projects-pure-white-theme .project-code-fullpage p,
+body.light-theme .project-code-fullpage p {
+  color: #334155 !important;
+}
+
+body.projects-pure-white-theme .project-code-fullpage label,
+body.light-theme .project-code-fullpage label {
+  color: #0e7490 !important;
+}
+
+body.projects-pure-white-theme .project-code-fullpage input,
+body.light-theme .project-code-fullpage input {
+  background: #f8fafc !important;
+  color: #0f172a !important;
+  border-color: #0e7490 !important;
+}
+
