@@ -5,7 +5,8 @@
 
 window.ProjectWizard = {
   currentStep: 1,
-  totalSteps: 15,
+  totalSteps: 16,
+  activeSlideIndex: 0,
   activeDraftId: null,
   autoSaveTimer: null,
   lastSavedText: 'Guardado automático activo',
@@ -46,11 +47,12 @@ window.ProjectWizard = {
     { step: 8, icon: '📅', shortTitle: 'Cronograma y fechas', title: 'Paso 8. Cronograma y fechas clave', question: '¿Cuáles son los hitos y fechas importantes del proyecto?' },
     { step: 9, icon: '❓', shortTitle: 'Preguntas frecuentes', title: 'Paso 9. Preguntas frecuentes (FAQ) y acción', question: '¿Cuáles son las preguntas frecuentes de los visitantes?' },
     { step: 10, icon: '🎬', shortTitle: 'Video de presentación', title: 'Paso 10. Video de presentación', question: '¿Tienes un video explicativo o demostrativo del proyecto?' },
-    { step: 11, icon: '📄', shortTitle: 'Documentos y guías', title: 'Paso 11. Documentos, guías y recursos descargables', question: '¿Qué manuales o documentos deseas compartir?' },
-    { step: 12, icon: '🖼️', shortTitle: 'Imágenes y portada', title: 'Paso 12. Portada y activos visuales', question: '¿Qué imágenes o capturas mostrarán tu proyecto?' },
-    { step: 13, icon: '🔗', shortTitle: 'Enlaces externos', title: 'Paso 13. Enlaces y demos externas', question: '¿Qué sitios web, demos o repositorios complementan el proyecto?' },
-    { step: 14, icon: '⚙️', shortTitle: 'Config. publicación', title: 'Paso 14. Configuración en la Landing Page', question: '¿Cómo deseas que aparezca publicado en la Landing Page?' },
-    { step: 15, icon: '🚀', shortTitle: 'Revisión y publicación', title: 'Paso 15. Revisión final y publicación', question: 'Revisa el resumen completo antes de publicar tu proyecto.' }
+    { step: 11, icon: '📊', shortTitle: 'Diapositivas y presentación', title: 'Paso 11. Diapositivas y presentación interactiva', question: '¿Deseas agregar diapositivas interactivas, subirlas o crearlas?' },
+    { step: 12, icon: '📄', shortTitle: 'Documentos y guías', title: 'Paso 12. Documentos, guías y recursos descargables', question: '¿Qué manuales o documentos deseas compartir?' },
+    { step: 13, icon: '🖼️', shortTitle: 'Imágenes y portada', title: 'Paso 13. Portada y activos visuales', question: '¿Qué imágenes o capturas mostrarán tu proyecto?' },
+    { step: 14, icon: '🔗', shortTitle: 'Enlaces externos', title: 'Paso 14. Enlaces y demos externas', question: '¿Qué sitios web, demos o repositorios complementan el proyecto?' },
+    { step: 15, icon: '⚙️', shortTitle: 'Config. publicación', title: 'Paso 15. Configuración en la Landing Page', question: '¿Cómo deseas que aparezca publicado en la Landing Page?' },
+    { step: 16, icon: '🚀', shortTitle: 'Revisión y publicación', title: 'Paso 16. Revisión final y publicación', question: 'Revisa el resumen completo antes de publicar tu proyecto.' }
   ],
 
   resourceCategories: [
@@ -151,6 +153,7 @@ window.ProjectWizard = {
           verified: Boolean(existingProject.videoConfig?.verified || gp.videoConfig?.verified)
         },
         resources: Array.isArray(existingProject.resources) ? JSON.parse(JSON.stringify(existingProject.resources)) : (Array.isArray(gp.resources) ? JSON.parse(JSON.stringify(gp.resources)) : []),
+        slides: Array.isArray(existingProject.slides) ? JSON.parse(JSON.stringify(existingProject.slides)) : (Array.isArray(gp.slides) ? JSON.parse(JSON.stringify(gp.slides)) : []),
         mainImage: existingProject.mainImage || existingProject.banner || gp.mainImage || '',
         thumbnailImage: existingProject.thumbnailImage || gp.thumbnailImage || '',
         useDefaultImage: existingProject.useDefaultImage !== undefined ? existingProject.useDefaultImage : true,
@@ -237,6 +240,7 @@ window.ProjectWizard = {
         verified: false
       },
       resources: [],
+      slides: [],
       mainImage: '',
       thumbnailImage: '',
       useDefaultImage: true,
@@ -608,6 +612,22 @@ collectCurrentStepInputs() {
       this.draft.videoConfig.isPublic = checked('gdn-video-public');
     }
 
+    if (Array.isArray(this.draft.slides) && this.draft.slides.length > 0) {
+      const curIdx = Math.max(0, Math.min(this.draft.slides.length - 1, this.activeSlideIndex || 0));
+      const s = this.draft.slides[curIdx];
+      if (s) {
+        if (val('gdn-slide-title') !== null) s.title = val('gdn-slide-title').trim();
+        if (val('gdn-slide-subtitle') !== null) s.subtitle = val('gdn-slide-subtitle').trim();
+        if (val('gdn-slide-content') !== null) s.content = val('gdn-slide-content').trim();
+        if (val('gdn-slide-layout') !== null) s.layout = val('gdn-slide-layout');
+        if (val('gdn-slide-media') !== null) s.media = val('gdn-slide-media').trim();
+        if (val('gdn-slide-notes') !== null) s.notes = val('gdn-slide-notes').trim();
+        if (val('gdn-slide-bullets') !== null) {
+          s.bullets = val('gdn-slide-bullets').split('\n').map(b => b.replace(/^[-*•]\s*/, '').trim()).filter(Boolean);
+        }
+      }
+    }
+
     if (val('gdn-main-image') !== null) this.draft.mainImage = val('gdn-main-image').trim();
     if (val('gdn-thumb-image') !== null) this.draft.thumbnailImage = val('gdn-thumb-image').trim();
     if (checked('gdn-use-default-img') !== null) this.draft.useDefaultImage = checked('gdn-use-default-img');
@@ -741,11 +761,12 @@ collectCurrentStepInputs() {
       case 8: return this.renderStep5TeamDates();
       case 9: return this.renderStep7Faqs();
       case 10: return this.renderStep3Video();
-      case 11: return this.renderStep4Resources();
-      case 12: return this.renderStep5Visuals();
-      case 13: return this.renderStep6ExternalLinks();
-      case 14: return this.renderStep7PublicationConfig();
-      case 15: return this.renderStep8FinalReview();
+      case 11: return this.renderStepSlides();
+      case 12: return this.renderStep4Resources();
+      case 13: return this.renderStep5Visuals();
+      case 14: return this.renderStep6ExternalLinks();
+      case 15: return this.renderStep7PublicationConfig();
+      case 16: return this.renderStep8FinalReview();
       default: return this.renderStep1Name();
     }
   },
@@ -1880,6 +1901,1152 @@ collectCurrentStepInputs() {
     if (window.ProjectsView) window.ProjectsView.render();
   },
 
+
+  // =========================================================================
+  // PASO 11: DIAPOSITIVAS Y PRESENTACIÓN INTERACTIVA (STAGE DE PROYECTOS)
+  // =========================================================================
+  initDefaultSlidesIfEmpty() {
+    if (!this.draft) return;
+    if (!Array.isArray(this.draft.slides) || this.draft.slides.length === 0) {
+      const pTitle = (this.draft.title || 'Mi Proyecto Innovador').trim();
+      const pSubtitle = (this.draft.subtitle || 'Presentación interactiva y propuesta de valor').trim();
+      const pDesc = (this.draft.shortDescription || this.draft.fullDescription || 'Descripción del proyecto en desarrollo.').trim();
+      const pCover = this.draft.mainImage || (this.draft.useDefaultImage !== false ? this.defaultCoverImage : '');
+      const pProb = this.draft.problemStatement || 'Identificación del reto o problemática que motiva esta iniciativa.';
+      const pObj = this.draft.mainObjective || 'Objetivo principal para generar impacto tangible en la comunidad.';
+      const pBen = this.draft.benefits || 'Solución accesible, escalable y con resultados medibles.';
+
+      this.draft.slides = [
+        {
+          id: 'slide_' + Date.now() + '_1',
+          title: pTitle,
+          subtitle: pSubtitle,
+          content: pDesc,
+          bullets: [
+            'Líder del proyecto: ' + (this.draft.author || 'Equipo de desarrollo'),
+            'Categoría: ' + (this.draft.categoryName || 'Tecnología & Programación'),
+            'Estado: ' + (this.draft.preparationStatus || 'En desarrollo')
+          ],
+          layout: 'split',
+          media: pCover,
+          notes: 'Diapositiva inicial de presentación ante evaluadores y público general.',
+          bgColor: '#0b091a',
+          themeId: this.draft.designConfig?.themeId || 'cosmos'
+        },
+        {
+          id: 'slide_' + Date.now() + '_2',
+          title: 'Problema y Necesidad Clave',
+          subtitle: 'El desafío a resolver',
+          content: pProb,
+          bullets: [
+            'Contexto y población afectada',
+            'Oportunidad de mejora e innovación',
+            'Obstáculos actuales detectados en el entorno'
+          ],
+          layout: 'split',
+          media: '',
+          notes: 'Explicar con claridad por qué este problema requiere una solución prioritaria.',
+          bgColor: '#0b091a',
+          themeId: this.draft.designConfig?.themeId || 'cosmos'
+        },
+        {
+          id: 'slide_' + Date.now() + '_3',
+          title: 'Propuesta de Solución y Objetivos',
+          subtitle: 'Cómo resolvemos el reto',
+          content: pObj,
+          bullets: [
+            pBen.slice(0, 80),
+            'Metodología y tecnología empleada',
+            'Sostenibilidad e impacto positivo comprobable'
+          ],
+          layout: 'split',
+          media: '',
+          notes: 'Detallar las ventajas competitivas y la innovación de nuestra propuesta.',
+          bgColor: '#0b091a',
+          themeId: this.draft.designConfig?.themeId || 'cosmos'
+        }
+      ];
+      this.activeSlideIndex = 0;
+    }
+    if (typeof this.activeSlideIndex !== 'number' || this.activeSlideIndex < 0) {
+      this.activeSlideIndex = 0;
+    }
+    if (this.activeSlideIndex >= this.draft.slides.length) {
+      this.activeSlideIndex = Math.max(0, this.draft.slides.length - 1);
+    }
+  },
+
+  renderStepSlides() {
+    this.initDefaultSlidesIfEmpty();
+    const slides = this.draft.slides || [];
+    const activeIdx = Math.max(0, Math.min(slides.length - 1, this.activeSlideIndex || 0));
+    this.activeSlideIndex = activeIdx;
+    const currentSlide = slides[activeIdx] || { title: '', subtitle: '', content: '', bullets: [], layout: 'split', media: '', notes: '' };
+    const curLayout = currentSlide.layout || 'split';
+    const curThemeId = currentSlide.themeId || this.draft.designConfig?.themeId || 'cosmos';
+    const activeTheme = this.SLIDE_THEMES.find(t => t.id === curThemeId) || this.SLIDE_THEMES[0];
+    const curBg = currentSlide.bgColor || activeTheme.bg;
+
+    return `
+      <!-- Cabecera y Herramientas Rápidas de Diapositivas -->
+      <div class="gdn-card" style="margin-bottom: 1.25rem; border: 2px solid rgba(0, 245, 212, 0.35); background: linear-gradient(135deg, rgba(11,9,26,0.95), rgba(20,15,45,0.95)); box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+        <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 1rem; margin-bottom: 1.2rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 1rem;">
+          <div>
+            <div style="font-size: 0.82rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; color: #00f5d4; margin-bottom: 0.25rem;">
+              📊 Paso 11 del Asistente · Presentaciones y Diapositivas Interactivas
+            </div>
+            <h3 style="margin: 0; font-size: 1.25rem; font-weight: 900; color: #ffffff; display: flex; align-items: center; gap: 0.5rem;">
+              <span>Diapositivas del Proyecto</span>
+              <span style="font-size: 0.85rem; font-weight: 800; background: rgba(0,245,212,0.18); color: #00f5d4; border: 1px solid rgba(0,245,212,0.4); padding: 0.2rem 0.65rem; border-radius: 999px;">
+                ${slides.length} ${slides.length === 1 ? 'lámina' : 'láminas'}
+              </span>
+            </h3>
+            <p style="margin: 0.35rem 0 0; font-size: 0.86rem; color: #cbd5e1;">
+              Crea diapositivas interactivas, sube presentaciones desde PowerPoint (.pptx), PDF o texto, o genera láminas automáticas con IA.
+            </p>
+          </div>
+
+          <!-- Botones de Acción Global -->
+          <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center;">
+            <input 
+              type="file" 
+              id="gdn-wizard-slide-file-input" 
+              accept=".pptx,.pdf,.json,.txt,.md,image/*" 
+              style="display: none;" 
+              onchange="if(this.files && this.files[0]) window.ProjectWizard.handleWizardSlideUpload(this.files[0])" 
+            />
+            <button 
+              type="button" 
+              class="btn btn-outline" 
+              style="border-color: #7c3aed; color: #c4b5fd; font-weight: 800; font-size: 0.82rem; padding: 0.45rem 0.85rem; display: inline-flex; align-items: center; gap: 0.45rem;"
+              onclick="document.getElementById('gdn-wizard-slide-file-input').click()"
+              title="Importar diapositivas desde PowerPoint (.pptx), documentos PDF (.pdf), Mentix (.json) o texto"
+            >
+              <span>📥</span> Subir Presentación (.pptx, .pdf, texto)
+            </button>
+            <button 
+              type="button" 
+              class="btn btn-cyan" 
+              style="font-weight: 800; font-size: 0.82rem; padding: 0.45rem 0.85rem; display: inline-flex; align-items: center; gap: 0.45rem;"
+              onclick="window.ProjectWizard.generateAiSlidesForProject()"
+              title="Generar 5 diapositivas completas con IA utilizando la información del proyecto"
+            >
+              <span>✨</span> Generar con IA
+            </button>
+            <button 
+              type="button" 
+              class="btn btn-cyan" 
+              style="font-weight: 900; font-size: 0.82rem; padding: 0.45rem 0.95rem; background: linear-gradient(135deg, #10b981, #059669); border: none; color: #fff;"
+              onclick="window.ProjectWizard.addWizardSlide()"
+              title="Añadir una nueva lámina a la presentación"
+            >
+              <span>➕</span> Nueva Diapositiva
+            </button>
+          </div>
+        </div>
+
+        <!-- Tira Horizontal de Diapositivas (Navegación Rápida) -->
+        <div style="margin-bottom: 0.75rem;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+            <span style="font-size: 0.82rem; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.05em;">
+              Láminas de la Presentación (Haz clic para seleccionar y editar):
+            </span>
+            <div style="display: flex; gap: 0.4rem;">
+              <button 
+                type="button" 
+                class="btn btn-outline" 
+                style="padding: 0.2rem 0.55rem; font-size: 0.76rem;" 
+                onclick="window.ProjectWizard.moveWizardSlide(${activeIdx}, -1)" 
+                ${activeIdx === 0 ? 'disabled style="opacity:0.4; cursor:not-allowed;"' : ''}
+                title="Mover diapositiva hacia arriba / antes"
+              >
+                ⬆ Mover Antes
+              </button>
+              <button 
+                type="button" 
+                class="btn btn-outline" 
+                style="padding: 0.2rem 0.55rem; font-size: 0.76rem;" 
+                onclick="window.ProjectWizard.moveWizardSlide(${activeIdx}, 1)" 
+                ${activeIdx === slides.length - 1 ? 'disabled style="opacity:0.4; cursor:not-allowed;"' : ''}
+                title="Mover diapositiva hacia abajo / después"
+              >
+                ⬇ Mover Después
+              </button>
+              <button 
+                type="button" 
+                class="btn btn-outline" 
+                style="padding: 0.2rem 0.55rem; font-size: 0.76rem; border-color: #00f5d4; color: #00f5d4;" 
+                onclick="window.ProjectWizard.duplicateWizardSlide()"
+                title="Duplicar la diapositiva activa"
+              >
+                📑 Duplicar
+              </button>
+              ${slides.length > 1 ? `
+                <button 
+                  type="button" 
+                  class="btn btn-danger" 
+                  style="padding: 0.2rem 0.55rem; font-size: 0.76rem;" 
+                  onclick="window.ProjectWizard.deleteWizardSlide(${activeIdx})"
+                  title="Eliminar esta diapositiva"
+                >
+                  🗑️ Eliminar
+                </button>
+              ` : ''}
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 0.65rem; overflow-x: auto; padding: 0.5rem 0.2rem 0.85rem; scrollbar-width: thin;" id="gdn-slides-thumbnails-strip">
+            ${this.renderWizardSlideThumbnailsHtml(slides, activeIdx)}
+          </div>
+        </div>
+
+        <!-- Selector Rápido de Temas Visuales (15 Temas) -->
+        <details style="background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 0.65rem 0.9rem; margin-top: 0.5rem;">
+          <summary style="cursor: pointer; font-size: 0.85rem; font-weight: 800; color: #cbd5e1; display: flex; align-items: center; justify-content: space-between;">
+            <span style="display: flex; align-items: center; gap: 0.45rem;">
+              <span>🎨</span> <span>Cambiar Estilo Visual / Tema de la Diapositiva (Tema actual: <strong style="color: #00f5d4;">${activeTheme.name}</strong>)</span>
+            </span>
+            <span style="font-size: 0.75rem; color: #94a3b8;">Ver los 15 diseños ▾</span>
+          </summary>
+          <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 0.6rem; margin-top: 0.85rem; max-height: 250px; overflow-y: auto;">
+            ${this.SLIDE_THEMES.map(t => `
+              <div 
+                onclick="window.ProjectWizard.applyWizardSlideTheme('${t.id}', false)"
+                style="background: ${t.bg}; border: 1.5px solid ${t.id === curThemeId ? '#00f5d4' : 'rgba(255,255,255,0.15)'}; border-radius: 10px; padding: 0.65rem; cursor: pointer; transition: transform 0.2s ease, box-shadow 0.2s ease; ${t.id === curThemeId ? 'box-shadow: 0 0 12px rgba(0,245,212,0.35);' : ''}"
+                onmouseenter="this.style.transform='translateY(-2px)'"
+                onmouseleave="this.style.transform='none'"
+                title="Aplicar tema ${t.name}"
+              >
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.3rem;">
+                  <span style="font-size: 1rem;">${t.icon}</span>
+                  <span style="font-size: 0.78rem; font-weight: 800; color: ${t.titleColor}; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                    ${t.name}
+                  </span>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.4rem; padding-top: 0.35rem; border-top: 1px solid rgba(255,255,255,0.1);">
+                  <div style="display: flex; gap: 0.25rem;">
+                    <span style="width: 10px; height: 10px; border-radius: 50%; background: ${t.titleColor}; display: inline-block;"></span>
+                    <span style="width: 10px; height: 10px; border-radius: 50%; background: ${t.subtitleColor}; display: inline-block;"></span>
+                    <span style="width: 10px; height: 10px; border-radius: 50%; background: ${t.contentColor}; display: inline-block;"></span>
+                  </div>
+                  <button 
+                    type="button" 
+                    class="btn btn-outline" 
+                    style="font-size: 0.68rem; padding: 0.15rem 0.45rem; border-color: rgba(255,255,255,0.3); color: #fff;"
+                    onclick="event.stopPropagation(); window.ProjectWizard.applyWizardSlideTheme('${t.id}', true)"
+                    title="Aplicar a todas las láminas"
+                  >
+                    A todas
+                  </button>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </details>
+      </div>
+
+      <!-- Zona de Edición en Dos Columnas: Formulario a la Izquierda y Vista Previa en Vivo a la Derecha -->
+      <div style="display: grid; grid-template-columns: minmax(360px, 1.1fr) minmax(360px, 1.2fr); gap: 1.5rem; align-items: start;">
+        
+        <!-- Columna Izquierda: Formulario de la Diapositiva Activa -->
+        <div class="gdn-card" style="margin-bottom: 0;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; border-bottom: 1px solid var(--gdn-border); padding-bottom: 0.65rem;">
+            <div>
+              <span style="font-size: 0.82rem; font-weight: 800; color: #10b981; text-transform: uppercase;">
+                Lámina #${activeIdx + 1} de ${slides.length}
+              </span>
+              <h4 style="margin: 0; font-size: 1.05rem; font-weight: 800; color: var(--gdn-text);">
+                Editor de Contenido
+              </h4>
+            </div>
+
+            <!-- Selector de Color de Fondo Específico -->
+            <div style="display: inline-flex; align-items: center; gap: 0.45rem; background: var(--gdn-subtle); padding: 0.28rem 0.75rem; border-radius: 999px; border: 1px solid var(--gdn-border);">
+              <span style="font-size: 0.78rem; font-weight: 700; color: var(--gdn-text-sec);">Color Fondo:</span>
+              <input 
+                type="color" 
+                value="${curBg.startsWith('#') ? curBg : '#0b091a'}" 
+                style="width: 24px; height: 24px; border: none; border-radius: 50%; cursor: pointer; background: transparent;"
+                onchange="window.ProjectWizard.setWizardSlideBg(this.value)"
+                title="Elegir color de fondo de esta lámina"
+              />
+            </div>
+          </div>
+
+          <!-- Selector de Modo / Formato de Diapositiva -->
+          <div style="margin-bottom: 1.25rem;">
+            <label class="gdn-label" style="font-size: 0.85rem; font-weight: 700; margin-bottom: 0.4rem; display: block;">
+              <span>Diseño / Disposición de la Lámina:</span>
+            </label>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 0.45rem;">
+              <button 
+                type="button" 
+                class="btn ${curLayout === 'split' ? 'btn-cyan' : 'btn-outline'}" 
+                style="font-size: 0.78rem; padding: 0.4rem 0.6rem; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; gap: 0.35rem;"
+                onclick="window.ProjectWizard.setWizardSlideLayout('split')"
+              >
+                <span>📝</span> Texto + Imagen
+              </button>
+              <button 
+                type="button" 
+                class="btn ${curLayout === 'full' ? 'btn-cyan' : 'btn-outline'}" 
+                style="font-size: 0.78rem; padding: 0.4rem 0.6rem; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; gap: 0.35rem;"
+                onclick="window.ProjectWizard.setWizardSlideLayout('full')"
+              >
+                <span>🖥️</span> Pantalla Completa
+              </button>
+              <button 
+                type="button" 
+                class="btn ${curLayout === 'video' ? 'btn-cyan' : 'btn-outline'}" 
+                style="font-size: 0.78rem; padding: 0.4rem 0.6rem; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; gap: 0.35rem;"
+                onclick="window.ProjectWizard.setWizardSlideLayout('video')"
+              >
+                <span>🎬</span> Texto + Video
+              </button>
+              <button 
+                type="button" 
+                class="btn ${curLayout === 'center' ? 'btn-cyan' : 'btn-outline'}" 
+                style="font-size: 0.78rem; padding: 0.4rem 0.6rem; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; gap: 0.35rem;"
+                onclick="window.ProjectWizard.setWizardSlideLayout('center')"
+              >
+                <span>🎯</span> Portada Centrada
+              </button>
+            </div>
+          </div>
+
+          <!-- Título de la Diapositiva -->
+          <div class="gdn-field" style="margin-bottom: 0.9rem;">
+            <label class="gdn-label" for="gdn-slide-title" style="font-size: 0.88rem; font-weight: 700;">
+              <span>Título de la lámina <span style="color: #10b981;">*</span></span>
+            </label>
+            <input 
+              type="text" 
+              id="gdn-slide-title" 
+              class="gdn-input" 
+              value="${this.escapeHtml(currentSlide.title || '')}" 
+              placeholder="Ej: Problema y Oportunidad del Proyecto"
+              oninput="window.ProjectWizard.updateActiveSlideField('title', this.value)"
+            />
+          </div>
+
+          <!-- Subtítulo de la Diapositiva -->
+          <div class="gdn-field" style="margin-bottom: 0.9rem;">
+            <label class="gdn-label" for="gdn-slide-subtitle" style="font-size: 0.88rem; font-weight: 700;">
+              <span>Subtítulo o Frase clave</span>
+            </label>
+            <input 
+              type="text" 
+              id="gdn-slide-subtitle" 
+              class="gdn-input" 
+              value="${this.escapeHtml(currentSlide.subtitle || '')}" 
+              placeholder="Ej: Análisis del contexto y necesidades reales"
+              oninput="window.ProjectWizard.updateActiveSlideField('subtitle', this.value)"
+            />
+          </div>
+
+          <!-- Contenido Explicativo -->
+          <div class="gdn-field" style="margin-bottom: 0.9rem;">
+            <label class="gdn-label" for="gdn-slide-content" style="font-size: 0.88rem; font-weight: 700;">
+              <span>Párrafo o Contenido explicativo</span>
+            </label>
+            <textarea 
+              id="gdn-slide-content" 
+              class="gdn-textarea" 
+              rows="3" 
+              placeholder="Describe los aspectos esenciales de esta lámina..."
+              oninput="window.ProjectWizard.updateActiveSlideField('content', this.value)"
+            >${this.escapeHtml(currentSlide.content || '')}</textarea>
+          </div>
+
+          <!-- Viñetas / Puntos Clave -->
+          <div class="gdn-field" style="margin-bottom: 0.9rem;">
+            <label class="gdn-label" for="gdn-slide-bullets" style="font-size: 0.88rem; font-weight: 700;">
+              <span>Viñetas / Puntos clave <span style="font-weight: 400; font-size: 0.78rem; color: var(--gdn-text-sec);">(1 punto por línea)</span></span>
+            </label>
+            <textarea 
+              id="gdn-slide-bullets" 
+              class="gdn-textarea" 
+              rows="3" 
+              placeholder="Punto clave 1&#10;Punto clave 2&#10;Punto clave 3"
+              oninput="window.ProjectWizard.updateActiveSlideBullets(this.value)"
+            >${this.escapeHtml((currentSlide.bullets || []).join('\n'))}</textarea>
+          </div>
+
+          <!-- Multimedia: Imagen o Video -->
+          <div class="gdn-field" style="margin-bottom: 0.9rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.35rem;">
+              <label class="gdn-label" for="gdn-slide-media" style="font-size: 0.88rem; font-weight: 700; margin-bottom: 0;">
+                <span>${curLayout === 'video' ? 'URL del Video (YouTube / Vimeo / MP4)' : 'URL de Imagen o Ilustración'}</span>
+              </label>
+              <input 
+                type="file" 
+                id="gdn-wizard-slide-img-input" 
+                accept="image/*" 
+                style="display: none;" 
+                onchange="if(this.files && this.files[0]) window.ProjectWizard.handleWizardSlideMediaUpload(this.files[0])"
+              />
+              <button 
+                type="button" 
+                class="btn btn-outline" 
+                style="font-size: 0.74rem; padding: 0.2rem 0.6rem; border-color: #00f5d4; color: #00f5d4;" 
+                onclick="document.getElementById('gdn-wizard-slide-img-input').click()"
+              >
+                📷 Subir imagen local
+              </button>
+            </div>
+            <input 
+              type="text" 
+              id="gdn-slide-media" 
+              class="gdn-input" 
+              value="${this.escapeHtml(currentSlide.media || '')}" 
+              placeholder="${curLayout === 'video' ? 'https://www.youtube.com/watch?v=...' : 'https://ejemplo.com/imagen.jpg o sube un archivo'}"
+              oninput="window.ProjectWizard.updateActiveSlideField('media', this.value)"
+            />
+          </div>
+
+          <!-- Notas del Presentador -->
+          <div class="gdn-field" style="margin-bottom: 0;">
+            <label class="gdn-label" for="gdn-slide-notes" style="font-size: 0.88rem; font-weight: 700;">
+              <span>Notas del orador / Guion de exposición <span style="font-weight: 400; font-size: 0.78rem; color: var(--gdn-text-sec);">(Uso personal)</span></span>
+            </label>
+            <input 
+              type="text" 
+              id="gdn-slide-notes" 
+              class="gdn-input" 
+              value="${this.escapeHtml(currentSlide.notes || '')}" 
+              placeholder="Apuntes clave para cuando proyectes esta diapositiva..."
+              oninput="window.ProjectWizard.updateActiveSlideField('notes', this.value)"
+            />
+          </div>
+        </div>
+
+        <!-- Columna Derecha: Vista Previa Interactiva en Vivo -->
+        <div class="gdn-card" style="margin-bottom: 0; position: sticky; top: 1.5rem; background: rgba(10, 15, 30, 0.95); border: 2px solid rgba(0, 245, 212, 0.3); box-shadow: 0 15px 35px rgba(0,0,0,0.6);">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 0.65rem;">
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+              <span style="display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: #00f5d4; box-shadow: 0 0 10px #00f5d4;"></span>
+              <strong style="color: #ffffff; font-size: 0.95rem;">Vista Previa en Vivo</strong>
+              <span style="font-size: 0.78rem; color: #94a3b8;">(Como se proyectará)</span>
+            </div>
+
+            <!-- Controles de Navegación del Preview -->
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+              <span style="font-size: 0.8rem; font-weight: 800; color: #00f5d4;">
+                ${activeIdx + 1} / ${slides.length}
+              </span>
+              <button 
+                type="button" 
+                class="btn btn-outline" 
+                style="padding: 0.25rem 0.6rem; font-size: 0.8rem;" 
+                onclick="window.ProjectWizard.selectWizardSlide(${activeIdx - 1})"
+                ${activeIdx === 0 ? 'disabled style="opacity:0.35; cursor:not-allowed;"' : ''}
+                title="Lámina anterior"
+              >
+                ◀
+              </button>
+              <button 
+                type="button" 
+                class="btn btn-outline" 
+                style="padding: 0.25rem 0.6rem; font-size: 0.8rem;" 
+                onclick="window.ProjectWizard.selectWizardSlide(${activeIdx + 1})"
+                ${activeIdx === slides.length - 1 ? 'disabled style="opacity:0.35; cursor:not-allowed;"' : ''}
+                title="Siguiente lámina"
+              >
+                ▶
+              </button>
+            </div>
+          </div>
+
+          <!-- Lienzo Renderizado en Tiempo Real de la Lámina -->
+          <div 
+            id="gdn-slide-live-preview-box" 
+            style="border-radius: 14px; overflow: hidden; min-height: 420px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); border: 1.5px solid rgba(255,255,255,0.12); display: flex; flex-direction: column;"
+          >
+            ${this.renderSlidePreviewInner(currentSlide, activeTheme, curBg, curLayout)}
+          </div>
+
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1rem; font-size: 0.78rem; color: #94a3b8;">
+            <span>💡 Las diapositivas se sincronizan automáticamente con la Landing Page.</span>
+            <span style="color: #00f5d4; font-weight: 700;">Modo: ${curLayout.toUpperCase()}</span>
+          </div>
+        </div>
+
+      </div>
+    `;
+  },
+
+  renderWizardSlideThumbnailsHtml(slides, activeIdx) {
+    if (!Array.isArray(slides) || slides.length === 0) return '';
+    return slides.map((s, idx) => {
+      const isActive = idx === activeIdx;
+      const t = this.SLIDE_THEMES.find(th => th.id === (s.themeId || 'cosmos')) || this.SLIDE_THEMES[0];
+      const bg = s.bgColor || t.bg;
+      const title = s.title || `Lámina #${idx + 1}`;
+      const layoutIcon = s.layout === 'full' ? '🖥️' : (s.layout === 'video' ? '🎬' : (s.layout === 'center' ? '🎯' : '📝'));
+
+      return `
+        <div 
+          onclick="window.ProjectWizard.selectWizardSlide(${idx})"
+          style="min-width: 140px; max-width: 160px; height: 95px; border-radius: 10px; cursor: pointer; padding: 0.55rem; background: ${bg}; border: ${isActive ? '2.5px solid #00f5d4' : '1px solid rgba(255,255,255,0.18)'}; box-shadow: ${isActive ? '0 0 15px rgba(0,245,212,0.45)' : '0 4px 10px rgba(0,0,0,0.3)'}; transition: transform 0.2s ease, border-color 0.2s ease; display: flex; flex-direction: column; justify-content: space-between; flex-shrink: 0;"
+          onmouseenter="this.style.transform='scale(1.03)'"
+          onmouseleave="this.style.transform='scale(1)'"
+          title="Ver y editar lámina #${idx + 1}: ${this.escapeHtml(title)}"
+        >
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span style="font-size: 0.72rem; font-weight: 900; color: #00f5d4; background: rgba(0,0,0,0.5); padding: 0.1rem 0.35rem; border-radius: 4px;">
+              #${idx + 1}
+            </span>
+            <span style="font-size: 0.72rem;">${layoutIcon}</span>
+          </div>
+          <div style="font-size: 0.76rem; font-weight: 800; color: #ffffff; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; line-height: 1.25;">
+            ${this.escapeHtml(title)}
+          </div>
+          <div style="font-size: 0.68rem; color: rgba(255,255,255,0.7); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+            ${(s.bullets && s.bullets.length) ? `${s.bullets.length} puntos` : (s.subtitle ? this.escapeHtml(s.subtitle) : 'Texto')}
+          </div>
+        </div>
+      `;
+    }).join('') + `
+      <div 
+        onclick="window.ProjectWizard.addWizardSlide()"
+        style="min-width: 110px; height: 95px; border-radius: 10px; cursor: pointer; padding: 0.55rem; background: rgba(255,255,255,0.04); border: 1.5px dashed rgba(0,245,212,0.5); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.35rem; transition: transform 0.2s ease; flex-shrink: 0;"
+        onmouseenter="this.style.transform='scale(1.03)'; this.style.borderColor='#00f5d4';"
+        onmouseleave="this.style.transform='scale(1)'; this.style.borderColor='rgba(0,245,212,0.5)';"
+        title="Crear una nueva lámina"
+      >
+        <span style="font-size: 1.35rem; color: #00f5d4;">➕</span>
+        <span style="font-size: 0.72rem; font-weight: 800; color: #00f5d4;">Añadir</span>
+      </div>
+    `;
+  },
+
+  renderSlidePreviewInner(slide, theme = null, bg = null, layout = null) {
+    const s = slide || {};
+    const th = theme || this.SLIDE_THEMES.find(t => t.id === (s.themeId || 'cosmos')) || this.SLIDE_THEMES[0];
+    const curBg = bg || s.bgColor || th.bg;
+    const curLayout = layout || s.layout || 'split';
+    const title = s.title || 'Título de la Lámina';
+    const subtitle = s.subtitle || '';
+    const content = s.content || '';
+    const bullets = Array.isArray(s.bullets) ? s.bullets : [];
+    const media = s.media || '';
+
+    if (curLayout === 'full') {
+      return `
+        <div style="width: 100%; height: 100%; min-height: 420px; background: ${curBg}; display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; padding: 1.5rem; box-sizing: border-box; text-align: center;">
+          ${media ? `
+            <img 
+              src="${this.escapeHtml(media)}" 
+              alt="${this.escapeHtml(title)}" 
+              style="max-width: 100%; max-height: 380px; object-fit: contain; border-radius: 8px; box-shadow: 0 8px 25px rgba(0,0,0,0.6);" 
+              onerror="this.style.display='none'"
+            />
+          ` : `
+            <div style="max-width: 90%;">
+              <h2 style="font-size: clamp(1.4rem, 2.8vw, 2.2rem); font-weight: 900; color: ${th.titleColor}; margin: 0 0 0.75rem; text-shadow: 0 2px 10px rgba(0,0,0,0.6);">
+                ${this.escapeHtml(title)}
+              </h2>
+              ${subtitle ? `
+                <h4 style="font-size: 1.05rem; font-weight: 700; color: ${th.subtitleColor}; margin: 0 0 1rem; text-transform: uppercase; letter-spacing: 0.05em;">
+                  ${this.escapeHtml(subtitle)}
+                </h4>
+              ` : ''}
+              ${content ? `
+                <p style="font-size: 0.95rem; color: ${th.contentColor}; line-height: 1.6; margin: 0 auto; max-width: 650px;">
+                  ${this.escapeHtml(content)}
+                </p>
+              ` : ''}
+            </div>
+          `}
+        </div>
+      `;
+    }
+
+    if (curLayout === 'center') {
+      return `
+        <div style="width: 100%; height: 100%; min-height: 420px; background: ${curBg}; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 2.25rem 1.75rem; box-sizing: border-box; text-align: center;">
+          <h2 style="font-size: clamp(1.4rem, 2.8vw, 2.1rem); font-weight: 900; color: ${th.titleColor}; margin: 0 0 0.6rem; text-shadow: 0 2px 12px rgba(0,0,0,0.7);">
+            ${this.escapeHtml(title)}
+          </h2>
+          ${subtitle ? `
+            <div style="font-size: 1rem; font-weight: 800; color: ${th.subtitleColor}; margin-bottom: 1.25rem; text-transform: uppercase; letter-spacing: 0.06em;">
+              ${this.escapeHtml(subtitle)}
+            </div>
+          ` : ''}
+          ${content ? `
+            <p style="font-size: 0.92rem; color: ${th.contentColor}; line-height: 1.65; max-width: 620px; margin: 0 auto 1.25rem;">
+              ${this.escapeHtml(content)}
+            </p>
+          ` : ''}
+          ${bullets.length > 0 ? `
+            <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 0.65rem; max-width: 680px; margin-top: 0.5rem;">
+              ${bullets.map(b => `
+                <div style="background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); padding: 0.45rem 0.9rem; border-radius: 999px; font-size: 0.84rem; color: ${th.contentColor}; font-weight: 600;">
+                  ✨ ${this.escapeHtml(b)}
+                </div>
+              `).join('')}
+            </div>
+          ` : ''}
+        </div>
+      `;
+    }
+
+    if (curLayout === 'video') {
+      const vUrl = media || this.draft.videoConfig?.url || '';
+      return `
+        <div style="width: 100%; height: 100%; min-height: 420px; background: ${curBg}; padding: 1.75rem; box-sizing: border-box; display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; align-items: center;">
+          <div>
+            <h3 style="font-size: 1.35rem; font-weight: 900; color: ${th.titleColor}; margin: 0 0 0.4rem; text-shadow: 0 2px 8px rgba(0,0,0,0.5);">
+              ${this.escapeHtml(title)}
+            </h3>
+            ${subtitle ? `
+              <div style="font-size: 0.88rem; font-weight: 700; color: ${th.subtitleColor}; margin-bottom: 0.85rem; text-transform: uppercase;">
+                ${this.escapeHtml(subtitle)}
+              </div>
+            ` : ''}
+            ${content ? `
+              <p style="font-size: 0.86rem; color: ${th.contentColor}; line-height: 1.55; margin-bottom: 0.85rem;">
+                ${this.escapeHtml(content)}
+              </p>
+            ` : ''}
+            ${bullets.length > 0 ? `
+              <ul style="margin: 0; padding-left: 1.2rem; font-size: 0.82rem; color: ${th.contentColor}; line-height: 1.6;">
+                ${bullets.map(b => `<li style="margin-bottom: 0.35rem;">${this.escapeHtml(b)}</li>`).join('')}
+              </ul>
+            ` : ''}
+          </div>
+          <div style="border-radius: 12px; overflow: hidden; background: #000; min-height: 220px; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 25px rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.15);">
+            ${vUrl ? `
+              <div style="padding: 1.5rem; text-align: center; color: #fff;">
+                <div style="font-size: 2.2rem; margin-bottom: 0.5rem;">🎬</div>
+                <div style="font-size: 0.85rem; font-weight: 700; color: #00f5d4;">Video Vinculado</div>
+                <div style="font-size: 0.72rem; color: #94a3b8; word-break: break-all; max-width: 200px; margin: 0.4rem auto 0;">
+                  ${this.escapeHtml(vUrl)}
+                </div>
+              </div>
+            ` : `
+              <div style="padding: 1.5rem; text-align: center; color: #64748b;">
+                <div style="font-size: 2.2rem; margin-bottom: 0.5rem;">🎬</div>
+                <div style="font-size: 0.82rem;">Escribe la URL del video para proyectarlo aquí</div>
+              </div>
+            `}
+          </div>
+        </div>
+      `;
+    }
+
+    // Default: 'split' (Texto a la izquierda, Imagen a la derecha)
+    return `
+      <div style="width: 100%; height: 100%; min-height: 420px; background: ${curBg}; padding: 1.85rem 1.6rem; box-sizing: border-box; display: grid; grid-template-columns: 1.15fr 0.95fr; gap: 1.25rem; align-items: center;">
+        <div>
+          <h3 style="font-size: 1.35rem; font-weight: 900; color: ${th.titleColor}; margin: 0 0 0.45rem; line-height: 1.25; text-shadow: 0 2px 10px rgba(0,0,0,0.6);">
+            ${this.escapeHtml(title)}
+          </h3>
+          ${subtitle ? `
+            <div style="font-size: 0.88rem; font-weight: 700; color: ${th.subtitleColor}; margin-bottom: 0.9rem; text-transform: uppercase; letter-spacing: 0.05em;">
+              ${this.escapeHtml(subtitle)}
+            </div>
+          ` : ''}
+          ${content ? `
+            <p style="font-size: 0.86rem; color: ${th.contentColor}; line-height: 1.6; margin-bottom: 1rem;">
+              ${this.escapeHtml(content)}
+            </p>
+          ` : ''}
+          ${bullets.length > 0 ? `
+            <div style="display: flex; flex-direction: column; gap: 0.45rem;">
+              ${bullets.map(b => `
+                <div style="display: flex; align-items: flex-start; gap: 0.5rem; font-size: 0.83rem; color: ${th.contentColor}; line-height: 1.45;">
+                  <span style="color: ${th.accent || '#00f5d4'}; font-weight: 900; font-size: 0.9rem; line-height: 1;">✦</span>
+                  <span>${this.escapeHtml(b)}</span>
+                </div>
+              `).join('')}
+            </div>
+          ` : ''}
+        </div>
+
+        <!-- Columna de Imagen / Ilustración -->
+        <div style="border-radius: 12px; overflow: hidden; min-height: 240px; background: rgba(0,0,0,0.35); border: 1.5px solid rgba(255,255,255,0.12); display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 25px rgba(0,0,0,0.5);">
+          ${media ? `
+            <img 
+              src="${this.escapeHtml(media)}" 
+              alt="${this.escapeHtml(title)}" 
+              style="width: 100%; height: 100%; max-height: 290px; object-fit: cover; display: block;" 
+              onerror="this.parentElement.innerHTML='<div style=\'padding:1.5rem; text-align:center; color:#94a3b8; font-size:0.8rem;\'>⚠️ No se pudo cargar la imagen</div>';"
+            />
+          ` : `
+            <div style="text-align: center; padding: 1.5rem; color: #64748b;">
+              <div style="font-size: 2.2rem; margin-bottom: 0.35rem;">🖼️</div>
+              <div style="font-size: 0.8rem; font-weight: 700; color: #cbd5e1;">Sin imagen asignada</div>
+              <div style="font-size: 0.72rem; color: #94a3b8; margin-top: 0.2rem;">Pega una URL o sube una imagen local</div>
+            </div>
+          `}
+        </div>
+      </div>
+    `;
+  },
+
+  selectWizardSlide(index) {
+    this.collectCurrentStepInputs();
+    const slides = this.draft.slides || [];
+    if (slides.length === 0) return;
+    this.activeSlideIndex = Math.max(0, Math.min(slides.length - 1, index));
+    this.saveDraftToStorage(true);
+    if (window.ProjectsView) window.ProjectsView.render();
+  },
+
+  addWizardSlide() {
+    this.collectCurrentStepInputs();
+    if (!Array.isArray(this.draft.slides)) this.draft.slides = [];
+    const num = this.draft.slides.length + 1;
+    this.draft.slides.push({
+      id: 'slide_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
+      title: `Nueva Diapositiva #${num}`,
+      subtitle: '',
+      content: 'Escribe aquí la explicación o detalles clave para esta lámina.',
+      bullets: ['Punto clave destacado 1', 'Punto clave destacado 2'],
+      layout: 'split',
+      media: '',
+      notes: '',
+      bgColor: '#0b091a',
+      themeId: this.draft.designConfig?.themeId || 'cosmos'
+    });
+    this.activeSlideIndex = this.draft.slides.length - 1;
+    this.saveDraftToStorage(true);
+    if (window.ProjectsView) window.ProjectsView.render();
+  },
+
+  duplicateWizardSlide() {
+    this.collectCurrentStepInputs();
+    const slides = this.draft.slides || [];
+    if (slides.length === 0) return;
+    const cur = slides[this.activeSlideIndex] || slides[0];
+    const clone = JSON.parse(JSON.stringify(cur));
+    clone.id = 'slide_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6);
+    clone.title = (clone.title || 'Diapositiva') + ' (Copia)';
+    slides.splice(this.activeSlideIndex + 1, 0, clone);
+    this.activeSlideIndex = this.activeSlideIndex + 1;
+    this.saveDraftToStorage(true);
+    if (window.ProjectsView) window.ProjectsView.render();
+  },
+
+  deleteWizardSlide(index) {
+    const slides = this.draft.slides || [];
+    if (slides.length <= 1) {
+      alert('La presentación debe contener al menos 1 diapositiva.');
+      return;
+    }
+    if (!confirm('¿Deseas eliminar esta diapositiva de la presentación?')) return;
+    this.collectCurrentStepInputs();
+    slides.splice(index, 1);
+    this.activeSlideIndex = Math.max(0, Math.min(slides.length - 1, index === 0 ? 0 : index - 1));
+    this.saveDraftToStorage(true);
+    if (window.ProjectsView) window.ProjectsView.render();
+  },
+
+  moveWizardSlide(fromIndex, direction) {
+    this.collectCurrentStepInputs();
+    const slides = this.draft.slides || [];
+    const targetIdx = fromIndex + direction;
+    if (targetIdx < 0 || targetIdx >= slides.length) return;
+    const item = slides.splice(fromIndex, 1)[0];
+    slides.splice(targetIdx, 0, item);
+    this.activeSlideIndex = targetIdx;
+    this.saveDraftToStorage(true);
+    if (window.ProjectsView) window.ProjectsView.render();
+  },
+
+  setWizardSlideLayout(layout) {
+    this.collectCurrentStepInputs();
+    const slides = this.draft.slides || [];
+    const cur = slides[this.activeSlideIndex];
+    if (cur) {
+      cur.layout = layout;
+      this.saveDraftToStorage(true);
+      if (window.ProjectsView) window.ProjectsView.render();
+    }
+  },
+
+  setWizardSlideBg(color) {
+    const slides = this.draft.slides || [];
+    const cur = slides[this.activeSlideIndex];
+    if (cur) {
+      cur.bgColor = color;
+      this.saveDraftToStorage(true);
+      const previewBox = document.getElementById('gdn-slide-live-preview-box');
+      if (previewBox) {
+        const activeTheme = this.SLIDE_THEMES.find(t => t.id === (cur.themeId || 'cosmos')) || this.SLIDE_THEMES[0];
+        previewBox.innerHTML = this.renderSlidePreviewInner(cur, activeTheme, color, cur.layout);
+      }
+    }
+  },
+
+  applyWizardSlideTheme(themeId, applyToAll = false) {
+    this.collectCurrentStepInputs();
+    const slides = this.draft.slides || [];
+    const theme = this.SLIDE_THEMES.find(t => t.id === themeId);
+    if (!theme) return;
+
+    if (applyToAll) {
+      slides.forEach(s => {
+        s.themeId = themeId;
+        s.bgColor = theme.bg;
+      });
+    } else {
+      const cur = slides[this.activeSlideIndex];
+      if (cur) {
+        cur.themeId = themeId;
+        cur.bgColor = theme.bg;
+      }
+    }
+    this.saveDraftToStorage(true);
+    if (window.ProjectsView) window.ProjectsView.render();
+  },
+
+  updateActiveSlideField(field, value) {
+    const slides = this.draft.slides || [];
+    const cur = slides[this.activeSlideIndex];
+    if (!cur) return;
+    cur[field] = value;
+
+    // Actualizar vista previa en tiempo real sin recargar toda la página
+    const previewBox = document.getElementById('gdn-slide-live-preview-box');
+    if (previewBox) {
+      const activeTheme = this.SLIDE_THEMES.find(t => t.id === (cur.themeId || 'cosmos')) || this.SLIDE_THEMES[0];
+      previewBox.innerHTML = this.renderSlidePreviewInner(cur, activeTheme, cur.bgColor, cur.layout);
+    }
+    this.triggerFieldAutoSave();
+  },
+
+  updateActiveSlideBullets(rawText) {
+    const slides = this.draft.slides || [];
+    const cur = slides[this.activeSlideIndex];
+    if (!cur) return;
+    cur.bullets = rawText.split('\n').map(b => b.replace(/^[-*•]\s*/, '').trim()).filter(Boolean);
+
+    const previewBox = document.getElementById('gdn-slide-live-preview-box');
+    if (previewBox) {
+      const activeTheme = this.SLIDE_THEMES.find(t => t.id === (cur.themeId || 'cosmos')) || this.SLIDE_THEMES[0];
+      previewBox.innerHTML = this.renderSlidePreviewInner(cur, activeTheme, cur.bgColor, cur.layout);
+    }
+    this.triggerFieldAutoSave();
+  },
+
+  async handleWizardSlideMediaUpload(file) {
+    if (!file) return;
+    try {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const dataUrl = e.target.result;
+        this.updateActiveSlideField('media', dataUrl);
+        const input = document.getElementById('gdn-slide-media');
+        if (input) input.value = dataUrl;
+        this.saveDraftToStorage(true);
+      };
+      reader.readAsDataURL(file);
+    } catch (err) {
+      console.warn('Error reading slide media:', err);
+    }
+  },
+
+  async handleWizardSlideUpload(file) {
+    if (!file) return;
+    this.collectCurrentStepInputs();
+    const ext = file.name.toLowerCase().split('.').pop();
+    const baseName = file.name.replace(/\.[^/.]+$/, '');
+
+    // 1. Archivo Mentix / JSON
+    if (ext === 'json' || ext === 'mentix') {
+      try {
+        const text = await file.text();
+        const parsed = JSON.parse(text);
+        let imported = [];
+        if (Array.isArray(parsed.slides) && parsed.slides.length > 0) {
+          imported = parsed.slides;
+        } else if (Array.isArray(parsed)) {
+          imported = parsed;
+        }
+        if (imported.length > 0) {
+          this.draft.slides = imported.map((s, idx) => ({
+            id: s.id || ('slide_' + Date.now() + '_' + idx),
+            title: s.title || `Diapositiva ${idx + 1}`,
+            subtitle: s.subtitle || '',
+            content: s.content || '',
+            bullets: Array.isArray(s.bullets) ? s.bullets : [],
+            layout: s.layout || 'split',
+            media: s.media || s.imageUrl || '',
+            notes: s.notes || '',
+            bgColor: s.bgColor || '#0b091a',
+            themeId: s.themeId || 'cosmos'
+          }));
+          this.activeSlideIndex = 0;
+          this.saveDraftToStorage(true);
+          alert(`✅ ¡Presentación JSON importada! Se cargaron ${this.draft.slides.length} diapositivas.`);
+          if (window.ProjectsView) window.ProjectsView.render();
+          return;
+        }
+      } catch (err) {
+        console.warn('Error parsing JSON slides:', err);
+      }
+    }
+
+    // 2. Archivo PDF (.pdf)
+    if (ext === 'pdf') {
+      if (window.PresentationView && typeof window.PresentationView.extractSlidesFromPDF === 'function') {
+        try {
+          const buffer = await file.arrayBuffer();
+          const extracted = await window.PresentationView.extractSlidesFromPDF(buffer);
+          if (extracted && extracted.length > 0) {
+            this.draft.slides = extracted.map((s, idx) => ({
+              id: s.id || ('slide_' + Date.now() + '_' + idx),
+              title: s.title || `Página ${idx + 1}`,
+              subtitle: '',
+              content: '',
+              bullets: [],
+              layout: 'full',
+              media: s.media || '',
+              notes: '',
+              bgColor: '#000000',
+              themeId: 'cosmos'
+            }));
+            this.activeSlideIndex = 0;
+            this.saveDraftToStorage(true);
+            alert(`✅ ¡Documento PDF procesado! Se generaron ${extracted.length} diapositivas de alta definición en pantalla completa.`);
+            if (window.ProjectsView) window.ProjectsView.render();
+            return;
+          }
+        } catch (pdfErr) {
+          console.warn('Error extracting PDF slides:', pdfErr);
+        }
+      }
+    }
+
+    // 3. Presentación PowerPoint (.pptx)
+    if (ext === 'pptx') {
+      if (window.PresentationView && typeof window.PresentationView.extractSlidesFromPPTX === 'function') {
+        try {
+          const buffer = await file.arrayBuffer();
+          const extracted = await window.PresentationView.extractSlidesFromPPTX(buffer);
+          if (extracted && extracted.length > 0) {
+            this.draft.slides = extracted.map((s, idx) => ({
+              id: s.id || ('slide_' + Date.now() + '_' + idx),
+              title: s.title || `Diapositiva ${idx + 1}`,
+              subtitle: s.subtitle || '',
+              content: s.content || '',
+              bullets: Array.isArray(s.bullets) ? s.bullets : [],
+              layout: s.videoUrl ? 'video' : (s.isFullImage ? 'full' : 'split'),
+              media: s.videoUrl || s.media || '',
+              notes: s.notes || '',
+              bgColor: '#0b091a',
+              themeId: 'cosmos'
+            }));
+            this.activeSlideIndex = 0;
+            this.saveDraftToStorage(true);
+            alert(`✅ ¡PowerPoint procesado con éxito! Se importaron ${extracted.length} diapositivas.`);
+            if (window.ProjectsView) window.ProjectsView.render();
+            return;
+          }
+        } catch (pptxErr) {
+          console.warn('Error extracting PPTX slides:', pptxErr);
+        }
+      }
+    }
+
+    // 4. Imagen directa (.png, .jpg, .webp, etc.)
+    if (file.type && file.type.startsWith('image/')) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const dataUrl = e.target.result;
+        if (!Array.isArray(this.draft.slides)) this.draft.slides = [];
+        this.draft.slides.push({
+          id: 'slide_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
+          title: baseName,
+          subtitle: '',
+          content: '',
+          bullets: [],
+          layout: 'full',
+          media: dataUrl,
+          notes: '',
+          bgColor: '#000000',
+          themeId: 'cosmos'
+        });
+        this.activeSlideIndex = this.draft.slides.length - 1;
+        this.saveDraftToStorage(true);
+        alert(`✅ Imagen agregada como nueva diapositiva en pantalla completa.`);
+        if (window.ProjectsView) window.ProjectsView.render();
+      };
+      reader.readAsDataURL(file);
+      return;
+    }
+
+    // 5. Archivo de Texto / Markdown (.txt, .md)
+    try {
+      const text = await file.text();
+      const rawBlocks = text.split(/\n\s*---\s*\n|\n\s*===\s*\n/);
+      const parsedSlides = [];
+
+      rawBlocks.forEach((block, idx) => {
+        const trimmed = block.trim();
+        if (!trimmed) return;
+        const lines = trimmed.split('\n');
+        let title = `Diapositiva ${idx + 1}`;
+        let subtitle = '';
+        const bullets = [];
+        const contentLines = [];
+
+        lines.forEach(line => {
+          const l = line.trim();
+          if (!l) return;
+          if (l.startsWith('# ')) {
+            title = l.replace(/^#\s+/, '');
+          } else if (l.startsWith('## ')) {
+            if (!subtitle) subtitle = l.replace(/^##\s+/, '');
+            else contentLines.push(l.replace(/^##\s+/, ''));
+          } else if (l.startsWith('- ') || l.startsWith('* ') || l.startsWith('• ')) {
+            bullets.push(l.replace(/^[-*•]\s+/, ''));
+          } else {
+            contentLines.push(l);
+          }
+        });
+
+        parsedSlides.push({
+          id: 'slide_' + Date.now() + '_' + idx,
+          title,
+          subtitle,
+          content: contentLines.join(' '),
+          bullets,
+          layout: 'split',
+          media: '',
+          notes: '',
+          bgColor: '#0b091a',
+          themeId: 'cosmos'
+        });
+      });
+
+      if (parsedSlides.length > 0) {
+        this.draft.slides = parsedSlides;
+        this.activeSlideIndex = 0;
+        this.saveDraftToStorage(true);
+        alert(`✅ Archivo de texto procesado. Se importaron ${parsedSlides.length} diapositivas.`);
+        if (window.ProjectsView) window.ProjectsView.render();
+        return;
+      }
+    } catch (txtErr) {
+      console.warn('Error reading text slides:', txtErr);
+    }
+
+    alert('⚠️ No se pudieron extraer diapositivas automáticas del archivo. Recuerda que puedes crear diapositivas directamente con el botón "+ Nueva Diapositiva" o "Generar con IA".');
+  },
+
+  generateAiSlidesForProject() {
+    this.collectCurrentStepInputs();
+    const d = this.draft;
+    const title = (d.title || 'Proyecto Educativo e Innovador').trim();
+    const subtitle = (d.subtitle || 'Solución interactiva y colaborativa').trim();
+    const desc = (d.shortDescription || d.fullDescription || 'Propuesta orientada a resolver necesidades prioritarias con tecnología y creatividad.').trim();
+    const problem = (d.problemStatement || 'Retos actuales en el acceso, comprensión y gestión eficiente de la información.').trim();
+    const objective = (d.mainObjective || 'Desarrollar una herramienta práctica, accesible y formativa para estudiantes y docentes.').trim();
+    const benefits = (d.benefits || 'Mayor productividad, aprendizaje activo y resultados medibles.').trim();
+    const author = (d.author || 'Equipo del Proyecto').trim();
+    const cover = d.mainImage || (d.useDefaultImage !== false ? this.defaultCoverImage : '');
+
+    const aiSlides = [
+      {
+        id: 'slide_' + Date.now() + '_1',
+        title: title,
+        subtitle: subtitle,
+        content: desc,
+        bullets: [
+          'Autor / Líder: ' + author,
+          'Institución: ' + (d.authorsConfig?.authorsInstitution || 'Comunidad Académica'),
+          'Área de enfoque: ' + (d.categoryName || 'Tecnología & Programación')
+        ],
+        layout: 'split',
+        media: cover,
+        notes: 'Apertura de la presentación: presentar el título, creadores y motivación general.',
+        bgColor: '#0b091a',
+        themeId: 'cosmos'
+      },
+      {
+        id: 'slide_' + Date.now() + '_2',
+        title: 'Desafío y Problemática Actual',
+        subtitle: 'El reto que nos inspiró a innovar',
+        content: problem,
+        bullets: [
+          'Dificultades identificadas en el entorno educativo y profesional',
+          'Brecha de herramientas intuitivas y modernas',
+          'Urgencia de una solución escalable y fácil de adoptar'
+        ],
+        layout: 'split',
+        media: '',
+        notes: 'Sensibilizar al público sobre por qué este problema debe resolverse hoy.',
+        bgColor: '#0f051d',
+        themeId: 'cyberpunk'
+      },
+      {
+        id: 'slide_' + Date.now() + '_3',
+        title: 'Objetivo y Propuesta de Solución',
+        subtitle: 'Innovación pedagógica y tecnológica',
+        content: objective,
+        bullets: [
+          'Enfoque centrado en la experiencia de los participantes',
+          'Arquitectura interactiva y modular',
+          'Integración de recursos multimedia y evaluación continua'
+        ],
+        layout: 'split',
+        media: '',
+        notes: 'Exponer la propuesta de valor y los pilares funcionales del proyecto.',
+        bgColor: '#041f17',
+        themeId: 'esmeralda'
+      },
+      {
+        id: 'slide_' + Date.now() + '_4',
+        title: 'Beneficios e Impacto Medible',
+        subtitle: 'Resultados para la comunidad',
+        content: benefits,
+        bullets: [
+          'Ahorro de tiempo en la preparación y visualización de contenidos',
+          'Experiencia interactiva memorable y de alto engagement',
+          'Resultados y retroalimentación en tiempo real'
+        ],
+        layout: 'split',
+        media: '',
+        notes: 'Resaltar los beneficios directos para los usuarios finales y evaluadores.',
+        bgColor: '#2b0e1e',
+        themeId: 'atardecer'
+      },
+      {
+        id: 'slide_' + Date.now() + '_5',
+        title: 'Conclusiones y Próximos Pasos',
+        subtitle: 'Hacia la implementación y escalabilidad',
+        content: 'El proyecto consolida una propuesta integral lista para implementarse y generar impacto en múltiples etapas.',
+        bullets: [
+          'Validación con usuarios piloto y retroalimentación',
+          'Publicación oficial en la Landing Page interactiva',
+          'Invitación a colaborar y participar en la iniciativa'
+        ],
+        layout: 'center',
+        media: '',
+        notes: 'Cierre con llamado a la acción y espacio para preguntas de la audiencia.',
+        bgColor: '#0c153b',
+        themeId: 'zafiro'
+      }
+    ];
+
+    if (!Array.isArray(this.draft.slides) || this.draft.slides.length <= 1) {
+      this.draft.slides = aiSlides;
+    } else {
+      if (confirm('¿Deseas reemplazar las láminas actuales con las 5 generadas por IA? (Si cancelas, se añadirán al final)')) {
+        this.draft.slides = aiSlides;
+      } else {
+        this.draft.slides = this.draft.slides.concat(aiSlides);
+      }
+    }
+
+    this.activeSlideIndex = 0;
+    this.saveDraftToStorage(true);
+    alert('✨ ¡5 diapositivas inteligentes generadas con éxito basadas en tu proyecto!');
+    if (window.ProjectsView) window.ProjectsView.render();
+  },
   // =========================================================================
   // PASO 4: DOCUMENTOS, GUÍAS Y RECURSOS DESCARGABLES
   // =========================================================================
@@ -2772,11 +3939,12 @@ collectCurrentStepInputs() {
       { label: 'Información obligatoria completada (Nombre y descripción del proyecto)', ok: hasBasicInfo, step: 1 },
       { label: 'Estilo de diseño, tipografía y banner configurados', ok: Boolean(d.designConfig?.themeId), step: 4 },
       { label: 'Autores y correos de contacto registrados', ok: Boolean(d.authorsConfig?.authorsList || d.author), step: 5 },
-      { label: 'Imagen principal configurada (o portada predeterminada activa)', ok: hasMainImage, step: 12 },
-      { label: `Recursos y documentos cargados (${(d.resources || []).length} archivos registrados)`, ok: allResourcesValid, step: 11 },
-      { label: `Enlaces externos comprobados (${(d.externalLinks || []).filter(l => l.verified).length}/${(d.externalLinks || []).length})`, ok: linksVerified, step: 13 },
-      { label: `URL pública preparada (slug: ${d.landingConfig?.slug || this.slugify(d.title || 'proyecto')})`, ok: hasSlug, step: 14 },
-      { label: 'Contenido listo para publicación en la Landing Page', ok: hasBasicInfo && hasMainImage, step: 15 }
+      { label: `Diapositivas y presentación interactiva (${(d.slides || []).length} láminas)`, ok: (d.slides || []).length > 0, step: 11 },
+      { label: `Recursos y documentos cargados (${(d.resources || []).length} archivos registrados)`, ok: allResourcesValid, step: 12 },
+      { label: 'Imagen principal configurada (o portada predeterminada activa)', ok: hasMainImage, step: 13 },
+      { label: `Enlaces externos comprobados (${(d.externalLinks || []).filter(l => l.verified).length}/${(d.externalLinks || []).length})`, ok: linksVerified, step: 14 },
+      { label: `URL pública preparada (slug: ${d.landingConfig?.slug || this.slugify(d.title || 'proyecto')})`, ok: hasSlug, step: 15 },
+      { label: 'Contenido listo para publicación en la Landing Page', ok: hasBasicInfo && hasMainImage, step: 16 }
     ];
   },
 
@@ -2839,11 +4007,11 @@ collectCurrentStepInputs() {
           </div>
         </div>
 
-        <!-- 3. Video -->
+        <!-- 3. Video de presentación -->
         <div class="gdn-card" style="margin-bottom:0;">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem;">
             <strong style="font-size:0.95rem; color:var(--gdn-text);">🎬 3. Video de presentación</strong>
-            <button type="button" class="plp-doc-btn outline" style="width:auto; padding:0.25rem 0.65rem; font-size:0.75rem;" onclick="window.ProjectWizard.goToStep(3)">✏️ Editar</button>
+            <button type="button" class="plp-doc-btn outline" style="width:auto; padding:0.25rem 0.65rem; font-size:0.75rem;" onclick="window.ProjectWizard.goToStep(10)">✏️ Editar</button>
           </div>
           <div style="font-size:0.84rem; color:var(--gdn-text-sec); line-height:1.55;">
             <div><strong>Estado:</strong> ${d.videoConfig?.verified ? '✔ Video verificado y listo' : 'Sin video o pendiente de verificar'}</div>
@@ -2852,11 +4020,24 @@ collectCurrentStepInputs() {
           </div>
         </div>
 
-        <!-- 4. Documentos y guías -->
+        <!-- 4. Diapositivas y Presentación Interactiva -->
+        <div class="gdn-card" style="margin-bottom:0; border:1px solid rgba(0, 245, 212, 0.35);">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem;">
+            <strong style="font-size:0.95rem; color:var(--gdn-text);">📊 4. Diapositivas y presentación</strong>
+            <button type="button" class="plp-doc-btn outline" style="width:auto; padding:0.25rem 0.65rem; font-size:0.75rem;" onclick="window.ProjectWizard.goToStep(11)">✏️ Editar</button>
+          </div>
+          <div style="font-size:0.84rem; color:var(--gdn-text-sec); line-height:1.55;">
+            <div><strong>Láminas creadas/subidas:</strong> ${(d.slides || []).length} diapositivas</div>
+            <div><strong>Estilo visual:</strong> ${d.designConfig?.themeId || 'Cosmos Neón'}</div>
+            <div><strong>Interactividad:</strong> Proyección en Landing Page y visor 3D</div>
+          </div>
+        </div>
+
+        <!-- 5. Documentos y guías -->
         <div class="gdn-card" style="margin-bottom:0;">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem;">
-            <strong style="font-size:0.95rem; color:var(--gdn-text);">📂 4. Documentos y guías</strong>
-            <button type="button" class="plp-doc-btn outline" style="width:auto; padding:0.25rem 0.65rem; font-size:0.75rem;" onclick="window.ProjectWizard.goToStep(4)">✏️ Editar</button>
+            <strong style="font-size:0.95rem; color:var(--gdn-text);">📂 5. Documentos y guías</strong>
+            <button type="button" class="plp-doc-btn outline" style="width:auto; padding:0.25rem 0.65rem; font-size:0.75rem;" onclick="window.ProjectWizard.goToStep(12)">✏️ Editar</button>
           </div>
           <div style="font-size:0.84rem; color:var(--gdn-text-sec); line-height:1.55;">
             <div><strong>Públicos en Landing Page:</strong> ${pubRes.length} documentos</div>
@@ -2864,11 +4045,11 @@ collectCurrentStepInputs() {
           </div>
         </div>
 
-        <!-- 5. Imágenes y presentaciones -->
+        <!-- 6. Portada e Imágenes -->
         <div class="gdn-card" style="margin-bottom:0;">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem;">
-            <strong style="font-size:0.95rem; color:var(--gdn-text);">🖼️ 5. Imágenes y presentaciones</strong>
-            <button type="button" class="plp-doc-btn outline" style="width:auto; padding:0.25rem 0.65rem; font-size:0.75rem;" onclick="window.ProjectWizard.goToStep(5)">✏️ Editar</button>
+            <strong style="font-size:0.95rem; color:var(--gdn-text);">🖼️ 6. Portada e imágenes</strong>
+            <button type="button" class="plp-doc-btn outline" style="width:auto; padding:0.25rem 0.65rem; font-size:0.75rem;" onclick="window.ProjectWizard.goToStep(13)">✏️ Editar</button>
           </div>
           <div style="font-size:0.84rem; color:var(--gdn-text-sec); line-height:1.55;">
             <div><strong>Portada:</strong> ${d.mainImage ? 'Portada personalizada' : 'Portada institucional predeterminada'}</div>
@@ -2876,13 +4057,13 @@ collectCurrentStepInputs() {
           </div>
         </div>
 
-        <!-- 6. Enlaces externos y 7. Configuración de publicación -->
+        <!-- 7. Enlaces externos y 8. Configuración de publicación -->
         <div class="gdn-card" style="margin-bottom:0;">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem;">
-            <strong style="font-size:0.95rem; color:var(--gdn-text);">⚙️ 6 y 7. Enlaces y Publicación</strong>
+            <strong style="font-size:0.95rem; color:var(--gdn-text);">⚙️ 7 y 8. Enlaces y Publicación</strong>
             <div style="display:flex; gap:0.35rem;">
-              <button type="button" class="plp-doc-btn outline" style="width:auto; padding:0.25rem 0.55rem; font-size:0.74rem;" onclick="window.ProjectWizard.goToStep(6)">Enlaces</button>
-              <button type="button" class="plp-doc-btn outline" style="width:auto; padding:0.25rem 0.55rem; font-size:0.74rem;" onclick="window.ProjectWizard.goToStep(7)">Publicación</button>
+              <button type="button" class="plp-doc-btn outline" style="width:auto; padding:0.25rem 0.55rem; font-size:0.74rem;" onclick="window.ProjectWizard.goToStep(14)">Enlaces</button>
+              <button type="button" class="plp-doc-btn outline" style="width:auto; padding:0.25rem 0.55rem; font-size:0.74rem;" onclick="window.ProjectWizard.goToStep(15)">Publicación</button>
             </div>
           </div>
           <div style="font-size:0.84rem; color:var(--gdn-text-sec); line-height:1.55;">
@@ -2948,6 +4129,11 @@ collectCurrentStepInputs() {
         <button type="button" class="plp-doc-btn outline" style="justify-content:flex-start; font-size:0.8rem; padding:0.5rem 0.75rem;" onclick="window.ProjectWizard.aiProposeFaqs()">
           ❓ Generar preguntas frecuentes (FAQ)
         </button>
+        ${this.currentStep === 11 ? `
+          <button type="button" class="plp-doc-btn" style="justify-content:flex-start; font-size:0.82rem; padding:0.55rem 0.75rem; background: linear-gradient(135deg, #10b981, #059669); color: #fff; font-weight: 800;" onclick="window.ProjectWizard.generateAiSlidesForProject()">
+            ✨ Generar 5 Diapositivas con IA
+          </button>
+        ` : ''}
         <button type="button" class="plp-doc-btn outline" style="justify-content:flex-start; font-size:0.8rem; padding:0.5rem 0.75rem;" onclick="window.ProjectWizard.aiSuggestPresentationStructure()">
           📊 Sugerir diapositivas para la Landing
         </button>
@@ -3384,9 +4570,11 @@ collectCurrentStepInputs() {
       videoConfig: d.videoConfig || {},
       resources: d.resources || [],
       visualAssets: d.visualAssets || [],
-      slides: slidesFromVisuals.length > 0 ? slidesFromVisuals : [
-        { id: 's1', title: finalTitle, content: d.shortDescription || d.mainObjective || '', imageUrl: cover, layout: 'split' }
-      ],
+      slides: (Array.isArray(d.slides) && d.slides.length > 0)
+        ? d.slides
+        : (slidesFromVisuals.length > 0 ? slidesFromVisuals : [
+            { id: 's1', title: finalTitle, content: d.shortDescription || d.mainObjective || '', imageUrl: cover, layout: 'split' }
+          ]),
       externalLinks: d.externalLinks || [],
       landingConfig: d.landingConfig || {},
       designConfig: d.designConfig || { themeId: 'cosmos', fontFamily: 'Montserrat', titleColor: '#ffffff', textColor: '#cbd5e1', accentColor: '#00f5d4', bannerStyle: 'gradient-cosmos', bannerUrl: '' },
