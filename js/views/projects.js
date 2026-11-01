@@ -566,39 +566,55 @@ window.ProjectsView = {
         <!-- 2. MAIN CONTENT AREA -->
         <main class="mentix-saas-main">
           <!-- TOPBAR -->
-          <header class="saas-topbar">
-            <div class="saas-search-pill">
-              <span class="saas-search-icon">🔍</span>
+          <header class="saas-topbar" style="display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: 1.25rem; width: 100%;">
+            
+            <!-- Search Pill Left -->
+            <div style="position: relative; width: 100%; max-width: 440px; display: flex; align-items: center;">
+              <span style="position: absolute; left: 1.1rem; font-size: 1rem; color: #64748b; pointer-events: none; z-index: 2;">🔍</span>
               <input 
                 type="text" 
+                id="projects-search-input"
+                class="saas-search-input"
                 placeholder="Buscar proyectos, contenidos o temas..." 
                 value="${this.escapeHtml(this.searchQuery)}"
                 oninput="window.ProjectsView.handleSearch(this.value)"
+                style="width: 100% !important; padding: 0.72rem 1.25rem 0.72rem 2.75rem !important; border-radius: 9999px !important; background: #ffffff !important; border: 1.5px solid #cbd5e1 !important; color: #0f172a !important; font-size: 0.92rem !important; outline: none !important; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04) !important;"
               />
             </div>
 
-            <div class="saas-topbar-right">
-              <div class="saas-bell-wrap" onclick="window.ProjectsView.showToast('🔔 Tienes 3 notificaciones nuevas de tus proyectos')" title="Notificaciones">
-                <span class="saas-bell-icon">🔔</span>
-                <span class="saas-bell-badge">3</span>
+            <!-- Topbar Right: Bell + User Pill -->
+            <div style="display: flex; align-items: center; gap: 0.85rem; flex-shrink: 0;">
+              <!-- Bell with Badge -->
+              <div 
+                onclick="window.ProjectsView.showToast('🔔 Tienes 3 notificaciones nuevas de tus proyectos')" 
+                title="Notificaciones"
+                style="position: relative; width: 42px; height: 42px; border-radius: 50%; background: #ffffff; border: 1.5px solid #e2e8f0; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s ease; box-shadow: 0 2px 8px rgba(0,0,0,0.03);"
+              >
+                <span style="font-size: 1.15rem;">🔔</span>
+                <span style="position: absolute; top: -3px; right: -3px; background: #ef4444; color: #ffffff; font-size: 0.68rem; font-weight: 900; width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid #ffffff;">3</span>
               </div>
 
-              <div class="saas-user-pill" onclick="window.appRouter.openAuthModal ? window.appRouter.openAuthModal('profile') : null" title="Perfil de usuario">
-                <img src="${userAvatar}" alt="${this.escapeHtml(userName)}" class="saas-user-avatar" onerror="this.onerror=null;this.src='assets/projects_ui/user_avatar.png';" />
-                <div class="saas-user-info">
-                  <span class="saas-user-name">${this.escapeHtml(userName)}</span>
-                  <span class="saas-user-role">${this.escapeHtml(userRole)}</span>
+              <!-- User Pill -->
+              <div 
+                onclick="window.appRouter.openAuthModal ? window.appRouter.openAuthModal('profile') : null" 
+                title="Perfil de usuario"
+                style="display: flex; align-items: center; gap: 0.65rem; background: #ffffff; border: 1.5px solid #e2e8f0; padding: 0.35rem 0.95rem 0.35rem 0.4rem; border-radius: 9999px; cursor: pointer; transition: all 0.2s ease; box-shadow: 0 2px 8px rgba(0,0,0,0.03);"
+              >
+                <img src="${userAvatar}" alt="${this.escapeHtml(userName)}" style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover; display: block;" onerror="this.onerror=null;this.src='assets/projects_ui/user_avatar.png';" />
+                <div style="display: flex; flex-direction: column; text-align: left; line-height: 1.25;">
+                  <span style="font-size: 0.88rem; font-weight: 800; color: #0f172a;">${this.escapeHtml(userName)}</span>
+                  <span style="font-size: 0.74rem; font-weight: 600; color: #64748b;">${this.escapeHtml(userRole)} ⌄</span>
                 </div>
               </div>
             </div>
           </header>
 
-          <!-- HERO BANNER (Identico a Imagen 2) -->
-          <div class="saas-hero-banner-wrapper" style="position: relative; width: 100%; max-width: 1100px; margin: 0 auto 1.5rem; border-radius: 18px; overflow: hidden; box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12); background: #071739;">
+          <!-- HERO BANNER (Abarca toda la parte de arriba, luminoso y nitido) -->
+          <div class="saas-hero-banner-wrapper" style="position: relative; width: 100%; border-radius: 20px; overflow: hidden; margin-bottom: 1.6rem; box-shadow: 0 12px 35px rgba(2, 40, 100, 0.16); background: #071739;">
             <img 
-              src="assets/projects_ui/hero_banner.png?v=20261101_hd_crisp" 
+              src="assets/projects_ui/hero_banner.png?v=20261101_bright_sharp" 
               alt="Tu ecosistema de aprendizaje estructurado - MENTIX" 
-              style="width: 100%; height: auto; display: block; object-fit: contain; image-rendering: -webkit-optimize-contrast; image-rendering: high-quality; transform: translateZ(0); backface-visibility: hidden;" 
+              style="width: 100%; height: auto; display: block; object-fit: cover; filter: brightness(1.16) contrast(1.1) saturate(1.18); image-rendering: -webkit-optimize-contrast; image-rendering: high-quality; transform: translateZ(0); backface-visibility: hidden;" 
             />
 
             <!-- Interactive Hotspot on 'Ver tutorial' Button -->
@@ -607,7 +623,7 @@ window.ProjectsView = {
               title="Ver tutorial" 
               class="saas-banner-hotspot"
               style="position: absolute; left: 4.4%; top: 69%; width: 14.5%; height: 23%; border-radius: 9999px; background: transparent; border: none; cursor: pointer; transition: all 0.2s ease;"
-              onmouseover="this.style.background='rgba(255,255,255,0.18)'; this.style.boxShadow='0 0 14px rgba(255,255,255,0.4)';"
+              onmouseover="this.style.background='rgba(255,255,255,0.2)'; this.style.boxShadow='0 0 16px rgba(255,255,255,0.5)';"
               onmouseout="this.style.background='transparent'; this.style.boxShadow='none';"
             ></button>
 
@@ -617,7 +633,7 @@ window.ProjectsView = {
               title="Conoce más" 
               class="saas-banner-hotspot"
               style="position: absolute; left: 20%; top: 69%; width: 12%; height: 23%; border-radius: 9999px; background: transparent; border: none; cursor: pointer; transition: all 0.2s ease;"
-              onmouseover="this.style.background='rgba(255,255,255,0.14)';"
+              onmouseover="this.style.background='rgba(255,255,255,0.16)';"
               onmouseout="this.style.background='transparent';"
             ></button>
           </div>
