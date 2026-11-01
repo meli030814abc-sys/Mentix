@@ -418,11 +418,23 @@ window.ProjectsView = {
       if (typeof saveGlobalState === 'function') saveGlobalState(window.appState);
     }
 
-    // En MENTIX, todos los proyectos creados (Presentaciones, Asistente, Videos, Documentos, Quizzes y URLs) son visibles
+    // En MENTIX, los proyectos son exclusivamente: Presentaciones, Video Clases, Documentos Didácticos, Enlaces Web/URL y Proyectos GovData / Asistente.
+    // Las pruebas evaluativas y retos gamificados (quizzes) NO pertenecen a Proyectos (pertenecen a Retos).
     const rawProjects = (window.appState.challenges || []).filter(c => {
       if (!c || !c.id) return false;
       if (c.deleted || c.is_deleted) return false;
-      return true;
+      if (c.projectType === 'quiz') return false;
+      if (!c.projectType && Array.isArray(c.questions) && c.questions.length > 0 && !c.isGovDataProject && !c.slides && !c.videoUrl && !c.docContent && !c.resourceWebUrl) {
+        return false;
+      }
+      return c.projectType === 'presentation' || 
+             c.projectType === 'video' || 
+             c.projectType === 'document' || 
+             c.projectType === 'url' || 
+             c.projectType === 'wizard' ||
+             c.isGovDataProject || 
+             c.is_gov_data_project || 
+             c.govdata;
     });
 
     const navEl = document.getElementById('main-navbar');
@@ -932,9 +944,6 @@ window.ProjectsView = {
     } else if (projectType === 'presentation') {
       defaultBanner = c.mainImage || c.image || c.banner || 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=800';
       primaryAction = `window.appRouter.openPresentation ? window.appRouter.openPresentation('${c.id}') : window.ProjectsView.openProjectLanding('${c.id}')`;
-    } else if (projectType === 'quiz') {
-      defaultBanner = c.banner || c.image || 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=800';
-      primaryAction = `window.appRouter.startSinglePlayer ? window.appRouter.startSinglePlayer('${c.id}') : window.ProjectsView.openProjectLanding('${c.id}')`;
     }
 
     const dateStr = c.date || (c.createdAt ? new Date(c.createdAt).toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' }) : '12 Abr 2025');
@@ -3587,10 +3596,6 @@ Generado por Mentix - Plataforma de Proyectos y Retos
         window.ProjectWizard.openWizard();
       } else if (window.appRouter && window.appRouter.createPresentation) {
         window.appRouter.createPresentation();
-      }
-    } else if (type === 'quiz') {
-      if (window.appRouter && window.appRouter.navigate) {
-        window.appRouter.navigate('creator');
       }
     } else if (type === 'presentation') {
       window.appRouter.createPresentation();
