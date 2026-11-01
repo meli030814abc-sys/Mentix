@@ -492,7 +492,7 @@ window.ProjectsView = {
 
     const userName = (u && u.name) ? u.name : 'Carlos Cañon';
     const userRole = (u && u.role) ? (u.role === 'teacher' ? 'Docente' : (u.role === 'admin' ? 'Administrador' : 'Estudiante')) : 'Docente';
-    const userAvatar = (u && u.avatar && !u.avatar.startsWith('http') && !u.avatar.includes('/')) ? u.avatar : 'assets/projects_ui/user_avatar.png';
+    const userAvatar = (u && u.avatar) ? u.avatar : 'assets/projects_ui/user_avatar.png';
 
     const cardsHtml = displayList.length === 0 ? `
       <div style="grid-column: 1 / -1; background: #ffffff; border-radius: 16px; padding: 3rem 1.5rem; text-align: center; border: 1.5px dashed #cbd5e1;">
@@ -702,49 +702,74 @@ window.ProjectsView = {
 
             <!-- RIGHT: WIDGETS -->
             <aside class="saas-widgets-col">
-              <!-- Widget 1: Tu Progreso -->
-              <div class="saas-widget-card">
-                <div class="saas-widget-header">
-                  <span class="widget-head-icon">📊</span>
-                  <span class="widget-head-title">Tu Progreso</span>
+              <!-- Widget 1: Tu Progreso (Con Imagen de Usuario y Estados de Proyectos) -->
+              <div class="saas-widget-card" style="padding: 1.35rem 1.4rem;">
+                <div class="saas-widget-header" style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1.15rem;">
+                  <span class="widget-head-icon" style="font-size: 1.25rem;">📊</span>
+                  <span class="widget-head-title" style="font-size: 1.05rem; font-weight: 800; color: #0f172a;">Tu Progreso</span>
                 </div>
 
-                <div class="saas-donut-wrap">
-                  <div class="donut-svg-box">
-                    <svg viewBox="0 0 100 100" class="donut-svg">
-                      <circle cx="50" cy="50" r="40" class="donut-bg-circle" />
-                      <circle cx="50" cy="50" r="40" class="donut-fg-circle" stroke-dasharray="251.2" stroke-dashoffset="55" />
-                    </svg>
-                    <div class="donut-inner-text">
-                      <span class="donut-pct">78%</span>
-                      <span class="donut-sub">completado</span>
+                <!-- Imagen / Foto del Usuario en Círculo Central -->
+                <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; margin-bottom: 1.25rem;">
+                  <div style="position: relative; width: 140px; height: 140px; border-radius: 50%; padding: 5px; background: linear-gradient(135deg, #00f5d4 0%, #0047cc 50%, #7c3aed 100%); box-shadow: 0 10px 25px rgba(0, 71, 204, 0.22); transition: transform 0.25s ease;" onmouseenter="this.style.transform='scale(1.04)';" onmouseleave="this.style.transform='scale(1)';">
+                    <div style="width: 100%; height: 100%; border-radius: 50%; overflow: hidden; background: #0f172a; border: 3px solid #ffffff;">
+                      <img 
+                        src="${userAvatar}" 
+                        alt="${this.escapeHtml(userName)}" 
+                        style="width: 100%; height: 100%; object-fit: cover; display: block;" 
+                        onerror="this.onerror=null;this.src='assets/projects_ui/user_avatar.png';" 
+                      />
                     </div>
+                    <!-- Indicador Activo -->
+                    <div style="position: absolute; bottom: 6px; right: 6px; background: #22c55e; border: 2.5px solid #ffffff; width: 22px; height: 22px; border-radius: 50%; box-shadow: 0 2px 6px rgba(0,0,0,0.25);" title="En línea"></div>
                   </div>
 
-                  <div class="donut-legend">
-                    <div class="legend-row">
-                      <span class="legend-dot dot-green">●</span>
-                      <span class="legend-text">Completados:</span>
-                      <strong class="legend-val">7</strong>
-                    </div>
-                    <div class="legend-row">
-                      <span class="legend-dot dot-blue">●</span>
-                      <span class="legend-text">En Proceso:</span>
-                      <strong class="legend-val">2</strong>
-                    </div>
-                    <div class="legend-row">
-                      <span class="legend-dot dot-purple">●</span>
-                      <span class="legend-text">Pendientes:</span>
-                      <strong class="legend-val">1</strong>
-                    </div>
+                  <div style="margin-top: 0.65rem; text-align: center;">
+                    <div style="font-size: 1.05rem; font-weight: 900; color: #0f172a; line-height: 1.2;">${this.escapeHtml(userName)}</div>
+                    <div style="font-size: 0.78rem; font-weight: 600; color: #64748b; margin-top: 2px;">${this.escapeHtml(userRole)}</div>
                   </div>
                 </div>
 
-                <div class="saas-praise-card">
-                  <span class="praise-trophy">🏆</span>
+                <!-- Resumen de Proyectos y Estados -->
+                <div style="margin-bottom: 1.15rem; padding-top: 0.85rem; border-top: 1px solid #f1f5f9;">
+                  <div style="display: flex; align-items: baseline; gap: 0.4rem; margin-bottom: 0.85rem;">
+                    <span style="font-size: 1.45rem; font-weight: 900; color: #0f172a; line-height: 1;">78%</span>
+                    <span style="font-size: 0.82rem; font-weight: 700; color: #64748b;">completado</span>
+                  </div>
+
+                  <div class="donut-legend" style="display: flex; flex-direction: column; gap: 0.55rem; font-size: 0.84rem;">
+                    <div class="legend-row" style="display: flex; align-items: center; justify-content: space-between;">
+                      <div style="display: flex; align-items: center; gap: 0.5rem;">
+                        <span class="legend-dot dot-green" style="color: #22c55e; font-size: 1rem; line-height: 1;">●</span>
+                        <span class="legend-text" style="color: #334155; font-weight: 600;">Proyectos Creados:</span>
+                      </div>
+                      <strong class="legend-val" style="color: #0f172a; font-weight: 800; font-size: 0.95rem;">7</strong>
+                    </div>
+
+                    <div class="legend-row" style="display: flex; align-items: center; justify-content: space-between;">
+                      <div style="display: flex; align-items: center; gap: 0.5rem;">
+                        <span class="legend-dot dot-blue" style="color: #0284c7; font-size: 1rem; line-height: 1;">●</span>
+                        <span class="legend-text" style="color: #334155; font-weight: 600;">En Proceso:</span>
+                      </div>
+                      <strong class="legend-val" style="color: #0f172a; font-weight: 800; font-size: 0.95rem;">2</strong>
+                    </div>
+
+                    <div class="legend-row" style="display: flex; align-items: center; justify-content: space-between;">
+                      <div style="display: flex; align-items: center; gap: 0.5rem;">
+                        <span class="legend-dot dot-purple" style="color: #8b5cf6; font-size: 1rem; line-height: 1;">●</span>
+                        <span class="legend-text" style="color: #334155; font-weight: 600;">Recién Empezados:</span>
+                      </div>
+                      <strong class="legend-val" style="color: #0f172a; font-weight: 800; font-size: 0.95rem;">1</strong>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Tarjeta de Elogio / Trofeo -->
+                <div class="saas-praise-card" style="background: #fefce8; border: 1.5px solid #fef08a; border-radius: 12px; padding: 0.75rem 0.95rem; display: flex; align-items: center; gap: 0.75rem;">
+                  <span class="praise-trophy" style="font-size: 1.6rem; flex-shrink: 0;">🏆</span>
                   <div class="praise-body">
-                    <div class="praise-head">¡Excelente trabajo!</div>
-                    <div class="praise-desc">Vas en el camino correcto. Mantén el ritmo.</div>
+                    <div class="praise-head" style="font-size: 0.85rem; font-weight: 800; color: #854d0e; margin-bottom: 2px;">¡Excelente trabajo!</div>
+                    <div class="praise-desc" style="font-size: 0.76rem; color: #a16207; line-height: 1.35;">Vas en el camino correcto. Mantén el ritmo.</div>
                   </div>
                 </div>
               </div>
