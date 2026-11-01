@@ -691,19 +691,19 @@ window.ProjectsView = {
             </button>
           </div>
 
-          <!-- MAIN BODY: PROJECT SHOWCASES (Cards + Roles side-by-side) -->
-          <div class="saas-body-grid" style="display: flex; flex-direction: column; gap: 2.2rem; width: 100%;">
-            <!-- PROJECT SHOWCASE ROWS -->
-            <div class="saas-projects-col" style="width: 100%;">
-              <div class="saas-cards-grid" style="display: flex; flex-direction: column; gap: 2.2rem; width: 100%;">
+          <!-- MAIN BODY GRID (Cards Col + Widgets Col) -->
+          <div class="saas-body-grid">
+            <!-- LEFT / CENTER: PROJECT CARDS -->
+            <div class="saas-projects-col">
+              <div class="saas-cards-grid ${this.layoutMode === 'list' ? 'layout-list-mode' : ''}">
                 ${cardsHtml}
               </div>
             </div>
 
-            <!-- WIDGETS IN HORIZONTAL 2-COLUMN GRID -->
-            <aside class="saas-widgets-col" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem; width: 100%; margin-top: 0.5rem;">
+            <!-- RIGHT: WIDGETS -->
+            <aside class="saas-widgets-col">
               <!-- Widget 1: Tu Progreso -->
-              <div class="saas-widget-card" style="margin: 0;">
+              <div class="saas-widget-card">
                 <div class="saas-widget-header">
                   <span class="widget-head-icon">📊</span>
                   <span class="widget-head-title">Tu Progreso</span>
@@ -750,7 +750,7 @@ window.ProjectsView = {
               </div>
 
               <!-- Widget 2: Accesos Rápidos -->
-              <div class="saas-widget-card" style="margin: 0;">
+              <div class="saas-widget-card">
                 <div class="saas-widget-header">
                   <span class="widget-head-icon">⚡</span>
                   <span class="widget-head-title">Accesos Rápidos</span>
@@ -780,6 +780,9 @@ window.ProjectsView = {
               </div>
             </aside>
           </div>
+
+          <!-- SECCIÓN: PERSONAS QUE PARTICIPARON EN EL PROYECTO & ROLES -->
+          ${this.getParticipantsSectionHtml()}
 
           <!-- BOTTOM BANNER -->
           <div class="saas-bottom-banner">
@@ -876,153 +879,88 @@ window.ProjectsView = {
     const ratingStr = c.rating || '4.8';
     const desc = c.description || (c.id === 'demo-gov-data' ? 'Proyecto académico sobre la gestión estratégica de los datos.' : 'Proyecto académico de aprendizaje colaborativo.');
 
-    let projectTitle = this.escapeHtml(c.title);
-    let projectSubtitle = this.escapeHtml(desc);
-    let categoryBadgeText = 'ENTRENAMIENTO DIRECTIVO EN';
-    let rolesCategoryTitle = `ALGUNOS DE LOS ROLES CON LOS QUE TE REÚNES EN ${projectTitle.toUpperCase()}`;
-    let bannerImg = defaultBanner;
-
-    if (c.id === 'demo-gov-data') {
-      projectTitle = 'Empresa Privada';
-      categoryBadgeText = 'ENTRENAMIENTO DIRECTIVO EN';
-      rolesCategoryTitle = 'ALGUNOS DE LOS ROLES CON LOS QUE TE REÚNES EN LA EMPRESA PRIVADA';
-      bannerImg = 'assets/projects_ui/scenario_card.png';
-      projectSubtitle = 'Una Aventura Gráfica Conversacional de BestPractices.Games';
-    } else if (c.id === 'demo-ai-society') {
-      projectTitle = 'Administración Pública';
-      categoryBadgeText = 'ENTRENAMIENTO DIRECTIVO EN';
-      rolesCategoryTitle = 'ALGUNOS DE LOS ROLES CON LOS QUE TE REÚNES EN LA ADMINISTRACIÓN PÚBLICA';
-      bannerImg = 'assets/projects_ui/scenario_card.png';
-      projectSubtitle = 'Una Aventura Gráfica Conversacional de BestPractices.Games';
-    } else if (c.id === 'demo-open-data') {
-      projectTitle = 'Datos Abiertos y Transparencia';
-      categoryBadgeText = 'ENTRENAMIENTO DIRECTIVO EN';
-      rolesCategoryTitle = 'ALGUNOS DE LOS ROLES CON LOS QUE TE REÚNES EN DATOS ABIERTOS Y TRANSPARENCIA';
-      bannerImg = 'assets/projects_ui/scenario_card.png';
-      projectSubtitle = 'Una Aventura Gráfica Conversacional de BestPractices.Games';
-    }
-
     const btnLeftStyle = primaryIsBlue
       ? 'background: #0047cc; color: #ffffff; border: none; box-shadow: 0 2px 8px rgba(0, 71, 204, 0.25);'
-      : 'background: #00f5d4; color: #07152b; border: none;';
+      : 'background: #ffffff; color: #0f172a; border: 1.5px solid #cbd5e1;';
     
     const btnRightStyle = primaryIsBlue
-      ? 'background: rgba(255,255,255,0.12); color: #ffffff; border: 1.5px solid rgba(255,255,255,0.3);'
-      : 'background: rgba(255,255,255,0.12); color: #ffffff; border: 1.5px solid rgba(255,255,255,0.3);';
+      ? 'background: #ffffff; color: #0f172a; border: 1.5px solid #cbd5e1;'
+      : 'background: #0047cc; color: #ffffff; border: none; box-shadow: 0 2px 8px rgba(0, 71, 204, 0.25);';
 
     return `
-      <div class="saas-project-showcase-row animate-fade-in" style="background: #060e1d; border: 1.5px solid rgba(0, 245, 212, 0.28); border-radius: 20px; padding: 1.6rem 1.75rem; box-shadow: 0 14px 35px rgba(0, 0, 0, 0.45); transition: border-color 0.25s ease, box-shadow 0.25s ease;">
+      <div class="saas-project-card animate-fade-in" onclick="${primaryAction}" style="border-radius: 16px; background: #ffffff; border: 1.5px solid #e2e8f0; overflow: hidden; box-shadow: 0 4px 18px rgba(0,0,0,0.04); display: flex; flex-direction: column; cursor: pointer; transition: transform 0.2s ease, box-shadow 0.2s ease; position: relative;">
         
-        <div style="display: flex; flex-wrap: wrap; gap: 1.25rem; align-items: stretch;">
-          
-          <!-- LEFT: TARJETA DEL PROYECTO -->
-          <div 
-            class="inno-scenario-card-wrap" 
-            onclick="${primaryAction}"
-            style="flex: 2 1 330px; min-width: 280px; min-height: 310px; border-radius: 16px; overflow: hidden; border: 1.5px solid rgba(0, 245, 212, 0.45); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(0, 245, 212, 0.15); transition: transform 0.25s ease, border-color 0.25s ease; background: #081528 url('${bannerImg}') center/cover no-repeat; cursor: pointer; position: relative; display: flex; flex-direction: column; justify-content: space-between; padding: 1.25rem 1.35rem;" 
-            onmouseenter="this.style.transform='translateY(-4px)'; this.style.borderColor='#00f5d4';" 
-            onmouseleave="this.style.transform='translateY(0)'; this.style.borderColor='rgba(0, 245, 212, 0.45)';"
-            title="Ver detalles de ${projectTitle}"
-          >
-            <!-- Gradient Overlay -->
-            <div style="position: absolute; inset: 0; background: linear-gradient(180deg, rgba(7, 14, 28, 0.18) 0%, rgba(7, 14, 28, 0.72) 55%, rgba(7, 14, 28, 0.96) 100%); pointer-events: none;"></div>
+        <!-- Banner Image Wrapper (Fixed 135px height with object-fit cover) -->
+        <div class="saas-card-banner-wrap" style="position: relative; width: 100%; height: 135px; min-height: 135px; max-height: 135px; overflow: hidden; background: #0f172a;">
+          <img 
+            src="${defaultBanner}" 
+            alt="${this.escapeHtml(c.title)}" 
+            class="saas-card-banner-img"
+            style="width: 100%; height: 135px; min-height: 135px; max-height: 135px; object-fit: cover; object-position: center; display: block;" 
+            onerror="this.onerror=null;this.src='assets/projects_ui/card_data_gov.png';" 
+          />
 
-            <!-- Top Row: Pill Tag + Menu -->
-            <div style="position: relative; z-index: 2; display: flex; align-items: center; justify-content: space-between;">
-              <div style="${tagColor} color: #ffffff; border-radius: 9999px; padding: 4px 12px; font-weight: 800; font-size: 0.76rem; display: inline-flex; align-items: center; gap: 5px; box-shadow: 0 2px 10px rgba(0,0,0,0.3);">
-                <span>${tagIcon}</span>
-                <span>${tag}</span>
-              </div>
-
-              <div style="display: flex; gap: 6px;" onclick="event.stopPropagation();">
-                ${isAuthor ? `
-                  <button 
-                    title="Eliminar proyecto" 
-                    onclick="window.appRouter.deleteChallenge('${c.id}')"
-                    style="width: 28px; height: 28px; border-radius: 8px; background: rgba(239, 68, 68, 0.85); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; cursor: pointer; border: none; font-size: 0.82rem; color: #ffffff;"
-                  >
-                    🗑️
-                  </button>
-                ` : ''}
-                <button 
-                  title="Opciones" 
-                  onclick="${primaryAction}"
-                  style="width: 28px; height: 28px; border-radius: 8px; background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; cursor: pointer; border: none; font-size: 0.95rem; color: #334155; font-weight: 900; line-height: 1;"
-                >
-                  ···
-                </button>
-              </div>
-            </div>
-
-            <!-- Bottom Content of Left Card -->
-            <div style="position: relative; z-index: 2; margin-top: auto;">
-              <div style="display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.25rem 0.75rem; border-radius: 9999px; background: rgba(0, 245, 212, 0.15); border: 1px solid rgba(0, 245, 212, 0.5); font-size: 0.7rem; font-weight: 800; color: #00f5d4; letter-spacing: 0.8px; text-transform: uppercase; margin-bottom: 0.5rem;">
-                🎯 ${categoryBadgeText}
-              </div>
-              <h3 style="font-size: 1.65rem; font-weight: 900; color: #ffffff; margin: 0 0 0.35rem; line-height: 1.15; text-shadow: 0 2px 10px rgba(0,0,0,0.8);">
-                ${projectTitle}
-              </h3>
-              <p style="font-size: 0.8rem; color: #94a3b8; margin: 0 0 0.85rem; line-height: 1.35; font-weight: 500;">
-                ${projectSubtitle}
-              </p>
-
-              <!-- Metadata -->
-              <div style="display: flex; align-items: center; gap: 0.85rem; margin-bottom: 0.85rem; font-size: 0.76rem; font-weight: 700; color: #cbd5e1;">
-                <span>📅 ${dateStr}</span>
-                <span style="color: #38bdf8;">👥 ${studentsCount}</span>
-                <span style="color: #facc15;">⭐ ${ratingStr}</span>
-              </div>
-
-              <!-- Action Buttons -->
-              <div style="display: flex; gap: 0.55rem; align-items: center;" onclick="event.stopPropagation();">
-                <button 
-                  type="button" 
-                  onclick="${primaryAction}" 
-                  style="${btnLeftStyle} border-radius: 10px; padding: 0.5rem 0.95rem; font-size: 0.82rem; font-weight: 800; cursor: pointer; flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 0.35rem; transition: all 0.2s; white-space: nowrap;"
-                >
-                  ${primaryText}
-                </button>
-                <button 
-                  type="button" 
-                  onclick="${secondaryAction}" 
-                  style="${btnRightStyle} border-radius: 10px; padding: 0.5rem 0.95rem; font-size: 0.82rem; font-weight: 800; cursor: pointer; flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 0.35rem; transition: all 0.2s; white-space: nowrap;"
-                >
-                  ${secondaryText}
-                </button>
-              </div>
-            </div>
+          <!-- Pill Badge Floating Top-Left -->
+          <div class="saas-card-badge" style="position: absolute; top: 10px; left: 10px; z-index: 2; ${tagColor} color: #ffffff; border-radius: 9999px; padding: 4px 12px; font-weight: 800; font-size: 0.76rem; display: inline-flex; align-items: center; gap: 5px; box-shadow: 0 2px 10px rgba(0,0,0,0.22); letter-spacing: 0.01em;">
+            <span style="font-size: 0.82rem; line-height: 1;">${tagIcon}</span>
+            <span>${tag}</span>
           </div>
 
-          <!-- RIGHT: ROLES CON LOS QUE TE REÚNES -->
-          <div style="flex: 3 1 480px; display: flex; flex-direction: column;">
-            
-            <!-- Cyan Category Heading -->
-            <div class="inno-roles-category-heading" style="font-size: 0.86rem; font-weight: 800; letter-spacing: 1.5px; color: #00f5d4; text-transform: uppercase; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.6rem;">
-              <span class="inno-roles-dot" style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #00f5d4; box-shadow: 0 0 10px #00f5d4;"></span>
-              ${rolesCategoryTitle}
-            </div>
+          <!-- Three Dots / Menu Button Floating Top-Right -->
+          <div style="position: absolute; top: 10px; right: 10px; z-index: 2; display: flex; gap: 6px;">
+            ${isAuthor ? `
+              <button 
+                title="Eliminar proyecto" 
+                onclick="event.stopPropagation(); window.appRouter.deleteChallenge('${c.id}')"
+                style="width: 30px; height: 30px; border-radius: 8px; background: rgba(239, 68, 68, 0.9); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; cursor: pointer; border: none; font-size: 0.85rem; color: #ffffff; box-shadow: 0 2px 8px rgba(0,0,0,0.18);"
+              >
+                🗑️
+              </button>
+            ` : ''}
+            <button 
+              title="Opciones" 
+              onclick="event.stopPropagation(); window.ProjectsView.openProjectLanding('${c.id}')"
+              style="width: 30px; height: 30px; border-radius: 8px; background: rgba(255, 255, 255, 0.88); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; cursor: pointer; border: none; font-size: 1rem; color: #334155; font-weight: 900; line-height: 1; box-shadow: 0 2px 8px rgba(0,0,0,0.15);"
+            >
+              ···
+            </button>
+          </div>
+        </div>
 
-            <!-- 3 Character Cards Grid -->
-            <div style="display: flex; gap: 1rem; flex-wrap: wrap; flex: 1;">
-              
-              <!-- 1. Severo Recorte -->
-              <div class="inno-char-card-wrap" style="flex: 1 1 140px; min-width: 130px; border-radius: 14px; overflow: hidden; border: 1.5px solid rgba(0, 245, 212, 0.35); box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4); background: #07152b; transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;" onmouseenter="this.style.transform='translateY(-4px)'; this.style.borderColor='#00f5d4'; this.style.boxShadow='0 12px 28px rgba(0, 245, 212, 0.3)';" onmouseleave="this.style.transform='translateY(0)'; this.style.borderColor='rgba(0, 245, 212, 0.35)'; this.style.boxShadow='0 8px 24px rgba(0, 0, 0, 0.4)';">
-                <img src="assets/projects_ui/card_severo.png" alt="Severo Recorte - Director General" style="width: 100%; height: 100%; object-fit: cover; display: block;" />
-              </div>
+        <!-- Card Body -->
+        <div class="saas-card-body" style="padding: 1.05rem 1.15rem 1.15rem; display: flex; flex-direction: column; flex: 1;">
+          <h3 class="saas-card-title" style="font-size: 0.98rem; font-weight: 800; color: #0f172a; margin: 0 0 0.4rem; line-height: 1.35; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+            ${this.escapeHtml(c.title)}
+          </h3>
 
-              <!-- 2. Clara Fuente -->
-              <div class="inno-char-card-wrap" style="flex: 1 1 140px; min-width: 130px; border-radius: 14px; overflow: hidden; border: 1.5px solid rgba(0, 245, 212, 0.35); box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4); background: #07152b; transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;" onmouseenter="this.style.transform='translateY(-4px)'; this.style.borderColor='#00f5d4'; this.style.boxShadow='0 12px 28px rgba(0, 245, 212, 0.3)';" onmouseleave="this.style.transform='translateY(0)'; this.style.borderColor='rgba(0, 245, 212, 0.35)'; this.style.boxShadow='0 8px 24px rgba(0, 0, 0, 0.4)';">
-                <img src="assets/projects_ui/card_clara.png" alt="Clara Fuente - Directora de Datos" style="width: 100%; height: 100%; object-fit: cover; display: block;" />
-              </div>
+          <p class="saas-card-desc" style="font-size: 0.81rem; color: #475569; margin: 0 0 0.85rem; line-height: 1.42; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; flex: 1;">
+            ${this.escapeHtml(desc)}
+          </p>
 
-              <!-- 3. Justo Sinrodeos -->
-              <div class="inno-char-card-wrap" style="flex: 1 1 140px; min-width: 130px; border-radius: 14px; overflow: hidden; border: 1.5px solid rgba(0, 245, 212, 0.35); box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4); background: #07152b; transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;" onmouseenter="this.style.transform='translateY(-4px)'; this.style.borderColor='#00f5d4'; this.style.boxShadow='0 12px 28px rgba(0, 245, 212, 0.3)';" onmouseleave="this.style.transform='translateY(0)'; this.style.borderColor='rgba(0, 245, 212, 0.35)'; this.style.boxShadow='0 8px 24px rgba(0, 0, 0, 0.4)';">
-                <img src="assets/projects_ui/card_justo.png" alt="Justo Sinrodeos - Consejero Independiente" style="width: 100%; height: 100%; object-fit: cover; display: block;" />
-              </div>
-
-            </div>
+          <!-- Metadata Row -->
+          <div class="saas-card-meta-row" style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem; font-size: 0.78rem; font-weight: 700; color: #1e293b; border-bottom: none; padding-bottom: 0;">
+            <span style="display: inline-flex; align-items: center; gap: 0.35rem;">📅 ${dateStr}</span>
+            <span style="display: inline-flex; align-items: center; gap: 0.35rem; color: #0284c7; cursor: pointer; transition: transform 0.15s ease;" onmouseenter="this.style.transform='scale(1.1)';" onmouseleave="this.style.transform='scale(1)';" onclick="event.stopPropagation(); window.ProjectsView.openParticipantsModal('${c.id}');" title="Ver personas y roles participantes">👥 ${studentsCount}</span>
+            <span style="display: inline-flex; align-items: center; gap: 0.25rem; color: #eab308;">⭐ ${ratingStr}</span>
           </div>
 
+          <!-- Action Buttons Row -->
+          <div class="saas-card-actions" style="display: flex; align-items: center; gap: 0.65rem; margin-top: auto;">
+            <button 
+              class="saas-card-btn-secondary"
+              onclick="event.stopPropagation(); ${primaryAction}" 
+              style="${btnLeftStyle} border-radius: 10px; padding: 0.55rem 0.95rem; font-size: 0.83rem; font-weight: 700; cursor: pointer; flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 0.35rem; transition: all 0.2s ease; white-space: nowrap;"
+            >
+              ${primaryText}
+            </button>
+            <button 
+              class="saas-card-btn-primary"
+              onclick="event.stopPropagation(); ${secondaryAction}" 
+              style="${btnRightStyle} border-radius: 10px; padding: 0.55rem 0.95rem; font-size: 0.83rem; font-weight: 700; cursor: pointer; flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 0.35rem; transition: all 0.2s ease; white-space: nowrap;"
+            >
+              ${secondaryText}
+            </button>
+          </div>
         </div>
       </div>
     `;
