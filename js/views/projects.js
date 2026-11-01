@@ -594,11 +594,11 @@ window.ProjectsView = {
           </header>
 
           <!-- HERO BANNER (Identico a Imagen 2) -->
-          <div class="saas-hero-banner-wrapper" style="position: relative; width: 100%; border-radius: 18px; overflow: hidden; margin-bottom: 1.5rem; box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1); background: #071739;">
+          <div class="saas-hero-banner-wrapper" style="position: relative; width: 100%; max-width: 1100px; margin: 0 auto 1.5rem; border-radius: 18px; overflow: hidden; box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12); background: #071739;">
             <img 
-              src="assets/projects_ui/hero_banner.png?v=20261101_v3" 
+              src="assets/projects_ui/hero_banner.png?v=20261101_hd_crisp" 
               alt="Tu ecosistema de aprendizaje estructurado - MENTIX" 
-              style="width: 100%; height: auto; display: block; object-fit: cover;" 
+              style="width: 100%; height: auto; display: block; object-fit: contain; image-rendering: -webkit-optimize-contrast; image-rendering: high-quality; transform: translateZ(0); backface-visibility: hidden;" 
             />
 
             <!-- Interactive Hotspot on 'Ver tutorial' Button -->
