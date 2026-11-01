@@ -490,9 +490,12 @@ window.ProjectsView = {
       displayList.sort((a, b) => (a.title || '').localeCompare(b.title || ''));
     }
 
-    const userName = (u && u.name) ? u.name : 'Carlos Cañon';
-    const userRole = (u && u.role) ? (u.role === 'teacher' ? 'Docente' : (u.role === 'admin' ? 'Administrador' : 'Estudiante')) : 'Docente';
-    const userAvatar = (u && u.avatar) ? u.avatar : 'assets/projects_ui/user_avatar.png';
+    const userAvatarConfig = window.AvatarEngine ? window.AvatarEngine.getSavedAvatar() : { animal: 'fox', alias: 'Eimy' };
+    const userAnimal = (userAvatarConfig && userAvatarConfig.animal) || 'fox';
+    const userName = (u && u.name) ? u.name : (userAvatarConfig.alias || 'Eimy');
+    const userRole = (u && u.role) ? (u.role === 'teacher' ? 'Docente' : (u.role === 'admin' ? 'Administrador' : 'Estudiante')) : 'Nivel 3 • Gamer Pro';
+    const animalAvatarHtml = window.AvatarEngine ? window.AvatarEngine.renderIconSVG(userAvatarConfig, 105) : `<img src="assets/sprites/${userAnimal}.png" alt="${userAnimal}" style="width: 100px; height: 100px; object-fit: contain;" onerror="this.src='assets/sprites/fox.png';" />`;
+    const animalTopPillHtml = window.AvatarEngine ? window.AvatarEngine.renderIconSVG(userAvatarConfig, 30) : `<img src="assets/sprites/${userAnimal}.png" alt="${userAnimal}" style="width: 28px; height: 28px; object-fit: contain;" onerror="this.src='assets/sprites/fox.png';" />`;
 
     const cardsHtml = displayList.length === 0 ? `
       <div style="grid-column: 1 / -1; background: #ffffff; border-radius: 16px; padding: 3rem 1.5rem; text-align: center; border: 1.5px dashed #cbd5e1;">
@@ -596,11 +599,13 @@ window.ProjectsView = {
 
               <!-- User Pill -->
               <div 
-                onclick="window.appRouter.openAuthModal ? window.appRouter.openAuthModal('profile') : null" 
-                title="Perfil de usuario"
+                onclick="window.appRouter.navigate ? window.appRouter.navigate('profile') : (window.appRouter.openAuthModal ? window.appRouter.openAuthModal('profile') : null)" 
+                title="Mi Perfil y Avatar Animal"
                 style="display: flex; align-items: center; gap: 0.65rem; background: #ffffff; border: 1.5px solid #e2e8f0; padding: 0.35rem 0.95rem 0.35rem 0.4rem; border-radius: 9999px; cursor: pointer; transition: all 0.2s ease; box-shadow: 0 2px 8px rgba(0,0,0,0.03);"
               >
-                <img src="${userAvatar}" alt="${this.escapeHtml(userName)}" style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover; display: block;" onerror="this.onerror=null;this.src='assets/projects_ui/user_avatar.png';" />
+                <div style="width: 36px; height: 36px; border-radius: 50%; overflow: hidden; background: radial-gradient(circle, #1e1b4b 0%, #0f172a 100%); border: 2px solid #00f5d4; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                  ${animalTopPillHtml}
+                </div>
                 <div style="display: flex; flex-direction: column; text-align: left; line-height: 1.25;">
                   <span style="font-size: 0.88rem; font-weight: 800; color: #0f172a;">${this.escapeHtml(userName)}</span>
                   <span style="font-size: 0.74rem; font-weight: 600; color: #64748b;">${this.escapeHtml(userRole)} ⌄</span>
@@ -709,16 +714,11 @@ window.ProjectsView = {
                   <span class="widget-head-title" style="font-size: 1.05rem; font-weight: 800; color: #0f172a;">Tu Progreso</span>
                 </div>
 
-                <!-- Imagen / Foto del Usuario en Círculo Central -->
+                <!-- Imagen / Avatar del Usuario Animal en Círculo Central -->
                 <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; margin-bottom: 1.25rem;">
-                  <div style="position: relative; width: 140px; height: 140px; border-radius: 50%; padding: 5px; background: linear-gradient(135deg, #00f5d4 0%, #0047cc 50%, #7c3aed 100%); box-shadow: 0 10px 25px rgba(0, 71, 204, 0.22); transition: transform 0.25s ease;" onmouseenter="this.style.transform='scale(1.04)';" onmouseleave="this.style.transform='scale(1)';">
-                    <div style="width: 100%; height: 100%; border-radius: 50%; overflow: hidden; background: #0f172a; border: 3px solid #ffffff;">
-                      <img 
-                        src="${userAvatar}" 
-                        alt="${this.escapeHtml(userName)}" 
-                        style="width: 100%; height: 100%; object-fit: cover; display: block;" 
-                        onerror="this.onerror=null;this.src='assets/projects_ui/user_avatar.png';" 
-                      />
+                  <div style="position: relative; width: 140px; height: 140px; border-radius: 50%; padding: 5px; background: linear-gradient(135deg, #00f5d4 0%, #0047cc 50%, #7c3aed 100%); box-shadow: 0 10px 25px rgba(0, 71, 204, 0.22); transition: transform 0.25s ease; cursor: pointer;" onclick="window.appRouter.navigate('profile')" title="Cambiar mi Avatar Animal" onmouseenter="this.style.transform='scale(1.04)';" onmouseleave="this.style.transform='scale(1)';">
+                    <div style="width: 100%; height: 100%; border-radius: 50%; overflow: hidden; background: radial-gradient(circle, #1e1b4b 0%, #0f172a 100%); border: 3px solid #ffffff; display: flex; align-items: center; justify-content: center;">
+                      ${animalAvatarHtml}
                     </div>
                     <!-- Indicador Activo -->
                     <div style="position: absolute; bottom: 6px; right: 6px; background: #22c55e; border: 2.5px solid #ffffff; width: 22px; height: 22px; border-radius: 50%; box-shadow: 0 2px 6px rgba(0,0,0,0.25);" title="En línea"></div>
