@@ -644,7 +644,7 @@ window.ProjectsView = {
               <button 
                 type="button" 
                 onclick="window.ProjectsView.openCreateProjectModal()" 
-                title="Crear Proyecto"
+                title="Crear Proyecto (Disponible para todos los estudiantes y docentes)"
                 class="mentix-hero-action-btn"
                 style="display: inline-flex; align-items: center; gap: 0.45rem; background: linear-gradient(135deg, #00d2ff 0%, #0077ff 100%); color: #ffffff; border: none; border-radius: 9999px; padding: 0.52rem 1.25rem; font-size: 0.9rem; font-weight: 800; cursor: pointer; box-shadow: 0 4px 16px rgba(0, 180, 255, 0.48); transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); white-space: nowrap;"
                 onmouseenter="this.style.transform='translateY(-2px) scale(1.03)'; this.style.boxShadow='0 8px 22px rgba(0, 180, 255, 0.7)';"
@@ -653,6 +653,21 @@ window.ProjectsView = {
                 <span style="font-size: 1rem; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.25));">➕</span>
                 <span>Crear Proyecto</span>
               </button>
+
+              ${isTeacherOrAdmin ? `
+              <button 
+                type="button" 
+                onclick="window.ProjectsView.openCreateCodeModal()" 
+                title="Crear Código de Proyecto (Exclusivo Profesores y Administradores)"
+                class="mentix-hero-action-btn"
+                style="display: inline-flex; align-items: center; gap: 0.45rem; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: #ffffff; border: none; border-radius: 9999px; padding: 0.52rem 1.25rem; font-size: 0.9rem; font-weight: 800; cursor: pointer; box-shadow: 0 4px 16px rgba(16, 185, 129, 0.45); transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); white-space: nowrap;"
+                onmouseenter="this.style.transform='translateY(-2px) scale(1.03)'; this.style.boxShadow='0 8px 22px rgba(16, 185, 129, 0.65)';"
+                onmouseleave="this.style.transform='translateY(0) scale(1)'; this.style.boxShadow='0 4px 16px rgba(16, 185, 129, 0.45)';"
+              >
+                <span style="font-size: 1rem; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.25));">🔑</span>
+                <span>Crear Código</span>
+              </button>
+              ` : ''}
 
               <button 
                 type="button" 
@@ -1095,6 +1110,7 @@ window.ProjectsView = {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   },
 
+  // Habilitado para TODOS los usuarios (estudiantes, profesores y administradores)
   openCreateProjectModal() {
     if (window.soundEngine && window.soundEngine.playClick) window.soundEngine.playClick();
     const modal = document.getElementById('create-project-type-modal');
@@ -1105,6 +1121,22 @@ window.ProjectsView = {
     } else if (window.appRouter && window.appRouter.createPresentation) {
       window.appRouter.createPresentation();
     }
+  },
+
+  // Habilitado EXCLUSIVAMENTE para profesores y administradores
+  openCreateCodeModal() {
+    if (!this.isTeacherOrAdmin()) {
+      alert('🚫 Solo los profesores y administradores pueden crear un código de proyecto para estudiantes.');
+      return;
+    }
+    this.viewMode = 'selector';
+    if (window.soundEngine) window.soundEngine.playClick();
+    this.render();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    setTimeout(() => {
+      const inp = document.getElementById('custom-project-code-input');
+      if (inp) inp.focus();
+    }, 100);
   },
 
   closeCreateProjectModal() {
