@@ -786,104 +786,164 @@ window.ProjectsView = {
     const isAuthor = window.appRouter ? window.appRouter.isChallengeOwner(c) : false;
     const projectType = c.projectType || 'presentation';
     let defaultBanner = 'assets/projects_ui/card_data_gov.png';
-    let tag = '✔ Completado';
-    let tagClass = 'badge-completed';
+    let tag = 'Completado';
+    let tagIcon = '✔';
+    let tagColor = 'background: #22c55e;';
     let primaryAction = `window.ProjectsView.openProjectLanding('${c.id}')`;
     let primaryText = 'Ver Detalles →';
     let secondaryAction = `window.ProjectsView.shareProject('${c.id}', '${this.escapeHtml(c.title || '')}')`;
-    let secondaryText = 'Compartir';
+    let secondaryText = 'Compartir <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-left:3px;"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>';
+    let primaryIsBlue = false;
 
-    if (c.tag) {
-      tag = c.tag;
-      tagClass = c.tagClass || 'badge-completed';
-    } else if (c.publicationStatus === 'draft' || c.publicationStatus === 'in_preparation') {
-      tag = '⏱ En Proceso';
-      tagClass = 'badge-process';
-    } else if (c.publicationStatus === 'ready_for_review') {
-      tag = '👁 En Revisión';
-      tagClass = 'badge-review';
+    if (c.status === 'in_progress' || c.publicationStatus === 'draft' || c.publicationStatus === 'in_preparation') {
+      tag = 'En Proceso';
+      tagIcon = '⏱';
+      tagColor = 'background: #0284c7;';
+      primaryIsBlue = true;
+      primaryText = 'Continuar →';
+      secondaryText = 'Ver Detalles';
+      secondaryAction = `window.ProjectsView.openProjectLanding('${c.id}')`;
+      defaultBanner = 'assets/projects_ui/card_ai_society.png';
+    } else if (c.status === 'review' || c.publicationStatus === 'ready_for_review') {
+      tag = 'En Revisión';
+      tagIcon = '👁';
+      tagColor = 'background: #8b5cf6;';
+      primaryText = 'Ver Detalles →';
+      secondaryText = '📊';
+      defaultBanner = 'assets/projects_ui/card_open_data.png';
     }
 
     if (c.image) {
       defaultBanner = c.image;
     } else if (c.banner || c.coverImage) {
       defaultBanner = c.banner || c.coverImage;
-    } else if (projectType === 'video') {
-      defaultBanner = 'assets/projects_ui/card_ai_society.png';
-      tag = '⏱ En Proceso';
-      tagClass = 'badge-process';
-      primaryAction = `window.appRouter.openVideo('${c.id}')`;
-      primaryText = 'Continuar →';
-      secondaryAction = `window.ProjectsView.openProjectLanding('${c.id}')`;
-      secondaryText = 'Ver Detalles';
-    } else if (projectType === 'document') {
-      defaultBanner = 'assets/projects_ui/card_open_data.png';
-      tag = '👁 En Revisión';
-      tagClass = 'badge-review';
     }
 
-    // Special handling for the 3 demo showcase cards
+    // Special handling for the 3 demo showcase cards to match Image 1 with 100% precision
     if (c.id === 'demo-gov-data') {
+      tag = 'Completado';
+      tagIcon = '✔';
+      tagColor = 'background: #22c55e;';
+      defaultBanner = 'assets/projects_ui/card_data_gov.png';
+      primaryText = 'Ver Detalles →';
       primaryAction = "window.ProjectsView.openGovDataLanding ? window.ProjectsView.openGovDataLanding() : window.ProjectsView.openProjectLanding('demo-gov-data')";
-      primaryText = "Ver Detalles →";
+      secondaryText = 'Compartir <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-left:3px;"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>';
       secondaryAction = "window.ProjectsView.shareProject('demo-gov-data', 'Gobierno de Datos en la Práctica')";
-      secondaryText = "Compartir";
+      primaryIsBlue = false;
     } else if (c.id === 'demo-ai-society') {
+      tag = 'En Proceso';
+      tagIcon = '⏱';
+      tagColor = 'background: #0284c7;';
+      defaultBanner = 'assets/projects_ui/card_ai_society.png';
+      primaryText = 'Continuar →';
       primaryAction = "window.ProjectWizard ? window.ProjectWizard.openWizard() : window.ProjectsView.openProjectLanding('demo-ai-society')";
-      primaryText = "Continuar →";
+      secondaryText = 'Ver Detalles';
       secondaryAction = "window.ProjectsView.openProjectLanding('demo-ai-society')";
-      secondaryText = "Ver Detalles";
+      primaryIsBlue = true;
     } else if (c.id === 'demo-open-data') {
+      tag = 'En Revisión';
+      tagIcon = '👁';
+      tagColor = 'background: #8b5cf6;';
+      defaultBanner = 'assets/projects_ui/card_open_data.png';
+      primaryText = 'Ver Detalles →';
       primaryAction = "window.ProjectsView.openProjectLanding('demo-open-data')";
-      primaryText = "Ver Detalles →";
+      secondaryText = '📊';
       secondaryAction = "window.ProjectsView.showToast('📊 Reporte analítico de Transparencia de Datos')";
-      secondaryText = "📊";
+      primaryIsBlue = false;
     }
 
     const dateStr = c.date || (c.createdAt ? new Date(c.createdAt).toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' }) : '12 Abr 2025');
     const studentsCount = c.students || c.playsCount || 24;
     const ratingStr = c.rating || '4.8';
-    const actionLabel = c.actionText || primaryText;
-    const secLabel = c.secondaryText || secondaryText;
+    const desc = c.description || (c.id === 'demo-gov-data' ? 'Proyecto académico sobre la gestión estratégica de los datos.' : 'Proyecto académico de aprendizaje colaborativo.');
+
+    const btnLeftStyle = primaryIsBlue
+      ? 'background: #0047cc; color: #ffffff; border: none; box-shadow: 0 2px 8px rgba(0, 71, 204, 0.25);'
+      : 'background: #ffffff; color: #0f172a; border: 1.5px solid #cbd5e1;';
+    
+    const btnRightStyle = primaryIsBlue
+      ? 'background: #ffffff; color: #0f172a; border: 1.5px solid #cbd5e1;'
+      : 'background: #0047cc; color: #ffffff; border: none; box-shadow: 0 2px 8px rgba(0, 71, 204, 0.25);';
 
     return `
-      <div class="saas-project-card animate-fade-in" onclick="${primaryAction}">
-        <div class="saas-card-banner-wrap">
-          <img src="${defaultBanner}" alt="${this.escapeHtml(c.title)}" class="saas-card-banner-img" onerror="this.onerror=null;this.src='assets/projects_ui/card_data_gov.png';" />
-          <span class="saas-card-badge ${tagClass}">${tag}</span>
-          ${isAuthor ? `
-            <button 
-              class="saas-card-delete-btn" 
-              title="Eliminar este proyecto" 
-              onclick="event.stopPropagation(); window.appRouter.deleteChallenge('${c.id}')"
-            >
-              🗑️
-            </button>
-          ` : ''}
-        </div>
+      <div class="saas-project-card animate-fade-in" onclick="${primaryAction}" style="border-radius: 16px; background: #ffffff; border: 1.5px solid #e2e8f0; overflow: hidden; box-shadow: 0 4px 18px rgba(0,0,0,0.04); display: flex; flex-direction: column; cursor: pointer; transition: transform 0.2s ease, box-shadow 0.2s ease; position: relative;">
+        
+        <!-- Banner Image Wrapper (Fixed 135px height with object-fit cover) -->
+        <div class="saas-card-banner-wrap" style="position: relative; width: 100%; height: 135px; min-height: 135px; max-height: 135px; overflow: hidden; background: #0f172a;">
+          <img 
+            src="${defaultBanner}" 
+            alt="${this.escapeHtml(c.title)}" 
+            class="saas-card-banner-img"
+            style="width: 100%; height: 135px; min-height: 135px; max-height: 135px; object-fit: cover; object-position: center; display: block;" 
+            onerror="this.onerror=null;this.src='assets/projects_ui/card_data_gov.png';" 
+          />
 
-        <div class="saas-card-body">
-          <h3 class="saas-card-title">${this.escapeHtml(c.title)}</h3>
-          <p class="saas-card-desc">${this.escapeHtml(c.description || 'Metodologías ágiles para la gobernanza moderna de información y toma de decisiones.')}</p>
-
-          <div class="saas-card-meta-row">
-            <span class="saas-meta-item">📅 ${dateStr}</span>
-            <span class="saas-meta-item">👥 ${studentsCount}</span>
-            <span class="saas-meta-item saas-rating">⭐ ${ratingStr}</span>
+          <!-- Pill Badge Floating Top-Left -->
+          <div class="saas-card-badge" style="position: absolute; top: 10px; left: 10px; z-index: 2; ${tagColor} color: #ffffff; border-radius: 9999px; padding: 4px 12px; font-weight: 800; font-size: 0.76rem; display: inline-flex; align-items: center; gap: 5px; box-shadow: 0 2px 10px rgba(0,0,0,0.22); letter-spacing: 0.01em;">
+            <span style="font-size: 0.82rem; line-height: 1;">${tagIcon}</span>
+            <span>${tag}</span>
           </div>
 
-          <div class="saas-card-actions">
-            <button class="saas-card-btn-primary" onclick="event.stopPropagation(); ${primaryAction}">
-              ${actionLabel}
+          <!-- Three Dots / Menu Button Floating Top-Right -->
+          <div style="position: absolute; top: 10px; right: 10px; z-index: 2; display: flex; gap: 6px;">
+            ${isAuthor ? `
+              <button 
+                title="Eliminar proyecto" 
+                onclick="event.stopPropagation(); window.appRouter.deleteChallenge('${c.id}')"
+                style="width: 30px; height: 30px; border-radius: 8px; background: rgba(239, 68, 68, 0.9); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; cursor: pointer; border: none; font-size: 0.85rem; color: #ffffff; box-shadow: 0 2px 8px rgba(0,0,0,0.18);"
+              >
+                🗑️
+              </button>
+            ` : ''}
+            <button 
+              title="Opciones" 
+              onclick="event.stopPropagation(); window.ProjectsView.openProjectLanding('${c.id}')"
+              style="width: 30px; height: 30px; border-radius: 8px; background: rgba(255, 255, 255, 0.88); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; cursor: pointer; border: none; font-size: 1rem; color: #334155; font-weight: 900; line-height: 1; box-shadow: 0 2px 8px rgba(0,0,0,0.15);"
+            >
+              ···
             </button>
-            <button class="saas-card-btn-secondary" onclick="event.stopPropagation(); ${secondaryAction}">
-              ${secLabel}
+          </div>
+        </div>
+
+        <!-- Card Body -->
+        <div class="saas-card-body" style="padding: 1.05rem 1.15rem 1.15rem; display: flex; flex-direction: column; flex: 1;">
+          <h3 class="saas-card-title" style="font-size: 0.98rem; font-weight: 800; color: #0f172a; margin: 0 0 0.4rem; line-height: 1.35; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+            ${this.escapeHtml(c.title)}
+          </h3>
+
+          <p class="saas-card-desc" style="font-size: 0.81rem; color: #475569; margin: 0 0 0.85rem; line-height: 1.42; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; flex: 1;">
+            ${this.escapeHtml(desc)}
+          </p>
+
+          <!-- Metadata Row -->
+          <div class="saas-card-meta-row" style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem; font-size: 0.78rem; font-weight: 700; color: #1e293b; border-bottom: none; padding-bottom: 0;">
+            <span style="display: inline-flex; align-items: center; gap: 0.35rem;">📅 ${dateStr}</span>
+            <span style="display: inline-flex; align-items: center; gap: 0.35rem; color: #0284c7;">👥 ${studentsCount}</span>
+            <span style="display: inline-flex; align-items: center; gap: 0.25rem; color: #eab308;">⭐ ${ratingStr}</span>
+          </div>
+
+          <!-- Action Buttons Row -->
+          <div class="saas-card-actions" style="display: flex; align-items: center; gap: 0.65rem; margin-top: auto;">
+            <button 
+              class="saas-card-btn-secondary"
+              onclick="event.stopPropagation(); ${primaryAction}" 
+              style="${btnLeftStyle} border-radius: 10px; padding: 0.55rem 0.95rem; font-size: 0.83rem; font-weight: 700; cursor: pointer; flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 0.35rem; transition: all 0.2s ease; white-space: nowrap;"
+            >
+              ${primaryText}
+            </button>
+            <button 
+              class="saas-card-btn-primary"
+              onclick="event.stopPropagation(); ${secondaryAction}" 
+              style="${btnRightStyle} border-radius: 10px; padding: 0.55rem 0.95rem; font-size: 0.83rem; font-weight: 700; cursor: pointer; flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 0.35rem; transition: all 0.2s ease; white-space: nowrap;"
+            >
+              ${secondaryText}
             </button>
           </div>
         </div>
       </div>
     `;
   },
+
 
   filterType(type) {
     this.currentTypeFilter = type;
