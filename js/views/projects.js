@@ -593,32 +593,35 @@ window.ProjectsView = {
             </div>
           </header>
 
-          <!-- HERO BANNER -->
-          <section class="saas-hero-banner">
-            <div class="saas-hero-left">
-              <h1 class="saas-hero-title">Tu ecosistema de aprendizaje estructurado</h1>
-              <p class="saas-hero-subtitle">Gestiona tus proyectos, evalúa competencias y potencia el aprendizaje con IA.</p>
-              <div class="saas-hero-btn-row">
-                <button class="saas-hero-btn-primary" onclick="window.ProjectsView.openTutorialModal()">
-                  ▶ Ver tutorial
-                </button>
-                <button class="saas-hero-btn-link" onclick="window.ProjectsView.openTutorialModal()">
-                  Conoce más →
-                </button>
-              </div>
-            </div>
+          <!-- HERO BANNER (Identico a Imagen 2) -->
+          <div class="saas-hero-banner-wrapper" style="position: relative; width: 100%; border-radius: 18px; overflow: hidden; margin-bottom: 1.5rem; box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1); background: #071739;">
+            <img 
+              src="assets/projects_ui/hero_banner.png?v=20261101_v3" 
+              alt="Tu ecosistema de aprendizaje estructurado - MENTIX" 
+              style="width: 100%; height: auto; display: block; object-fit: cover;" 
+            />
 
-            <div class="saas-hero-center">
-              <img src="assets/projects_ui/robot_mascot.png" alt="Robot IA Mentix" class="saas-robot-mascot" />
-            </div>
+            <!-- Interactive Hotspot on 'Ver tutorial' Button -->
+            <button 
+              onclick="window.ProjectsView.openTutorialModal()" 
+              title="Ver tutorial" 
+              class="saas-banner-hotspot"
+              style="position: absolute; left: 4.4%; top: 69%; width: 14.5%; height: 23%; border-radius: 9999px; background: transparent; border: none; cursor: pointer; transition: all 0.2s ease;"
+              onmouseover="this.style.background='rgba(255,255,255,0.18)'; this.style.boxShadow='0 0 14px rgba(255,255,255,0.4)';"
+              onmouseout="this.style.background='transparent'; this.style.boxShadow='none';"
+            ></button>
 
-            <div class="saas-hero-right-pills">
-              <div class="hero-feature-pill">🤖 IA para aprender</div>
-              <div class="hero-feature-pill">🧩 Proyectos interactivos</div>
-              <div class="hero-feature-pill">⚡ Evaluación inteligente</div>
-              <div class="hero-feature-pill">✨ Experiencia única</div>
-            </div>
-          </section>
+            <!-- Interactive Hotspot on 'Conoce más' Link -->
+            <button 
+              onclick="window.ProjectsView.openTutorialModal()" 
+              title="Conoce más" 
+              class="saas-banner-hotspot"
+              style="position: absolute; left: 20%; top: 69%; width: 12%; height: 23%; border-radius: 9999px; background: transparent; border: none; cursor: pointer; transition: all 0.2s ease;"
+              onmouseover="this.style.background='rgba(255,255,255,0.14)';"
+              onmouseout="this.style.background='transparent';"
+            ></button>
+          </div>
+
 
           <!-- CONTROLS & FILTER TABS -->
           <div class="saas-controls-row">
