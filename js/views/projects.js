@@ -623,27 +623,14 @@ window.ProjectsView = {
             />
 
             <!-- BOTONES PRINCIPALES DE ACCIÓN INTEGRADOS EN EL BANNER ('estos aca') -->
-            <div class="mentix-banner-action-row" style="position: absolute; left: 3.8%; bottom: 8.5%; z-index: 5; display: flex; align-items: center; gap: 0.7rem; flex-wrap: wrap; max-width: 58%;">
+            <div class="mentix-banner-action-row" style="position: absolute; left: 3.8%; bottom: 8.5%; z-index: 5; display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; max-width: 58%;">
               
-              <button 
-                type="button" 
-                onclick="window.ProjectWizard ? window.ProjectWizard.openWizard() : null" 
-                title="Asistente Inteligente de Proyecto"
-                class="mentix-hero-action-btn"
-                style="display: inline-flex; align-items: center; gap: 0.45rem; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: #ffffff; border: none; border-radius: 9999px; padding: 0.52rem 1.15rem; font-size: 0.88rem; font-weight: 800; cursor: pointer; box-shadow: 0 4px 16px rgba(16, 185, 129, 0.45); transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); white-space: nowrap;"
-                onmouseenter="this.style.transform='translateY(-2px) scale(1.03)'; this.style.boxShadow='0 8px 22px rgba(16, 185, 129, 0.65)';"
-                onmouseleave="this.style.transform='translateY(0) scale(1)'; this.style.boxShadow='0 4px 16px rgba(16, 185, 129, 0.45)';"
-              >
-                <span style="font-size: 1rem; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.25));">✨</span>
-                <span>Asistente Inteligente de Proyecto</span>
-              </button>
-
               <button 
                 type="button" 
                 onclick="window.ProjectsView.openJoinProjectModal()" 
                 title="Unirse a un código"
                 class="mentix-hero-action-btn"
-                style="display: inline-flex; align-items: center; gap: 0.45rem; background: linear-gradient(135deg, #f72585 0%, #b5179e 100%); color: #ffffff; border: none; border-radius: 9999px; padding: 0.52rem 1.15rem; font-size: 0.88rem; font-weight: 800; cursor: pointer; box-shadow: 0 4px 16px rgba(247, 37, 133, 0.45); transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); white-space: nowrap;"
+                style="display: inline-flex; align-items: center; gap: 0.45rem; background: linear-gradient(135deg, #f72585 0%, #b5179e 100%); color: #ffffff; border: none; border-radius: 9999px; padding: 0.52rem 1.25rem; font-size: 0.9rem; font-weight: 800; cursor: pointer; box-shadow: 0 4px 16px rgba(247, 37, 133, 0.45); transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); white-space: nowrap;"
                 onmouseenter="this.style.transform='translateY(-2px) scale(1.03)'; this.style.boxShadow='0 8px 22px rgba(247, 37, 133, 0.65)';"
                 onmouseleave="this.style.transform='translateY(0) scale(1)'; this.style.boxShadow='0 4px 16px rgba(247, 37, 133, 0.45)';"
               >
@@ -656,7 +643,7 @@ window.ProjectsView = {
                 onclick="window.ProjectsView.openCreateProjectModal()" 
                 title="Crear Proyecto"
                 class="mentix-hero-action-btn"
-                style="display: inline-flex; align-items: center; gap: 0.45rem; background: linear-gradient(135deg, #00d2ff 0%, #0077ff 100%); color: #ffffff; border: none; border-radius: 9999px; padding: 0.52rem 1.15rem; font-size: 0.88rem; font-weight: 800; cursor: pointer; box-shadow: 0 4px 16px rgba(0, 180, 255, 0.48); transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); white-space: nowrap;"
+                style="display: inline-flex; align-items: center; gap: 0.45rem; background: linear-gradient(135deg, #00d2ff 0%, #0077ff 100%); color: #ffffff; border: none; border-radius: 9999px; padding: 0.52rem 1.25rem; font-size: 0.9rem; font-weight: 800; cursor: pointer; box-shadow: 0 4px 16px rgba(0, 180, 255, 0.48); transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); white-space: nowrap;"
                 onmouseenter="this.style.transform='translateY(-2px) scale(1.03)'; this.style.boxShadow='0 8px 22px rgba(0, 180, 255, 0.7)';"
                 onmouseleave="this.style.transform='translateY(0) scale(1)'; this.style.boxShadow='0 4px 16px rgba(0, 180, 255, 0.48)';"
               >
@@ -669,7 +656,7 @@ window.ProjectsView = {
                 onclick="window.appRouter.openCategoryModal ? window.appRouter.openCategoryModal() : null" 
                 title="Categorías"
                 class="mentix-hero-action-btn"
-                style="display: inline-flex; align-items: center; gap: 0.45rem; background: linear-gradient(135deg, #4f46e5 0%, #3730a3 100%); color: #ffffff; border: none; border-radius: 9999px; padding: 0.52rem 1.15rem; font-size: 0.88rem; font-weight: 800; cursor: pointer; box-shadow: 0 4px 16px rgba(79, 70, 229, 0.45); transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); white-space: nowrap;"
+                style="display: inline-flex; align-items: center; gap: 0.45rem; background: linear-gradient(135deg, #4f46e5 0%, #3730a3 100%); color: #ffffff; border: none; border-radius: 9999px; padding: 0.52rem 1.25rem; font-size: 0.9rem; font-weight: 800; cursor: pointer; box-shadow: 0 4px 16px rgba(79, 70, 229, 0.45); transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); white-space: nowrap;"
                 onmouseenter="this.style.transform='translateY(-2px) scale(1.03)'; this.style.boxShadow='0 8px 22px rgba(79, 70, 229, 0.65)';"
                 onmouseleave="this.style.transform='translateY(0) scale(1)'; this.style.boxShadow='0 4px 16px rgba(79, 70, 229, 0.45)';"
               >
