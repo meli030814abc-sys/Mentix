@@ -448,6 +448,14 @@ window.ProjectsView = {
         window.ProjectWizard.render(container);
         return;
       }
+    } else if (this.viewMode === 'create') {
+      if (navEl) navEl.style.display = 'none';
+      document.body.classList.remove('projects-pure-white-theme');
+      container.style.padding = '0';
+      container.style.margin = '0';
+      container.style.background = 'transparent';
+      this.renderStudentCreatePageView(container);
+      return;
     } else if (this.viewMode === 'join') {
       if (navEl) navEl.style.display = 'none';
       document.body.classList.remove('projects-pure-white-theme');
@@ -1113,74 +1121,77 @@ window.ProjectsView = {
   // Habilitado para TODOS los usuarios (estudiantes, profesores y administradores)
   openCreateProjectModal() {
     if (window.soundEngine && window.soundEngine.playClick) window.soundEngine.playClick();
-    const modal = document.getElementById('create-project-type-modal');
-    if (modal) {
-      modal.classList.add('active');
-      this.goToCreateProjectStep(1);
-      const authorInput = document.getElementById('proj-create-author');
-      if (authorInput && !authorInput.value.trim()) {
-        const u = window.appState?.currentUser;
-        authorInput.value = (u && (u.name || u.username)) ? (u.name || u.username) : '';
-      }
-      setTimeout(() => {
-        const tInput = document.getElementById('proj-create-title');
-        if (tInput) tInput.focus();
-      }, 100);
-    } else if (window.ProjectWizard) {
-      window.ProjectWizard.openWizard();
-    } else if (window.appRouter && window.appRouter.createPresentation) {
-      window.appRouter.createPresentation();
-    }
+    const u = window.appState?.currentUser;
+    this.createProjectStep = 1;
+    this.createDraft = {
+      title: '',
+      author: (u && (u.name || u.username)) ? (u.name || u.username) : 'Estudiante',
+      summary: '',
+      description: ''
+    };
+    this.viewMode = 'create';
+    this.render();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   },
 
   goToCreateProjectStep(step) {
     if (window.soundEngine && window.soundEngine.playClick) window.soundEngine.playClick();
-    const step1 = document.getElementById('create-project-step-1');
-    const step2 = document.getElementById('create-project-step-2');
-    const modalTitle = document.getElementById('create-project-modal-title');
-    const modalSubtitle = document.getElementById('create-project-modal-subtitle');
 
     if (step === 2) {
-      const titleInput = document.getElementById('proj-create-title');
-      const authorInput = document.getElementById('proj-create-author');
-      const summaryInput = document.getElementById('proj-create-summary');
+      const titleInput = document.getElementById('student-proj-title') || document.getElementById('proj-create-title');
+      const authorInput = document.getElementById('student-proj-author') || document.getElementById('proj-create-author');
+      const summaryInput = document.getElementById('student-proj-summary') || document.getElementById('proj-create-summary');
+      const descInput = document.getElementById('student-proj-desc') || document.getElementById('proj-create-description');
 
-      const title = (titleInput?.value || '').trim();
+      const title = (titleInput?.value || this.createDraft?.title || '').trim();
       if (!title) {
-        alert('⚠️ Por favor ingresa el nombre de tu proyecto.');
+        alert('⚠️ Por favor ingresa el Nombre del Proyecto.');
         titleInput?.focus();
         return;
       }
 
-      const author = (authorInput?.value || '').trim();
+      const author = (authorInput?.value || this.createDraft?.author || '').trim();
       if (!author) {
-        alert('⚠️ Por favor indica quién realizó el proyecto (autor o integrantes).');
+        alert('⚠️ Por favor indica Quién realizó el proyecto (autor o integrantes).');
         authorInput?.focus();
         return;
       }
 
-      const summary = (summaryInput?.value || '').trim();
+      const summary = (summaryInput?.value || this.createDraft?.summary || '').trim();
       if (!summary) {
-        alert('⚠️ Por favor escribe un breve resumen o síntesis del proyecto.');
+        alert('⚠️ Por favor escribe un Resumen breve de tu proyecto.');
         summaryInput?.focus();
         return;
       }
 
-      const previewTitle = document.getElementById('create-project-preview-title');
-      const previewAuthor = document.getElementById('create-project-preview-author');
-      if (previewTitle) previewTitle.textContent = title;
-      if (previewAuthor) previewAuthor.textContent = '• Por ' + author;
+      this.createDraft = {
+        title: title,
+        author: author,
+        summary: summary,
+        description: (descInput?.value || this.createDraft?.description || '').trim()
+      };
 
-      if (modalTitle) modalTitle.textContent = 'Selecciona el Formato';
-      if (modalSubtitle) modalSubtitle.textContent = 'Paso 2 de 2: Elige cómo presentarás tu proyecto (Presentación, Video, Documento o URL).';
-
-      if (step1) step1.style.display = 'none';
-      if (step2) step2.style.display = 'block';
+      this.createProjectStep = 2;
     } else {
-      if (modalTitle) modalTitle.textContent = 'Datos de tu Proyecto';
-      if (modalSubtitle) modalSubtitle.textContent = 'Paso 1 de 2: Ingresa la información general para preparar la ficha y Landing Page de tu proyecto.';
-      if (step1) step1.style.display = 'block';
-      if (step2) step2.style.display = 'none';
+      const titleInput = document.getElementById('student-proj-title') || document.getElementById('proj-create-title');
+      const authorInput = document.getElementById('student-proj-author') || document.getElementById('proj-create-author');
+      const summaryInput = document.getElementById('student-proj-summary') || document.getElementById('proj-create-summary');
+      const descInput = document.getElementById('student-proj-desc') || document.getElementById('proj-create-description');
+
+      if (titleInput || authorInput) {
+        this.createDraft = {
+          title: (titleInput?.value || this.createDraft?.title || '').trim(),
+          author: (authorInput?.value || this.createDraft?.author || '').trim(),
+          summary: (summaryInput?.value || this.createDraft?.summary || '').trim(),
+          description: (descInput?.value || this.createDraft?.description || '').trim()
+        };
+      }
+      this.createProjectStep = 1;
+    }
+
+    if (this.viewMode === 'create') {
+      this.render();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   },
 
@@ -1191,15 +1202,16 @@ window.ProjectsView = {
       window.soundEngine.playClick();
     }
 
-    const titleInput = document.getElementById('proj-create-title');
-    const authorInput = document.getElementById('proj-create-author');
-    const summaryInput = document.getElementById('proj-create-summary');
-    const descInput = document.getElementById('proj-create-description');
+    const titleInput = document.getElementById('student-proj-title') || document.getElementById('proj-create-title');
+    const authorInput = document.getElementById('student-proj-author') || document.getElementById('proj-create-author');
+    const summaryInput = document.getElementById('student-proj-summary') || document.getElementById('proj-create-summary');
+    const descInput = document.getElementById('student-proj-desc') || document.getElementById('proj-create-description');
 
-    const title = (titleInput?.value || '').trim() || 'Proyecto Educativo';
-    const author = (authorInput?.value || '').trim() || (window.appState?.currentUser?.name || 'Estudiante');
-    const summary = (summaryInput?.value || '').trim();
-    const description = (descInput?.value || '').trim() || summary || 'Proyecto escolar preparado para la comunidad educativa.';
+    const draft = this.createDraft || {};
+    const title = (titleInput?.value || draft.title || '').trim() || 'Proyecto Educativo';
+    const author = (authorInput?.value || draft.author || '').trim() || (window.appState?.currentUser?.name || 'Estudiante');
+    const summary = (summaryInput?.value || draft.summary || '').trim();
+    const description = (descInput?.value || draft.description || '').trim() || summary || 'Proyecto escolar preparado para la comunidad educativa.';
     const finalSummary = summary || description.slice(0, 160);
 
     const currentUser = window.appState?.currentUser || {};
@@ -1340,14 +1352,12 @@ window.ProjectsView = {
       window.supabaseService.saveChallengeToSupabase(newProject);
     }
 
-    // Cerrar modal y limpiar campos
+    // Resetear variables y vista
     const modal = document.getElementById('create-project-type-modal');
     if (modal) modal.classList.remove('active');
-    if (titleInput) titleInput.value = '';
-    if (authorInput) authorInput.value = '';
-    if (summaryInput) summaryInput.value = '';
-    if (descInput) descInput.value = '';
-    this.goToCreateProjectStep(1);
+    this.createDraft = null;
+    this.createProjectStep = 1;
+    this.viewMode = 'list';
 
     // Navegar directamente al editor según el formato seleccionado
     if (window.appRouter) {
@@ -1361,6 +1371,340 @@ window.ProjectsView = {
         window.appRouter.navigate('url', { id: newProject.id, edit: true, project: newProject });
       }
     }
+  },
+
+  renderStudentCreatePageView(container) {
+    const u = window.appState?.currentUser || {};
+    if (!this.createDraft) {
+      this.createDraft = {
+        title: '',
+        author: u.name || u.username || 'Estudiante',
+        summary: '',
+        description: ''
+      };
+    }
+    const d = this.createDraft;
+    const step = this.createProjectStep || 1;
+
+    container.innerHTML = `
+      <div class="student-create-page-wrapper" style="min-height: 100vh; min-height: 100dvh; width: 100%; position: relative; overflow-x: hidden; background-color: #060b18; background-image: radial-gradient(circle at 10% 15%, rgba(0, 245, 212, 0.35) 0%, transparent 48%), radial-gradient(circle at 90% 12%, rgba(124, 58, 237, 0.42) 0%, transparent 50%), radial-gradient(circle at 50% 90%, rgba(247, 37, 133, 0.32) 0%, transparent 52%), radial-gradient(circle at 85% 82%, rgba(59, 130, 246, 0.38) 0%, transparent 46%), radial-gradient(circle at 15% 82%, rgba(16, 185, 129, 0.28) 0%, transparent 44%), linear-gradient(135deg, #050a18 0%, #0a1128 50%, #020617 100%); background-size: 160% 160%; animation: studentModalCosmicFlow 18s ease-in-out infinite alternate; padding: 2rem 1.5rem 5rem; box-sizing: border-box; display: flex; flex-direction: column; align-items: center;">
+        
+        <!-- Capa de Fondo Dinámico de Pantalla Completa con orbes y estrellas -->
+        <div class="student-bg-orbs-container" aria-hidden="true">
+          <div class="student-bg-orb orb-1"></div>
+          <div class="student-bg-orb orb-2"></div>
+          <div class="student-bg-orb orb-3"></div>
+          <div class="student-bg-orb orb-4"></div>
+          <div class="student-bg-cybergrid"></div>
+          <div class="student-float-icon icon-1">🚀</div>
+          <div class="student-float-icon icon-2">✨</div>
+          <div class="student-float-icon icon-3">🎯</div>
+          <div class="student-float-icon icon-4">💡</div>
+          <div class="student-float-icon icon-5">🪐</div>
+          <div class="student-float-icon icon-6">🏆</div>
+        </div>
+
+        <!-- Barra Superior de Navegación y Encabezado de Página -->
+        <header style="position: relative; z-index: 10; width: 100%; max-width: 960px; margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+          <button 
+            type="button" 
+            onclick="window.ProjectsView.closeCreateProjectModal()" 
+            style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.65rem 1.25rem; border-radius: 12px; background: rgba(15, 23, 42, 0.75); border: 1.5px solid rgba(255,255,255,0.2); color: #fff; font-size: 0.92rem; font-weight: 800; cursor: pointer; transition: all 0.2s ease; backdrop-filter: blur(10px);"
+            onmouseenter="this.style.borderColor='var(--neon-cyan)'; this.style.color='var(--neon-cyan)';"
+            onmouseleave="this.style.borderColor='rgba(255,255,255,0.2)'; this.style.color='#fff';"
+          >
+            ← Volver a Proyectos
+          </button>
+
+          <div style="text-align: center; flex: 1; min-width: 260px;">
+            <div style="display: inline-flex; align-items: center; gap: 0.4rem; background: rgba(0,245,212,0.15); border: 1px solid var(--neon-cyan); padding: 0.35rem 1rem; border-radius: 9999px; font-size: 0.85rem; font-weight: 900; color: var(--neon-cyan); margin-bottom: 0.4rem; box-shadow: 0 0 20px rgba(0,245,212,0.25);">
+              <span>✨</span> CREADOR DE PROYECTOS EDUCATIVOS
+            </div>
+            <h1 style="font-size: 2rem; font-weight: 900; margin: 0; color: #ffffff; letter-spacing: -0.5px; text-shadow: 0 2px 10px rgba(0,0,0,0.7);">
+              ${step === 1 ? 'Datos Generales de tu Proyecto' : 'Elige el Formato de Contenido'}
+            </h1>
+            <p style="font-size: 0.95rem; color: #cbd5e1; margin: 0.4rem 0 0;">
+              ${step === 1 
+                ? 'Paso 1 de 2: Completa la información principal para estructurar y publicar tu proyecto en la Landing Page.' 
+                : 'Paso 2 de 2: Selecciona la presentación, video, documentos o enlaces para dar vida a tu Landing Page.'}
+            </p>
+          </div>
+
+          <div style="display: inline-flex; align-items: center; gap: 0.5rem; background: rgba(124, 58, 237, 0.2); border: 1.5px solid #7c3aed; padding: 0.5rem 1rem; border-radius: 12px; color: #c4b5fd; font-size: 0.88rem; font-weight: 800;">
+            <span>${step === 1 ? 'Paso 1 de 2' : 'Paso 2 de 2'}</span>
+          </div>
+        </header>
+
+        <!-- Contenedor Principal Amplio (Pantallas Grandes) -->
+        <main style="position: relative; z-index: 10; width: 100%; max-width: 960px;">
+          ${step === 1 ? this.renderStudentCreateStep1Html(d) : this.renderStudentCreateStep2Html(d)}
+        </main>
+      </div>
+    `;
+
+    setTimeout(() => {
+      if (step === 1) {
+        const inp = document.getElementById('student-proj-title');
+        if (inp && !inp.value.trim()) inp.focus();
+      }
+    }, 120);
+  },
+
+  renderStudentCreateStep1Html(d) {
+    return `
+      <div class="glass-panel" style="background: rgba(10, 18, 42, 0.88); backdrop-filter: blur(28px); -webkit-backdrop-filter: blur(28px); border: 2px solid rgba(0, 245, 212, 0.5); border-radius: 24px; padding: 2.5rem; box-shadow: 0 30px 90px rgba(0,0,0,0.85), 0 0 50px rgba(0,245,212,0.25);">
+        
+        <div style="display: flex; flex-direction: column; gap: 1.75rem; margin-bottom: 2.25rem;">
+          
+          <!-- PANTALLA 1: Nombre del Proyecto -->
+          <div style="background: rgba(15, 23, 42, 0.7); border: 1.5px solid rgba(0, 245, 212, 0.3); border-radius: 18px; padding: 1.5rem; transition: all 0.25s ease;" onfocuswithin="this.style.borderColor='var(--neon-cyan)'; this.style.boxShadow='0 0 25px rgba(0,245,212,0.3)';">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem;">
+              <label for="student-proj-title" style="display: flex; align-items: center; gap: 0.5rem; font-size: 1.15rem; font-weight: 900; color: var(--neon-cyan);">
+                <span>🏷️</span> Nombre del Proyecto <span style="color: #ef4444;">*</span>
+              </label>
+              <span style="font-size: 0.78rem; font-weight: 800; background: rgba(0,245,212,0.15); color: var(--neon-cyan); padding: 0.2rem 0.6rem; border-radius: 9999px;">Obligatorio</span>
+            </div>
+            <p style="font-size: 0.88rem; color: #94a3b8; margin: 0 0 0.85rem;">
+              Título principal de impacto que se mostrará en grande en la portada de tu Landing Page y catálogo.
+            </p>
+            <input 
+              type="text" 
+              id="student-proj-title" 
+              value="${this.escapeHtml(d.title || '')}"
+              placeholder="Ej. Inteligencia Artificial en el Aula: El Futuro de la Educación" 
+              style="width: 100%; font-size: 1.25rem; font-weight: 800; padding: 1rem 1.25rem; border-radius: 14px; background: rgba(10, 15, 30, 0.9); border: 1.5px solid rgba(255, 255, 255, 0.18); color: #ffffff; outline: none; box-sizing: border-box;"
+            />
+          </div>
+
+          <!-- PANTALLA 2: Quién lo hizo -->
+          <div style="background: rgba(15, 23, 42, 0.7); border: 1.5px solid rgba(124, 58, 237, 0.3); border-radius: 18px; padding: 1.5rem; transition: all 0.25s ease;" onfocuswithin="this.style.borderColor='#a78bfa'; this.style.boxShadow='0 0 25px rgba(124,58,237,0.3)';">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem;">
+              <label for="student-proj-author" style="display: flex; align-items: center; gap: 0.5rem; font-size: 1.15rem; font-weight: 900; color: #c4b5fd;">
+                <span>👤</span> Quién lo hizo (Autor o Integrantes) <span style="color: #ef4444;">*</span>
+              </label>
+              <span style="font-size: 0.78rem; font-weight: 800; background: rgba(124,58,237,0.15); color: #c4b5fd; padding: 0.2rem 0.6rem; border-radius: 9999px;">Obligatorio</span>
+            </div>
+            <p style="font-size: 0.88rem; color: #94a3b8; margin: 0 0 0.85rem;">
+              Nombres de los estudiantes, integrantes o creadores que desarrollaron este proyecto educativo.
+            </p>
+            <input 
+              type="text" 
+              id="student-proj-author" 
+              value="${this.escapeHtml(d.author || '')}"
+              placeholder="Ej. Valentina Gómez, Mateo Torres, Equipo Alfa..." 
+              style="width: 100%; font-size: 1.2rem; font-weight: 700; padding: 1rem 1.25rem; border-radius: 14px; background: rgba(10, 15, 30, 0.9); border: 1.5px solid rgba(255, 255, 255, 0.18); color: #ffffff; outline: none; box-sizing: border-box;"
+            />
+          </div>
+
+          <!-- PANTALLA 3: Resumen del Proyecto -->
+          <div style="background: rgba(15, 23, 42, 0.7); border: 1.5px solid rgba(56, 189, 248, 0.3); border-radius: 18px; padding: 1.5rem; transition: all 0.25s ease;" onfocuswithin="this.style.borderColor='#38bdf8'; this.style.boxShadow='0 0 25px rgba(56,189,248,0.3)';">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem;">
+              <label for="student-proj-summary" style="display: flex; align-items: center; gap: 0.5rem; font-size: 1.15rem; font-weight: 900; color: #38bdf8;">
+                <span>📝</span> Resumen del Proyecto (Síntesis) <span style="color: #ef4444;">*</span>
+              </label>
+              <span style="font-size: 0.78rem; font-weight: 800; background: rgba(56,189,248,0.15); color: #38bdf8; padding: 0.2rem 0.6rem; border-radius: 9999px;">Obligatorio</span>
+            </div>
+            <p style="font-size: 0.88rem; color: #94a3b8; margin: 0 0 0.85rem;">
+              Breve sinopsis (2 a 4 líneas) que resume el objetivo y cautiva a los visitantes en la portada de la Landing Page.
+            </p>
+            <textarea 
+              id="student-proj-summary" 
+              rows="3"
+              placeholder="Escribe un resumen conciso de qué trata el proyecto, a quién va dirigido y cuál es su objetivo principal..." 
+              style="width: 100%; font-size: 1.15rem; line-height: 1.6; padding: 1rem 1.25rem; border-radius: 14px; background: rgba(10, 15, 30, 0.9); border: 1.5px solid rgba(255, 255, 255, 0.18); color: #ffffff; outline: none; box-sizing: border-box; resize: vertical;"
+            >${this.escapeHtml(d.summary || '')}</textarea>
+          </div>
+
+          <!-- PANTALLA 4: Descripción Detallada -->
+          <div style="background: rgba(15, 23, 42, 0.7); border: 1.5px solid rgba(244, 114, 182, 0.3); border-radius: 18px; padding: 1.5rem; transition: all 0.25s ease;" onfocuswithin="this.style.borderColor='#f472b6'; this.style.boxShadow='0 0 25px rgba(244,114,182,0.3)';">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem;">
+              <label for="student-proj-desc" style="display: flex; align-items: center; gap: 0.5rem; font-size: 1.15rem; font-weight: 900; color: #f472b6;">
+                <span>📖</span> Descripción Detallada del Proyecto
+              </label>
+              <span style="font-size: 0.78rem; font-weight: 800; background: rgba(244,114,182,0.15); color: #f472b6; padding: 0.2rem 0.6rem; border-radius: 9999px;">Detallada</span>
+            </div>
+            <p style="font-size: 0.88rem; color: #94a3b8; margin: 0 0 0.85rem;">
+              Profundiza en los antecedentes, el problema identificado, la metodología de trabajo, los aprendizajes y conclusiones.
+            </p>
+            <textarea 
+              id="student-proj-desc" 
+              rows="5"
+              placeholder="Detalla toda la información de tu proyecto educativo para estructurar las secciones de la Landing Page..." 
+              style="width: 100%; font-size: 1.15rem; line-height: 1.6; padding: 1rem 1.25rem; border-radius: 14px; background: rgba(10, 15, 30, 0.9); border: 1.5px solid rgba(255, 255, 255, 0.18); color: #ffffff; outline: none; box-sizing: border-box; resize: vertical;"
+            >${this.escapeHtml(d.description || '')}</textarea>
+          </div>
+
+        </div>
+
+        <!-- Barra Inferior de Acción -->
+        <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(255,255,255,0.12); padding-top: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+          <button 
+            type="button" 
+            onclick="window.ProjectsView.closeCreateProjectModal()" 
+            style="padding: 0.85rem 1.5rem; font-weight: 800; border-radius: 12px; background: transparent; border: 1.5px solid rgba(255,255,255,0.25); color: #cbd5e1; cursor: pointer; font-size: 0.95rem;"
+          >
+            ← Cancelar
+          </button>
+
+          <button 
+            type="button" 
+            onclick="window.ProjectsView.goToCreateProjectStep(2)" 
+            style="display: inline-flex; align-items: center; gap: 0.65rem; padding: 0.95rem 2rem; font-weight: 900; font-size: 1.1rem; border-radius: 14px; background: linear-gradient(135deg, #00f5d4 0%, #7c3aed 100%); color: #050b14; border: none; cursor: pointer; box-shadow: 0 6px 25px rgba(0, 245, 212, 0.4); transition: transform 0.2s ease;"
+            onmouseenter="this.style.transform='translateY(-2px) scale(1.02)';"
+            onmouseleave="this.style.transform='none';"
+          >
+            <span>Siguiente: Elegir Formato y Recursos</span>
+            <span>→</span>
+          </button>
+        </div>
+
+      </div>
+    `;
+  },
+
+  renderStudentCreateStep2Html(d) {
+    return `
+      <div class="glass-panel" style="background: rgba(10, 18, 42, 0.88); backdrop-filter: blur(28px); -webkit-backdrop-filter: blur(28px); border: 2px solid rgba(0, 245, 212, 0.5); border-radius: 24px; padding: 2.5rem; box-shadow: 0 30px 90px rgba(0,0,0,0.85), 0 0 50px rgba(0,245,212,0.25);">
+        
+        <!-- Ficha Resumen del Proyecto -->
+        <div style="background: rgba(0, 245, 212, 0.08); border: 1.5px solid rgba(0, 245, 212, 0.35); border-radius: 16px; padding: 1.25rem 1.5rem; margin-bottom: 2rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
+          <div>
+            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.25rem;">
+              <span style="font-size: 1.4rem;">💡</span>
+              <h3 style="font-size: 1.3rem; font-weight: 900; margin: 0; color: var(--neon-cyan);">
+                ${this.escapeHtml(d.title || 'Mi Proyecto Educativo')}
+              </h3>
+            </div>
+            <p style="font-size: 0.92rem; color: #cbd5e1; margin: 0;">
+              <strong>Por:</strong> ${this.escapeHtml(d.author || 'Estudiante')} 
+              ${d.summary ? `<span style="color: #94a3b8; margin-left: 0.5rem;">• "${this.escapeHtml(d.summary)}"</span>` : ''}
+            </p>
+          </div>
+
+          <button 
+            type="button" 
+            onclick="window.ProjectsView.goToCreateProjectStep(1)" 
+            style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.25); color: #ffffff; border-radius: 10px; padding: 0.5rem 1rem; font-size: 0.85rem; font-weight: 800; cursor: pointer; display: inline-flex; align-items: center; gap: 0.4rem;"
+          >
+            ✏️ Volver a editar datos
+          </button>
+        </div>
+
+        <div style="text-align: center; margin-bottom: 1.75rem;">
+          <h2 style="font-size: 1.6rem; font-weight: 900; margin: 0 0 0.4rem; color: #ffffff;">
+            Selecciona el Formato de tu Proyecto
+          </h2>
+          <p style="font-size: 0.95rem; color: #94a3b8; margin: 0;">
+            Elige la estructura que deseas utilizar. Al seleccionar, se creará tu proyecto configurado para la Landing Page:
+          </p>
+        </div>
+
+        <!-- Las 4 Pantallas Grandes de Formato (Presentación, Video Clase, Documento, URL) -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.5rem; margin-bottom: 2.25rem;">
+          
+          <!-- Opción 1: Presentación Interactiva -->
+          <div 
+            class="glass-panel" 
+            onclick="window.ProjectsView.createStudentProject('presentation')"
+            style="padding: 2rem 1.5rem; border-radius: 20px; border: 2px solid #7c3aed; background: rgba(124, 58, 237, 0.12); cursor: pointer; text-align: center; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); display: flex; flex-direction: column; justify-content: space-between;"
+            onmouseenter="this.style.transform='translateY(-6px)'; this.style.borderColor='var(--neon-cyan)'; this.style.boxShadow='0 12px 30px rgba(124, 58, 237, 0.35)';"
+            onmouseleave="this.style.transform='none'; this.style.borderColor='#7c3aed'; this.style.boxShadow='none';"
+          >
+            <div>
+              <div style="font-size: 3.5rem; margin-bottom: 0.75rem;">📊</div>
+              <h3 style="font-size: 1.35rem; font-weight: 900; margin: 0 0 0.5rem; color: #ffffff;">Presentación</h3>
+              <p style="font-size: 0.88rem; color: #cbd5e1; margin: 0 0 1.25rem; line-height: 1.5;">
+                Diapositivas interactivas con explicaciones, conceptos clave, notas e imágenes para proyectar en clase.
+              </p>
+            </div>
+            <button type="button" class="btn btn-outline" style="width: 100%; font-size: 0.9rem; padding: 0.65rem 1rem; border-color: #7c3aed; color: #c4b5fd; font-weight: 900; border-radius: 12px; pointer-events: none;">
+              Crear Presentación →
+            </button>
+          </div>
+
+          <!-- Opción 2: Video Clase -->
+          <div 
+            class="glass-panel" 
+            onclick="window.ProjectsView.createStudentProject('video')"
+            style="padding: 2rem 1.5rem; border-radius: 20px; border: 2px solid #ef4444; background: rgba(239, 68, 68, 0.12); cursor: pointer; text-align: center; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); display: flex; flex-direction: column; justify-content: space-between;"
+            onmouseenter="this.style.transform='translateY(-6px)'; this.style.borderColor='var(--neon-cyan)'; this.style.boxShadow='0 12px 30px rgba(239, 68, 68, 0.35)';"
+            onmouseleave="this.style.transform='none'; this.style.borderColor='#ef4444'; this.style.boxShadow='none';"
+          >
+            <div>
+              <div style="font-size: 3.5rem; margin-bottom: 0.75rem;">🎬</div>
+              <h3 style="font-size: 1.35rem; font-weight: 900; margin: 0 0 0.5rem; color: #ffffff;">Video Clase</h3>
+              <p style="font-size: 0.88rem; color: #cbd5e1; margin: 0 0 1.25rem; line-height: 1.5;">
+                Integra videos (YouTube, Google Drive, MP4) con capítulos, resumen y preguntas interactivas.
+              </p>
+            </div>
+            <button type="button" class="btn btn-outline" style="width: 100%; font-size: 0.9rem; padding: 0.65rem 1rem; border-color: #ef4444; color: #fca5a5; font-weight: 900; border-radius: 12px; pointer-events: none;">
+              Crear Video Clase →
+            </button>
+          </div>
+
+          <!-- Opción 3: Documento Didáctico -->
+          <div 
+            class="glass-panel" 
+            onclick="window.ProjectsView.createStudentProject('document')"
+            style="padding: 2rem 1.5rem; border-radius: 20px; border: 2px solid #3b82f6; background: rgba(59, 130, 246, 0.12); cursor: pointer; text-align: center; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); display: flex; flex-direction: column; justify-content: space-between;"
+            onmouseenter="this.style.transform='translateY(-6px)'; this.style.borderColor='var(--neon-cyan)'; this.style.boxShadow='0 12px 30px rgba(59, 130, 246, 0.35)';"
+            onmouseleave="this.style.transform='none'; this.style.borderColor='#3b82f6'; this.style.boxShadow='none';"
+          >
+            <div>
+              <div style="font-size: 3.5rem; margin-bottom: 0.75rem;">📄</div>
+              <h3 style="font-size: 1.35rem; font-weight: 900; margin: 0 0 0.5rem; color: #ffffff;">Documentos</h3>
+              <p style="font-size: 0.88rem; color: #cbd5e1; margin: 0 0 1.25rem; line-height: 1.5;">
+                Guías didácticas, apuntes de clase y lecturas estructuradas por secciones para la comunidad educativa.
+              </p>
+            </div>
+            <button type="button" class="btn btn-outline" style="width: 100%; font-size: 0.9rem; padding: 0.65rem 1rem; border-color: #3b82f6; color: #93c5fd; font-weight: 900; border-radius: 12px; pointer-events: none;">
+              Crear Documento →
+            </button>
+          </div>
+
+          <!-- Opción 4: Recurso Web por URL -->
+          <div 
+            class="glass-panel" 
+            onclick="window.ProjectsView.createStudentProject('url')"
+            style="padding: 2rem 1.5rem; border-radius: 20px; border: 2px solid #10b981; background: rgba(16, 185, 129, 0.12); cursor: pointer; text-align: center; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); display: flex; flex-direction: column; justify-content: space-between;"
+            onmouseenter="this.style.transform='translateY(-6px)'; this.style.borderColor='var(--neon-cyan)'; this.style.boxShadow='0 12px 30px rgba(16, 185, 129, 0.35)';"
+            onmouseleave="this.style.transform='none'; this.style.borderColor='#10b981'; this.style.boxShadow='none';"
+          >
+            <div>
+              <div style="font-size: 3.5rem; margin-bottom: 0.75rem;">🌐</div>
+              <h3 style="font-size: 1.35rem; font-weight: 900; margin: 0 0 0.5rem; color: #ffffff;">Enlace / URLs</h3>
+              <p style="font-size: 0.88rem; color: #cbd5e1; margin: 0 0 1.25rem; line-height: 1.5;">
+                Enlaza e incrusta simuladores (PhET, GeoGebra), páginas web, formularios y herramientas en línea.
+              </p>
+            </div>
+            <button type="button" class="btn btn-outline" style="width: 100%; font-size: 0.9rem; padding: 0.65rem 1rem; border-color: #10b981; color: #6ee7b7; font-weight: 900; border-radius: 12px; pointer-events: none;">
+              Crear Recurso URL →
+            </button>
+          </div>
+
+        </div>
+
+        <!-- Barra Inferior de Acción -->
+        <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(255,255,255,0.12); padding-top: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+          <button 
+            type="button" 
+            onclick="window.ProjectsView.goToCreateProjectStep(1)" 
+            style="padding: 0.85rem 1.5rem; font-weight: 800; border-radius: 12px; background: transparent; border: 1.5px solid rgba(255,255,255,0.25); color: #cbd5e1; cursor: pointer; font-size: 0.95rem;"
+          >
+            ← Volver a editar datos generales
+          </button>
+
+          <button 
+            type="button" 
+            onclick="window.ProjectsView.closeCreateProjectModal()" 
+            style="padding: 0.85rem 1.5rem; font-weight: 800; border-radius: 12px; background: transparent; border: 1.5px solid rgba(255,255,255,0.25); color: #cbd5e1; cursor: pointer; font-size: 0.95rem;"
+          >
+            Cerrar
+          </button>
+        </div>
+
+      </div>
+    `;
   },
 
   // Habilitado EXCLUSIVAMENTE para profesores y administradores
@@ -1381,11 +1725,13 @@ window.ProjectsView = {
 
   closeCreateProjectModal() {
     this.viewMode = 'list';
+    this.createDraft = null;
+    this.createProjectStep = 1;
     const modal = document.getElementById('create-project-type-modal');
     if (modal) modal.classList.remove('active');
-    this.goToCreateProjectStep(1);
     if (window.soundEngine) window.soundEngine.playClick();
     this.render();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   },
 
   openJoinProjectModal(prefillCode = '') {
