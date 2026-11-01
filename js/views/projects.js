@@ -622,77 +622,62 @@ window.ProjectsView = {
               style="width: 100%; height: auto; display: block; object-fit: cover; filter: brightness(1.16) contrast(1.1) saturate(1.18); image-rendering: -webkit-optimize-contrast; image-rendering: high-quality; transform: translateZ(0); backface-visibility: hidden;" 
             />
 
-            <!-- Interactive Hotspots on Banner ('Ver tutorial' y 'Conoce más') -->
-            <button 
-              onclick="window.ProjectsView.openTutorialModal()" 
-              title="Ver tutorial" 
-              class="saas-banner-hotspot"
-              style="position: absolute; left: 4.4%; top: 69%; width: 14.5%; height: 23%; border-radius: 9999px; background: transparent; border: none; cursor: pointer; transition: all 0.2s ease;"
-              onmouseover="this.style.background='rgba(255,255,255,0.2)'; this.style.boxShadow='0 0 16px rgba(255,255,255,0.5)';"
-              onmouseout="this.style.background='transparent'; this.style.boxShadow='none';"
-            ></button>
+            <!-- BOTONES PRINCIPALES DE ACCIÓN INTEGRADOS EN EL BANNER ('estos aca') -->
+            <div class="mentix-banner-action-row" style="position: absolute; left: 3.8%; bottom: 8.5%; z-index: 5; display: flex; align-items: center; gap: 0.7rem; flex-wrap: wrap; max-width: 58%;">
+              
+              <button 
+                type="button" 
+                onclick="window.ProjectWizard ? window.ProjectWizard.openWizard() : null" 
+                title="Asistente Inteligente de Proyecto"
+                class="mentix-hero-action-btn"
+                style="display: inline-flex; align-items: center; gap: 0.45rem; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: #ffffff; border: none; border-radius: 9999px; padding: 0.52rem 1.15rem; font-size: 0.88rem; font-weight: 800; cursor: pointer; box-shadow: 0 4px 16px rgba(16, 185, 129, 0.45); transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); white-space: nowrap;"
+                onmouseenter="this.style.transform='translateY(-2px) scale(1.03)'; this.style.boxShadow='0 8px 22px rgba(16, 185, 129, 0.65)';"
+                onmouseleave="this.style.transform='translateY(0) scale(1)'; this.style.boxShadow='0 4px 16px rgba(16, 185, 129, 0.45)';"
+              >
+                <span style="font-size: 1rem; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.25));">✨</span>
+                <span>Asistente Inteligente de Proyecto</span>
+              </button>
 
-            <button 
-              onclick="window.ProjectsView.openTutorialModal()" 
-              title="Conoce más" 
-              class="saas-banner-hotspot"
-              style="position: absolute; left: 20%; top: 69%; width: 12%; height: 23%; border-radius: 9999px; background: transparent; border: none; cursor: pointer; transition: all 0.2s ease;"
-              onmouseover="this.style.background='rgba(255,255,255,0.16)';"
-              onmouseout="this.style.background='transparent';"
-            ></button>
-          </div>
+              <button 
+                type="button" 
+                onclick="window.ProjectsView.openJoinProjectModal()" 
+                title="Unirse a un código"
+                class="mentix-hero-action-btn"
+                style="display: inline-flex; align-items: center; gap: 0.45rem; background: linear-gradient(135deg, #f72585 0%, #b5179e 100%); color: #ffffff; border: none; border-radius: 9999px; padding: 0.52rem 1.15rem; font-size: 0.88rem; font-weight: 800; cursor: pointer; box-shadow: 0 4px 16px rgba(247, 37, 133, 0.45); transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); white-space: nowrap;"
+                onmouseenter="this.style.transform='translateY(-2px) scale(1.03)'; this.style.boxShadow='0 8px 22px rgba(247, 37, 133, 0.65)';"
+                onmouseleave="this.style.transform='translateY(0) scale(1)'; this.style.boxShadow='0 4px 16px rgba(247, 37, 133, 0.45)';"
+              >
+                <span style="font-size: 1rem; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.25));">🎮</span>
+                <span>Unirse a un código</span>
+              </button>
 
-          <!-- BOTONES PRINCIPALES DE ACCIÓN QUE YA TENÍAMOS (Asistente, Unirse a código, Crear Proyecto, Categorías) -->
-          <div class="mentix-action-bar-wrap" style="display: flex; align-items: center; justify-content: center; gap: 0.85rem; flex-wrap: wrap; margin-bottom: 1.6rem; padding: 0.25rem 0;">
-            
-            <button 
-              type="button" 
-              onclick="window.ProjectWizard ? window.ProjectWizard.openWizard() : null" 
-              title="Asistente Inteligente de Proyecto"
-              style="display: inline-flex; align-items: center; gap: 0.55rem; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: #ffffff; border: none; border-radius: 9999px; padding: 0.72rem 1.45rem; font-size: 0.95rem; font-weight: 800; cursor: pointer; box-shadow: 0 4px 18px rgba(16, 185, 129, 0.42); transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1); letter-spacing: 0.01em;"
-              onmouseenter="this.style.transform='translateY(-2px) scale(1.025)'; this.style.boxShadow='0 8px 25px rgba(16, 185, 129, 0.6)';"
-              onmouseleave="this.style.transform='translateY(0) scale(1)'; this.style.boxShadow='0 4px 18px rgba(16, 185, 129, 0.42)';"
-            >
-              <span style="font-size: 1.15rem; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));">✨</span>
-              <span>Asistente Inteligente de Proyecto</span>
-            </button>
+              <button 
+                type="button" 
+                onclick="window.ProjectsView.openCreateProjectModal()" 
+                title="Crear Proyecto"
+                class="mentix-hero-action-btn"
+                style="display: inline-flex; align-items: center; gap: 0.45rem; background: linear-gradient(135deg, #00d2ff 0%, #0077ff 100%); color: #ffffff; border: none; border-radius: 9999px; padding: 0.52rem 1.15rem; font-size: 0.88rem; font-weight: 800; cursor: pointer; box-shadow: 0 4px 16px rgba(0, 180, 255, 0.48); transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); white-space: nowrap;"
+                onmouseenter="this.style.transform='translateY(-2px) scale(1.03)'; this.style.boxShadow='0 8px 22px rgba(0, 180, 255, 0.7)';"
+                onmouseleave="this.style.transform='translateY(0) scale(1)'; this.style.boxShadow='0 4px 16px rgba(0, 180, 255, 0.48)';"
+              >
+                <span style="font-size: 1rem; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.25));">➕</span>
+                <span>Crear Proyecto</span>
+              </button>
 
-            <button 
-              type="button" 
-              onclick="window.ProjectsView.openJoinProjectModal()" 
-              title="Unirse a un código"
-              style="display: inline-flex; align-items: center; gap: 0.55rem; background: linear-gradient(135deg, #f72585 0%, #b5179e 100%); color: #ffffff; border: none; border-radius: 9999px; padding: 0.72rem 1.45rem; font-size: 0.95rem; font-weight: 800; cursor: pointer; box-shadow: 0 4px 18px rgba(247, 37, 133, 0.42); transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1); letter-spacing: 0.01em;"
-              onmouseenter="this.style.transform='translateY(-2px) scale(1.025)'; this.style.boxShadow='0 8px 25px rgba(247, 37, 133, 0.6)';"
-              onmouseleave="this.style.transform='translateY(0) scale(1)'; this.style.boxShadow='0 4px 18px rgba(247, 37, 133, 0.42)';"
-            >
-              <span style="font-size: 1.15rem; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));">🎮</span>
-              <span>Unirse a un código</span>
-            </button>
+              <button 
+                type="button" 
+                onclick="window.appRouter.openCategoryModal ? window.appRouter.openCategoryModal() : null" 
+                title="Categorías"
+                class="mentix-hero-action-btn"
+                style="display: inline-flex; align-items: center; gap: 0.45rem; background: linear-gradient(135deg, #4f46e5 0%, #3730a3 100%); color: #ffffff; border: none; border-radius: 9999px; padding: 0.52rem 1.15rem; font-size: 0.88rem; font-weight: 800; cursor: pointer; box-shadow: 0 4px 16px rgba(79, 70, 229, 0.45); transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); white-space: nowrap;"
+                onmouseenter="this.style.transform='translateY(-2px) scale(1.03)'; this.style.boxShadow='0 8px 22px rgba(79, 70, 229, 0.65)';"
+                onmouseleave="this.style.transform='translateY(0) scale(1)'; this.style.boxShadow='0 4px 16px rgba(79, 70, 229, 0.45)';"
+              >
+                <span style="font-size: 1rem; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.25));">🏷️</span>
+                <span>Categorías</span>
+              </button>
 
-            <button 
-              type="button" 
-              onclick="window.ProjectsView.openCreateProjectModal()" 
-              title="Crear Proyecto"
-              style="display: inline-flex; align-items: center; gap: 0.55rem; background: linear-gradient(135deg, #00d2ff 0%, #0077ff 100%); color: #ffffff; border: none; border-radius: 9999px; padding: 0.72rem 1.45rem; font-size: 0.95rem; font-weight: 800; cursor: pointer; box-shadow: 0 4px 18px rgba(0, 180, 255, 0.45); transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1); letter-spacing: 0.01em;"
-              onmouseenter="this.style.transform='translateY(-2px) scale(1.025)'; this.style.boxShadow='0 8px 25px rgba(0, 180, 255, 0.65)';"
-              onmouseleave="this.style.transform='translateY(0) scale(1)'; this.style.boxShadow='0 4px 18px rgba(0, 180, 255, 0.45)';"
-            >
-              <span style="font-size: 1.15rem; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));">➕</span>
-              <span>Crear Proyecto</span>
-            </button>
-
-            <button 
-              type="button" 
-              onclick="window.appRouter.openCategoryModal ? window.appRouter.openCategoryModal() : null" 
-              title="Categorías"
-              style="display: inline-flex; align-items: center; gap: 0.55rem; background: linear-gradient(135deg, #4f46e5 0%, #3730a3 100%); color: #ffffff; border: none; border-radius: 9999px; padding: 0.72rem 1.45rem; font-size: 0.95rem; font-weight: 800; cursor: pointer; box-shadow: 0 4px 18px rgba(79, 70, 229, 0.42); transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1); letter-spacing: 0.01em;"
-              onmouseenter="this.style.transform='translateY(-2px) scale(1.025)'; this.style.boxShadow='0 8px 25px rgba(79, 70, 229, 0.6)';"
-              onmouseleave="this.style.transform='translateY(0) scale(1)'; this.style.boxShadow='0 4px 18px rgba(79, 70, 229, 0.42)';"
-            >
-              <span style="font-size: 1.15rem; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));">🏷️</span>
-              <span>Categorías</span>
-            </button>
-
+            </div>
           </div>
 
 
