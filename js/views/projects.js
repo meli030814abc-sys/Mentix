@@ -418,11 +418,12 @@ window.ProjectsView = {
       if (typeof saveGlobalState === 'function') saveGlobalState(window.appState);
     }
 
-    // En MENTIX, los proyectos de la base de datos abarcan: Presentaciones, Video Clases, Documentos Didácticos, Enlaces Web/URL y Proyectos GovData
-    const rawProjects = (window.appState.challenges || []).filter(c => 
-      c.projectType === 'presentation' || c.projectType === 'video' || c.projectType === 'document' || c.projectType === 'url' || 
-      c.isGovDataProject || c.project_type || c.is_gov_data_project
-    );
+    // En MENTIX, todos los proyectos creados (Presentaciones, Asistente, Videos, Documentos, Quizzes y URLs) son visibles
+    const rawProjects = (window.appState.challenges || []).filter(c => {
+      if (!c || !c.id) return false;
+      if (c.deleted || c.is_deleted) return false;
+      return true;
+    });
 
     const navEl = document.getElementById('main-navbar');
     if (this.viewMode === 'wizard') {
@@ -461,11 +462,15 @@ window.ProjectsView = {
       return;
     }
 
-    // Filtrar borradores y proyectos en preparación para que solo los vea su autor o el profesor/admin
+    // Filtrar proyectos asegurando que los publicados, aprobados y creados por el usuario sean visibles
     const allUserProjects = rawProjects.filter(c => {
       if (!c.publicationStatus || c.publicationStatus === 'published' || c.publicationStatus === 'approved') return true;
-      const isOwner = window.appRouter ? window.appRouter.isChallengeOwner(c) : false;
-      return isOwner || isTeacherOrAdmin;
+      if (isTeacherOrAdmin) return true;
+      if (window.appRouter && window.appRouter.isChallengeOwner(c)) return true;
+      const cleanAuthor = (c.author || '').toLowerCase().trim();
+      const currentName = (u?.name || '').toLowerCase().trim();
+      if (!cleanAuthor || cleanAuthor === currentName || c.authorId === u?.id) return true;
+      return true;
     });
 
     // Proyectos directos desde la base de datos
@@ -872,11 +877,11 @@ window.ProjectsView = {
     if (c.tag) tag = c.tag.replace(/^[✔⏱👁\s]+/, '').trim();
     if (c.tagIcon) tagIcon = c.tagIcon;
 
-    if (c.id === 'proj_gov_data' || c.id === 'demo-gov-data' || c.isGovDataProject || c.is_gov_data_project) {
+    if (c.id === 'proj_gov_data' || c.id === 'demo-gov-data') {
       tag = 'Completado';
       tagIcon = '✔';
       tagColor = 'background: #22c55e;';
-      defaultBanner = c.image || c.banner || 'assets/projects_ui/card_data_gov.png';
+      defaultBanner = c.mainImage || c.image || c.banner || 'assets/projects_ui/card_data_gov.png';
       primaryText = 'Ver Detalles →';
       primaryAction = `window.ProjectsView.openGovDataLanding ? window.ProjectsView.openGovDataLanding() : window.ProjectsView.openProjectLanding('${c.id}')`;
       secondaryText = 'Compartir <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-left:3px;"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>';
@@ -886,9 +891,9 @@ window.ProjectsView = {
       tag = 'En Proceso';
       tagIcon = '⏱';
       tagColor = 'background: #0284c7;';
-      defaultBanner = c.image || c.banner || 'assets/projects_ui/card_ai_society.png';
+      defaultBanner = c.mainImage || c.image || c.banner || 'assets/projects_ui/card_ai_society.png';
       primaryText = 'Continuar →';
-      primaryAction = `window.ProjectWizard ? window.ProjectWizard.openWizard() : window.ProjectsView.openProjectLanding('${c.id}')`;
+      primaryAction = `window.ProjectWizard ? window.ProjectWizard.openWizard('${c.id}') : window.ProjectsView.openProjectLanding('${c.id}')`;
       secondaryText = 'Ver Detalles';
       secondaryAction = `window.ProjectsView.openProjectLanding('${c.id}')`;
       primaryIsBlue = true;
@@ -896,12 +901,40 @@ window.ProjectsView = {
       tag = 'En Revisión';
       tagIcon = '👁';
       tagColor = 'background: #8b5cf6;';
-      defaultBanner = c.image || c.banner || 'assets/projects_ui/card_open_data.png';
+      defaultBanner = c.mainImage || c.image || c.banner || 'assets/projects_ui/card_open_data.png';
       primaryText = 'Ver Detalles →';
       primaryAction = `window.ProjectsView.openProjectLanding('${c.id}')`;
       secondaryText = '📊';
       secondaryAction = `window.ProjectsView.showToast('📊 Reporte analítico de Transparencia de Datos')`;
       primaryIsBlue = false;
+    } else if (c.govdata || c.isGovDataProject || c.is_gov_data_project) {
+      // Proyectos creados por el usuario en el Asistente Inteligente
+      defaultBanner = c.mainImage || c.banner || c.image || c.thumbnailImage || 'assets/projects_ui/card_data_gov.png';
+      if (c.publicationStatus === 'draft' || c.status === 'in_progress') {
+        tag = 'En Proceso';
+        tagIcon = '⏱';
+        tagColor = 'background: #0284c7;';
+        primaryText = 'Continuar →';
+        primaryAction = `window.ProjectWizard ? window.ProjectWizard.openWizard('${c.id}') : window.ProjectsView.openProjectLanding('${c.id}')`;
+        secondaryText = 'Ver Detalles';
+        secondaryAction = `window.ProjectsView.openProjectLanding('${c.id}')`;
+        primaryIsBlue = true;
+      } else {
+        tag = 'Completado';
+        tagIcon = '✔';
+        tagColor = 'background: #22c55e;';
+        primaryText = 'Ver Detalles →';
+        primaryAction = `window.ProjectsView.openProjectLanding('${c.id}')`;
+        secondaryText = 'Compartir <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-left:3px;"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>';
+        secondaryAction = `window.ProjectsView.shareProject('${c.id}', '${this.escapeHtml(c.title || '')}')`;
+        primaryIsBlue = false;
+      }
+    } else if (projectType === 'presentation') {
+      defaultBanner = c.mainImage || c.image || c.banner || 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=800';
+      primaryAction = `window.appRouter.openPresentation ? window.appRouter.openPresentation('${c.id}') : window.ProjectsView.openProjectLanding('${c.id}')`;
+    } else if (projectType === 'quiz') {
+      defaultBanner = c.banner || c.image || 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=800';
+      primaryAction = `window.appRouter.startSinglePlayer ? window.appRouter.startSinglePlayer('${c.id}') : window.ProjectsView.openProjectLanding('${c.id}')`;
     }
 
     const dateStr = c.date || (c.createdAt ? new Date(c.createdAt).toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' }) : '12 Abr 2025');
@@ -1037,18 +1070,15 @@ window.ProjectsView = {
   },
 
   openCreateProjectModal() {
-    if (!this.isTeacherOrAdmin()) {
-      alert('🚫 Solo los maestros y administradores pueden crear un código de proyecto para estudiantes.');
-      return;
+    if (window.soundEngine && window.soundEngine.playClick) window.soundEngine.playClick();
+    const modal = document.getElementById('create-project-type-modal');
+    if (modal) {
+      modal.classList.add('active');
+    } else if (window.ProjectWizard) {
+      window.ProjectWizard.openWizard();
+    } else if (window.appRouter && window.appRouter.createPresentation) {
+      window.appRouter.createPresentation();
     }
-    this.viewMode = 'selector';
-    if (window.soundEngine) window.soundEngine.playClick();
-    this.render();
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-    setTimeout(() => {
-      const inp = document.getElementById('custom-project-code-input');
-      if (inp) inp.focus();
-    }, 100);
   },
 
   closeCreateProjectModal() {
@@ -3552,7 +3582,17 @@ Generado por Mentix - Plataforma de Proyectos y Retos
     const modal = document.getElementById('create-project-type-modal');
     if (modal) modal.classList.remove('active');
 
-    if (type === 'presentation') {
+    if (type === 'wizard' || type === 'govdata') {
+      if (window.ProjectWizard) {
+        window.ProjectWizard.openWizard();
+      } else if (window.appRouter && window.appRouter.createPresentation) {
+        window.appRouter.createPresentation();
+      }
+    } else if (type === 'quiz') {
+      if (window.appRouter && window.appRouter.navigate) {
+        window.appRouter.navigate('creator');
+      }
+    } else if (type === 'presentation') {
       window.appRouter.createPresentation();
     } else if (type === 'video') {
       window.appRouter.createVideo();

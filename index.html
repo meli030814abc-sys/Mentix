@@ -860,7 +860,7 @@
 
   <!-- Modal: Crear Nuevo Proyecto (Presentación, Video Interactivo o Quiz) -->
   <div id="create-project-type-modal" class="modal-overlay">
-    <div class="modal-content glass-panel" style="max-width: 680px; padding: 2rem; border-radius: 20px; border: 2px solid var(--neon-cyan);">
+    <div class="modal-content glass-panel" style="max-width: 760px; padding: 2rem; border-radius: 20px; border: 2px solid var(--neon-cyan);">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
         <div>
           <div style="display: inline-flex; align-items: center; gap: 0.4rem; background: rgba(0,245,212,0.15); border: 1px solid var(--neon-cyan); padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.78rem; font-weight: 800; color: var(--neon-cyan); margin-bottom: 0.4rem;">
@@ -876,75 +876,111 @@
         <button class="btn btn-outline btn-icon" onclick="window.ProjectsView.closeCreateProjectModal()">✕</button>
       </div>
 
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.25rem; margin-bottom: 1.5rem;">
-        <!-- Opción 1: Presentación Interactiva -->
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 1.15rem; margin-bottom: 1.5rem;">
+        <!-- Opción 1: Asistente Inteligente (Wizard) -->
+        <div 
+          class="glass-panel" 
+          onclick="window.ProjectsView.startNewProject('wizard')"
+          style="padding: 1.35rem 1.15rem; border-radius: 16px; border: 2px solid #00f5d4; background: rgba(0, 245, 212, 0.08); cursor: pointer; text-align: center; transition: var(--transition-bounce);"
+          onmouseenter="this.style.transform='translateY(-4px)'; this.style.borderColor='#f72585'"
+          onmouseleave="this.style.transform='none'; this.style.borderColor='#00f5d4'"
+        >
+          <div style="font-size: 2.4rem; margin-bottom: 0.4rem;">🤖</div>
+          <h3 style="font-size: 1.15rem; font-weight: 900; margin: 0 0 0.35rem; color: var(--text-primary);">Asistente Inteligente</h3>
+          <p style="font-size: 0.8rem; color: var(--text-secondary); margin: 0 0 0.85rem; line-height: 1.4;">
+            Asistente guiado de 8 pasos para crear proyectos con IA y Landing Page.
+          </p>
+          <span class="btn btn-outline" style="font-size: 0.78rem; padding: 0.35rem 0.75rem; border-color: #00f5d4; color: #00f5d4; font-weight: 800;">
+            Abrir Asistente →
+          </span>
+        </div>
+
+        <!-- Opción 2: Presentación Interactiva -->
         <div 
           class="glass-panel" 
           onclick="window.ProjectsView.startNewProject('presentation')"
-          style="padding: 1.5rem 1.25rem; border-radius: 16px; border: 2px solid #7c3aed; background: rgba(124, 58, 237, 0.08); cursor: pointer; text-align: center; transition: var(--transition-bounce);"
+          style="padding: 1.35rem 1.15rem; border-radius: 16px; border: 2px solid #7c3aed; background: rgba(124, 58, 237, 0.08); cursor: pointer; text-align: center; transition: var(--transition-bounce);"
           onmouseenter="this.style.transform='translateY(-4px)'; this.style.borderColor='var(--neon-cyan)'"
           onmouseleave="this.style.transform='none'; this.style.borderColor='#7c3aed'"
         >
-          <div style="font-size: 2.6rem; margin-bottom: 0.5rem;">📊</div>
-          <h3 style="font-size: 1.2rem; font-weight: 900; margin: 0 0 0.35rem; color: var(--text-primary);">Presentación</h3>
-          <p style="font-size: 0.82rem; color: var(--text-secondary); margin: 0 0 1rem; line-height: 1.4;">
+          <div style="font-size: 2.4rem; margin-bottom: 0.4rem;">📊</div>
+          <h3 style="font-size: 1.15rem; font-weight: 900; margin: 0 0 0.35rem; color: var(--text-primary);">Presentación</h3>
+          <p style="font-size: 0.8rem; color: var(--text-secondary); margin: 0 0 0.85rem; line-height: 1.4;">
             Diapositivas interactivas con explicaciones, imágenes y conceptos clave.
           </p>
-          <span class="btn btn-outline" style="font-size: 0.8rem; padding: 0.4rem 0.8rem; border-color: #7c3aed; color: #c4b5fd; font-weight: 800;">
+          <span class="btn btn-outline" style="font-size: 0.78rem; padding: 0.35rem 0.75rem; border-color: #7c3aed; color: #c4b5fd; font-weight: 800;">
             Crear Presentación →
           </span>
         </div>
 
-        <!-- Opción 2: Video Interactivo -->
+        <!-- Opción 3: Reto Gamificado / Quiz -->
+        <div 
+          class="glass-panel" 
+          onclick="window.ProjectsView.startNewProject('quiz')"
+          style="padding: 1.35rem 1.15rem; border-radius: 16px; border: 2px solid #f72585; background: rgba(247, 37, 133, 0.08); cursor: pointer; text-align: center; transition: var(--transition-bounce);"
+          onmouseenter="this.style.transform='translateY(-4px)'; this.style.borderColor='var(--neon-cyan)'"
+          onmouseleave="this.style.transform='none'; this.style.borderColor='#f72585'"
+        >
+          <div style="font-size: 2.4rem; margin-bottom: 0.4rem;">🎮</div>
+          <h3 style="font-size: 1.15rem; font-weight: 900; margin: 0 0 0.35rem; color: var(--text-primary);">Reto Gamificado</h3>
+          <p style="font-size: 0.8rem; color: var(--text-secondary); margin: 0 0 0.85rem; line-height: 1.4;">
+            Cuestionario de preguntas interactivas, puntajes, comodines y salas multijugador.
+          </p>
+          <span class="btn btn-outline" style="font-size: 0.78rem; padding: 0.35rem 0.75rem; border-color: #f72585; color: #f472b6; font-weight: 800;">
+            Crear Reto / Quiz →
+          </span>
+        </div>
+
+        <!-- Opción 4: Video Interactivo -->
         <div 
           class="glass-panel" 
           onclick="window.ProjectsView.startNewProject('video')"
-          style="padding: 1.5rem 1.25rem; border-radius: 16px; border: 2px solid #ef4444; background: rgba(239, 68, 68, 0.08); cursor: pointer; text-align: center; transition: var(--transition-bounce);"
+          style="padding: 1.35rem 1.15rem; border-radius: 16px; border: 2px solid #ef4444; background: rgba(239, 68, 68, 0.08); cursor: pointer; text-align: center; transition: var(--transition-bounce);"
           onmouseenter="this.style.transform='translateY(-4px)'; this.style.borderColor='var(--neon-cyan)'"
           onmouseleave="this.style.transform='none'; this.style.borderColor='#ef4444'"
         >
-          <div style="font-size: 2.6rem; margin-bottom: 0.5rem;">🎬</div>
-          <h3 style="font-size: 1.2rem; font-weight: 900; margin: 0 0 0.35rem; color: var(--text-primary);">Video Clase</h3>
-          <p style="font-size: 0.82rem; color: var(--text-secondary); margin: 0 0 1rem; line-height: 1.4;">
+          <div style="font-size: 2.4rem; margin-bottom: 0.4rem;">🎬</div>
+          <h3 style="font-size: 1.15rem; font-weight: 900; margin: 0 0 0.35rem; color: var(--text-primary);">Video Clase</h3>
+          <p style="font-size: 0.8rem; color: var(--text-secondary); margin: 0 0 0.85rem; line-height: 1.4;">
             Integra videos (YouTube, Drive, MP4) con capítulos, resumen y preguntas.
           </p>
-          <span class="btn btn-outline" style="font-size: 0.8rem; padding: 0.4rem 0.8rem; border-color: #ef4444; color: #fca5a5; font-weight: 800;">
+          <span class="btn btn-outline" style="font-size: 0.78rem; padding: 0.35rem 0.75rem; border-color: #ef4444; color: #fca5a5; font-weight: 800;">
             Crear Video Clase →
           </span>
         </div>
 
-        <!-- Opción 3: Documento Didáctico -->
+        <!-- Opción 5: Documento Didáctico -->
         <div 
           class="glass-panel" 
           onclick="window.ProjectsView.startNewProject('document')"
-          style="padding: 1.5rem 1.25rem; border-radius: 16px; border: 2px solid #3b82f6; background: rgba(59, 130, 246, 0.08); cursor: pointer; text-align: center; transition: var(--transition-bounce);"
+          style="padding: 1.35rem 1.15rem; border-radius: 16px; border: 2px solid #3b82f6; background: rgba(59, 130, 246, 0.08); cursor: pointer; text-align: center; transition: var(--transition-bounce);"
           onmouseenter="this.style.transform='translateY(-4px)'; this.style.borderColor='var(--neon-cyan)'"
           onmouseleave="this.style.transform='none'; this.style.borderColor='#3b82f6'"
         >
-          <div style="font-size: 2.6rem; margin-bottom: 0.5rem;">📄</div>
-          <h3 style="font-size: 1.2rem; font-weight: 900; margin: 0 0 0.35rem; color: var(--text-primary);">Documento</h3>
-          <p style="font-size: 0.82rem; color: var(--text-secondary); margin: 0 0 1rem; line-height: 1.4;">
+          <div style="font-size: 2.4rem; margin-bottom: 0.4rem;">📄</div>
+          <h3 style="font-size: 1.15rem; font-weight: 900; margin: 0 0 0.35rem; color: var(--text-primary);">Documento</h3>
+          <p style="font-size: 0.8rem; color: var(--text-secondary); margin: 0 0 0.85rem; line-height: 1.4;">
             Guías didácticas, apuntes de clase y lecturas estructuradas por secciones.
           </p>
-          <span class="btn btn-outline" style="font-size: 0.8rem; padding: 0.4rem 0.8rem; border-color: #3b82f6; color: #93c5fd; font-weight: 800;">
+          <span class="btn btn-outline" style="font-size: 0.78rem; padding: 0.35rem 0.75rem; border-color: #3b82f6; color: #93c5fd; font-weight: 800;">
             Crear Documento →
           </span>
         </div>
 
-        <!-- Opción 4: Recurso Web por URL -->
+        <!-- Opción 6: Recurso Web por URL -->
         <div 
           class="glass-panel" 
           onclick="window.ProjectsView.startNewProject('url')"
-          style="padding: 1.5rem 1.25rem; border-radius: 16px; border: 2px solid #10b981; background: rgba(16, 185, 129, 0.08); cursor: pointer; text-align: center; transition: var(--transition-bounce);"
+          style="padding: 1.35rem 1.15rem; border-radius: 16px; border: 2px solid #10b981; background: rgba(16, 185, 129, 0.08); cursor: pointer; text-align: center; transition: var(--transition-bounce);"
           onmouseenter="this.style.transform='translateY(-4px)'; this.style.borderColor='var(--neon-cyan)'"
           onmouseleave="this.style.transform='none'; this.style.borderColor='#10b981'"
         >
-          <div style="font-size: 2.6rem; margin-bottom: 0.5rem;">🌐</div>
-          <h3 style="font-size: 1.2rem; font-weight: 900; margin: 0 0 0.35rem; color: var(--text-primary);">Enlace / URL</h3>
-          <p style="font-size: 0.82rem; color: var(--text-secondary); margin: 0 0 1rem; line-height: 1.4;">
+          <div style="font-size: 2.4rem; margin-bottom: 0.4rem;">🌐</div>
+          <h3 style="font-size: 1.15rem; font-weight: 900; margin: 0 0 0.35rem; color: var(--text-primary);">Enlace / URL</h3>
+          <p style="font-size: 0.8rem; color: var(--text-secondary); margin: 0 0 0.85rem; line-height: 1.4;">
             Enlaza e incrusta simuladores (PhET, GeoGebra), sitios web y herramientas.
           </p>
-          <span class="btn btn-outline" style="font-size: 0.8rem; padding: 0.4rem 0.8rem; border-color: #10b981; color: #6ee7b7; font-weight: 800;">
+          <span class="btn btn-outline" style="font-size: 0.78rem; padding: 0.35rem 0.75rem; border-color: #10b981; color: #6ee7b7; font-weight: 800;">
             Crear Recurso URL →
           </span>
         </div>
@@ -1045,8 +1081,8 @@
   <script src="js/views/teacher.js?v=20261016_utf8"></script>
   <script src="js/views/admin.js?v=20261016_utf8"></script>
   <script src="js/views/ranking.js?v=20261016_utf8"></script>
-  <script src="js/views/project-wizard.js?v=20261025_gdn"></script>
-  <script src="js/views/projects.js?v=20261101_nosidebar_v12"></script>
+  <script src="js/views/project-wizard.js?v=20261101_publish_fix1"></script>
+  <script src="js/views/projects.js?v=20261101_publish_fix1"></script>
   <script src="js/views/presentation.js?v=20261016_utf8"></script>
   <script src="js/views/video-project.js?v=20261016_utf8"></script>
   <script src="js/views/document-project.js?v=20261016_utf8"></script>

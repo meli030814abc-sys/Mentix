@@ -3378,6 +3378,7 @@ collectCurrentStepInputs() {
       teamLead: d.teamLead || d.author || 'Equipo del Proyecto',
       preparationStatus: d.preparationStatus || 'en_desarrollo',
       publicationStatus: pubStatus,
+      status: pubStatus === 'published' ? 'completed' : 'in_progress',
       isPublic: pubStatus === 'published',
       startDate: d.startDate || '',
       endDate: d.endDate || '',
@@ -3460,7 +3461,11 @@ collectCurrentStepInputs() {
     }
   },
 
-  async publishOrSubmitProject() {
+  publishProject() {
+    return this.publishOrSubmitProject(true);
+  },
+
+  async publishOrSubmitProject(forcePublish = false) {
     this.collectCurrentStepInputs();
     if (!this.draft.title || this.draft.title.trim().length < 3) {
       alert('⚠️ Por favor escribe el nombre del proyecto en el Paso 1 antes de publicarlo.');
@@ -3473,12 +3478,14 @@ collectCurrentStepInputs() {
       return;
     }
 
-    const canPub = this.canPublishDirectly();
+    const canPub = forcePublish || this.canPublishDirectly();
     const targetStatus = canPub ? 'published' : 'ready_for_review';
     const rec = this.syncProjectRecordToAppState(targetStatus);
 
     // Remover de borradores pendientes o marcarlo como publicado
     this.draft.publicationStatus = targetStatus;
+    this.draft.status = canPub ? 'completed' : 'in_progress';
+    this.draft.isPublic = canPub;
     this.saveDraftToStorage(true);
 
     if (window.appRouter && typeof window.appRouter.pushChallengeToCloud === 'function') {
@@ -3486,7 +3493,7 @@ collectCurrentStepInputs() {
     }
 
     if (canPub) {
-      alert(`🚀 ¡Proyecto "${rec.title}" publicado con éxito en la Landing Page! Solo los recursos marcados como públicos están visibles para los visitantes.`);
+      alert(`🚀 ¡Proyecto "${rec.title}" publicado con éxito en la Landing Page!`);
     } else {
       alert(`🔎 ¡Proyecto "${rec.title}" enviado a revisión! Un docente o administrador podrá aprobar su publicación final.`);
     }
