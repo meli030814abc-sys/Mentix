@@ -45,7 +45,7 @@
   <link href="https://fonts.cdnfonts.com/css/gagalin" rel="stylesheet">
   
   <!-- Estilos propios de MENTIX -->
-  <link rel="stylesheet" href="css/styles.css?v=20261016_mobile" />
+  <link rel="stylesheet" href="css/styles.css?v=20261101_cool_bg1" />
   <link rel="stylesheet" href="css/project-landing.css?v=20261101_nosidebar_v1" />
 
   <!-- Supabase JS Client v2, PeerJS & MQTT.js para conexión Multidispositivo en Tiempo Real (CDN Ultra Rápido) -->
@@ -858,9 +858,24 @@
     </div>
   </div>
 
-  <!-- Modal: Crear Nuevo Proyecto (Flujo Estudiantil 2 Pasos sin Asistente Inteligente) -->
+  <!-- Modal: Crear Nuevo Proyecto (Flujo Estudiantil 2 Pasos con Fondo Chévere en Toda la Página) -->
   <div id="create-project-type-modal" class="modal-overlay">
-    <div class="modal-content glass-panel" style="max-width: 760px; padding: 2rem; border-radius: 20px; border: 2px solid var(--neon-cyan); background: rgba(10, 20, 42, 0.98); box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8), 0 0 35px rgba(0, 245, 212, 0.25);">
+    <!-- Capa de Fondo Dinámico Chévere de Pantalla Completa -->
+    <div class="student-bg-orbs-container" aria-hidden="true">
+      <div class="student-bg-orb orb-1"></div>
+      <div class="student-bg-orb orb-2"></div>
+      <div class="student-bg-orb orb-3"></div>
+      <div class="student-bg-orb orb-4"></div>
+      <div class="student-bg-cybergrid"></div>
+      <div class="student-float-icon icon-1">🚀</div>
+      <div class="student-float-icon icon-2">✨</div>
+      <div class="student-float-icon icon-3">🎯</div>
+      <div class="student-float-icon icon-4">💡</div>
+      <div class="student-float-icon icon-5">🪐</div>
+      <div class="student-float-icon icon-6">🏆</div>
+    </div>
+
+    <div class="modal-content glass-panel student-create-modal-card">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
         <div>
           <div style="display: inline-flex; align-items: center; gap: 0.4rem; background: rgba(0,245,212,0.15); border: 1px solid var(--neon-cyan); padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.78rem; font-weight: 800; color: var(--neon-cyan); margin-bottom: 0.4rem;">
