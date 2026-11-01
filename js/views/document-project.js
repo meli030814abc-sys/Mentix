@@ -10,6 +10,7 @@ window.DocumentProjectView = {
   render(params = {}) {
     const container = document.getElementById('view-document');
     if (!container) return;
+    this.fromStudentCreate = Boolean(params.fromStudentCreate || params.project?.fromStudentCreate || this.currentProject?.fromStudentCreate || this.currentProject?._isStudentDraft);
 
     if (params.edit) {
       this.isEditing = true;
@@ -66,7 +67,7 @@ window.DocumentProjectView = {
         
         <!-- Barra Superior -->
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
-          <button class="btn btn-outline" onclick="window.appRouter.navigate('projects')">
+          <button class="btn btn-outline" onclick="window.DocumentProjectView.cancelEdit()">
             ← Volver a Proyectos
           </button>
           <div style="display: flex; gap: 0.6rem; flex-wrap: wrap;">
@@ -185,7 +186,7 @@ window.DocumentProjectView = {
             <button class="btn btn-outline" style="border-color: #3b82f6; color: #93c5fd; font-weight: 800; display: inline-flex; align-items: center; gap: 0.4rem;" onclick="window.DocumentProjectView.openImportModal()">
               <span>📥</span> Importar Documento
             </button>
-            <button class="btn btn-outline" onclick="window.appRouter.navigate('projects')">
+            <button class="btn btn-outline" onclick="window.DocumentProjectView.cancelEdit()">
               Cancelar
             </button>
             <button class="btn btn-cyan" onclick="window.DocumentProjectView.saveDocument()" style="font-weight: 800; background: linear-gradient(135deg, #3b82f6, var(--neon-cyan)); border: none;">
@@ -374,6 +375,21 @@ window.DocumentProjectView = {
     }
   },
 
+  cancelEdit() {
+    this.isEditing = false;
+    if (this.fromStudentCreate || this.currentProject?.fromStudentCreate || this.currentProject?._isStudentDraft) {
+      const cancelId = this.currentProject?.id;
+      if (window.ProjectsView && typeof window.ProjectsView.returnToStudentCreateStep2 === 'function') {
+        window.ProjectsView.returnToStudentCreateStep2(cancelId);
+        return;
+      } else if (window.appRouter) {
+        window.appRouter.navigate('projects', { returnToStudentCreate: true, cleanUpProjectId: cancelId });
+        return;
+      }
+    }
+    window.appRouter.navigate('projects');
+  },
+
   openEditMode() {
     this.isEditing = true;
     this.renderEditor(document.getElementById('view-document'));
@@ -442,6 +458,14 @@ window.DocumentProjectView = {
     saveGlobalState(window.appState);
     if (window.appRouter && window.appRouter.pushChallengeToCloud) {
       window.appRouter.pushChallengeToCloud(p);
+    }
+    if (p) {
+      delete p.fromStudentCreate;
+      delete p._isStudentDraft;
+    }
+    this.fromStudentCreate = false;
+    if (window.ProjectsView && typeof window.ProjectsView.clearStudentCreateDraft === 'function') {
+      window.ProjectsView.clearStudentCreateDraft();
     }
     alert('✅ ¡Documento guardado y publicado con éxito en formato de hoja impresa PDF!');
     this.isEditing = false;

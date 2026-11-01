@@ -201,6 +201,7 @@ window.PresentationView = {
   render(params = {}) {
     const container = document.getElementById('view-presentation');
     if (!container) return;
+    this.fromStudentCreate = Boolean(params.fromStudentCreate || params.project?.fromStudentCreate || this.currentProject?.fromStudentCreate || this.currentProject?._isStudentDraft);
 
     if (params.edit) {
       this.isEditing = true;
@@ -440,7 +441,7 @@ window.PresentationView = {
         <!-- Barra Superior de Navegación de la Presentación -->
         <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 1rem; margin-bottom: 1.25rem;">
           <div style="display: flex; align-items: center; gap: 0.75rem;">
-            <button class="btn btn-outline" onclick="window.appRouter.navigate('projects')" style="padding: 0.45rem 0.85rem; font-size: 0.9rem;">
+            <button class="btn btn-outline" onclick="window.PresentationView.handleBackFromPresentation()" style="padding: 0.45rem 0.85rem; font-size: 0.9rem;">
               <span>←</span> Volver a Proyectos
             </button>
             <div>
@@ -1377,7 +1378,32 @@ window.PresentationView = {
     this.renderEditor(document.getElementById('view-presentation'));
   },
 
+  handleBackFromPresentation() {
+    if (this.fromStudentCreate || this.currentProject?.fromStudentCreate || this.currentProject?._isStudentDraft) {
+      const cancelId = this.currentProject?.id;
+      if (window.ProjectsView && typeof window.ProjectsView.returnToStudentCreateStep2 === 'function') {
+        window.ProjectsView.returnToStudentCreateStep2(cancelId);
+        return;
+      } else if (window.appRouter) {
+        window.appRouter.navigate('projects', { returnToStudentCreate: true, cleanUpProjectId: cancelId });
+        return;
+      }
+    }
+    window.appRouter.navigate('projects');
+  },
+
   exitEditMode() {
+    if (this.fromStudentCreate || this.currentProject?.fromStudentCreate || this.currentProject?._isStudentDraft) {
+      this.isEditing = false;
+      const cancelId = this.currentProject?.id;
+      if (window.ProjectsView && typeof window.ProjectsView.returnToStudentCreateStep2 === 'function') {
+        window.ProjectsView.returnToStudentCreateStep2(cancelId);
+        return;
+      } else if (window.appRouter) {
+        window.appRouter.navigate('projects', { returnToStudentCreate: true, cleanUpProjectId: cancelId });
+        return;
+      }
+    }
     this.isEditing = false;
     const exists = window.appState.challenges && window.appState.challenges.some(c => c.id === this.currentProject?.id);
     if (!exists) {
@@ -1724,6 +1750,14 @@ window.PresentationView = {
     saveGlobalState(window.appState);
     if (window.appRouter && window.appRouter.pushChallengeToCloud) {
       window.appRouter.pushChallengeToCloud(p);
+    }
+    if (p) {
+      delete p.fromStudentCreate;
+      delete p._isStudentDraft;
+    }
+    this.fromStudentCreate = false;
+    if (window.ProjectsView && typeof window.ProjectsView.clearStudentCreateDraft === 'function') {
+      window.ProjectsView.clearStudentCreateDraft();
     }
     alert('✅ ¡Presentación guardada exitosamente!');
     this.isEditing = false;

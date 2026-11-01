@@ -322,7 +322,14 @@ class AppRouter {
       case 'projects':
         document.getElementById('view-projects')?.classList.add('active');
         if (window.ProjectsView) {
-          window.ProjectsView.viewMode = 'list';
+          if (params?.returnToStudentCreate || params?.viewMode === 'create') {
+            window.ProjectsView.returnToStudentCreateStep2(params?.cleanUpProjectId);
+            break;
+          } else if (params?.viewMode) {
+            window.ProjectsView.viewMode = params.viewMode;
+          } else if (window.ProjectsView.viewMode !== 'create') {
+            window.ProjectsView.viewMode = 'list';
+          }
           window.ProjectsView.render();
         }
         this.syncChallengesWithCloud();

@@ -1122,13 +1122,19 @@ window.ProjectsView = {
   openCreateProjectModal() {
     if (window.soundEngine && window.soundEngine.playClick) window.soundEngine.playClick();
     const u = window.appState?.currentUser;
-    this.createProjectStep = 1;
-    this.createDraft = {
+    let savedDraft = null;
+    try {
+      const saved = localStorage.getItem('te_reto_student_create_draft');
+      if (saved) savedDraft = JSON.parse(saved);
+    } catch (e) {}
+
+    this.createDraft = savedDraft || {
       title: '',
       author: (u && (u.name || u.username)) ? (u.name || u.username) : 'Estudiante',
       summary: '',
       description: ''
     };
+    this.createProjectStep = (this.createDraft.title && this.createDraft.summary) ? 2 : 1;
     this.viewMode = 'create';
     this.render();
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -1170,6 +1176,9 @@ window.ProjectsView = {
         summary: summary,
         description: (descInput?.value || this.createDraft?.description || '').trim()
       };
+      try {
+        localStorage.setItem('te_reto_student_create_draft', JSON.stringify(this.createDraft));
+      } catch (e) {}
 
       this.createProjectStep = 2;
     } else {
@@ -1185,6 +1194,9 @@ window.ProjectsView = {
           summary: (summaryInput?.value || this.createDraft?.summary || '').trim(),
           description: (descInput?.value || this.createDraft?.description || '').trim()
         };
+        try {
+          localStorage.setItem('te_reto_student_create_draft', JSON.stringify(this.createDraft));
+        } catch (e) {}
       }
       this.createProjectStep = 1;
     }
@@ -1228,6 +1240,8 @@ window.ProjectsView = {
 
     const newProject = {
       id: newId,
+      fromStudentCreate: true,
+      _isStudentDraft: true,
       title: title,
       author: author,
       authorId: currentUser.id || '',
@@ -1352,25 +1366,86 @@ window.ProjectsView = {
       window.supabaseService.saveChallengeToSupabase(newProject);
     }
 
-    // Resetear variables y vista
+    // Preservar borrador de datos del estudiante para no perderlos si cancela
+    this.createDraft = {
+      title: title,
+      author: author,
+      summary: summary,
+      description: description
+    };
+    try {
+      localStorage.setItem('te_reto_student_create_draft', JSON.stringify(this.createDraft));
+    } catch (e) {}
+
     const modal = document.getElementById('create-project-type-modal');
     if (modal) modal.classList.remove('active');
-    this.createDraft = null;
-    this.createProjectStep = 1;
-    this.viewMode = 'list';
+    this.createProjectStep = 2;
+    this.viewMode = 'create';
 
     // Navegar directamente al editor según el formato seleccionado
     if (window.appRouter) {
       if (format === 'presentation') {
-        window.appRouter.navigate('presentation', { id: newProject.id, edit: true, project: newProject });
+        window.appRouter.navigate('presentation', { id: newProject.id, edit: true, project: newProject, fromStudentCreate: true });
       } else if (format === 'video') {
-        window.appRouter.navigate('video', { id: newProject.id, edit: true, project: newProject });
+        window.appRouter.navigate('video', { id: newProject.id, edit: true, project: newProject, fromStudentCreate: true });
       } else if (format === 'document') {
-        window.appRouter.navigate('document', { id: newProject.id, edit: true, project: newProject });
+        window.appRouter.navigate('document', { id: newProject.id, edit: true, project: newProject, fromStudentCreate: true });
       } else if (format === 'url') {
-        window.appRouter.navigate('url', { id: newProject.id, edit: true, project: newProject });
+        window.appRouter.navigate('url', { id: newProject.id, edit: true, project: newProject, fromStudentCreate: true });
       }
     }
+  },
+
+  returnToStudentCreateStep2(cleanUpProjectId = null) {
+    if (cleanUpProjectId) {
+      if (Array.isArray(window.appState?.challenges)) {
+        window.appState.challenges = window.appState.challenges.filter(c => c.id !== cleanUpProjectId);
+        if (typeof saveGlobalState === 'function') {
+          saveGlobalState(window.appState);
+        } else {
+          localStorage.setItem('te_reto_state', JSON.stringify(window.appState));
+        }
+      }
+      if (window.supabaseService && typeof window.supabaseService.deleteChallengeFromSupabase === 'function') {
+        window.supabaseService.deleteChallengeFromSupabase(cleanUpProjectId);
+      }
+    }
+
+    if (!this.createDraft) {
+      try {
+        const saved = localStorage.getItem('te_reto_student_create_draft');
+        if (saved) this.createDraft = JSON.parse(saved);
+      } catch (e) {}
+    }
+
+    this.createProjectStep = 2;
+    this.viewMode = 'create';
+
+    const viewPres = document.getElementById('view-presentation');
+    if (viewPres) viewPres.classList.remove('active');
+    const viewVid = document.getElementById('view-video');
+    if (viewVid) viewVid.classList.remove('active');
+    const viewDoc = document.getElementById('view-document');
+    if (viewDoc) viewDoc.classList.remove('active');
+    const viewUrl = document.getElementById('view-url');
+    if (viewUrl) viewUrl.classList.remove('active');
+    const viewProj = document.getElementById('view-projects');
+    if (viewProj) viewProj.classList.add('active');
+
+    if (window.appRouter) {
+      window.appRouter.currentView = 'projects';
+    }
+
+    this.render();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  },
+
+  clearStudentCreateDraft() {
+    this.createDraft = null;
+    this.createProjectStep = 1;
+    try {
+      localStorage.removeItem('te_reto_student_create_draft');
+    } catch (e) {}
   },
 
   renderStudentCreatePageView(container) {
@@ -1721,8 +1796,7 @@ window.ProjectsView = {
 
   closeCreateProjectModal() {
     this.viewMode = 'list';
-    this.createDraft = null;
-    this.createProjectStep = 1;
+    this.clearStudentCreateDraft();
     const modal = document.getElementById('create-project-type-modal');
     if (modal) modal.classList.remove('active');
     if (window.soundEngine) window.soundEngine.playClick();

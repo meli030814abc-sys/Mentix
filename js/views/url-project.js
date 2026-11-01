@@ -10,6 +10,7 @@ window.UrlProjectView = {
   render(params = {}) {
     const container = document.getElementById('view-url');
     if (!container) return;
+    this.fromStudentCreate = Boolean(params.fromStudentCreate || params.project?.fromStudentCreate || this.currentProject?.fromStudentCreate || this.currentProject?._isStudentDraft);
 
     if (params.edit) {
       this.isEditing = true;
@@ -55,7 +56,7 @@ window.UrlProjectView = {
         <!-- Barra Superior -->
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
           <div style="display: flex; align-items: center; gap: 0.75rem;">
-            <button class="btn btn-outline" onclick="window.appRouter.navigate('projects')">
+            <button class="btn btn-outline" onclick="window.UrlProjectView.cancelEdit()">
               ← Volver a Proyectos
             </button>
             <div>
@@ -123,7 +124,7 @@ window.UrlProjectView = {
           </div>
 
           <div style="display: flex; gap: 0.6rem;">
-            <button class="btn btn-outline" onclick="window.appRouter.navigate('projects')">
+            <button class="btn btn-outline" onclick="window.UrlProjectView.cancelEdit()">
               Cancelar
             </button>
             <button class="btn btn-cyan" onclick="window.UrlProjectView.saveUrlProject()" style="font-weight: 800; background: linear-gradient(135deg, #10b981, var(--neon-cyan)); border: none;">
@@ -211,6 +212,21 @@ window.UrlProjectView = {
     }
   },
 
+  cancelEdit() {
+    this.isEditing = false;
+    if (this.fromStudentCreate || this.currentProject?.fromStudentCreate || this.currentProject?._isStudentDraft) {
+      const cancelId = this.currentProject?.id;
+      if (window.ProjectsView && typeof window.ProjectsView.returnToStudentCreateStep2 === 'function') {
+        window.ProjectsView.returnToStudentCreateStep2(cancelId);
+        return;
+      } else if (window.appRouter) {
+        window.appRouter.navigate('projects', { returnToStudentCreate: true, cleanUpProjectId: cancelId });
+        return;
+      }
+    }
+    window.appRouter.navigate('projects');
+  },
+
   openEditMode() {
     this.isEditing = true;
     this.renderEditor(document.getElementById('view-url'));
@@ -250,6 +266,14 @@ window.UrlProjectView = {
     saveGlobalState(window.appState);
     if (window.appRouter && window.appRouter.pushChallengeToCloud) {
       window.appRouter.pushChallengeToCloud(p);
+    }
+    if (p) {
+      delete p.fromStudentCreate;
+      delete p._isStudentDraft;
+    }
+    this.fromStudentCreate = false;
+    if (window.ProjectsView && typeof window.ProjectsView.clearStudentCreateDraft === 'function') {
+      window.ProjectsView.clearStudentCreateDraft();
     }
     alert('✅ ¡Recurso Web guardado exitosamente!');
     this.isEditing = false;
