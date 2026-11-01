@@ -806,9 +806,6 @@ window.ProjectsView = {
             </aside>
           </div>
 
-          <!-- SECCIÓN: PERSONAS QUE PARTICIPARON EN EL PROYECTO & ROLES -->
-          ${this.getParticipantsSectionHtml()}
-
           <!-- BOTTOM BANNER -->
           <div class="saas-bottom-banner">
             <div class="saas-bottom-left">
