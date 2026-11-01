@@ -126,6 +126,107 @@ const DEFAULT_GROUPS = [
   }
 ];
 
+const DEFAULT_PROJECTS = [
+  {
+    id: 'proj_gov_data',
+    title: 'Gobierno de Datos en la Práctica',
+    description: 'Metodologías ágiles para la gobernanza moderna de información y toma de decisiones.',
+    projectType: 'presentation',
+    isGovDataProject: true,
+    category: 'admin',
+    categoryName: 'Administración Pública',
+    author: 'Melisa',
+    authorRole: 'teacher',
+    authorAvatar: '🦊',
+    status: 'completed',
+    publicationStatus: 'published',
+    tag: '✔ Completado',
+    tagClass: 'badge-completed',
+    date: '12 Abr 2025',
+    students: 24,
+    rating: '4.8',
+    progress: 100,
+    image: 'assets/projects_ui/card_data_gov.png',
+    banner: 'assets/projects_ui/card_data_gov.png',
+    slides: [
+      { id: 's1', title: 'Fundamentos de Gobernanza', content: 'Principios de calidad, seguridad y valor de los datos en la organización.', background: '#1e1b4b', textColor: '#ffffff' },
+      { id: 's2', title: 'Arquitectura de Datos y Metadatos', content: 'Estructuración de catálogos de datos y ciclo de vida de la información.', background: '#0f172a', textColor: '#ffffff' },
+      { id: 's3', title: 'Casos de Éxito y Auditoría', content: 'Implementación práctica, métricas de éxito y cumplimiento normativo.', background: '#042f2e', textColor: '#ffffff' }
+    ],
+    chapters: [
+      { id: 'ch1', title: 'Fundamentos de Gobernanza', slidesCount: 1 },
+      { id: 'ch2', title: 'Arquitectura de Datos', slidesCount: 1 },
+      { id: 'ch3', title: 'Casos de Éxito y Auditoría', slidesCount: 1 }
+    ],
+    createdAt: '2025-04-12T10:00:00.000Z',
+    updatedAt: '2025-04-12T10:00:00.000Z'
+  },
+  {
+    id: 'proj_ai_society',
+    title: 'Inteligencia Artificial y Sociedad',
+    description: 'Impacto ético, retos y oportunidades del desarrollo de modelos generativos.',
+    projectType: 'presentation',
+    isGovDataProject: false,
+    category: 'tecnologia',
+    categoryName: 'Tecnología & Programación',
+    author: 'Melisa',
+    authorRole: 'teacher',
+    authorAvatar: '🦊',
+    status: 'in_progress',
+    publicationStatus: 'draft',
+    tag: '⏱ En Proceso',
+    tagClass: 'badge-process',
+    date: '10 Abr 2025',
+    students: 18,
+    rating: '4.6',
+    progress: 50,
+    image: 'assets/projects_ui/card_ai_society.png',
+    banner: 'assets/projects_ui/card_ai_society.png',
+    slides: [
+      { id: 's1', title: 'Introducción a la IA', content: 'Panorama general de los algoritmos de machine learning e inteligencia artificial.', background: '#172554', textColor: '#ffffff' },
+      { id: 's2', title: 'Dilemas Éticos y Sociedad', content: 'Privacidad, sesgos algorítmicos y futuro del trabajo colaborativo con IA.', background: '#312e81', textColor: '#ffffff' }
+    ],
+    chapters: [
+      { id: 'ch1', title: 'Introducción a la IA', slidesCount: 1 },
+      { id: 'ch2', title: 'Dilemas Éticos', slidesCount: 1 }
+    ],
+    createdAt: '2025-04-10T09:30:00.000Z',
+    updatedAt: '2025-04-10T09:30:00.000Z'
+  },
+  {
+    id: 'proj_open_data',
+    title: 'Datos Abiertos y Transparencia',
+    description: 'Estrategias prácticas para la apertura, estandarización y auditoría ciudadana.',
+    projectType: 'presentation',
+    isGovDataProject: false,
+    category: 'sociales',
+    categoryName: 'Ciencias Sociales',
+    author: 'Melisa',
+    authorRole: 'teacher',
+    authorAvatar: '🦊',
+    status: 'review',
+    publicationStatus: 'ready_for_review',
+    tag: '👁 En Revisión',
+    tagClass: 'badge-review',
+    date: '8 Abr 2025',
+    students: 20,
+    rating: '4.7',
+    progress: 15,
+    image: 'assets/projects_ui/card_open_data.png',
+    banner: 'assets/projects_ui/card_open_data.png',
+    slides: [
+      { id: 's1', title: 'Transparencia Activa', content: 'Políticas de rendición de cuentas e interoperabilidad para el sector público.', background: '#2e1065', textColor: '#ffffff' },
+      { id: 's2', title: 'Formatos Estándar y Apertura', content: 'JSON, CSV, RDF y APIs abiertas para la consulta ciudadana.', background: '#3b0764', textColor: '#ffffff' }
+    ],
+    chapters: [
+      { id: 'ch1', title: 'Transparencia Activa', slidesCount: 1 },
+      { id: 'ch2', title: 'Formatos Estándar', slidesCount: 1 }
+    ],
+    createdAt: '2025-04-08T14:15:00.000Z',
+    updatedAt: '2025-04-08T14:15:00.000Z'
+  }
+];
+
 const DEFAULT_CHALLENGES = [
   {
     id: 'reto_sample_cloud',
@@ -401,6 +502,32 @@ function loadInitialState() {
       return c;
     });
   }
+  // Asegurar que existan los proyectos estructurados en la base de datos
+  if (typeof DEFAULT_PROJECTS !== 'undefined') {
+    DEFAULT_PROJECTS.forEach(defProj => {
+      const existingIndex = challenges.findIndex(c => c && (c.id === defProj.id || c.title === defProj.title));
+      if (existingIndex < 0) {
+        challenges.push({ ...defProj });
+      } else {
+        challenges[existingIndex] = {
+          ...defProj,
+          ...challenges[existingIndex],
+          projectType: challenges[existingIndex].projectType || defProj.projectType,
+          isGovDataProject: challenges[existingIndex].isGovDataProject ?? defProj.isGovDataProject,
+          status: challenges[existingIndex].status || defProj.status,
+          progress: challenges[existingIndex].progress ?? defProj.progress,
+          students: challenges[existingIndex].students ?? defProj.students,
+          rating: challenges[existingIndex].rating || defProj.rating,
+          date: challenges[existingIndex].date || defProj.date,
+          tag: challenges[existingIndex].tag || defProj.tag,
+          tagClass: challenges[existingIndex].tagClass || defProj.tagClass,
+          image: challenges[existingIndex].image || defProj.image,
+          banner: challenges[existingIndex].banner || defProj.banner
+        };
+      }
+    });
+  }
+
   localStorage.setItem('te_reto_challenges', JSON.stringify(challenges));
 
   const BLOCKED_CATS = ['fhjr', 'kj'];

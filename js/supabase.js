@@ -152,10 +152,20 @@ class SupabaseService {
       const { data, error } = await this.client.from('challenges').select('*');
       if (!error) {
         if (data && data.length > 0) {
-          // Mezclar retos en la nube con los locales
-          const cloudIds = new Set(data.map(c => c.id));
+          // Normalizar retos y proyectos provenientes de Supabase
+          const normalizedCloud = data.map(c => ({
+            ...c,
+            categoryName: c.categoryName || c.category_name || 'General',
+            authorAvatar: c.authorAvatar || c.author_avatar || '👨‍🏫',
+            projectType: c.projectType || c.project_type || 'presentation',
+            isGovDataProject: c.isGovDataProject ?? c.is_gov_data_project ?? false,
+            publicationStatus: c.publicationStatus || c.publication_status || 'published',
+            timePerQuestion: c.timePerQuestion || c.time_per_question || 20,
+            pointsStandard: c.pointsStandard || c.points_standard || 1000
+          }));
+          const cloudIds = new Set(normalizedCloud.map(c => c.id));
           const merged = [
-            ...data,
+            ...normalizedCloud,
             ...localChallenges.filter(c => !cloudIds.has(c.id))
           ];
           window.appState.challenges = merged;
@@ -172,14 +182,23 @@ class SupabaseService {
             author_avatar: c.authorAvatar || '👨‍🏫',
             plays: c.plays || 0,
             difficulty: c.difficulty || 'Medio',
-            banner: c.banner || '',
+            banner: c.banner || c.image || '',
+            project_type: c.projectType || c.project_type || 'presentation',
+            is_gov_data_project: !!(c.isGovDataProject || c.is_gov_data_project),
+            slides: c.slides || [],
+            chapters: c.chapters || [],
+            progress: c.progress || 0,
+            status: c.status || 'in_progress',
+            publication_status: c.publicationStatus || c.publication_status || 'draft',
+            rating: c.rating || '5.0',
+            students: c.students || 0,
             time_per_question: c.timePerQuestion || 20,
             points_standard: c.pointsStandard || 1000,
             is_public: true,
             questions: c.questions || []
           }));
           await this.client.from('challenges').upsert(formatted);
-          console.log('⚡ Retos predeterminados sincronizados en Supabase.');
+          console.log('⚡ Retos y proyectos predeterminados sincronizados en Supabase.');
         }
       }
     } catch (e) {

@@ -10,7 +10,8 @@ window.ProjectsView = {
   sortBy: 'recent',         // 'recent' | 'popular' | 'alpha'
   layoutMode: 'grid',       // 'grid' | 'list'
   searchQuery: '',
-  demoShowcaseProjects: [
+  demoShowcaseProjects: [],
+  legacyDemoShowcaseProjects: [
     {
       id: 'demo-gov-data',
       title: 'Gobierno de Datos en la Práctica',
@@ -402,9 +403,25 @@ window.ProjectsView = {
 
     const u = window.appState.currentUser;
     const isTeacherOrAdmin = this.isTeacherOrAdmin();
-    // En MENTIX, los proyectos abarcan: Presentaciones, Video Clases, Documentos Didácticos, Enlaces Web/URL y Proyectos GovData Nexus
+    // Asegurar que existan los proyectos estructurados en la base de datos
+    if (!window.appState.challenges) window.appState.challenges = [];
+    const hasDBProjects = window.appState.challenges.some(c => 
+      c.projectType === 'presentation' || c.projectType === 'video' || c.projectType === 'document' || c.projectType === 'url' || 
+      c.isGovDataProject || c.project_type || c.is_gov_data_project
+    );
+    if (!hasDBProjects && typeof DEFAULT_PROJECTS !== 'undefined') {
+      DEFAULT_PROJECTS.forEach(dp => {
+        if (!window.appState.challenges.some(c => c.id === dp.id)) {
+          window.appState.challenges.push({ ...dp });
+        }
+      });
+      if (typeof saveGlobalState === 'function') saveGlobalState(window.appState);
+    }
+
+    // En MENTIX, los proyectos de la base de datos abarcan: Presentaciones, Video Clases, Documentos Didácticos, Enlaces Web/URL y Proyectos GovData
     const rawProjects = (window.appState.challenges || []).filter(c => 
-      c.projectType === 'presentation' || c.projectType === 'video' || c.projectType === 'document' || c.projectType === 'url' || c.isGovDataProject
+      c.projectType === 'presentation' || c.projectType === 'video' || c.projectType === 'document' || c.projectType === 'url' || 
+      c.isGovDataProject || c.project_type || c.is_gov_data_project
     );
 
     const navEl = document.getElementById('main-navbar');
@@ -451,15 +468,25 @@ window.ProjectsView = {
       return isOwner || isTeacherOrAdmin;
     });
 
-    // Combinar con los proyectos de muestra del mockup si el usuario tiene pocos proyectos
+    // Proyectos directos desde la base de datos
     let displayList = [...allUserProjects];
-    if (this.demoShowcaseProjects && this.demoShowcaseProjects.length > 0) {
-      this.demoShowcaseProjects.forEach(demo => {
-        if (!displayList.some(p => p.id === demo.id || p.title === demo.title)) {
-          displayList.push(demo);
-        }
-      });
-    }
+
+    // Métricas dinámicas calculadas 100% desde la Base de Datos
+    const totalCreated = allUserProjects.length;
+    const completedCount = allUserProjects.filter(p => 
+      p.status === 'completed' || p.progress === 100 || p.publicationStatus === 'published'
+    ).length;
+    const inProgressCount = allUserProjects.filter(p => 
+      (p.status === 'in_progress' || (p.progress > 0 && p.progress < 100) || p.publicationStatus === 'draft') && 
+      p.status !== 'completed' && p.progress !== 100
+    ).length;
+    const justStartedCount = allUserProjects.filter(p => 
+      (!p.progress || p.progress <= 25 || p.status === 'review' || p.publicationStatus === 'ready_for_review') && 
+      p.status !== 'completed' && p.progress !== 100
+    ).length;
+    const avgProgress = totalCreated > 0 
+      ? Math.min(100, Math.round(allUserProjects.reduce((acc, p) => acc + (p.progress || (p.status === 'completed' ? 100 : (p.status === 'in_progress' ? 50 : 20))), 0) / totalCreated)) 
+      : 0;
 
     // Filtrar por pestañas (Todos, Mis Proyectos, En Proceso, Completados, Favoritos)
     if (this.currentFilterTab === 'mine') {
@@ -757,7 +784,7 @@ window.ProjectsView = {
                 <!-- Resumen de Proyectos y Estados -->
                 <div style="margin-bottom: 1.15rem; padding-top: 0.85rem; border-top: 1px solid #f1f5f9;">
                   <div style="display: flex; align-items: baseline; gap: 0.4rem; margin-bottom: 0.85rem;">
-                    <span style="font-size: 1.45rem; font-weight: 900; color: #0f172a; line-height: 1;">78%</span>
+                    <span style="font-size: 1.45rem; font-weight: 900; color: #0f172a; line-height: 1;">${avgProgress}%</span>
                     <span style="font-size: 0.82rem; font-weight: 700; color: #64748b;">completado</span>
                   </div>
 
@@ -767,7 +794,7 @@ window.ProjectsView = {
                         <span class="legend-dot dot-green" style="color: #22c55e; font-size: 1rem; line-height: 1;">●</span>
                         <span class="legend-text" style="color: #334155; font-weight: 600;">Proyectos Creados:</span>
                       </div>
-                      <strong class="legend-val" style="color: #0f172a; font-weight: 800; font-size: 0.95rem;">7</strong>
+                      <strong class="legend-val" style="color: #0f172a; font-weight: 800; font-size: 0.95rem;">${totalCreated}</strong>
                     </div>
 
                     <div class="legend-row" style="display: flex; align-items: center; justify-content: space-between;">
@@ -775,7 +802,7 @@ window.ProjectsView = {
                         <span class="legend-dot dot-blue" style="color: #0284c7; font-size: 1rem; line-height: 1;">●</span>
                         <span class="legend-text" style="color: #334155; font-weight: 600;">En Proceso:</span>
                       </div>
-                      <strong class="legend-val" style="color: #0f172a; font-weight: 800; font-size: 0.95rem;">2</strong>
+                      <strong class="legend-val" style="color: #0f172a; font-weight: 800; font-size: 0.95rem;">${inProgressCount}</strong>
                     </div>
 
                     <div class="legend-row" style="display: flex; align-items: center; justify-content: space-between;">
@@ -783,7 +810,7 @@ window.ProjectsView = {
                         <span class="legend-dot dot-purple" style="color: #8b5cf6; font-size: 1rem; line-height: 1;">●</span>
                         <span class="legend-text" style="color: #334155; font-weight: 600;">Recién Empezados:</span>
                       </div>
-                      <strong class="legend-val" style="color: #0f172a; font-weight: 800; font-size: 0.95rem;">1</strong>
+                      <strong class="legend-val" style="color: #0f172a; font-weight: 800; font-size: 0.95rem;">${justStartedCount}</strong>
                     </div>
                   </div>
                 </div>
@@ -851,9 +878,10 @@ window.ProjectsView = {
   },
 
   renderProjectCard(c, currentUser) {
-    const isAuthor = window.appRouter ? window.appRouter.isChallengeOwner(c) : false;
-    const projectType = c.projectType || 'presentation';
-    let defaultBanner = 'assets/projects_ui/card_data_gov.png';
+    const isTeacherOrAdmin = this.isTeacherOrAdmin();
+    const isAuthor = (window.appRouter ? window.appRouter.isChallengeOwner(c) : false) || isTeacherOrAdmin;
+    const projectType = c.projectType || c.project_type || 'presentation';
+    let defaultBanner = c.image || c.banner || c.coverImage || 'assets/projects_ui/card_data_gov.png';
     let tag = 'Completado';
     let tagIcon = '✔';
     let tagColor = 'background: #22c55e;';
@@ -871,59 +899,56 @@ window.ProjectsView = {
       primaryText = 'Continuar →';
       secondaryText = 'Ver Detalles';
       secondaryAction = `window.ProjectsView.openProjectLanding('${c.id}')`;
-      defaultBanner = 'assets/projects_ui/card_ai_society.png';
+      if (!c.image && !c.banner) defaultBanner = 'assets/projects_ui/card_ai_society.png';
     } else if (c.status === 'review' || c.publicationStatus === 'ready_for_review') {
       tag = 'En Revisión';
       tagIcon = '👁';
       tagColor = 'background: #8b5cf6;';
       primaryText = 'Ver Detalles →';
       secondaryText = '📊';
-      defaultBanner = 'assets/projects_ui/card_open_data.png';
+      secondaryAction = `window.ProjectsView.openProjectLanding('${c.id}')`;
+      if (!c.image && !c.banner) defaultBanner = 'assets/projects_ui/card_open_data.png';
     }
 
-    if (c.image) {
-      defaultBanner = c.image;
-    } else if (c.banner || c.coverImage) {
-      defaultBanner = c.banner || c.coverImage;
-    }
+    if (c.tag) tag = c.tag.replace(/^[✔⏱👁\s]+/, '').trim();
+    if (c.tagIcon) tagIcon = c.tagIcon;
 
-    // Special handling for the 3 demo showcase cards to match Image 1 with 100% precision
-    if (c.id === 'demo-gov-data') {
+    if (c.id === 'proj_gov_data' || c.id === 'demo-gov-data' || c.isGovDataProject || c.is_gov_data_project) {
       tag = 'Completado';
       tagIcon = '✔';
       tagColor = 'background: #22c55e;';
-      defaultBanner = 'assets/projects_ui/card_data_gov.png';
+      defaultBanner = c.image || c.banner || 'assets/projects_ui/card_data_gov.png';
       primaryText = 'Ver Detalles →';
-      primaryAction = "window.ProjectsView.openGovDataLanding ? window.ProjectsView.openGovDataLanding() : window.ProjectsView.openProjectLanding('demo-gov-data')";
+      primaryAction = `window.ProjectsView.openGovDataLanding ? window.ProjectsView.openGovDataLanding() : window.ProjectsView.openProjectLanding('${c.id}')`;
       secondaryText = 'Compartir <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-left:3px;"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>';
-      secondaryAction = "window.ProjectsView.shareProject('demo-gov-data', 'Gobierno de Datos en la Práctica')";
+      secondaryAction = `window.ProjectsView.shareProject('${c.id}', '${this.escapeHtml(c.title || '')}')`;
       primaryIsBlue = false;
-    } else if (c.id === 'demo-ai-society') {
+    } else if (c.id === 'proj_ai_society' || c.id === 'demo-ai-society') {
       tag = 'En Proceso';
       tagIcon = '⏱';
       tagColor = 'background: #0284c7;';
-      defaultBanner = 'assets/projects_ui/card_ai_society.png';
+      defaultBanner = c.image || c.banner || 'assets/projects_ui/card_ai_society.png';
       primaryText = 'Continuar →';
-      primaryAction = "window.ProjectWizard ? window.ProjectWizard.openWizard() : window.ProjectsView.openProjectLanding('demo-ai-society')";
+      primaryAction = `window.ProjectWizard ? window.ProjectWizard.openWizard() : window.ProjectsView.openProjectLanding('${c.id}')`;
       secondaryText = 'Ver Detalles';
-      secondaryAction = "window.ProjectsView.openProjectLanding('demo-ai-society')";
+      secondaryAction = `window.ProjectsView.openProjectLanding('${c.id}')`;
       primaryIsBlue = true;
-    } else if (c.id === 'demo-open-data') {
+    } else if (c.id === 'proj_open_data' || c.id === 'demo-open-data') {
       tag = 'En Revisión';
       tagIcon = '👁';
       tagColor = 'background: #8b5cf6;';
-      defaultBanner = 'assets/projects_ui/card_open_data.png';
+      defaultBanner = c.image || c.banner || 'assets/projects_ui/card_open_data.png';
       primaryText = 'Ver Detalles →';
-      primaryAction = "window.ProjectsView.openProjectLanding('demo-open-data')";
+      primaryAction = `window.ProjectsView.openProjectLanding('${c.id}')`;
       secondaryText = '📊';
-      secondaryAction = "window.ProjectsView.showToast('📊 Reporte analítico de Transparencia de Datos')";
+      secondaryAction = `window.ProjectsView.showToast('📊 Reporte analítico de Transparencia de Datos')`;
       primaryIsBlue = false;
     }
 
     const dateStr = c.date || (c.createdAt ? new Date(c.createdAt).toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' }) : '12 Abr 2025');
-    const studentsCount = c.students || c.playsCount || 24;
-    const ratingStr = c.rating || '4.8';
-    const desc = c.description || (c.id === 'demo-gov-data' ? 'Proyecto académico sobre la gestión estratégica de los datos.' : 'Proyecto académico de aprendizaje colaborativo.');
+    const studentsCount = (c.students !== undefined && c.students !== null) ? c.students : (c.playsCount || 0);
+    const ratingStr = c.rating || '5.0';
+    const desc = c.description || 'Proyecto académico de aprendizaje colaborativo.';
 
     const btnLeftStyle = primaryIsBlue
       ? 'background: #0047cc; color: #ffffff; border: none; box-shadow: 0 2px 8px rgba(0, 71, 204, 0.25);'
