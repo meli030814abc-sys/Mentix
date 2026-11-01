@@ -537,79 +537,38 @@ window.ProjectsView = {
 
     container.innerHTML = `
       <div class="mentix-saas-dashboard animate-fade-in">
-        <!-- 1. LEFT SIDEBAR -->
-        <aside class="mentix-saas-sidebar">
-          <div class="saas-sidebar-brand" onclick="window.appRouter.navigate('home')">
-            <div class="saas-brand-logo-icon">🧠</div>
-            <div class="saas-brand-text">
-              <span class="saas-brand-name">MENTIX</span>
-              <span class="saas-brand-sub">Aprende · Crea · Innova</span>
-            </div>
-          </div>
-
-          <nav class="saas-sidebar-nav">
-            <button class="saas-nav-item" onclick="window.appRouter.navigate('home')">
-              <span class="saas-nav-icon">🏠</span>
-              <span class="saas-nav-label">Inicio</span>
-            </button>
-            <button class="saas-nav-item active" onclick="window.ProjectsView.setCustomFilter('all')">
-              <span class="saas-nav-icon">📁</span>
-              <span class="saas-nav-label">Mis Proyectos</span>
-            </button>
-            <button class="saas-nav-item" onclick="window.ProjectsView.openCreateProjectModal()">
-              <span class="saas-nav-icon">👨‍🏫</span>
-              <span class="saas-nav-label">Panel Docente</span>
-            </button>
-            <button class="saas-nav-item" onclick="window.appRouter.navigate('home')">
-              <span class="saas-nav-icon">📝</span>
-              <span class="saas-nav-label">Evaluaciones</span>
-            </button>
-            <button class="saas-nav-item" onclick="window.ProjectsView.setCustomFilter('all')">
-              <span class="saas-nav-icon">📚</span>
-              <span class="saas-nav-label">Recursos</span>
-            </button>
-            <button class="saas-nav-item" onclick="window.ProjectsView.openCommunity()">
-              <span class="saas-nav-icon">👥</span>
-              <span class="saas-nav-label">Comunidad</span>
-            </button>
-            <button class="saas-nav-item" onclick="window.appRouter.navigate('home')">
-              <span class="saas-nav-icon">📊</span>
-              <span class="saas-nav-label">Reportes</span>
-            </button>
-            <button class="saas-nav-item" onclick="window.appRouter.openAuthModal ? window.appRouter.openAuthModal('profile') : null">
-              <span class="saas-nav-icon">⚙️</span>
-              <span class="saas-nav-label">Configuración</span>
-            </button>
-          </nav>
-
-          <!-- Bottom Promo Card -->
-          <div class="saas-sidebar-promo-card">
-            <div class="promo-cap-icon">🎓</div>
-            <div class="promo-title">Aprende sin límites</div>
-            <div class="promo-desc">Potencia tus habilidades con IA y tecnología.</div>
-            <button class="promo-btn" onclick="window.ProjectsView.openCreateProjectModal()">
-              Explorar Cursos →
-            </button>
-          </div>
-        </aside>
-
-        <!-- 2. MAIN CONTENT AREA -->
+        <!-- MAIN CONTENT AREA -->
         <main class="mentix-saas-main">
           <!-- TOPBAR -->
           <header class="saas-topbar" style="display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: 1.25rem; width: 100%;">
             
-            <!-- Search Pill Left -->
-            <div style="position: relative; width: 100%; max-width: 440px; display: flex; align-items: center;">
-              <span style="position: absolute; left: 1.1rem; font-size: 1rem; color: #64748b; pointer-events: none; z-index: 2;">🔍</span>
-              <input 
-                type="text" 
-                id="projects-search-input"
-                class="saas-search-input"
-                placeholder="Buscar proyectos, contenidos o temas..." 
-                value="${this.escapeHtml(this.searchQuery)}"
-                oninput="window.ProjectsView.handleSearch(this.value)"
-                style="width: 100% !important; padding: 0.72rem 1.25rem 0.72rem 2.75rem !important; border-radius: 9999px !important; background: #ffffff !important; border: 1.5px solid #cbd5e1 !important; color: #0f172a !important; font-size: 0.92rem !important; outline: none !important; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04) !important;"
-              />
+            <!-- Left: Brand / Home Link + Search Input -->
+            <div style="display: flex; align-items: center; gap: 0.85rem; width: 100%; max-width: 620px;">
+              <div 
+                onclick="window.appRouter.navigate('home')" 
+                title="Volver al Inicio" 
+                style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; padding: 0.45rem 1rem; border-radius: 9999px; background: #ffffff; border: 1.5px solid #e2e8f0; color: #0f172a; box-shadow: 0 2px 8px rgba(0,0,0,0.03); transition: all 0.2s ease; flex-shrink: 0;"
+                onmouseenter="this.style.borderColor='#00f5d4'; this.style.transform='translateY(-1px)';"
+                onmouseleave="this.style.borderColor='#e2e8f0'; this.style.transform='translateY(0)';"
+              >
+                <span style="font-size: 1.15rem;">🧠</span>
+                <span style="font-weight: 900; letter-spacing: -0.02em; font-size: 0.95rem;">MENTIX</span>
+                <span style="color: #64748b; font-weight: 600; font-size: 0.8rem;">· Inicio</span>
+              </div>
+
+              <!-- Search Pill -->
+              <div style="position: relative; width: 100%; display: flex; align-items: center;">
+                <span style="position: absolute; left: 1.1rem; font-size: 1rem; color: #64748b; pointer-events: none; z-index: 2;">🔍</span>
+                <input 
+                  type="text" 
+                  id="projects-search-input"
+                  class="saas-search-input"
+                  placeholder="Buscar proyectos, contenidos o temas..." 
+                  value="${this.escapeHtml(this.searchQuery)}"
+                  oninput="window.ProjectsView.handleSearch(this.value)"
+                  style="width: 100% !important; padding: 0.72rem 1.25rem 0.72rem 2.75rem !important; border-radius: 9999px !important; background: #ffffff !important; border: 1.5px solid #cbd5e1 !important; color: #0f172a !important; font-size: 0.92rem !important; outline: none !important; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04) !important;"
+                />
+              </div>
             </div>
 
             <!-- Topbar Right: Bell + User Pill -->
