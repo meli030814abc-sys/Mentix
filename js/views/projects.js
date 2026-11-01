@@ -1,4 +1,4 @@
-﻿/**
+/**
  * 🔥 MENTIX - Vista de Proyectos & Retos (Projects View)
  * Gestión integral de proyectos educativos: Diapositivas, Videos interactivos y Quizzes gamificados.
  */
@@ -937,7 +937,7 @@ window.ProjectsView = {
           <!-- Metadata Row -->
           <div class="saas-card-meta-row" style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem; font-size: 0.78rem; font-weight: 700; color: #1e293b; border-bottom: none; padding-bottom: 0;">
             <span style="display: inline-flex; align-items: center; gap: 0.35rem;">📅 ${dateStr}</span>
-            <span style="display: inline-flex; align-items: center; gap: 0.35rem; color: #0284c7;">👥 ${studentsCount}</span>
+            <span style="display: inline-flex; align-items: center; gap: 0.35rem; color: #0284c7; cursor: pointer; transition: transform 0.15s ease;" onmouseenter="this.style.transform='scale(1.1)';" onmouseleave="this.style.transform='scale(1)';" onclick="event.stopPropagation(); window.ProjectsView.openParticipantsModal('${c.id}');" title="Ver personas y roles participantes">👥 ${studentsCount}</span>
             <span style="display: inline-flex; align-items: center; gap: 0.25rem; color: #eab308;">⭐ ${ratingStr}</span>
           </div>
 
@@ -2339,8 +2339,7 @@ window.ProjectsView = {
               <button type="button" class="inno-nav-item active" onclick="window.ProjectsView.scrollToLandingSection('inno-sec-hero')">Inicio</button>
               <button type="button" class="inno-nav-item" onclick="window.ProjectsView.scrollToLandingSection('inno-sec-why')">Sobre el Proyecto</button>
               <button type="button" class="inno-nav-item" onclick="window.ProjectsView.scrollToLandingSection('inno-sec-resources')">Recursos</button>
-              <button type="button" class="inno-nav-item" onclick="window.ProjectsView.scrollToLandingSection('inno-sec-resources')">Presentaciones</button>
-              <button type="button" class="inno-nav-item" onclick="window.ProjectsView.scrollToLandingSection('inno-sec-resources')">Galería</button>
+              <button type="button" class="inno-nav-item" onclick="window.ProjectsView.scrollToLandingSection('inno-sec-participants')">Participantes & Roles</button>
               <button type="button" class="inno-nav-item" onclick="window.ProjectsView.scrollToLandingSection('inno-sec-timeline')">Contacto</button>
             </nav>
 
@@ -2566,7 +2565,12 @@ window.ProjectsView = {
           </section>
 
           <!-- ================================================================
-               5. SECCIÓN AVANCES E IMPACTO & SÉ PARTE DEL PROYECTO
+               5. SECCIÓN PERSONAS QUE PARTICIPARON EN EL PROYECTO & ROLES (MOCKUP EXACTO)
+               ================================================================ -->
+          ${this.getParticipantsSectionHtml(selected)}
+
+          <!-- ================================================================
+               6. SECCIÓN AVANCES E IMPACTO & SÉ PARTE DEL PROYECTO
                ================================================================ -->
           <section class="inno-bottom-section" id="inno-sec-timeline">
             <div class="inno-bottom-grid">
@@ -2607,7 +2611,7 @@ window.ProjectsView = {
           </section>
 
           <!-- ================================================================
-               6. FOOTER
+               7. FOOTER
                ================================================================ -->
           <footer class="inno-footer">
             <div class="inno-footer-left">
@@ -2625,8 +2629,7 @@ window.ProjectsView = {
               <a href="#inno-sec-hero" class="inno-footer-link">Inicio</a>
               <a href="#inno-sec-why" class="inno-footer-link">Sobre el Proyecto</a>
               <a href="#inno-sec-resources" class="inno-footer-link">Recursos</a>
-              <a href="#inno-sec-resources" class="inno-footer-link">Presentaciones</a>
-              <a href="#inno-sec-resources" class="inno-footer-link">Galería</a>
+              <a href="#inno-sec-participants" class="inno-footer-link">Participantes & Roles</a>
               <a href="#inno-sec-timeline" class="inno-footer-link">Contacto</a>
             </nav>
 
@@ -2661,6 +2664,156 @@ window.ProjectsView = {
   scrollToLandingSection(sectionId) {
     const el = document.getElementById(sectionId);
     if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  },
+
+  // ==========================================
+  // PARTICIPANTES Y ROLES (MOCKUP EXACTO)
+  // ==========================================
+  getParticipantsSectionHtml(proj = null, isModal = false) {
+    const title = proj ? this.escapeHtml(proj.title || 'Empresa Privada') : 'Empresa Privada';
+    return `
+      <section class="inno-participants-section" id="inno-sec-participants" style="${isModal ? 'padding: 0; background: transparent; border: none;' : ''}">
+        <div class="inno-participants-inner">
+          
+          <!-- Encabezado Superior -->
+          <div class="inno-roles-category-heading">
+            <span class="inno-roles-dot"></span>
+            ALGUNOS DE LOS ROLES CON LOS QUE TE REÚNES EN LA EMPRESA PRIVADA
+          </div>
+
+          <!-- Fila Principal: Tarjeta de Escenario + Tarjetas de Roles -->
+          <div class="inno-roles-row-grid">
+            
+            <!-- Tarjeta Izquierda del Escenario -->
+            <article class="inno-scenario-card" style="background-image: url('assets/projects_ui/scenario_card.png');">
+              <div class="inno-scenario-content">
+                <div class="inno-scenario-badge">
+                  <span>🎯</span> ENTRENAMIENTO DIRECTIVO EN
+                </div>
+                <h3 class="inno-scenario-title">Empresa Privada</h3>
+                <p class="inno-scenario-subtitle">
+                  Una Aventura Gráfica Conversacional de <strong style="color: #38bdf8;">BestPractices.Games</strong>
+                </p>
+              </div>
+            </article>
+
+            <!-- Tarjetas de Personajes Participantes -->
+            <div class="inno-characters-grid">
+              
+              <!-- 1. Severo Recorte -->
+              <article class="inno-char-card">
+                <div class="inno-char-img-wrap">
+                  <img src="assets/projects_ui/avatar_severo.png" alt="Severo Recorte" loading="lazy" />
+                </div>
+                <div class="inno-char-body">
+                  <div>
+                    <div class="inno-char-name">Severo Recorte</div>
+                    <div class="inno-char-role">Director General</div>
+                  </div>
+                  <div class="inno-char-quote">
+                    «los números salen»
+                  </div>
+                </div>
+              </article>
+
+              <!-- 2. Clara Fuente -->
+              <article class="inno-char-card">
+                <div class="inno-char-img-wrap">
+                  <img src="assets/projects_ui/avatar_clara.png" alt="Clara Fuente" loading="lazy" />
+                </div>
+                <div class="inno-char-body">
+                  <div>
+                    <div class="inno-char-name">Clara Fuente</div>
+                    <div class="inno-char-role">Directora de Datos</div>
+                  </div>
+                  <div class="inno-char-quote">
+                    «el dato es ese; lo que hagamos con él ya es tuyo»
+                  </div>
+                </div>
+              </article>
+
+              <!-- 3. Justo Sinrodeos -->
+              <article class="inno-char-card">
+                <div class="inno-char-img-wrap">
+                  <img src="assets/projects_ui/avatar_justo.png" alt="Justo Sinrodeos" loading="lazy" />
+                </div>
+                <div class="inno-char-body">
+                  <div>
+                    <div class="inno-char-name">Justo Sinrodeos</div>
+                    <div class="inno-char-role">Consejero Independiente</div>
+                  </div>
+                  <div class="inno-char-quote">
+                    «La decisión es suya. Dígamela sin rodeos, por favor.»
+                  </div>
+                </div>
+              </article>
+
+            </div>
+          </div>
+
+          <!-- Encabezado Inferior -->
+          <div class="inno-roles-category-heading" style="margin-top: 2rem; opacity: 0.85;">
+            <span class="inno-roles-dot"></span>
+            ALGUNOS DE LOS ROLES CON LOS QUE TE REÚNES EN LA ADMINISTRACIÓN PÚBLICA
+          </div>
+
+        </div>
+      </section>
+    `;
+  },
+
+  openParticipantsModal(projectId) {
+    if (window.soundEngine) window.soundEngine.playClick();
+    const proj = (window.appState.challenges || []).find(x => x.id === projectId) || 
+                 this.demoShowcaseProjects.find(x => x.id === projectId);
+    
+    const existing = document.getElementById('mentix-participants-modal');
+    if (existing) existing.remove();
+
+    const modal = document.createElement('div');
+    modal.id = 'mentix-participants-modal';
+    modal.className = 'animate-fade-in';
+    modal.style.cssText = `
+      position: fixed;
+      inset: 0;
+      z-index: 100000;
+      background: rgba(3, 7, 18, 0.85);
+      backdrop-filter: blur(8px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+      overflow-y: auto;
+    `;
+
+    modal.innerHTML = `
+      <div style="position: relative; width: 100%; max-width: 1100px; background: #070e1c; border: 1.5px solid rgba(0, 245, 212, 0.4); border-radius: 20px; box-shadow: 0 25px 60px rgba(0,0,0,0.7), 0 0 30px rgba(0, 245, 212, 0.2); overflow: hidden; margin: auto;">
+        <!-- Modal Header -->
+        <div style="display: flex; align-items: center; justify-content: space-between; padding: 1.25rem 1.75rem; border-bottom: 1px solid rgba(0, 245, 212, 0.15); background: rgba(15, 23, 42, 0.6);">
+          <div style="display: flex; align-items: center; gap: 0.65rem;">
+            <span style="font-size: 1.35rem;">👥</span>
+            <div>
+              <h3 style="margin: 0; font-size: 1.15rem; font-weight: 800; color: #ffffff;">Personas que participaron en el proyecto</h3>
+              <p style="margin: 0; font-size: 0.8rem; color: #94a3b8;">${proj ? this.escapeHtml(proj.title) : 'Roles y Participantes'}</p>
+            </div>
+          </div>
+          <button type="button" onclick="document.getElementById('mentix-participants-modal').remove()" style="background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.2); color: #ffffff; width: 34px; height: 34px; border-radius: 50%; font-size: 1.1rem; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: background 0.2s;" onmouseenter="this.style.background='rgba(239, 68, 68, 0.3)'" onmouseleave="this.style.background='rgba(255,255,255,0.08)'">
+            ✕
+          </button>
+        </div>
+
+        <!-- Modal Body -->
+        <div style="padding: 1.5rem 1.75rem;">
+          ${this.getParticipantsSectionHtml(proj, true)}
+        </div>
+      </div>
+    `;
+
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) modal.remove();
+    });
+
+    document.body.appendChild(modal);
   },
 
   playLandingVideo() {
