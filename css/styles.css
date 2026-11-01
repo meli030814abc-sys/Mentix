@@ -761,9 +761,158 @@ h1, h2, h3, h4, h5, h6 {
   100% { opacity: 1; transform: scale(1) translateY(0); }
 }
 
-@keyframes modalPopIn {
-  0% { opacity: 0; transform: scale(0.93) translateY(24px); }
-  100% { opacity: 1; transform: scale(1) translateY(0); }
+/* ==========================================================================
+   ESTILOS ULTRA-LLAMATIVOS Y VISIBLES PARA CREAR PROYECTO (ESTUDIANTES)
+   ========================================================================== */
+.student-create-page-wrapper,
+body.light-theme .student-create-page-wrapper {
+  color-scheme: dark;
+}
+
+/* Títulos y Subtítulos Principales */
+.student-create-page-wrapper .student-header-badge {
+  background: rgba(0, 245, 212, 0.22) !important;
+  border: 1.5px solid #00f5d4 !important;
+  color: #00f5d4 !important;
+  text-shadow: 0 0 12px rgba(0, 245, 212, 0.8) !important;
+  box-shadow: 0 0 25px rgba(0, 245, 212, 0.4) !important;
+}
+
+.student-create-page-wrapper .student-main-title {
+  color: #ffffff !important;
+  text-shadow: 0 2px 16px rgba(0, 0, 0, 0.95), 0 0 30px rgba(0, 245, 212, 0.35) !important;
+}
+
+/* Títulos de Cada Campo (Llamativos, Ligeramente más Grandes y Vibrantes) */
+.student-create-page-wrapper .student-title-cyan,
+body.light-theme .student-create-page-wrapper .student-title-cyan {
+  color: #00f5d4 !important;
+  font-size: 1.35rem !important;
+  font-weight: 900 !important;
+  letter-spacing: 0.3px !important;
+  text-shadow: 0 0 16px rgba(0, 245, 212, 0.85), 0 2px 6px rgba(0, 0, 0, 0.95) !important;
+}
+
+.student-create-page-wrapper .student-title-purple,
+body.light-theme .student-create-page-wrapper .student-title-purple {
+  color: #c084fc !important;
+  font-size: 1.35rem !important;
+  font-weight: 900 !important;
+  letter-spacing: 0.3px !important;
+  text-shadow: 0 0 16px rgba(192, 132, 252, 0.85), 0 2px 6px rgba(0, 0, 0, 0.95) !important;
+}
+
+.student-create-page-wrapper .student-title-blue,
+body.light-theme .student-create-page-wrapper .student-title-blue {
+  color: #38bdf8 !important;
+  font-size: 1.35rem !important;
+  font-weight: 900 !important;
+  letter-spacing: 0.3px !important;
+  text-shadow: 0 0 16px rgba(56, 189, 248, 0.85), 0 2px 6px rgba(0, 0, 0, 0.95) !important;
+}
+
+.student-create-page-wrapper .student-title-pink,
+body.light-theme .student-create-page-wrapper .student-title-pink {
+  color: #f472b6 !important;
+  font-size: 1.35rem !important;
+  font-weight: 900 !important;
+  letter-spacing: 0.3px !important;
+  text-shadow: 0 0 16px rgba(244, 114, 182, 0.85), 0 2px 6px rgba(0, 0, 0, 0.95) !important;
+}
+
+/* Badges de Estado */
+.student-create-page-wrapper .student-badge-cyan {
+  background: rgba(0, 245, 212, 0.22) !important;
+  border: 1px solid rgba(0, 245, 212, 0.6) !important;
+  color: #00f5d4 !important;
+  font-weight: 800 !important;
+  box-shadow: 0 0 12px rgba(0, 245, 212, 0.35) !important;
+}
+
+.student-create-page-wrapper .student-badge-purple {
+  background: rgba(192, 132, 252, 0.22) !important;
+  border: 1px solid rgba(192, 132, 252, 0.6) !important;
+  color: #e9d5ff !important;
+  font-weight: 800 !important;
+  box-shadow: 0 0 12px rgba(192, 132, 252, 0.35) !important;
+}
+
+.student-create-page-wrapper .student-badge-blue {
+  background: rgba(56, 189, 248, 0.22) !important;
+  border: 1px solid rgba(56, 189, 248, 0.6) !important;
+  color: #7dd3fc !important;
+  font-weight: 800 !important;
+  box-shadow: 0 0 12px rgba(56, 189, 248, 0.35) !important;
+}
+
+.student-create-page-wrapper .student-badge-pink {
+  background: rgba(244, 114, 182, 0.22) !important;
+  border: 1px solid rgba(244, 114, 182, 0.6) !important;
+  color: #fbcfe8 !important;
+  font-weight: 800 !important;
+  box-shadow: 0 0 12px rgba(244, 114, 182, 0.35) !important;
+}
+
+/* Párrafos explicativos claros y nítidos */
+.student-create-page-wrapper .student-field-desc,
+body.light-theme .student-create-page-wrapper .student-field-desc {
+  color: #cbd5e1 !important;
+  font-size: 0.95rem !important;
+  line-height: 1.5 !important;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8) !important;
+}
+
+/* Inputs y Textareas blindados contra el modo claro */
+.student-create-page-wrapper input:not([type="button"]):not([type="submit"]):not([type="checkbox"]):not([type="radio"]),
+.student-create-page-wrapper textarea,
+body.light-theme .student-create-page-wrapper input:not([type="button"]):not([type="submit"]):not([type="checkbox"]):not([type="radio"]),
+body.light-theme .student-create-page-wrapper textarea {
+  background: rgba(6, 11, 26, 0.92) !important;
+  color: #ffffff !important;
+  border: 2px solid rgba(255, 255, 255, 0.22) !important;
+  box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.75), 0 0 15px rgba(0, 245, 212, 0.08) !important;
+  transition: all 0.25s ease !important;
+}
+
+.student-create-page-wrapper input:focus,
+.student-create-page-wrapper textarea:focus,
+body.light-theme .student-create-page-wrapper input:focus,
+body.light-theme .student-create-page-wrapper textarea:focus {
+  background: rgba(8, 15, 36, 0.98) !important;
+  color: #ffffff !important;
+  border-color: #00f5d4 !important;
+  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.6), 0 0 24px rgba(0, 245, 212, 0.45) !important;
+}
+
+.student-create-page-wrapper input::placeholder,
+.student-create-page-wrapper textarea::placeholder,
+body.light-theme .student-create-page-wrapper input::placeholder,
+body.light-theme .student-create-page-wrapper textarea::placeholder {
+  color: rgba(203, 213, 225, 0.65) !important;
+  opacity: 1 !important;
+}
+
+/* Formatos de Contenido en Paso 2 */
+.student-create-page-wrapper .student-format-card-title {
+  font-size: 1.45rem !important;
+  font-weight: 900 !important;
+  margin-bottom: 0.5rem !important;
+}
+.student-create-page-wrapper .student-format-presentation .student-format-card-title {
+  color: #d8b4fe !important;
+  text-shadow: 0 0 14px rgba(192, 132, 252, 0.8) !important;
+}
+.student-create-page-wrapper .student-format-video .student-format-card-title {
+  color: #fca5a5 !important;
+  text-shadow: 0 0 14px rgba(248, 113, 113, 0.8) !important;
+}
+.student-create-page-wrapper .student-format-document .student-format-card-title {
+  color: #93c5fd !important;
+  text-shadow: 0 0 14px rgba(96, 165, 250, 0.8) !important;
+}
+.student-create-page-wrapper .student-format-url .student-format-card-title {
+  color: #6ee7b7 !important;
+  text-shadow: 0 0 14px rgba(52, 211, 153, 0.8) !important;
 }
 
 /* Vista Pantalla Completa para Previsualización de Reto */
