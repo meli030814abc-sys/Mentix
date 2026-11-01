@@ -1387,56 +1387,44 @@ window.ProjectsView = {
     const step = this.createProjectStep || 1;
 
     container.innerHTML = `
-      <div class="student-create-page-wrapper" style="min-height: 100vh; min-height: 100dvh; width: 100%; position: relative; overflow-x: hidden; background-color: #060b18; background-image: radial-gradient(circle at 10% 15%, rgba(0, 245, 212, 0.35) 0%, transparent 48%), radial-gradient(circle at 90% 12%, rgba(124, 58, 237, 0.42) 0%, transparent 50%), radial-gradient(circle at 50% 90%, rgba(247, 37, 133, 0.32) 0%, transparent 52%), radial-gradient(circle at 85% 82%, rgba(59, 130, 246, 0.38) 0%, transparent 46%), radial-gradient(circle at 15% 82%, rgba(16, 185, 129, 0.28) 0%, transparent 44%), linear-gradient(135deg, #050a18 0%, #0a1128 50%, #020617 100%); background-size: 160% 160%; animation: studentModalCosmicFlow 18s ease-in-out infinite alternate; padding: 2rem 1.5rem 5rem; box-sizing: border-box; display: flex; flex-direction: column; align-items: center;">
+      <div class="student-create-page-wrapper" style="min-height: 100vh; min-height: 100dvh; width: 100%; position: relative; overflow-x: hidden; box-sizing: border-box; background: #060b18 url('assets/student_create_bg.jpg') center center / cover no-repeat fixed; padding: 2.5rem 1.5rem 5rem; display: flex; flex-direction: column; align-items: center;">
         
-        <!-- Capa de Fondo Dinámico de Pantalla Completa con orbes y estrellas -->
-        <div class="student-bg-orbs-container" aria-hidden="true">
-          <div class="student-bg-orb orb-1"></div>
-          <div class="student-bg-orb orb-2"></div>
-          <div class="student-bg-orb orb-3"></div>
-          <div class="student-bg-orb orb-4"></div>
-          <div class="student-bg-cybergrid"></div>
-          <div class="student-float-icon icon-1">🚀</div>
-          <div class="student-float-icon icon-2">✨</div>
-          <div class="student-float-icon icon-3">🎯</div>
-          <div class="student-float-icon icon-4">💡</div>
-          <div class="student-float-icon icon-5">🪐</div>
-          <div class="student-float-icon icon-6">🏆</div>
-        </div>
+        <!-- Capa de viñeta cinematográfica para contraste y profundidad visual perfecta -->
+        <div style="position: fixed; inset: 0; background: radial-gradient(circle at 50% 25%, rgba(6, 11, 24, 0.40) 0%, rgba(3, 7, 18, 0.88) 100%); pointer-events: none; z-index: 0;"></div>
 
         <!-- Barra Superior de Navegación y Encabezado de Página -->
-        <header style="position: relative; z-index: 10; width: 100%; max-width: 960px; margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+        <header style="position: relative; z-index: 10; width: 100%; max-width: 980px; margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
           <button 
             type="button" 
             onclick="window.ProjectsView.closeCreateProjectModal()" 
-            style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.65rem 1.25rem; border-radius: 12px; background: rgba(15, 23, 42, 0.75); border: 1.5px solid rgba(255,255,255,0.2); color: #fff; font-size: 0.92rem; font-weight: 800; cursor: pointer; transition: all 0.2s ease; backdrop-filter: blur(10px);"
-            onmouseenter="this.style.borderColor='var(--neon-cyan)'; this.style.color='var(--neon-cyan)';"
-            onmouseleave="this.style.borderColor='rgba(255,255,255,0.2)'; this.style.color='#fff';"
+            style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.4rem; border-radius: 14px; background: rgba(10, 18, 42, 0.85); border: 1.5px solid rgba(0, 245, 212, 0.4); color: #ffffff; font-size: 0.95rem; font-weight: 800; cursor: pointer; transition: all 0.2s ease; backdrop-filter: blur(16px); box-shadow: 0 4px 20px rgba(0,0,0,0.4);"
+            onmouseenter="this.style.borderColor='var(--neon-cyan)'; this.style.boxShadow='0 0 15px rgba(0,245,212,0.4)';"
+            onmouseleave="this.style.borderColor='rgba(0, 245, 212, 0.4)'; this.style.boxShadow='0 4px 20px rgba(0,0,0,0.4)';"
           >
             ← Volver a Proyectos
           </button>
 
           <div style="text-align: center; flex: 1; min-width: 260px;">
-            <div style="display: inline-flex; align-items: center; gap: 0.4rem; background: rgba(0,245,212,0.15); border: 1px solid var(--neon-cyan); padding: 0.35rem 1rem; border-radius: 9999px; font-size: 0.85rem; font-weight: 900; color: var(--neon-cyan); margin-bottom: 0.4rem; box-shadow: 0 0 20px rgba(0,245,212,0.25);">
+            <div style="display: inline-flex; align-items: center; gap: 0.4rem; background: rgba(0,245,212,0.18); border: 1.5px solid var(--neon-cyan); padding: 0.35rem 1.15rem; border-radius: 9999px; font-size: 0.85rem; font-weight: 900; color: var(--neon-cyan); margin-bottom: 0.45rem; box-shadow: 0 0 25px rgba(0,245,212,0.35); text-transform: uppercase; letter-spacing: 0.5px;">
               <span>✨</span> CREADOR DE PROYECTOS EDUCATIVOS
             </div>
-            <h1 style="font-size: 2rem; font-weight: 900; margin: 0; color: #ffffff; letter-spacing: -0.5px; text-shadow: 0 2px 10px rgba(0,0,0,0.7);">
+            <h1 style="font-size: 2.2rem; font-weight: 900; margin: 0; color: #ffffff; letter-spacing: -0.5px; text-shadow: 0 2px 14px rgba(0,0,0,0.85);">
               ${step === 1 ? 'Datos Generales de tu Proyecto' : 'Elige el Formato de Contenido'}
             </h1>
-            <p style="font-size: 0.95rem; color: #cbd5e1; margin: 0.4rem 0 0;">
+            <p style="font-size: 0.98rem; color: #e2e8f0; margin: 0.45rem 0 0; text-shadow: 0 1px 4px rgba(0,0,0,0.8);">
               ${step === 1 
-                ? 'Paso 1 de 2: Completa la información principal para estructurar y publicar tu proyecto en la Landing Page.' 
-                : 'Paso 2 de 2: Selecciona la presentación, video, documentos o enlaces para dar vida a tu Landing Page.'}
+                ? 'Paso 1 de 2: Registra la información general de tu proyecto para destacarlo en la Landing Page.' 
+                : 'Paso 2 de 2: Selecciona la presentación, video, documentos o enlaces para estructurar tu proyecto.'}
             </p>
           </div>
 
-          <div style="display: inline-flex; align-items: center; gap: 0.5rem; background: rgba(124, 58, 237, 0.2); border: 1.5px solid #7c3aed; padding: 0.5rem 1rem; border-radius: 12px; color: #c4b5fd; font-size: 0.88rem; font-weight: 800;">
+          <div style="display: inline-flex; align-items: center; gap: 0.5rem; background: rgba(124, 58, 237, 0.35); border: 1.5px solid #a78bfa; padding: 0.6rem 1.2rem; border-radius: 14px; color: #ede9fe; font-size: 0.92rem; font-weight: 900; backdrop-filter: blur(12px); box-shadow: 0 4px 20px rgba(124,58,237,0.3);">
             <span>${step === 1 ? 'Paso 1 de 2' : 'Paso 2 de 2'}</span>
           </div>
         </header>
 
         <!-- Contenedor Principal Amplio (Pantallas Grandes) -->
-        <main style="position: relative; z-index: 10; width: 100%; max-width: 960px;">
+        <main style="position: relative; z-index: 10; width: 100%; max-width: 980px;">
           ${step === 1 ? this.renderStudentCreateStep1Html(d) : this.renderStudentCreateStep2Html(d)}
         </main>
       </div>
@@ -1452,19 +1440,19 @@ window.ProjectsView = {
 
   renderStudentCreateStep1Html(d) {
     return `
-      <div class="glass-panel" style="background: rgba(10, 18, 42, 0.88); backdrop-filter: blur(28px); -webkit-backdrop-filter: blur(28px); border: 2px solid rgba(0, 245, 212, 0.5); border-radius: 24px; padding: 2.5rem; box-shadow: 0 30px 90px rgba(0,0,0,0.85), 0 0 50px rgba(0,245,212,0.25);">
+      <div class="glass-panel" style="background: rgba(8, 14, 34, 0.82); backdrop-filter: blur(28px); -webkit-backdrop-filter: blur(28px); border: 2px solid rgba(0, 245, 212, 0.4); border-radius: 28px; padding: 2.75rem; box-shadow: 0 30px 90px rgba(0,0,0,0.85), 0 0 45px rgba(0,245,212,0.2);">
         
-        <div style="display: flex; flex-direction: column; gap: 1.75rem; margin-bottom: 2.25rem;">
+        <div style="display: flex; flex-direction: column; gap: 1.85rem; margin-bottom: 2.5rem;">
           
           <!-- PANTALLA 1: Nombre del Proyecto -->
-          <div style="background: rgba(15, 23, 42, 0.7); border: 1.5px solid rgba(0, 245, 212, 0.3); border-radius: 18px; padding: 1.5rem; transition: all 0.25s ease;" onfocuswithin="this.style.borderColor='var(--neon-cyan)'; this.style.boxShadow='0 0 25px rgba(0,245,212,0.3)';">
+          <div style="background: rgba(12, 20, 48, 0.65); border: 1.5px solid rgba(0, 245, 212, 0.35); border-radius: 20px; padding: 1.6rem 1.8rem; box-shadow: 0 8px 30px rgba(0,0,0,0.25); transition: all 0.25s ease;" onfocuswithin="this.style.borderColor='var(--neon-cyan)'; this.style.boxShadow='0 0 30px rgba(0,245,212,0.35)';">
             <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem;">
               <label for="student-proj-title" style="display: flex; align-items: center; gap: 0.5rem; font-size: 1.15rem; font-weight: 900; color: var(--neon-cyan);">
                 <span>🏷️</span> Nombre del Proyecto <span style="color: #ef4444;">*</span>
               </label>
-              <span style="font-size: 0.78rem; font-weight: 800; background: rgba(0,245,212,0.15); color: var(--neon-cyan); padding: 0.2rem 0.6rem; border-radius: 9999px;">Obligatorio</span>
+              <span style="font-size: 0.78rem; font-weight: 800; background: rgba(0,245,212,0.18); color: var(--neon-cyan); padding: 0.25rem 0.7rem; border-radius: 9999px;">Obligatorio</span>
             </div>
-            <p style="font-size: 0.88rem; color: #94a3b8; margin: 0 0 0.85rem;">
+            <p style="font-size: 0.9rem; color: #94a3b8; margin: 0 0 0.85rem;">
               Título principal de impacto que se mostrará en grande en la portada de tu Landing Page y catálogo.
             </p>
             <input 
@@ -1472,19 +1460,19 @@ window.ProjectsView = {
               id="student-proj-title" 
               value="${this.escapeHtml(d.title || '')}"
               placeholder="Ej. Inteligencia Artificial en el Aula: El Futuro de la Educación" 
-              style="width: 100%; font-size: 1.25rem; font-weight: 800; padding: 1rem 1.25rem; border-radius: 14px; background: rgba(10, 15, 30, 0.9); border: 1.5px solid rgba(255, 255, 255, 0.18); color: #ffffff; outline: none; box-sizing: border-box;"
+              style="width: 100%; font-size: 1.3rem; font-weight: 800; padding: 1.1rem 1.4rem; border-radius: 14px; background: rgba(4, 8, 22, 0.9); border: 1.5px solid rgba(255, 255, 255, 0.18); color: #ffffff; outline: none; box-sizing: border-box;"
             />
           </div>
 
           <!-- PANTALLA 2: Quién lo hizo -->
-          <div style="background: rgba(15, 23, 42, 0.7); border: 1.5px solid rgba(124, 58, 237, 0.3); border-radius: 18px; padding: 1.5rem; transition: all 0.25s ease;" onfocuswithin="this.style.borderColor='#a78bfa'; this.style.boxShadow='0 0 25px rgba(124,58,237,0.3)';">
+          <div style="background: rgba(12, 20, 48, 0.65); border: 1.5px solid rgba(124, 58, 237, 0.35); border-radius: 20px; padding: 1.6rem 1.8rem; box-shadow: 0 8px 30px rgba(0,0,0,0.25); transition: all 0.25s ease;" onfocuswithin="this.style.borderColor='#a78bfa'; this.style.boxShadow='0 0 30px rgba(124,58,237,0.35)';">
             <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem;">
               <label for="student-proj-author" style="display: flex; align-items: center; gap: 0.5rem; font-size: 1.15rem; font-weight: 900; color: #c4b5fd;">
                 <span>👤</span> Quién lo hizo (Autor o Integrantes) <span style="color: #ef4444;">*</span>
               </label>
-              <span style="font-size: 0.78rem; font-weight: 800; background: rgba(124,58,237,0.15); color: #c4b5fd; padding: 0.2rem 0.6rem; border-radius: 9999px;">Obligatorio</span>
+              <span style="font-size: 0.78rem; font-weight: 800; background: rgba(124,58,237,0.18); color: #c4b5fd; padding: 0.25rem 0.7rem; border-radius: 9999px;">Obligatorio</span>
             </div>
-            <p style="font-size: 0.88rem; color: #94a3b8; margin: 0 0 0.85rem;">
+            <p style="font-size: 0.9rem; color: #94a3b8; margin: 0 0 0.85rem;">
               Nombres de los estudiantes, integrantes o creadores que desarrollaron este proyecto educativo.
             </p>
             <input 
@@ -1492,56 +1480,58 @@ window.ProjectsView = {
               id="student-proj-author" 
               value="${this.escapeHtml(d.author || '')}"
               placeholder="Ej. Valentina Gómez, Mateo Torres, Equipo Alfa..." 
-              style="width: 100%; font-size: 1.2rem; font-weight: 700; padding: 1rem 1.25rem; border-radius: 14px; background: rgba(10, 15, 30, 0.9); border: 1.5px solid rgba(255, 255, 255, 0.18); color: #ffffff; outline: none; box-sizing: border-box;"
+              style="width: 100%; font-size: 1.2rem; font-weight: 700; padding: 1.1rem 1.4rem; border-radius: 14px; background: rgba(4, 8, 22, 0.9); border: 1.5px solid rgba(255, 255, 255, 0.18); color: #ffffff; outline: none; box-sizing: border-box;"
             />
           </div>
 
           <!-- PANTALLA 3: Resumen del Proyecto -->
-          <div style="background: rgba(15, 23, 42, 0.7); border: 1.5px solid rgba(56, 189, 248, 0.3); border-radius: 18px; padding: 1.5rem; transition: all 0.25s ease;" onfocuswithin="this.style.borderColor='#38bdf8'; this.style.boxShadow='0 0 25px rgba(56,189,248,0.3)';">
+          <div style="background: rgba(12, 20, 48, 0.65); border: 1.5px solid rgba(56, 189, 248, 0.35); border-radius: 20px; padding: 1.6rem 1.8rem; box-shadow: 0 8px 30px rgba(0,0,0,0.25); transition: all 0.25s ease;" onfocuswithin="this.style.borderColor='#38bdf8'; this.style.boxShadow='0 0 30px rgba(56,189,248,0.35)';">
             <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem;">
               <label for="student-proj-summary" style="display: flex; align-items: center; gap: 0.5rem; font-size: 1.15rem; font-weight: 900; color: #38bdf8;">
                 <span>📝</span> Resumen del Proyecto (Síntesis) <span style="color: #ef4444;">*</span>
               </label>
-              <span style="font-size: 0.78rem; font-weight: 800; background: rgba(56,189,248,0.15); color: #38bdf8; padding: 0.2rem 0.6rem; border-radius: 9999px;">Obligatorio</span>
+              <span style="font-size: 0.78rem; font-weight: 800; background: rgba(56,189,248,0.18); color: #38bdf8; padding: 0.25rem 0.7rem; border-radius: 9999px;">Obligatorio</span>
             </div>
-            <p style="font-size: 0.88rem; color: #94a3b8; margin: 0 0 0.85rem;">
+            <p style="font-size: 0.9rem; color: #94a3b8; margin: 0 0 0.85rem;">
               Breve sinopsis (2 a 4 líneas) que resume el objetivo y cautiva a los visitantes en la portada de la Landing Page.
             </p>
             <textarea 
               id="student-proj-summary" 
               rows="3"
               placeholder="Escribe un resumen conciso de qué trata el proyecto, a quién va dirigido y cuál es su objetivo principal..." 
-              style="width: 100%; font-size: 1.15rem; line-height: 1.6; padding: 1rem 1.25rem; border-radius: 14px; background: rgba(10, 15, 30, 0.9); border: 1.5px solid rgba(255, 255, 255, 0.18); color: #ffffff; outline: none; box-sizing: border-box; resize: vertical;"
+              style="width: 100%; font-size: 1.15rem; line-height: 1.6; padding: 1.1rem 1.4rem; border-radius: 14px; background: rgba(4, 8, 22, 0.9); border: 1.5px solid rgba(255, 255, 255, 0.18); color: #ffffff; outline: none; box-sizing: border-box; resize: vertical;"
             >${this.escapeHtml(d.summary || '')}</textarea>
           </div>
 
           <!-- PANTALLA 4: Descripción Detallada -->
-          <div style="background: rgba(15, 23, 42, 0.7); border: 1.5px solid rgba(244, 114, 182, 0.3); border-radius: 18px; padding: 1.5rem; transition: all 0.25s ease;" onfocuswithin="this.style.borderColor='#f472b6'; this.style.boxShadow='0 0 25px rgba(244,114,182,0.3)';">
+          <div style="background: rgba(12, 20, 48, 0.65); border: 1.5px solid rgba(244, 114, 182, 0.35); border-radius: 20px; padding: 1.6rem 1.8rem; box-shadow: 0 8px 30px rgba(0,0,0,0.25); transition: all 0.25s ease;" onfocuswithin="this.style.borderColor='#f472b6'; this.style.boxShadow='0 0 30px rgba(244,114,182,0.35)';">
             <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem;">
               <label for="student-proj-desc" style="display: flex; align-items: center; gap: 0.5rem; font-size: 1.15rem; font-weight: 900; color: #f472b6;">
                 <span>📖</span> Descripción Detallada del Proyecto
               </label>
-              <span style="font-size: 0.78rem; font-weight: 800; background: rgba(244,114,182,0.15); color: #f472b6; padding: 0.2rem 0.6rem; border-radius: 9999px;">Detallada</span>
+              <span style="font-size: 0.78rem; font-weight: 800; background: rgba(244,114,182,0.18); color: #f472b6; padding: 0.25rem 0.7rem; border-radius: 9999px;">Detallada</span>
             </div>
-            <p style="font-size: 0.88rem; color: #94a3b8; margin: 0 0 0.85rem;">
+            <p style="font-size: 0.9rem; color: #94a3b8; margin: 0 0 0.85rem;">
               Profundiza en los antecedentes, el problema identificado, la metodología de trabajo, los aprendizajes y conclusiones.
             </p>
             <textarea 
               id="student-proj-desc" 
               rows="5"
               placeholder="Detalla toda la información de tu proyecto educativo para estructurar las secciones de la Landing Page..." 
-              style="width: 100%; font-size: 1.15rem; line-height: 1.6; padding: 1rem 1.25rem; border-radius: 14px; background: rgba(10, 15, 30, 0.9); border: 1.5px solid rgba(255, 255, 255, 0.18); color: #ffffff; outline: none; box-sizing: border-box; resize: vertical;"
+              style="width: 100%; font-size: 1.15rem; line-height: 1.6; padding: 1.1rem 1.4rem; border-radius: 14px; background: rgba(4, 8, 22, 0.9); border: 1.5px solid rgba(255, 255, 255, 0.18); color: #ffffff; outline: none; box-sizing: border-box; resize: vertical;"
             >${this.escapeHtml(d.description || '')}</textarea>
           </div>
 
         </div>
 
         <!-- Barra Inferior de Acción -->
-        <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(255,255,255,0.12); padding-top: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(255,255,255,0.14); padding-top: 1.75rem; flex-wrap: wrap; gap: 1rem;">
           <button 
             type="button" 
             onclick="window.ProjectsView.closeCreateProjectModal()" 
-            style="padding: 0.85rem 1.5rem; font-weight: 800; border-radius: 12px; background: transparent; border: 1.5px solid rgba(255,255,255,0.25); color: #cbd5e1; cursor: pointer; font-size: 0.95rem;"
+            style="padding: 0.95rem 1.65rem; font-weight: 800; border-radius: 14px; background: rgba(15, 23, 42, 0.7); border: 1.5px solid rgba(255,255,255,0.25); color: #cbd5e1; cursor: pointer; font-size: 1rem; transition: all 0.2s ease;"
+            onmouseenter="this.style.color='#fff'; this.style.borderColor='rgba(255,255,255,0.4)';"
+            onmouseleave="this.style.color='#cbd5e1'; this.style.borderColor='rgba(255,255,255,0.25)';"
           >
             ← Cancelar
           </button>
@@ -1549,7 +1539,7 @@ window.ProjectsView = {
           <button 
             type="button" 
             onclick="window.ProjectsView.goToCreateProjectStep(2)" 
-            style="display: inline-flex; align-items: center; gap: 0.65rem; padding: 0.95rem 2rem; font-weight: 900; font-size: 1.1rem; border-radius: 14px; background: linear-gradient(135deg, #00f5d4 0%, #7c3aed 100%); color: #050b14; border: none; cursor: pointer; box-shadow: 0 6px 25px rgba(0, 245, 212, 0.4); transition: transform 0.2s ease;"
+            style="display: inline-flex; align-items: center; gap: 0.75rem; padding: 1.05rem 2.25rem; font-weight: 900; font-size: 1.15rem; border-radius: 16px; background: linear-gradient(135deg, #00f5d4 0%, #7c3aed 100%); color: #050b14; border: none; cursor: pointer; box-shadow: 0 6px 28px rgba(0, 245, 212, 0.45); transition: transform 0.2s ease;"
             onmouseenter="this.style.transform='translateY(-2px) scale(1.02)';"
             onmouseleave="this.style.transform='none';"
           >
@@ -1564,18 +1554,18 @@ window.ProjectsView = {
 
   renderStudentCreateStep2Html(d) {
     return `
-      <div class="glass-panel" style="background: rgba(10, 18, 42, 0.88); backdrop-filter: blur(28px); -webkit-backdrop-filter: blur(28px); border: 2px solid rgba(0, 245, 212, 0.5); border-radius: 24px; padding: 2.5rem; box-shadow: 0 30px 90px rgba(0,0,0,0.85), 0 0 50px rgba(0,245,212,0.25);">
+      <div class="glass-panel" style="background: rgba(8, 14, 34, 0.82); backdrop-filter: blur(28px); -webkit-backdrop-filter: blur(28px); border: 2px solid rgba(0, 245, 212, 0.4); border-radius: 28px; padding: 2.75rem; box-shadow: 0 30px 90px rgba(0,0,0,0.85), 0 0 45px rgba(0,245,212,0.2);">
         
         <!-- Ficha Resumen del Proyecto -->
-        <div style="background: rgba(0, 245, 212, 0.08); border: 1.5px solid rgba(0, 245, 212, 0.35); border-radius: 16px; padding: 1.25rem 1.5rem; margin-bottom: 2rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
+        <div style="background: rgba(0, 245, 212, 0.08); border: 1.5px solid rgba(0, 245, 212, 0.35); border-radius: 18px; padding: 1.35rem 1.65rem; margin-bottom: 2.25rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
           <div>
-            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.25rem;">
-              <span style="font-size: 1.4rem;">💡</span>
-              <h3 style="font-size: 1.3rem; font-weight: 900; margin: 0; color: var(--neon-cyan);">
+            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.3rem;">
+              <span style="font-size: 1.5rem;">💡</span>
+              <h3 style="font-size: 1.35rem; font-weight: 900; margin: 0; color: var(--neon-cyan);">
                 ${this.escapeHtml(d.title || 'Mi Proyecto Educativo')}
               </h3>
             </div>
-            <p style="font-size: 0.92rem; color: #cbd5e1; margin: 0;">
+            <p style="font-size: 0.95rem; color: #cbd5e1; margin: 0;">
               <strong>Por:</strong> ${this.escapeHtml(d.author || 'Estudiante')} 
               ${d.summary ? `<span style="color: #94a3b8; margin-left: 0.5rem;">• "${this.escapeHtml(d.summary)}"</span>` : ''}
             </p>
@@ -1584,40 +1574,42 @@ window.ProjectsView = {
           <button 
             type="button" 
             onclick="window.ProjectsView.goToCreateProjectStep(1)" 
-            style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.25); color: #ffffff; border-radius: 10px; padding: 0.5rem 1rem; font-size: 0.85rem; font-weight: 800; cursor: pointer; display: inline-flex; align-items: center; gap: 0.4rem;"
+            style="background: rgba(255,255,255,0.1); border: 1.5px solid rgba(255,255,255,0.25); color: #ffffff; border-radius: 12px; padding: 0.6rem 1.15rem; font-size: 0.9rem; font-weight: 800; cursor: pointer; display: inline-flex; align-items: center; gap: 0.4rem; transition: all 0.2s ease;"
+            onmouseenter="this.style.background='rgba(255,255,255,0.18)';"
+            onmouseleave="this.style.background='rgba(255,255,255,0.1)';"
           >
             ✏️ Volver a editar datos
           </button>
         </div>
 
-        <div style="text-align: center; margin-bottom: 1.75rem;">
-          <h2 style="font-size: 1.6rem; font-weight: 900; margin: 0 0 0.4rem; color: #ffffff;">
+        <div style="text-align: center; margin-bottom: 2rem;">
+          <h2 style="font-size: 1.75rem; font-weight: 900; margin: 0 0 0.45rem; color: #ffffff;">
             Selecciona el Formato de tu Proyecto
           </h2>
-          <p style="font-size: 0.95rem; color: #94a3b8; margin: 0;">
-            Elige la estructura que deseas utilizar. Al seleccionar, se creará tu proyecto configurado para la Landing Page:
+          <p style="font-size: 0.98rem; color: #94a3b8; margin: 0;">
+            Elige la estructura interactiva que deseas utilizar para publicar tu contenido en la Landing Page:
           </p>
         </div>
 
         <!-- Las 4 Pantallas Grandes de Formato (Presentación, Video Clase, Documento, URL) -->
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.5rem; margin-bottom: 2.25rem;">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.5rem; margin-bottom: 2.5rem;">
           
           <!-- Opción 1: Presentación Interactiva -->
           <div 
             class="glass-panel" 
             onclick="window.ProjectsView.createStudentProject('presentation')"
-            style="padding: 2rem 1.5rem; border-radius: 20px; border: 2px solid #7c3aed; background: rgba(124, 58, 237, 0.12); cursor: pointer; text-align: center; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); display: flex; flex-direction: column; justify-content: space-between;"
-            onmouseenter="this.style.transform='translateY(-6px)'; this.style.borderColor='var(--neon-cyan)'; this.style.boxShadow='0 12px 30px rgba(124, 58, 237, 0.35)';"
-            onmouseleave="this.style.transform='none'; this.style.borderColor='#7c3aed'; this.style.boxShadow='none';"
+            style="padding: 2.2rem 1.8rem; border-radius: 22px; border: 2px solid #7c3aed; background: rgba(124, 58, 237, 0.15); cursor: pointer; text-align: center; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); display: flex; flex-direction: column; justify-content: space-between; box-shadow: 0 10px 30px rgba(0,0,0,0.3);"
+            onmouseenter="this.style.transform='translateY(-6px)'; this.style.borderColor='var(--neon-cyan)'; this.style.boxShadow='0 14px 35px rgba(124, 58, 237, 0.45)';"
+            onmouseleave="this.style.transform='none'; this.style.borderColor='#7c3aed'; this.style.boxShadow='0 10px 30px rgba(0,0,0,0.3)';"
           >
             <div>
-              <div style="font-size: 3.5rem; margin-bottom: 0.75rem;">📊</div>
-              <h3 style="font-size: 1.35rem; font-weight: 900; margin: 0 0 0.5rem; color: #ffffff;">Presentación</h3>
-              <p style="font-size: 0.88rem; color: #cbd5e1; margin: 0 0 1.25rem; line-height: 1.5;">
+              <div style="font-size: 3.6rem; margin-bottom: 0.85rem;">📊</div>
+              <h3 style="font-size: 1.4rem; font-weight: 900; margin: 0 0 0.5rem; color: #ffffff;">Presentación</h3>
+              <p style="font-size: 0.9rem; color: #cbd5e1; margin: 0 0 1.35rem; line-height: 1.5;">
                 Diapositivas interactivas con explicaciones, conceptos clave, notas e imágenes para proyectar en clase.
               </p>
             </div>
-            <button type="button" class="btn btn-outline" style="width: 100%; font-size: 0.9rem; padding: 0.65rem 1rem; border-color: #7c3aed; color: #c4b5fd; font-weight: 900; border-radius: 12px; pointer-events: none;">
+            <button type="button" class="btn btn-outline" style="width: 100%; font-size: 0.92rem; padding: 0.75rem 1rem; border-color: #7c3aed; color: #c4b5fd; font-weight: 900; border-radius: 14px; pointer-events: none;">
               Crear Presentación →
             </button>
           </div>
@@ -1626,18 +1618,18 @@ window.ProjectsView = {
           <div 
             class="glass-panel" 
             onclick="window.ProjectsView.createStudentProject('video')"
-            style="padding: 2rem 1.5rem; border-radius: 20px; border: 2px solid #ef4444; background: rgba(239, 68, 68, 0.12); cursor: pointer; text-align: center; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); display: flex; flex-direction: column; justify-content: space-between;"
-            onmouseenter="this.style.transform='translateY(-6px)'; this.style.borderColor='var(--neon-cyan)'; this.style.boxShadow='0 12px 30px rgba(239, 68, 68, 0.35)';"
-            onmouseleave="this.style.transform='none'; this.style.borderColor='#ef4444'; this.style.boxShadow='none';"
+            style="padding: 2.2rem 1.8rem; border-radius: 22px; border: 2px solid #ef4444; background: rgba(239, 68, 68, 0.15); cursor: pointer; text-align: center; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); display: flex; flex-direction: column; justify-content: space-between; box-shadow: 0 10px 30px rgba(0,0,0,0.3);"
+            onmouseenter="this.style.transform='translateY(-6px)'; this.style.borderColor='var(--neon-cyan)'; this.style.boxShadow='0 14px 35px rgba(239, 68, 68, 0.45)';"
+            onmouseleave="this.style.transform='none'; this.style.borderColor='#ef4444'; this.style.boxShadow='0 10px 30px rgba(0,0,0,0.3)';"
           >
             <div>
-              <div style="font-size: 3.5rem; margin-bottom: 0.75rem;">🎬</div>
-              <h3 style="font-size: 1.35rem; font-weight: 900; margin: 0 0 0.5rem; color: #ffffff;">Video Clase</h3>
-              <p style="font-size: 0.88rem; color: #cbd5e1; margin: 0 0 1.25rem; line-height: 1.5;">
+              <div style="font-size: 3.6rem; margin-bottom: 0.85rem;">🎬</div>
+              <h3 style="font-size: 1.4rem; font-weight: 900; margin: 0 0 0.5rem; color: #ffffff;">Video Clase</h3>
+              <p style="font-size: 0.9rem; color: #cbd5e1; margin: 0 0 1.35rem; line-height: 1.5;">
                 Integra videos (YouTube, Google Drive, MP4) con capítulos, resumen y preguntas interactivas.
               </p>
             </div>
-            <button type="button" class="btn btn-outline" style="width: 100%; font-size: 0.9rem; padding: 0.65rem 1rem; border-color: #ef4444; color: #fca5a5; font-weight: 900; border-radius: 12px; pointer-events: none;">
+            <button type="button" class="btn btn-outline" style="width: 100%; font-size: 0.92rem; padding: 0.75rem 1rem; border-color: #ef4444; color: #fca5a5; font-weight: 900; border-radius: 14px; pointer-events: none;">
               Crear Video Clase →
             </button>
           </div>
@@ -1646,18 +1638,18 @@ window.ProjectsView = {
           <div 
             class="glass-panel" 
             onclick="window.ProjectsView.createStudentProject('document')"
-            style="padding: 2rem 1.5rem; border-radius: 20px; border: 2px solid #3b82f6; background: rgba(59, 130, 246, 0.12); cursor: pointer; text-align: center; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); display: flex; flex-direction: column; justify-content: space-between;"
-            onmouseenter="this.style.transform='translateY(-6px)'; this.style.borderColor='var(--neon-cyan)'; this.style.boxShadow='0 12px 30px rgba(59, 130, 246, 0.35)';"
-            onmouseleave="this.style.transform='none'; this.style.borderColor='#3b82f6'; this.style.boxShadow='none';"
+            style="padding: 2.2rem 1.8rem; border-radius: 22px; border: 2px solid #3b82f6; background: rgba(59, 130, 246, 0.15); cursor: pointer; text-align: center; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); display: flex; flex-direction: column; justify-content: space-between; box-shadow: 0 10px 30px rgba(0,0,0,0.3);"
+            onmouseenter="this.style.transform='translateY(-6px)'; this.style.borderColor='var(--neon-cyan)'; this.style.boxShadow='0 14px 35px rgba(59, 130, 246, 0.45)';"
+            onmouseleave="this.style.transform='none'; this.style.borderColor='#3b82f6'; this.style.boxShadow='0 10px 30px rgba(0,0,0,0.3)';"
           >
             <div>
-              <div style="font-size: 3.5rem; margin-bottom: 0.75rem;">📄</div>
-              <h3 style="font-size: 1.35rem; font-weight: 900; margin: 0 0 0.5rem; color: #ffffff;">Documentos</h3>
-              <p style="font-size: 0.88rem; color: #cbd5e1; margin: 0 0 1.25rem; line-height: 1.5;">
+              <div style="font-size: 3.6rem; margin-bottom: 0.85rem;">📄</div>
+              <h3 style="font-size: 1.4rem; font-weight: 900; margin: 0 0 0.5rem; color: #ffffff;">Documentos</h3>
+              <p style="font-size: 0.9rem; color: #cbd5e1; margin: 0 0 1.35rem; line-height: 1.5;">
                 Guías didácticas, apuntes de clase y lecturas estructuradas por secciones para la comunidad educativa.
               </p>
             </div>
-            <button type="button" class="btn btn-outline" style="width: 100%; font-size: 0.9rem; padding: 0.65rem 1rem; border-color: #3b82f6; color: #93c5fd; font-weight: 900; border-radius: 12px; pointer-events: none;">
+            <button type="button" class="btn btn-outline" style="width: 100%; font-size: 0.92rem; padding: 0.75rem 1rem; border-color: #3b82f6; color: #93c5fd; font-weight: 900; border-radius: 14px; pointer-events: none;">
               Crear Documento →
             </button>
           </div>
@@ -1666,18 +1658,18 @@ window.ProjectsView = {
           <div 
             class="glass-panel" 
             onclick="window.ProjectsView.createStudentProject('url')"
-            style="padding: 2rem 1.5rem; border-radius: 20px; border: 2px solid #10b981; background: rgba(16, 185, 129, 0.12); cursor: pointer; text-align: center; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); display: flex; flex-direction: column; justify-content: space-between;"
-            onmouseenter="this.style.transform='translateY(-6px)'; this.style.borderColor='var(--neon-cyan)'; this.style.boxShadow='0 12px 30px rgba(16, 185, 129, 0.35)';"
-            onmouseleave="this.style.transform='none'; this.style.borderColor='#10b981'; this.style.boxShadow='none';"
+            style="padding: 2.2rem 1.8rem; border-radius: 22px; border: 2px solid #10b981; background: rgba(16, 185, 129, 0.15); cursor: pointer; text-align: center; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); display: flex; flex-direction: column; justify-content: space-between; box-shadow: 0 10px 30px rgba(0,0,0,0.3);"
+            onmouseenter="this.style.transform='translateY(-6px)'; this.style.borderColor='var(--neon-cyan)'; this.style.boxShadow='0 14px 35px rgba(16, 185, 129, 0.45)';"
+            onmouseleave="this.style.transform='none'; this.style.borderColor='#10b981'; this.style.boxShadow='0 10px 30px rgba(0,0,0,0.3)';"
           >
             <div>
-              <div style="font-size: 3.5rem; margin-bottom: 0.75rem;">🌐</div>
-              <h3 style="font-size: 1.35rem; font-weight: 900; margin: 0 0 0.5rem; color: #ffffff;">Enlace / URLs</h3>
-              <p style="font-size: 0.88rem; color: #cbd5e1; margin: 0 0 1.25rem; line-height: 1.5;">
+              <div style="font-size: 3.6rem; margin-bottom: 0.85rem;">🌐</div>
+              <h3 style="font-size: 1.4rem; font-weight: 900; margin: 0 0 0.5rem; color: #ffffff;">Enlace / URLs</h3>
+              <p style="font-size: 0.9rem; color: #cbd5e1; margin: 0 0 1.35rem; line-height: 1.5;">
                 Enlaza e incrusta simuladores (PhET, GeoGebra), páginas web, formularios y herramientas en línea.
               </p>
             </div>
-            <button type="button" class="btn btn-outline" style="width: 100%; font-size: 0.9rem; padding: 0.65rem 1rem; border-color: #10b981; color: #6ee7b7; font-weight: 900; border-radius: 12px; pointer-events: none;">
+            <button type="button" class="btn btn-outline" style="width: 100%; font-size: 0.92rem; padding: 0.75rem 1rem; border-color: #10b981; color: #6ee7b7; font-weight: 900; border-radius: 14px; pointer-events: none;">
               Crear Recurso URL →
             </button>
           </div>
@@ -1685,11 +1677,13 @@ window.ProjectsView = {
         </div>
 
         <!-- Barra Inferior de Acción -->
-        <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(255,255,255,0.12); padding-top: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(255,255,255,0.14); padding-top: 1.75rem; flex-wrap: wrap; gap: 1rem;">
           <button 
             type="button" 
             onclick="window.ProjectsView.goToCreateProjectStep(1)" 
-            style="padding: 0.85rem 1.5rem; font-weight: 800; border-radius: 12px; background: transparent; border: 1.5px solid rgba(255,255,255,0.25); color: #cbd5e1; cursor: pointer; font-size: 0.95rem;"
+            style="padding: 0.95rem 1.65rem; font-weight: 800; border-radius: 14px; background: rgba(15, 23, 42, 0.7); border: 1.5px solid rgba(255,255,255,0.25); color: #cbd5e1; cursor: pointer; font-size: 1rem; transition: all 0.2s ease;"
+            onmouseenter="this.style.color='#fff'; this.style.borderColor='rgba(255,255,255,0.4)';"
+            onmouseleave="this.style.color='#cbd5e1'; this.style.borderColor='rgba(255,255,255,0.25)';"
           >
             ← Volver a editar datos generales
           </button>
@@ -1697,7 +1691,9 @@ window.ProjectsView = {
           <button 
             type="button" 
             onclick="window.ProjectsView.closeCreateProjectModal()" 
-            style="padding: 0.85rem 1.5rem; font-weight: 800; border-radius: 12px; background: transparent; border: 1.5px solid rgba(255,255,255,0.25); color: #cbd5e1; cursor: pointer; font-size: 0.95rem;"
+            style="padding: 0.95rem 1.65rem; font-weight: 800; border-radius: 14px; background: rgba(15, 23, 42, 0.7); border: 1.5px solid rgba(255,255,255,0.25); color: #cbd5e1; cursor: pointer; font-size: 1rem; transition: all 0.2s ease;"
+            onmouseenter="this.style.color='#fff'; this.style.borderColor='rgba(255,255,255,0.4)';"
+            onmouseleave="this.style.color='#cbd5e1'; this.style.borderColor='rgba(255,255,255,0.25)';"
           >
             Cerrar
           </button>
