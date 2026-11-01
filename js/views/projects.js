@@ -1,4 +1,4 @@
-/**
+﻿/**
  * 🔥 MENTIX - Vista de Proyectos & Retos (Projects View)
  * Gestión integral de proyectos educativos: Diapositivas, Videos interactivos y Quizzes gamificados.
  */
@@ -6,11 +6,54 @@
 window.ProjectsView = {
   currentCategory: 'all',
   currentTypeFilter: 'all', // 'all' | 'presentation' | 'video' | 'document' | 'url'
+  currentFilterTab: 'all',  // 'all' | 'mine' | 'in_progress' | 'completed' | 'favorites'
+  sortBy: 'recent',         // 'recent' | 'popular' | 'alpha'
+  layoutMode: 'grid',       // 'grid' | 'list'
   searchQuery: '',
-  viewMode: 'list', // 'list' | 'selector' | 'landing'
-  selectedProjectId: null,
-  selectedProjectTypeId: 'presentation',
-  currentSlideIndex: 0,
+  demoShowcaseProjects: [
+    {
+      id: 'demo-gov-data',
+      title: 'Gobierno de Datos en la Práctica',
+      description: 'Metodologías ágiles para la gobernanza moderna de información y toma de decisiones.',
+      tag: '✔ Completado',
+      tagClass: 'badge-completed',
+      date: '12 Abr 2025',
+      students: 24,
+      rating: '4.8',
+      image: 'assets/projects_ui/card_data_gov.png',
+      actionText: 'Ver Detalles →',
+      secondaryText: 'Compartir',
+      status: 'completed'
+    },
+    {
+      id: 'demo-ai-society',
+      title: 'Inteligencia Artificial y Sociedad',
+      description: 'Impacto ético, retos y oportunidades del desarrollo de modelos generativos.',
+      tag: '⏱ En Proceso',
+      tagClass: 'badge-process',
+      date: '10 Abr 2025',
+      students: 18,
+      rating: '4.6',
+      image: 'assets/projects_ui/card_ai_society.png',
+      actionText: 'Continuar →',
+      secondaryText: 'Ver Detalles',
+      status: 'in_progress'
+    },
+    {
+      id: 'demo-open-data',
+      title: 'Datos Abiertos y Transparencia',
+      description: 'Estrategias prácticas para la apertura, estandarización y auditoría ciudadana.',
+      tag: '👁 En Revisión',
+      tagClass: 'badge-review',
+      date: '8 Abr 2025',
+      students: 20,
+      rating: '4.7',
+      image: 'assets/projects_ui/card_open_data.png',
+      actionText: 'Ver Detalles →',
+      secondaryText: '📊',
+      status: 'review'
+    }
+  ],
 
   isTeacherOrAdmin() {
     const u = window.appState && window.appState.currentUser;
@@ -268,6 +311,91 @@ window.ProjectsView = {
     return this.projectModes.find(m => m.id === id) || this.projectModes[0];
   },
 
+  setCustomFilter(tab) {
+    this.currentFilterTab = tab;
+    if (window.soundEngine) window.soundEngine.playClick();
+    this.render();
+  },
+
+  setSort(sortVal) {
+    this.sortBy = sortVal;
+    this.render();
+  },
+
+  setLayout(layout) {
+    this.layoutMode = layout;
+    if (window.soundEngine) window.soundEngine.playClick();
+    this.render();
+  },
+
+  shareProject(id, title) {
+    if (window.soundEngine) window.soundEngine.playClick();
+    const url = window.location.origin + window.location.pathname + '#projects?id=' + encodeURIComponent(id);
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(url).then(() => {
+        this.showToast('🔗 ¡Enlace del proyecto copiado al portapapeles!');
+      }).catch(() => {
+        prompt('Copia el enlace para compartir:', url);
+      });
+    } else {
+      prompt('Copia el enlace para compartir:', url);
+    }
+  },
+
+  showToast(msg) {
+    const existing = document.getElementById('mentix-saas-toast');
+    if (existing) existing.remove();
+    const toast = document.createElement('div');
+    toast.id = 'mentix-saas-toast';
+    toast.innerHTML = msg;
+    toast.style.cssText = 'position:fixed;bottom:24px;right:24px;background:#0f172a;color:#ffffff;padding:12px 20px;border-radius:12px;box-shadow:0 12px 36px rgba(0,0,0,0.35);z-index:999999;font-weight:700;font-size:0.92rem;border:1.5px solid rgba(0,245,212,0.6);display:flex;align-items:center;gap:8px;';
+    document.body.appendChild(toast);
+    setTimeout(() => { if (toast.parentNode) toast.remove(); }, 3500);
+  },
+
+  openTutorialModal() {
+    if (window.soundEngine) window.soundEngine.playClick();
+    const modal = document.createElement('div');
+    modal.className = 'modal-backdrop active';
+    modal.style.zIndex = '999999';
+    modal.innerHTML = `
+      <div class="modal" style="max-width: 580px; padding: 2.2rem; border-radius: 20px; background: #ffffff; color: #0f172a; text-align: center; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);">
+        <div style="font-size: 3.2rem; margin-bottom: 0.6rem;">🎓</div>
+        <h3 style="font-size: 1.5rem; font-weight: 900; margin-bottom: 0.75rem; color: #0f172a;">Tutorial MENTIX Proyectos</h3>
+        <p style="color: #475569; font-size: 0.95rem; margin-bottom: 1.5rem; line-height: 1.5;">
+          Aprende a estructurar tus proyectos educativos con Inteligencia Artificial, diseñar presentaciones dinámicas y evaluar el avance de tus estudiantes en tiempo real.
+        </p>
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 1.25rem; border-radius: 12px; margin-bottom: 1.5rem; text-align: left; font-size: 0.9rem; color: #334155;">
+          <div style="margin-bottom: 0.75rem; display: flex; align-items: flex-start; gap: 0.5rem;">
+            <span>🤖</span>
+            <div><strong>1. Diseña con IA:</strong> Utiliza el asistente inteligente para generar diapositivas y actividades didácticas automáticamente.</div>
+          </div>
+          <div style="margin-bottom: 0.75rem; display: flex; align-items: flex-start; gap: 0.5rem;">
+            <span>📊</span>
+            <div><strong>2. Monitorea el Progreso:</strong> Visualiza en el panel circular el porcentaje completado y la participación estudiantil.</div>
+          </div>
+          <div style="display: flex; align-items: flex-start; gap: 0.5rem;">
+            <span>🔗</span>
+            <div><strong>3. Comparte y Evalúa:</strong> Envía el enlace a tus alumnos para que exploren el contenido interactivo y respondan preguntas.</div>
+          </div>
+        </div>
+        <div style="display: flex; gap: 0.75rem; justify-content: center;">
+          <button class="btn btn-primary" onclick="this.closest('.modal-backdrop').remove(); window.ProjectsView.openCreateProjectModal();" style="padding: 0.75rem 1.5rem; font-weight: 800; border-radius: 10px; background: #2563eb; color: #fff; border: none;">
+            🚀 ¡Crear un Proyecto Ahora!
+          </button>
+          <button class="btn btn-outline" onclick="this.closest('.modal-backdrop').remove();" style="padding: 0.75rem 1.5rem; font-weight: 800; border-radius: 10px; border-color: #cbd5e1; color: #475569;">
+            Cerrar
+          </button>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(modal);
+  },
+
+  openCommunity() {
+    this.showToast('👥 Comunidad MENTIX: ¡Conectando con más de 1,200 docentes e innovadores educativos!');
+  },
+
   render() {
     const container = document.getElementById('view-projects');
     if (!container) return;
@@ -300,12 +428,10 @@ window.ProjectsView = {
       return;
     } else {
       document.body.classList.add('projects-pure-white-theme');
-      if (navEl && (!window.appRouter || !['lobby-join', 'game', 'leaderboard', 'podium'].includes(window.appRouter.currentView))) {
-        navEl.style.display = '';
-      }
-      container.style.padding = '';
-      container.style.margin = '';
-      container.style.background = '';
+      if (navEl) navEl.style.display = 'none';
+      container.style.padding = '0';
+      container.style.margin = '0';
+      container.style.background = '#f4f7fb';
     }
 
     if (this.viewMode === 'selector') {
@@ -319,227 +445,335 @@ window.ProjectsView = {
     }
 
     // Filtrar borradores y proyectos en preparación para que solo los vea su autor o el profesor/admin
-    const allProjects = rawProjects.filter(c => {
+    const allUserProjects = rawProjects.filter(c => {
       if (!c.publicationStatus || c.publicationStatus === 'published' || c.publicationStatus === 'approved') return true;
       const isOwner = window.appRouter ? window.appRouter.isChallengeOwner(c) : false;
       return isOwner || isTeacherOrAdmin;
     });
 
-    const categories = (window.appState.categories || []).filter(c => {
-      if (!c || !c.id) return false;
-      const cid = String(c.id).toLowerCase().trim();
-      const cname = String(c.name || '').toLowerCase().trim();
-      return !['fhjr', 'kj'].includes(cid) && !['fhjr', 'kj'].includes(cname);
-    });
-
-    // Reconciliar categorías
-    let needsSave = false;
-    allProjects.forEach(proj => {
-      if (proj.category) {
-        const catExists = categories.find(cat => cat.id === proj.category);
-        if (!catExists && proj.categoryName) {
-          const catByName = categories.find(cat =>
-            cat.name.toLowerCase() === (proj.categoryName || '').toLowerCase()
-          );
-          if (catByName) {
-            proj.category = catByName.id;
-            proj.categoryName = catByName.name;
-            needsSave = true;
-          }
+    // Combinar con los proyectos de muestra del mockup si el usuario tiene pocos proyectos
+    let displayList = [...allUserProjects];
+    if (this.demoShowcaseProjects && this.demoShowcaseProjects.length > 0) {
+      this.demoShowcaseProjects.forEach(demo => {
+        if (!displayList.some(p => p.id === demo.id || p.title === demo.title)) {
+          displayList.push(demo);
         }
-      }
-    });
-    if (needsSave && typeof saveGlobalState === 'function') {
-      saveGlobalState(window.appState);
+      });
     }
 
-    // Filtrar proyectos
-    let filtered = allProjects;
-
-    if (this.currentCategory !== 'all') {
-      filtered = filtered.filter(c => c.category === this.currentCategory);
+    // Filtrar por pestañas (Todos, Mis Proyectos, En Proceso, Completados, Favoritos)
+    if (this.currentFilterTab === 'mine') {
+      displayList = displayList.filter(c => window.appRouter ? window.appRouter.isChallengeOwner(c) : false);
+    } else if (this.currentFilterTab === 'in_progress') {
+      displayList = displayList.filter(c => c.status === 'in_progress' || c.publicationStatus === 'draft' || c.publicationStatus === 'in_preparation');
+    } else if (this.currentFilterTab === 'completed') {
+      displayList = displayList.filter(c => c.status === 'completed' || c.publicationStatus === 'published');
+    } else if (this.currentFilterTab === 'favorites') {
+      const favs = JSON.parse(localStorage.getItem('mentix_fav_projects') || '[]');
+      displayList = displayList.filter(c => favs.includes(c.id));
     }
 
-    if (this.currentTypeFilter !== 'all') {
-      filtered = filtered.filter(c => c.projectType === this.currentTypeFilter);
-    }
-
+    // Filtro por búsqueda
     if (this.searchQuery) {
       const q = this.searchQuery.toLowerCase().trim();
-      filtered = filtered.filter(c => 
+      displayList = displayList.filter(c => 
         (c.title && c.title.toLowerCase().includes(q)) ||
         (c.description && c.description.toLowerCase().includes(q)) ||
-        (c.categoryName && c.categoryName.toLowerCase().includes(q)) ||
-        (c.author && c.author.toLowerCase().includes(q))
+        (c.categoryName && c.categoryName.toLowerCase().includes(q))
       );
     }
 
-    // Estadísticas exclusivas de Proyectos
-    const totalProjects = allProjects.length;
-    const totalSlides = allProjects.filter(c => c.projectType === 'presentation').reduce((acc, c) => acc + (c.slides ? c.slides.length : 0), 0);
-    const totalVideos = allProjects.filter(c => c.projectType === 'video').length;
-    const totalDocs = allProjects.filter(c => c.projectType === 'document').length;
-    const totalUrls = allProjects.filter(c => c.projectType === 'url').length;
+    // Ordenamiento
+    if (this.sortBy === 'popular') {
+      displayList.sort((a, b) => (b.students || b.playsCount || 0) - (a.students || a.playsCount || 0));
+    } else if (this.sortBy === 'alpha') {
+      displayList.sort((a, b) => (a.title || '').localeCompare(b.title || ''));
+    }
+
+    const userName = (u && u.name) ? u.name : 'Carlos Cañon';
+    const userRole = (u && u.role) ? (u.role === 'teacher' ? 'Docente' : (u.role === 'admin' ? 'Administrador' : 'Estudiante')) : 'Docente';
+    const userAvatar = (u && u.avatar && !u.avatar.startsWith('http') && !u.avatar.includes('/')) ? u.avatar : 'assets/projects_ui/user_avatar.png';
+
+    const cardsHtml = displayList.length === 0 ? `
+      <div style="grid-column: 1 / -1; background: #ffffff; border-radius: 16px; padding: 3rem 1.5rem; text-align: center; border: 1.5px dashed #cbd5e1;">
+        <div style="font-size: 3rem; margin-bottom: 0.75rem;">🔍</div>
+        <h3 style="color: #0f172a; font-size: 1.3rem; font-weight: 800; margin-bottom: 0.4rem;">No se encontraron proyectos</h3>
+        <p style="color: #64748b; font-size: 0.95rem; margin-bottom: 1.25rem;">Intenta con otro término de búsqueda o limpia los filtros.</p>
+        <button class="btn btn-primary" onclick="window.ProjectsView.searchQuery = ''; window.ProjectsView.currentFilterTab = 'all'; window.ProjectsView.render();" style="padding: 0.6rem 1.25rem; font-weight: 800; border-radius: 9999px;">
+          Ver todos los proyectos
+        </button>
+      </div>
+    ` : displayList.map(c => this.renderProjectCard(c, u)).join('');
 
     container.innerHTML = `
-      <div style="max-width: 1200px; margin: 0 auto; padding: 2.5rem 1.25rem 5rem;">
-        
-        <!-- Header Principal de Proyectos con Banner Gráfico -->
-        <style>
-          .mentix-project-banner-wrapper {
-            position: relative;
-            width: 100%;
-            border-radius: 20px;
-            overflow: hidden;
-            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45), 0 0 30px rgba(0, 245, 212, 0.2);
-            border: 2px solid rgba(0, 245, 212, 0.35);
-            margin-bottom: 2rem;
-            background: #0b1120;
-          }
-          .mentix-banner-hotspot {
-            position: absolute;
-            cursor: pointer;
-            border-radius: 9999px;
-            background: transparent;
-            border: none;
-            outline: none;
-            pointer-events: auto;
-            transition: all 0.15s ease;
-          }
-          .mentix-banner-hotspot:hover {
-            background: rgba(255, 255, 255, 0.16) !important;
-            box-shadow: 0 0 18px rgba(255, 255, 255, 0.45);
-            transform: scale(1.02);
-          }
-          .mentix-banner-hotspot:active {
-            transform: scale(0.97);
-          }
-        </style>
-
-        <div class="mentix-project-banner-wrapper animate-fade-in" style="max-width: 1100px; margin: 0 auto 2.25rem;">
-          <img 
-            src="assets/projects_banner.png?v=2" 
-            alt="Mis Proyectos Educativos - Panel de Proyectos Didácticos" 
-            style="width: 100%; height: auto; display: block; image-rendering: -webkit-optimize-contrast; image-rendering: high-quality; transform: translateZ(0); backface-visibility: hidden;"
-          />
-
-          <!-- Hotspots Interactivos Superpuestos en los botones del Banner -->
-          <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none;">
-            
-            <!-- Botón 1: Asistente Inteligente de Proyecto -->
-            <button 
-              onclick="window.ProjectWizard.openWizard()" 
-              title="Asistente Inteligente de Proyecto" 
-              class="mentix-banner-hotspot"
-              style="left: 10.2%; top: 64.5%; width: 20.3%; height: 20%;"
-            ></button>
-
-            <!-- Botón 2: Unirse a un código -->
-            <button 
-              onclick="window.ProjectsView.openJoinProjectModal()" 
-              title="Unirse a un código" 
-              class="mentix-banner-hotspot"
-              style="left: 30.8%; top: 64.5%; width: 19.2%; height: 20%;"
-            ></button>
-
-            <!-- Botón 3: Crear Proyecto -->
-            <button 
-              onclick="window.ProjectsView.openCreateProjectModal()" 
-              title="Crear Proyecto" 
-              class="mentix-banner-hotspot"
-              style="left: 50.3%; top: 64.5%; width: 19.2%; height: 20%;"
-            ></button>
-
-            <!-- Botón 4: Categorías -->
-            <button 
-              onclick="window.appRouter.openCategoryModal()" 
-              title="Categorías" 
-              class="mentix-banner-hotspot"
-              style="left: 70.0%; top: 64.5%; width: 19.0%; height: 20%;"
-            ></button>
-
-            <!-- Sub-Badge: Enviar código para estudiantes -->
-            <button 
-              onclick="window.ProjectsView.openCreateProjectModal()" 
-              title="Enviar un código o crear un código de proyecto para estudiantes" 
-              class="mentix-banner-hotspot"
-              style="left: 34%; top: 87%; width: 32%; height: 11%;"
-            ></button>
-
-          </div>
-        </div>
-
-
-
-
-
-        <!-- Buscador y Filtros de Categoría -->
-        <div class="glass-panel" style="padding: 1.25rem; margin-bottom: 2rem;">
-          <!-- Buscador -->
-          <div style="position: relative; margin-bottom: 1.25rem;">
-            <input 
-              type="text" 
-              id="projects-search-input"
-              placeholder="🔍 Buscar por título o tema..." 
-              value="${this.escapeHtml(this.searchQuery)}"
-              oninput="window.ProjectsView.handleSearch(this.value)"
-              style="width: 100%; padding: 0.75rem 1.1rem; border-radius: var(--border-radius-md); background: rgba(0,0,0,0.3); border: 1.5px solid var(--border-color); color: var(--text-primary); font-size: 0.95rem; outline: none;"
-            />
+      <div class="mentix-saas-dashboard animate-fade-in">
+        <!-- 1. LEFT SIDEBAR -->
+        <aside class="mentix-saas-sidebar">
+          <div class="saas-sidebar-brand" onclick="window.appRouter.navigate('home')">
+            <div class="saas-brand-logo-icon">🧠</div>
+            <div class="saas-brand-text">
+              <span class="saas-brand-name">MENTIX</span>
+              <span class="saas-brand-sub">Aprende · Crea · Innova</span>
+            </div>
           </div>
 
-          <!-- Filtros de Categoría -->
-          <div style="display: flex; gap: 0.5rem; overflow-x: auto; padding-bottom: 0.35rem; max-width: 100%;">
-            <button 
-              onclick="window.ProjectsView.filterCategory('all')" 
-              class="btn ${this.currentCategory === 'all' ? 'btn-primary' : 'btn-outline'}"
-              style="padding: 0.4rem 0.85rem; font-size: 0.82rem; white-space: nowrap;"
-            >
-              Todas las Materias (${allProjects.length})
+          <nav class="saas-sidebar-nav">
+            <button class="saas-nav-item" onclick="window.appRouter.navigate('home')">
+              <span class="saas-nav-icon">🏠</span>
+              <span class="saas-nav-label">Inicio</span>
             </button>
-            ${categories.map(cat => {
-              const count = allProjects.filter(c => c.category === cat.id).length;
-              return `
-                <button 
-                  onclick="window.ProjectsView.filterCategory('${cat.id}')" 
-                  class="btn ${this.currentCategory === cat.id ? 'btn-primary' : 'btn-outline'}"
-                  style="padding: 0.4rem 0.85rem; font-size: 0.82rem; white-space: nowrap;"
-                >
-                  <span>${cat.icon}</span> ${cat.name} (${count})
+            <button class="saas-nav-item active" onclick="window.ProjectsView.setCustomFilter('all')">
+              <span class="saas-nav-icon">📁</span>
+              <span class="saas-nav-label">Mis Proyectos</span>
+            </button>
+            <button class="saas-nav-item" onclick="window.ProjectsView.openCreateProjectModal()">
+              <span class="saas-nav-icon">👨‍🏫</span>
+              <span class="saas-nav-label">Panel Docente</span>
+            </button>
+            <button class="saas-nav-item" onclick="window.appRouter.navigate('home')">
+              <span class="saas-nav-icon">📝</span>
+              <span class="saas-nav-label">Evaluaciones</span>
+            </button>
+            <button class="saas-nav-item" onclick="window.ProjectsView.setCustomFilter('all')">
+              <span class="saas-nav-icon">📚</span>
+              <span class="saas-nav-label">Recursos</span>
+            </button>
+            <button class="saas-nav-item" onclick="window.ProjectsView.openCommunity()">
+              <span class="saas-nav-icon">👥</span>
+              <span class="saas-nav-label">Comunidad</span>
+            </button>
+            <button class="saas-nav-item" onclick="window.appRouter.navigate('home')">
+              <span class="saas-nav-icon">📊</span>
+              <span class="saas-nav-label">Reportes</span>
+            </button>
+            <button class="saas-nav-item" onclick="window.appRouter.openAuthModal ? window.appRouter.openAuthModal('profile') : null">
+              <span class="saas-nav-icon">⚙️</span>
+              <span class="saas-nav-label">Configuración</span>
+            </button>
+          </nav>
+
+          <!-- Bottom Promo Card -->
+          <div class="saas-sidebar-promo-card">
+            <div class="promo-cap-icon">🎓</div>
+            <div class="promo-title">Aprende sin límites</div>
+            <div class="promo-desc">Potencia tus habilidades con IA y tecnología.</div>
+            <button class="promo-btn" onclick="window.ProjectsView.openCreateProjectModal()">
+              Explorar Cursos →
+            </button>
+          </div>
+        </aside>
+
+        <!-- 2. MAIN CONTENT AREA -->
+        <main class="mentix-saas-main">
+          <!-- TOPBAR -->
+          <header class="saas-topbar">
+            <div class="saas-search-pill">
+              <span class="saas-search-icon">🔍</span>
+              <input 
+                type="text" 
+                placeholder="Buscar proyectos, contenidos o temas..." 
+                value="${this.escapeHtml(this.searchQuery)}"
+                oninput="window.ProjectsView.handleSearch(this.value)"
+              />
+            </div>
+
+            <div class="saas-topbar-right">
+              <div class="saas-bell-wrap" onclick="window.ProjectsView.showToast('🔔 Tienes 3 notificaciones nuevas de tus proyectos')" title="Notificaciones">
+                <span class="saas-bell-icon">🔔</span>
+                <span class="saas-bell-badge">3</span>
+              </div>
+
+              <div class="saas-user-pill" onclick="window.appRouter.openAuthModal ? window.appRouter.openAuthModal('profile') : null" title="Perfil de usuario">
+                <img src="${userAvatar}" alt="${this.escapeHtml(userName)}" class="saas-user-avatar" onerror="this.onerror=null;this.src='assets/projects_ui/user_avatar.png';" />
+                <div class="saas-user-info">
+                  <span class="saas-user-name">${this.escapeHtml(userName)}</span>
+                  <span class="saas-user-role">${this.escapeHtml(userRole)}</span>
+                </div>
+              </div>
+            </div>
+          </header>
+
+          <!-- HERO BANNER -->
+          <section class="saas-hero-banner">
+            <div class="saas-hero-left">
+              <h1 class="saas-hero-title">Tu ecosistema de aprendizaje estructurado</h1>
+              <p class="saas-hero-subtitle">Gestiona tus proyectos, evalúa competencias y potencia el aprendizaje con IA.</p>
+              <div class="saas-hero-btn-row">
+                <button class="saas-hero-btn-primary" onclick="window.ProjectsView.openTutorialModal()">
+                  ▶ Ver tutorial
                 </button>
-              `;
-            }).join('')}
-          </div>
-        </div>
+                <button class="saas-hero-btn-link" onclick="window.ProjectsView.openTutorialModal()">
+                  Conoce más →
+                </button>
+              </div>
+            </div>
 
-        <!-- Grid de Proyectos / Retos -->
-        ${allProjects.length === 0 ? `
-          <div class="glass-panel" style="text-align: center; padding: 4.5rem 1.5rem; border: 2px dashed rgba(0, 245, 212, 0.35); border-radius: 20px;">
-            <div style="font-size: 3.8rem; margin-bottom: 1rem;">📁</div>
-            <h3 style="font-size: 1.5rem; font-weight: 800; color: var(--text-primary); margin-bottom: 0.5rem;">Aún no has creado proyectos</h3>
-            <p style="color: var(--text-secondary); font-size: 1rem; max-width: 500px; margin: 0 auto 1.75rem; line-height: 1.5;">
-              Tu panel está limpio. Puedes crear tu primera presentación interactiva o video clase cuando desees.
-            </p>
-            <button class="btn btn-cyan btn-lg" onclick="window.ProjectsView.openCreateProjectModal()" style="font-weight: 900; box-shadow: 0 6px 20px rgba(0,245,212,0.35);">
-              ➕ Crear Mi Primer Proyecto
+            <div class="saas-hero-center">
+              <img src="assets/projects_ui/robot_mascot.png" alt="Robot IA Mentix" class="saas-robot-mascot" />
+            </div>
+
+            <div class="saas-hero-right-pills">
+              <div class="hero-feature-pill">🤖 IA para aprender</div>
+              <div class="hero-feature-pill">🧩 Proyectos interactivos</div>
+              <div class="hero-feature-pill">⚡ Evaluación inteligente</div>
+              <div class="hero-feature-pill">✨ Experiencia única</div>
+            </div>
+          </section>
+
+          <!-- CONTROLS & FILTER TABS -->
+          <div class="saas-controls-row">
+            <div class="saas-tabs-group">
+              <button class="saas-tab-pill ${this.currentFilterTab === 'all' ? 'active' : ''}" onclick="window.ProjectsView.setCustomFilter('all')">
+                ⊞ Todos
+              </button>
+              <button class="saas-tab-pill ${this.currentFilterTab === 'mine' ? 'active' : ''}" onclick="window.ProjectsView.setCustomFilter('mine')">
+                📁 Mis Proyectos
+              </button>
+              <button class="saas-tab-pill ${this.currentFilterTab === 'in_progress' ? 'active' : ''}" onclick="window.ProjectsView.setCustomFilter('in_progress')">
+                ⏱ En Proceso
+              </button>
+              <button class="saas-tab-pill ${this.currentFilterTab === 'completed' ? 'active' : ''}" onclick="window.ProjectsView.setCustomFilter('completed')">
+                ✔ Completados
+              </button>
+              <button class="saas-tab-pill ${this.currentFilterTab === 'favorites' ? 'active' : ''}" onclick="window.ProjectsView.setCustomFilter('favorites')">
+                ♡ Favoritos
+              </button>
+            </div>
+
+            <div class="saas-controls-right">
+              <div class="saas-sort-select-wrap">
+                <select class="saas-sort-select" onchange="window.ProjectsView.setSort(this.value)">
+                  <option value="recent" ${this.sortBy === 'recent' ? 'selected' : ''}>Más recientes ⌄</option>
+                  <option value="popular" ${this.sortBy === 'popular' ? 'selected' : ''}>Más populares</option>
+                  <option value="alpha" ${this.sortBy === 'alpha' ? 'selected' : ''}>Alfabético A-Z</option>
+                </select>
+              </div>
+
+              <div class="saas-view-switchers">
+                <button class="view-btn ${this.layoutMode === 'grid' ? 'active' : ''}" onclick="window.ProjectsView.setLayout('grid')" title="Vista en cuadrícula">
+                  ⊞
+                </button>
+                <button class="view-btn ${this.layoutMode === 'list' ? 'active' : ''}" onclick="window.ProjectsView.setLayout('list')" title="Vista en lista">
+                  ≡
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- SECTION TITLE & ACTION -->
+          <div class="saas-section-head">
+            <div class="saas-section-titles">
+              <h2 class="saas-head-title">🚀 Mis Proyectos</h2>
+              <p class="saas-head-subtitle">Explora, gestiona y comparte tus proyectos de aprendizaje.</p>
+            </div>
+
+            <button class="saas-create-btn" onclick="window.ProjectsView.openCreateProjectModal()">
+              + Crear Proyecto
             </button>
           </div>
-        ` : (filtered.length === 0 ? `
-          <div class="glass-panel" style="text-align: center; padding: 4rem 1.5rem;">
-            <div style="font-size: 3.5rem; margin-bottom: 1rem;">🔍</div>
-            <h3 style="font-size: 1.4rem; color: var(--text-primary); margin-bottom: 0.5rem;">No se encontraron proyectos</h3>
-            <p style="color: var(--text-secondary); max-width: 480px; margin: 0 auto 1.5rem;">
-              No hay proyectos que coincidan con los filtros seleccionados.
-            </p>
-            <button class="btn btn-primary" onclick="window.ProjectsView.resetFilters()">
-              Restablecer Filtros
+
+          <!-- MAIN BODY GRID (Cards Col + Widgets Col) -->
+          <div class="saas-body-grid">
+            <!-- LEFT / CENTER: PROJECT CARDS -->
+            <div class="saas-projects-col">
+              <div class="saas-cards-grid ${this.layoutMode === 'list' ? 'layout-list-mode' : ''}">
+                ${cardsHtml}
+              </div>
+            </div>
+
+            <!-- RIGHT: WIDGETS -->
+            <aside class="saas-widgets-col">
+              <!-- Widget 1: Tu Progreso -->
+              <div class="saas-widget-card">
+                <div class="saas-widget-header">
+                  <span class="widget-head-icon">📊</span>
+                  <span class="widget-head-title">Tu Progreso</span>
+                </div>
+
+                <div class="saas-donut-wrap">
+                  <div class="donut-svg-box">
+                    <svg viewBox="0 0 100 100" class="donut-svg">
+                      <circle cx="50" cy="50" r="40" class="donut-bg-circle" />
+                      <circle cx="50" cy="50" r="40" class="donut-fg-circle" stroke-dasharray="251.2" stroke-dashoffset="55" />
+                    </svg>
+                    <div class="donut-inner-text">
+                      <span class="donut-pct">78%</span>
+                      <span class="donut-sub">completado</span>
+                    </div>
+                  </div>
+
+                  <div class="donut-legend">
+                    <div class="legend-row">
+                      <span class="legend-dot dot-green">●</span>
+                      <span class="legend-text">Completados:</span>
+                      <strong class="legend-val">7</strong>
+                    </div>
+                    <div class="legend-row">
+                      <span class="legend-dot dot-blue">●</span>
+                      <span class="legend-text">En Proceso:</span>
+                      <strong class="legend-val">2</strong>
+                    </div>
+                    <div class="legend-row">
+                      <span class="legend-dot dot-purple">●</span>
+                      <span class="legend-text">Pendientes:</span>
+                      <strong class="legend-val">1</strong>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="saas-praise-card">
+                  <span class="praise-trophy">🏆</span>
+                  <div class="praise-body">
+                    <div class="praise-head">¡Excelente trabajo!</div>
+                    <div class="praise-desc">Vas en el camino correcto. Mantén el ritmo.</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Widget 2: Accesos Rápidos -->
+              <div class="saas-widget-card">
+                <div class="saas-widget-header">
+                  <span class="widget-head-icon">⚡</span>
+                  <span class="widget-head-title">Accesos Rápidos</span>
+                </div>
+
+                <div class="saas-quick-grid">
+                  <button class="quick-mini-card mini-purple" onclick="window.appRouter.navigate('home')">
+                    <span class="quick-mini-icon">📅</span>
+                    <span class="quick-mini-label">Mis Evaluaciones</span>
+                  </button>
+
+                  <button class="quick-mini-card mini-green" onclick="window.ProjectsView.filterCategory('all')">
+                    <span class="quick-mini-icon">📖</span>
+                    <span class="quick-mini-label">Recursos Didácticos</span>
+                  </button>
+
+                  <button class="quick-mini-card mini-peach" onclick="window.ProjectsView.openCommunity()">
+                    <span class="quick-mini-icon">👥</span>
+                    <span class="quick-mini-label">Comunidad MENTIX</span>
+                  </button>
+
+                  <button class="quick-mini-card mini-blue" onclick="window.appRouter.navigate('home')">
+                    <span class="quick-mini-icon">📊</span>
+                    <span class="quick-mini-label">Reportes</span>
+                  </button>
+                </div>
+              </div>
+            </aside>
+          </div>
+
+          <!-- BOTTOM BANNER -->
+          <div class="saas-bottom-banner">
+            <div class="saas-bottom-left">
+              <span class="bulb-icon">💡</span>
+              <span>Construyamos juntos un aprendizaje más inteligente</span>
+            </div>
+
+            <button class="saas-bottom-btn" onclick="window.ProjectsView.openCreateProjectModal()">
+              Descubrir más →
             </button>
           </div>
-        ` : `
-          <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.5rem; margin-bottom: 2.5rem;">
-            ${filtered.map(c => this.renderProjectCard(c, u)).join('')}
-          </div>
-        `)}
-
+        </main>
       </div>
     `;
   },
@@ -550,185 +784,101 @@ window.ProjectsView = {
 
   renderProjectCard(c, currentUser) {
     const isAuthor = window.appRouter ? window.appRouter.isChallengeOwner(c) : false;
-    const cardProgress = this.calculateProjectProgress(c);
-
-    const diffBadge = c.difficulty === 'Difícil' || c.difficulty === 'hard'
-      ? '<span class="badge-tag tag-hard">Difícil</span>'
-      : ((c.difficulty === 'Medio' || c.difficulty === 'medium') ? '<span class="badge-tag tag-medium">Medio</span>' : '<span class="badge-tag tag-easy">Fácil</span>');
-
     const projectType = c.projectType || 'presentation';
-    let typeBadge = '<span class="badge-tag" style="background: rgba(124, 58, 237, 0.85); color: white;">📊 Diapositivas</span>';
-    let defaultBanner = 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=800';
-    let cardAction = `window.appRouter.openPresentation('${c.id}')`;
-    let countBadge = `📄 ${(c.slides ? c.slides.length : 0)} diaps`;
+    let defaultBanner = 'assets/projects_ui/card_data_gov.png';
+    let tag = '✔ Completado';
+    let tagClass = 'badge-completed';
+    let primaryAction = `window.ProjectsView.openProjectLanding('${c.id}')`;
+    let primaryText = 'Ver Detalles →';
+    let secondaryAction = `window.ProjectsView.shareProject('${c.id}', '${this.escapeHtml(c.title || '')}')`;
+    let secondaryText = 'Compartir';
 
-    if (projectType === 'video') {
-      typeBadge = '<span class="badge-tag" style="background: rgba(239, 68, 68, 0.85); color: white;">🎬 Video Clase</span>';
-      defaultBanner = 'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800';
-      cardAction = `window.appRouter.openVideo('${c.id}')`;
-      countBadge = `⏱️ ${c.duration || 'Video'}`;
-    } else if (projectType === 'document') {
-      typeBadge = '<span class="badge-tag" style="background: rgba(59, 130, 246, 0.85); color: white;">📄 Documento</span>';
-      defaultBanner = 'https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=800';
-      cardAction = `window.appRouter.openDocument('${c.id}')`;
-      countBadge = (c.pdfPages && c.pdfPages.length > 0)
-        ? `📄 ${c.pdfPages.length} págs (PDF)`
-        : `📝 ${(c.sections ? c.sections.length : 1)} secciones`;
-    } else if (projectType === 'url') {
-      typeBadge = '<span class="badge-tag" style="background: rgba(16, 185, 129, 0.85); color: white;">🌐 Enlace / URL</span>';
-      defaultBanner = 'https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?w=800';
-      cardAction = `window.appRouter.openUrl('${c.id}')`;
-      countBadge = `🔗 Enlace Web`;
+    if (c.tag) {
+      tag = c.tag;
+      tagClass = c.tagClass || 'badge-completed';
+    } else if (c.publicationStatus === 'draft' || c.publicationStatus === 'in_preparation') {
+      tag = '⏱ En Proceso';
+      tagClass = 'badge-process';
+    } else if (c.publicationStatus === 'ready_for_review') {
+      tag = '👁 En Revisión';
+      tagClass = 'badge-review';
     }
 
+    if (c.image) {
+      defaultBanner = c.image;
+    } else if (c.banner || c.coverImage) {
+      defaultBanner = c.banner || c.coverImage;
+    } else if (projectType === 'video') {
+      defaultBanner = 'assets/projects_ui/card_ai_society.png';
+      tag = '⏱ En Proceso';
+      tagClass = 'badge-process';
+      primaryAction = `window.appRouter.openVideo('${c.id}')`;
+      primaryText = 'Continuar →';
+      secondaryAction = `window.ProjectsView.openProjectLanding('${c.id}')`;
+      secondaryText = 'Ver Detalles';
+    } else if (projectType === 'document') {
+      defaultBanner = 'assets/projects_ui/card_open_data.png';
+      tag = '👁 En Revisión';
+      tagClass = 'badge-review';
+    }
+
+    // Special handling for the 3 demo showcase cards
+    if (c.id === 'demo-gov-data') {
+      primaryAction = "window.ProjectsView.openGovDataLanding ? window.ProjectsView.openGovDataLanding() : window.ProjectsView.openProjectLanding('demo-gov-data')";
+      primaryText = "Ver Detalles →";
+      secondaryAction = "window.ProjectsView.shareProject('demo-gov-data', 'Gobierno de Datos en la Práctica')";
+      secondaryText = "Compartir";
+    } else if (c.id === 'demo-ai-society') {
+      primaryAction = "window.ProjectWizard ? window.ProjectWizard.openWizard() : window.ProjectsView.openProjectLanding('demo-ai-society')";
+      primaryText = "Continuar →";
+      secondaryAction = "window.ProjectsView.openProjectLanding('demo-ai-society')";
+      secondaryText = "Ver Detalles";
+    } else if (c.id === 'demo-open-data') {
+      primaryAction = "window.ProjectsView.openProjectLanding('demo-open-data')";
+      primaryText = "Ver Detalles →";
+      secondaryAction = "window.ProjectsView.showToast('📊 Reporte analítico de Transparencia de Datos')";
+      secondaryText = "📊";
+    }
+
+    const dateStr = c.date || (c.createdAt ? new Date(c.createdAt).toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' }) : '12 Abr 2025');
+    const studentsCount = c.students || c.playsCount || 24;
+    const ratingStr = c.rating || '4.8';
+    const actionLabel = c.actionText || primaryText;
+    const secLabel = c.secondaryText || secondaryText;
+
     return `
-      <div class="challenge-card" onclick="window.ProjectsView.openProjectLanding('${c.id}')" style="display: flex; flex-direction: column; height: 100%; cursor: pointer;">
-        <div class="challenge-banner" style="background-image: url('${c.banner || c.coverImage || defaultBanner}'); position: relative; height: 160px;">
-          <div style="position: absolute; top: 0.6rem; left: 0.6rem; display: flex; gap: 0.35rem; flex-wrap: wrap;">
-            ${typeBadge}
-            ${c.publicationStatus === 'draft' || c.publicationStatus === 'in_preparation' ? '<span class="badge-tag" style="background: rgba(245, 158, 11, 0.92); color: #fff;">📝 Borrador</span>' : ''}
-            ${c.publicationStatus === 'ready_for_review' ? '<span class="badge-tag" style="background: rgba(59, 130, 246, 0.92); color: #fff;">🔎 En Revisión</span>' : ''}
-            ${c.publicationStatus === 'published' && c.isGovDataProject ? '<span class="badge-tag" style="background: rgba(16, 185, 129, 0.92); color: #fff;">🚀 Publicado</span>' : ''}
-          </div>
-          <span class="badge-tag" style="position: absolute; bottom: 0.6rem; left: 0.6rem; background: rgba(0,0,0,0.65); color: white;">
-            ${countBadge}
-          </span>
-          
+      <div class="saas-project-card animate-fade-in" onclick="${primaryAction}">
+        <div class="saas-card-banner-wrap">
+          <img src="${defaultBanner}" alt="${this.escapeHtml(c.title)}" class="saas-card-banner-img" onerror="this.onerror=null;this.src='assets/projects_ui/card_data_gov.png';" />
+          <span class="saas-card-badge ${tagClass}">${tag}</span>
           ${isAuthor ? `
             <button 
-              class="btn btn-danger" 
+              class="saas-card-delete-btn" 
               title="Eliminar este proyecto" 
-              style="position: absolute; top: 0.6rem; right: 0.6rem; width: 34px; height: 34px; padding: 0; border-radius: 8px; font-size: 0.9rem; display: flex; align-items: center; justify-content: center; z-index: 5; background: rgba(239, 68, 68, 0.9); box-shadow: 0 2px 8px rgba(0,0,0,0.4);" 
               onclick="event.stopPropagation(); window.appRouter.deleteChallenge('${c.id}')"
             >
               🗑️
             </button>
           ` : ''}
         </div>
-        
-        <div style="padding: 1.35rem; display: flex; flex-direction: column; flex: 1;">
-          <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
-            <span style="font-size: 0.85rem; color: var(--neon-cyan); font-weight: 800;">${c.categoryName || 'General'}</span>
-            <span style="color: var(--text-muted);">•</span>
-            <span style="font-size: 0.85rem; color: var(--text-muted);">
-              ${projectType === 'presentation' ? (c.slides ? c.slides.length : 0) + ' diapositivas' : (projectType === 'video' ? (c.chapters ? c.chapters.length : 0) + ' capítulos' : (projectType === 'document' ? 'Lectura / Guía' : 'Recurso Web'))}
-            </span>
+
+        <div class="saas-card-body">
+          <h3 class="saas-card-title">${this.escapeHtml(c.title)}</h3>
+          <p class="saas-card-desc">${this.escapeHtml(c.description || 'Metodologías ágiles para la gobernanza moderna de información y toma de decisiones.')}</p>
+
+          <div class="saas-card-meta-row">
+            <span class="saas-meta-item">📅 ${dateStr}</span>
+            <span class="saas-meta-item">👥 ${studentsCount}</span>
+            <span class="saas-meta-item saas-rating">⭐ ${ratingStr}</span>
           </div>
 
-          <h3 style="font-size: 1.2rem; margin: 0 0 0.5rem; line-height: 1.3; font-weight: 800; color: var(--text-primary);">
-            ${this.escapeHtml(c.title)}
-          </h3>
-
-          <p style="color: var(--text-secondary); font-size: 0.88rem; margin: 0 0 1.25rem; flex: 1; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.45;">
-            ${this.escapeHtml(c.description || 'Proyecto interactivo para aprendizaje de clase.')}
-          </p>
-
-          <!-- Barra y porcentaje de avance real del proyecto -->
-          <div style="margin-bottom: 0.95rem; background: rgba(0,0,0,0.22); border-radius: 8px; padding: 0.5rem 0.65rem; border: 1px solid rgba(255,255,255,0.08);">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.35rem; font-size: 0.76rem;">
-              <span style="font-weight: 700; color: var(--text-muted); display: flex; align-items: center; gap: 0.35rem;">
-                <span>📈</span> Avance del proyecto
-              </span>
-              <strong style="color: ${cardProgress === 100 ? '#10b981' : (cardProgress > 50 ? '#00e5be' : '#f59e0b')}; font-weight: 900;">
-                ${cardProgress}%
-              </strong>
-            </div>
-            <div style="height: 6px; background: rgba(255,255,255,0.12); border-radius: 9999px; overflow: hidden;">
-              <div style="height: 100%; width: ${cardProgress}%; background: ${cardProgress === 100 ? 'linear-gradient(90deg, #10b981, #059669)' : 'linear-gradient(90deg, #00e5be, #0ea5e9)'}; border-radius: 9999px; transition: width 0.4s ease;"></div>
-            </div>
-          </div>
-
-          <div style="display: flex; align-items: center; justify-content: space-between; border-top: 1px solid var(--border-color); padding-top: 1rem; gap: 0.5rem; flex-wrap: wrap;">
-            <div style="display: flex; align-items: center; gap: 0.45rem; font-size: 0.82rem; color: var(--text-muted);">
-              <span>${c.authorAvatar || '👤'}</span>
-              <span style="max-width: 120px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${c.author || 'Docente'}</span>
-            </div>
-
-            <div style="display: flex; gap: 0.45rem; align-items: center; flex-wrap: wrap;">
-              ${isAuthor ? `
-                <button 
-                  class="btn btn-outline" 
-                  title="Abrir en el Asistente Inteligente de Proyectos" 
-                  style="padding: 0.42rem 0.68rem; font-size: 0.8rem; border-color: rgba(16, 185, 129, 0.55); color: #10b981; font-weight: 800;" 
-                  onclick="event.stopPropagation(); window.ProjectWizard.openWizard('${c.id}')"
-                >
-                  ✨ Asistente
-                </button>
-              ` : ''}
-              ${projectType === 'presentation' ? `
-                ${isAuthor ? `
-                  <button 
-                    class="btn btn-outline" 
-                    title="Editar Diapositivas" 
-                    style="padding: 0.45rem 0.75rem; font-size: 0.85rem;" 
-                    onclick="event.stopPropagation(); window.appRouter.editPresentation('${c.id}')"
-                  >
-                    ✏️
-                  </button>
-                ` : ''}
-                <button 
-                  class="btn btn-cyan" 
-                  style="padding: 0.45rem 1rem; font-size: 0.85rem; font-weight: 800; background: linear-gradient(135deg, #7c3aed, var(--neon-cyan)); border: none;" 
-                  onclick="event.stopPropagation(); window.appRouter.openPresentation('${c.id}')"
-                >
-                  🖥️ Presentar
-                </button>
-              ` : (projectType === 'video' ? `
-                ${isAuthor ? `
-                  <button 
-                    class="btn btn-outline" 
-                    title="Editar Video Clase" 
-                    style="padding: 0.45rem 0.75rem; font-size: 0.85rem;" 
-                    onclick="event.stopPropagation(); window.appRouter.editVideo('${c.id}')"
-                  >
-                    ✏️
-                  </button>
-                ` : ''}
-                <button 
-                  class="btn btn-cyan" 
-                  style="padding: 0.45rem 1rem; font-size: 0.85rem; font-weight: 800; background: linear-gradient(135deg, #ef4444, #dc2626); border: none;" 
-                  onclick="event.stopPropagation(); window.appRouter.openVideo('${c.id}')"
-                >
-                  🎬 Ver Video
-                </button>
-              ` : (projectType === 'document' ? `
-                ${isAuthor ? `
-                  <button 
-                    class="btn btn-outline" 
-                    title="Editar Documento" 
-                    style="padding: 0.45rem 0.75rem; font-size: 0.85rem;" 
-                    onclick="event.stopPropagation(); window.appRouter.editDocument('${c.id}')"
-                  >
-                    ✏️
-                  </button>
-                ` : ''}
-                <button 
-                  class="btn btn-cyan" 
-                  style="padding: 0.45rem 1rem; font-size: 0.85rem; font-weight: 800; background: linear-gradient(135deg, #3b82f6, var(--neon-cyan)); border: none;" 
-                  onclick="event.stopPropagation(); window.appRouter.openDocument('${c.id}')"
-                >
-                  📄 Leer
-                </button>
-              ` : `
-                ${isAuthor ? `
-                  <button 
-                    class="btn btn-outline" 
-                    title="Editar Recurso Web" 
-                    style="padding: 0.45rem 0.75rem; font-size: 0.85rem;" 
-                    onclick="event.stopPropagation(); window.appRouter.editUrl('${c.id}')"
-                  >
-                    ✏️
-                  </button>
-                ` : ''}
-                <button 
-                  class="btn btn-cyan" 
-                  style="padding: 0.45rem 1rem; font-size: 0.85rem; font-weight: 800; background: linear-gradient(135deg, #10b981, var(--neon-cyan)); border: none;" 
-                  onclick="event.stopPropagation(); window.appRouter.openUrl('${c.id}')"
-                >
-                  🌐 Abrir
-                </button>
-              `))}
-            </div>
+          <div class="saas-card-actions">
+            <button class="saas-card-btn-primary" onclick="event.stopPropagation(); ${primaryAction}">
+              ${actionLabel}
+            </button>
+            <button class="saas-card-btn-secondary" onclick="event.stopPropagation(); ${secondaryAction}">
+              ${secLabel}
+            </button>
           </div>
         </div>
       </div>

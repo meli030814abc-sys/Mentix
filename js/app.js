@@ -1,4 +1,4 @@
-/**
+﻿/**
  * 🔥 TE RETO - Orquestador Principal y Enrutador SPA (app.js)
  * Conecta todas las vistas, modales, autenticación, experiencia XP y sonido.
  */
@@ -209,8 +209,8 @@ class AppRouter {
 
     // Control de tema totalmente blanco exclusivo para la vista de proyectos
     if (viewName === 'projects') {
-      const isProjectFullActive = (window.ProjectsView && (window.ProjectsView.viewMode === 'wizard' || window.ProjectsView.viewMode === 'join'));
-      if (isProjectFullActive) {
+      const isProjectsView = (window.ProjectsView && (window.ProjectsView.viewMode === 'wizard' || window.ProjectsView.viewMode === 'join'));
+      if (isProjectsView) {
         document.body.classList.remove('projects-pure-white-theme');
       } else {
         document.body.classList.add('projects-pure-white-theme');
@@ -222,8 +222,8 @@ class AppRouter {
     // Controlar visibilidad del navbar principal (ocultar en lobby-join, game, leaderboard y podium para diseño inmersivo con fondo Mentix completo)
     const navEl = document.getElementById('main-navbar');
     if (navEl) {
-      const isProjectFullActive = (viewName === 'projects' && window.ProjectsView && (window.ProjectsView.viewMode === 'wizard' || window.ProjectsView.viewMode === 'join'));
-      if (viewName === 'lobby-join' || viewName === 'game' || viewName === 'leaderboard' || viewName === 'podium' || isProjectFullActive) {
+      const isProjectsView = (viewName === 'projects');
+      if (viewName === 'lobby-join' || viewName === 'game' || viewName === 'leaderboard' || viewName === 'podium' || isProjectsView) {
         navEl.style.display = 'none';
       } else {
         navEl.style.display = '';
