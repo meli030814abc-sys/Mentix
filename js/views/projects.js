@@ -781,6 +781,9 @@ window.ProjectsView = {
             </aside>
           </div>
 
+          <!-- SECCIÓN: PERSONAS QUE PARTICIPARON EN EL PROYECTO & ROLES -->
+          ${this.getParticipantsSectionHtml()}
+
           <!-- BOTTOM BANNER -->
           <div class="saas-bottom-banner">
             <div class="saas-bottom-left">
@@ -2672,88 +2675,47 @@ window.ProjectsView = {
   getParticipantsSectionHtml(proj = null, isModal = false) {
     const title = proj ? this.escapeHtml(proj.title || 'Empresa Privada') : 'Empresa Privada';
     return `
-      <section class="inno-participants-section" id="inno-sec-participants" style="${isModal ? 'padding: 0; background: transparent; border: none;' : ''}">
-        <div class="inno-participants-inner">
+      <section class="inno-participants-section" id="inno-sec-participants" style="margin: 2.2rem 0; border-radius: 20px; overflow: hidden; background: #060e1d; padding: 2.25rem 2rem; border: 1.5px solid rgba(0, 245, 212, 0.25); box-shadow: 0 15px 40px rgba(0, 0, 0, 0.45); ${isModal ? 'margin: 0; border: none; box-shadow: none; padding: 0.5rem 0;' : ''}">
+        <div class="inno-participants-inner" style="max-width: 1240px; margin: 0 auto;">
           
           <!-- Encabezado Superior -->
-          <div class="inno-roles-category-heading">
-            <span class="inno-roles-dot"></span>
+          <div class="inno-roles-category-heading" style="font-size: 0.88rem; font-weight: 800; letter-spacing: 1.5px; color: #00f5d4; text-transform: uppercase; margin-bottom: 1.25rem; display: flex; align-items: center; gap: 0.6rem;">
+            <span class="inno-roles-dot" style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #00f5d4; box-shadow: 0 0 10px #00f5d4;"></span>
             ALGUNOS DE LOS ROLES CON LOS QUE TE REÚNES EN LA EMPRESA PRIVADA
           </div>
 
           <!-- Fila Principal: Tarjeta de Escenario + Tarjetas de Roles -->
-          <div class="inno-roles-row-grid">
+          <div class="inno-roles-row-grid" style="display: flex; flex-wrap: wrap; gap: 1.25rem; align-items: stretch; justify-content: space-between;">
             
             <!-- Tarjeta Izquierda del Escenario -->
-            <article class="inno-scenario-card" style="background-image: url('assets/projects_ui/scenario_card.png');">
-              <div class="inno-scenario-content">
-                <div class="inno-scenario-badge">
-                  <span>🎯</span> ENTRENAMIENTO DIRECTIVO EN
-                </div>
-                <h3 class="inno-scenario-title">Empresa Privada</h3>
-                <p class="inno-scenario-subtitle">
-                  Una Aventura Gráfica Conversacional de <strong style="color: #38bdf8;">BestPractices.Games</strong>
-                </p>
-              </div>
-            </article>
+            <div class="inno-scenario-card-wrap" style="flex: 2 1 340px; min-width: 290px; border-radius: 16px; overflow: hidden; border: 1.5px solid rgba(0, 245, 212, 0.45); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(0, 245, 212, 0.15); transition: transform 0.25s ease, border-color 0.25s ease; background: #081528;" onmouseenter="this.style.transform='translateY(-4px)'; this.style.borderColor='#00f5d4';" onmouseleave="this.style.transform='translateY(0)'; this.style.borderColor='rgba(0, 245, 212, 0.45)';">
+              <img src="assets/projects_ui/scenario_card.png" alt="Entrenamiento Directivo en Empresa Privada" style="width: 100%; height: 100%; object-fit: cover; display: block;" />
+            </div>
 
-            <!-- Tarjetas de Personajes Participantes -->
-            <div class="inno-characters-grid">
+            <!-- Fila de las 3 Tarjetas de Roles -->
+            <div class="inno-characters-flex-wrap" style="flex: 3 1 500px; display: flex; gap: 1rem; flex-wrap: wrap;">
               
               <!-- 1. Severo Recorte -->
-              <article class="inno-char-card">
-                <div class="inno-char-img-wrap">
-                  <img src="assets/projects_ui/avatar_severo.png" alt="Severo Recorte" loading="lazy" />
-                </div>
-                <div class="inno-char-body">
-                  <div>
-                    <div class="inno-char-name">Severo Recorte</div>
-                    <div class="inno-char-role">Director General</div>
-                  </div>
-                  <div class="inno-char-quote">
-                    «los números salen»
-                  </div>
-                </div>
-              </article>
+              <div class="inno-char-card-wrap" style="flex: 1 1 150px; min-width: 140px; border-radius: 14px; overflow: hidden; border: 1.5px solid rgba(0, 245, 212, 0.35); box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4); background: #07152b; transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;" onmouseenter="this.style.transform='translateY(-4px)'; this.style.borderColor='#00f5d4'; this.style.boxShadow='0 12px 28px rgba(0, 245, 212, 0.3)';" onmouseleave="this.style.transform='translateY(0)'; this.style.borderColor='rgba(0, 245, 212, 0.35)'; this.style.boxShadow='0 8px 24px rgba(0, 0, 0, 0.4)';">
+                <img src="assets/projects_ui/card_severo.png" alt="Severo Recorte - Director General" style="width: 100%; height: 100%; object-fit: cover; display: block;" />
+              </div>
 
               <!-- 2. Clara Fuente -->
-              <article class="inno-char-card">
-                <div class="inno-char-img-wrap">
-                  <img src="assets/projects_ui/avatar_clara.png" alt="Clara Fuente" loading="lazy" />
-                </div>
-                <div class="inno-char-body">
-                  <div>
-                    <div class="inno-char-name">Clara Fuente</div>
-                    <div class="inno-char-role">Directora de Datos</div>
-                  </div>
-                  <div class="inno-char-quote">
-                    «el dato es ese; lo que hagamos con él ya es tuyo»
-                  </div>
-                </div>
-              </article>
+              <div class="inno-char-card-wrap" style="flex: 1 1 150px; min-width: 140px; border-radius: 14px; overflow: hidden; border: 1.5px solid rgba(0, 245, 212, 0.35); box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4); background: #07152b; transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;" onmouseenter="this.style.transform='translateY(-4px)'; this.style.borderColor='#00f5d4'; this.style.boxShadow='0 12px 28px rgba(0, 245, 212, 0.3)';" onmouseleave="this.style.transform='translateY(0)'; this.style.borderColor='rgba(0, 245, 212, 0.35)'; this.style.boxShadow='0 8px 24px rgba(0, 0, 0, 0.4)';">
+                <img src="assets/projects_ui/card_clara.png" alt="Clara Fuente - Directora de Datos" style="width: 100%; height: 100%; object-fit: cover; display: block;" />
+              </div>
 
               <!-- 3. Justo Sinrodeos -->
-              <article class="inno-char-card">
-                <div class="inno-char-img-wrap">
-                  <img src="assets/projects_ui/avatar_justo.png" alt="Justo Sinrodeos" loading="lazy" />
-                </div>
-                <div class="inno-char-body">
-                  <div>
-                    <div class="inno-char-name">Justo Sinrodeos</div>
-                    <div class="inno-char-role">Consejero Independiente</div>
-                  </div>
-                  <div class="inno-char-quote">
-                    «La decisión es suya. Dígamela sin rodeos, por favor.»
-                  </div>
-                </div>
-              </article>
+              <div class="inno-char-card-wrap" style="flex: 1 1 150px; min-width: 140px; border-radius: 14px; overflow: hidden; border: 1.5px solid rgba(0, 245, 212, 0.35); box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4); background: #07152b; transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;" onmouseenter="this.style.transform='translateY(-4px)'; this.style.borderColor='#00f5d4'; this.style.boxShadow='0 12px 28px rgba(0, 245, 212, 0.3)';" onmouseleave="this.style.transform='translateY(0)'; this.style.borderColor='rgba(0, 245, 212, 0.35)'; this.style.boxShadow='0 8px 24px rgba(0, 0, 0, 0.4)';">
+                <img src="assets/projects_ui/card_justo.png" alt="Justo Sinrodeos - Consejero Independiente" style="width: 100%; height: 100%; object-fit: cover; display: block;" />
+              </div>
 
             </div>
           </div>
 
           <!-- Encabezado Inferior -->
-          <div class="inno-roles-category-heading" style="margin-top: 2rem; opacity: 0.85;">
-            <span class="inno-roles-dot"></span>
+          <div class="inno-roles-category-heading" style="font-size: 0.88rem; font-weight: 800; letter-spacing: 1.5px; color: #00f5d4; text-transform: uppercase; margin-top: 2.25rem; display: flex; align-items: center; gap: 0.6rem; opacity: 0.9;">
+            <span class="inno-roles-dot" style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #00f5d4; box-shadow: 0 0 10px #00f5d4;"></span>
             ALGUNOS DE LOS ROLES CON LOS QUE TE REÚNES EN LA ADMINISTRACIÓN PÚBLICA
           </div>
 
