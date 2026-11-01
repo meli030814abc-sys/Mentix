@@ -145,61 +145,167 @@ class SupabaseService {
     }
   }
 
+  // Guardar cualquier reto o proyecto educativo en Supabase
+  async saveChallengeToSupabase(c) {
+    if (!this.client || !this.isConnected || !c || !c.id) return false;
+    try {
+      const isGov = !!(c.isGovDataProject || c.is_gov_data_project || c.govdata || c.govdata_payload);
+      const pubStatus = c.publicationStatus || c.publication_status || 'published';
+      const mainImg = c.mainImage || c.banner || c.image || '';
+      const row = {
+        id: c.id,
+        title: c.title || c.name || 'Proyecto',
+        description: c.shortDescription || c.description || '',
+        category: c.category || 'tecnologia',
+        category_name: c.categoryName || c.category_name || 'General',
+        author: c.author || 'Profesor',
+        author_avatar: c.authorAvatar || c.author_avatar || '👨‍🏫',
+        plays: Number(c.plays || c.students || 0),
+        difficulty: c.difficulty || 'Medio',
+        banner: mainImg,
+        time_per_question: Number(c.timePerQuestion || c.time_per_question || 20),
+        points_standard: Number(c.pointsStandard || c.points_standard || 1000),
+        is_public: pubStatus === 'published',
+        questions: Array.isArray(c.questions) ? c.questions : [],
+        slug: c.slug || c.id,
+        subtitle: c.subtitle || '',
+        short_description: c.shortDescription || c.description || '',
+        full_description: c.fullDescription || '',
+        project_type: c.projectType || c.project_type || (isGov ? 'presentation' : 'quiz'),
+        preparation_status: c.preparationStatus || c.preparation_status || (pubStatus === 'published' ? 'completado' : 'en_desarrollo'),
+        publication_status: pubStatus,
+        govdata_payload: c.govdata || c.govdata_payload || (isGov ? c : {}),
+        updated_at: new Date().toISOString()
+      };
+      await this.client.from('challenges').upsert(row);
+
+      // Si es un proyecto de Asistente Inteligente / GovData, respaldar también en govdata_projects
+      if (isGov && typeof this.saveGovDataProject === 'function') {
+        await this.saveGovDataProject(c);
+      }
+      return true;
+    } catch (e) {
+      console.warn('Aviso guardando en Supabase:', e);
+      return false;
+    }
+  },
+
   // Sincronizar retos con la base de datos
   async syncChallenges(localChallenges) {
     if (!this.client || !this.isConnected) return;
     try {
       const { data, error } = await this.client.from('challenges').select('*');
-      if (!error) {
-        if (data && data.length > 0) {
-          // Normalizar retos y proyectos provenientes de Supabase
-          const normalizedCloud = data.map(c => ({
+      let normalizedCloud = [];
+
+      if (!error && data && data.length > 0) {
+        // Normalizar retos y proyectos provenientes de Supabase
+        normalizedCloud = data.map(c => {
+          const isGov = Boolean(c.isGovDataProject ?? c.is_gov_data_project ?? (c.govdata_payload && Object.keys(c.govdata_payload).length > 0));
+          const pubStatus = c.publicationStatus || c.publication_status || 'published';
+          const status = c.status || (pubStatus === 'published' ? 'completed' : 'in_progress');
+          const mainImg = c.mainImage || c.main_image || c.banner || c.image || '';
+          const gd = c.govdata || c.govdata_payload || null;
+          return {
             ...c,
+            title: c.title || c.name || 'Proyecto',
             categoryName: c.categoryName || c.category_name || 'General',
             authorAvatar: c.authorAvatar || c.author_avatar || '👨‍🏫',
-            projectType: c.projectType || c.project_type || 'presentation',
-            isGovDataProject: c.isGovDataProject ?? c.is_gov_data_project ?? false,
-            publicationStatus: c.publicationStatus || c.publication_status || 'published',
+            projectType: c.projectType || c.project_type || (Array.isArray(c.questions) && c.questions.length > 0 && !isGov ? 'quiz' : 'presentation'),
+            isGovDataProject: isGov,
+            publicationStatus: pubStatus,
+            preparationStatus: c.preparationStatus || c.preparation_status || (pubStatus === 'published' ? 'completado' : 'en_desarrollo'),
+            status: status,
+            mainImage: mainImg,
+            banner: c.banner || mainImg,
+            govdata: gd,
             timePerQuestion: c.timePerQuestion || c.time_per_question || 20,
             pointsStandard: c.pointsStandard || c.points_standard || 1000
-          }));
-          const cloudIds = new Set(normalizedCloud.map(c => c.id));
-          const merged = [
-            ...normalizedCloud,
-            ...localChallenges.filter(c => !cloudIds.has(c.id))
-          ];
-          window.appState.challenges = merged;
-          saveGlobalState(window.appState);
-        } else if (localChallenges && localChallenges.length > 0) {
-          // Sembrar la tabla challenges en Supabase
-          const formatted = localChallenges.map(c => ({
-            id: c.id,
-            title: c.title,
-            description: c.description || '',
-            category: c.category,
-            category_name: c.categoryName || 'General',
-            author: c.author || 'Profesor',
-            author_avatar: c.authorAvatar || '👨‍🏫',
-            plays: c.plays || 0,
-            difficulty: c.difficulty || 'Medio',
-            banner: c.banner || c.image || '',
-            project_type: c.projectType || c.project_type || 'presentation',
-            is_gov_data_project: !!(c.isGovDataProject || c.is_gov_data_project),
-            slides: c.slides || [],
-            chapters: c.chapters || [],
-            progress: c.progress || 0,
-            status: c.status || 'in_progress',
-            publication_status: c.publicationStatus || c.publication_status || 'draft',
-            rating: c.rating || '5.0',
-            students: c.students || 0,
-            time_per_question: c.timePerQuestion || 20,
-            points_standard: c.pointsStandard || 1000,
-            is_public: true,
-            questions: c.questions || []
-          }));
-          await this.client.from('challenges').upsert(formatted);
-          console.log('⚡ Retos y proyectos predeterminados sincronizados en Supabase.');
+          };
+        });
+      }
+
+      // También cargar proyectos dedicados desde govdata_projects si la tabla existe
+      try {
+        const { data: gData, error: gErr } = await this.client.from('govdata_projects').select('*');
+        if (!gErr && Array.isArray(gData) && gData.length > 0) {
+          gData.forEach(gp => {
+            if (!gp || !gp.id) return;
+            const existingIdx = normalizedCloud.findIndex(c => c.id === gp.id);
+            const pubStatus = gp.publication_status || 'published';
+            const govProj = {
+              id: gp.id,
+              slug: gp.slug || gp.id,
+              title: gp.name || gp.title || 'Proyecto Sin Título',
+              subtitle: gp.subtitle || '',
+              shortDescription: gp.short_description || '',
+              fullDescription: gp.full_description || '',
+              description: gp.short_description || gp.full_description || '',
+              category: gp.category || 'tecnologia',
+              categoryName: gp.category_name || 'Tecnología & Programación',
+              projectType: 'presentation',
+              isGovDataProject: true,
+              projectSubtype: gp.project_subtype || 'Gobierno de Datos e IA',
+              difficulty: 'Medio',
+              banner: gp.main_image || gp.thumbnail_image || '',
+              mainImage: gp.main_image || '',
+              thumbnailImage: gp.thumbnail_image || '',
+              publicationStatus: pubStatus,
+              preparationStatus: gp.preparation_status || 'completado',
+              status: pubStatus === 'published' ? 'completed' : 'in_progress',
+              isPublic: pubStatus === 'published',
+              author: gp.author_name || gp.responsible || 'Profesor',
+              authorId: gp.created_by || '',
+              authorRole: gp.author_role || 'teacher',
+              targetAudience: gp.target_audience || '',
+              problemStatement: gp.problem_statement || '',
+              mainObjective: gp.objectives || '',
+              benefits: gp.benefits || '',
+              valueProposition: gp.value_proposition || {},
+              videoUrl: gp.video_url || '',
+              videoConfig: gp.video_config || {},
+              visualAssets: gp.visual_assets || [],
+              externalLinks: gp.external_links || [],
+              landingConfig: gp.landing_config || {},
+              tags: gp.tags || [],
+              govdata: gp
+            };
+            if (existingIdx >= 0) {
+              normalizedCloud[existingIdx] = { ...normalizedCloud[existingIdx], ...govProj };
+            } else {
+              normalizedCloud.push(govProj);
+            }
+          });
         }
+      } catch (gEx) {}
+
+      if (normalizedCloud.length > 0) {
+        const cloudIds = new Set(normalizedCloud.map(c => c.id));
+        const merged = [
+          ...normalizedCloud,
+          ...localChallenges.filter(c => !cloudIds.has(c.id))
+        ];
+        window.appState.challenges = merged;
+        saveGlobalState(window.appState);
+
+        // Respaldar en Supabase cualquier proyecto local nuevo que no estuviese en la nube
+        const unpushed = localChallenges.filter(c => !cloudIds.has(c.id) && c.id && c.title);
+        for (const up of unpushed) {
+          this.saveChallengeToSupabase(up).catch(() => {});
+        }
+
+        // Refrescar vistas activas en tiempo real tras la sincronización
+        if (window.ProjectsView) {
+          window.ProjectsView.render();
+        }
+        if (window.HomeView && window.appRouter?.currentView === 'home') {
+          window.HomeView.render();
+        }
+      } else if (localChallenges && localChallenges.length > 0) {
+        // Sembrar la tabla challenges en Supabase
+        for (const lc of localChallenges) {
+          await this.saveChallengeToSupabase(lc);
+        }
+        console.log('⚡ Retos y proyectos predeterminados sincronizados en Supabase.');
       }
     } catch (e) {
       console.warn('Error sincronizando retos:', e);

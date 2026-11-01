@@ -712,6 +712,10 @@ window.VideoProjectView = {
     p.authorId = p.authorId || u?.id || ('user_' + (u?.email || u?.name || 'anon'));
     p.authorEmail = p.authorEmail || u?.email || '';
 
+    p.publicationStatus = 'published';
+    p.status = 'completed';
+    p.isPublic = true;
+
     const existingIndex = window.appState.challenges.findIndex(c => c.id === p.id);
     if (existingIndex >= 0) {
       window.appState.challenges[existingIndex] = p;

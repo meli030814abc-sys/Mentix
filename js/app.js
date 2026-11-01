@@ -1,4 +1,4 @@
-﻿/**
+/**
  * 🔥 TE RETO - Orquestador Principal y Enrutador SPA (app.js)
  * Conecta todas las vistas, modales, autenticación, experiencia XP y sonido.
  */
@@ -1368,7 +1368,12 @@ class AppRouter {
     if (!challenge || !challenge.id || !challenge.title) return;
     try {
       challenge.isPublic = true;
-      challenge.projectType = challenge.projectType || 'quiz';
+      if (!challenge.projectType) {
+        challenge.projectType = (challenge.isGovDataProject || challenge.slides) ? 'presentation' : 'quiz';
+      }
+      if (window.supabaseService && typeof window.supabaseService.saveChallengeToSupabase === 'function') {
+        window.supabaseService.saveChallengeToSupabase(challenge);
+      }
       challenge.updatedAt = new Date().toISOString();
 
       const apiBase = this.getApiBase();

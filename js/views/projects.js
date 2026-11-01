@@ -718,8 +718,16 @@ window.ProjectsView = {
               <p class="saas-head-subtitle">Explora, gestiona y comparte tus proyectos de aprendizaje.</p>
             </div>
 
-            <button class="saas-create-btn" onclick="window.ProjectsView.openCreateProjectModal()">
-              + Crear Proyecto
+            <button 
+              type="button" 
+              class="saas-create-btn" 
+              onclick="window.ProjectsView.openCreateProjectModal()"
+              style="display: inline-flex; align-items: center; gap: 0.45rem; background: linear-gradient(135deg, #00d2ff 0%, #0077ff 100%); color: #ffffff; border: none; border-radius: 9999px; padding: 0.48rem 1.15rem; font-size: 0.85rem; font-weight: 800; cursor: pointer; box-shadow: 0 4px 14px rgba(0, 180, 255, 0.4); transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); white-space: nowrap;"
+              onmouseenter="this.style.transform='translateY(-2px) scale(1.02)';"
+              onmouseleave="this.style.transform='translateY(0) scale(1)';"
+            >
+              <span>➕</span>
+              <span>Crear Proyecto</span>
             </button>
           </div>
 
@@ -944,6 +952,15 @@ window.ProjectsView = {
     } else if (projectType === 'presentation') {
       defaultBanner = c.mainImage || c.image || c.banner || 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=800';
       primaryAction = `window.appRouter.openPresentation ? window.appRouter.openPresentation('${c.id}') : window.ProjectsView.openProjectLanding('${c.id}')`;
+    } else if (projectType === 'video') {
+      defaultBanner = c.mainImage || c.image || c.banner || 'https://images.unsplash.com/photo-1536240478700-b869070f9279?w=800';
+      primaryAction = `window.appRouter.openVideo ? window.appRouter.openVideo('${c.id}') : window.ProjectsView.openProjectLanding('${c.id}')`;
+    } else if (projectType === 'document') {
+      defaultBanner = c.mainImage || c.image || c.banner || 'https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=800';
+      primaryAction = `window.appRouter.openDocument ? window.appRouter.openDocument('${c.id}') : window.ProjectsView.openProjectLanding('${c.id}')`;
+    } else if (projectType === 'url') {
+      defaultBanner = c.mainImage || c.image || c.banner || 'https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?w=800';
+      primaryAction = `window.appRouter.openUrl ? window.appRouter.openUrl('${c.id}') : window.ProjectsView.openProjectLanding('${c.id}')`;
     }
 
     const dateStr = c.date || (c.createdAt ? new Date(c.createdAt).toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' }) : '12 Abr 2025');

@@ -2781,9 +2781,6 @@ collectCurrentStepInputs() {
   },
 
   canPublishDirectly() {
-    if (window.ProjectsView && typeof window.ProjectsView.isTeacherOrAdmin === 'function') {
-      return window.ProjectsView.isTeacherOrAdmin();
-    }
     return true;
   },
 
