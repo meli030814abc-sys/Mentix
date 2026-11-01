@@ -858,120 +858,201 @@
     </div>
   </div>
 
-  <!-- Modal: Crear Nuevo Proyecto (Presentación, Video Interactivo o Quiz) -->
+  <!-- Modal: Crear Nuevo Proyecto (Flujo Estudiantil 2 Pasos sin Asistente Inteligente) -->
   <div id="create-project-type-modal" class="modal-overlay">
-    <div class="modal-content glass-panel" style="max-width: 760px; padding: 2rem; border-radius: 20px; border: 2px solid var(--neon-cyan);">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+    <div class="modal-content glass-panel" style="max-width: 760px; padding: 2rem; border-radius: 20px; border: 2px solid var(--neon-cyan); background: rgba(10, 20, 42, 0.98); box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8), 0 0 35px rgba(0, 245, 212, 0.25);">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
         <div>
           <div style="display: inline-flex; align-items: center; gap: 0.4rem; background: rgba(0,245,212,0.15); border: 1px solid var(--neon-cyan); padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.78rem; font-weight: 800; color: var(--neon-cyan); margin-bottom: 0.4rem;">
             <span>✨</span> NUEVO PROYECTO EDUCATIVO
           </div>
-          <h2 style="font-size: 1.6rem; font-weight: 900; margin: 0; color: var(--text-primary);">
-            ¿Qué tipo de proyecto deseas crear?
+          <h2 id="create-project-modal-title" style="font-size: 1.55rem; font-weight: 900; margin: 0; color: var(--text-primary);">
+            Datos de tu Proyecto
           </h2>
-          <p style="font-size: 0.88rem; color: var(--text-secondary); margin: 0.35rem 0 0;">
-            Selecciona el formato para estructurar tu contenido interactivo de clase:
+          <p id="create-project-modal-subtitle" style="font-size: 0.88rem; color: var(--text-secondary); margin: 0.35rem 0 0;">
+            Paso 1 de 2: Ingresa la información general para preparar la ficha y Landing Page de tu proyecto.
           </p>
         </div>
-        <button class="btn btn-outline btn-icon" onclick="window.ProjectsView.closeCreateProjectModal()">✕</button>
+        <button type="button" class="btn btn-outline btn-icon" onclick="window.ProjectsView.closeCreateProjectModal()" aria-label="Cerrar">✕</button>
       </div>
 
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 1.15rem; margin-bottom: 1.5rem;">
-        <!-- Opción 1: Asistente Inteligente (Wizard) -->
-        <div 
-          class="glass-panel" 
-          onclick="window.ProjectsView.startNewProject('wizard')"
-          style="padding: 1.35rem 1.15rem; border-radius: 16px; border: 2px solid #00f5d4; background: rgba(0, 245, 212, 0.08); cursor: pointer; text-align: center; transition: var(--transition-bounce);"
-          onmouseenter="this.style.transform='translateY(-4px)'; this.style.borderColor='#f72585'"
-          onmouseleave="this.style.transform='none'; this.style.borderColor='#00f5d4'"
-        >
-          <div style="font-size: 2.4rem; margin-bottom: 0.4rem;">🤖</div>
-          <h3 style="font-size: 1.15rem; font-weight: 900; margin: 0 0 0.35rem; color: var(--text-primary);">Asistente Inteligente</h3>
-          <p style="font-size: 0.8rem; color: var(--text-secondary); margin: 0 0 0.85rem; line-height: 1.4;">
-            Asistente guiado de 8 pasos para crear proyectos con IA y Landing Page.
-          </p>
-          <span class="btn btn-outline" style="font-size: 0.78rem; padding: 0.35rem 0.75rem; border-color: #00f5d4; color: #00f5d4; font-weight: 800;">
-            Abrir Asistente →
-          </span>
+      <!-- PASO 1: Datos Generales (Nombre, Quién lo hizo, Resumen, Descripción) -->
+      <div id="create-project-step-1" style="display: block;">
+        <div style="display: flex; flex-direction: column; gap: 1rem; margin-bottom: 1.5rem;">
+          <!-- Nombre del Proyecto -->
+          <div>
+            <label for="proj-create-title" style="display: block; font-size: 0.86rem; font-weight: 800; color: var(--neon-cyan); margin-bottom: 0.35rem;">
+              🏷️ Nombre del Proyecto <span style="color: #ef4444;">*</span>
+            </label>
+            <input 
+              type="text" 
+              id="proj-create-title" 
+              class="form-control" 
+              placeholder="Ej. Inteligencia Artificial en el Aula, Reto Ecológico 2026..." 
+              style="width: 100%; padding: 0.75rem 1rem; border-radius: 12px; background: rgba(15, 23, 42, 0.75); border: 1.5px solid rgba(255, 255, 255, 0.15); color: #fff; font-size: 0.95rem;"
+            />
+          </div>
+
+          <!-- Quién lo hizo -->
+          <div>
+            <label for="proj-create-author" style="display: block; font-size: 0.86rem; font-weight: 800; color: var(--neon-cyan); margin-bottom: 0.35rem;">
+              👤 Quién lo hizo (Autor o Integrantes) <span style="color: #ef4444;">*</span>
+            </label>
+            <input 
+              type="text" 
+              id="proj-create-author" 
+              class="form-control" 
+              placeholder="Ej. Sofía Martínez, Carlos Ruiz, Equipo Alfa..." 
+              style="width: 100%; padding: 0.75rem 1rem; border-radius: 12px; background: rgba(15, 23, 42, 0.75); border: 1.5px solid rgba(255, 255, 255, 0.15); color: #fff; font-size: 0.95rem;"
+            />
+          </div>
+
+          <!-- Resumen del Proyecto -->
+          <div>
+            <label for="proj-create-summary" style="display: block; font-size: 0.86rem; font-weight: 800; color: var(--neon-cyan); margin-bottom: 0.35rem;">
+              📝 Resumen del Proyecto (Breve síntesis) <span style="color: #ef4444;">*</span>
+            </label>
+            <textarea 
+              id="proj-create-summary" 
+              class="form-control" 
+              rows="2" 
+              placeholder="Escribe una síntesis concisa de qué trata el proyecto para la portada de la Landing Page..." 
+              style="width: 100%; padding: 0.75rem 1rem; border-radius: 12px; background: rgba(15, 23, 42, 0.75); border: 1.5px solid rgba(255, 255, 255, 0.15); color: #fff; font-size: 0.92rem; resize: vertical;"
+            ></textarea>
+          </div>
+
+          <!-- Descripción del Proyecto -->
+          <div>
+            <label for="proj-create-description" style="display: block; font-size: 0.86rem; font-weight: 800; color: var(--neon-cyan); margin-bottom: 0.35rem;">
+              📖 Descripción del Proyecto (Detallada)
+            </label>
+            <textarea 
+              id="proj-create-description" 
+              class="form-control" 
+              rows="3" 
+              placeholder="Detalla los antecedentes, metas, metodología o alcance de este proyecto educativo..." 
+              style="width: 100%; padding: 0.75rem 1rem; border-radius: 12px; background: rgba(15, 23, 42, 0.75); border: 1.5px solid rgba(255, 255, 255, 0.15); color: #fff; font-size: 0.92rem; resize: vertical;"
+            ></textarea>
+          </div>
         </div>
 
-        <!-- Opción 2: Presentación Interactiva -->
-        <div 
-          class="glass-panel" 
-          onclick="window.ProjectsView.startNewProject('presentation')"
-          style="padding: 1.35rem 1.15rem; border-radius: 16px; border: 2px solid #7c3aed; background: rgba(124, 58, 237, 0.08); cursor: pointer; text-align: center; transition: var(--transition-bounce);"
-          onmouseenter="this.style.transform='translateY(-4px)'; this.style.borderColor='var(--neon-cyan)'"
-          onmouseleave="this.style.transform='none'; this.style.borderColor='#7c3aed'"
-        >
-          <div style="font-size: 2.4rem; margin-bottom: 0.4rem;">📊</div>
-          <h3 style="font-size: 1.15rem; font-weight: 900; margin: 0 0 0.35rem; color: var(--text-primary);">Presentación</h3>
-          <p style="font-size: 0.8rem; color: var(--text-secondary); margin: 0 0 0.85rem; line-height: 1.4;">
-            Diapositivas interactivas con explicaciones, imágenes y conceptos clave.
-          </p>
-          <span class="btn btn-outline" style="font-size: 0.78rem; padding: 0.35rem 0.75rem; border-color: #7c3aed; color: #c4b5fd; font-weight: 800;">
-            Crear Presentación →
-          </span>
-        </div>
-
-        <!-- Opción 3: Video Interactivo -->
-        <div 
-          class="glass-panel" 
-          onclick="window.ProjectsView.startNewProject('video')"
-          style="padding: 1.35rem 1.15rem; border-radius: 16px; border: 2px solid #ef4444; background: rgba(239, 68, 68, 0.08); cursor: pointer; text-align: center; transition: var(--transition-bounce);"
-          onmouseenter="this.style.transform='translateY(-4px)'; this.style.borderColor='var(--neon-cyan)'"
-          onmouseleave="this.style.transform='none'; this.style.borderColor='#ef4444'"
-        >
-          <div style="font-size: 2.4rem; margin-bottom: 0.4rem;">🎬</div>
-          <h3 style="font-size: 1.15rem; font-weight: 900; margin: 0 0 0.35rem; color: var(--text-primary);">Video Clase</h3>
-          <p style="font-size: 0.8rem; color: var(--text-secondary); margin: 0 0 0.85rem; line-height: 1.4;">
-            Integra videos (YouTube, Drive, MP4) con capítulos, resumen y preguntas.
-          </p>
-          <span class="btn btn-outline" style="font-size: 0.78rem; padding: 0.35rem 0.75rem; border-color: #ef4444; color: #fca5a5; font-weight: 800;">
-            Crear Video Clase →
-          </span>
-        </div>
-
-        <!-- Opción 4: Documento Didáctico -->
-        <div 
-          class="glass-panel" 
-          onclick="window.ProjectsView.startNewProject('document')"
-          style="padding: 1.35rem 1.15rem; border-radius: 16px; border: 2px solid #3b82f6; background: rgba(59, 130, 246, 0.08); cursor: pointer; text-align: center; transition: var(--transition-bounce);"
-          onmouseenter="this.style.transform='translateY(-4px)'; this.style.borderColor='var(--neon-cyan)'"
-          onmouseleave="this.style.transform='none'; this.style.borderColor='#3b82f6'"
-        >
-          <div style="font-size: 2.4rem; margin-bottom: 0.4rem;">📄</div>
-          <h3 style="font-size: 1.15rem; font-weight: 900; margin: 0 0 0.35rem; color: var(--text-primary);">Documento</h3>
-          <p style="font-size: 0.8rem; color: var(--text-secondary); margin: 0 0 0.85rem; line-height: 1.4;">
-            Guías didácticas, apuntes de clase y lecturas estructuradas por secciones.
-          </p>
-          <span class="btn btn-outline" style="font-size: 0.78rem; padding: 0.35rem 0.75rem; border-color: #3b82f6; color: #93c5fd; font-weight: 800;">
-            Crear Documento →
-          </span>
-        </div>
-
-        <!-- Opción 5: Recurso Web por URL -->
-        <div 
-          class="glass-panel" 
-          onclick="window.ProjectsView.startNewProject('url')"
-          style="padding: 1.35rem 1.15rem; border-radius: 16px; border: 2px solid #10b981; background: rgba(16, 185, 129, 0.08); cursor: pointer; text-align: center; transition: var(--transition-bounce);"
-          onmouseenter="this.style.transform='translateY(-4px)'; this.style.borderColor='var(--neon-cyan)'"
-          onmouseleave="this.style.transform='none'; this.style.borderColor='#10b981'"
-        >
-          <div style="font-size: 2.4rem; margin-bottom: 0.4rem;">🌐</div>
-          <h3 style="font-size: 1.15rem; font-weight: 900; margin: 0 0 0.35rem; color: var(--text-primary);">Enlace / URL</h3>
-          <p style="font-size: 0.8rem; color: var(--text-secondary); margin: 0 0 0.85rem; line-height: 1.4;">
-            Enlaza e incrusta simuladores (PhET, GeoGebra), sitios web y herramientas.
-          </p>
-          <span class="btn btn-outline" style="font-size: 0.78rem; padding: 0.35rem 0.75rem; border-color: #10b981; color: #6ee7b7; font-weight: 800;">
-            Crear Recurso URL →
-          </span>
+        <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 1rem;">
+          <button type="button" class="btn btn-outline" onclick="window.ProjectsView.closeCreateProjectModal()">
+            Cancelar
+          </button>
+          <button 
+            type="button" 
+            class="btn btn-primary" 
+            onclick="window.ProjectsView.goToCreateProjectStep(2)"
+            style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.5rem; font-weight: 800; border-radius: 12px; background: linear-gradient(135deg, #00f5d4 0%, #7c3aed 100%); color: #050b14; border: none; cursor: pointer; box-shadow: 0 4px 15px rgba(0,245,212,0.3); font-size: 0.95rem;"
+          >
+            Siguiente: Elegir Formato →
+          </button>
         </div>
       </div>
 
-      <div style="text-align: right;">
-        <button type="button" class="btn btn-outline" onclick="window.ProjectsView.closeCreateProjectModal()">
-          Cerrar
-        </button>
+      <!-- PASO 2: Elegir Formato (Presentación, Video Clase, Documento, URL) -->
+      <div id="create-project-step-2" style="display: none;">
+        <!-- Banner resumen con datos del paso 1 -->
+        <div style="background: rgba(0, 245, 212, 0.08); border: 1px solid rgba(0, 245, 212, 0.25); border-radius: 12px; padding: 0.75rem 1rem; margin-bottom: 1.25rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem;">
+          <div style="display: flex; align-items: center; gap: 0.5rem;">
+            <span style="font-size: 1.2rem;">💡</span>
+            <div style="font-size: 0.88rem; color: #fff;">
+              <strong id="create-project-preview-title" style="color: var(--neon-cyan);">Mi Proyecto</strong>
+              <span id="create-project-preview-author" style="color: var(--text-secondary); margin-left: 0.5rem;">• Por Estudiante</span>
+            </div>
+          </div>
+          <button 
+            type="button" 
+            onclick="window.ProjectsView.goToCreateProjectStep(1)" 
+            style="background: transparent; border: 1px solid rgba(255,255,255,0.25); color: #cbd5e1; border-radius: 8px; padding: 0.25rem 0.65rem; font-size: 0.78rem; cursor: pointer;"
+          >
+            ✏️ Volver a editar datos
+          </button>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 1.15rem; margin-bottom: 1.5rem;">
+          <!-- Opción 1: Presentación Interactiva -->
+          <div 
+            class="glass-panel" 
+            onclick="window.ProjectsView.createStudentProject('presentation')"
+            style="padding: 1.35rem 1.15rem; border-radius: 16px; border: 2px solid #7c3aed; background: rgba(124, 58, 237, 0.08); cursor: pointer; text-align: center; transition: var(--transition-bounce);"
+            onmouseenter="this.style.transform='translateY(-4px)'; this.style.borderColor='var(--neon-cyan)'"
+            onmouseleave="this.style.transform='none'; this.style.borderColor='#7c3aed'"
+          >
+            <div style="font-size: 2.4rem; margin-bottom: 0.4rem;">📊</div>
+            <h3 style="font-size: 1.15rem; font-weight: 900; margin: 0 0 0.35rem; color: var(--text-primary);">Presentación</h3>
+            <p style="font-size: 0.8rem; color: var(--text-secondary); margin: 0 0 0.85rem; line-height: 1.4;">
+              Diapositivas interactivas con explicaciones, imágenes y conceptos clave.
+            </p>
+            <span class="btn btn-outline" style="font-size: 0.78rem; padding: 0.35rem 0.75rem; border-color: #7c3aed; color: #c4b5fd; font-weight: 800;">
+              Crear Presentación →
+            </span>
+          </div>
+
+          <!-- Opción 2: Video Interactivo -->
+          <div 
+            class="glass-panel" 
+            onclick="window.ProjectsView.createStudentProject('video')"
+            style="padding: 1.35rem 1.15rem; border-radius: 16px; border: 2px solid #ef4444; background: rgba(239, 68, 68, 0.08); cursor: pointer; text-align: center; transition: var(--transition-bounce);"
+            onmouseenter="this.style.transform='translateY(-4px)'; this.style.borderColor='var(--neon-cyan)'"
+            onmouseleave="this.style.transform='none'; this.style.borderColor='#ef4444'"
+          >
+            <div style="font-size: 2.4rem; margin-bottom: 0.4rem;">🎬</div>
+            <h3 style="font-size: 1.15rem; font-weight: 900; margin: 0 0 0.35rem; color: var(--text-primary);">Video Clase</h3>
+            <p style="font-size: 0.8rem; color: var(--text-secondary); margin: 0 0 0.85rem; line-height: 1.4;">
+              Integra videos (YouTube, Drive, MP4) con capítulos, resumen y preguntas.
+            </p>
+            <span class="btn btn-outline" style="font-size: 0.78rem; padding: 0.35rem 0.75rem; border-color: #ef4444; color: #fca5a5; font-weight: 800;">
+              Crear Video Clase →
+            </span>
+          </div>
+
+          <!-- Opción 3: Documento Didáctico -->
+          <div 
+            class="glass-panel" 
+            onclick="window.ProjectsView.createStudentProject('document')"
+            style="padding: 1.35rem 1.15rem; border-radius: 16px; border: 2px solid #3b82f6; background: rgba(59, 130, 246, 0.08); cursor: pointer; text-align: center; transition: var(--transition-bounce);"
+            onmouseenter="this.style.transform='translateY(-4px)'; this.style.borderColor='var(--neon-cyan)'"
+            onmouseleave="this.style.transform='none'; this.style.borderColor='#3b82f6'"
+          >
+            <div style="font-size: 2.4rem; margin-bottom: 0.4rem;">📄</div>
+            <h3 style="font-size: 1.15rem; font-weight: 900; margin: 0 0 0.35rem; color: var(--text-primary);">Documento</h3>
+            <p style="font-size: 0.8rem; color: var(--text-secondary); margin: 0 0 0.85rem; line-height: 1.4;">
+              Guías didácticas, apuntes de clase y lecturas estructuradas por secciones.
+            </p>
+            <span class="btn btn-outline" style="font-size: 0.78rem; padding: 0.35rem 0.75rem; border-color: #3b82f6; color: #93c5fd; font-weight: 800;">
+              Crear Documento →
+            </span>
+          </div>
+
+          <!-- Opción 4: Recurso Web por URL -->
+          <div 
+            class="glass-panel" 
+            onclick="window.ProjectsView.createStudentProject('url')"
+            style="padding: 1.35rem 1.15rem; border-radius: 16px; border: 2px solid #10b981; background: rgba(16, 185, 129, 0.08); cursor: pointer; text-align: center; transition: var(--transition-bounce);"
+            onmouseenter="this.style.transform='translateY(-4px)'; this.style.borderColor='var(--neon-cyan)'"
+            onmouseleave="this.style.transform='none'; this.style.borderColor='#10b981'"
+          >
+            <div style="font-size: 2.4rem; margin-bottom: 0.4rem;">🌐</div>
+            <h3 style="font-size: 1.15rem; font-weight: 900; margin: 0 0 0.35rem; color: var(--text-primary);">Enlace / URL</h3>
+            <p style="font-size: 0.8rem; color: var(--text-secondary); margin: 0 0 0.85rem; line-height: 1.4;">
+              Enlaza e incrusta simuladores (PhET, GeoGebra), sitios web y herramientas.
+            </p>
+            <span class="btn btn-outline" style="font-size: 0.78rem; padding: 0.35rem 0.75rem; border-color: #10b981; color: #6ee7b7; font-weight: 800;">
+              Crear Recurso URL →
+            </span>
+          </div>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 1rem;">
+          <button type="button" class="btn btn-outline" onclick="window.ProjectsView.goToCreateProjectStep(1)">
+            ← Volver a editar datos
+          </button>
+          <button type="button" class="btn btn-outline" onclick="window.ProjectsView.closeCreateProjectModal()">
+            Cerrar
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -1064,7 +1145,7 @@
   <script src="js/views/admin.js?v=20261016_utf8"></script>
   <script src="js/views/ranking.js?v=20261016_utf8"></script>
   <script src="js/views/project-wizard.js?v=20261101_persist_fix1"></script>
-  <script src="js/views/projects.js?v=20261101_roles_fix1"></script>
+  <script src="js/views/projects.js?v=20261101_student_flow1"></script>
   <script src="js/views/presentation.js?v=20261101_persist_fix1"></script>
   <script src="js/views/video-project.js?v=20261101_persist_fix1"></script>
   <script src="js/views/document-project.js?v=20261101_persist_fix1"></script>

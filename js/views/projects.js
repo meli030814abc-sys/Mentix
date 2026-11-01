@@ -1116,10 +1116,250 @@ window.ProjectsView = {
     const modal = document.getElementById('create-project-type-modal');
     if (modal) {
       modal.classList.add('active');
+      this.goToCreateProjectStep(1);
+      const authorInput = document.getElementById('proj-create-author');
+      if (authorInput && !authorInput.value.trim()) {
+        const u = window.appState?.currentUser;
+        authorInput.value = (u && (u.name || u.username)) ? (u.name || u.username) : '';
+      }
+      setTimeout(() => {
+        const tInput = document.getElementById('proj-create-title');
+        if (tInput) tInput.focus();
+      }, 100);
     } else if (window.ProjectWizard) {
       window.ProjectWizard.openWizard();
     } else if (window.appRouter && window.appRouter.createPresentation) {
       window.appRouter.createPresentation();
+    }
+  },
+
+  goToCreateProjectStep(step) {
+    if (window.soundEngine && window.soundEngine.playClick) window.soundEngine.playClick();
+    const step1 = document.getElementById('create-project-step-1');
+    const step2 = document.getElementById('create-project-step-2');
+    const modalTitle = document.getElementById('create-project-modal-title');
+    const modalSubtitle = document.getElementById('create-project-modal-subtitle');
+
+    if (step === 2) {
+      const titleInput = document.getElementById('proj-create-title');
+      const authorInput = document.getElementById('proj-create-author');
+      const summaryInput = document.getElementById('proj-create-summary');
+
+      const title = (titleInput?.value || '').trim();
+      if (!title) {
+        alert('⚠️ Por favor ingresa el nombre de tu proyecto.');
+        titleInput?.focus();
+        return;
+      }
+
+      const author = (authorInput?.value || '').trim();
+      if (!author) {
+        alert('⚠️ Por favor indica quién realizó el proyecto (autor o integrantes).');
+        authorInput?.focus();
+        return;
+      }
+
+      const summary = (summaryInput?.value || '').trim();
+      if (!summary) {
+        alert('⚠️ Por favor escribe un breve resumen o síntesis del proyecto.');
+        summaryInput?.focus();
+        return;
+      }
+
+      const previewTitle = document.getElementById('create-project-preview-title');
+      const previewAuthor = document.getElementById('create-project-preview-author');
+      if (previewTitle) previewTitle.textContent = title;
+      if (previewAuthor) previewAuthor.textContent = '• Por ' + author;
+
+      if (modalTitle) modalTitle.textContent = 'Selecciona el Formato';
+      if (modalSubtitle) modalSubtitle.textContent = 'Paso 2 de 2: Elige cómo presentarás tu proyecto (Presentación, Video, Documento o URL).';
+
+      if (step1) step1.style.display = 'none';
+      if (step2) step2.style.display = 'block';
+    } else {
+      if (modalTitle) modalTitle.textContent = 'Datos de tu Proyecto';
+      if (modalSubtitle) modalSubtitle.textContent = 'Paso 1 de 2: Ingresa la información general para preparar la ficha y Landing Page de tu proyecto.';
+      if (step1) step1.style.display = 'block';
+      if (step2) step2.style.display = 'none';
+    }
+  },
+
+  createStudentProject(format) {
+    if (window.soundEngine && window.soundEngine.playSuccess) {
+      window.soundEngine.playSuccess();
+    } else if (window.soundEngine && window.soundEngine.playClick) {
+      window.soundEngine.playClick();
+    }
+
+    const titleInput = document.getElementById('proj-create-title');
+    const authorInput = document.getElementById('proj-create-author');
+    const summaryInput = document.getElementById('proj-create-summary');
+    const descInput = document.getElementById('proj-create-description');
+
+    const title = (titleInput?.value || '').trim() || 'Proyecto Educativo';
+    const author = (authorInput?.value || '').trim() || (window.appState?.currentUser?.name || 'Estudiante');
+    const summary = (summaryInput?.value || '').trim();
+    const description = (descInput?.value || '').trim() || summary || 'Proyecto escolar preparado para la comunidad educativa.';
+    const finalSummary = summary || description.slice(0, 160);
+
+    const currentUser = window.appState?.currentUser || {};
+    const catId = (window.appState?.categories && window.appState.categories[0]) ? window.appState.categories[0].id : 'cat_general';
+    const catName = (window.appState?.categories && window.appState.categories[0]) ? window.appState.categories[0].name : 'Proyectos de Estudiantes';
+
+    const slug = title.toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '') || ('proyecto-' + Date.now());
+
+    const newId = 'proj_' + format + '_' + Date.now();
+
+    const newProject = {
+      id: newId,
+      title: title,
+      author: author,
+      authorId: currentUser.id || '',
+      authorEmail: currentUser.email || '',
+      authorAvatar: currentUser.avatar || '🎓',
+      authorRole: currentUser.role || 'student',
+      projectType: format,
+      category: catId,
+      categoryName: catName,
+      difficulty: 'Medio',
+      timePerQuestion: 25,
+      plays: 0,
+      banner: '',
+      shortDescription: finalSummary,
+      description: description,
+      fullDescription: description,
+      publicationStatus: 'published',
+      status: 'completed',
+      isPublic: true,
+      displayOrder: 1,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      landingConfig: {
+        publicName: title,
+        landingTitle: title,
+        publicDescription: finalSummary,
+        slug: slug,
+        visibleCategory: catName,
+        tags: ['Estudiantes', 'Proyecto', format.toUpperCase()],
+        ctaText: 'Ver Proyecto',
+        ctaUrl: '#',
+        displayOrder: 1,
+        featuredVideoPublic: true
+      },
+      authorsConfig: {
+        authorsList: author,
+        authorsEmails: currentUser.email || '',
+        authorsRole: 'Estudiante / Creador',
+        collaborators: ''
+      },
+      designConfig: {
+        themeId: 'cosmos',
+        fontFamily: 'Montserrat',
+        titleColor: '#ffffff',
+        textColor: '#cbd5e1',
+        accentColor: '#00f5d4',
+        bannerStyle: 'gradient-cosmos',
+        bannerUrl: ''
+      }
+    };
+
+    if (format === 'presentation') {
+      newProject.slides = [
+        {
+          id: 'slide_1',
+          title: title,
+          subtitle: 'Por ' + author,
+          content: finalSummary,
+          bullets: description ? [description] : [],
+          media: '',
+          videoUrl: '',
+          layout: 'split',
+          teacherNotes: ''
+        }
+      ];
+      newProject.resources = [
+        {
+          name: 'Presentación del Proyecto',
+          url: '',
+          type: 'ppt',
+          format: 'PPT',
+          description: finalSummary
+        }
+      ];
+    } else if (format === 'video') {
+      newProject.videoUrl = '';
+      newProject.videoConfig = {
+        url: '',
+        title: title,
+        description: finalSummary,
+        chapters: []
+      };
+    } else if (format === 'document') {
+      newProject.docContent = `# ${title}\n\n**Autor(es):** ${author}\n\n### Resumen\n${finalSummary}\n\n### Descripción y Desarrollo\n${description}\n`;
+      newProject.resources = [
+        {
+          name: 'Documento / Guía del Proyecto',
+          url: '',
+          type: 'doc',
+          format: 'DOC',
+          description: finalSummary
+        }
+      ];
+    } else if (format === 'url') {
+      newProject.resourceWebUrl = '';
+      newProject.externalLinks = [
+        {
+          title: title,
+          url: '',
+          category: 'Enlace Web',
+          description: finalSummary
+        }
+      ];
+    }
+
+    // Guardar en estado global
+    if (!Array.isArray(window.appState.challenges)) {
+      window.appState.challenges = [];
+    }
+    window.appState.challenges.unshift(newProject);
+
+    if (typeof saveGlobalState === 'function') {
+      saveGlobalState(window.appState);
+    } else {
+      localStorage.setItem('te_reto_state', JSON.stringify(window.appState));
+    }
+
+    // Sincronizar inmediatamente a la nube de Supabase
+    if (window.appRouter && typeof window.appRouter.pushChallengeToCloud === 'function') {
+      window.appRouter.pushChallengeToCloud(newProject);
+    } else if (window.supabaseService && typeof window.supabaseService.saveChallengeToSupabase === 'function') {
+      window.supabaseService.saveChallengeToSupabase(newProject);
+    }
+
+    // Cerrar modal y limpiar campos
+    const modal = document.getElementById('create-project-type-modal');
+    if (modal) modal.classList.remove('active');
+    if (titleInput) titleInput.value = '';
+    if (authorInput) authorInput.value = '';
+    if (summaryInput) summaryInput.value = '';
+    if (descInput) descInput.value = '';
+    this.goToCreateProjectStep(1);
+
+    // Navegar directamente al editor según el formato seleccionado
+    if (window.appRouter) {
+      if (format === 'presentation') {
+        window.appRouter.navigate('presentation', { id: newProject.id, edit: true, project: newProject });
+      } else if (format === 'video') {
+        window.appRouter.navigate('video', { id: newProject.id, edit: true, project: newProject });
+      } else if (format === 'document') {
+        window.appRouter.navigate('document', { id: newProject.id, edit: true, project: newProject });
+      } else if (format === 'url') {
+        window.appRouter.navigate('url', { id: newProject.id, edit: true, project: newProject });
+      }
     }
   },
 
@@ -1143,6 +1383,7 @@ window.ProjectsView = {
     this.viewMode = 'list';
     const modal = document.getElementById('create-project-type-modal');
     if (modal) modal.classList.remove('active');
+    this.goToCreateProjectStep(1);
     if (window.soundEngine) window.soundEngine.playClick();
     this.render();
   },
@@ -3640,20 +3881,17 @@ Generado por Mentix - Plataforma de Proyectos y Retos
     const modal = document.getElementById('create-project-type-modal');
     if (modal) modal.classList.remove('active');
 
+    if (['presentation', 'video', 'document', 'url'].includes(type)) {
+      this.createStudentProject(type);
+      return;
+    }
+
     if (type === 'wizard' || type === 'govdata') {
       if (window.ProjectWizard) {
         window.ProjectWizard.openWizard();
       } else if (window.appRouter && window.appRouter.createPresentation) {
         window.appRouter.createPresentation();
       }
-    } else if (type === 'presentation') {
-      window.appRouter.createPresentation();
-    } else if (type === 'video') {
-      window.appRouter.createVideo();
-    } else if (type === 'document') {
-      window.appRouter.createDocument();
-    } else if (type === 'url') {
-      window.appRouter.createUrl();
     } else if (type === 'import_presentation') {
       this.openImportPresentationModal();
     } else if (type === 'import_document') {
