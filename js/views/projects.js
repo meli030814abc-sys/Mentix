@@ -622,25 +622,32 @@ window.ProjectsView = {
               style="width: 100%; height: auto; display: block; object-fit: cover; filter: brightness(1.16) contrast(1.1) saturate(1.18); image-rendering: -webkit-optimize-contrast; image-rendering: high-quality; transform: translateZ(0); backface-visibility: hidden;" 
             />
 
-            <!-- Interactive Hotspot on 'Ver tutorial' Button -->
-            <button 
-              onclick="window.ProjectsView.openTutorialModal()" 
-              title="Ver tutorial" 
-              class="saas-banner-hotspot"
-              style="position: absolute; left: 4.4%; top: 69%; width: 14.5%; height: 23%; border-radius: 9999px; background: transparent; border: none; cursor: pointer; transition: all 0.2s ease;"
-              onmouseover="this.style.background='rgba(255,255,255,0.2)'; this.style.boxShadow='0 0 16px rgba(255,255,255,0.5)';"
-              onmouseout="this.style.background='transparent'; this.style.boxShadow='none';"
-            ></button>
+            <!-- Botones que ya teníamos: 'Ver tutorial' y 'Conoce más' -->
+            <div class="saas-hero-btn-row" style="position: absolute; left: 4.4%; top: 68%; z-index: 5; display: flex; align-items: center; gap: 1.25rem;">
+              <button 
+                type="button" 
+                class="saas-btn-tutorial" 
+                onclick="window.ProjectsView.openTutorialModal()" 
+                title="Ver tutorial"
+                style="background: linear-gradient(135deg, #00d2ff 0%, #0084ff 100%); color: #ffffff; border: none; border-radius: 9999px; padding: 0.58rem 1.4rem; font-size: 0.92rem; font-weight: 800; cursor: pointer; display: inline-flex; align-items: center; gap: 0.5rem; box-shadow: 0 4px 18px rgba(0, 180, 255, 0.45), 0 0 12px rgba(0, 210, 255, 0.35); transition: all 0.2s ease;"
+                onmouseenter="this.style.transform='translateY(-2px) scale(1.03)'; this.style.boxShadow='0 6px 22px rgba(0, 180, 255, 0.6)';"
+                onmouseleave="this.style.transform='translateY(0) scale(1)'; this.style.boxShadow='0 4px 18px rgba(0, 180, 255, 0.45)';"
+              >
+                <span style="font-size: 0.85rem; line-height: 1;">▶</span> <span>Ver tutorial</span>
+              </button>
 
-            <!-- Interactive Hotspot on 'Conoce más' Link -->
-            <button 
-              onclick="window.ProjectsView.openTutorialModal()" 
-              title="Conoce más" 
-              class="saas-banner-hotspot"
-              style="position: absolute; left: 20%; top: 69%; width: 12%; height: 23%; border-radius: 9999px; background: transparent; border: none; cursor: pointer; transition: all 0.2s ease;"
-              onmouseover="this.style.background='rgba(255,255,255,0.16)';"
-              onmouseout="this.style.background='transparent';"
-            ></button>
+              <button 
+                type="button" 
+                class="saas-link-more" 
+                onclick="window.ProjectsView.openTutorialModal()" 
+                title="Conoce más"
+                style="background: transparent; border: none; color: #ffffff; font-size: 0.95rem; font-weight: 800; cursor: pointer; display: inline-flex; align-items: center; gap: 0.35rem; transition: all 0.2s ease; text-shadow: 0 2px 8px rgba(0,0,0,0.5);"
+                onmouseenter="this.style.color='#00f5d4'; this.style.transform='translateX(3px)';"
+                onmouseleave="this.style.color='#ffffff'; this.style.transform='translateX(0)';"
+              >
+                <span>Conoce más</span> <span>→</span>
+              </button>
+            </div>
           </div>
 
 
