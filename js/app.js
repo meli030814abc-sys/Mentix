@@ -1421,7 +1421,7 @@ class AppRouter {
         body: JSON.stringify({ challenge })
       });
       if (res.ok) {
-        console.log('☁️ Reto guardado globalmente en MENTIX Cloud:', challenge.title);
+        let persisted = false; try { const j = await res.json(); persisted = !!(j && j.persisted); } catch (e) {} this.lastCloudPersisted = persisted; console.log('☁️ Reto enviado a MENTIX Cloud (persistido: ' + persisted + '):', challenge.title);
       } else {
         console.warn('Respuesta no-ok al guardar en /api/challenges:', res.status);
       }

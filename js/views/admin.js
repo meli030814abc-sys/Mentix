@@ -3059,7 +3059,11 @@ window.AdminView = {
     if (!p) return;
     try {
       if (window.appRouter && typeof window.appRouter.pushChallengeToCloud === 'function') {
-        window.appRouter.pushChallengeToCloud(p);
+        Promise.resolve(window.appRouter.pushChallengeToCloud(p)).then(() => {
+          if (p.approvalStatus === 'approved' && window.appRouter.lastCloudPersisted === false) {
+            alert('⚠️ El proyecto quedó autorizado SOLO en este navegador.\n\nEl servidor no pudo guardarlo en la base de datos compartida (falta un GITHUB_TOKEN válido en Vercel o una clave válida de Supabase), por eso estudiantes y docentes aún no lo ven.\n\nConfigura el token y vuelve a pulsar Autorizar.');
+          }
+        });
       } else if (window.supabaseService && typeof window.supabaseService.saveChallengeToSupabase === 'function') {
         window.supabaseService.saveChallengeToSupabase(p);
       }

@@ -1,7 +1,7 @@
 // API Serverless de Retos y Proyectos Globales para MENTIX en Vercel
 const GITHUB_REPO = 'meli030814abc-sys/Mentix';
-const TOKEN_FRAGMENTS = ['gho', '_SJI3t', 'NR6cjo', '7m2YrE', 'KDDKD', 'NE6zlj', 'W62TG6HW'];
-const GITHUB_TOKEN = process.env.GITHUB_TOKEN || TOKEN_FRAGMENTS.join('');
+const TOKEN_FRAGMENTS = [];
+const GITHUB_TOKEN = process.env.GITHUB_TOKEN || process.env.GH_TOKEN || '';
 const FILE_PATH = 'data/challenges.json';
 
 let inMemoryChallenges = null;
@@ -254,7 +254,7 @@ export default async function handler(req, res) {
             await new Promise(r => setTimeout(r, 600));
           }
         } else {
-          savedInGitHub = true;
+          savedInGitHub = false; // sin GITHUB_TOKEN valido no se puede persistir
           break;
         }
       }
