@@ -767,6 +767,7 @@ window.AdminView = {
   templateProjects() {
     const rawProjects = this.getRealProjects();
     const categories = (window.appState && window.appState.categories) ? window.appState.categories : [];
+    const pendingApprovalCount = rawProjects.filter(p => p.approvalStatus === 'pending' || p.status === 'review' || p.publicationStatus === 'pending_approval' || p.publicationStatus === 'ready_for_review').length;
 
     // Filtrado
     let projects = rawProjects.filter(p => {
@@ -783,16 +784,20 @@ window.AdminView = {
         if (p.category !== this.projectFilter.category) return false;
       }
       // Filtro de estado
-      if (this.projectFilter.status === 'completed') {
+      if (this.projectFilter.status === 'pending_approval') {
+        return p.approvalStatus === 'pending' || p.status === 'review' || p.publicationStatus === 'pending_approval' || p.publicationStatus === 'ready_for_review';
+      } else if (this.projectFilter.status === 'approved') {
+        return p.approvalStatus === 'approved' || (p.publicationStatus === 'published' && p.approvalStatus !== 'pending');
+      } else if (this.projectFilter.status === 'completed') {
         return p.status === 'completed' || p.stage === 'completed';
       } else if (this.projectFilter.status === 'in_progress') {
-        return p.status === 'in_progress' || p.status === 'active' || !p.status;
+        return (p.status === 'in_progress' || p.status === 'active' || !p.status) && p.approvalStatus !== 'pending';
       } else if (this.projectFilter.status === 'review') {
-        return p.status === 'review';
+        return p.status === 'review' || p.approvalStatus === 'pending';
       } else if (this.projectFilter.status === 'public') {
-        return p.visibility !== 'private';
+        return p.visibility !== 'private' && p.isPublic !== false;
       } else if (this.projectFilter.status === 'private') {
-        return p.visibility === 'private';
+        return p.visibility === 'private' || p.isPublic === false;
       }
       return true;
     });
@@ -913,6 +918,10 @@ window.AdminView = {
         <!-- Filtros de Píldoras -->
         <div class="filter-pills">
           <button class="filter-pill ${this.projectFilter.status === 'all' ? 'active' : ''}" onclick="window.AdminView.setProjectStatusFilter('all')">Todos (${rawProjects.length})</button>
+          <button class="filter-pill ${this.projectFilter.status === 'pending_approval' ? 'active' : ''}" style="${pendingApprovalCount > 0 ? 'background: rgba(245, 158, 11, 0.22); border: 1.5px solid #f59e0b; color: #fbbf24; font-weight: 800;' : ''}" onclick="window.AdminView.setProjectStatusFilter('pending_approval')">
+            ⏳ Pendientes (${pendingApprovalCount})
+          </button>
+          <button class="filter-pill ${this.projectFilter.status === 'approved' ? 'active' : ''}" onclick="window.AdminView.setProjectStatusFilter('approved')">✔ Autorizados</button>
           <button class="filter-pill ${this.projectFilter.status === 'in_progress' ? 'active' : ''}" onclick="window.AdminView.setProjectStatusFilter('in_progress')">En Proceso</button>
           <button class="filter-pill ${this.projectFilter.status === 'completed' ? 'active' : ''}" onclick="window.AdminView.setProjectStatusFilter('completed')">Completados</button>
           <button class="filter-pill ${this.projectFilter.status === 'public' ? 'active' : ''}" onclick="window.AdminView.setProjectStatusFilter('public')">Públicos</button>
@@ -949,7 +958,9 @@ window.AdminView = {
     return `
       <div class="admin-projects-grid">
         ${projects.map(p => {
-          const isCompleted = p.status === 'completed' || p.stage === 'completed';
+          const isPendingApproval = p.approvalStatus === 'pending' || p.status === 'review' || p.publicationStatus === 'pending_approval' || p.publicationStatus === 'ready_for_review';
+          const isApproved = p.approvalStatus === 'approved' || (p.publicationStatus === 'published' && !isPendingApproval);
+          const isCompleted = isApproved && (p.status === 'completed' || p.stage === 'completed');
           const coverImage = p.image || p.cover || p.banner || 'assets/student_create_bg.jpg';
           const title = p.title || 'Gobierno de Datos en la Práctica';
           const description = p.description || 'Metodologías ágiles para la gobernanza moderna de información y toma de decisiones.';
@@ -975,15 +986,18 @@ window.AdminView = {
                 
                 <div class="admin-card-badge-row">
                   <!-- Badge Izquierdo de Estado -->
-                  <div class="admin-card-status-badge ${isCompleted ? 'completed' : 'in-progress'}">
-                    <span>${isCompleted ? '✔' : '⚡'}</span>
-                    <span>${isCompleted ? 'Completado' : 'En Proceso'}</span>
+                  <div class="admin-card-status-badge ${isPendingApproval ? 'pending' : (isCompleted ? 'completed' : 'in-progress')}" style="${isPendingApproval ? 'background: #f59e0b; color: #07152b; border: 1.5px solid #fbbf24; font-weight: 900; box-shadow: 0 0 10px rgba(245, 158, 11, 0.45);' : ''}">
+                    <span>${isPendingApproval ? '⏳' : (isCompleted ? '✔' : '⚡')}</span>
+                    <span>${isPendingApproval ? 'Pendiente Autorización' : (isCompleted ? 'Completado' : 'En Proceso')}</span>
                   </div>
 
                   <!-- Botones Flotantes Derechos -->
                   <div class="admin-card-top-actions">
                     <button class="btn-card-robot-banner" title="Personalizar banner del robot" onclick="window.AdminView.switchTab('design')">
                       <span>🤖</span> Banner
+                    </button>
+                    <button class="btn-card-review" title="Revisar Landing Page y Autorización" onclick="window.AdminView.reviewProjectInLanding('${p.id}')">
+                      <span>🔍</span> Revisar
                     </button>
                     <button class="btn-card-edit" title="Editar proyecto" onclick="window.AdminView.openEditProjectModal('${p.id}')">
                       ✏️
@@ -1019,10 +1033,13 @@ window.AdminView = {
                   </div>
                 </div>
 
-                <!-- Botones Inferiores: Ver Detalles y Compartir -->
+                <!-- Botones Inferiores: Ver Detalles, Revisar y Compartir -->
                 <div class="admin-card-actions-row">
                   <button class="btn-card-details" onclick="window.AdminView.openProjectDetailModal('${p.id}')">
                     Ver Detalles →
+                  </button>
+                  <button class="btn-card-review-bottom" title="Revisar Landing Page para Autorización" onclick="window.AdminView.reviewProjectInLanding('${p.id}')">
+                    <span>🔍</span> Revisar
                   </button>
                   <button class="btn-card-share" onclick="window.AdminView.shareProject('${p.id}')">
                     <span>Compartir</span>
@@ -1087,8 +1104,8 @@ window.AdminView = {
                   </td>
                   <td><span class="table-cat-badge">${p.category || 'General'}</span></td>
                   <td>
-                    <span class="badge-status ${isCompleted ? 'status-completed' : 'status-in-progress'}">
-                      ${isCompleted ? '🏆 Completado' : '⚡ En Proceso'}
+                    <span class="badge-status ${p.approvalStatus === 'pending' || p.status === 'review' ? 'status-review' : (isCompleted ? 'status-completed' : 'status-in-progress')}" style="${p.approvalStatus === 'pending' || p.status === 'review' ? 'background: #f59e0b; color: #07152b; font-weight: 800;' : ''}">
+                      ${p.approvalStatus === 'pending' || p.status === 'review' ? '⏳ Pendiente' : (isCompleted ? '🏆 Autorizado' : '⚡ En Proceso')}
                     </span>
                   </td>
                   <td>
@@ -1099,6 +1116,7 @@ window.AdminView = {
                   <td class="table-date">${dateStr}</td>
                   <td style="text-align: right;">
                     <div class="table-actions">
+                      <button class="btn-icon" title="Revisar Landing Page y Autorización" onclick="window.AdminView.reviewProjectInLanding('${p.id}')">🔍</button>
                       <button class="btn-icon" title="Editar proyecto" onclick="window.AdminView.openEditProjectModal('${p.id}')">✏️</button>
                       <button class="btn-icon" title="Ver detalle" onclick="window.AdminView.openProjectDetailModal('${p.id}')">👁️</button>
                       <button class="btn-icon" title="Alternar visibilidad" onclick="window.AdminView.toggleProjectVisibility('${p.id}')">
@@ -1855,6 +1873,9 @@ window.AdminView = {
     const p = projects.find(item => item.id === projectId);
     if (!p) return;
 
+    const isPendingApproval = p.approvalStatus === 'pending' || p.status === 'review' || p.publicationStatus === 'pending_approval' || p.publicationStatus === 'ready_for_review';
+    const isApproved = p.approvalStatus === 'approved' || (p.publicationStatus === 'published' && !isPendingApproval);
+
     this.selectedProjectForModal = p;
     this.activeModalTab = 'general';
 
@@ -1906,12 +1927,21 @@ window.AdminView = {
           <!-- Modal Footer -->
           <div class="admin-modal-footer">
             <button class="btn btn-outline" onclick="window.AdminView.closeModal()">Cerrar</button>
+            <button class="btn btn-outline" style="border-color: #06b6d4; color: #06b6d4; font-weight: 800;" onclick="window.AdminView.reviewProjectInLanding('${p.id}')">
+              <span>🔍</span> Revisar Landing
+            </button>
             <button class="btn btn-outline" style="border-color: #00f5d4; color: #00f5d4; font-weight: 800;" onclick="window.AdminView.openEditProjectModal('${p.id}')">
               <span>✏️</span> Editar Proyecto
             </button>
-            <button class="btn btn-cyan" onclick="window.AdminView.toggleProjectVisibility('${p.id}'); window.AdminView.closeModal();">
-              ${p.visibility === 'private' ? 'Hacer Público' : 'Hacer Privado'}
-            </button>
+            ${isPendingApproval ? `
+              <button class="btn btn-cyan" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: #ffffff; border: none; font-weight: 900;" onclick="window.AdminView.approveProject('${p.id}'); window.AdminView.closeModal();">
+                ✅ Autorizar y Publicar
+              </button>
+            ` : `
+              <button class="btn btn-cyan" onclick="window.AdminView.toggleProjectVisibility('${p.id}'); window.AdminView.closeModal();">
+                ${p.visibility === 'private' ? 'Hacer Público' : 'Hacer Privado'}
+              </button>
+            `}
           </div>
 
         </div>
@@ -1935,7 +1965,50 @@ window.AdminView = {
     if (!p) return '';
 
     if (this.activeModalTab === 'general') {
+      const isPendingApproval = p.approvalStatus === 'pending' || p.status === 'review' || p.publicationStatus === 'pending_approval' || p.publicationStatus === 'ready_for_review';
+      const isApproved = p.approvalStatus === 'approved' || (p.publicationStatus === 'published' && !isPendingApproval);
+
       return `
+        ${isPendingApproval ? `
+          <div style="background: rgba(245, 158, 11, 0.14); border: 1.5px solid #f59e0b; border-radius: 12px; padding: 1rem 1.25rem; margin-bottom: 1.25rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap;">
+            <div>
+              <h4 style="margin: 0 0 0.25rem; color: #fbbf24; font-weight: 800; display: flex; align-items: center; gap: 0.45rem;">
+                <span>⏳</span> Solicitud de Autorización Pendiente
+              </h4>
+              <p style="margin: 0; font-size: 0.83rem; color: #cbd5e1;">
+                Este proyecto fue enviado para validación antes de publicarse en Mentix.
+              </p>
+            </div>
+            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+              <button class="btn btn-sm btn-cyan" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: #ffffff; border: none; font-weight: 900;" onclick="window.AdminView.approveProject('${p.id}'); window.AdminView.closeModal();">
+                ✅ Autorizar y Publicar
+              </button>
+              <button class="btn btn-sm btn-outline" style="border-color: #06b6d4; color: #06b6d4; font-weight: 800;" onclick="window.AdminView.reviewProjectInLanding('${p.id}')">
+                🔍 Revisar Landing Page
+              </button>
+              <button class="btn btn-sm btn-outline" style="border-color: #ef4444; color: #f87171; font-weight: 800;" onclick="window.AdminView.rejectProject('${p.id}'); window.AdminView.closeModal();">
+                ❌ Denegar
+              </button>
+            </div>
+          </div>
+        ` : `
+          <div style="background: rgba(16, 185, 129, 0.12); border: 1.5px solid #10b981; border-radius: 12px; padding: 0.85rem 1.25rem; margin-bottom: 1.25rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap;">
+            <div>
+              <h4 style="margin: 0 0 0.2rem; color: #34d399; font-weight: 800; display: flex; align-items: center; gap: 0.45rem;">
+                <span>✔</span> Proyecto Autorizado y Publicado
+              </h4>
+              <span style="font-size: 0.8rem; color: #94a3b8;">Cuenta con autorización del Administrador y es visible para todos en la plataforma.</span>
+            </div>
+            <div style="display: flex; gap: 0.5rem;">
+              <button class="btn btn-sm btn-outline" style="border-color: #06b6d4; color: #06b6d4; font-weight: 800;" onclick="window.AdminView.reviewProjectInLanding('${p.id}')">
+                🔍 Ver Landing Page
+              </button>
+              <button class="btn btn-sm btn-outline" style="border-color: #ef4444; color: #f87171; font-weight: 800;" onclick="window.AdminView.rejectProject('${p.id}'); window.AdminView.closeModal();">
+                ❌ Cancelar Autorización
+              </button>
+            </div>
+          </div>
+        `}
         <div class="modal-project-general-grid">
           <div class="general-cover">
             <img src="${p.image || 'assets/student_create_bg.jpg'}" alt="${p.title}" onerror="this.onerror=null; this.src='assets/student_create_bg.jpg';">
@@ -1947,8 +2020,8 @@ window.AdminView = {
             <div class="general-meta-grid">
               <div class="meta-item">
                 <span class="label">Estado Actual:</span>
-                <span class="val badge-status ${p.status === 'completed' ? 'status-completed' : 'status-in-progress'}">
-                  ${p.status === 'completed' ? '🏆 Completado' : '⚡ En Proceso'}
+                <span class="val badge-status ${isApproved ? 'status-completed' : (isPendingApproval ? 'status-review' : 'status-in-progress')}">
+                  ${isApproved ? '🏆 Autorizado' : (isPendingApproval ? '⏳ Pendiente Autorización' : '⚡ En Proceso')}
                 </span>
               </div>
               <div class="meta-item">
@@ -2667,6 +2740,275 @@ window.AdminView = {
         window.appRouter.navigate('presentation', { id: projectId, edit: true });
       }
     }
+  },
+
+  // ==========================================
+  // AUTORIZACIÓN Y AUDITORÍA DE PROYECTOS (MODERACIÓN ADMINISTRATIVA)
+  // ==========================================
+  isAdminAuditing: false,
+
+  /**
+   * Abre la Landing Page completa de un proyecto con la Barra Flotante de Auditoría para Administrador
+   */
+  reviewProjectInLanding(projectId) {
+    this.closeModal();
+    const raw = this.getRealProjects();
+    const p = raw.find(item => item && item.id === projectId) || (window.appState?.challenges || []).find(item => item && item.id === projectId);
+    if (!p) {
+      this.showToast('No se encontró el proyecto para revisar', 'error');
+      return;
+    }
+
+    this.isAdminAuditing = true;
+
+    // Navegar a la vista de proyectos en modo landing para auditarla
+    if (window.ProjectsView && typeof window.ProjectsView.openProjectLanding === 'function') {
+      window.ProjectsView.openProjectLanding(projectId);
+      setTimeout(() => {
+        this.renderLandingAuditBar(projectId);
+      }, 150);
+    } else if (window.appRouter) {
+      window.appRouter.navigate('projects');
+      setTimeout(() => {
+        if (window.ProjectsView) {
+          window.ProjectsView.openProjectLanding(projectId);
+          this.renderLandingAuditBar(projectId);
+        }
+      }, 200);
+    }
+  },
+
+  /**
+   * Barra Superior Flotante de Auditoría y Autorización en la Landing Page
+   */
+  renderLandingAuditBar(projectId) {
+    const prev = document.getElementById('admin-audit-floating-banner');
+    if (prev) prev.remove();
+
+    const p = (window.appState?.challenges || []).find(item => item && item.id === projectId);
+    if (!p) return;
+
+    const isPendingApproval = p.approvalStatus === 'pending' || p.status === 'review' || p.publicationStatus === 'pending_approval' || p.publicationStatus === 'ready_for_review';
+    const isApproved = p.approvalStatus === 'approved' || (p.publicationStatus === 'published' && !isPendingApproval);
+    const authorName = p.creatorName || p.author || 'Estudiante';
+
+    const bar = document.createElement('div');
+    bar.id = 'admin-audit-floating-banner';
+    bar.style.cssText = `
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 9999999;
+      background: rgba(7, 21, 43, 0.96);
+      backdrop-filter: blur(18px);
+      border-bottom: 2px solid #00f5d4;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.55);
+      padding: 0.65rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      color: #ffffff;
+      font-family: 'Outfit', sans-serif;
+    `;
+
+    bar.innerHTML = `
+      <div style="display: flex; align-items: center; gap: 0.85rem;">
+        <span style="font-size: 1.35rem; background: rgba(0, 245, 212, 0.15); padding: 0.35rem 0.55rem; border-radius: 10px; border: 1.5px solid #00f5d4;">🛡️</span>
+        <div>
+          <div style="display: flex; align-items: center; gap: 0.55rem; flex-wrap: wrap;">
+            <strong style="font-size: 0.96rem; color: #ffffff;">Modo Auditoría & Autorización de Proyecto</strong>
+            <span style="padding: 0.2rem 0.65rem; border-radius: 999px; font-size: 0.76rem; font-weight: 900; ${isPendingApproval ? 'background: #f59e0b; color: #07152b;' : 'background: #10b981; color: #ffffff;'}">
+              ${isPendingApproval ? '⏳ Pendiente de Autorización' : '✔ Autorizado y Publicado'}
+            </span>
+          </div>
+          <span style="font-size: 0.78rem; color: #94a3b8;">
+            Revisando: <strong style="color: #ffffff;">${this.escapeHtml(p.title)}</strong> (Autor: ${this.escapeHtml(authorName)})
+          </span>
+        </div>
+      </div>
+
+      <div style="display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap;">
+        <button 
+          type="button" 
+          class="btn btn-sm btn-outline" 
+          style="border-color: #00f5d4; color: #00f5d4; font-weight: 800; font-size: 0.82rem; padding: 0.45rem 0.85rem;" 
+          onclick="window.AdminView.openEditProjectModal('${p.id}')"
+          title="Modificar metadatos, textos, categorías o detalles que falten"
+        >
+          ✏️ Editar Proyecto
+        </button>
+        <button 
+          type="button" 
+          class="btn btn-sm btn-outline" 
+          style="border-color: #38bdf8; color: #38bdf8; font-weight: 800; font-size: 0.82rem; padding: 0.45rem 0.85rem;" 
+          onclick="window.AdminView.editProjectContent('${p.id}')"
+          title="Modificar diapositivas, recursos o contenido interactivo directamente"
+        >
+          🎨 Diseñador Diapositivas
+        </button>
+        ${!isApproved ? `
+          <button 
+            type="button" 
+            class="btn btn-sm btn-cyan" 
+            style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: #ffffff; font-weight: 900; font-size: 0.84rem; padding: 0.45rem 1rem; border: none; box-shadow: 0 0 15px rgba(16, 185, 129, 0.45);" 
+            onclick="window.AdminView.approveProject('${p.id}')"
+          >
+            ✅ Autorizar y Publicar
+          </button>
+          <button 
+            type="button" 
+            class="btn btn-sm btn-outline" 
+            style="border-color: #ef4444; color: #f87171; font-weight: 800; font-size: 0.82rem; padding: 0.45rem 0.8rem;" 
+            onclick="window.AdminView.rejectProject('${p.id}')"
+          >
+            ❌ Denegar
+          </button>
+        ` : `
+          <button 
+            type="button" 
+            class="btn btn-sm btn-outline" 
+            style="border-color: #ef4444; color: #f87171; font-weight: 800; font-size: 0.82rem; padding: 0.45rem 0.8rem;" 
+            onclick="window.AdminView.rejectProject('${p.id}')"
+          >
+            ❌ Cancelar Autorización
+          </button>
+        `}
+        <button 
+          type="button" 
+          class="btn btn-sm btn-outline" 
+          style="font-weight: 800; font-size: 0.82rem; padding: 0.45rem 0.85rem;" 
+          onclick="window.AdminView.exitAuditAndReturnToAdmin()"
+        >
+          ← Volver al Admin
+        </button>
+      </div>
+    `;
+
+    document.body.appendChild(bar);
+    document.body.style.paddingTop = '68px';
+  },
+
+  updateLandingAuditBar(projectId) {
+    if (document.getElementById('admin-audit-floating-banner')) {
+      this.renderLandingAuditBar(projectId);
+    }
+  },
+
+  exitAuditAndReturnToAdmin() {
+    this.isAdminAuditing = false;
+    const banner = document.getElementById('admin-audit-floating-banner');
+    if (banner) banner.remove();
+    document.body.style.paddingTop = '';
+    if (window.appRouter) {
+      window.appRouter.navigate('admin');
+      if (window.AdminView) {
+        window.AdminView.switchTab('projects');
+      }
+    }
+  },
+
+  /**
+   * Concede autorización formal a un proyecto y lo publica en la plataforma
+   */
+  approveProject(projectId) {
+    let raw = window.appState.challenges || [];
+    let p = raw.find(item => item && item.id === projectId);
+    if (!p) {
+      this.showToast('No se encontró el proyecto', 'error');
+      return;
+    }
+
+    p.approvalStatus = 'approved';
+    p.publicationStatus = 'published';
+    p.status = 'completed';
+    p.stage = 'completed';
+    p.isPublic = true;
+    p.accessMode = 'public';
+    p.authorizedAt = new Date().toISOString();
+    p.authorizedBy = (window.appState.currentUser?.name) || 'Administrador Mentix';
+    delete p.rejectionReason;
+
+    if (typeof saveGlobalState === 'function') {
+      saveGlobalState(window.appState);
+    } else {
+      try {
+        localStorage.setItem('mentix_challenges', JSON.stringify(window.appState.challenges));
+        localStorage.setItem('mentix_projects', JSON.stringify(window.appState.challenges));
+        localStorage.setItem('te_reto_challenges', JSON.stringify(window.appState.challenges));
+      } catch(e) {}
+    }
+
+    this.syncProjectToUserVaults(p);
+    this.logAuditEvent(`Proyecto autorizado y publicado: "${p.title}"`, 'Autorizaciones');
+    this.showToast(`✅ ¡Proyecto "${p.title}" autorizado y publicado con éxito!`, 'success');
+    
+    this.updateLandingAuditBar(projectId);
+    this.renderActiveTab();
+  },
+
+  /**
+   * Cancela o deniega la autorización de un proyecto
+   */
+  rejectProject(projectId, reason = '') {
+    let raw = window.appState.challenges || [];
+    let p = raw.find(item => item && item.id === projectId);
+    if (!p) {
+      this.showToast('No se encontró el proyecto', 'error');
+      return;
+    }
+
+    const note = prompt('Ingresa el motivo de cancelación o corrección que debe realizar el autor:', reason || 'Faltan detalles o el contenido requiere ajustes antes de publicarse.');
+    if (note === null) return;
+
+    p.approvalStatus = 'rejected';
+    p.publicationStatus = 'draft';
+    p.status = 'in_progress';
+    p.stage = 'in_progress';
+    p.isPublic = false;
+    p.accessMode = 'private';
+    p.rejectionReason = note;
+    p.rejectedAt = new Date().toISOString();
+
+    if (typeof saveGlobalState === 'function') {
+      saveGlobalState(window.appState);
+    } else {
+      try {
+        localStorage.setItem('mentix_challenges', JSON.stringify(window.appState.challenges));
+        localStorage.setItem('mentix_projects', JSON.stringify(window.appState.challenges));
+        localStorage.setItem('te_reto_challenges', JSON.stringify(window.appState.challenges));
+      } catch(e) {}
+    }
+
+    this.syncProjectToUserVaults(p);
+    this.logAuditEvent(`Autorización cancelada para "${p.title}": ${note}`, 'Autorizaciones');
+    this.showToast(`❌ Autorización cancelada para "${p.title}".`, 'warning');
+
+    this.updateLandingAuditBar(projectId);
+    this.renderActiveTab();
+  },
+
+  syncProjectToUserVaults(project) {
+    if (!project || !project.id) return;
+    try {
+      for (let i = 0; i < localStorage.length; i++) {
+        const k = localStorage.key(i);
+        if (k && k.startsWith('mentix_user_projects_')) {
+          const raw = localStorage.getItem(k);
+          if (raw) {
+            let list = JSON.parse(raw);
+            if (Array.isArray(list)) {
+              const idx = list.findIndex(item => item && item.id === project.id);
+              if (idx >= 0) {
+                list[idx] = { ...list[idx], ...project };
+                localStorage.setItem(k, JSON.stringify(list));
+              }
+            }
+          }
+        }
+      }
+    } catch(e) {}
   },
 
   toggleUserBlock(userId) {

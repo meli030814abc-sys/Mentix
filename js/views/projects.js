@@ -1,4 +1,4 @@
-﻿/**
+/**
  * 🔥 MENTIX - Vista de Proyectos & Retos (Projects View)
  * Gestión integral de proyectos educativos: Diapositivas, Videos interactivos y Quizzes gamificados.
  */
@@ -1681,6 +1681,10 @@ window.ProjectsView = {
   },
 
   switchViewMode(mode) {
+    const auditBar = document.getElementById('admin-audit-floating-banner');
+    if (auditBar) auditBar.remove();
+    document.body.style.paddingTop = '';
+
     this.viewMode = mode;
     const navEl = document.getElementById('main-navbar');
     if (navEl) {
@@ -1851,10 +1855,11 @@ window.ProjectsView = {
       shortDescription: finalSummary,
       description: description,
       fullDescription: description,
-      publicationStatus: (draft.isPublic !== false) ? 'published' : 'draft',
-      status: (draft.isPublic !== false) ? 'completed' : 'in_progress',
-      isPublic: draft.isPublic !== false,
-      accessMode: draft.isPublic !== false ? 'public' : 'private',
+      publicationStatus: (currentUser && (currentUser.role === 'admin' || currentUser.isAdmin)) ? ((draft.isPublic !== false) ? 'published' : 'draft') : 'pending_approval',
+      approvalStatus: (currentUser && (currentUser.role === 'admin' || currentUser.isAdmin)) ? 'approved' : 'pending',
+      status: (currentUser && (currentUser.role === 'admin' || currentUser.isAdmin)) ? ((draft.isPublic !== false) ? 'completed' : 'in_progress') : 'review',
+      isPublic: (currentUser && (currentUser.role === 'admin' || currentUser.isAdmin)) ? (draft.isPublic !== false) : false,
+      accessMode: (currentUser && (currentUser.role === 'admin' || currentUser.isAdmin)) ? ((draft.isPublic !== false) ? 'public' : 'private') : 'private',
       displayOrder: 1,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
@@ -3794,8 +3799,8 @@ window.ProjectsView = {
                   <span>🚀</span> Publicar Ahora
                 </button>
               ` : `
-                <button type="button" class="plp-mentix-btn" onclick="window.ProjectsView.switchViewMode('list')">
-                  <span>←</span> Volver a Mis Proyectos
+                <button type="button" class="plp-mentix-btn" onclick="if (window.AdminView && window.AdminView.isAdminAuditing) { window.AdminView.exitAuditAndReturnToAdmin(); } else { window.ProjectsView.switchViewMode('list'); }">
+                  <span>←</span> ${window.AdminView && window.AdminView.isAdminAuditing ? 'Volver al Admin' : 'Volver a Mis Proyectos'}
                 </button>
                 ${selected ? `
                 <button type="button" class="plp-mentix-btn" onclick="window.ProjectsView.editSelectedProject('${selected.id}')">

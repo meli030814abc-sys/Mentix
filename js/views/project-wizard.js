@@ -1,4 +1,4 @@
-﻿/**
+/**
  * ✨ GOVDATA NEXUS — ASISTENTE INTELIGENTE PARA CREAR PROYECTOS (WIZARD PASO A PASO)
  * Integrado con el Módulo de Proyectos existente y la Landing Page (renderLandingPageView / proyecto-landing.html)
  */
@@ -4375,7 +4375,9 @@ collectCurrentStepInputs() {
   },
 
   canPublishDirectly() {
-    return true;
+    const u = window.appState?.currentUser;
+    const r = String(u?.role || '').toLowerCase().trim();
+    return r === 'admin' || r === 'administrador' || u?.isAdmin === true || localStorage.getItem('mentix_admin_override') === 'true';
   },
 
   renderStep8FinalReview() {
@@ -5092,12 +5094,13 @@ collectCurrentStepInputs() {
     }
 
     const canPub = forcePublish || this.canPublishDirectly();
-    const targetStatus = canPub ? 'published' : 'ready_for_review';
+    const targetStatus = canPub ? 'published' : 'pending_approval';
     const rec = this.syncProjectRecordToAppState(targetStatus);
 
     // Remover de borradores pendientes o marcarlo como publicado
     this.draft.publicationStatus = targetStatus;
-    this.draft.status = canPub ? 'completed' : 'in_progress';
+    this.draft.approvalStatus = canPub ? 'approved' : 'pending';
+    this.draft.status = canPub ? 'completed' : 'review';
     this.draft.isPublic = canPub;
     this.saveDraftToStorage(true);
 
@@ -5108,7 +5111,7 @@ collectCurrentStepInputs() {
     if (canPub) {
       alert(`🚀 ¡Proyecto "${rec.title}" publicado con éxito en la Landing Page!`);
     } else {
-      alert(`🔎 ¡Proyecto "${rec.title}" enviado a revisión! Un docente o administrador podrá aprobar su publicación final.`);
+      alert(`🔎 ¡Proyecto "${rec.title}" enviado para autorización!\n\nTu proyecto ha sido enviado al Administrador para su revisión y validación antes de ser publicado públicamente.`);
     }
 
     const navEl = document.getElementById('main-navbar');

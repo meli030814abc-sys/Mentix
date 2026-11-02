@@ -1,4 +1,4 @@
-﻿/**
+/**
  * 🔗 MENTIX - Vista de Enlaces Web / Recursos URL (url-project.js)
  * Permite incrustar y enlazar recursos web interactivos, simuladores, GeoGebra, Wikipedia, formularios, etc.
  */
@@ -253,13 +253,18 @@ window.UrlProjectView = {
     }
 
     const u = window.appState.currentUser;
+    const r = String(u?.role || '').toLowerCase().trim();
+    const isAdmin = r === 'admin' || r === 'administrador' || u?.isAdmin === true || localStorage.getItem('mentix_admin_override') === 'true';
+
     p.author = p.author || u?.name || 'Docente';
     p.authorAvatar = p.authorAvatar || u?.avatar || '👨‍🏫';
     p.authorId = p.authorId || u?.id || ('user_' + (u?.email || u?.name || 'anon'));
     p.authorEmail = p.authorEmail || u?.email || '';
-    p.publicationStatus = 'published';
-    p.status = 'completed';
-    p.isPublic = true;
+
+    p.publicationStatus = isAdmin ? 'published' : 'pending_approval';
+    p.approvalStatus = isAdmin ? 'approved' : 'pending';
+    p.status = isAdmin ? 'completed' : 'review';
+    p.isPublic = isAdmin ? true : false;
 
     const existingIndex = window.appState.challenges.findIndex(c => c.id === p.id);
     if (existingIndex >= 0) {
@@ -284,7 +289,11 @@ window.UrlProjectView = {
     if (window.ProjectsView && typeof window.ProjectsView.clearStudentCreateDraft === 'function') {
       window.ProjectsView.clearStudentCreateDraft();
     }
-    alert('✅ ¡Recurso Web guardado y publicado con éxito! Mostrando la Landing Page oficial del proyecto...');
+    if (isAdmin) {
+      alert('✅ ¡Recurso Web guardado y publicado con éxito! Mostrando la Landing Page oficial del proyecto...');
+    } else {
+      alert('🔎 ¡Recurso Web enviado a autorización!\n\nTu proyecto ha sido guardado y enviado al Administrador para su revisión y aprobación antes de ser publicado públicamente.');
+    }
     this.isEditing = false;
     if (window.ProjectsView && typeof window.ProjectsView.openProjectLanding === 'function') {
       window.ProjectsView.openProjectLanding(p.id);
