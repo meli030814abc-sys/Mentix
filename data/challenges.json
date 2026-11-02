@@ -168,7 +168,7 @@
         2,
         3
       ],
-      "currentStep": 4,
+      "currentStep": 3,
       "author": "Melisa",
       "authorId": "user_1792184134006",
       "authorEmail": "gatitaxd6f79@gmail.com",
@@ -191,7 +191,7 @@
         "collaborators": ""
       },
       "createdAt": "2026-10-25T23:37:25.678Z",
-      "updatedAt": "2026-11-02T19:17:29.739Z",
+      "updatedAt": "2026-11-02T19:17:36.931Z",
       "progress": 30,
       "calculatedProgress": 30
     },
@@ -201,7 +201,7 @@
     "authorAvatar": "🦄",
     "authorRole": "teacher",
     "createdAt": "2026-10-25T23:37:25.678Z",
-    "updatedAt": "2026-11-02T19:17:29.171Z"
+    "updatedAt": "2026-11-02T19:17:36.380Z"
   },
   {
     "id": "proj_pres_1791658288964",
