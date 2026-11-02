@@ -1535,16 +1535,20 @@ window.ProjectsView = {
       }
     } else if (projectType === 'presentation') {
       defaultBanner = c.mainImage || c.image || c.banner || 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=800';
-      primaryAction = `window.appRouter.openPresentation ? window.appRouter.openPresentation('${c.id}') : window.ProjectsView.openProjectLanding('${c.id}')`;
+      primaryAction = `window.ProjectsView.openProjectLanding('${c.id}')`;
+      primaryText = 'Ver Detalles →';
     } else if (projectType === 'video') {
       defaultBanner = c.mainImage || c.image || c.banner || 'https://images.unsplash.com/photo-1536240478700-b869070f9279?w=800';
-      primaryAction = `window.appRouter.openVideo ? window.appRouter.openVideo('${c.id}') : window.ProjectsView.openProjectLanding('${c.id}')`;
+      primaryAction = `window.ProjectsView.openProjectLanding('${c.id}')`;
+      primaryText = 'Ver Detalles →';
     } else if (projectType === 'document') {
       defaultBanner = c.mainImage || c.image || c.banner || 'https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=800';
-      primaryAction = `window.appRouter.openDocument ? window.appRouter.openDocument('${c.id}') : window.ProjectsView.openProjectLanding('${c.id}')`;
+      primaryAction = `window.ProjectsView.openProjectLanding('${c.id}')`;
+      primaryText = 'Ver Detalles →';
     } else if (projectType === 'url') {
       defaultBanner = c.mainImage || c.image || c.banner || 'https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?w=800';
-      primaryAction = `window.appRouter.openUrl ? window.appRouter.openUrl('${c.id}') : window.ProjectsView.openProjectLanding('${c.id}')`;
+      primaryAction = `window.ProjectsView.openProjectLanding('${c.id}')`;
+      primaryText = 'Ver Detalles →';
     }
 
     const dateStr = c.date || (c.createdAt ? new Date(c.createdAt).toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' }) : '12 Abr 2025');
@@ -2671,6 +2675,18 @@ window.ProjectsView = {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   },
 
+  editSelectedProject(id) {
+    const projId = id || this.selectedProjectId;
+    const c = (window.appState?.challenges || []).find(x => x && x.id === projId);
+    if (!c) return;
+    const t = c.projectType;
+    if (t === 'video') window.appRouter.editVideo(c.id);
+    else if (t === 'document') window.appRouter.editDocument(c.id);
+    else if (t === 'url') window.appRouter.editUrl(c.id);
+    else if (t === 'presentation') window.appRouter.editPresentation(c.id);
+    else if (window.ProjectWizard) window.ProjectWizard.openWizard(c.id);
+  },
+
   // Abre el editor/visor real del proyecto seleccionado
   openSelectedProject() {
     const c = (window.appState.challenges || []).find(x => x.id === this.selectedProjectId);
@@ -3782,8 +3798,8 @@ window.ProjectsView = {
                   <span>←</span> Volver a Mis Proyectos
                 </button>
                 ${selected ? `
-                <button type="button" class="plp-mentix-btn" onclick="window.ProjectWizard.openWizard('${selected.id}')">
-                  <span>✨</span> Editar en Asistente
+                <button type="button" class="plp-mentix-btn" onclick="window.ProjectsView.editSelectedProject('${selected.id}')">
+                  <span>✏️</span> Editar Proyecto
                 </button>
                 <button type="button" class="plp-mentix-btn primary" onclick="window.ProjectsView.openSelectedProject()">
                   <span>📂</span> Abrir Proyecto

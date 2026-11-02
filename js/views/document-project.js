@@ -71,6 +71,9 @@ window.DocumentProjectView = {
             ← Volver a Proyectos
           </button>
           <div style="display: flex; gap: 0.6rem; flex-wrap: wrap;">
+            <button class="btn btn-outline" onclick="window.ProjectsView.openProjectLanding('${p.id}')" style="font-weight: 800; border-color: #00f5d4; color: #00f5d4; background: rgba(0, 245, 212, 0.08);">
+              🚀 Ver Landing Page
+            </button>
             <button class="btn btn-outline" onclick="window.DocumentProjectView.openEditMode()">
               ✏️ Editar Documento
             </button>
@@ -473,9 +476,13 @@ window.DocumentProjectView = {
     if (window.ProjectsView && typeof window.ProjectsView.clearStudentCreateDraft === 'function') {
       window.ProjectsView.clearStudentCreateDraft();
     }
-    alert('✅ ¡Documento guardado y publicado con éxito en formato de hoja impresa PDF!');
+    alert('✅ ¡Documento guardado y publicado con éxito! Mostrando la Landing Page oficial del proyecto...');
     this.isEditing = false;
-    this.renderViewer(document.getElementById('view-document'));
+    if (window.ProjectsView && typeof window.ProjectsView.openProjectLanding === 'function') {
+      window.ProjectsView.openProjectLanding(p.id);
+    } else {
+      this.renderViewer(document.getElementById('view-document'));
+    }
   },
 
   // ==========================================

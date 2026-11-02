@@ -456,6 +456,9 @@ window.PresentationView = {
           </div>
 
           <div style="display: flex; align-items: center; gap: 0.6rem;">
+            <button class="btn btn-outline" onclick="window.ProjectsView.openProjectLanding('${p.id}')" style="font-size: 0.85rem; padding: 0.45rem 0.85rem; font-weight: 800; border-color: #00f5d4; color: #00f5d4; background: rgba(0, 245, 212, 0.08);">
+              <span>🚀</span> Ver Landing Page
+            </button>
             <button class="btn btn-outline" onclick="window.PresentationView.toggleTeacherNotes()" style="font-size: 0.85rem; padding: 0.45rem 0.85rem;">
               <span>📝</span> ${this.showTeacherNotes ? 'Ocultar Notas' : 'Notas Docente'}
             </button>
@@ -1767,13 +1770,16 @@ window.PresentationView = {
     if (window.ProjectsView && typeof window.ProjectsView.clearStudentCreateDraft === 'function') {
       window.ProjectsView.clearStudentCreateDraft();
     }
-    alert('✅ ¡Presentación guardada exitosamente!');
+    alert('✅ ¡Presentación guardada y publicada con éxito! Mostrando la Landing Page oficial del proyecto...');
     this.isEditing = false;
-    // Mantiene la diapositiva en la que estaba el usuario en vez de reiniciarla a 0
-    if (this.currentSlideIndex >= (p.slides || []).length) {
-      this.currentSlideIndex = 0;
+    if (window.ProjectsView && typeof window.ProjectsView.openProjectLanding === 'function') {
+      window.ProjectsView.openProjectLanding(p.id);
+    } else {
+      if (this.currentSlideIndex >= (p.slides || []).length) {
+        this.currentSlideIndex = 0;
+      }
+      this.renderViewer(document.getElementById('view-presentation'));
     }
-    this.renderViewer(document.getElementById('view-presentation'));
   },
 
   // =========================================================================

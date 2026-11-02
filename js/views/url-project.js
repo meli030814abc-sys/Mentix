@@ -70,7 +70,10 @@ window.UrlProjectView = {
             </div>
           </div>
 
-          <div style="display: flex; gap: 0.6rem;">
+          <div style="display: flex; gap: 0.6rem; flex-wrap: wrap;">
+            <button class="btn btn-outline" onclick="window.ProjectsView.openProjectLanding('${p.id}')" style="font-size: 0.85rem; padding: 0.45rem 0.85rem; font-weight: 800; border-color: #00f5d4; color: #00f5d4; background: rgba(0, 245, 212, 0.08);">
+              🚀 Ver Landing Page
+            </button>
             <button class="btn btn-outline" onclick="window.UrlProjectView.openEditMode()">
               ✏️ Editar
             </button>
@@ -281,9 +284,13 @@ window.UrlProjectView = {
     if (window.ProjectsView && typeof window.ProjectsView.clearStudentCreateDraft === 'function') {
       window.ProjectsView.clearStudentCreateDraft();
     }
-    alert('✅ ¡Recurso Web guardado exitosamente!');
+    alert('✅ ¡Recurso Web guardado y publicado con éxito! Mostrando la Landing Page oficial del proyecto...');
     this.isEditing = false;
-    this.renderViewer(document.getElementById('view-url'));
+    if (window.ProjectsView && typeof window.ProjectsView.openProjectLanding === 'function') {
+      window.ProjectsView.openProjectLanding(p.id);
+    } else {
+      this.renderViewer(document.getElementById('view-url'));
+    }
   },
 
   escapeHtml(str) {
