@@ -1510,6 +1510,44 @@
   transform: translateY(-1px);
 }
 
+/* Botón 'Autorizar' en fila inferior */
+.btn-card-authorize {
+  flex: 1;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: #ffffff;
+  border: none;
+  border-radius: 12px;
+  padding: 0.65rem 0.85rem;
+  font-size: 0.86rem;
+  font-weight: 800;
+  cursor: pointer;
+  text-align: center;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35);
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  font-family: inherit;
+}
+.btn-card-authorize:hover {
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+  box-shadow: 0 6px 18px rgba(16, 185, 129, 0.55);
+  transform: translateY(-1px);
+}
+.btn-card-authorize.approved {
+  background: #f0fdf4;
+  color: #15803d;
+  border: 1.5px solid #86efac;
+  box-shadow: none;
+}
+.btn-card-authorize.approved:hover {
+  background: #fef2f2;
+  color: #b91c1c;
+  border-color: #fca5a5;
+}
+
 /* Botón 'Revisar' en fila inferior */
 .btn-card-review-bottom {
   flex: 1;

@@ -1033,13 +1033,14 @@ window.AdminView = {
                   </div>
                 </div>
 
-                <!-- Botones Inferiores: Ver Detalles, Revisar y Compartir -->
+                <!-- Botones Inferiores: Ver Detalles, Autorizar y Compartir -->
                 <div class="admin-card-actions-row">
                   <button class="btn-card-details" onclick="window.AdminView.openProjectDetailModal('${p.id}')">
                     Ver Detalles →
                   </button>
-                  <button class="btn-card-review-bottom" title="Revisar Landing Page para Autorización" onclick="window.AdminView.reviewProjectInLanding('${p.id}')">
-                    <span>🔍</span> Revisar
+                  <button class="btn-card-authorize ${isApproved ? 'approved' : ''}" title="${isApproved ? 'Proyecto ya autorizado (clic para revocar)' : 'Autorizar y publicar este proyecto'}" onclick="${isApproved ? `window.AdminView.rejectProject('${p.id}')` : `window.AdminView.approveProject('${p.id}')`}">
+                    <span>${isApproved ? '✔' : '✅'}</span>
+                    <span>${isApproved ? 'Autorizado' : 'Autorizar'}</span>
                   </button>
                   <button class="btn-card-share" onclick="window.AdminView.shareProject('${p.id}')">
                     <span>Compartir</span>
