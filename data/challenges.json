@@ -80,12 +80,12 @@
       "featuredVideoPublic": true
     },
     "designConfig": {
-      "themeId": "cosmos",
+      "themeId": "oceano",
       "fontFamily": "Montserrat",
-      "titleColor": "#ffffff",
-      "textColor": "#cbd5e1",
-      "accentColor": "#00f5d4",
-      "bannerStyle": "gradient-cosmos",
+      "titleColor": "#38bdf8",
+      "textColor": "#bae6fd",
+      "accentColor": "#2dd4bf",
+      "bannerStyle": "robot-hero",
       "bannerUrl": ""
     },
     "authorsConfig": {
@@ -166,21 +166,22 @@
       "completedSteps": [
         1,
         2,
-        3
+        3,
+        4
       ],
-      "currentStep": 4,
+      "currentStep": 5,
       "author": "Melisa",
       "authorId": "user_1792184134006",
       "authorEmail": "gatitaxd6f79@gmail.com",
       "authorAvatar": "🦄",
       "authorRole": "teacher",
       "designConfig": {
-        "themeId": "cosmos",
+        "themeId": "oceano",
         "fontFamily": "Montserrat",
-        "titleColor": "#ffffff",
-        "textColor": "#cbd5e1",
-        "accentColor": "#00f5d4",
-        "bannerStyle": "gradient-cosmos",
+        "titleColor": "#38bdf8",
+        "textColor": "#bae6fd",
+        "accentColor": "#2dd4bf",
+        "bannerStyle": "robot-hero",
         "bannerUrl": ""
       },
       "authorsConfig": {
@@ -191,7 +192,7 @@
         "collaborators": ""
       },
       "createdAt": "2026-10-25T23:37:25.678Z",
-      "updatedAt": "2026-11-02T19:17:41.427Z",
+      "updatedAt": "2026-11-02T19:17:48.379Z",
       "progress": 30,
       "calculatedProgress": 30
     },
@@ -201,7 +202,7 @@
     "authorAvatar": "🦄",
     "authorRole": "teacher",
     "createdAt": "2026-10-25T23:37:25.678Z",
-    "updatedAt": "2026-11-02T19:17:40.888Z"
+    "updatedAt": "2026-11-02T19:17:47.881Z"
   },
   {
     "id": "proj_pres_1791658288964",
