@@ -6412,3 +6412,369 @@ body[data-theme="dark"] .plp-lightbox-content {
   transform: translateY(-2px) !important;
   box-shadow: 0 8px 24px rgba(0, 245, 212, 0.6) !important;
 }
+
+
+/* ==========================================================================
+   HIGH CONTRAST & ACCESSIBILITY OVERRIDE (GRANDES BOTONES & LETRA VISIBLE)
+   ========================================================================== */
+
+/* 1. Visibilidad Total de Textos (Letra que se vea con maximo contraste) */
+.inno-section-title,
+.plp-wrapper .inno-section-title,
+.plp-wrapper[data-theme="dark"] .inno-section-title,
+#view-projects .inno-section-title {
+  color: #ffffff !important;
+  font-size: 2rem !important;
+  font-weight: 900 !important;
+  letter-spacing: -0.02em !important;
+  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.6) !important;
+  margin: 0 0 0.45rem !important;
+}
+
+.inno-section-sub,
+.plp-wrapper .inno-section-sub,
+.plp-wrapper[data-theme="dark"] .inno-section-sub,
+#view-projects .inno-section-sub {
+  color: #cbd5e1 !important;
+  font-size: 1.15rem !important;
+  font-weight: 500 !important;
+  line-height: 1.5 !important;
+}
+
+.inno-section-head {
+  border-left: 5px solid #00f5d4 !important;
+  padding-left: 1.15rem !important;
+  margin-bottom: 1.75rem !important;
+}
+
+/* 2. Botones de Filtro Ultra Visibles y Grandes (Todos, Documentos, Videos, etc.) */
+.inno-filter-pills {
+  display: flex !important;
+  align-items: center !important;
+  gap: 1rem !important;
+  margin-bottom: 2rem !important;
+  flex-wrap: wrap !important;
+}
+
+.inno-pill-tab,
+.inno-filter-pill {
+  background: rgba(15, 29, 51, 0.9) !important;
+  border: 2px solid rgba(255, 255, 255, 0.3) !important;
+  color: #ffffff !important;
+  font-size: 1.15rem !important;
+  font-weight: 800 !important;
+  padding: 0.9rem 2rem !important;
+  border-radius: 9999px !important;
+  cursor: pointer !important;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.65rem !important;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.4) !important;
+  user-select: none !important;
+}
+
+.inno-pill-tab:hover,
+.inno-filter-pill:hover {
+  background: rgba(0, 245, 212, 0.22) !important;
+  border-color: #00f5d4 !important;
+  color: #00f5d4 !important;
+  transform: translateY(-2px) scale(1.04) !important;
+  box-shadow: 0 6px 22px rgba(0, 245, 212, 0.45) !important;
+}
+
+.inno-pill-tab.active,
+.inno-filter-pill.active {
+  background: linear-gradient(135deg, #00f5d4 0%, #00b4d8 100%) !important;
+  border-color: #00f5d4 !important;
+  color: #071739 !important;
+  font-weight: 900 !important;
+  box-shadow: 0 6px 28px rgba(0, 245, 212, 0.65) !important;
+  transform: scale(1.06) !important;
+}
+
+/* 3. Tarjetas de Recursos (Documentos, Videos, Presentaciones) */
+.inno-resource-card {
+  background: #ffffff !important;
+  border: 1.5px solid #e2e8f0 !important;
+  border-radius: 20px !important;
+  overflow: hidden !important;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease !important;
+}
+
+.plp-wrapper[data-theme="dark"] .inno-resource-card {
+  background: #0d1a2d !important;
+  border-color: rgba(255, 255, 255, 0.16) !important;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.45) !important;
+}
+
+.inno-resource-card:hover {
+  transform: translateY(-5px) !important;
+  border-color: #00f5d4 !important;
+  box-shadow: 0 14px 34px rgba(0, 245, 212, 0.25) !important;
+}
+
+.inno-res-thumb-wrap,
+.inno-card-thumb-wrap {
+  position: relative !important;
+  height: 185px !important;
+  background-size: cover !important;
+  background-position: center !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  background-color: #071739 !important;
+}
+
+/* Boton gigante de Play en videos */
+.inno-res-play-btn,
+.inno-card-play-btn {
+  width: 70px !important;
+  height: 70px !important;
+  border-radius: 50% !important;
+  background: linear-gradient(135deg, #00f5d4 0%, #00b4d8 100%) !important;
+  color: #071739 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 2rem !important;
+  box-shadow: 0 0 28px rgba(0, 245, 212, 0.8) !important;
+  cursor: pointer !important;
+  border: 3.5px solid #ffffff !important;
+  transition: transform 0.25s ease, box-shadow 0.25s ease !important;
+}
+
+.inno-res-play-btn:hover,
+.inno-card-play-btn:hover {
+  transform: scale(1.15) !important;
+  box-shadow: 0 0 40px rgba(0, 245, 212, 1) !important;
+}
+
+.inno-res-body,
+.inno-card-body {
+  padding: 1.5rem !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: space-between !important;
+  flex: 1 !important;
+  gap: 1rem !important;
+}
+
+.inno-res-badge,
+.inno-card-tag {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 0.35rem !important;
+  font-size: 0.9rem !important;
+  font-weight: 800 !important;
+  padding: 0.4rem 1rem !important;
+  border-radius: 9999px !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.03em !important;
+  align-self: flex-start !important;
+}
+
+.inno-res-title,
+.inno-card-title {
+  font-size: 1.3rem !important;
+  font-weight: 900 !important;
+  color: #0f172a !important;
+  margin: 0.4rem 0 0.45rem !important;
+  line-height: 1.35 !important;
+}
+
+.plp-wrapper[data-theme="dark"] .inno-res-title,
+.plp-wrapper[data-theme="dark"] .inno-card-title {
+  color: #ffffff !important;
+}
+
+.inno-res-desc,
+.inno-card-desc {
+  font-size: 1.05rem !important;
+  color: #475569 !important;
+  line-height: 1.6 !important;
+  margin: 0 !important;
+}
+
+.plp-wrapper[data-theme="dark"] .inno-res-desc,
+.plp-wrapper[data-theme="dark"] .inno-card-desc {
+  color: #cbd5e1 !important;
+}
+
+.inno-res-footer,
+.inno-card-footer {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  border-top: 1px solid #e2e8f0 !important;
+  padding-top: 1rem !important;
+  margin-top: 0.5rem !important;
+  font-size: 0.95rem !important;
+  font-weight: 600 !important;
+  color: #64748b !important;
+  flex-wrap: wrap !important;
+  gap: 0.85rem !important;
+}
+
+.plp-wrapper[data-theme="dark"] .inno-res-footer,
+.plp-wrapper[data-theme="dark"] .inno-card-footer {
+  border-top-color: rgba(255, 255, 255, 0.12) !important;
+  color: #94a3b8 !important;
+}
+
+/* 4. BOTONES GRANDES PARA RECURSOS (Documentos, Videos, Enlaces, Descargas) */
+.inno-res-action-link,
+.inno-card-dl-btn,
+.inno-res-btn-action,
+.inno-card-action-btn {
+  background: linear-gradient(135deg, #0284c7 0%, #00f5d4 100%) !important;
+  color: #071739 !important;
+  font-size: 1.05rem !important;
+  font-weight: 900 !important;
+  padding: 0.8rem 1.75rem !important;
+  border-radius: 9999px !important;
+  border: none !important;
+  cursor: pointer !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.55rem !important;
+  box-shadow: 0 4px 18px rgba(0, 245, 212, 0.45) !important;
+  transition: all 0.25s ease !important;
+  text-decoration: none !important;
+  white-space: nowrap !important;
+}
+
+.inno-res-action-link:hover,
+.inno-card-dl-btn:hover,
+.inno-res-btn-action:hover,
+.inno-card-action-btn:hover {
+  transform: translateY(-2px) scale(1.05) !important;
+  box-shadow: 0 8px 26px rgba(0, 245, 212, 0.65) !important;
+  color: #071739 !important;
+  text-decoration: none !important;
+}
+
+/* 5. Otros Botones Principales Mas Grandes */
+.inno-btn-explore {
+  padding: 1.1rem 2.5rem !important;
+  font-size: 1.18rem !important;
+  font-weight: 900 !important;
+}
+
+.inno-btn-resources {
+  padding: 1.1rem 2.5rem !important;
+  font-size: 1.18rem !important;
+  font-weight: 800 !important;
+}
+
+.inno-btn-join {
+  padding: 1.05rem 2rem !important;
+  font-size: 1.15rem !important;
+  font-weight: 900 !important;
+}
+
+.inno-btn-comment {
+  padding: 1rem 2rem !important;
+  font-size: 1.1rem !important;
+  font-weight: 800 !important;
+}
+
+.inno-btn-view-all-team {
+  padding: 1rem 2.3rem !important;
+  font-size: 1.12rem !important;
+  font-weight: 800 !important;
+}
+
+.inno-cta-btn {
+  padding: 1.2rem 3rem !important;
+  font-size: 1.3rem !important;
+  font-weight: 900 !important;
+}
+
+/* 6. Claridad y Tamano en Seccion Por que este proyecto? */
+.inno-why-card {
+  min-height: 220px !important;
+  padding: 1.5rem !important;
+}
+
+.plp-wrapper[data-theme="dark"] .inno-why-card {
+  background: #0d1a2d !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.15) !important;
+}
+
+.inno-why-card-title {
+  font-size: 1.2rem !important;
+  font-weight: 900 !important;
+  color: #0f172a !important;
+  margin-bottom: 0.45rem !important;
+}
+
+.plp-wrapper[data-theme="dark"] .inno-why-card-title {
+  color: #ffffff !important;
+}
+
+.inno-why-card-desc {
+  font-size: 1rem !important;
+  line-height: 1.6 !important;
+  color: #475569 !important;
+}
+
+.plp-wrapper[data-theme="dark"] .inno-why-card-desc {
+  color: #cbd5e1 !important;
+}
+
+.inno-why-card-link {
+  font-size: 1rem !important;
+  font-weight: 800 !important;
+}
+
+/* 7. Claridad en KPIs y Roadmap */
+.plp-wrapper[data-theme="dark"] .inno-kpi-card,
+.plp-wrapper[data-theme="dark"] .inno-roadmap-track-wrap,
+.plp-wrapper[data-theme="dark"] .inno-participation-card,
+.plp-wrapper[data-theme="dark"] .inno-team-card {
+  background: #0d1a2d !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.15) !important;
+}
+
+.inno-kpi-val {
+  font-size: 1.85rem !important;
+  font-weight: 900 !important;
+  color: #0f172a !important;
+}
+
+.plp-wrapper[data-theme="dark"] .inno-kpi-val {
+  color: #ffffff !important;
+}
+
+.inno-kpi-lbl {
+  font-size: 0.96rem !important;
+  font-weight: 600 !important;
+  color: #475569 !important;
+}
+
+.plp-wrapper[data-theme="dark"] .inno-kpi-lbl {
+  color: #cbd5e1 !important;
+}
+
+.inno-team-name {
+  font-size: 1.15rem !important;
+  font-weight: 800 !important;
+}
+
+.plp-wrapper[data-theme="dark"] .inno-team-name {
+  color: #ffffff !important;
+}
+
+.inno-team-role {
+  font-size: 0.95rem !important;
+}
+
+.plp-wrapper[data-theme="dark"] .inno-team-role {
+  color: #cbd5e1 !important;
+}

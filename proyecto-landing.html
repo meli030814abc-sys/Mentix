@@ -373,11 +373,11 @@
 
       <!-- Filtros de categoría -->
       <div class="inno-filter-pills">
-        <button type="button" class="inno-pill-tab active" onclick="filterResourceCategory('all', this)">Todos</button>
-        <button type="button" class="inno-pill-tab" onclick="filterResourceCategory('doc', this)">Documentos</button>
-        <button type="button" class="inno-pill-tab" onclick="filterResourceCategory('video', this)">Videos</button>
-        <button type="button" class="inno-pill-tab" onclick="filterResourceCategory('pres', this)">Presentaciones</button>
-        <button type="button" class="inno-pill-tab" onclick="filterResourceCategory('link', this)">Enlaces</button>
+        <button type="button" class="inno-pill-tab inno-filter-pill active" onclick="filterResourceCategory('all', this)"><span>🌐</span> Todos</button>
+        <button type="button" class="inno-pill-tab inno-filter-pill" onclick="filterResourceCategory('doc', this)"><span>📄</span> Documentos</button>
+        <button type="button" class="inno-pill-tab inno-filter-pill" onclick="filterResourceCategory('video', this)"><span>🎬</span> Videos</button>
+        <button type="button" class="inno-pill-tab inno-filter-pill" onclick="filterResourceCategory('pres', this)"><span>📊</span> Presentaciones</button>
+        <button type="button" class="inno-pill-tab inno-filter-pill" onclick="filterResourceCategory('link', this)"><span>🔗</span> Enlaces</button>
       </div>
 
       <!-- Grid de Recursos (3 Columnas) -->
@@ -394,8 +394,8 @@
             </div>
             <div class="inno-res-footer">
               <span>📅 12 Oct. 2026</span>
-              <button type="button" class="inno-res-action-link" onclick="previewLandingDoc('Guía del Proyecto')">
-                Ver detalle <span>→</span>
+              <button type="button" class="inno-card-action-btn inno-res-btn-action" onclick="previewLandingDoc('Guía del Proyecto')">
+                <span>📄</span> Ver detalle
               </button>
             </div>
           </div>
@@ -414,8 +414,8 @@
             </div>
             <div class="inno-res-footer">
               <span>📅 10 Oct. 2026</span>
-              <button type="button" class="inno-res-action-link" onclick="playLandingVideo()">
-                Ver video <span>→</span>
+              <button type="button" class="inno-card-action-btn inno-res-btn-action" onclick="playLandingVideo()">
+                <span>▶</span> Ver video
               </button>
             </div>
           </div>
@@ -433,8 +433,8 @@
             </div>
             <div class="inno-res-footer">
               <span>📅 08 Oct. 2026</span>
-              <button type="button" class="inno-res-action-link" onclick="previewLandingDoc('Plan de Trabajo')">
-                Ver detalle <span>→</span>
+              <button type="button" class="inno-card-action-btn inno-res-btn-action" onclick="previewLandingDoc('Plan de Trabajo')">
+                <span>📊</span> Ver detalle
               </button>
             </div>
           </div>
@@ -728,7 +728,7 @@
     }
 
     function filterResourceCategory(cat, btn) {
-      document.querySelectorAll('.inno-filter-pill').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.inno-pill-tab, .inno-filter-pill').forEach(b => b.classList.remove('active'));
       if (btn) btn.classList.add('active');
 
       document.querySelectorAll('#inno-resource-cards-container article').forEach(el => {
@@ -1114,7 +1114,9 @@
                 </div>
                 <div class="inno-card-footer">
                   <span>🎬 ${vFile}</span>
-                  <button type="button" class="inno-card-dl-btn" onclick="playLandingVideo()" title="Reproducir">▶</button>
+                  <button type="button" class="inno-card-action-btn inno-res-btn-action" onclick="playLandingVideo()" title="Reproducir">
+                    <span>▶</span> Ver video
+                  </button>
                 </div>
               </div>
             </article>
@@ -1180,7 +1182,9 @@
                 </div>
                 <div class="inno-card-footer">
                   <span>📅 ${dateStr} • 💾 ${sizeStr}</span>
-                  <button type="button" class="inno-card-dl-btn" onclick="${actionFn}" title="Abrir o Descargar">⬇</button>
+                  <button type="button" class="inno-card-action-btn inno-res-btn-action" onclick="${actionFn}" title="Abrir o Descargar">
+                    <span>📄</span> Abrir documento
+                  </button>
                 </div>
               </div>
             </article>
@@ -1207,7 +1211,9 @@
                 </div>
                 <div class="inno-card-footer">
                   <span>🌐 ${domain}</span>
-                  <button type="button" class="inno-card-dl-btn" onclick="window.open('${lnk.url.replace(/'/g, "\\'")}', '_blank')" title="Visitar enlace">↗</button>
+                  <button type="button" class="inno-card-action-btn inno-res-btn-action" onclick="window.open('${lnk.url.replace(/'/g, "\\'")}', '_blank')" title="Visitar enlace">
+                    <span>🔗</span> Visitar enlace
+                  </button>
                 </div>
               </div>
             </article>

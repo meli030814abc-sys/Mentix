@@ -3718,7 +3718,7 @@ window.ProjectsView = {
       } else if (mainCover) {
         videoThumb = mainCover;
       }
-      const vTitle = vc.title || 'Video explicativo del proyecto';
+      const vTitle = vc.title || (selectedTitle ? `Video: ${selectedTitle}` : 'Video explicativo del proyecto');
       const vDesc = vc.description || 'Conoce los objetivos y el alcance de la iniciativa.';
       const vSearch = (vTitle + ' ' + vDesc + ' video explicativo multimedia').toLowerCase();
       const vFile = vc.fileName || 'Video oficial';
@@ -3736,7 +3736,9 @@ window.ProjectsView = {
             </div>
             <div class="inno-card-footer">
               <span>🎬 ${this.escapeHtml(vFile)}</span>
-              <button type="button" class="inno-card-dl-btn" onclick="window.ProjectsView.playLandingVideo()" title="Reproducir">▶</button>
+              <button type="button" class="inno-card-action-btn inno-res-btn-action" onclick="window.ProjectsView.playLandingVideo()" title="Reproducir">
+                <span>▶</span> Ver video
+              </button>
             </div>
           </div>
         </article>
@@ -3803,7 +3805,9 @@ window.ProjectsView = {
             </div>
             <div class="inno-card-footer">
               <span>📅 ${this.escapeHtml(dateStr)} • 💾 ${this.escapeHtml(sizeStr)}</span>
-              <button type="button" class="inno-card-dl-btn" onclick="${actionFn}" title="Abrir o Descargar">⬇</button>
+              <button type="button" class="inno-card-action-btn inno-res-btn-action" onclick="${actionFn}" title="Abrir o Descargar">
+                <span>📄</span> Abrir documento
+              </button>
             </div>
           </div>
         </article>
@@ -3831,7 +3835,9 @@ window.ProjectsView = {
             </div>
             <div class="inno-card-footer">
               <span>🌐 ${this.escapeHtml(domain)}</span>
-              <button type="button" class="inno-card-dl-btn" onclick="window.open('${this.escapeHtml(lnk.url)}', '_blank')" title="Visitar enlace">↗</button>
+              <button type="button" class="inno-card-action-btn inno-res-btn-action" onclick="window.open('${this.escapeHtml(lnk.url)}', '_blank')" title="Visitar enlace">
+                <span>🔗</span> Visitar enlace
+              </button>
             </div>
           </div>
         </article>
@@ -3851,8 +3857,8 @@ window.ProjectsView = {
             </div>
             <div class="inno-res-footer">
               <span>📅 12 Oct. 2026</span>
-              <button type="button" class="inno-res-action-link" onclick="window.ProjectsView.previewLandingDoc('Guía del Proyecto — ${selectedTitle}')">
-                Ver detalle <span>→</span>
+              <button type="button" class="inno-card-action-btn inno-res-btn-action" onclick="window.ProjectsView.previewLandingDoc('Guía del Proyecto — ${selectedTitle}')">
+                <span>📄</span> Ver detalle
               </button>
             </div>
           </div>
@@ -3870,8 +3876,8 @@ window.ProjectsView = {
             </div>
             <div class="inno-res-footer">
               <span>📅 10 Oct. 2026</span>
-              <button type="button" class="inno-res-action-link" onclick="window.ProjectsView.playLandingVideo()">
-                Ver video <span>→</span>
+              <button type="button" class="inno-card-action-btn inno-res-btn-action" onclick="window.ProjectsView.playLandingVideo()">
+                <span>▶</span> Ver video
               </button>
             </div>
           </div>
@@ -3888,8 +3894,8 @@ window.ProjectsView = {
             </div>
             <div class="inno-res-footer">
               <span>📅 08 Oct. 2026</span>
-              <button type="button" class="inno-res-action-link" onclick="window.ProjectsView.previewLandingDoc('Plan de Trabajo — ${selectedTitle}')">
-                Ver detalle <span>→</span>
+              <button type="button" class="inno-card-action-btn inno-res-btn-action" onclick="window.ProjectsView.previewLandingDoc('Plan de Trabajo — ${selectedTitle}')">
+                <span>📊</span> Ver detalle
               </button>
             </div>
           </div>
@@ -4300,11 +4306,11 @@ window.ProjectsView = {
 
             <!-- Filtros de categoría -->
             <div class="inno-filter-pills">
-              <button type="button" class="inno-pill-tab active" onclick="window.ProjectsView.filterResourceCategory('all', this)">Todos</button>
-              <button type="button" class="inno-pill-tab" onclick="window.ProjectsView.filterResourceCategory('doc', this)">Documentos</button>
-              <button type="button" class="inno-pill-tab" onclick="window.ProjectsView.filterResourceCategory('video', this)">Videos</button>
-              <button type="button" class="inno-pill-tab" onclick="window.ProjectsView.filterResourceCategory('pres', this)">Presentaciones</button>
-              <button type="button" class="inno-pill-tab" onclick="window.ProjectsView.filterResourceCategory('link', this)">Enlaces</button>
+              <button type="button" class="inno-pill-tab inno-filter-pill active" onclick="window.ProjectsView.filterResourceCategory('all', this)"><span>🌐</span> Todos</button>
+              <button type="button" class="inno-pill-tab inno-filter-pill" onclick="window.ProjectsView.filterResourceCategory('doc', this)"><span>📄</span> Documentos</button>
+              <button type="button" class="inno-pill-tab inno-filter-pill" onclick="window.ProjectsView.filterResourceCategory('video', this)"><span>🎬</span> Videos</button>
+              <button type="button" class="inno-pill-tab inno-filter-pill" onclick="window.ProjectsView.filterResourceCategory('pres', this)"><span>📊</span> Presentaciones</button>
+              <button type="button" class="inno-pill-tab inno-filter-pill" onclick="window.ProjectsView.filterResourceCategory('link', this)"><span>🔗</span> Enlaces</button>
             </div>
 
             <!-- Grid de Recursos (3 Columnas) -->
@@ -4597,10 +4603,10 @@ window.ProjectsView = {
   },
 
   filterResourceCategory(cat, btn) {
-    document.querySelectorAll('#view-projects .inno-filter-pill').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('#view-projects .inno-pill-tab, #view-projects .inno-filter-pill, .inno-pill-tab, .inno-filter-pill').forEach(b => b.classList.remove('active'));
     if (btn) btn.classList.add('active');
 
-    document.querySelectorAll('#view-projects #inno-resource-cards-container article').forEach(el => {
+    document.querySelectorAll('#view-projects #inno-resource-cards-container article, #inno-resource-cards-container article').forEach(el => {
       if (cat === 'all') {
         el.style.display = 'flex';
       } else {
