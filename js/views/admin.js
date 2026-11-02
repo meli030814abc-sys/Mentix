@@ -2993,6 +2993,10 @@ window.AdminView = {
    * Concede autorización formal a un proyecto y lo publica en la plataforma
    */
   approveProject(projectId) {
+    if (!this.isAdminUser()) {
+      this.showToast('Solo los administradores pueden autorizar proyectos', 'error');
+      return;
+    }
     let raw = window.appState.challenges || [];
     let p = raw.find(item => item && item.id === projectId);
     if (!p) {
@@ -3021,6 +3025,7 @@ window.AdminView = {
     }
 
     this.syncProjectToUserVaults(p);
+    this.pushProjectToDatabase(p);
     this.logAuditEvent(`Proyecto autorizado y publicado: "${p.title}"`, 'Autorizaciones');
     this.showToast(`✅ ¡Proyecto "${p.title}" autorizado y publicado con éxito!`, 'success');
     
@@ -3032,9 +3037,29 @@ window.AdminView = {
   },
 
   /**
+   * Publica/actualiza el estado de un proyecto en la base de datos (Supabase + API global)
+   */
+  pushProjectToDatabase(p) {
+    if (!p) return;
+    try {
+      if (window.appRouter && typeof window.appRouter.pushChallengeToCloud === 'function') {
+        window.appRouter.pushChallengeToCloud(p);
+      } else if (window.supabaseService && typeof window.supabaseService.saveChallengeToSupabase === 'function') {
+        window.supabaseService.saveChallengeToSupabase(p);
+      }
+    } catch (e) {
+      console.warn('No se pudo sincronizar el proyecto con la base de datos:', e);
+    }
+  },
+
+  /**
    * Cancela o deniega la autorización de un proyecto
    */
   rejectProject(projectId, reason = '') {
+    if (!this.isAdminUser()) {
+      this.showToast('Solo los administradores pueden cancelar autorizaciones', 'error');
+      return;
+    }
     let raw = window.appState.challenges || [];
     let p = raw.find(item => item && item.id === projectId);
     if (!p) {
@@ -3065,6 +3090,7 @@ window.AdminView = {
     }
 
     this.syncProjectToUserVaults(p);
+    this.pushProjectToDatabase(p);
     this.logAuditEvent(`Autorización cancelada para "${p.title}": ${note}`, 'Autorizaciones');
     this.showToast(`❌ Autorización cancelada para "${p.title}".`, 'warning');
 

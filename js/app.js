@@ -1400,9 +1400,14 @@ class AppRouter {
   async pushChallengeToCloud(challenge) {
     if (!challenge || !challenge.id || !challenge.title) return;
     try {
-      challenge.isPublic = true;
       if (!challenge.projectType) {
         challenge.projectType = (challenge.isGovDataProject || challenge.slides) ? 'presentation' : 'quiz';
+      }
+      // Los proyectos solo son públicos en la nube cuando un administrador los autoriza
+      if (challenge.projectType !== 'quiz') {
+        challenge.isPublic = challenge.approvalStatus === 'approved';
+      } else {
+        challenge.isPublic = true;
       }
       if (window.supabaseService && typeof window.supabaseService.saveChallengeToSupabase === 'function') {
         window.supabaseService.saveChallengeToSupabase(challenge);

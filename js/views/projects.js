@@ -1758,23 +1758,23 @@ window.ProjectsView = {
             <button 
               class="saas-card-btn-secondary"
               onclick="event.stopPropagation(); ${primaryAction}" 
-              style="${btnLeftStyle} border-radius: 10px; padding: 0.52rem 0.65rem; font-size: 0.79rem; font-weight: 700; cursor: pointer; flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 0.25rem; transition: all 0.2s ease; white-space: nowrap;"
+              style="${btnLeftStyle} border-radius: 10px; padding: 0.52rem 0.5rem; font-size: 0.76rem; font-weight: 700; cursor: pointer; flex: 1 1 0; min-width: 0; display: inline-flex; align-items: center; justify-content: center; gap: 0.2rem; transition: all 0.2s ease; white-space: nowrap;"
             >
               ${primaryText}
             </button>
-            <button 
+            ${isAdmin ? `<button 
               class="saas-card-btn-authorize ${isApproved ? 'approved' : ''}"
               onclick="event.stopPropagation(); window.ProjectsView.toggleAuthorizeProject('${c.id}')"
-              style="${isApproved ? 'background:#f0fdf4; color:#15803d; border:1.5px solid #86efac;' : 'background:linear-gradient(135deg, #10b981 0%, #059669 100%); color:#ffffff; border:none; box-shadow: 0 2px 8px rgba(16, 185, 129, 0.32);'} border-radius: 10px; padding: 0.52rem 0.65rem; font-size: 0.79rem; font-weight: 800; cursor: pointer; flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 0.25rem; transition: all 0.2s ease; white-space: nowrap;"
+              style="${isApproved ? 'background:#f0fdf4; color:#15803d; border:1.5px solid #86efac;' : 'background:linear-gradient(135deg, #10b981 0%, #059669 100%); color:#ffffff; border:none; box-shadow: 0 2px 8px rgba(16, 185, 129, 0.32);'} border-radius: 10px; padding: 0.52rem 0.5rem; font-size: 0.76rem; font-weight: 800; cursor: pointer; flex: 1 1 0; min-width: 0; display: inline-flex; align-items: center; justify-content: center; gap: 0.2rem; transition: all 0.2s ease; white-space: nowrap;"
               title="${isApproved ? 'Proyecto ya autorizado (clic para revocar)' : 'Autorizar y publicar este proyecto'}"
             >
               <span>${isApproved ? '✔' : '✅'}</span>
               <span>${isApproved ? 'Autorizado' : 'Autorizar'}</span>
-            </button>
+            </button>` : ''}
             <button 
               class="saas-card-btn-primary"
               onclick="event.stopPropagation(); ${secondaryAction}" 
-              style="${btnRightStyle} border-radius: 10px; padding: 0.52rem 0.65rem; font-size: 0.79rem; font-weight: 700; cursor: pointer; flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 0.25rem; transition: all 0.2s ease; white-space: nowrap;"
+              style="${btnRightStyle} border-radius: 10px; padding: 0.52rem 0.5rem; font-size: 0.76rem; font-weight: 700; cursor: pointer; flex: 1 1 0; min-width: 0; display: inline-flex; align-items: center; justify-content: center; gap: 0.2rem; transition: all 0.2s ease; white-space: nowrap;"
             >
               ${secondaryText}
             </button>
@@ -1788,6 +1788,10 @@ window.ProjectsView = {
    * Alterna la autorización y publicación de un proyecto desde la tarjeta
    */
   toggleAuthorizeProject(projectId) {
+    if (!this.isAdminUser()) {
+      alert('🔒 Solo los administradores pueden autorizar proyectos.');
+      return;
+    }
     let raw = (window.appState && window.appState.challenges) ? window.appState.challenges : [];
     let p = raw.find(item => item && item.id === projectId);
     if (!p) {

@@ -779,7 +779,7 @@ collectCurrentStepInputs() {
                 </button>
               ` : `
                 <button type="button" class="plp-cta-btn" onclick="window.ProjectWizard.publishOrSubmitProject()" style="padding: 0.8rem 1.8rem; font-size: 1rem; background: #10b981;">
-                  🚀 ${this.canPublishDirectly() ? 'Publicar Proyecto en Landing Page' : 'Enviar Proyecto a Revisión'}
+                  🚀 ${this.canPublishDirectly() ? 'Publicar Proyecto en Landing Page' : 'Enviar autorización'}
                 </button>
               `}
             </div>
@@ -4527,7 +4527,7 @@ collectCurrentStepInputs() {
             👁️ 2. Vista previa en la Landing Page
           </button>
           <button type="button" class="plp-mentix-btn primary" style="padding:0.75rem 1.65rem; font-size:0.95rem;" onclick="window.ProjectWizard.publishOrSubmitProject()">
-            🚀 3. ${this.canPublishDirectly() ? 'Publicar proyecto ahora' : 'Enviar proyecto a revisión'}
+            🚀 3. ${this.canPublishDirectly() ? 'Publicar proyecto ahora' : 'Enviar autorización'}
           </button>
         </div>
       </div>
