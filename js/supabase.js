@@ -174,7 +174,21 @@ class SupabaseService {
         project_type: c.projectType || c.project_type || (isGov ? 'presentation' : 'quiz'),
         preparation_status: c.preparationStatus || c.preparation_status || (pubStatus === 'published' ? 'completado' : 'en_desarrollo'),
         publication_status: pubStatus,
-        govdata_payload: c.govdata || c.govdata_payload || (isGov ? c : {}),
+        govdata_payload: (() => {
+          const base = c.govdata || c.govdata_payload || (isGov ? c : {});
+          const projType = c.projectType || c.project_type || (isGov ? 'presentation' : 'quiz');
+          if (projType === 'quiz' && !isGov) return base;
+          // Guardar el estado de autorización del administrador junto al proyecto
+          return {
+            ...(base && typeof base === 'object' ? base : {}),
+            _approval: {
+              approvalStatus: c.approvalStatus || 'pending',
+              authorizedAt: c.authorizedAt || null,
+              authorizedBy: c.authorizedBy || null,
+              rejectionReason: c.rejectionReason || null
+            }
+          };
+        })(),
         updated_at: new Date().toISOString()
       };
       await this.client.from('challenges').upsert(row);
@@ -200,13 +214,23 @@ class SupabaseService {
       if (!error && data && data.length > 0) {
         // Normalizar retos y proyectos provenientes de Supabase
         normalizedCloud = data.map(c => {
-          const isGov = Boolean(c.isGovDataProject ?? c.is_gov_data_project ?? (c.govdata_payload && Object.keys(c.govdata_payload).length > 0));
+          const gpKeys = (c.govdata_payload && typeof c.govdata_payload === 'object') ? Object.keys(c.govdata_payload).filter(k => k !== '_approval') : [];
+          const isGov = Boolean(c.isGovDataProject ?? c.is_gov_data_project ?? (gpKeys.length > 0));
           const pubStatus = c.publicationStatus || c.publication_status || 'published';
           const status = c.status || (pubStatus === 'published' ? 'completed' : 'in_progress');
           const mainImg = c.mainImage || c.main_image || c.banner || c.image || '';
           const gd = c.govdata || c.govdata_payload || null;
+          const ap = (c.govdata_payload && c.govdata_payload._approval) ? c.govdata_payload._approval : null;
+          const approvalProps = ap ? {
+            approvalStatus: ap.approvalStatus,
+            authorizedAt: ap.authorizedAt || undefined,
+            authorizedBy: ap.authorizedBy || undefined,
+            rejectionReason: ap.rejectionReason || undefined,
+            isPublic: ap.approvalStatus === 'approved' && pubStatus === 'published'
+          } : {};
           return {
             ...c,
+            ...approvalProps,
             title: c.title || c.name || 'Proyecto',
             categoryName: c.categoryName || c.category_name || 'General',
             authorAvatar: c.authorAvatar || c.author_avatar || '👨‍🏫',
@@ -232,7 +256,15 @@ class SupabaseService {
             if (!gp || !gp.id) return;
             const existingIdx = normalizedCloud.findIndex(c => c.id === gp.id);
             const pubStatus = gp.publication_status || 'published';
+            const vc = (gp.visibility_config && typeof gp.visibility_config === 'object') ? gp.visibility_config : {};
+            const gApproval = vc.approvalStatus ? {
+              approvalStatus: vc.approvalStatus,
+              authorizedAt: vc.authorizedAt || undefined,
+              authorizedBy: vc.authorizedBy || undefined,
+              rejectionReason: vc.rejectionReason || undefined
+            } : {};
             const govProj = {
+              ...gApproval,
               id: gp.id,
               slug: gp.slug || gp.id,
               title: gp.name || gp.title || 'Proyecto Sin Título',
@@ -252,7 +284,7 @@ class SupabaseService {
               publicationStatus: pubStatus,
               preparationStatus: gp.preparation_status || 'completado',
               status: pubStatus === 'published' ? 'completed' : 'in_progress',
-              isPublic: pubStatus === 'published',
+              isPublic: pubStatus === 'published' && (vc.approvalStatus ? vc.approvalStatus === 'approved' : true),
               author: gp.author_name || gp.responsible || 'Profesor',
               authorId: gp.created_by || '',
               authorRole: gp.author_role || 'teacher',
@@ -441,7 +473,13 @@ class SupabaseService {
         visual_assets: projectObj.visualAssets || [],
         external_links: projectObj.externalLinks || [],
         landing_config: projectObj.landingConfig || {},
-        visibility_config: { isPublic: projectObj.publicationStatus === 'published' && (projectObj.approvalStatus ? projectObj.approvalStatus === 'approved' : true) },
+        visibility_config: {
+          isPublic: projectObj.publicationStatus === 'published' && (projectObj.approvalStatus ? projectObj.approvalStatus === 'approved' : true),
+          approvalStatus: projectObj.approvalStatus || 'pending',
+          authorizedAt: projectObj.authorizedAt || null,
+          authorizedBy: projectObj.authorizedBy || null,
+          rejectionReason: projectObj.rejectionReason || null
+        },
         display_order: Number(projectObj.displayOrder || 0),
         created_by: projectObj.authorId || projectObj.author || '',
         author_name: projectObj.author || '',

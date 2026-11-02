@@ -478,6 +478,7 @@ window.AdminView = {
         break;
       case 'projects':
         content.innerHTML = this.templateProjects();
+        this.syncApprovedProjectsOnce();
         break;
       case 'teacher':
         content.innerHTML = this.templateTeacher();
@@ -3034,6 +3035,21 @@ window.AdminView = {
     if (window.ProjectsView && typeof window.ProjectsView.render === 'function') {
       try { window.ProjectsView.render(); } catch(e) {}
     }
+  },
+
+  /**
+   * Una vez por sesión, vuelve a enviar a la base de datos los proyectos ya autorizados
+   * para que todos los usuarios los vean publicados.
+   */
+  _approvedSyncDone: false,
+  syncApprovedProjectsOnce() {
+    if (this._approvedSyncDone || !this.isAdminUser()) return;
+    this._approvedSyncDone = true;
+    (window.appState?.challenges || []).forEach(p => {
+      if (p && p.id && p.approvalStatus === 'approved' && p.authorizedAt) {
+        this.pushProjectToDatabase(p);
+      }
+    });
   },
 
   /**

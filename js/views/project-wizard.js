@@ -4958,6 +4958,14 @@ collectCurrentStepInputs() {
   buildChallengeCompatibleRecord(statusOverride = null) {
     this.collectCurrentStepInputs();
     const d = this.draft;
+    // Conservar el estado de autorización que el administrador ya haya dado a este proyecto
+    const existingRec = (window.appState?.challenges || []).find(c => c && c.id === d.id) || {};
+    let approvalStatus = existingRec.approvalStatus || d.approvalStatus || 'pending';
+    if (statusOverride === 'pending_approval') approvalStatus = 'pending';
+    else if (statusOverride === 'published') approvalStatus = 'approved';
+    const authorizedAt = approvalStatus === 'approved' ? (existingRec.authorizedAt || d.authorizedAt || new Date().toISOString()) : undefined;
+    const authorizedBy = approvalStatus === 'approved' ? (existingRec.authorizedBy || d.authorizedBy || (window.appState?.currentUser?.name) || 'Administrador Mentix') : undefined;
+    if (approvalStatus === 'approved' && !statusOverride) statusOverride = 'published';
     const pubStatus = statusOverride || d.publicationStatus || 'draft';
     d.publicationStatus = pubStatus;
 
@@ -4999,8 +5007,11 @@ collectCurrentStepInputs() {
       teamLead: d.teamLead || d.author || 'Equipo del Proyecto',
       preparationStatus: d.preparationStatus || 'en_desarrollo',
       publicationStatus: pubStatus,
+      approvalStatus: approvalStatus,
+      authorizedAt: authorizedAt,
+      authorizedBy: authorizedBy,
       status: pubStatus === 'published' ? 'completed' : 'in_progress',
-      isPublic: pubStatus === 'published',
+      isPublic: pubStatus === 'published' && approvalStatus === 'approved',
       startDate: d.startDate || '',
       endDate: d.endDate || '',
       valueProposition: d.valueProp || {},
