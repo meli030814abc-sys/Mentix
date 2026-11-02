@@ -1448,6 +1448,8 @@ window.ProjectsView = {
     const isTeacherOrAdmin = this.isTeacherOrAdmin();
     const isAdmin = this.isAdminUser();
     const isAuthor = (window.appRouter ? window.appRouter.isChallengeOwner(c) : false) || isTeacherOrAdmin;
+    const isPendingApproval = c.approvalStatus === 'pending' || c.status === 'review' || c.publicationStatus === 'pending_approval' || c.publicationStatus === 'ready_for_review';
+    const isApproved = c.approvalStatus === 'approved' || (c.publicationStatus === 'published' && !isPendingApproval);
     const projectType = c.projectType || c.project_type || 'presentation';
     let defaultBanner = c.image || c.banner || c.coverImage || 'assets/projects_ui/card_data_gov.png';
     let tag = 'Completado';
@@ -1634,18 +1636,27 @@ window.ProjectsView = {
           </div>
 
           <!-- Action Buttons Row -->
-          <div class="saas-card-actions" style="display: flex; align-items: center; gap: 0.65rem; margin-top: auto;">
+          <div class="saas-card-actions" style="display: flex; align-items: center; gap: 0.45rem; margin-top: auto;">
             <button 
               class="saas-card-btn-secondary"
               onclick="event.stopPropagation(); ${primaryAction}" 
-              style="${btnLeftStyle} border-radius: 10px; padding: 0.55rem 0.95rem; font-size: 0.83rem; font-weight: 700; cursor: pointer; flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 0.35rem; transition: all 0.2s ease; white-space: nowrap;"
+              style="${btnLeftStyle} border-radius: 10px; padding: 0.52rem 0.65rem; font-size: 0.79rem; font-weight: 700; cursor: pointer; flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 0.25rem; transition: all 0.2s ease; white-space: nowrap;"
             >
               ${primaryText}
             </button>
             <button 
+              class="saas-card-btn-authorize ${isApproved ? 'approved' : ''}"
+              onclick="event.stopPropagation(); window.ProjectsView.toggleAuthorizeProject('${c.id}')"
+              style="${isApproved ? 'background:#f0fdf4; color:#15803d; border:1.5px solid #86efac;' : 'background:linear-gradient(135deg, #10b981 0%, #059669 100%); color:#ffffff; border:none; box-shadow: 0 2px 8px rgba(16, 185, 129, 0.32);'} border-radius: 10px; padding: 0.52rem 0.65rem; font-size: 0.79rem; font-weight: 800; cursor: pointer; flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 0.25rem; transition: all 0.2s ease; white-space: nowrap;"
+              title="${isApproved ? 'Proyecto ya autorizado (clic para revocar)' : 'Autorizar y publicar este proyecto'}"
+            >
+              <span>${isApproved ? '✔' : '✅'}</span>
+              <span>${isApproved ? 'Autorizado' : 'Autorizar'}</span>
+            </button>
+            <button 
               class="saas-card-btn-primary"
               onclick="event.stopPropagation(); ${secondaryAction}" 
-              style="${btnRightStyle} border-radius: 10px; padding: 0.55rem 0.95rem; font-size: 0.83rem; font-weight: 700; cursor: pointer; flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 0.35rem; transition: all 0.2s ease; white-space: nowrap;"
+              style="${btnRightStyle} border-radius: 10px; padding: 0.52rem 0.65rem; font-size: 0.79rem; font-weight: 700; cursor: pointer; flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 0.25rem; transition: all 0.2s ease; white-space: nowrap;"
             >
               ${secondaryText}
             </button>
@@ -1653,6 +1664,60 @@ window.ProjectsView = {
         </div>
       </div>
     `;
+  },
+
+  /**
+   * Alterna la autorización y publicación de un proyecto desde la tarjeta
+   */
+  toggleAuthorizeProject(projectId) {
+    let raw = (window.appState && window.appState.challenges) ? window.appState.challenges : [];
+    let p = raw.find(item => item && item.id === projectId);
+    if (!p) {
+      if (this.showToast) this.showToast('No se encontró el proyecto', 'error');
+      else alert('No se encontró el proyecto');
+      return;
+    }
+
+    const isPending = p.approvalStatus === 'pending' || p.publicationStatus === 'pending_approval' || p.status === 'review' || p.publicationStatus === 'ready_for_review';
+    const isApproved = p.approvalStatus === 'approved' || (p.publicationStatus === 'published' && !isPending);
+
+    if (isApproved) {
+      if (window.AdminView && typeof window.AdminView.rejectProject === 'function') {
+        window.AdminView.rejectProject(projectId);
+      } else {
+        const note = prompt('Ingresa el motivo de cancelación o corrección:', 'Faltan detalles o el contenido requiere ajustes antes de publicarse.');
+        if (note === null) return;
+        p.approvalStatus = 'rejected';
+        p.publicationStatus = 'draft';
+        p.status = 'in_progress';
+        p.stage = 'in_progress';
+        p.isPublic = false;
+        p.accessMode = 'private';
+        p.rejectionReason = note;
+        p.rejectedAt = new Date().toISOString();
+        if (typeof saveGlobalState === 'function') saveGlobalState(window.appState);
+        if (this.showToast) this.showToast(`❌ Autorización cancelada para "${p.title}".`, 'warning');
+      }
+    } else {
+      if (window.AdminView && typeof window.AdminView.approveProject === 'function') {
+        window.AdminView.approveProject(projectId);
+      } else {
+        p.approvalStatus = 'approved';
+        p.publicationStatus = 'published';
+        p.status = 'completed';
+        p.stage = 'completed';
+        p.isPublic = true;
+        p.accessMode = 'public';
+        p.authorizedAt = new Date().toISOString();
+        p.authorizedBy = (window.appState.currentUser?.name) || 'Administrador Mentix';
+        delete p.rejectionReason;
+        if (typeof saveGlobalState === 'function') saveGlobalState(window.appState);
+        if (this.showToast) this.showToast(`✅ ¡Proyecto "${p.title}" autorizado y publicado con éxito!`, 'success');
+      }
+    }
+
+    // Actualizar vista de proyectos
+    this.render();
   },
 
 

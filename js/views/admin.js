@@ -2947,6 +2947,9 @@ window.AdminView = {
     
     this.updateLandingAuditBar(projectId);
     this.renderActiveTab();
+    if (window.ProjectsView && typeof window.ProjectsView.render === 'function') {
+      try { window.ProjectsView.render(); } catch(e) {}
+    }
   },
 
   /**
@@ -2988,6 +2991,9 @@ window.AdminView = {
 
     this.updateLandingAuditBar(projectId);
     this.renderActiveTab();
+    if (window.ProjectsView && typeof window.ProjectsView.render === 'function') {
+      try { window.ProjectsView.render(); } catch(e) {}
+    }
   },
 
   syncProjectToUserVaults(project) {
