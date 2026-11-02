@@ -1218,20 +1218,57 @@ window.ProjectsView = {
           <!-- CONTROLS & FILTER TABS -->
           <div class="saas-controls-row">
             <div class="saas-tabs-group">
-              <button class="saas-tab-pill ${this.currentFilterTab === 'all' ? 'active' : ''}" onclick="window.ProjectsView.setCustomFilter('all')">
-                ⊞ Todos
+              <button 
+                type="button" 
+                class="saas-tab-pill ${this.currentFilterTab === 'all' ? 'active' : ''}" 
+                onclick="window.ProjectsView.setCustomFilter('all')"
+              >
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+                  <rect x="3" y="3" width="7.5" height="7.5" rx="1.8"/>
+                  <rect x="13.5" y="3" width="7.5" height="7.5" rx="1.8"/>
+                  <rect x="3" y="13.5" width="7.5" height="7.5" rx="1.8"/>
+                  <rect x="13.5" y="13.5" width="7.5" height="7.5" rx="1.8"/>
+                </svg>
+                <span>Todos</span>
               </button>
-              <button class="saas-tab-pill ${this.currentFilterTab === 'mine' ? 'active' : ''}" onclick="window.ProjectsView.setCustomFilter('mine')">
-                📁 Mis Proyectos
+
+              <button 
+                type="button" 
+                class="saas-tab-pill ${this.currentFilterTab === 'mine' ? 'active' : ''}" 
+                onclick="window.ProjectsView.setCustomFilter('mine')"
+              >
+                <span>Mis Proyectos</span>
               </button>
-              <button class="saas-tab-pill ${this.currentFilterTab === 'in_progress' ? 'active' : ''}" onclick="window.ProjectsView.setCustomFilter('in_progress')">
-                ⏱ En Proceso
+
+              <button 
+                type="button" 
+                class="saas-tab-pill ${this.currentFilterTab === 'in_progress' ? 'active' : ''}" 
+                onclick="window.ProjectsView.setCustomFilter('in_progress')"
+              >
+                <span>En Proceso</span>
               </button>
-              <button class="saas-tab-pill ${this.currentFilterTab === 'completed' ? 'active' : ''}" onclick="window.ProjectsView.setCustomFilter('completed')">
-                ✔ Completados
+
+              <button 
+                type="button" 
+                class="saas-tab-pill ${this.currentFilterTab === 'completed' ? 'active' : ''}" 
+                onclick="window.ProjectsView.setCustomFilter('completed')"
+              >
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" style="opacity: 0.85;">
+                  <circle cx="12" cy="12" r="9"/>
+                  <polyline points="9 12 11.5 14.5 15.5 9.5"/>
+                </svg>
+                <span>Completados</span>
               </button>
-              <button class="saas-tab-pill ${this.currentFilterTab === 'favorites' ? 'active' : ''}" onclick="window.ProjectsView.setCustomFilter('favorites')">
-                ♡ Favoritos
+
+              <button 
+                type="button" 
+                class="saas-tab-pill ${this.currentFilterTab === 'favorites' ? 'active' : ''}" 
+                onclick="window.ProjectsView.setCustomFilter('favorites')"
+              >
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="#ec4899" stroke="#db2777" stroke-width="1.2">
+                  <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                </svg>
+                <span>Favoritos</span>
               </button>
             </div>
 
