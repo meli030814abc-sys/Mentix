@@ -919,7 +919,7 @@
         "collaborators": "Julian Mendez"
       },
       "createdAt": "2026-11-01T04:23:09.177Z",
-      "updatedAt": "2026-11-02T02:53:14.988Z",
+      "updatedAt": "2026-11-02T18:31:52.099Z",
       "progress": 70,
       "calculatedProgress": 70
     },
@@ -929,8 +929,8 @@
     "authorAvatar": "👨‍🏫",
     "authorRole": "Gerente del Proyecto",
     "createdAt": "2026-11-01T04:23:09.177Z",
-    "updatedAt": "2026-11-02T17:38:26.118Z",
-    "approvalStatus": "rejected",
+    "updatedAt": "2026-11-02T18:31:50.863Z",
+    "approvalStatus": "pending",
     "tag": "⏳ Pendiente de Autorización",
     "tagClass": "badge-review",
     "stage": "in_progress",
