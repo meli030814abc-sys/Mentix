@@ -63,6 +63,24 @@ export default async function handler(req, res) {
     return res.status(200).end();
   }
 
+  // 0. Diagnóstico de la conexión con GitHub (no expone el token)
+  if (req.method === 'GET' && req.query && req.query.status) {
+    const info = { hasToken: !!GITHUB_TOKEN, tokenLength: GITHUB_TOKEN ? GITHUB_TOKEN.length : 0, tokenValid: false, canWrite: false };
+    if (GITHUB_TOKEN) {
+      try {
+        const r = await fetch(`https://api.github.com/repos/${GITHUB_REPO}`, { headers: ghHeaders(), cache: 'no-store' });
+        info.githubStatus = r.status;
+        if (r.ok) {
+          const d = await r.json();
+          info.tokenValid = true;
+          info.canWrite = !!(d.permissions && d.permissions.push);
+        }
+      } catch (e) { info.error = String(e.message || e); }
+    }
+    res.setHeader('Cache-Control', 'no-store');
+    return res.status(200).json(info);
+  }
+
   // 1. GET: Consultar todos los retos y proyectos compartidos en la nube
   if (req.method === 'GET' && req.query && req.query.deleted) {
     const { ids } = await readDeletedIds();
