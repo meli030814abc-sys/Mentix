@@ -67,6 +67,477 @@ window.ProjectsView = {
     return false;
   },
 
+  // =========================================================================
+  // GESTIÓN DE BANNERS EXCLUSIVA PARA ADMINISTRADORES DE MENTIX (ROBOT BANNER)
+  // =========================================================================
+  isAdminUser() {
+    const u = window.appState && window.appState.currentUser;
+    if (!u) return false;
+    const r = (u.role || '').toLowerCase().trim();
+    if (r === 'admin' || r === 'administrador' || u.isAdmin === true) return true;
+    if (localStorage.getItem('mentix_admin_override') === 'true') return true;
+    return false;
+  },
+
+  getHeroBannerUrl() {
+    const saved = localStorage.getItem('mentix_projects_hero_banner');
+    if (saved) return saved;
+    if (window.appState && window.appState.projectsHeroBanner) return window.appState.projectsHeroBanner;
+    return 'assets/projects_ui/hero_banner.png?v=20261101_bright_sharp';
+  },
+
+  setHeroBannerUrl(url) {
+    if (!this.isAdminUser()) {
+      alert('⛔ Acceso denegado: Solo los administradores de Mentix pueden cambiar el banner de proyectos.');
+      return false;
+    }
+    localStorage.setItem('mentix_projects_hero_banner', url);
+    if (!window.appState) window.appState = {};
+    window.appState.projectsHeroBanner = url;
+    if (typeof saveGlobalState === 'function') saveGlobalState(window.appState);
+    return true;
+  },
+
+  setProjectCardBanner(projectId, bannerUrl) {
+    if (!this.isAdminUser()) {
+      alert('⛔ Acceso denegado: Solo los administradores de Mentix pueden cambiar el banner de proyectos.');
+      return false;
+    }
+    if (!window.appState || !Array.isArray(window.appState.challenges)) return false;
+    const proj = window.appState.challenges.find(c => c && String(c.id) === String(projectId));
+    if (!proj) {
+      alert('⚠️ No se encontró el proyecto seleccionado.');
+      return false;
+    }
+    proj.banner = bannerUrl;
+    proj.mainImage = bannerUrl;
+    proj.thumbnailImage = bannerUrl;
+    proj.image = bannerUrl;
+    if (proj.govdata) {
+      proj.govdata.banner = bannerUrl;
+      proj.govdata.mainImage = bannerUrl;
+      proj.govdata.thumbnailImage = bannerUrl;
+    }
+    if (typeof saveGlobalState === 'function') saveGlobalState(window.appState);
+    return true;
+  },
+
+  promptAdminAccess() {
+    const key = prompt('🛡️ Modo Administrador de Mentix\nIngresa tu clave de administrador o escribe "admin" para activar los controles exclusivos de banner:');
+    if (!key) return;
+    if (key.trim().toLowerCase() === 'admin' || key.trim() === 'mentix2026' || key.trim() === '1234') {
+      if (!window.appState) window.appState = {};
+      if (!window.appState.currentUser) window.appState.currentUser = { id: 'admin1', name: 'Administrador Mentix', role: 'admin' };
+      window.appState.currentUser.role = 'admin';
+      localStorage.setItem('mentix_admin_override', 'true');
+      if (typeof saveGlobalState === 'function') saveGlobalState(window.appState);
+      this.showToast('✅ ¡Modo Administrador activado con éxito!');
+      this.render();
+      this.openAdminBannerModal();
+    } else {
+      alert('❌ Clave no válida para el modo administrador.');
+    }
+  },
+
+  ROBOT_BANNER_PRESETS: [
+    {
+      id: 'robot-mentor-oficial',
+      title: '🤖 Robot Educador IA Mentix (Oficial)',
+      desc: 'Robot humanoide cibernético en observatorio espacial de Mentix con cristales holográficos.',
+      url: 'assets/projects_ui/robot_hero_banner.png',
+      badge: 'OFICIAL ADMIN',
+      accent: '#00f5d4'
+    },
+    {
+      id: 'robot-cyber-ai',
+      title: '🦾 Androide Mecatrónico High-Tech',
+      desc: 'Interfaz neuronal cibernética, luces cian y circuitos de última generación.',
+      url: 'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=1600&q=80',
+      badge: 'CYBER ROBOT',
+      accent: '#38bdf8'
+    },
+    {
+      id: 'robot-quantum-lab',
+      title: '🌐 Laboratorio Cuántico de Robótica',
+      desc: 'Entorno de investigación en inteligencia artificial y robótica espacial.',
+      url: 'https://images.unsplash.com/photo-1531746790731-6c087fecd65a?w=1600&q=80',
+      badge: 'ROBÓTICA IA',
+      accent: '#7c3aed'
+    },
+    {
+      id: 'robot-neon-matrix',
+      title: '⚡ Núcleo Robótico Cyberpunk Neón',
+      desc: 'Energía violeta y neón magenta con arquitectura cibernética inmersiva.',
+      url: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=1600&q=80',
+      badge: 'NEON MATRIX',
+      accent: '#f72585'
+    },
+    {
+      id: 'mentix-classic',
+      title: '🚀 Ecosistema Mentix Clásico',
+      desc: 'Banner institucional original de la plataforma Mentix.',
+      url: 'assets/projects_ui/hero_banner.png?v=20261101_bright_sharp',
+      badge: 'CLÁSICO',
+      accent: '#0077ff'
+    }
+  ],
+
+  openAdminBannerModal(targetProjectId = null) {
+    if (!this.isAdminUser()) {
+      alert('⛔ Acceso denegado: Solo los administradores de Mentix pueden cambiar el banner de proyectos.');
+      return;
+    }
+
+    const existing = document.getElementById('mentix-admin-banner-modal-overlay');
+    if (existing) existing.remove();
+
+    const currentHero = this.getHeroBannerUrl();
+    const projects = (window.appState?.challenges || []).filter(c => c && c.id && c.projectType !== 'quiz');
+    const initialTargetType = targetProjectId ? 'project' : 'hero';
+    let currentSelectedProj = targetProjectId ? projects.find(p => String(p.id) === String(targetProjectId)) : (projects[0] || null);
+
+    this.selectedAdminBannerUrl = targetProjectId && currentSelectedProj ? (currentSelectedProj.banner || currentSelectedProj.mainImage || 'assets/projects_ui/robot_hero_banner.png') : (currentHero || 'assets/projects_ui/robot_hero_banner.png');
+    this.selectedAdminBannerTarget = initialTargetType;
+    this.selectedAdminBannerProjId = currentSelectedProj ? currentSelectedProj.id : (projects[0]?.id || '');
+
+    const overlay = document.createElement('div');
+    overlay.id = 'mentix-admin-banner-modal-overlay';
+    overlay.style.cssText = 'position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(4,9,24,0.88); backdrop-filter:blur(10px); z-index:999999; display:flex; align-items:center; justify-content:center; padding:1.25rem; overflow-y:auto;';
+
+    overlay.innerHTML = this.renderAdminBannerModalHtml(projects);
+    document.body.appendChild(overlay);
+  },
+
+  closeAdminBannerModal() {
+    const modal = document.getElementById('mentix-admin-banner-modal-overlay');
+    if (modal) modal.remove();
+  },
+
+  switchAdminBannerTarget(targetType) {
+    this.selectedAdminBannerTarget = targetType;
+    const heroBtn = document.getElementById('admin-banner-target-hero-btn');
+    const projBtn = document.getElementById('admin-banner-target-project-btn');
+    const selectBox = document.getElementById('admin-banner-project-select-container');
+    const previewLabel = document.getElementById('admin-banner-preview-target-label');
+
+    if (targetType === 'hero') {
+      if (heroBtn) {
+        heroBtn.style.border = '2px solid #00f5d4';
+        heroBtn.style.background = 'rgba(0,245,212,0.15)';
+      }
+      if (projBtn) {
+        projBtn.style.border = '1px solid rgba(255,255,255,0.15)';
+        projBtn.style.background = 'rgba(255,255,255,0.03)';
+      }
+      if (selectBox) selectBox.style.display = 'none';
+      if (previewLabel) previewLabel.textContent = 'Banner Principal (Hero de Proyectos)';
+      this.selectedAdminBannerUrl = this.getHeroBannerUrl();
+    } else {
+      if (projBtn) {
+        projBtn.style.border = '2px solid #00f5d4';
+        projBtn.style.background = 'rgba(0,245,212,0.15)';
+      }
+      if (heroBtn) {
+        heroBtn.style.border = '1px solid rgba(255,255,255,0.15)';
+        heroBtn.style.background = 'rgba(255,255,255,0.03)';
+      }
+      if (selectBox) selectBox.style.display = 'block';
+      if (previewLabel) previewLabel.textContent = 'Proyecto Específico';
+      const sel = document.getElementById('admin-banner-project-select');
+      if (sel) this.onAdminBannerProjectChanged(sel.value);
+    }
+
+    const previewImg = document.getElementById('admin-banner-preview-img');
+    if (previewImg) previewImg.src = this.selectedAdminBannerUrl;
+    const urlInput = document.getElementById('admin-banner-url-input');
+    if (urlInput) urlInput.value = this.selectedAdminBannerUrl;
+  },
+
+  onAdminBannerProjectChanged(projectId) {
+    this.selectedAdminBannerProjId = projectId;
+    const projects = (window.appState?.challenges || []);
+    const proj = projects.find(p => p && String(p.id) === String(projectId));
+    if (proj) {
+      this.selectedAdminBannerUrl = proj.banner || proj.mainImage || proj.image || 'assets/projects_ui/robot_hero_banner.png';
+      const previewImg = document.getElementById('admin-banner-preview-img');
+      if (previewImg) previewImg.src = this.selectedAdminBannerUrl;
+      const urlInput = document.getElementById('admin-banner-url-input');
+      if (urlInput) urlInput.value = this.selectedAdminBannerUrl;
+      const previewLabel = document.getElementById('admin-banner-preview-target-label');
+      if (previewLabel) previewLabel.textContent = `Proyecto: "${proj.title}"`;
+    }
+  },
+
+  selectAdminBannerPreset(presetId) {
+    const preset = this.ROBOT_BANNER_PRESETS.find(p => p.id === presetId);
+    if (!preset) return;
+    this.selectedAdminBannerUrl = preset.url;
+    const previewImg = document.getElementById('admin-banner-preview-img');
+    if (previewImg) previewImg.src = preset.url;
+    const urlInput = document.getElementById('admin-banner-url-input');
+    if (urlInput) urlInput.value = preset.url;
+    this.showToast(`🤖 Seleccionado: ${preset.title}`);
+  },
+
+  handleAdminBannerFileUpload(file) {
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const dataUrl = e.target.result;
+      this.selectedAdminBannerUrl = dataUrl;
+      const previewImg = document.getElementById('admin-banner-preview-img');
+      if (previewImg) previewImg.src = dataUrl;
+      const urlInput = document.getElementById('admin-banner-url-input');
+      if (urlInput) urlInput.value = dataUrl.slice(0, 50) + '... (Imagen cargada)';
+      this.showToast('📷 Imagen local cargada para previsualización.');
+    };
+    reader.readAsDataURL(file);
+  },
+
+  previewAdminBannerUrl(url) {
+    const trimmed = (url || '').trim();
+    if (trimmed) {
+      this.selectedAdminBannerUrl = trimmed;
+      const previewImg = document.getElementById('admin-banner-preview-img');
+      if (previewImg) previewImg.src = trimmed;
+    }
+  },
+
+  applyAdminBanner() {
+    if (!this.isAdminUser()) {
+      alert('⛔ Acceso denegado: Solo los administradores de Mentix pueden cambiar el banner de proyectos.');
+      return;
+    }
+    const finalUrl = this.selectedAdminBannerUrl;
+    if (!finalUrl) {
+      alert('⚠️ Por favor selecciona o ingresa una URL de banner antes de guardar.');
+      return;
+    }
+
+    if (this.selectedAdminBannerTarget === 'hero') {
+      this.setHeroBannerUrl(finalUrl);
+      const heroImg = document.getElementById('mentix-projects-hero-banner-img');
+      if (heroImg) heroImg.src = finalUrl;
+      this.showToast('🤖 ¡Banner de Robot aplicado al Hero de Proyectos con éxito!');
+    } else {
+      const projId = this.selectedAdminBannerProjId;
+      if (!projId) {
+        alert('⚠️ Selecciona un proyecto válido de la lista.');
+        return;
+      }
+      this.setProjectCardBanner(projId, finalUrl);
+      const projects = (window.appState?.challenges || []);
+      const p = projects.find(c => c && String(c.id) === String(projId));
+      const pName = p ? p.title : 'el proyecto';
+      this.showToast(`🤖 ¡Banner de Robot asignado al proyecto "${pName}"!`);
+      this.render();
+    }
+
+    this.closeAdminBannerModal();
+  },
+
+  renderAdminBannerModalHtml(projects) {
+    return `
+      <div style="background: linear-gradient(135deg, #071739 0%, #0d204d 50%, #071129 100%); border: 2px solid #00f5d4; border-radius: 20px; max-width: 920px; width: 100%; max-height: 90vh; overflow-y: auto; padding: 1.85rem; box-shadow: 0 25px 70px rgba(0,0,0,0.8), 0 0 40px rgba(0,245,212,0.25); color: #ffffff; position: relative;">
+        <!-- Header -->
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.25rem; border-bottom: 1px solid rgba(255,255,255,0.12); padding-bottom: 1rem;">
+          <div>
+            <div style="display: inline-flex; align-items: center; gap: 0.4rem; background: rgba(0,245,212,0.15); border: 1px solid #00f5d4; padding: 0.2rem 0.65rem; border-radius: 999px; font-size: 0.75rem; font-weight: 900; color: #00f5d4; margin-bottom: 0.4rem;">
+              👑 MODO ADMINISTRADOR EXCLUSIVO
+            </div>
+            <h2 style="margin: 0; font-size: 1.45rem; font-weight: 900; color: #ffffff; display: flex; align-items: center; gap: 0.5rem;">
+              <span>🤖</span> <span>Gestor de Banners de Robot y Proyectos</span>
+            </h2>
+            <p style="margin: 0.25rem 0 0; font-size: 0.86rem; color: #cbd5e1;">
+              Configura el Banner de Robot oficial para el encabezado principal de la plataforma o personaliza el banner de cualquier proyecto específico.
+            </p>
+          </div>
+          <button type="button" onclick="window.ProjectsView.closeAdminBannerModal()" style="background: none; border: none; color: #cbd5e1; font-size: 1.5rem; cursor: pointer; line-height: 1;" title="Cerrar">✕</button>
+        </div>
+
+        <!-- Selector de Destino: Hero Banner vs Proyecto Específico -->
+        <div style="background: rgba(0,0,0,0.35); border: 1.5px solid rgba(255,255,255,0.12); border-radius: 14px; padding: 1rem 1.25rem; margin-bottom: 1.5rem;">
+          <label style="display: block; font-size: 0.85rem; font-weight: 800; color: #00f5d4; margin-bottom: 0.6rem; text-transform: uppercase; letter-spacing: 0.04em;">
+            1. ¿A qué elemento deseas aplicar o cambiar el banner?
+          </label>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.85rem;">
+            <div 
+              id="admin-banner-target-hero-btn"
+              onclick="window.ProjectsView.switchAdminBannerTarget('hero')"
+              style="padding: 0.85rem 1rem; border-radius: 12px; cursor: pointer; border: ${this.selectedAdminBannerTarget === 'hero' ? '2px solid #00f5d4; background: rgba(0,245,212,0.15);' : '1px solid rgba(255,255,255,0.15); background: rgba(255,255,255,0.03);'}; display: flex; align-items: center; gap: 0.65rem;"
+            >
+              <span style="font-size: 1.5rem;">🌐</span>
+              <div>
+                <strong style="display: block; font-size: 0.9rem; color: #ffffff;">Banner Principal (Hero Banner)</strong>
+                <span style="font-size: 0.75rem; color: #94a3b8;">Encabezado superior de toda la vista de proyectos</span>
+              </div>
+            </div>
+
+            <div 
+              id="admin-banner-target-project-btn"
+              onclick="window.ProjectsView.switchAdminBannerTarget('project')"
+              style="padding: 0.85rem 1rem; border-radius: 12px; cursor: pointer; border: ${this.selectedAdminBannerTarget === 'project' ? '2px solid #00f5d4; background: rgba(0,245,212,0.15);' : '1px solid rgba(255,255,255,0.15); background: rgba(255,255,255,0.03);'}; display: flex; align-items: center; gap: 0.65rem;"
+            >
+              <span style="font-size: 1.5rem;">📁</span>
+              <div>
+                <strong style="display: block; font-size: 0.9rem; color: #ffffff;">Banner de un Proyecto Específico</strong>
+                <span style="font-size: 0.75rem; color: #94a3b8;">Asignar el banner a una tarjeta y landing page concreta</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Dropdown de Proyecto (Visible si target === 'project') -->
+          <div id="admin-banner-project-select-container" style="margin-top: 0.85rem; display: ${this.selectedAdminBannerTarget === 'project' ? 'block' : 'none'};">
+            <label style="display: block; font-size: 0.8rem; font-weight: 700; color: #cbd5e1; margin-bottom: 0.35rem;">
+              Selecciona el proyecto a modificar:
+            </label>
+            <select 
+              id="admin-banner-project-select" 
+              onchange="window.ProjectsView.onAdminBannerProjectChanged(this.value)"
+              style="width: 100%; padding: 0.65rem 0.9rem; border-radius: 10px; background: #040e24; color: #ffffff; border: 1.5px solid #00f5d4; font-size: 0.9rem; font-weight: 700; outline: none;"
+            >
+              ${projects.map(p => `
+                <option value="${p.id}" ${String(p.id) === String(this.selectedAdminBannerProjId) ? 'selected' : ''}>
+                  ${this.escapeHtml(p.title || 'Proyecto sin título')} (${p.categoryName || 'General'})
+                </option>
+              `).join('')}
+            </select>
+          </div>
+        </div>
+
+        <!-- Galería de Banners con Robot Destacado -->
+        <div style="margin-bottom: 1.5rem;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+            <label style="font-size: 0.85rem; font-weight: 800; color: #00f5d4; text-transform: uppercase; letter-spacing: 0.04em;">
+              2. Elige el Banner de Robot o Tema Prediseñado:
+            </label>
+            <span style="font-size: 0.75rem; color: #94a3b8;">Haz clic en cualquier tarjeta para previsualizar</span>
+          </div>
+
+          <!-- TARJETA DESTACADA: BANNER DE ROBOT EDUCADOR MENTIX -->
+          <div 
+            onclick="window.ProjectsView.selectAdminBannerPreset('robot-mentor-oficial')"
+            style="margin-bottom: 1rem; border-radius: 14px; overflow: hidden; border: 2.5px solid #00f5d4; box-shadow: 0 0 25px rgba(0,245,212,0.35); cursor: pointer; position: relative; background: #071739;"
+            title="Seleccionar el Banner Oficial de Robot"
+          >
+            <div style="position: relative; width: 100%; height: 180px; overflow: hidden;">
+              <img 
+                src="assets/projects_ui/robot_hero_banner.png" 
+                alt="Banner de Robot Oficial Mentix" 
+                style="width: 100%; height: 100%; object-fit: cover; display: block;" 
+              />
+              <div style="position: absolute; top: 12px; left: 12px; background: linear-gradient(135deg, #00f5d4, #0077ff); color: #071739; font-weight: 900; font-size: 0.78rem; padding: 0.25rem 0.75rem; border-radius: 999px; box-shadow: 0 2px 10px rgba(0,0,0,0.5);">
+                🤖 BANNER DE ROBOT OFICIAL MENTIX
+              </div>
+              <div style="position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(to top, rgba(7,23,57,0.95), transparent); padding: 1rem 1.25rem 0.75rem; display: flex; justify-content: space-between; align-items: flex-end;">
+                <div>
+                  <strong style="color: #ffffff; font-size: 1.05rem; display: block;">Robot Educador IA Mentix</strong>
+                  <span style="color: #a7f3d0; font-size: 0.8rem;">Observatorio espacial con tecnología cibernética y cristales holográficos</span>
+                </div>
+                <button type="button" class="btn btn-cyan" style="font-weight: 900; font-size: 0.8rem; padding: 0.35rem 0.85rem;">
+                  ✓ Seleccionar Robot
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Otras opciones robot / cyberpunk -->
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0.75rem;">
+            ${this.ROBOT_BANNER_PRESETS.filter(p => p.id !== 'robot-mentor-oficial').map(preset => `
+              <div 
+                onclick="window.ProjectsView.selectAdminBannerPreset('${preset.id}')"
+                style="border-radius: 12px; overflow: hidden; border: 1.5px solid ${this.selectedAdminBannerUrl === preset.url ? '#00f5d4' : 'rgba(255,255,255,0.15)'}; background: #0a122c; cursor: pointer; transition: transform 0.2s ease, border-color 0.2s ease;"
+                onmouseenter="this.style.transform='translateY(-2px)'"
+                onmouseleave="this.style.transform='none'"
+              >
+                <div style="height: 95px; width: 100%; overflow: hidden; position: relative;">
+                  <img src="${preset.url}" alt="${preset.title}" style="width: 100%; height: 100%; object-fit: cover; display: block;" />
+                  <span style="position: absolute; top: 6px; left: 6px; font-size: 0.68rem; font-weight: 800; background: rgba(0,0,0,0.7); color: ${preset.accent || '#00f5d4'}; padding: 0.15rem 0.45rem; border-radius: 4px;">
+                    ${preset.badge}
+                  </span>
+                </div>
+                <div style="padding: 0.6rem 0.75rem;">
+                  <div style="font-size: 0.82rem; font-weight: 800; color: #ffffff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                    ${preset.title}
+                  </div>
+                  <div style="font-size: 0.7rem; color: #94a3b8; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                    ${preset.desc}
+                  </div>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+
+        <!-- Opciones de Subida de Archivo y URL Externa -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem; background: rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 1rem;">
+          <div>
+            <label style="display: block; font-size: 0.8rem; font-weight: 800; color: #cbd5e1; margin-bottom: 0.4rem;">
+              📷 Subir Imagen desde tu PC (.png, .jpg, .webp):
+            </label>
+            <input 
+              type="file" 
+              id="admin-banner-file-input" 
+              accept="image/*" 
+              style="display: none;" 
+              onchange="if(this.files && this.files[0]) window.ProjectsView.handleAdminBannerFileUpload(this.files[0])"
+            />
+            <button 
+              type="button" 
+              class="btn btn-outline" 
+              style="width: 100%; border-color: #00f5d4; color: #00f5d4; font-weight: 800; font-size: 0.82rem; padding: 0.5rem;"
+              onclick="document.getElementById('admin-banner-file-input').click()"
+            >
+              📁 Buscar archivo local...
+            </button>
+          </div>
+
+          <div>
+            <label style="display: block; font-size: 0.8rem; font-weight: 800; color: #cbd5e1; margin-bottom: 0.4rem;">
+              🔗 O escribir URL externa de la imagen:
+            </label>
+            <input 
+              type="url" 
+              id="admin-banner-url-input" 
+              value="${this.selectedAdminBannerUrl || ''}" 
+              placeholder="https://images.unsplash.com/..." 
+              style="width: 100%; padding: 0.5rem 0.75rem; border-radius: 8px; background: #040e24; color: #ffffff; border: 1px solid rgba(255,255,255,0.2); font-size: 0.82rem; outline: none;"
+              oninput="window.ProjectsView.previewAdminBannerUrl(this.value)"
+            />
+          </div>
+        </div>
+
+        <!-- Vista Previa en Vivo -->
+        <div style="margin-bottom: 1.5rem;">
+          <div style="font-size: 0.8rem; font-weight: 800; color: #94a3b8; margin-bottom: 0.4rem; text-transform: uppercase;">
+            Lienzo de Vista Previa en Tiempo Real:
+          </div>
+          <div style="border-radius: 14px; overflow: hidden; height: 160px; width: 100%; background: #000; border: 1.5px solid #00f5d4; box-shadow: 0 8px 25px rgba(0,0,0,0.5); position: relative;">
+            <img 
+              id="admin-banner-preview-img" 
+              src="${this.selectedAdminBannerUrl}" 
+              alt="Vista previa" 
+              style="width: 100%; height: 100%; object-fit: cover; display: block;" 
+            />
+            <div style="position: absolute; bottom: 10px; left: 12px; background: rgba(0,0,0,0.7); backdrop-filter: blur(6px); padding: 0.3rem 0.75rem; border-radius: 999px; font-size: 0.75rem; color: #00f5d4; font-weight: 800;">
+              Destino: <span id="admin-banner-preview-target-label">${this.selectedAdminBannerTarget === 'hero' ? 'Banner Principal (Hero)' : 'Proyecto Seleccionado'}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Botones de Acción -->
+        <div style="display: flex; justify-content: flex-end; gap: 0.75rem; border-top: 1px solid rgba(255,255,255,0.12); padding-top: 1rem;">
+          <button type="button" class="btn btn-outline" style="font-size: 0.88rem; padding: 0.55rem 1.25rem;" onclick="window.ProjectsView.closeAdminBannerModal()">
+            Cancelar
+          </button>
+          <button type="button" class="btn btn-cyan" style="font-size: 0.9rem; font-weight: 900; padding: 0.55rem 1.75rem; background: linear-gradient(135deg, #00f5d4, #0077ff); color: #071739; border: none; box-shadow: 0 4px 18px rgba(0,245,212,0.45);" onclick="window.ProjectsView.applyAdminBanner()">
+            💾 Guardar y Aplicar Banner
+          </button>
+        </div>
+      </div>
+    `;
+  },
+
   projectModes: [
     {
       id: 'presentation',
@@ -403,6 +874,7 @@ window.ProjectsView = {
 
     const u = window.appState.currentUser;
     const isTeacherOrAdmin = this.isTeacherOrAdmin();
+    const isAdmin = this.isAdminUser();
     // Asegurar que existan los proyectos estructurados en la base de datos
     if (!window.appState.challenges) window.appState.challenges = [];
     const hasDBProjects = window.appState.challenges.some(c => 
@@ -596,8 +1068,33 @@ window.ProjectsView = {
               </div>
             </div>
 
-            <!-- Topbar Right: Bell + User Pill -->
-            <div style="display: flex; align-items: center; gap: 0.85rem; flex-shrink: 0;">
+            <!-- Topbar Right: Admin Badge + Bell + User Pill -->
+            <div style="display: flex; align-items: center; gap: 0.75rem; flex-shrink: 0;">
+              ${isAdmin ? `
+                <!-- Admin Mode Indicator & Direct Banner Access -->
+                <div 
+                  onclick="window.ProjectsView.openAdminBannerModal()" 
+                  title="Consola de Banners (Modo Administrador Activo - Clic para cambiar banner)"
+                  style="display: inline-flex; align-items: center; gap: 0.45rem; background: #071739; border: 1.5px solid #00f5d4; color: #00f5d4; padding: 0.38rem 0.95rem; border-radius: 9999px; font-size: 0.78rem; font-weight: 800; cursor: pointer; box-shadow: 0 0 15px rgba(0, 245, 212, 0.35); transition: transform 0.2s ease;"
+                  onmouseenter="this.style.transform='scale(1.04)';"
+                  onmouseleave="this.style.transform='scale(1)';"
+                >
+                  <span style="font-size: 1rem;">🤖</span>
+                  <span>Modo Admin · Banners</span>
+                </div>
+              ` : `
+                <div 
+                  onclick="window.ProjectsView.promptAdminAccess()" 
+                  title="Activar Modo Administrador para gestión de banners"
+                  style="display: inline-flex; align-items: center; gap: 0.35rem; background: #f8fafc; border: 1px solid #cbd5e1; color: #64748b; padding: 0.35rem 0.75rem; border-radius: 9999px; font-size: 0.74rem; font-weight: 700; cursor: pointer; transition: all 0.2s ease;"
+                  onmouseenter="this.style.background='#e2e8f0';"
+                  onmouseleave="this.style.background='#f8fafc';"
+                >
+                  <span>🛡️</span>
+                  <span>Acceso Admin</span>
+                </div>
+              `}
+
               <!-- Bell with Badge -->
               <div 
                 onclick="window.ProjectsView.showToast('🔔 Tienes 3 notificaciones nuevas de tus proyectos')" 
@@ -628,10 +1125,29 @@ window.ProjectsView = {
           <!-- HERO BANNER (Abarca toda la parte de arriba, luminoso y nitido) -->
           <div class="saas-hero-banner-wrapper" style="position: relative; width: 100%; border-radius: 20px; overflow: hidden; margin-bottom: 1.6rem; box-shadow: 0 12px 35px rgba(2, 40, 100, 0.16); background: #071739;">
             <img 
-              src="assets/projects_ui/hero_banner.png?v=20261101_bright_sharp" 
+              id="mentix-projects-hero-banner-img"
+              src="${this.getHeroBannerUrl()}" 
               alt="Tu ecosistema de aprendizaje estructurado - MENTIX" 
-              style="width: 100%; height: auto; display: block; object-fit: cover; filter: brightness(1.16) contrast(1.1) saturate(1.18); image-rendering: -webkit-optimize-contrast; image-rendering: high-quality; transform: translateZ(0); backface-visibility: hidden;" 
+              style="width: 100%; height: auto; display: block; object-fit: cover; filter: brightness(1.12) contrast(1.08) saturate(1.15); image-rendering: -webkit-optimize-contrast; image-rendering: high-quality; transform: translateZ(0); backface-visibility: hidden;" 
             />
+
+            ${isAdmin ? `
+              <!-- BOTÓN FLOTANTE EXCLUSIVO DE ADMINISTRADOR PARA CAMBIAR BANNER -->
+              <div style="position: absolute; top: 1rem; right: 1.25rem; z-index: 10;">
+                <button 
+                  type="button" 
+                  onclick="window.ProjectsView.openAdminBannerModal()" 
+                  title="Cambiar Banner de Proyectos y Banner de Robot (Exclusivo Administrador)"
+                  style="display: inline-flex; align-items: center; gap: 0.5rem; background: rgba(7, 23, 57, 0.92); backdrop-filter: blur(10px); color: #00f5d4; border: 2px solid #00f5d4; border-radius: 9999px; padding: 0.45rem 1.15rem; font-size: 0.84rem; font-weight: 900; cursor: pointer; box-shadow: 0 0 20px rgba(0, 245, 212, 0.45); transition: all 0.25s ease;"
+                  onmouseenter="this.style.transform='scale(1.05)'; this.style.background='rgba(0, 245, 212, 0.25)';"
+                  onmouseleave="this.style.transform='scale(1)'; this.style.background='rgba(7, 23, 57, 0.92)';"
+                >
+                  <span style="font-size: 1.1rem;">🤖</span>
+                  <span>Cambiar Banner (Modo Administrador)</span>
+                  <span style="background: #00f5d4; color: #071739; padding: 0.1rem 0.4rem; border-radius: 999px; font-size: 0.7rem; font-weight: 900;">ADMIN</span>
+                </button>
+              </div>
+            ` : ''}
 
             <!-- BOTONES PRINCIPALES DE ACCIÓN INTEGRADOS EN EL BANNER ('estos aca') -->
             <div class="mentix-banner-action-row" style="position: absolute; left: 3.8%; bottom: 8.5%; z-index: 5; display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; max-width: 58%;">
@@ -886,6 +1402,7 @@ window.ProjectsView = {
 
   renderProjectCard(c, currentUser) {
     const isTeacherOrAdmin = this.isTeacherOrAdmin();
+    const isAdmin = this.isAdminUser();
     const isAuthor = (window.appRouter ? window.appRouter.isChallengeOwner(c) : false) || isTeacherOrAdmin;
     const projectType = c.projectType || c.project_type || 'presentation';
     let defaultBanner = c.image || c.banner || c.coverImage || 'assets/projects_ui/card_data_gov.png';
@@ -1019,7 +1536,19 @@ window.ProjectsView = {
           </div>
 
           <!-- Three Dots / Menu Button Floating Top-Right -->
-          <div style="position: absolute; top: 10px; right: 10px; z-index: 2; display: flex; gap: 6px;">
+          <div style="position: absolute; top: 10px; right: 10px; z-index: 2; display: flex; gap: 6px; align-items: center;">
+            ${isAdmin ? `
+              <button 
+                title="Cambiar Banner de este Proyecto (Exclusivo Administrador)" 
+                onclick="event.stopPropagation(); window.ProjectsView.openAdminBannerModal('${c.id}')"
+                style="height: 30px; padding: 0 0.65rem; border-radius: 8px; background: rgba(7, 23, 57, 0.92); backdrop-filter: blur(6px); display: inline-flex; align-items: center; gap: 0.35rem; cursor: pointer; border: 1.5px solid #00f5d4; font-size: 0.74rem; font-weight: 900; color: #00f5d4; box-shadow: 0 2px 10px rgba(0, 245, 212, 0.35); transition: transform 0.2s ease;"
+                onmouseenter="this.style.transform='scale(1.05)';"
+                onmouseleave="this.style.transform='scale(1)';"
+              >
+                <span>🤖</span>
+                <span>Banner</span>
+              </button>
+            ` : ''}
             ${isAuthor ? `
               <button 
                 title="Eliminar proyecto" 
@@ -2513,6 +3042,9 @@ window.ProjectsView = {
 
   getBannerStyleCss(styleId) {
     switch (styleId) {
+      case 'robot-hero':
+      case 'robot':
+        return "#071739 url('assets/projects_ui/robot_hero_banner.png') center/cover no-repeat";
       case 'gradient-cosmos':
       case 'cosmos':
         return 'linear-gradient(135deg, #0b091a 0%, #171033 50%, #200f40 100%)';

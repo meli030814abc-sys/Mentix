@@ -131,6 +131,23 @@ window.AdminView = {
               </select>
             </div>
           </div>
+
+          <!-- Panel Banner de Robot y Banners de Proyectos (Exclusivo Administrador) -->
+          <div style="margin-top: 1.25rem; background: linear-gradient(135deg, rgba(7,23,57,0.7) 0%, rgba(124,58,237,0.2) 100%); border-radius: 12px; padding: 1.25rem; border: 1px solid rgba(0,245,212,0.3); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
+            <div style="display:flex; align-items:center; gap: 1rem;">
+              <img src="assets/projects_ui/robot_hero_banner.png" alt="Banner Robot IA" style="width: 110px; height: 60px; object-fit: cover; border-radius: 8px; border: 1px solid var(--neon-cyan); box-shadow: 0 4px 12px rgba(0,245,212,0.25);" onerror="this.style.display='none'" />
+              <div>
+                <span class="badge-tag" style="background: rgba(0,245,212,0.2); color: var(--neon-cyan); font-weight: 800; font-size: 0.72rem;">🤖 EXCLUSIVO ADMIN</span>
+                <h3 style="margin: 0.25rem 0 0.15rem; font-size: 1.05rem; color: #fff;">Banner de Robot & Gestión de Banners de Proyectos</h3>
+                <p style="margin: 0; font-size: 0.83rem; color: var(--text-secondary);">Cambia el Hero Banner de Proyectos por el nuevo Banner de Robot IA oficial o gestiona banners de proyectos individuales.</p>
+              </div>
+            </div>
+            <div style="display:flex; gap: 0.5rem;">
+              <button type="button" class="btn btn-cyan" style="font-weight: 800; font-size: 0.85rem;" onclick="if(window.ProjectsView && window.ProjectsView.openAdminBannerModal){window.ProjectsView.openAdminBannerModal('hero');}else if(window.app && window.app.navigate){window.app.navigate('projects'); setTimeout(() => { if(window.ProjectsView) window.ProjectsView.openAdminBannerModal('hero'); }, 300);}">
+                <span>🤖</span> Gestionar Banners
+              </button>
+            </div>
+          </div>
         </div>
 
         <!-- Tabla: Gestión de Usuarios -->

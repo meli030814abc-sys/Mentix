@@ -935,6 +935,15 @@ collectCurrentStepInputs() {
       { id: 'custom-url', name: '🖼️ Imagen / URL Personalizada' }
     ];
 
+    const currentAuthUser = window.appState && window.appState.currentUser;
+    const isUserAdmin = Boolean(currentAuthUser && (currentAuthUser.role === 'admin' || currentAuthUser.isAdmin === true || localStorage.getItem('mentix_admin_override') === 'true'));
+    if (isUserAdmin) {
+      banners.unshift({
+        id: 'robot-hero',
+        name: '🤖 Banner Especial Robot IA Mentix (Exclusivo Administrador)'
+      });
+    }
+
     const bgVal = selectedTheme ? selectedTheme.bg : dc.bannerStyle;
     const contrastPreview = window.ProjectsView
       ? window.ProjectsView.getBannerAutoContrast(bgVal, dc.titleColor, dc.textColor, dc.accentColor, dc.bannerUrl)
