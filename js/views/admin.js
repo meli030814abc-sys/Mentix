@@ -958,8 +958,8 @@ window.AdminView = {
     return `
       <div class="admin-projects-grid">
         ${projects.map(p => {
-          const isPendingApproval = p.approvalStatus === 'pending' || p.status === 'review' || p.publicationStatus === 'pending_approval' || p.publicationStatus === 'ready_for_review';
-          const isApproved = p.approvalStatus === 'approved' || (p.publicationStatus === 'published' && !isPendingApproval);
+          const isApproved = p.approvalStatus === 'approved' && !p.rejectionReason;
+          const isPendingApproval = !isApproved;
           const isCompleted = isApproved && (p.status === 'completed' || p.stage === 'completed');
           const coverImage = p.image || p.cover || p.banner || 'assets/student_create_bg.jpg';
           const title = p.title || 'Gobierno de Datos en la Práctica';
@@ -1874,8 +1874,8 @@ window.AdminView = {
     const p = projects.find(item => item.id === projectId);
     if (!p) return;
 
-    const isPendingApproval = p.approvalStatus === 'pending' || p.status === 'review' || p.publicationStatus === 'pending_approval' || p.publicationStatus === 'ready_for_review';
-    const isApproved = p.approvalStatus === 'approved' || (p.publicationStatus === 'published' && !isPendingApproval);
+    const isApproved = p.approvalStatus === 'approved' && !p.rejectionReason;
+    const isPendingApproval = !isApproved;
 
     this.selectedProjectForModal = p;
     this.activeModalTab = 'general';
@@ -2789,8 +2789,8 @@ window.AdminView = {
     const p = (window.appState?.challenges || []).find(item => item && item.id === projectId);
     if (!p) return;
 
-    const isPendingApproval = p.approvalStatus === 'pending' || p.status === 'review' || p.publicationStatus === 'pending_approval' || p.publicationStatus === 'ready_for_review';
-    const isApproved = p.approvalStatus === 'approved' || (p.publicationStatus === 'published' && !isPendingApproval);
+    const isApproved = p.approvalStatus === 'approved' && !p.rejectionReason;
+    const isPendingApproval = !isApproved;
     const authorName = p.creatorName || p.author || 'Estudiante';
 
     const bar = document.createElement('div');

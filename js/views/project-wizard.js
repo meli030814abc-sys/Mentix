@@ -5077,7 +5077,7 @@ collectCurrentStepInputs() {
   },
 
   publishProject() {
-    return this.publishOrSubmitProject(true);
+    return this.publishOrSubmitProject(false);
   },
 
   async publishOrSubmitProject(forcePublish = false) {
@@ -5093,11 +5093,11 @@ collectCurrentStepInputs() {
       return;
     }
 
-    const canPub = forcePublish || this.canPublishDirectly();
+    const canPub = forcePublish;
     const targetStatus = canPub ? 'published' : 'pending_approval';
     const rec = this.syncProjectRecordToAppState(targetStatus);
 
-    // Remover de borradores pendientes o marcarlo como publicado
+    // Guardar siempre como pendiente de autorización a menos que sea publicación forzada por admin
     this.draft.publicationStatus = targetStatus;
     this.draft.approvalStatus = canPub ? 'approved' : 'pending';
     this.draft.status = canPub ? 'completed' : 'review';

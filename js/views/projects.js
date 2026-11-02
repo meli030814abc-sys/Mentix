@@ -890,6 +890,21 @@ window.ProjectsView = {
       if (typeof saveGlobalState === 'function') saveGlobalState(window.appState);
     }
 
+    // Regla estricta de autorización: Ningún proyecto está autorizado ni publicado públicamente
+    // si no cuenta con aprobación explícita de un Administrador (approvalStatus === 'approved' y authorizedAt)
+    window.appState.challenges.forEach(c => {
+      if (!c || !c.id) return;
+      const isProject = c.projectType === 'presentation' || c.projectType === 'video' || c.projectType === 'document' || c.projectType === 'url' || c.isGovDataProject || c.project_type || c.is_gov_data_project;
+      if (isProject) {
+        if (c.approvalStatus !== 'approved' || !c.authorizedAt) {
+          c.approvalStatus = 'pending';
+          c.publicationStatus = 'pending_approval';
+          c.isPublic = false;
+          if (c.status === 'completed') c.status = 'review';
+        }
+      }
+    });
+
     // En MENTIX, los proyectos son exclusivamente: Presentaciones, Video Clases, Documentos Didácticos, Enlaces Web/URL y Proyectos GovData / Asistente.
     // Las pruebas evaluativas y retos gamificados (quizzes) NO pertenecen a Proyectos (pertenecen a Retos).
     const rawProjects = (window.appState.challenges || []).filter(c => {
@@ -948,17 +963,24 @@ window.ProjectsView = {
       return;
     }
 
-    // Filtrar proyectos: Cualquier persona que se registre o navegue en MENTIX ve todos los proyectos públicos.
-    // Solo los proyectos marcados expresamente como privados se reservan para su autor, docentes o administradores.
+    // Filtrar proyectos: Solo los proyectos debidamente autorizados por el Administrador son públicos.
+    // Los proyectos pendientes de autorización o en revisión solo son visibles para el Administrador (para validarlos) o para su respectivo autor.
     const allUserProjects = rawProjects.filter(c => {
+      const isApproved = c.approvalStatus === 'approved';
+      const isAuthor = (window.appRouter && window.appRouter.isChallengeOwner(c)) ||
+        ((c.author || '').toLowerCase().trim() === (u?.name || '').toLowerCase().trim()) ||
+        (c.authorId && c.authorId === u?.id);
+
+      if (!isApproved) {
+        // Si no cuenta con autorización, solo el administrador o el autor pueden verlo
+        if (isAdmin || isTeacherOrAdmin || isAuthor) return true;
+        return false;
+      }
+
+      // Si está autorizado por el administrador, verificar si fue marcado expresamente como privado
       const isPrivate = c.isPublic === false || c.accessMode === 'private';
       if (isPrivate) {
-        if (isTeacherOrAdmin) return true;
-        if (window.appRouter && window.appRouter.isChallengeOwner(c)) return true;
-        const cleanAuthor = (c.author || '').toLowerCase().trim();
-        const currentName = (u?.name || '').toLowerCase().trim();
-        if (cleanAuthor && cleanAuthor === currentName) return true;
-        if (c.authorId && c.authorId === u?.id) return true;
+        if (isAdmin || isTeacherOrAdmin || isAuthor) return true;
         return false;
       }
       return true;
@@ -1448,20 +1470,30 @@ window.ProjectsView = {
     const isTeacherOrAdmin = this.isTeacherOrAdmin();
     const isAdmin = this.isAdminUser();
     const isAuthor = (window.appRouter ? window.appRouter.isChallengeOwner(c) : false) || isTeacherOrAdmin;
-    const isPendingApproval = c.approvalStatus === 'pending' || c.status === 'review' || c.publicationStatus === 'pending_approval' || c.publicationStatus === 'ready_for_review';
-    const isApproved = c.approvalStatus === 'approved' || (c.publicationStatus === 'published' && !isPendingApproval);
+    const isApproved = c.approvalStatus === 'approved' && !c.rejectionReason;
+    const isRejected = c.approvalStatus === 'rejected';
+    const isDraft = c.status === 'in_progress' || c.publicationStatus === 'draft';
+    const isPendingApproval = !isApproved;
     const projectType = c.projectType || c.project_type || 'presentation';
     let defaultBanner = c.image || c.banner || c.coverImage || 'assets/projects_ui/card_data_gov.png';
-    let tag = 'Completado';
-    let tagIcon = '✔';
-    let tagColor = 'background: #22c55e;';
+    let tag = 'Pendiente de Autorización';
+    let tagIcon = '⏳';
+    let tagColor = 'background: #d97706;';
     let primaryAction = `window.ProjectsView.openProjectLanding('${c.id}')`;
     let primaryText = 'Ver Detalles →';
     let secondaryAction = `window.ProjectsView.shareProject('${c.id}', '${this.escapeHtml(c.title || '')}')`;
     let secondaryText = 'Compartir <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-left:3px;"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>';
     let primaryIsBlue = false;
 
-    if (c.status === 'in_progress' || c.publicationStatus === 'draft' || c.publicationStatus === 'in_preparation') {
+    if (isApproved) {
+      tag = 'Completado';
+      tagIcon = '✔';
+      tagColor = 'background: #22c55e;';
+    } else if (isRejected) {
+      tag = 'Autorización Revocada';
+      tagIcon = '❌';
+      tagColor = 'background: #ef4444;';
+    } else if (isDraft) {
       tag = 'En Proceso';
       tagIcon = '⏱';
       tagColor = 'background: #0284c7;';
@@ -1470,23 +1502,18 @@ window.ProjectsView = {
       secondaryText = 'Ver Detalles';
       secondaryAction = `window.ProjectsView.openProjectLanding('${c.id}')`;
       if (!c.image && !c.banner) defaultBanner = 'assets/projects_ui/card_ai_society.png';
-    } else if (c.status === 'review' || c.publicationStatus === 'ready_for_review') {
-      tag = 'En Revisión';
-      tagIcon = '👁';
-      tagColor = 'background: #8b5cf6;';
-      primaryText = 'Ver Detalles →';
-      secondaryText = '📊';
-      secondaryAction = `window.ProjectsView.openProjectLanding('${c.id}')`;
-      if (!c.image && !c.banner) defaultBanner = 'assets/projects_ui/card_open_data.png';
+    } else {
+      tag = 'Pendiente de Autorización';
+      tagIcon = '⏳';
+      tagColor = 'background: #d97706;';
     }
 
-    if (c.tag) tag = c.tag.replace(/^[✔⏱👁\s]+/, '').trim();
-    if (c.tagIcon) tagIcon = c.tagIcon;
-
     if (c.id === 'proj_gov_data' || c.id === 'demo-gov-data') {
-      tag = 'Completado';
-      tagIcon = '✔';
-      tagColor = 'background: #22c55e;';
+      if (isApproved) {
+        tag = 'Completado';
+        tagIcon = '✔';
+        tagColor = 'background: #22c55e;';
+      }
       defaultBanner = c.mainImage || c.image || c.banner || 'assets/projects_ui/card_data_gov.png';
       primaryText = 'Ver Detalles →';
       primaryAction = `window.ProjectsView.openGovDataLanding ? window.ProjectsView.openGovDataLanding() : window.ProjectsView.openProjectLanding('${c.id}')`;
@@ -1494,9 +1521,15 @@ window.ProjectsView = {
       secondaryAction = `window.ProjectsView.shareProject('${c.id}', '${this.escapeHtml(c.title || '')}')`;
       primaryIsBlue = false;
     } else if (c.id === 'proj_ai_society' || c.id === 'demo-ai-society') {
-      tag = 'En Proceso';
-      tagIcon = '⏱';
-      tagColor = 'background: #0284c7;';
+      if (isApproved) {
+        tag = 'Completado';
+        tagIcon = '✔';
+        tagColor = 'background: #22c55e;';
+      } else {
+        tag = 'En Proceso';
+        tagIcon = '⏱';
+        tagColor = 'background: #0284c7;';
+      }
       defaultBanner = c.mainImage || c.image || c.banner || 'assets/projects_ui/card_ai_society.png';
       primaryText = 'Continuar →';
       primaryAction = `window.ProjectWizard ? window.ProjectWizard.openWizard('${c.id}') : window.ProjectsView.openProjectLanding('${c.id}')`;
@@ -1504,9 +1537,15 @@ window.ProjectsView = {
       secondaryAction = `window.ProjectsView.openProjectLanding('${c.id}')`;
       primaryIsBlue = true;
     } else if (c.id === 'proj_open_data' || c.id === 'demo-open-data') {
-      tag = 'En Revisión';
-      tagIcon = '👁';
-      tagColor = 'background: #8b5cf6;';
+      if (isApproved) {
+        tag = 'Completado';
+        tagIcon = '✔';
+        tagColor = 'background: #22c55e;';
+      } else {
+        tag = 'Pendiente de Autorización';
+        tagIcon = '⏳';
+        tagColor = 'background: #d97706;';
+      }
       defaultBanner = c.mainImage || c.image || c.banner || 'assets/projects_ui/card_open_data.png';
       primaryText = 'Ver Detalles →';
       primaryAction = `window.ProjectsView.openProjectLanding('${c.id}')`;
@@ -1516,7 +1555,7 @@ window.ProjectsView = {
     } else if (c.govdata || c.isGovDataProject || c.is_gov_data_project) {
       // Proyectos creados por el usuario en el Asistente Inteligente
       defaultBanner = c.mainImage || c.banner || c.image || c.thumbnailImage || 'assets/projects_ui/card_data_gov.png';
-      if (c.publicationStatus === 'draft' || c.status === 'in_progress') {
+      if (isDraft) {
         tag = 'En Proceso';
         tagIcon = '⏱';
         tagColor = 'background: #0284c7;';
@@ -1525,10 +1564,19 @@ window.ProjectsView = {
         secondaryText = 'Ver Detalles';
         secondaryAction = `window.ProjectsView.openProjectLanding('${c.id}')`;
         primaryIsBlue = true;
-      } else {
+      } else if (isApproved) {
         tag = 'Completado';
         tagIcon = '✔';
         tagColor = 'background: #22c55e;';
+        primaryText = 'Ver Detalles →';
+        primaryAction = `window.ProjectsView.openProjectLanding('${c.id}')`;
+        secondaryText = 'Compartir <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-left:3px;"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>';
+        secondaryAction = `window.ProjectsView.shareProject('${c.id}', '${this.escapeHtml(c.title || '')}')`;
+        primaryIsBlue = false;
+      } else {
+        tag = 'Pendiente de Autorización';
+        tagIcon = '⏳';
+        tagColor = 'background: #d97706;';
         primaryText = 'Ver Detalles →';
         primaryAction = `window.ProjectsView.openProjectLanding('${c.id}')`;
         secondaryText = 'Compartir <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-left:3px;"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>';
@@ -1597,6 +1645,17 @@ window.ProjectsView = {
               >
                 <span>🤖</span>
                 <span>Banner</span>
+              </button>
+            ` : ''}
+            ${(isAdmin || isAuthor) ? `
+              <button 
+                title="Editar este proyecto" 
+                onclick="event.stopPropagation(); window.AdminView ? window.AdminView.openEditProjectModal('${c.id}') : window.ProjectsView.openProjectLanding('${c.id}')"
+                style="width: 30px; height: 30px; border-radius: 8px; background: rgba(14, 165, 233, 0.92); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; cursor: pointer; border: none; font-size: 0.85rem; color: #ffffff; box-shadow: 0 2px 8px rgba(0,0,0,0.18); transition: transform 0.15s ease;"
+                onmouseenter="this.style.transform='scale(1.1)';"
+                onmouseleave="this.style.transform='scale(1)';"
+              >
+                ✏️
               </button>
             ` : ''}
             ${isAuthor ? `
@@ -1678,8 +1737,7 @@ window.ProjectsView = {
       return;
     }
 
-    const isPending = p.approvalStatus === 'pending' || p.publicationStatus === 'pending_approval' || p.status === 'review' || p.publicationStatus === 'ready_for_review';
-    const isApproved = p.approvalStatus === 'approved' || (p.publicationStatus === 'published' && !isPending);
+    const isApproved = p.approvalStatus === 'approved' && !p.rejectionReason;
 
     if (isApproved) {
       if (window.AdminView && typeof window.AdminView.rejectProject === 'function') {

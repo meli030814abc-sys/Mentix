@@ -1,4 +1,4 @@
-﻿/**
+/**
  * 🔥 MENTIX - Almacén de Datos Predeterminados
  * Categorías, Niveles XP, Medallas, Retos de ejemplo completos y Usuarios
  */
@@ -138,10 +138,12 @@ const DEFAULT_PROJECTS = [
     author: 'Melisa',
     authorRole: 'teacher',
     authorAvatar: '🦊',
-    status: 'completed',
-    publicationStatus: 'published',
-    tag: '✔ Completado',
-    tagClass: 'badge-completed',
+    status: 'review',
+    publicationStatus: 'pending_approval',
+    approvalStatus: 'pending',
+    isPublic: false,
+    tag: '⏳ Pendiente de Autorización',
+    tagClass: 'badge-review',
     date: '12 Abr 2025',
     students: 24,
     rating: '4.8',
@@ -174,6 +176,8 @@ const DEFAULT_PROJECTS = [
     authorAvatar: '🦊',
     status: 'in_progress',
     publicationStatus: 'draft',
+    approvalStatus: 'pending',
+    isPublic: false,
     tag: '⏱ En Proceso',
     tagClass: 'badge-process',
     date: '10 Abr 2025',
@@ -205,8 +209,10 @@ const DEFAULT_PROJECTS = [
     authorRole: 'teacher',
     authorAvatar: '🦊',
     status: 'review',
-    publicationStatus: 'ready_for_review',
-    tag: '👁 En Revisión',
+    publicationStatus: 'pending_approval',
+    approvalStatus: 'pending',
+    isPublic: false,
+    tag: '⏳ Pendiente de Autorización',
     tagClass: 'badge-review',
     date: '8 Abr 2025',
     students: 20,
@@ -573,6 +579,23 @@ function loadInitialState() {
       }
     });
   }
+
+  // Regla estricta de autorización previa por Administrador:
+  // Ningún proyecto se considera autorizado ni publicado a menos que cuente con aprobación explícita del Admin
+  challenges.forEach(c => {
+    if (!c || !c.id) return;
+    const isProject = c.projectType === 'presentation' || c.projectType === 'video' || c.projectType === 'document' || c.projectType === 'url' || c.isGovDataProject || c.project_type || c.is_gov_data_project;
+    if (isProject) {
+      if (c.approvalStatus !== 'approved' || !c.authorizedAt) {
+        c.approvalStatus = 'pending';
+        c.publicationStatus = 'pending_approval';
+        c.isPublic = false;
+        c.status = (c.status === 'in_progress' && c.publicationStatus === 'draft') ? 'in_progress' : 'review';
+        c.tag = '⏳ Pendiente de Autorización';
+        c.tagClass = 'badge-review';
+      }
+    }
+  });
 
   localStorage.setItem('te_reto_challenges', JSON.stringify(challenges));
 
