@@ -6778,3 +6778,423 @@ body[data-theme="dark"] .plp-lightbox-content {
 .plp-wrapper[data-theme="dark"] .inno-team-role {
   color: #cbd5e1 !important;
 }
+
+
+/* ==========================================================================
+   ANIMATED PROGRESS GRAPHICS, HIGH-VISIBILITY CARDS & TRANSLUCENT MODALS
+   ========================================================================== */
+
+/* Keyframe Animations */
+@keyframes innoShimmerWave {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+@keyframes innoPulseRipple {
+  0% {
+    box-shadow: 0 0 0 0 rgba(0, 245, 212, 0.75);
+  }
+  70% {
+    box-shadow: 0 0 0 16px rgba(0, 245, 212, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(0, 245, 212, 0);
+  }
+}
+
+@keyframes innoCardGlow {
+  0%, 100% {
+    border-color: rgba(0, 245, 212, 0.35);
+    box-shadow: 0 10px 32px rgba(0, 0, 0, 0.5), 0 0 15px rgba(0, 245, 212, 0.12);
+  }
+  50% {
+    border-color: rgba(0, 245, 212, 0.65);
+    box-shadow: 0 12px 38px rgba(0, 0, 0, 0.6), 0 0 25px rgba(0, 245, 212, 0.28);
+  }
+}
+
+@keyframes innoModalPop {
+  0% {
+    opacity: 0;
+    transform: scale(0.92) translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* 1. TARJETAS ULTRA VISTOSAS Y NOTORIAS (Alto relieve visual y bordes de neon) */
+.inno-why-card,
+.plp-wrapper[data-theme="dark"] .inno-why-card {
+  background: linear-gradient(145deg, rgba(16, 36, 68, 0.94) 0%, rgba(9, 21, 42, 0.98) 100%) !important;
+  border: 1.5px solid rgba(0, 245, 212, 0.35) !important;
+  border-radius: 20px !important;
+  padding: 1.6rem 1.4rem !important;
+  box-shadow: 0 12px 34px rgba(0, 0, 0, 0.55), 0 0 18px rgba(0, 245, 212, 0.1) !important;
+  position: relative !important;
+  overflow: hidden !important;
+  cursor: pointer !important;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease, border-color 0.3s ease !important;
+}
+
+.inno-why-card::before {
+  content: "" !important;
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  height: 4px !important;
+  background: linear-gradient(90deg, #00f5d4 0%, #00b4d8 50%, #2563eb 100%) !important;
+  opacity: 0.9 !important;
+}
+
+.inno-why-card:nth-child(1)::before {
+  background: linear-gradient(90deg, #f97316 0%, #fb923c 100%) !important;
+}
+.inno-why-card:nth-child(2)::before {
+  background: linear-gradient(90deg, #00f5d4 0%, #00b4d8 100%) !important;
+}
+.inno-why-card:nth-child(3)::before {
+  background: linear-gradient(90deg, #a855f7 0%, #c084fc 100%) !important;
+}
+.inno-why-card:nth-child(4)::before {
+  background: linear-gradient(90deg, #10b981 0%, #34d399 100%) !important;
+}
+
+.inno-why-card:hover {
+  transform: translateY(-8px) scale(1.025) !important;
+  border-color: #00f5d4 !important;
+  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.7), 0 0 35px rgba(0, 245, 212, 0.35) !important;
+}
+
+.inno-why-card-title {
+  font-size: 1.25rem !important;
+  font-weight: 900 !important;
+  color: #ffffff !important;
+  margin: 0.75rem 0 0.45rem !important;
+  letter-spacing: -0.015em !important;
+}
+
+.inno-why-card-desc {
+  font-size: 0.98rem !important;
+  color: #cbd5e1 !important;
+  line-height: 1.6 !important;
+  margin-bottom: 1.2rem !important;
+}
+
+.inno-why-card-link {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 0.45rem !important;
+  font-size: 0.92rem !important;
+  font-weight: 800 !important;
+  color: #00f5d4 !important;
+  background: rgba(0, 245, 212, 0.12) !important;
+  border: 1px solid rgba(0, 245, 212, 0.4) !important;
+  padding: 0.45rem 1.15rem !important;
+  border-radius: 9999px !important;
+  transition: all 0.25s ease !important;
+}
+
+.inno-why-card:hover .inno-why-card-link {
+  background: #00f5d4 !important;
+  color: #071739 !important;
+  border-color: #00f5d4 !important;
+  box-shadow: 0 4px 16px rgba(0, 245, 212, 0.6) !important;
+  transform: translateX(4px) !important;
+}
+
+/* 2. Tarjetas KPI Notorias y con Relieve */
+.inno-kpi-card,
+.plp-wrapper[data-theme="dark"] .inno-kpi-card {
+  background: linear-gradient(145deg, rgba(16, 36, 68, 0.92) 0%, rgba(8, 19, 38, 0.96) 100%) !important;
+  border: 1.5px solid rgba(0, 245, 212, 0.3) !important;
+  border-radius: 18px !important;
+  padding: 1.35rem 1.5rem !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 15px rgba(0, 245, 212, 0.1) !important;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease !important;
+}
+
+.inno-kpi-card:hover {
+  transform: translateY(-5px) !important;
+  border-color: #00f5d4 !important;
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.65), 0 0 25px rgba(0, 245, 212, 0.25) !important;
+}
+
+.inno-kpi-val {
+  font-size: 2rem !important;
+  font-weight: 900 !important;
+  color: #ffffff !important;
+  text-shadow: 0 0 16px rgba(0, 245, 212, 0.4) !important;
+}
+
+/* 3. Barra Lateral (Tu participación) */
+.inno-sidebar-card,
+.plp-wrapper[data-theme="dark"] .inno-sidebar-card {
+  background: linear-gradient(145deg, rgba(16, 36, 68, 0.95) 0%, rgba(8, 19, 38, 0.98) 100%) !important;
+  border: 1.5px solid rgba(0, 245, 212, 0.35) !important;
+  border-radius: 22px !important;
+  padding: 1.65rem 1.45rem !important;
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.6), 0 0 22px rgba(0, 245, 212, 0.12) !important;
+}
+
+.inno-sidebar-title {
+  color: #ffffff !important;
+  font-size: 1.25rem !important;
+  font-weight: 900 !important;
+}
+
+.inno-user-name {
+  color: #ffffff !important;
+  font-size: 1.2rem !important;
+  font-weight: 800 !important;
+}
+
+/* 4. GRAFICAS ANIMADAS DE PROGRESO */
+
+/* Medidor Circular SVG */
+.inno-gauge-circle-track {
+  stroke: rgba(255, 255, 255, 0.12) !important;
+}
+
+.inno-gauge-circle-fill {
+  stroke: url(#cyanBlueGrad) !important;
+  filter: drop-shadow(0 0 8px rgba(0, 245, 212, 0.7)) !important;
+  transition: stroke-dashoffset 1.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.inno-gauge-number {
+  font-size: 2rem !important;
+  font-weight: 900 !important;
+  color: #ffffff !important;
+  text-shadow: 0 0 18px rgba(0, 245, 212, 0.6) !important;
+}
+
+/* Barra de Progreso Shimmer Animada */
+.inno-gauge-bar-track,
+.inno-sidebar-progress-track {
+  height: 10px !important;
+  background: rgba(255, 255, 255, 0.12) !important;
+  border-radius: 999px !important;
+  overflow: hidden !important;
+  position: relative !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+.inno-gauge-bar-fill,
+.inno-sidebar-progress-fill {
+  height: 100% !important;
+  border-radius: 999px !important;
+  background: linear-gradient(90deg, #2563eb 0%, #00f5d4 50%, #2563eb 100%) !important;
+  background-size: 200% 100% !important;
+  animation: innoShimmerWave 2.8s infinite linear !important;
+  box-shadow: 0 0 14px rgba(0, 245, 212, 0.6) !important;
+  transition: width 1.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+/* Ruta del Proyecto Animada (Timeline Stepper) */
+.inno-roadmap-track-wrap,
+.plp-wrapper[data-theme="dark"] .inno-roadmap-track-wrap {
+  background: linear-gradient(145deg, rgba(16, 36, 68, 0.94) 0%, rgba(9, 21, 42, 0.98) 100%) !important;
+  border: 1.5px solid rgba(0, 245, 212, 0.35) !important;
+  border-radius: 20px !important;
+  padding: 1.85rem 1.6rem 2.1rem !important;
+  box-shadow: 0 12px 34px rgba(0, 0, 0, 0.55), 0 0 20px rgba(0, 245, 212, 0.1) !important;
+  position: relative !important;
+}
+
+.inno-roadmap-track-fill {
+  background: linear-gradient(90deg, #2563eb 0%, #00f5d4 50%, #2563eb 100%) !important;
+  background-size: 200% 100% !important;
+  animation: innoShimmerWave 3s infinite linear !important;
+  box-shadow: 0 0 12px rgba(0, 245, 212, 0.6) !important;
+}
+
+.inno-road-step.active .inno-road-badge {
+  background: linear-gradient(135deg, #00f5d4 0%, #00b4d8 100%) !important;
+  color: #071739 !important;
+  animation: innoPulseRipple 2s infinite !important;
+}
+
+/* 5. MODAL TRASLUCIDO DE ALTO IMPACTO (Cyber Glassmorphism) */
+.inno-modal-overlay {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 99999 !important;
+  background: rgba(5, 12, 26, 0.85) !important;
+  backdrop-filter: blur(24px) saturate(190%) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(190%) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 1.5rem !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  transition: opacity 0.3s ease, visibility 0.3s ease !important;
+}
+
+.inno-modal-overlay.active {
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+.inno-glass-modal {
+  background: linear-gradient(145deg, rgba(14, 30, 58, 0.94) 0%, rgba(7, 18, 38, 0.98) 100%) !important;
+  backdrop-filter: blur(30px) !important;
+  -webkit-backdrop-filter: blur(30px) !important;
+  border: 2px solid rgba(0, 245, 212, 0.45) !important;
+  border-radius: 28px !important;
+  max-width: 720px !important;
+  width: 100% !important;
+  padding: 2.5rem !important;
+  box-shadow: 0 25px 75px rgba(0, 0, 0, 0.85), 0 0 50px rgba(0, 245, 212, 0.25) !important;
+  position: relative !important;
+  overflow: hidden !important;
+  animation: innoModalPop 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+  color: #ffffff !important;
+}
+
+.inno-glass-modal::before {
+  content: "" !important;
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  height: 5px !important;
+  background: linear-gradient(90deg, #00f5d4 0%, #00b4d8 50%, #2563eb 100%) !important;
+}
+
+.inno-modal-close-btn {
+  position: absolute !important;
+  top: 1.25rem !important;
+  right: 1.25rem !important;
+  width: 44px !important;
+  height: 44px !important;
+  border-radius: 50% !important;
+  background: rgba(255, 255, 255, 0.1) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  color: #ffffff !important;
+  font-size: 1.35rem !important;
+  cursor: pointer !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  transition: all 0.2s ease !important;
+}
+
+.inno-modal-close-btn:hover {
+  background: #ff4757 !important;
+  border-color: #ff4757 !important;
+  color: #ffffff !important;
+  transform: rotate(90deg) scale(1.1) !important;
+  box-shadow: 0 0 20px rgba(255, 71, 87, 0.6) !important;
+}
+
+.inno-modal-badge {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 0.5rem !important;
+  padding: 0.4rem 1.15rem !important;
+  border-radius: 9999px !important;
+  font-size: 0.86rem !important;
+  font-weight: 800 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em !important;
+  margin-bottom: 0.85rem !important;
+  background: rgba(0, 245, 212, 0.15) !important;
+  border: 1px solid rgba(0, 245, 212, 0.45) !important;
+  color: #00f5d4 !important;
+}
+
+.inno-modal-title {
+  font-size: 1.85rem !important;
+  font-weight: 900 !important;
+  color: #ffffff !important;
+  margin: 0 0 1.25rem !important;
+  line-height: 1.25 !important;
+  letter-spacing: -0.02em !important;
+}
+
+.inno-modal-content-box {
+  background: rgba(255, 255, 255, 0.06) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  border-radius: 18px !important;
+  padding: 1.5rem !important;
+  margin-bottom: 1.5rem !important;
+  backdrop-filter: blur(10px) !important;
+}
+
+.inno-modal-text {
+  font-size: 1.12rem !important;
+  line-height: 1.75 !important;
+  color: #e2e8f0 !important;
+  margin: 0 !important;
+  white-space: pre-wrap !important;
+}
+
+.inno-modal-pills-row {
+  display: flex !important;
+  gap: 0.75rem !important;
+  flex-wrap: wrap !important;
+  margin-bottom: 1.75rem !important;
+}
+
+.inno-modal-pill {
+  background: rgba(0, 245, 212, 0.08) !important;
+  border: 1px solid rgba(0, 245, 212, 0.25) !important;
+  color: #cbd5e1 !important;
+  font-size: 0.9rem !important;
+  font-weight: 700 !important;
+  padding: 0.45rem 1rem !important;
+  border-radius: 12px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 0.4rem !important;
+}
+
+.inno-modal-actions {
+  display: flex !important;
+  gap: 1rem !important;
+  flex-wrap: wrap !important;
+}
+
+.inno-modal-btn-primary {
+  background: linear-gradient(135deg, #00f5d4 0%, #00b4d8 100%) !important;
+  color: #071739 !important;
+  font-size: 1.05rem !important;
+  font-weight: 900 !important;
+  padding: 0.85rem 2.2rem !important;
+  border-radius: 9999px !important;
+  border: none !important;
+  cursor: pointer !important;
+  box-shadow: 0 6px 24px rgba(0, 245, 212, 0.5) !important;
+  transition: all 0.25s ease !important;
+}
+
+.inno-modal-btn-primary:hover {
+  transform: translateY(-2px) scale(1.04) !important;
+  box-shadow: 0 8px 30px rgba(0, 245, 212, 0.7) !important;
+}
+
+.inno-modal-btn-secondary {
+  background: rgba(255, 255, 255, 0.08) !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.25) !important;
+  color: #ffffff !important;
+  font-size: 1.05rem !important;
+  font-weight: 800 !important;
+  padding: 0.85rem 2rem !important;
+  border-radius: 9999px !important;
+  cursor: pointer !important;
+  transition: all 0.25s ease !important;
+}
+
+.inno-modal-btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.18) !important;
+  border-color: #ffffff !important;
+  transform: translateY(-2px) !important;
+}

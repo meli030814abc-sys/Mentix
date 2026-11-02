@@ -626,79 +626,158 @@
     }
 
     let currentActiveProject = null;
+
+    function getLandingConfig() {
+      try {
+        const saved = localStorage.getItem('mentix_landing_page_config');
+        if (saved) return JSON.parse(saved);
+      } catch (e) {}
+      return {
+        brandTitle: 'MENTIX · Proyectos',
+        heroTitle: 'Transformando el Aprendizaje con Proyectos Reales',
+        heroSub: 'Plataforma oficial donde convergen innovación, colaboración interdisciplinaria y resultados tangibles en tiempo real.',
+        btnExplore: 'Explorar proyecto',
+        btnResources: 'Ver recursos',
+        kpiProgress: 64,
+        kpiActivities: 24,
+        kpiDeliverables: 8,
+        kpiParticipants: 12,
+        problemTitle: 'Problema / Oportunidad',
+        problemDesc: 'Dificultades en la trazabilidad, gobierno de datos y toma de decisiones.',
+        problemModal: 'Este proyecto surge ante la imperiosa necesidad de modernizar la gestión y trazabilidad de datos en entornos académicos y profesionales. La ausencia de un marco unificado genera silos de información, demoras e inconsistencias críticas que este proyecto aborda con arquitectura moderna.',
+        goalTitle: 'Objetivo',
+        goalDesc: 'Consolidar un marco de trabajo interdisciplinario y escalable.',
+        goalModal: 'El objetivo primordial radica en consolidar un marco de trabajo interdisciplinario, con métricas verificables y protocolos de alta fidelidad que aseguren la excelencia en cada fase del ciclo de vida del proyecto.',
+        methodTitle: 'Metodología',
+        methodDesc: 'Enfoque ágil e iterativo estructurado en 6 fases de desarrollo.',
+        methodModal: 'Implementamos un ciclo ágil iterativo basado en 6 fases consecutivas: Descubrimiento, Planeación, Diseño, Desarrollo, Puesta en Marcha y Medición de Impacto con retrospectivas continuas.',
+        impactTitle: 'Impacto esperado',
+        impactDesc: 'Incremento del 70% en eficiencia y adopción tecnológica institucional.',
+        impactModal: 'Se proyecta una optimización del 40% en tiempos de respuesta, un incremento del 75% en colaboración y una entrega con estándares de calidad de nivel industrial aplicables a escenarios reales.',
+        ctaTitle: 'Construyamos el siguiente avance del proyecto',
+        ctaSub: 'Tu aporte hace la diferencia. Súmate a los equipos colaborativos.',
+        ctaBtn: 'Participar ahora'
+      };
+    }
+
+    function animateLandingProgress(targetProg, targetUserPart) {
+      const prog = parseInt(targetProg, 10) || 64;
+      const userPart = parseInt(targetUserPart, 10) || 72;
+
+      const gaugeEl = document.querySelector('.inno-gauge-number');
+      const circleFill = document.querySelector('.inno-gauge-fill');
+      if (circleFill) {
+        const offset = 264 - (264 * prog) / 100;
+        circleFill.style.strokeDashoffset = offset;
+      }
+      if (gaugeEl) {
+        let start = 0;
+        const duration = 1200;
+        const stepTime = 25;
+        const steps = duration / stepTime;
+        const increment = prog / steps;
+        const timer = setInterval(() => {
+          start += increment;
+          if (start >= prog) {
+            gaugeEl.textContent = prog + '%';
+            clearInterval(timer);
+          } else {
+            gaugeEl.textContent = Math.round(start) + '%';
+          }
+        }, stepTime);
+      }
+
+      const heroBarFill = document.querySelector('.inno-gauge-bar-fill');
+      if (heroBarFill) {
+        heroBarFill.style.width = prog + '%';
+      }
+
+      const sideFill = document.querySelector('.inno-user-part-bar-fill');
+      if (sideFill) {
+        sideFill.style.width = userPart + '%';
+      }
+    }
+
     function previewLandingDoc(title, cardType = '') {
       const modal = document.getElementById('plp-standalone-lightbox');
       const body = document.getElementById('plp-standalone-lightbox-body');
       if (!modal || !body) return;
-      const isDark = document.getElementById('inno-app-root').getAttribute('data-theme') === 'dark';
-      const bg = isDark ? '#091e2d' : '#ffffff';
-      const titleColor = isDark ? '#ffffff' : '#091e2d';
-      const textColor = isDark ? '#cbd5e1' : '#334155';
-      const border = isDark ? '1px solid #1e3a54' : 'none';
 
       const p = currentActiveProject || {};
       const gp = p.govdata || {};
       const vp = p.valueProp || p.valueProposition || gp.valueProp || {};
       const cleanTitle = (title || '').toLowerCase();
+      const cfg = getLandingConfig();
 
-      let detailHtml = '';
-      let docBadge = 'Documento Oficial';
+      let docBadge = 'DOCUMENTO OFICIAL';
+      let icon = '📄';
+      let badgeColor = '#00f5d4';
+      let mainHeading = title || 'Detalle del Apartado';
+      let mainText = '';
+      let pills = ['⚡ Alta Prioridad', '👥 Trabajo Colaborativo', '📊 Verificado'];
 
       if (cardType === 'problem' || cleanTitle.includes('problema') || cleanTitle.includes('oportunidad')) {
-        docBadge = 'Problema / Oportunidad';
-        const prob = p.problemStatement || gp.problemStatement || vp.problemSolved || p.shortDescription || 'Sin problema documentado aún.';
-        detailHtml = '<div style="background:rgba(2,132,199,0.08); border-left:4px solid #0284c7; padding:1.25rem; border-radius:12px; margin-bottom:1.25rem;"><h4 style="margin:0 0 0.5rem; color:#0284c7; font-size:0.95rem; font-weight:800;">Problema y Reto que aborda el proyecto:</h4><p style="margin:0; color:' + textColor + '; line-height:1.75; font-size:1.02rem; white-space:pre-wrap;">' + prob + '</p></div>' + (p.targetAudience ? '<div style="font-size:0.9rem; color:' + textColor + ';"><strong>Público o Comunidad afectada:</strong> ' + p.targetAudience + '</div>' : '');
-      } else if (cardType === 'valueProp' || cleanTitle.includes('propuesta') || cleanTitle.includes('valor')) {
-        docBadge = 'Propuesta de Valor';
-        const how = vp.howItWorks || p.mainObjective || gp.mainObjective || 'En desarrollo.';
-        const diff = vp.differentiator || '';
-        detailHtml = '<div style="background:rgba(22,163,74,0.08); border-left:4px solid #16a34a; padding:1.25rem; border-radius:12px; margin-bottom:1.25rem;"><h4 style="margin:0 0 0.5rem; color:#16a34a; font-size:0.95rem; font-weight:800;">Cómo funciona la solución propuesta:</h4><p style="margin:0; color:' + textColor + '; line-height:1.75; font-size:1.02rem; white-space:pre-wrap;">' + how + '</p></div>' + (diff ? '<div style="padding:1rem; background:rgba(22,163,74,0.08); border-radius:10px; font-size:0.92rem; color:' + textColor + '; margin-bottom:0.75rem;"><strong style="color:#16a34a;">Factor Diferenciador:</strong> ' + diff + '</div>' : '');
+        docBadge = 'DIAGNÓSTICO & PROBLEMA';
+        icon = '⚠️';
+        badgeColor = '#f97316';
+        mainHeading = cfg.problemTitle || 'Problema u Oportunidad';
+        mainText = p.problemStatement || gp.problemStatement || vp.problemSolved || cfg.problemModal;
+        pills = ['🔥 Reto Crítico', '🎯 Enfoque Estratégico', '🔍 Diagnóstico Validado'];
+      } else if (cardType === 'valueProp' || cleanTitle.includes('objetivo') || cleanTitle.includes('valor')) {
+        docBadge = 'OBJETIVO & PROPUESTA DE VALOR';
+        icon = '🎯';
+        badgeColor = '#00f5d4';
+        mainHeading = cfg.goalTitle || 'Objetivo Principal';
+        mainText = vp.howItWorks || p.mainObjective || gp.mainObjective || cfg.goalModal;
+        pills = ['🚀 Meta Cuantificable', '💡 Solución Innovadora', '✨ Excelencia'];
       } else if (cardType === 'methodology' || cleanTitle.includes('metodolog') || cleanTitle.includes('enfoque')) {
-        docBadge = 'Metodología & Ejecución';
-        const full = p.fullDescription || gp.fullDescription || (Array.isArray(vp.keyFeatures) && vp.keyFeatures.length ? vp.keyFeatures.map(f => '• ' + f).join('\n') : '') || p.projectSubtype || 'Metodología en desarrollo.';
-        detailHtml = '<div style="background:rgba(124,58,237,0.08); border-left:4px solid #7c3aed; padding:1.25rem; border-radius:12px; margin-bottom:1.25rem;"><h4 style="margin:0 0 0.5rem; color:#7c3aed; font-size:0.95rem; font-weight:800;">Metodología y Alcance Técnico:</h4><p style="margin:0; color:' + textColor + '; line-height:1.75; font-size:1.02rem; white-space:pre-wrap;">' + full + '</p></div>' + (p.preparationStatus ? '<div style="font-size:0.9rem; color:' + textColor + ';"><strong>Estado de desarrollo:</strong> ' + p.preparationStatus.replace(/_/g, ' ') + '</div>' : '');
+        docBadge = 'METODOLOGÍA & EJECUCIÓN';
+        icon = '⚙️';
+        badgeColor = '#a855f7';
+        mainHeading = cfg.methodTitle || 'Metodología de Trabajo';
+        mainText = p.fullDescription || gp.fullDescription || (Array.isArray(vp.keyFeatures) && vp.keyFeatures.length ? vp.keyFeatures.map(f => '• ' + f).join('\n') : '') || cfg.methodModal;
+        pills = ['🔄 6 Fases Ágiles', '📈 Validación Continua', '🛠️ Ejecución Técnica'];
       } else if (cardType === 'impact' || cleanTitle.includes('impacto') || cleanTitle.includes('beneficio')) {
-        docBadge = 'Impacto & Resultados';
-        const ben = p.benefits || gp.benefits || vp.resultsAndBenefits || 'Impacto social y beneficios en desarrollo.';
-        detailHtml = '<div style="background:rgba(5,150,105,0.08); border-left:4px solid #059669; padding:1.25rem; border-radius:12px; margin-bottom:1.25rem;"><h4 style="margin:0 0 0.5rem; color:#059669; font-size:0.95rem; font-weight:800;">Beneficios e impacto generado:</h4><p style="margin:0; color:' + textColor + '; line-height:1.75; font-size:1.02rem; white-space:pre-wrap;">' + ben + '</p></div>';
+        docBadge = 'IMPACTO & RESULTADOS ESPERADOS';
+        icon = '🚀';
+        badgeColor = '#10b981';
+        mainHeading = cfg.impactTitle || 'Impacto Esperado';
+        mainText = p.benefits || gp.benefits || vp.resultsAndBenefits || cfg.impactModal;
+        pills = ['📈 +70% Adopción', '⚡ Eficiencia Operativa', '🌱 Sostenibilidad'];
       } else {
-        docBadge = 'Visión General';
-        const desc = p.fullDescription || p.shortDescription || p.description || gp.shortDescription || 'Información oficial del proyecto.';
-        detailHtml = '<div style="padding:1.25rem; background:rgba(15,23,42,0.04); border-radius:12px; margin-bottom:1.25rem;"><p style="margin:0; color:' + textColor + '; line-height:1.75; font-size:1.02rem; white-space:pre-wrap;">' + desc + '</p></div><div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:0.75rem; font-size:0.88rem; color:' + textColor + ';">' + (p.targetAudience ? '<div><strong>Público:</strong> ' + p.targetAudience + '</div>' : '') + (p.categoryName ? '<div><strong>Categoría:</strong> ' + p.categoryName + '</div>' : '') + (p.author ? '<div><strong>Responsable:</strong> ' + p.author + '</div>' : '') + '</div>';
+        docBadge = 'DOCUMENTO OFICIAL DEL PROYECTO';
+        icon = '📑';
+        badgeColor = '#00f5d4';
+        mainHeading = title;
+        mainText = p.fullDescription || p.shortDescription || p.description || 'Material oficial y recursos correspondientes a esta iniciativa.';
       }
 
       body.innerHTML = `
-        <button class="plp-lightbox-close" onclick="closeLandingLightbox()" aria-label="Cerrar">✕</button>
-        <div style="padding:2.5rem; background:${bg}; border:${border}; border-radius:20px; max-width:680px; margin:0 auto;">
-          <span class="inno-eyebrow" style="font-size:0.78rem; text-transform:uppercase; letter-spacing:0.05em; font-weight:800; color:#10b981; margin-bottom:0.5rem; display:inline-block;">${docBadge}</span>
-          <h2 style="margin:0.25rem 0 1.25rem; color:${titleColor}; font-size:1.4rem; font-weight:800;">${title}</h2>
-          ${detailHtml}
-          <div style="margin-top:1.5rem; display:flex; gap:0.75rem; flex-wrap:wrap;">
-            <button class="inno-btn-cyan" onclick="downloadLandingDoc('${title.replace(/\s+/g, '_').slice(0, 40)}.txt'); closeLandingLightbox();">
-              ⬇ Descargar Resumen
-            </button>
-            <button class="inno-btn-ghost" style="color:${titleColor}; border-color:${titleColor};" onclick="closeLandingLightbox()">
-              Cerrar
-            </button>
+        <div class="inno-glass-modal">
+          <button type="button" class="inno-modal-close-btn" onclick="closeLandingLightbox()" aria-label="Cerrar">✕</button>
+
+          <div style="display:flex; align-items:center; gap:0.75rem; margin-bottom:0.75rem;">
+            <span class="inno-modal-badge" style="border-color:${badgeColor}; color:${badgeColor}; background:rgba(0,245,212,0.1);">
+              <span>${icon}</span> ${docBadge}
+            </span>
           </div>
-        </div>
-      `;
-      modal.classList.add('active');
-      return;
-      body.innerHTML = `
-        <button class="plp-lightbox-close" onclick="closeLandingLightbox()" aria-label="Cerrar">✕</button>
-        <div style="padding:2.5rem; background:${bg}; border:${border}; border-radius:20px;">
-          <span class="inno-eyebrow">Vista Previa Oficial</span>
-          <h2 style="margin:0.5rem 0 1rem; color:${titleColor};">${title}</h2>
-          <p style="color:${textColor}; line-height:1.7;">
-            Recurso oficial y didáctico del proyecto. Diseñado para impulsar el aprendizaje, la colaboración y la toma de mejores decisiones.
-          </p>
-          <div style="margin-top:1.5rem; display:flex; gap:0.75rem; flex-wrap:wrap;">
-            <button class="inno-btn-cyan" onclick="downloadLandingDoc('${title.replace(/\\s+/g, '_').slice(0, 40)}.txt'); closeLandingLightbox();">
-              ⬇ Descargar Ficha Oficial
+
+          <h2 class="inno-modal-title">${mainHeading}</h2>
+
+          <div class="inno-modal-content-box">
+            <p class="inno-modal-text">${mainText}</p>
+          </div>
+
+          <div class="inno-modal-pills-row">
+            ${pills.map(pi => `<span class="inno-modal-pill">${pi}</span>`).join('')}
+          </div>
+
+          <div class="inno-modal-actions">
+            <button type="button" class="inno-modal-btn-primary" onclick="closeLandingLightbox()">
+              ✓ Entendido
             </button>
-            <button class="inno-btn-ghost" style="color:${titleColor}; border-color:${titleColor};" onclick="closeLandingLightbox()">
-              Cerrar
+            <button type="button" class="inno-modal-btn-secondary" onclick="document.getElementById('inno-sec-resources')?.scrollIntoView({ behavior: 'smooth' }); closeLandingLightbox();">
+              📑 Ver Recursos
             </button>
           </div>
         </div>
@@ -983,6 +1062,7 @@
 
         // Actualización dinámica de avance general
         const progressPercent = calculateProjectProgress(activeProject);
+        animateLandingProgress(progressPercent, 72);
         const cardProgNum = document.getElementById('inno-card-progress-num');
         if (cardProgNum) cardProgNum.textContent = `${progressPercent}%`;
         const cardProgBar = document.getElementById('inno-card-progress-bar');

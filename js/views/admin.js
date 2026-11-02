@@ -1801,6 +1801,7 @@ window.AdminView = {
   templateDesign() {
     const heroBanner = localStorage.getItem('mentix_admin_hero_banner') || localStorage.getItem('mentix_projects_hero_banner') || 'assets/projects_ui/robot_hero_banner.png';
     const s = this.getSavedDesign();
+    const lpCfg = this.getLandingConfig();
 
     return `
       <!-- Breadcrumbs -->
@@ -1822,10 +1823,6 @@ window.AdminView = {
           </button>
           <button class="btn btn-cyan" onclick="window.AdminView.saveDesignSettings()">
             <span>💾</span> Guardar y Aplicar Cambios
-          </button>
-        </div>
-      </div>
-            <span>💾</span> Guardar Cambios
           </button>
         </div>
       </div>
@@ -1928,6 +1925,156 @@ window.AdminView = {
             <button class="btn btn-danger" onclick="window.AdminView.resetFactoryData()">
               <span>⚠️</span> Restaurar Valores de Fábrica
             </button>
+          </div>
+        </div>
+
+        <!-- Tarjeta 5: Parametrización & Configuración de la Landing Page de Proyectos -->
+        <div class="admin-card settings-card" style="grid-column: 1 / -1; border: 2px solid rgba(0, 245, 212, 0.45); box-shadow: 0 10px 35px rgba(0, 0, 0, 0.35), 0 0 25px rgba(0, 245, 212, 0.15);">
+          <div class="admin-card-header" style="border-bottom: 1px solid rgba(255, 255, 255, 0.1); padding-bottom: 1.25rem;">
+            <div>
+              <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.35rem;">
+                <span style="font-size: 1.6rem;">🚀</span>
+                <h3 style="font-size: 1.35rem; font-weight: 900; color: #ffffff; margin: 0;">Parametrización & Personalización de la Landing Page</h3>
+              </div>
+              <p style="color: #94a3b8; margin: 0; font-size: 0.92rem;">Controla cada uno de los textos, apartados, métricas base, modales traslúcidos y botones de la landing page pública.</p>
+            </div>
+            <span class="badge-tag tag-cyan" style="font-size: 0.85rem; padding: 0.4rem 0.9rem;">⭐ Módulo Landing</span>
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: 1.75rem; padding-top: 1.5rem;">
+            
+            <!-- Grupo 1: Hero & Encabezado -->
+            <div style="background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 16px; padding: 1.35rem;">
+              <h4 style="color: #00f5d4; font-size: 1.05rem; font-weight: 800; margin: 0 0 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                <span>🌟</span> 1. Encabezado & Hero Principal
+              </h4>
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem;">
+                <div>
+                  <label style="display: block; font-size: 0.82rem; font-weight: 700; color: #cbd5e1; margin-bottom: 0.35rem;">Nombre Institucional / Marca:</label>
+                  <input type="text" id="admin-lp-brand-title" value="${this.escapeHtml(lpCfg.brandTitle)}" style="width: 100%; padding: 0.65rem 0.95rem; background: rgba(15, 23, 42, 0.8); border: 1.5px solid rgba(255, 255, 255, 0.15); border-radius: 10px; color: #ffffff; font-size: 0.92rem;">
+                </div>
+                <div>
+                  <label style="display: block; font-size: 0.82rem; font-weight: 700; color: #cbd5e1; margin-bottom: 0.35rem;">Titular Destacado del Hero:</label>
+                  <input type="text" id="admin-lp-hero-title" value="${this.escapeHtml(lpCfg.heroTitle)}" style="width: 100%; padding: 0.65rem 0.95rem; background: rgba(15, 23, 42, 0.8); border: 1.5px solid rgba(255, 255, 255, 0.15); border-radius: 10px; color: #ffffff; font-size: 0.92rem;">
+                </div>
+                <div style="grid-column: 1 / -1;">
+                  <label style="display: block; font-size: 0.82rem; font-weight: 700; color: #cbd5e1; margin-bottom: 0.35rem;">Subtítulo / Mensaje Central:</label>
+                  <textarea id="admin-lp-hero-sub" rows="2" style="width: 100%; padding: 0.65rem 0.95rem; background: rgba(15, 23, 42, 0.8); border: 1.5px solid rgba(255, 255, 255, 0.15); border-radius: 10px; color: #ffffff; font-size: 0.92rem; resize: vertical;">${this.escapeHtml(lpCfg.heroSub)}</textarea>
+                </div>
+                <div>
+                  <label style="display: block; font-size: 0.82rem; font-weight: 700; color: #cbd5e1; margin-bottom: 0.35rem;">Texto Botón Principal:</label>
+                  <input type="text" id="admin-lp-btn-explore" value="${this.escapeHtml(lpCfg.btnExplore)}" style="width: 100%; padding: 0.65rem 0.95rem; background: rgba(15, 23, 42, 0.8); border: 1.5px solid rgba(255, 255, 255, 0.15); border-radius: 10px; color: #ffffff; font-size: 0.92rem;">
+                </div>
+                <div>
+                  <label style="display: block; font-size: 0.82rem; font-weight: 700; color: #cbd5e1; margin-bottom: 0.35rem;">Texto Botón Recursos:</label>
+                  <input type="text" id="admin-lp-btn-resources" value="${this.escapeHtml(lpCfg.btnResources)}" style="width: 100%; padding: 0.65rem 0.95rem; background: rgba(15, 23, 42, 0.8); border: 1.5px solid rgba(255, 255, 255, 0.15); border-radius: 10px; color: #ffffff; font-size: 0.92rem;">
+                </div>
+              </div>
+            </div>
+
+            <!-- Grupo 2: Métricas & KPIs Base -->
+            <div style="background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 16px; padding: 1.35rem;">
+              <h4 style="color: #00f5d4; font-size: 1.05rem; font-weight: 800; margin: 0 0 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                <span>📊</span> 2. Métricas y Avance General
+              </h4>
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                <div>
+                  <label style="display: block; font-size: 0.82rem; font-weight: 700; color: #cbd5e1; margin-bottom: 0.35rem;">% Avance Predeterminado:</label>
+                  <input type="number" min="0" max="100" id="admin-lp-kpi-progress" value="${lpCfg.kpiProgress}" style="width: 100%; padding: 0.65rem 0.95rem; background: rgba(15, 23, 42, 0.8); border: 1.5px solid rgba(255, 255, 255, 0.15); border-radius: 10px; color: #ffffff; font-size: 0.92rem;">
+                </div>
+                <div>
+                  <label style="display: block; font-size: 0.82rem; font-weight: 700; color: #cbd5e1; margin-bottom: 0.35rem;">Total Actividades:</label>
+                  <input type="number" min="0" id="admin-lp-kpi-activities" value="${lpCfg.kpiActivities}" style="width: 100%; padding: 0.65rem 0.95rem; background: rgba(15, 23, 42, 0.8); border: 1.5px solid rgba(255, 255, 255, 0.15); border-radius: 10px; color: #ffffff; font-size: 0.92rem;">
+                </div>
+                <div>
+                  <label style="display: block; font-size: 0.82rem; font-weight: 700; color: #cbd5e1; margin-bottom: 0.35rem;">Total Entregables:</label>
+                  <input type="number" min="0" id="admin-lp-kpi-deliverables" value="${lpCfg.kpiDeliverables}" style="width: 100%; padding: 0.65rem 0.95rem; background: rgba(15, 23, 42, 0.8); border: 1.5px solid rgba(255, 255, 255, 0.15); border-radius: 10px; color: #ffffff; font-size: 0.92rem;">
+                </div>
+                <div>
+                  <label style="display: block; font-size: 0.82rem; font-weight: 700; color: #cbd5e1; margin-bottom: 0.35rem;">Participantes Base:</label>
+                  <input type="number" min="0" id="admin-lp-kpi-participants" value="${lpCfg.kpiParticipants}" style="width: 100%; padding: 0.65rem 0.95rem; background: rgba(15, 23, 42, 0.8); border: 1.5px solid rgba(255, 255, 255, 0.15); border-radius: 10px; color: #ffffff; font-size: 0.92rem;">
+                </div>
+              </div>
+            </div>
+
+            <!-- Grupo 3: Apartados "¿Por qué este proyecto?" & Contenido de Modales Traslúcidos -->
+            <div style="background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 16px; padding: 1.35rem;">
+              <h4 style="color: #00f5d4; font-size: 1.05rem; font-weight: 800; margin: 0 0 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                <span>🎯</span> 3. Apartados de Análisis & Modales Traslúcidos
+              </h4>
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.25rem;">
+                <!-- 1. Problema -->
+                <div style="background: rgba(249, 115, 22, 0.08); border: 1px solid rgba(249, 115, 22, 0.3); border-radius: 12px; padding: 1.15rem;">
+                  <div style="color: #fb923c; font-weight: 800; font-size: 0.95rem; margin-bottom: 0.6rem;">⚠️ Problema u Oportunidad</div>
+                  <label style="display: block; font-size: 0.78rem; font-weight: 700; color: #cbd5e1; margin-bottom: 0.25rem;">Resumen en Tarjeta:</label>
+                  <input type="text" id="admin-lp-problem-desc" value="${this.escapeHtml(lpCfg.problemDesc)}" style="width: 100%; padding: 0.55rem 0.85rem; background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 8px; color: #ffffff; font-size: 0.88rem; margin-bottom: 0.6rem;">
+                  <label style="display: block; font-size: 0.78rem; font-weight: 700; color: #cbd5e1; margin-bottom: 0.25rem;">Detalle Extenso en Modal Traslúcido:</label>
+                  <textarea id="admin-lp-problem-modal" rows="3" style="width: 100%; padding: 0.55rem 0.85rem; background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 8px; color: #ffffff; font-size: 0.88rem; resize: vertical;">${this.escapeHtml(lpCfg.problemModal)}</textarea>
+                </div>
+
+                <!-- 2. Objetivo -->
+                <div style="background: rgba(0, 245, 212, 0.08); border: 1px solid rgba(0, 245, 212, 0.3); border-radius: 12px; padding: 1.15rem;">
+                  <div style="color: #00f5d4; font-weight: 800; font-size: 0.95rem; margin-bottom: 0.6rem;">🎯 Objetivo Principal</div>
+                  <label style="display: block; font-size: 0.78rem; font-weight: 700; color: #cbd5e1; margin-bottom: 0.25rem;">Resumen en Tarjeta:</label>
+                  <input type="text" id="admin-lp-goal-desc" value="${this.escapeHtml(lpCfg.goalDesc)}" style="width: 100%; padding: 0.55rem 0.85rem; background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 8px; color: #ffffff; font-size: 0.88rem; margin-bottom: 0.6rem;">
+                  <label style="display: block; font-size: 0.78rem; font-weight: 700; color: #cbd5e1; margin-bottom: 0.25rem;">Detalle Extenso en Modal Traslúcido:</label>
+                  <textarea id="admin-lp-goal-modal" rows="3" style="width: 100%; padding: 0.55rem 0.85rem; background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 8px; color: #ffffff; font-size: 0.88rem; resize: vertical;">${this.escapeHtml(lpCfg.goalModal)}</textarea>
+                </div>
+
+                <!-- 3. Metodología -->
+                <div style="background: rgba(168, 85, 247, 0.08); border: 1px solid rgba(168, 85, 247, 0.3); border-radius: 12px; padding: 1.15rem;">
+                  <div style="color: #c084fc; font-weight: 800; font-size: 0.95rem; margin-bottom: 0.6rem;">⚙️ Metodología de Trabajo</div>
+                  <label style="display: block; font-size: 0.78rem; font-weight: 700; color: #cbd5e1; margin-bottom: 0.25rem;">Resumen en Tarjeta:</label>
+                  <input type="text" id="admin-lp-method-desc" value="${this.escapeHtml(lpCfg.methodDesc)}" style="width: 100%; padding: 0.55rem 0.85rem; background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 8px; color: #ffffff; font-size: 0.88rem; margin-bottom: 0.6rem;">
+                  <label style="display: block; font-size: 0.78rem; font-weight: 700; color: #cbd5e1; margin-bottom: 0.25rem;">Detalle Extenso en Modal Traslúcido:</label>
+                  <textarea id="admin-lp-method-modal" rows="3" style="width: 100%; padding: 0.55rem 0.85rem; background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 8px; color: #ffffff; font-size: 0.88rem; resize: vertical;">${this.escapeHtml(lpCfg.methodModal)}</textarea>
+                </div>
+
+                <!-- 4. Impacto -->
+                <div style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 12px; padding: 1.15rem;">
+                  <div style="color: #34d399; font-weight: 800; font-size: 0.95rem; margin-bottom: 0.6rem;">🚀 Impacto Esperado</div>
+                  <label style="display: block; font-size: 0.78rem; font-weight: 700; color: #cbd5e1; margin-bottom: 0.25rem;">Resumen en Tarjeta:</label>
+                  <input type="text" id="admin-lp-impact-desc" value="${this.escapeHtml(lpCfg.impactDesc)}" style="width: 100%; padding: 0.55rem 0.85rem; background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 8px; color: #ffffff; font-size: 0.88rem; margin-bottom: 0.6rem;">
+                  <label style="display: block; font-size: 0.78rem; font-weight: 700; color: #cbd5e1; margin-bottom: 0.25rem;">Detalle Extenso en Modal Traslúcido:</label>
+                  <textarea id="admin-lp-impact-modal" rows="3" style="width: 100%; padding: 0.55rem 0.85rem; background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 8px; color: #ffffff; font-size: 0.88rem; resize: vertical;">${this.escapeHtml(lpCfg.impactModal)}</textarea>
+                </div>
+              </div>
+            </div>
+
+            <!-- Grupo 4: Banner Inferior CTA -->
+            <div style="background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 16px; padding: 1.35rem;">
+              <h4 style="color: #00f5d4; font-size: 1.05rem; font-weight: 800; margin: 0 0 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                <span>📢</span> 4. Llamado a la Acción Inferior (CTA)
+              </h4>
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1rem;">
+                <div>
+                  <label style="display: block; font-size: 0.82rem; font-weight: 700; color: #cbd5e1; margin-bottom: 0.35rem;">Titular del Banner:</label>
+                  <input type="text" id="admin-lp-cta-title" value="${this.escapeHtml(lpCfg.ctaTitle)}" style="width: 100%; padding: 0.65rem 0.95rem; background: rgba(15, 23, 42, 0.8); border: 1.5px solid rgba(255, 255, 255, 0.15); border-radius: 10px; color: #ffffff; font-size: 0.92rem;">
+                </div>
+                <div>
+                  <label style="display: block; font-size: 0.82rem; font-weight: 700; color: #cbd5e1; margin-bottom: 0.35rem;">Subtítulo de Acompañamiento:</label>
+                  <input type="text" id="admin-lp-cta-sub" value="${this.escapeHtml(lpCfg.ctaSub)}" style="width: 100%; padding: 0.65rem 0.95rem; background: rgba(15, 23, 42, 0.8); border: 1.5px solid rgba(255, 255, 255, 0.15); border-radius: 10px; color: #ffffff; font-size: 0.92rem;">
+                </div>
+                <div>
+                  <label style="display: block; font-size: 0.82rem; font-weight: 700; color: #cbd5e1; margin-bottom: 0.35rem;">Texto del Botón:</label>
+                  <input type="text" id="admin-lp-cta-btn" value="${this.escapeHtml(lpCfg.ctaBtn)}" style="width: 100%; padding: 0.65rem 0.95rem; background: rgba(15, 23, 42, 0.8); border: 1.5px solid rgba(255, 255, 255, 0.15); border-radius: 10px; color: #ffffff; font-size: 0.92rem;">
+                </div>
+              </div>
+            </div>
+
+            <!-- Botones de Acción del Módulo Landing -->
+            <div style="display: flex; gap: 1rem; flex-wrap: wrap; justify-content: flex-end; padding-top: 0.5rem;">
+              <button type="button" class="btn btn-outline" onclick="window.AdminView.resetLandingPageSettings()">
+                <span>🔄</span> Restablecer Parámetros Originales
+              </button>
+              <button type="button" class="btn btn-outline" onclick="window.open('proyecto-landing.html', '_blank')">
+                <span>👁️</span> Previsualizar Landing en Vivo
+              </button>
+              <button type="button" class="btn btn-cyan" onclick="window.AdminView.saveLandingPageSettings()" style="font-weight: 900; box-shadow: 0 4px 18px rgba(0, 245, 212, 0.45);">
+                <span>💾</span> Guardar Parámetros de Landing Page
+              </button>
+            </div>
+
           </div>
         </div>
 
@@ -3685,6 +3832,81 @@ window.AdminView = {
   applyGlobalDesignSettings() {
     const s = this.getSavedDesign();
     this.applyDesign(s);
+  },
+
+  getLandingConfig() {
+    try {
+      const saved = localStorage.getItem('mentix_landing_page_config');
+      if (saved) return JSON.parse(saved);
+    } catch (e) {}
+    return {
+      brandTitle: 'MENTIX · Proyectos',
+      heroTitle: 'Transformando el Aprendizaje con Proyectos Reales',
+      heroSub: 'Plataforma oficial donde convergen innovación, colaboración interdisciplinaria y resultados tangibles en tiempo real.',
+      btnExplore: 'Explorar proyecto',
+      btnResources: 'Ver recursos',
+      kpiProgress: 64,
+      kpiActivities: 24,
+      kpiDeliverables: 8,
+      kpiParticipants: 12,
+      problemTitle: 'Problema / Oportunidad',
+      problemDesc: 'Dificultades en la trazabilidad, gobierno de datos y toma de decisiones.',
+      problemModal: 'Este proyecto surge ante la imperiosa necesidad de modernizar la gestión y trazabilidad de datos en entornos académicos y profesionales. La ausencia de un marco unificado genera silos de información, demoras e inconsistencias críticas que este proyecto aborda con arquitectura moderna.',
+      goalTitle: 'Objetivo',
+      goalDesc: 'Consolidar un marco de trabajo interdisciplinario y escalable.',
+      goalModal: 'El objetivo primordial radica en consolidar un marco de trabajo interdisciplinario, con métricas verificables y protocolos de alta fidelidad que aseguren la excelencia en cada fase del ciclo de vida del proyecto.',
+      methodTitle: 'Metodología',
+      methodDesc: 'Enfoque ágil e iterativo estructurado en 6 fases de desarrollo.',
+      methodModal: 'Implementamos un ciclo ágil iterativo basado en 6 fases consecutivas: Descubrimiento, Planeación, Diseño, Desarrollo, Puesta en Marcha y Medición de Impacto con retrospectivas continuas.',
+      impactTitle: 'Impacto esperado',
+      impactDesc: 'Incremento del 70% en eficiencia y adopción tecnológica institucional.',
+      impactModal: 'Se proyecta una optimización del 40% en tiempos de respuesta, un incremento del 75% en colaboración y una entrega con estándares de calidad de nivel industrial aplicables a escenarios reales.',
+      ctaTitle: 'Construyamos el siguiente avance del proyecto',
+      ctaSub: 'Tu aporte hace la diferencia. Súmate a los equipos colaborativos.',
+      ctaBtn: 'Participar ahora'
+    };
+  },
+
+  saveLandingPageSettings() {
+    const config = {
+      brandTitle: document.getElementById('admin-lp-brand-title')?.value || 'MENTIX · Proyectos',
+      heroTitle: document.getElementById('admin-lp-hero-title')?.value || 'Transformando el Aprendizaje con Proyectos Reales',
+      heroSub: document.getElementById('admin-lp-hero-sub')?.value || '',
+      btnExplore: document.getElementById('admin-lp-btn-explore')?.value || 'Explorar proyecto',
+      btnResources: document.getElementById('admin-lp-btn-resources')?.value || 'Ver recursos',
+      kpiProgress: parseInt(document.getElementById('admin-lp-kpi-progress')?.value, 10) || 64,
+      kpiActivities: parseInt(document.getElementById('admin-lp-kpi-activities')?.value, 10) || 24,
+      kpiDeliverables: parseInt(document.getElementById('admin-lp-kpi-deliverables')?.value, 10) || 8,
+      kpiParticipants: parseInt(document.getElementById('admin-lp-kpi-participants')?.value, 10) || 12,
+      problemTitle: 'Problema / Oportunidad',
+      problemDesc: document.getElementById('admin-lp-problem-desc')?.value || '',
+      problemModal: document.getElementById('admin-lp-problem-modal')?.value || '',
+      goalTitle: 'Objetivo',
+      goalDesc: document.getElementById('admin-lp-goal-desc')?.value || '',
+      goalModal: document.getElementById('admin-lp-goal-modal')?.value || '',
+      methodTitle: 'Metodología',
+      methodDesc: document.getElementById('admin-lp-method-desc')?.value || '',
+      methodModal: document.getElementById('admin-lp-method-modal')?.value || '',
+      impactTitle: 'Impacto esperado',
+      impactDesc: document.getElementById('admin-lp-impact-desc')?.value || '',
+      impactModal: document.getElementById('admin-lp-impact-modal')?.value || '',
+      ctaTitle: document.getElementById('admin-lp-cta-title')?.value || '',
+      ctaSub: document.getElementById('admin-lp-cta-sub')?.value || '',
+      ctaBtn: document.getElementById('admin-lp-cta-btn')?.value || 'Participar ahora'
+    };
+
+    localStorage.setItem('mentix_landing_page_config', JSON.stringify(config));
+    if (window.appState) {
+      window.appState.landingConfig = config;
+    }
+    this.showToast('Parámetros de la Landing Page guardados y aplicados con éxito', 'success');
+  },
+
+  resetLandingPageSettings() {
+    if (!confirm('¿Deseas restablecer todos los parámetros de la Landing Page a los valores originales de fábrica?')) return;
+    localStorage.removeItem('mentix_landing_page_config');
+    this.renderActiveTab();
+    this.showToast('Parámetros de la Landing Page restablecidos', 'info');
   },
 
   // ==========================================

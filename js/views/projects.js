@@ -3355,6 +3355,77 @@ window.ProjectsView = {
     });
   },
 
+  getLandingConfig() {
+    try {
+      const saved = localStorage.getItem('mentix_landing_page_config');
+      if (saved) return JSON.parse(saved);
+    } catch (e) {}
+    return {
+      brandTitle: 'MENTIX · Proyectos',
+      heroTitle: 'Transformando el Aprendizaje con Proyectos Reales',
+      heroSub: 'Plataforma oficial donde convergen innovación, colaboración interdisciplinaria y resultados tangibles en tiempo real.',
+      btnExplore: 'Explorar proyecto',
+      btnResources: 'Ver recursos',
+      kpiProgress: 64,
+      kpiActivities: 24,
+      kpiDeliverables: 8,
+      kpiParticipants: 12,
+      problemTitle: 'Problema / Oportunidad',
+      problemDesc: 'Dificultades en la trazabilidad, gobierno de datos y toma de decisiones.',
+      problemModal: 'Este proyecto surge ante la imperiosa necesidad de modernizar la gestión y trazabilidad de datos en entornos académicos y profesionales. La ausencia de un marco unificado genera silos de información, demoras e inconsistencias críticas que este proyecto aborda con arquitectura moderna.',
+      goalTitle: 'Objetivo',
+      goalDesc: 'Consolidar un marco de trabajo interdisciplinario y escalable.',
+      goalModal: 'El objetivo primordial radica en consolidar un marco de trabajo interdisciplinario, con métricas verificables y protocolos de alta fidelidad que aseguren la excelencia en cada fase del ciclo de vida del proyecto.',
+      methodTitle: 'Metodología',
+      methodDesc: 'Enfoque ágil e iterativo estructurado en 6 fases de desarrollo.',
+      methodModal: 'Implementamos un ciclo ágil iterativo basado en 6 fases consecutivas: Descubrimiento, Planeación, Diseño, Desarrollo, Puesta en Marcha y Medición de Impacto con retrospectivas continuas.',
+      impactTitle: 'Impacto esperado',
+      impactDesc: 'Incremento del 70% en eficiencia y adopción tecnológica institucional.',
+      impactModal: 'Se proyecta una optimización del 40% en tiempos de respuesta, un incremento del 75% en colaboración y una entrega con estándares de calidad de nivel industrial aplicables a escenarios reales.',
+      ctaTitle: 'Construyamos el siguiente avance del proyecto',
+      ctaSub: 'Tu aporte hace la diferencia. Súmate a los equipos colaborativos.',
+      ctaBtn: 'Participar ahora'
+    };
+  },
+
+  animateLandingProgress(targetProg, targetUserPart) {
+    const prog = parseInt(targetProg, 10) || 64;
+    const userPart = parseInt(targetUserPart, 10) || 72;
+
+    const gaugeEl = document.querySelector('.inno-gauge-number');
+    const circleFill = document.querySelector('.inno-gauge-fill');
+    if (circleFill) {
+      const offset = 264 - (264 * prog) / 100;
+      circleFill.style.strokeDashoffset = offset;
+    }
+    if (gaugeEl) {
+      let start = 0;
+      const duration = 1200;
+      const stepTime = 25;
+      const steps = duration / stepTime;
+      const increment = prog / steps;
+      const timer = setInterval(() => {
+        start += increment;
+        if (start >= prog) {
+          gaugeEl.textContent = prog + '%';
+          clearInterval(timer);
+        } else {
+          gaugeEl.textContent = Math.round(start) + '%';
+        }
+      }, stepTime);
+    }
+
+    const heroBarFill = document.querySelector('.inno-gauge-bar-fill');
+    if (heroBarFill) {
+      heroBarFill.style.width = prog + '%';
+    }
+
+    const sideFill = document.querySelector('.inno-user-part-bar-fill');
+    if (sideFill) {
+      sideFill.style.width = userPart + '%';
+    }
+  },
+
   getLandingTheme() {
     if (document.body.classList.contains('light-theme')) return 'light';
     return localStorage.getItem('mentix_landing_theme') || localStorage.getItem('te_reto_theme') || 'dark';
@@ -3628,25 +3699,26 @@ window.ProjectsView = {
       } catch (e) {}
     }
 
+    const cfg = this.getLandingConfig();
     const gp = (selected && selected.govdata) ? selected.govdata : {};
     const vp = (selected && (selected.valueProp || selected.valueProposition)) ? (selected.valueProp || selected.valueProposition) : (gp.valueProp || {});
     const pub = (selected && (selected.landingConfig || selected.publication)) ? (selected.landingConfig || selected.publication) : {};
     const vid = (selected && (selected.videoConfig || selected.video)) ? (selected.videoConfig || selected.video) : {};
 
-    const brandTitle = this.escapeHtml((selected && (selected.categoryName || pub.visibleCategory)) || 'Proyecto');
+    const brandTitle = this.escapeHtml((selected && (selected.categoryName || pub.visibleCategory)) || cfg.brandTitle || 'Proyecto');
     const brandSubtitle = this.escapeHtml((selected && (pub.publicName || selected.title)) || '');
     const selectedTitle = selected ? this.escapeHtml(pub.publicName || selected.title || 'Proyecto') : 'Proyecto';
     const heroEyebrow = this.escapeHtml((selected && (selected.subtitle || selected.categoryName)) || '🚀 Proyecto Educativo & Didáctico');
-    const heroMainTitle1 = selected ? this.escapeHtml(pub.landingTitle || selected.title || 'Proyecto') : 'Proyecto';
+    const heroMainTitle1 = selected ? this.escapeHtml(pub.landingTitle || selected.title || cfg.heroTitle) : cfg.heroTitle;
     const heroMainTitle2 = (selected && selected.subtitle) ? this.escapeHtml(selected.subtitle) : '';
     const heroSubtitle = this.escapeHtml(
       (selected && (pub.publicDescription || selected.shortDescription || selected.description || gp.shortDescription)) ||
-      'Explora los objetivos, recursos y detalles de este proyecto educativo.'
+      cfg.heroSub
     );
 
-    const ctaText = this.escapeHtml((selected && (pub.ctaText || selected.ctaText || vp.visitorAction)) || 'Unirse / Colaborar');
+    const ctaText = this.escapeHtml((selected && (pub.ctaText || selected.ctaText || vp.visitorAction)) || cfg.btnExplore);
     const ctaUrl = (selected && (pub.ctaUrl || selected.ctaUrl)) || '';
-    const mainObjective = this.escapeHtml((selected && (selected.mainObjective || gp.mainObjective || vp.problemSolved)) || 'Objetivo en desarrollo');
+    const mainObjective = this.escapeHtml((selected && (selected.mainObjective || gp.mainObjective || vp.problemSolved)) || cfg.goalDesc);
     const targetAudience = this.escapeHtml((selected && (selected.targetAudience || gp.targetAudience || vp.targetAudience || vp.forWhom)) || 'Comunidad educativa y participantes');
     const visibleCategory = this.escapeHtml((selected && (selected.categoryName || pub.visibleCategory)) || 'General');
     const projectState = this.escapeHtml((selected && (selected.preparationStatus || selected.projectState || 'En desarrollo')).toString().replace(/_/g, ' '));
@@ -3654,19 +3726,19 @@ window.ProjectsView = {
     const cardProblem = this.escapeHtml(
       (selected && (selected.problemStatement || gp.problemStatement || vp.problemSolved)) ||
       (selected && (selected.shortDescription || gp.shortDescription)) ||
-      'Definición y planteamiento del reto o necesidad abordada por el proyecto.'
+      cfg.problemDesc
     );
     const cardValueProp = this.escapeHtml(
       (selected && (vp.howItWorks || selected.mainObjective || gp.mainObjective)) ||
-      'Solución propuesta y enfoque central para resolver el reto planteado.'
+      cfg.goalDesc
     );
     const cardMethodology = this.escapeHtml(
       (selected && (selected.fullDescription || gp.fullDescription || (Array.isArray(vp.keyFeatures) && vp.keyFeatures.length ? vp.keyFeatures.join(', ') : '') || selected.projectSubtype)) ||
-      'Metodología, etapas y procesos clave de ejecución del proyecto.'
+      cfg.methodDesc
     );
     const cardImpact = this.escapeHtml(
       (selected && (selected.benefits || gp.benefits || vp.resultsAndBenefits)) ||
-      'Resultados tangibles, beneficios directos y alcance esperado para la comunidad.'
+      cfg.impactDesc
     );
     const leadWhyText = this.escapeHtml(
       (selected && (selected.shortDescription || gp.shortDescription || selected.description || selected.mainObjective)) ||
@@ -4416,6 +4488,12 @@ window.ProjectsView = {
         </div>
       </div>
     `;
+
+    setTimeout(() => {
+      if (window.ProjectsView && window.ProjectsView.animateLandingProgress) {
+        window.ProjectsView.animateLandingProgress(progressPercent, userPartPercent);
+      }
+    }, 80);
   },
 
   scrollToLandingSection(sectionId) {
