@@ -7198,3 +7198,441 @@ body[data-theme="dark"] .plp-lightbox-content {
   border-color: #ffffff !important;
   transform: translateY(-2px) !important;
 }
+
+
+/* ==========================================================================
+   MASTER TOTAL ELIMINATION OF BLACK TEXT ON DARK BACKGROUNDS
+   Garantiza 100% legibilidad en todas las vistas, tarjetas, encabezados y modales
+   ========================================================================== */
+
+/* 1. Fondo Global y Tipografia Base */
+.plp-wrapper,
+#view-projects .plp-wrapper,
+#inno-app-root,
+body .plp-wrapper {
+  background-color: #060e1d !important;
+  color: #e2e8f0 !important;
+}
+
+/* 2. Header / Barra de Navegacion */
+.inno-header,
+.plp-wrapper .inno-header {
+  background: rgba(7, 18, 36, 0.98) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12) !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5) !important;
+}
+
+.inno-brand-title,
+.plp-wrapper .inno-brand-title {
+  color: #ffffff !important;
+  font-weight: 900 !important;
+  text-shadow: 0 0 12px rgba(0, 245, 212, 0.4) !important;
+}
+
+.inno-brand-section,
+.plp-wrapper .inno-brand-section {
+  color: #00f5d4 !important;
+  font-weight: 700 !important;
+}
+
+.inno-brand-sep,
+.plp-wrapper .inno-brand-sep {
+  color: rgba(255, 255, 255, 0.4) !important;
+}
+
+.inno-nav-item,
+.plp-wrapper .inno-nav-item {
+  color: #cbd5e1 !important;
+  font-weight: 700 !important;
+}
+
+.inno-nav-item:hover,
+.plp-wrapper .inno-nav-item:hover {
+  color: #00f5d4 !important;
+}
+
+.inno-nav-item.active,
+.plp-wrapper .inno-nav-item.active {
+  color: #ffffff !important;
+  font-weight: 900 !important;
+}
+
+.inno-nav-indicator,
+.plp-wrapper .inno-nav-indicator {
+  background: #00f5d4 !important;
+  box-shadow: 0 0 10px #00f5d4 !important;
+}
+
+.inno-search-input,
+.plp-wrapper .inno-search-input {
+  background: rgba(255, 255, 255, 0.08) !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.22) !important;
+  color: #ffffff !important;
+}
+
+.inno-search-input::placeholder,
+.plp-wrapper .inno-search-input::placeholder {
+  color: #94a3b8 !important;
+}
+
+.inno-notification-bell,
+.plp-wrapper .inno-notification-bell {
+  background: rgba(255, 255, 255, 0.08) !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.2) !important;
+  color: #ffffff !important;
+}
+
+/* 3. Tarjeta Flotante Hero (Avance del Proyecto) */
+.inno-gauge-card,
+.plp-wrapper .inno-gauge-card,
+.inno-status-card,
+.plp-wrapper .inno-status-card {
+  background: linear-gradient(145deg, rgba(16, 36, 68, 0.96) 0%, rgba(8, 19, 38, 0.98) 100%) !important;
+  border: 1.5px solid rgba(0, 245, 212, 0.4) !important;
+  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.65), 0 0 25px rgba(0, 245, 212, 0.15) !important;
+  color: #ffffff !important;
+}
+
+.inno-gauge-card-title,
+.plp-wrapper .inno-gauge-card-title,
+.inno-status-title,
+.plp-wrapper .inno-status-title {
+  color: #ffffff !important;
+  font-weight: 900 !important;
+  font-size: 1.25rem !important;
+}
+
+.inno-gauge-number,
+.plp-wrapper .inno-gauge-number {
+  color: #ffffff !important;
+  font-weight: 900 !important;
+  text-shadow: 0 0 18px rgba(0, 245, 212, 0.6) !important;
+}
+
+.inno-legend-item,
+.plp-wrapper .inno-legend-item,
+.inno-legend-label,
+.plp-wrapper .inno-legend-label,
+.inno-status-desc,
+.plp-wrapper .inno-status-desc {
+  color: #e2e8f0 !important;
+  font-weight: 600 !important;
+  font-size: 0.92rem !important;
+}
+
+.inno-gauge-footer,
+.plp-wrapper .inno-gauge-footer {
+  color: #cbd5e1 !important;
+  font-weight: 500 !important;
+  font-size: 0.88rem !important;
+}
+
+/* 4. Barra de Metricas y KPIs */
+.inno-kpi-card,
+.plp-wrapper .inno-kpi-card {
+  background: linear-gradient(145deg, rgba(16, 36, 68, 0.94) 0%, rgba(8, 19, 38, 0.98) 100%) !important;
+  border: 1.5px solid rgba(0, 245, 212, 0.35) !important;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.55), 0 0 18px rgba(0, 245, 212, 0.12) !important;
+  color: #ffffff !important;
+}
+
+.inno-kpi-val,
+.plp-wrapper .inno-kpi-val {
+  color: #ffffff !important;
+  font-weight: 900 !important;
+  font-size: 2.1rem !important;
+  text-shadow: 0 0 16px rgba(0, 245, 212, 0.5) !important;
+}
+
+.inno-kpi-lbl,
+.plp-wrapper .inno-kpi-lbl {
+  color: #cbd5e1 !important;
+  font-weight: 600 !important;
+  font-size: 0.96rem !important;
+}
+
+/* 5. Titulos y Subtitulos de Seccion */
+.inno-section-title,
+.plp-wrapper .inno-section-title,
+.inno-why-lead-title,
+.plp-wrapper .inno-why-lead-title {
+  color: #ffffff !important;
+  font-weight: 900 !important;
+  font-size: 2.1rem !important;
+  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.6) !important;
+}
+
+.inno-section-sub,
+.plp-wrapper .inno-section-sub,
+.inno-why-lead-text,
+.plp-wrapper .inno-why-lead-text {
+  color: #cbd5e1 !important;
+  font-weight: 500 !important;
+  font-size: 1.15rem !important;
+  line-height: 1.6 !important;
+}
+
+/* 6. Tarjetas "Por que este proyecto?" */
+.inno-why-card,
+.plp-wrapper .inno-why-card {
+  background: linear-gradient(145deg, rgba(16, 36, 68, 0.95) 0%, rgba(9, 21, 42, 0.98) 100%) !important;
+  border: 1.5px solid rgba(0, 245, 212, 0.35) !important;
+  box-shadow: 0 12px 34px rgba(0, 0, 0, 0.55), 0 0 18px rgba(0, 245, 212, 0.12) !important;
+  color: #ffffff !important;
+}
+
+.inno-why-card-title,
+.plp-wrapper .inno-why-card-title,
+.inno-why-card h4,
+.plp-wrapper .inno-why-card h4 {
+  color: #ffffff !important;
+  font-weight: 900 !important;
+  font-size: 1.3rem !important;
+  text-shadow: 0 0 10px rgba(0, 0, 0, 0.4) !important;
+}
+
+.inno-why-card-desc,
+.plp-wrapper .inno-why-card-desc,
+.inno-why-card p,
+.plp-wrapper .inno-why-card p {
+  color: #e2e8f0 !important;
+  font-size: 1.02rem !important;
+  line-height: 1.65 !important;
+}
+
+.inno-why-card-link,
+.plp-wrapper .inno-why-card-link {
+  color: #00f5d4 !important;
+  font-weight: 800 !important;
+  font-size: 0.95rem !important;
+}
+
+/* 7. Ruta del Proyecto / Timeline */
+.inno-roadmap-track-wrap,
+.plp-wrapper .inno-roadmap-track-wrap {
+  background: linear-gradient(145deg, rgba(16, 36, 68, 0.95) 0%, rgba(8, 19, 38, 0.98) 100%) !important;
+  border: 1.5px solid rgba(0, 245, 212, 0.35) !important;
+  color: #ffffff !important;
+}
+
+.inno-road-name,
+.plp-wrapper .inno-road-name {
+  color: #ffffff !important;
+  font-weight: 800 !important;
+  font-size: 1.02rem !important;
+}
+
+.inno-road-name.active,
+.plp-wrapper .inno-road-name.active {
+  color: #00f5d4 !important;
+  font-weight: 900 !important;
+  text-shadow: 0 0 12px rgba(0, 245, 212, 0.6) !important;
+}
+
+.inno-road-sub,
+.plp-wrapper .inno-road-sub {
+  color: #cbd5e1 !important;
+  font-weight: 500 !important;
+  font-size: 0.88rem !important;
+}
+
+/* 8. Barra Lateral (Tu participacion) */
+.inno-sidebar-card,
+.plp-wrapper .inno-sidebar-card {
+  background: linear-gradient(145deg, rgba(16, 36, 68, 0.95) 0%, rgba(8, 19, 38, 0.98) 100%) !important;
+  border: 1.5px solid rgba(0, 245, 212, 0.35) !important;
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.6) !important;
+  color: #ffffff !important;
+}
+
+.inno-sidebar-title,
+.plp-wrapper .inno-sidebar-title {
+  color: #ffffff !important;
+  font-weight: 900 !important;
+  font-size: 1.3rem !important;
+}
+
+.inno-user-name,
+.plp-wrapper .inno-user-name {
+  color: #ffffff !important;
+  font-weight: 900 !important;
+  font-size: 1.3rem !important;
+}
+
+.inno-user-role,
+.plp-wrapper .inno-user-role {
+  color: #00f5d4 !important;
+  font-weight: 800 !important;
+  font-size: 0.98rem !important;
+}
+
+.inno-user-part-label,
+.plp-wrapper .inno-user-part-label {
+  color: #e2e8f0 !important;
+  font-weight: 600 !important;
+  font-size: 0.95rem !important;
+}
+
+.inno-user-part-percent,
+.plp-wrapper .inno-user-part-percent {
+  color: #00f5d4 !important;
+  font-weight: 900 !important;
+  font-size: 1.25rem !important;
+  text-shadow: 0 0 14px rgba(0, 245, 212, 0.6) !important;
+}
+
+.inno-btn-join,
+.plp-wrapper .inno-btn-join {
+  background: linear-gradient(135deg, #0284c7 0%, #00f5d4 100%) !important;
+  color: #071739 !important;
+  font-weight: 900 !important;
+}
+
+.inno-btn-comment,
+.plp-wrapper .inno-btn-comment {
+  background: rgba(255, 255, 255, 0.08) !important;
+  border: 2px solid rgba(255, 255, 255, 0.25) !important;
+  color: #ffffff !important;
+  font-weight: 800 !important;
+}
+
+/* 9. Recursos del Proyecto (Filtros y Tarjetas) */
+.inno-pill-tab,
+.inno-filter-pill,
+.plp-wrapper .inno-pill-tab,
+.plp-wrapper .inno-filter-pill {
+  background: rgba(16, 36, 68, 0.92) !important;
+  border: 2px solid rgba(255, 255, 255, 0.3) !important;
+  color: #ffffff !important;
+}
+
+.inno-pill-tab.active,
+.inno-filter-pill.active,
+.plp-wrapper .inno-pill-tab.active,
+.plp-wrapper .inno-filter-pill.active {
+  background: linear-gradient(135deg, #00f5d4 0%, #00b4d8 100%) !important;
+  border-color: #00f5d4 !important;
+  color: #071739 !important;
+  font-weight: 900 !important;
+}
+
+.inno-resource-card,
+.plp-wrapper .inno-resource-card {
+  background: linear-gradient(145deg, rgba(16, 36, 68, 0.95) 0%, rgba(8, 19, 38, 0.98) 100%) !important;
+  border: 1.5px solid rgba(0, 245, 212, 0.35) !important;
+  box-shadow: 0 10px 32px rgba(0, 0, 0, 0.55), 0 0 18px rgba(0, 245, 212, 0.1) !important;
+  color: #ffffff !important;
+}
+
+.inno-res-title,
+.plp-wrapper .inno-res-title,
+.inno-card-title,
+.plp-wrapper .inno-card-title {
+  color: #ffffff !important;
+  font-weight: 900 !important;
+  font-size: 1.3rem !important;
+  line-height: 1.35 !important;
+  text-shadow: 0 0 10px rgba(0, 0, 0, 0.4) !important;
+}
+
+.inno-res-desc,
+.plp-wrapper .inno-res-desc,
+.inno-card-desc,
+.plp-wrapper .inno-card-desc {
+  color: #e2e8f0 !important;
+  font-size: 1.05rem !important;
+  line-height: 1.6 !important;
+}
+
+.inno-res-footer,
+.plp-wrapper .inno-res-footer,
+.inno-card-footer,
+.plp-wrapper .inno-card-footer {
+  color: #cbd5e1 !important;
+  font-size: 0.95rem !important;
+  font-weight: 600 !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.15) !important;
+}
+
+.inno-card-action-btn,
+.inno-res-btn-action,
+.plp-wrapper .inno-card-action-btn,
+.plp-wrapper .inno-res-btn-action {
+  background: linear-gradient(135deg, #0284c7 0%, #00f5d4 100%) !important;
+  color: #071739 !important;
+  font-weight: 900 !important;
+}
+
+/* 10. Equipo y Participantes */
+.inno-team-card,
+.plp-wrapper .inno-team-card {
+  background: linear-gradient(145deg, rgba(16, 36, 68, 0.92) 0%, rgba(8, 19, 38, 0.96) 100%) !important;
+  border: 1.5px solid rgba(0, 245, 212, 0.3) !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5) !important;
+  color: #ffffff !important;
+}
+
+.inno-team-name,
+.plp-wrapper .inno-team-name {
+  color: #ffffff !important;
+  font-weight: 800 !important;
+  font-size: 1.2rem !important;
+}
+
+.inno-team-role,
+.plp-wrapper .inno-team-role {
+  color: #cbd5e1 !important;
+  font-weight: 600 !important;
+  font-size: 0.96rem !important;
+}
+
+.inno-btn-view-all-team,
+.plp-wrapper .inno-btn-view-all-team {
+  background: rgba(255, 255, 255, 0.08) !important;
+  border: 2px solid rgba(255, 255, 255, 0.25) !important;
+  color: #ffffff !important;
+  font-weight: 800 !important;
+}
+
+.inno-btn-view-all-team:hover,
+.plp-wrapper .inno-btn-view-all-team:hover {
+  background: #00f5d4 !important;
+  color: #071739 !important;
+  border-color: #00f5d4 !important;
+}
+
+/* 11. Modal Traslucido */
+.inno-glass-modal,
+.plp-lightbox-content {
+  color: #ffffff !important;
+}
+
+.inno-modal-title {
+  color: #ffffff !important;
+  text-shadow: 0 0 15px rgba(0, 245, 212, 0.4) !important;
+}
+
+.inno-modal-text {
+  color: #f1f5f9 !important;
+  line-height: 1.75 !important;
+}
+
+.inno-modal-pill {
+  color: #cbd5e1 !important;
+  background: rgba(0, 245, 212, 0.1) !important;
+  border: 1px solid rgba(0, 245, 212, 0.35) !important;
+}
+
+/* 12. Regla Universal de Respaldo contra Letra Oscura */
+.plp-wrapper h1,
+.plp-wrapper h2,
+.plp-wrapper h3,
+.plp-wrapper h4,
+.plp-wrapper h5,
+.plp-wrapper h6 {
+  color: #ffffff !important;
+}
+
+.plp-wrapper strong {
+  color: #ffffff !important;
+}
