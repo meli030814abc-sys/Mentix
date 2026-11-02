@@ -954,14 +954,19 @@ window.ProjectsView = {
       return;
     }
 
-    // Filtrar proyectos asegurando que los publicados, aprobados y creados por el usuario sean visibles
+    // Filtrar proyectos: Cualquier persona que se registre o navegue en MENTIX ve todos los proyectos públicos.
+    // Solo los proyectos marcados expresamente como privados se reservan para su autor, docentes o administradores.
     const allUserProjects = rawProjects.filter(c => {
-      if (!c.publicationStatus || c.publicationStatus === 'published' || c.publicationStatus === 'approved') return true;
-      if (isTeacherOrAdmin) return true;
-      if (window.appRouter && window.appRouter.isChallengeOwner(c)) return true;
-      const cleanAuthor = (c.author || '').toLowerCase().trim();
-      const currentName = (u?.name || '').toLowerCase().trim();
-      if (!cleanAuthor || cleanAuthor === currentName || c.authorId === u?.id) return true;
+      const isPrivate = c.isPublic === false || c.accessMode === 'private';
+      if (isPrivate) {
+        if (isTeacherOrAdmin) return true;
+        if (window.appRouter && window.appRouter.isChallengeOwner(c)) return true;
+        const cleanAuthor = (c.author || '').toLowerCase().trim();
+        const currentName = (u?.name || '').toLowerCase().trim();
+        if (cleanAuthor && cleanAuthor === currentName) return true;
+        if (c.authorId && c.authorId === u?.id) return true;
+        return false;
+      }
       return true;
     });
 
@@ -1661,12 +1666,26 @@ window.ProjectsView = {
       title: '',
       author: (u && (u.name || u.username)) ? (u.name || u.username) : 'Estudiante',
       summary: '',
-      description: ''
+      description: '',
+      isPublic: true
     };
+    if (this.createDraft.isPublic === undefined) this.createDraft.isPublic = true;
     this.createProjectStep = (this.createDraft.title && this.createDraft.summary) ? 2 : 1;
     this.viewMode = 'create';
     this.render();
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  },
+
+  setStudentProjectVisibility(isPublic) {
+    if (window.soundEngine && window.soundEngine.playClick) window.soundEngine.playClick();
+    if (!this.createDraft) this.createDraft = {};
+    this.createDraft.isPublic = Boolean(isPublic);
+    try {
+      localStorage.setItem('te_reto_student_create_draft', JSON.stringify(this.createDraft));
+    } catch (e) {}
+    if (this.viewMode === 'create') {
+      this.render();
+    }
   },
 
   goToCreateProjectStep(step) {
@@ -1703,7 +1722,8 @@ window.ProjectsView = {
         title: title,
         author: author,
         summary: summary,
-        description: (descInput?.value || this.createDraft?.description || '').trim()
+        description: (descInput?.value || this.createDraft?.description || '').trim(),
+        isPublic: this.createDraft?.isPublic !== false
       };
       try {
         localStorage.setItem('te_reto_student_create_draft', JSON.stringify(this.createDraft));
@@ -1721,7 +1741,8 @@ window.ProjectsView = {
           title: (titleInput?.value || this.createDraft?.title || '').trim(),
           author: (authorInput?.value || this.createDraft?.author || '').trim(),
           summary: (summaryInput?.value || this.createDraft?.summary || '').trim(),
-          description: (descInput?.value || this.createDraft?.description || '').trim()
+          description: (descInput?.value || this.createDraft?.description || '').trim(),
+          isPublic: this.createDraft?.isPublic !== false
         };
         try {
           localStorage.setItem('te_reto_student_create_draft', JSON.stringify(this.createDraft));
@@ -1787,9 +1808,10 @@ window.ProjectsView = {
       shortDescription: finalSummary,
       description: description,
       fullDescription: description,
-      publicationStatus: 'published',
-      status: 'completed',
-      isPublic: true,
+      publicationStatus: (draft.isPublic !== false) ? 'published' : 'draft',
+      status: (draft.isPublic !== false) ? 'completed' : 'in_progress',
+      isPublic: draft.isPublic !== false,
+      accessMode: draft.isPublic !== false ? 'public' : 'private',
       displayOrder: 1,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
@@ -1823,17 +1845,29 @@ window.ProjectsView = {
     };
 
     if (format === 'presentation') {
+      const bulletsList = description 
+        ? description.split('\n').map(s => s.trim().replace(/^[-•*✦●▸★✔\d.]+\s*/, '')).filter(Boolean)
+        : [finalSummary];
       newProject.slides = [
         {
           id: 'slide_1',
           title: title,
           subtitle: 'Por ' + author,
           content: finalSummary,
-          bullets: description ? [description] : [],
+          bullets: bulletsList.length > 0 ? bulletsList : [finalSummary],
           media: '',
           videoUrl: '',
           layout: 'split',
-          teacherNotes: ''
+          teacherNotes: '',
+          titleColor: '#ffffff',
+          subtitleColor: '#00f5d4',
+          contentColor: '#cbd5e1',
+          bulletsColor: '#ffffff',
+          titleFont: "'Outfit', sans-serif",
+          subtitleFont: "'Outfit', sans-serif",
+          contentFont: "'Outfit', sans-serif",
+          bulletsFont: "'Outfit', sans-serif",
+          bulletStyle: '✦'
         }
       ];
       newProject.resources = [
@@ -2126,6 +2160,77 @@ window.ProjectsView = {
             >${this.escapeHtml(d.description || '')}</textarea>
           </div>
 
+          <!-- PANTALLA 5: ¿Quieres que tu proyecto sea público o privado? -->
+          <div style="background: rgba(12, 20, 48, 0.75); border: 2px solid ${d.isPublic !== false ? 'rgba(0, 245, 212, 0.65)' : 'rgba(245, 158, 11, 0.65)'}; border-radius: 20px; padding: 1.75rem 1.9rem; box-shadow: 0 8px 35px rgba(0,0,0,0.4); transition: all 0.25s ease;">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.6rem; flex-wrap: wrap; gap: 0.5rem;">
+              <label class="student-title-cyan" style="display: flex; align-items: center; gap: 0.6rem; font-size: 1.35rem !important; font-weight: 900 !important; color: ${d.isPublic !== false ? '#00f5d4' : '#fbbf24'} !important; text-shadow: 0 0 16px ${d.isPublic !== false ? 'rgba(0, 245, 212, 0.85)' : 'rgba(251, 191, 36, 0.85)'}, 0 2px 6px rgba(0,0,0,0.95) !important;">
+                <span style="font-size: 1.5rem;">${d.isPublic !== false ? '🌐' : '🔒'}</span> ¿Quieres que tu proyecto sea público o privado? <span style="color: #ef4444;">*</span>
+              </label>
+              <span style="font-size: 0.82rem; font-weight: 900; background: ${d.isPublic !== false ? 'rgba(0,245,212,0.22)' : 'rgba(245,158,11,0.22)'}; color: ${d.isPublic !== false ? '#00f5d4' : '#fbbf24'}; border: 1px solid ${d.isPublic !== false ? 'rgba(0,245,212,0.6)' : 'rgba(245,158,11,0.6)'}; padding: 0.3rem 0.85rem; border-radius: 9999px; box-shadow: 0 0 12px ${d.isPublic !== false ? 'rgba(0,245,212,0.35)' : 'rgba(245,158,11,0.35)'};">
+                ${d.isPublic !== false ? '🌐 PÚBLICO' : '🔒 PRIVADO'}
+              </span>
+            </div>
+            <p class="student-field-desc" style="font-size: 0.96rem; color: #cbd5e1; margin: 0 0 1.25rem; text-shadow: 0 1px 3px rgba(0,0,0,0.8);">
+              Selecciona cómo se visualizará tu proyecto en la plataforma para los demás usuarios y visitantes:
+            </p>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.25rem;">
+              
+              <!-- Tarjeta 1: Público -->
+              <div 
+                onclick="window.ProjectsView.setStudentProjectVisibility(true)"
+                style="cursor: pointer; border-radius: 16px; padding: 1.35rem 1.45rem; transition: all 0.25s ease; border: ${d.isPublic !== false ? '2.5px solid #00f5d4' : '1.5px solid rgba(255,255,255,0.15)'}; background: ${d.isPublic !== false ? 'rgba(0, 245, 212, 0.16)' : 'rgba(5, 10, 24, 0.7)'}; box-shadow: ${d.isPublic !== false ? '0 0 30px rgba(0,245,212,0.35)' : 'none'}; display: flex; flex-direction: column; justify-content: space-between;"
+                onmouseenter="this.style.transform='translateY(-2px)';"
+                onmouseleave="this.style.transform='none';"
+              >
+                <div>
+                  <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.6rem;">
+                    <span style="font-size: 1.6rem;">🌐</span>
+                    <span style="font-size: 0.78rem; font-weight: 900; padding: 0.25rem 0.75rem; border-radius: 999px; background: ${d.isPublic !== false ? 'rgba(0,245,212,0.28)' : 'rgba(255,255,255,0.08)'}; color: ${d.isPublic !== false ? '#00f5d4' : '#94a3b8'}; border: 1px solid ${d.isPublic !== false ? '#00f5d4' : 'rgba(255,255,255,0.2)'};">
+                      ${d.isPublic !== false ? '✔ SELECCIONADO' : 'Elegir'}
+                    </span>
+                  </div>
+                  <h4 style="margin: 0 0 0.4rem; font-size: 1.2rem; color: #ffffff; font-weight: 900;">
+                    Proyecto Público (Para todos)
+                  </h4>
+                  <p style="margin: 0; font-size: 0.92rem; color: #cbd5e1; line-height: 1.45;">
+                    Cualquier persona que se registre o navegue en MENTIX podrá descubrir, ver y acceder a este proyecto en la sección de proyectos y en su Landing Page.
+                  </p>
+                </div>
+                <div style="margin-top: 1rem; padding-top: 0.65rem; border-top: 1px solid rgba(255,255,255,0.1); font-size: 0.8rem; font-weight: 800; color: #00f5d4; display: flex; align-items: center; gap: 0.35rem;">
+                  <span>✨</span> Recomendado para proyectos estudiantiles
+                </div>
+              </div>
+
+              <!-- Tarjeta 2: Privado -->
+              <div 
+                onclick="window.ProjectsView.setStudentProjectVisibility(false)"
+                style="cursor: pointer; border-radius: 16px; padding: 1.35rem 1.45rem; transition: all 0.25s ease; border: ${d.isPublic === false ? '2.5px solid #fbbf24' : '1.5px solid rgba(255,255,255,0.15)'}; background: ${d.isPublic === false ? 'rgba(245, 158, 11, 0.16)' : 'rgba(5, 10, 24, 0.7)'}; box-shadow: ${d.isPublic === false ? '0 0 30px rgba(245, 158, 11, 0.35)' : 'none'}; display: flex; flex-direction: column; justify-content: space-between;"
+                onmouseenter="this.style.transform='translateY(-2px)';"
+                onmouseleave="this.style.transform='none';"
+              >
+                <div>
+                  <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.6rem;">
+                    <span style="font-size: 1.6rem;">🔒</span>
+                    <span style="font-size: 0.78rem; font-weight: 900; padding: 0.25rem 0.75rem; border-radius: 999px; background: ${d.isPublic === false ? 'rgba(245,158,11,0.28)' : 'rgba(255,255,255,0.08)'}; color: ${d.isPublic === false ? '#fbbf24' : '#94a3b8'}; border: 1px solid ${d.isPublic === false ? '#fbbf24' : 'rgba(255,255,255,0.2)'};">
+                      ${d.isPublic === false ? '✔ SELECCIONADO' : 'Elegir'}
+                    </span>
+                  </div>
+                  <h4 style="margin: 0 0 0.4rem; font-size: 1.2rem; color: #ffffff; font-weight: 900;">
+                    Proyecto Privado (Solo tú y profesores)
+                  </h4>
+                  <p style="margin: 0; font-size: 0.92rem; color: #cbd5e1; line-height: 1.45;">
+                    Solo tú como creador y los docentes o administradores de la plataforma tendrán acceso para ver y editar este proyecto.
+                  </p>
+                </div>
+                <div style="margin-top: 1rem; padding-top: 0.65rem; border-top: 1px solid rgba(255,255,255,0.1); font-size: 0.8rem; font-weight: 800; color: #fbbf24; display: flex; align-items: center; gap: 0.35rem;">
+                  <span>🛡️</span> Acceso restringido y confidencial
+                </div>
+              </div>
+
+            </div>
+          </div>
+
         </div>
 
         <!-- Barra Inferior de Acción -->
@@ -2175,15 +2280,26 @@ window.ProjectsView = {
             </p>
           </div>
 
-          <button 
-            type="button" 
-            onclick="window.ProjectsView.goToCreateProjectStep(1)" 
-            style="background: rgba(255,255,255,0.12); border: 1.5px solid rgba(255,255,255,0.3); color: #ffffff; border-radius: 12px; padding: 0.65rem 1.25rem; font-size: 0.95rem; font-weight: 800; cursor: pointer; display: inline-flex; align-items: center; gap: 0.4rem; transition: all 0.2s ease;"
-            onmouseenter="this.style.background='rgba(255,255,255,0.22)';"
-            onmouseleave="this.style.background='rgba(255,255,255,0.12)';"
-          >
-            ✏️ Volver a editar datos
-          </button>
+          <div style="display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;">
+            <div 
+              onclick="window.ProjectsView.setStudentProjectVisibility(${d.isPublic === false ? 'true' : 'false'})" 
+              style="cursor: pointer; display: inline-flex; align-items: center; gap: 0.45rem; padding: 0.5rem 1rem; border-radius: 999px; font-size: 0.88rem; font-weight: 900; transition: all 0.2s ease; ${d.isPublic !== false ? 'background: rgba(0,245,212,0.2); color: #00f5d4; border: 1.5px solid #00f5d4; box-shadow: 0 0 14px rgba(0,245,212,0.3);' : 'background: rgba(245,158,11,0.2); color: #fbbf24; border: 1.5px solid #fbbf24; box-shadow: 0 0 14px rgba(245,158,11,0.3);'}"
+              title="Haz clic para cambiar la visibilidad de tu proyecto"
+            >
+              <span>${d.isPublic !== false ? '🌐 Proyecto Público' : '🔒 Proyecto Privado'}</span>
+              <span style="font-size: 0.72rem; opacity: 0.85;">(Cambiar)</span>
+            </div>
+
+            <button 
+              type="button" 
+              onclick="window.ProjectsView.goToCreateProjectStep(1)" 
+              style="background: rgba(255,255,255,0.12); border: 1.5px solid rgba(255,255,255,0.3); color: #ffffff; border-radius: 12px; padding: 0.65rem 1.25rem; font-size: 0.95rem; font-weight: 800; cursor: pointer; display: inline-flex; align-items: center; gap: 0.4rem; transition: all 0.2s ease;"
+              onmouseenter="this.style.background='rgba(255,255,255,0.22)';"
+              onmouseleave="this.style.background='rgba(255,255,255,0.12)';"
+            >
+              ✏️ Volver a editar datos
+            </button>
+          </div>
         </div>
 
         <div style="text-align: center; margin-bottom: 2.25rem;">

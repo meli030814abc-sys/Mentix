@@ -36,6 +36,38 @@ window.ProjectWizard = {
     { id: 'coral-suave', name: 'Crema & Coral', icon: '🎨', bg: 'linear-gradient(135deg, #fff7ed 0%, #fed7aa 50%, #fef3c7 100%)', titleColor: '#7c2d12', subtitleColor: '#ea580c', contentColor: '#431407', accent: '#ea580c' }
   ],
 
+  SLIDE_FONTS: [
+    { id: 'Outfit', name: 'Outfit (Moderna)', family: "'Outfit', sans-serif" },
+    { id: 'Montserrat', name: 'Montserrat (Titular)', family: "'Montserrat', sans-serif" },
+    { id: 'Poppins', name: 'Poppins (Amigable)', family: "'Poppins', sans-serif" },
+    { id: 'Plus Jakarta Sans', name: 'Plus Jakarta Sans (Limpia)', family: "'Plus Jakarta Sans', sans-serif" },
+    { id: 'Playfair Display', name: 'Playfair (Elegante Serif)', family: "'Playfair Display', serif" },
+    { id: 'Cinzel', name: 'Cinzel (Imperial)', family: "'Cinzel', serif" },
+    { id: 'Bebas Neue', name: 'Bebas Neue (Impacto)', family: "'Bebas Neue', sans-serif" },
+    { id: 'Anton', name: 'Anton (Cartel Grueso)', family: "'Anton', sans-serif" },
+    { id: 'Righteous', name: 'Righteous (Retro Futurista)', family: "'Righteous', cursive" },
+    { id: 'Orbitron', name: 'Orbitron (Sci-Fi Cyber)', family: "'Orbitron', sans-serif" },
+    { id: 'Press Start 2P', name: 'Press Start (Pixel Gamer)', family: "'Press Start 2P', monospace" },
+    { id: 'Pacifico', name: 'Pacifico (Cursiva)', family: "'Pacifico', cursive" },
+    { id: 'Caveat', name: 'Caveat (Manuscrita Pizarra)', family: "'Caveat', cursive" },
+    { id: 'Comfortaa', name: 'Comfortaa (Redondeada)', family: "'Comfortaa', cursive" },
+    { id: 'Lobster', name: 'Lobster (Vintage)', family: "'Lobster', cursive" },
+    { id: 'Merriweather', name: 'Merriweather (Académica)', family: "'Merriweather', serif" }
+  ],
+
+  BULLET_TYPES: [
+    { id: '✦', name: '✦ Destello Neón', icon: '✦' },
+    { id: '●', name: '● Punto Clásico', icon: '●' },
+    { id: '▸', name: '▸ Flecha Dinámica', icon: '▸' },
+    { id: '✔', name: '✔ Check Verificado', icon: '✔' },
+    { id: '◆', name: '◆ Rombo Elegante', icon: '◆' },
+    { id: '⚡', name: '⚡ Rayo de Energía', icon: '⚡' },
+    { id: 'custom', name: '🎯 Emoji Personalizado...', icon: '🎯' }
+  ],
+
+  QUICK_EMOJIS: ['🎯', '🚀', '💡', '🔥', '⭐', '💎', '🧠', '🌟', '📌', '✨', '🏆', '🎉'],
+  showSlideThemesPicker: false,
+
   stepsMeta: [
     { step: 1, icon: '🏷️', shortTitle: 'Nombre del proyecto', title: 'Paso 1. Nombre e identidad', question: '¿Cómo se llama tu proyecto y cuál es su subtítulo?' },
     { step: 2, icon: '📝', shortTitle: 'Descripción', title: 'Paso 2. Descripción y resumen', question: '¿En qué consiste tu proyecto y cuál es su resumen ejecutivo?' },
@@ -1918,12 +1950,21 @@ collectCurrentStepInputs() {
     if (!this.draft) return;
     if (!Array.isArray(this.draft.slides) || this.draft.slides.length === 0) {
       const pTitle = (this.draft.title || 'Mi Proyecto Innovador').trim();
-      const pSubtitle = (this.draft.subtitle || 'Presentación interactiva y propuesta de valor').trim();
-      const pDesc = (this.draft.shortDescription || this.draft.fullDescription || 'Descripción del proyecto en desarrollo.').trim();
+      const pAuthor = (this.draft.author || 'Carlosf').trim();
+      const pSubtitle = this.draft.subtitle && !this.draft.subtitle.startsWith('Por ') ? this.draft.subtitle.trim() : ('Por ' + pAuthor);
+      const pDesc = (this.draft.shortDescription || this.draft.summary || this.draft.fullDescription || 'Descripción del proyecto en desarrollo.').trim();
       const pCover = this.draft.mainImage || (this.draft.useDefaultImage !== false ? this.defaultCoverImage : '');
       const pProb = this.draft.problemStatement || 'Identificación del reto o problemática que motiva esta iniciativa.';
       const pObj = this.draft.mainObjective || 'Objetivo principal para generar impacto tangible en la comunidad.';
       const pBen = this.draft.benefits || 'Solución accesible, escalable y con resultados medibles.';
+
+      const initialBullets = (Array.isArray(this.draft.bullets) && this.draft.bullets.length > 0)
+        ? this.draft.bullets
+        : [
+            'Líder del proyecto: ' + pAuthor,
+            'Categoría: ' + (this.draft.categoryName || 'Tecnología & Programación'),
+            'Estado: ' + (this.draft.preparationStatus || 'En desarrollo')
+          ];
 
       this.draft.slides = [
         {
@@ -1931,16 +1972,21 @@ collectCurrentStepInputs() {
           title: pTitle,
           subtitle: pSubtitle,
           content: pDesc,
-          bullets: [
-            'Líder del proyecto: ' + (this.draft.author || 'Equipo de desarrollo'),
-            'Categoría: ' + (this.draft.categoryName || 'Tecnología & Programación'),
-            'Estado: ' + (this.draft.preparationStatus || 'En desarrollo')
-          ],
+          bullets: initialBullets,
           layout: 'split',
           media: pCover,
           notes: 'Diapositiva inicial de presentación ante evaluadores y público general.',
           bgColor: '#0b091a',
-          themeId: this.draft.designConfig?.themeId || 'cosmos'
+          themeId: this.draft.designConfig?.themeId || 'cosmos',
+          titleColor: '#ffffff',
+          subtitleColor: '#00f5d4',
+          contentColor: '#cbd5e1',
+          bulletsColor: '#ffffff',
+          titleFont: "'Outfit', sans-serif",
+          subtitleFont: "'Outfit', sans-serif",
+          contentFont: "'Outfit', sans-serif",
+          bulletsFont: "'Outfit', sans-serif",
+          bulletStyle: '✦'
         },
         {
           id: 'slide_' + Date.now() + '_2',
@@ -1956,7 +2002,16 @@ collectCurrentStepInputs() {
           media: '',
           notes: 'Explicar con claridad por qué este problema requiere una solución prioritaria.',
           bgColor: '#0b091a',
-          themeId: this.draft.designConfig?.themeId || 'cosmos'
+          themeId: this.draft.designConfig?.themeId || 'cosmos',
+          titleColor: '#ffffff',
+          subtitleColor: '#00f5d4',
+          contentColor: '#cbd5e1',
+          bulletsColor: '#ffffff',
+          titleFont: "'Outfit', sans-serif",
+          subtitleFont: "'Outfit', sans-serif",
+          contentFont: "'Outfit', sans-serif",
+          bulletsFont: "'Outfit', sans-serif",
+          bulletStyle: '✦'
         },
         {
           id: 'slide_' + Date.now() + '_3',
@@ -1972,7 +2027,16 @@ collectCurrentStepInputs() {
           media: '',
           notes: 'Detallar las ventajas competitivas y la innovación de nuestra propuesta.',
           bgColor: '#0b091a',
-          themeId: this.draft.designConfig?.themeId || 'cosmos'
+          themeId: this.draft.designConfig?.themeId || 'cosmos',
+          titleColor: '#ffffff',
+          subtitleColor: '#00f5d4',
+          contentColor: '#cbd5e1',
+          bulletsColor: '#ffffff',
+          titleFont: "'Outfit', sans-serif",
+          subtitleFont: "'Outfit', sans-serif",
+          contentFont: "'Outfit', sans-serif",
+          bulletsFont: "'Outfit', sans-serif",
+          bulletStyle: '✦'
         }
       ];
       this.activeSlideIndex = 0;
@@ -2157,176 +2221,439 @@ collectCurrentStepInputs() {
       <!-- Zona de Edición en Dos Columnas: Formulario a la Izquierda y Vista Previa en Vivo a la Derecha -->
       <div style="display: grid; grid-template-columns: minmax(360px, 1.1fr) minmax(360px, 1.2fr); gap: 1.5rem; align-items: start;">
         
-        <!-- Columna Izquierda: Formulario de la Diapositiva Activa -->
-        <div class="gdn-card" style="margin-bottom: 0;">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; border-bottom: 1px solid var(--gdn-border); padding-bottom: 0.65rem;">
-            <div>
-              <span style="font-size: 0.82rem; font-weight: 800; color: #10b981; text-transform: uppercase;">
-                Lámina #${activeIdx + 1} de ${slides.length}
+        <!-- Columna Izquierda: Formulario de la Diapositiva Activa (Idéntico a la imagen) -->
+        <div class="gdn-card" style="margin-bottom: 0; background: rgba(15, 23, 42, 0.95); border: 2px solid rgba(0, 245, 212, 0.35); border-radius: 18px; padding: 1.5rem; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+          
+          <!-- Encabezado de la lámina: Diapositiva #1 — [Título] + Color + Diseños (15) -->
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 0.85rem; flex-wrap: wrap; gap: 0.75rem;">
+            <div style="display: flex; align-items: center; gap: 0.6rem; overflow: hidden; max-width: 60%;">
+              <span class="glow-text-cyan" style="font-weight: 900; font-size: 1.2rem; color: #00f5d4; text-shadow: 0 0 15px rgba(0,245,212,0.6); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                Diapositiva #${activeIdx + 1} — ${this.escapeHtml(currentSlide.title || 'Sin título')}
               </span>
-              <h4 style="margin: 0; font-size: 1.05rem; font-weight: 800; color: var(--gdn-text);">
-                Editor de Contenido
-              </h4>
             </div>
 
-            <!-- Selector de Color de Fondo Específico -->
-            <div style="display: inline-flex; align-items: center; gap: 0.45rem; background: var(--gdn-subtle); padding: 0.28rem 0.75rem; border-radius: 999px; border: 1px solid var(--gdn-border);">
-              <span style="font-size: 0.78rem; font-weight: 700; color: var(--gdn-text-sec);">Color Fondo:</span>
-              <input 
-                type="color" 
-                value="${curBg.startsWith('#') ? curBg : '#0b091a'}" 
-                style="width: 24px; height: 24px; border: none; border-radius: 50%; cursor: pointer; background: transparent;"
-                onchange="window.ProjectWizard.setWizardSlideBg(this.value)"
-                title="Elegir color de fondo de esta lámina"
-              />
+            <div style="display: flex; align-items: center; gap: 0.65rem; flex-wrap: wrap;">
+              <!-- 1. Color de la Diapositiva -->
+              <div style="display: inline-flex; align-items: center; gap: 0.45rem; background: rgba(0,0,0,0.4); padding: 0.3rem 0.8rem; border-radius: 9999px; border: 1.5px solid rgba(255,255,255,0.18);" title="Color Diapositiva">
+                <span style="font-size: 0.78rem; font-weight: 700; color: #cbd5e1;">Color Diapositiva:</span>
+                <div 
+                  id="color-preview-slideBg" 
+                  style="position: relative; width: 22px; height: 22px; border-radius: 50%; background: ${currentSlide.bgColor || '#140f26'}; border: 2.5px solid rgba(255,255,255,0.85); box-shadow: 0 0 10px ${currentSlide.bgColor || '#140f26'}88; cursor: pointer; transition: transform 0.2s ease;"
+                  onmouseenter="this.style.transform='scale(1.2)'"
+                  onmouseleave="this.style.transform='scale(1)'"
+                >
+                  <input 
+                    type="color" 
+                    value="${currentSlide.bgColor && currentSlide.bgColor.startsWith('#') ? currentSlide.bgColor : '#140f26'}" 
+                    style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer;"
+                    onchange="window.ProjectWizard.setWizardSlideBg(this.value)"
+                  />
+                </div>
+              </div>
+
+              <!-- 2. Diseños de Diapositivas (15) -->
+              <button 
+                type="button" 
+                class="btn ${this.showSlideThemesPicker ? 'btn-cyan' : 'btn-outline'}" 
+                style="font-size: 0.8rem; padding: 0.38rem 0.9rem; font-weight: 800; border-color: #7c3aed; color: ${this.showSlideThemesPicker ? '#000' : '#c4b5fd'}; display: inline-flex; align-items: center; gap: 0.45rem; box-shadow: 0 0 12px rgba(124,58,237,0.3);"
+                onclick="window.ProjectWizard.toggleSlideThemesPicker()"
+                title="Diseños de Diapositivas (${this.SLIDE_THEMES.length})"
+              >
+                <span>🎨</span>
+                <span>Diseños de Diapositivas (${this.SLIDE_THEMES.length})</span>
+              </button>
             </div>
           </div>
 
-          <!-- Selector de Modo / Formato de Diapositiva -->
-          <div style="margin-bottom: 1.25rem;">
-            <label class="gdn-label" style="font-size: 0.85rem; font-weight: 700; margin-bottom: 0.4rem; display: block;">
-              <span>Diseño / Disposición de la Lámina:</span>
-            </label>
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 0.45rem;">
-              <button 
-                type="button" 
-                class="btn ${curLayout === 'split' ? 'btn-cyan' : 'btn-outline'}" 
-                style="font-size: 0.78rem; padding: 0.4rem 0.6rem; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; gap: 0.35rem;"
-                onclick="window.ProjectWizard.setWizardSlideLayout('split')"
-              >
-                <span>📝</span> Texto + Imagen
-              </button>
+          <!-- Panel Desplegable de los 15 Diseños de Diapositivas si está activo -->
+          ${this.showSlideThemesPicker ? `
+            <div style="background: linear-gradient(135deg, rgba(15, 23, 42, 0.98), rgba(20, 15, 38, 0.98)); border: 2px solid #7c3aed; border-radius: 16px; padding: 1.25rem; margin-bottom: 1.5rem; box-shadow: 0 12px 35px rgba(0,0,0,0.6);">
+              <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 0.75rem; margin-bottom: 1rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 0.75rem;">
+                <div>
+                  <div style="font-weight: 900; font-size: 1.05rem; color: #ffffff; display: flex; align-items: center; gap: 0.5rem;">
+                    <span>🎨</span> Diseños de Diapositivas Disponibles (${this.SLIDE_THEMES.length} Estilos)
+                  </div>
+                  <div style="font-size: 0.82rem; color: #94a3b8; margin-top: 0.15rem;">
+                    Selecciona un diseño para transformar el fondo y la combinación de colores de esta lámina.
+                  </div>
+                </div>
+                <button 
+                  class="btn btn-outline" 
+                  style="padding: 0.35rem 0.75rem; font-size: 0.78rem;" 
+                  onclick="window.ProjectWizard.toggleSlideThemesPicker()"
+                >
+                  ✕ Ocultar
+                </button>
+              </div>
+
+              <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 0.85rem; max-height: 380px; overflow-y: auto; padding-right: 0.4rem;">
+                ${this.SLIDE_THEMES.map((theme, tIdx) => `
+                  <div 
+                    onclick="window.ProjectWizard.applyWizardSlideTheme('${theme.id}', false)"
+                    style="background: ${theme.bg}; border: 1.5px solid rgba(255,255,255,0.2); border-radius: 12px; padding: 0.85rem; cursor: pointer; transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease; display: flex; flex-direction: column; justify-content: space-between; min-height: 100px; box-shadow: 0 4px 15px rgba(0,0,0,0.4);"
+                    onmouseenter="this.style.transform='translateY(-3px)'; this.style.borderColor='var(--neon-cyan)'; this.style.boxShadow='0 8px 25px rgba(0,245,212,0.3)'"
+                    onmouseleave="this.style.transform='none'; this.style.borderColor='rgba(255,255,255,0.2)'; this.style.boxShadow='0 4px 15px rgba(0,0,0,0.4)'"
+                    title="Aplicar ${theme.name}"
+                  >
+                    <div>
+                      <div style="display: flex; align-items: center; gap: 0.4rem; margin-bottom: 0.35rem;">
+                        <span style="font-size: 1.15rem;">${theme.icon}</span>
+                        <span style="font-size: 0.88rem; font-weight: 800; color: ${theme.titleColor}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                          ${theme.name}
+                        </span>
+                      </div>
+                      <div style="font-size: 0.73rem; color: ${theme.subtitleColor}; font-weight: 700; text-transform: uppercase;">
+                        Subtítulo
+                      </div>
+                      <div style="font-size: 0.72rem; color: ${theme.contentColor}; line-height: 1.25;">
+                        Texto y viñetas
+                      </div>
+                    </div>
+
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 0.65rem; padding-top: 0.45rem; border-top: 1px solid rgba(255,255,255,0.15);">
+                      <div style="display: flex; gap: 0.3rem;">
+                        <span style="width: 12px; height: 12px; border-radius: 50%; background: ${theme.titleColor}; display: inline-block;"></span>
+                        <span style="width: 12px; height: 12px; border-radius: 50%; background: ${theme.subtitleColor}; display: inline-block;"></span>
+                        <span style="width: 12px; height: 12px; border-radius: 50%; background: ${theme.contentColor}; display: inline-block;"></span>
+                      </div>
+                      <button 
+                        type="button"
+                        class="btn btn-outline" 
+                        style="font-size: 0.7rem; padding: 0.15rem 0.45rem; border-color: rgba(255,255,255,0.4); color: #ffffff;"
+                        onclick="event.stopPropagation(); window.ProjectWizard.applyWizardSlideTheme('${theme.id}', true)"
+                        title="Aplicar a todas las láminas"
+                      >
+                        A todas
+                      </button>
+                    </div>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+          ` : ''}
+
+          <!-- Selector de Modo / Formato de Diapositiva (Subcard) -->
+          <div style="background: rgba(124, 58, 237, 0.1); border: 1.5px solid rgba(124, 58, 237, 0.35); border-radius: 14px; padding: 0.9rem 1.2rem; margin-bottom: 1.5rem; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 0.85rem;">
+            <div>
+              <div style="font-weight: 800; font-size: 0.9rem; color: #ffffff; display: flex; align-items: center; gap: 0.4rem; margin-bottom: 0.2rem;">
+                <span>${curLayout === 'full' ? '🖥️' : (curLayout === 'video' ? '🎬' : '📝')}</span>
+                <span>Modo: ${curLayout === 'full' ? 'Lámina en Pantalla Completa (Importada)' : (curLayout === 'video' ? 'Creada en la App (Texto + Video)' : 'Creada en la App (Texto + Imagen)')}</span>
+              </div>
+              <div style="font-size: 0.8rem; color: #94a3b8;">
+                ${curLayout === 'full'
+                  ? 'La lámina se proyectará limpia en toda la pantalla sin textos de la página.' 
+                  : (curLayout === 'video' 
+                    ? 'Texto explicativo con título y viñetas a la izquierda, y video explicativo interactivo a la derecha.'
+                    : 'Texto explicativo con título y viñetas a la izquierda, e imagen de apoyo a la derecha.')}
+              </div>
+            </div>
+
+            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
               <button 
                 type="button" 
                 class="btn ${curLayout === 'full' ? 'btn-cyan' : 'btn-outline'}" 
-                style="font-size: 0.78rem; padding: 0.4rem 0.6rem; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; gap: 0.35rem;"
+                style="font-size: 0.82rem; padding: 0.4rem 0.85rem; font-weight: 800;"
                 onclick="window.ProjectWizard.setWizardSlideLayout('full')"
+                title="Mostrar solo la lámina en toda la pantalla"
               >
-                <span>🖥️</span> Pantalla Completa
+                🖥️ Pantalla Completa
+              </button>
+              <button 
+                type="button" 
+                class="btn ${(curLayout === 'split' || (!curLayout && curLayout !== 'full' && curLayout !== 'video')) ? 'btn-cyan' : 'btn-outline'}" 
+                style="font-size: 0.82rem; padding: 0.4rem 0.85rem; font-weight: 800;"
+                onclick="window.ProjectWizard.setWizardSlideLayout('split')"
+                title="Mostrar texto a la izquierda e imagen a la derecha"
+              >
+                📝 Texto + Imagen
               </button>
               <button 
                 type="button" 
                 class="btn ${curLayout === 'video' ? 'btn-cyan' : 'btn-outline'}" 
-                style="font-size: 0.78rem; padding: 0.4rem 0.6rem; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; gap: 0.35rem;"
+                style="font-size: 0.82rem; padding: 0.4rem 0.85rem; font-weight: 800;"
                 onclick="window.ProjectWizard.setWizardSlideLayout('video')"
+                title="Mostrar texto a la izquierda y video a la derecha"
               >
-                <span>🎬</span> Texto + Video
-              </button>
-              <button 
-                type="button" 
-                class="btn ${curLayout === 'center' ? 'btn-cyan' : 'btn-outline'}" 
-                style="font-size: 0.78rem; padding: 0.4rem 0.6rem; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; gap: 0.35rem;"
-                onclick="window.ProjectWizard.setWizardSlideLayout('center')"
-              >
-                <span>🎯</span> Portada Centrada
+                🎬 Texto + Video
               </button>
             </div>
           </div>
 
-          <!-- Título de la Diapositiva -->
-          <div class="gdn-field" style="margin-bottom: 0.9rem;">
-            <label class="gdn-label" for="gdn-slide-title" style="font-size: 0.88rem; font-weight: 700;">
-              <span>Título de la lámina <span style="color: #10b981;">*</span></span>
-            </label>
-            <input 
-              type="text" 
-              id="gdn-slide-title" 
-              class="gdn-input" 
-              value="${this.escapeHtml(currentSlide.title || '')}" 
-              placeholder="Ej: Problema y Oportunidad del Proyecto"
-              oninput="window.ProjectWizard.updateActiveSlideField('title', this.value)"
-            />
+          <!-- Campos del Formulario de Diapositiva -->
+          <!-- Fila 1: Título de la Lámina + Subtítulo o Tema -->
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem; margin-bottom: 1rem;">
+            <!-- 1. Título de la Lámina -->
+            <div>
+              <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.4rem; flex-wrap: wrap; gap: 0.4rem;">
+                <label style="font-size: 0.85rem; font-weight: 800; margin: 0; color: #ffffff;">
+                  Título de la Lámina
+                </label>
+                <div style="display: flex; align-items: center; gap: 0.65rem;">
+                  <!-- Selector de Fuente -->
+                  <div style="display: flex; align-items: center; gap: 0.3rem;" title="Cambiar tipo de letra del título">
+                    <span style="font-size: 0.72rem; color: #94a3b8; font-weight: 600;">Fuente:</span>
+                    <select 
+                      style="padding: 0.22rem 0.45rem; font-size: 0.78rem; border-radius: 8px; background: rgba(0,0,0,0.45); border: 1px solid rgba(255,255,255,0.2); color: #ffffff; cursor: pointer; outline: none; max-width: 140px;"
+                      onchange="window.ProjectWizard.updateCurrentSlideFont('titleFont', this.value)"
+                    >
+                      ${this.SLIDE_FONTS.map(f => `
+                        <option value="${f.family}" style="font-family: ${f.family};" ${(currentSlide.titleFont === f.family || (!currentSlide.titleFont && f.id === 'Outfit')) ? 'selected' : ''}>
+                          ${f.name}
+                        </option>
+                      `).join('')}
+                    </select>
+                  </div>
+
+                  <!-- Selector de Color -->
+                  <div style="display: flex; align-items: center; gap: 0.35rem;" title="Elegir color del título">
+                    <span style="font-size: 0.72rem; color: #94a3b8; font-weight: 600;">Color</span>
+                    <div 
+                      id="color-preview-titleColor" 
+                      style="position: relative; width: 22px; height: 22px; border-radius: 50%; background: ${currentSlide.titleColor || '#ffffff'}; border: 2.5px solid rgba(255,255,255,0.8); box-shadow: 0 0 10px ${currentSlide.titleColor || '#ffffff'}88; cursor: pointer; transition: transform 0.2s ease;"
+                      onmouseenter="this.style.transform='scale(1.2)'"
+                      onmouseleave="this.style.transform='scale(1)'"
+                    >
+                      <input 
+                        type="color" 
+                        value="${currentSlide.titleColor || '#ffffff'}" 
+                        style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer;"
+                        oninput="window.ProjectWizard.updateCurrentSlideColor('titleColor', this.value)"
+                        onchange="window.ProjectWizard.updateCurrentSlideColor('titleColor', this.value)"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <input 
+                type="text" 
+                id="input-titleColor"
+                value="${this.escapeHtml(currentSlide.title || '')}" 
+                placeholder="Ej: ILYLIY" 
+                style="width: 100%; padding: 0.75rem 1rem; border-radius: 10px; background: rgba(0,0,0,0.3); border: 1.5px solid rgba(255,255,255,0.2); color: ${currentSlide.titleColor || '#ffffff'}; font-family: ${currentSlide.titleFont || "'Outfit', sans-serif"}; font-size: 0.95rem; font-weight: 700; outline: none; box-sizing: border-box;"
+                oninput="window.ProjectWizard.updateActiveSlideField('title', this.value)"
+              />
+            </div>
+
+            <!-- 2. Subtítulo o Tema -->
+            <div>
+              <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.4rem; flex-wrap: wrap; gap: 0.4rem;">
+                <label style="font-size: 0.85rem; font-weight: 800; margin: 0; color: #ffffff;">
+                  Subtítulo o Tema
+                </label>
+                <div style="display: flex; align-items: center; gap: 0.65rem;">
+                  <!-- Selector de Fuente -->
+                  <div style="display: flex; align-items: center; gap: 0.3rem;" title="Cambiar tipo de letra del subtítulo">
+                    <span style="font-size: 0.72rem; color: #94a3b8; font-weight: 600;">Fuente:</span>
+                    <select 
+                      style="padding: 0.22rem 0.45rem; font-size: 0.78rem; border-radius: 8px; background: rgba(0,0,0,0.45); border: 1px solid rgba(255,255,255,0.2); color: #ffffff; cursor: pointer; outline: none; max-width: 140px;"
+                      onchange="window.ProjectWizard.updateCurrentSlideFont('subtitleFont', this.value)"
+                    >
+                      ${this.SLIDE_FONTS.map(f => `
+                        <option value="${f.family}" style="font-family: ${f.family};" ${(currentSlide.subtitleFont === f.family || (!currentSlide.subtitleFont && f.id === 'Outfit')) ? 'selected' : ''}>
+                          ${f.name}
+                        </option>
+                      `).join('')}
+                    </select>
+                  </div>
+
+                  <!-- Selector de Color -->
+                  <div style="display: flex; align-items: center; gap: 0.35rem;" title="Elegir color del subtítulo">
+                    <span style="font-size: 0.72rem; color: #94a3b8; font-weight: 600;">Color</span>
+                    <div 
+                      id="color-preview-subtitleColor" 
+                      style="position: relative; width: 22px; height: 22px; border-radius: 50%; background: ${currentSlide.subtitleColor || '#00f5d4'}; border: 2.5px solid rgba(255,255,255,0.8); box-shadow: 0 0 10px ${currentSlide.subtitleColor || '#00f5d4'}88; cursor: pointer; transition: transform 0.2s ease;"
+                      onmouseenter="this.style.transform='scale(1.2)'"
+                      onmouseleave="this.style.transform='scale(1)'"
+                    >
+                      <input 
+                        type="color" 
+                        value="${currentSlide.subtitleColor || '#00f5d4'}" 
+                        style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer;"
+                        oninput="window.ProjectWizard.updateCurrentSlideColor('subtitleColor', this.value)"
+                        onchange="window.ProjectWizard.updateCurrentSlideColor('subtitleColor', this.value)"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <input 
+                type="text" 
+                id="input-subtitleColor"
+                value="${this.escapeHtml(currentSlide.subtitle || '')}" 
+                placeholder="Ej: Por Carlosf" 
+                style="width: 100%; padding: 0.75rem 1rem; border-radius: 10px; background: rgba(0,0,0,0.3); border: 1.5px solid rgba(255,255,255,0.2); color: ${currentSlide.subtitleColor || '#00f5d4'}; font-family: ${currentSlide.subtitleFont || "'Outfit', sans-serif"}; font-size: 0.95rem; font-weight: 700; outline: none; box-sizing: border-box;"
+                oninput="window.ProjectWizard.updateActiveSlideField('subtitle', this.value)"
+              />
+            </div>
           </div>
 
-          <!-- Subtítulo de la Diapositiva -->
-          <div class="gdn-field" style="margin-bottom: 0.9rem;">
-            <label class="gdn-label" for="gdn-slide-subtitle" style="font-size: 0.88rem; font-weight: 700;">
-              <span>Subtítulo o Frase clave</span>
-            </label>
-            <input 
-              type="text" 
-              id="gdn-slide-subtitle" 
-              class="gdn-input" 
-              value="${this.escapeHtml(currentSlide.subtitle || '')}" 
-              placeholder="Ej: Análisis del contexto y necesidades reales"
-              oninput="window.ProjectWizard.updateActiveSlideField('subtitle', this.value)"
-            />
-          </div>
+          <!-- Fila 2: Explicación Central -->
+          <div style="margin-bottom: 1rem;">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.4rem; flex-wrap: wrap; gap: 0.4rem;">
+              <label style="font-size: 0.85rem; font-weight: 800; margin: 0; color: #ffffff;">
+                Explicación Central
+              </label>
+              <div style="display: flex; align-items: center; gap: 0.65rem;">
+                <!-- Selector de Fuente -->
+                <div style="display: flex; align-items: center; gap: 0.3rem;" title="Cambiar tipo de letra de la explicación">
+                  <span style="font-size: 0.72rem; color: #94a3b8; font-weight: 600;">Fuente:</span>
+                  <select 
+                    style="padding: 0.22rem 0.45rem; font-size: 0.78rem; border-radius: 8px; background: rgba(0,0,0,0.45); border: 1px solid rgba(255,255,255,0.2); color: #ffffff; cursor: pointer; outline: none; max-width: 140px;"
+                    onchange="window.ProjectWizard.updateCurrentSlideFont('contentFont', this.value)"
+                  >
+                    ${this.SLIDE_FONTS.map(f => `
+                      <option value="${f.family}" style="font-family: ${f.family};" ${(currentSlide.contentFont === f.family || (!currentSlide.contentFont && f.id === 'Outfit')) ? 'selected' : ''}>
+                        ${f.name}
+                      </option>
+                    `).join('')}
+                  </select>
+                </div>
 
-          <!-- Contenido Explicativo -->
-          <div class="gdn-field" style="margin-bottom: 0.9rem;">
-            <label class="gdn-label" for="gdn-slide-content" style="font-size: 0.88rem; font-weight: 700;">
-              <span>Párrafo o Contenido explicativo</span>
-            </label>
+                <!-- Selector de Color -->
+                <div style="display: flex; align-items: center; gap: 0.35rem;" title="Elegir color de la explicación">
+                  <span style="font-size: 0.72rem; color: #94a3b8; font-weight: 600;">Color</span>
+                  <div 
+                    id="color-preview-contentColor" 
+                    style="position: relative; width: 22px; height: 22px; border-radius: 50%; background: ${currentSlide.contentColor || '#cbd5e1'}; border: 2.5px solid rgba(255,255,255,0.8); box-shadow: 0 0 10px ${currentSlide.contentColor || '#cbd5e1'}88; cursor: pointer; transition: transform 0.2s ease;"
+                    onmouseenter="this.style.transform='scale(1.2)'"
+                    onmouseleave="this.style.transform='scale(1)'"
+                  >
+                    <input 
+                      type="color" 
+                      value="${currentSlide.contentColor || '#cbd5e1'}" 
+                      style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer;"
+                      oninput="window.ProjectWizard.updateCurrentSlideColor('contentColor', this.value)"
+                      onchange="window.ProjectWizard.updateCurrentSlideColor('contentColor', this.value)"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
             <textarea 
-              id="gdn-slide-content" 
-              class="gdn-textarea" 
               rows="3" 
-              placeholder="Describe los aspectos esenciales de esta lámina..."
+              id="input-contentColor"
+              placeholder="Escribe la explicación teórica o concepto clave..." 
+              style="width: 100%; padding: 0.75rem 1rem; border-radius: 10px; background: rgba(0,0,0,0.3); border: 1.5px solid rgba(255,255,255,0.2); color: ${currentSlide.contentColor || '#cbd5e1'}; font-family: ${currentSlide.contentFont || "'Outfit', sans-serif"}; font-size: 0.95rem; outline: none; resize: vertical; box-sizing: border-box;"
               oninput="window.ProjectWizard.updateActiveSlideField('content', this.value)"
             >${this.escapeHtml(currentSlide.content || '')}</textarea>
           </div>
 
-          <!-- Viñetas / Puntos Clave -->
-          <div class="gdn-field" style="margin-bottom: 0.9rem;">
-            <label class="gdn-label" for="gdn-slide-bullets" style="font-size: 0.88rem; font-weight: 700;">
-              <span>Viñetas / Puntos clave <span style="font-weight: 400; font-size: 0.78rem; color: var(--gdn-text-sec);">(1 punto por línea)</span></span>
-            </label>
+          <!-- Fila 3: Puntos Clave / Viñetas -->
+          <div style="margin-bottom: 1rem;">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.4rem; flex-wrap: wrap; gap: 0.4rem;">
+              <label style="font-size: 0.85rem; font-weight: 800; margin: 0; color: #ffffff;">
+                Puntos Clave / Viñetas (Uno por línea)
+              </label>
+              <div style="display: flex; align-items: center; gap: 0.65rem; flex-wrap: wrap;">
+                <!-- Selector de Viñetas -->
+                <div style="display: flex; align-items: center; gap: 0.3rem;" title="Elige el estilo de viñeta">
+                  <span style="font-size: 0.72rem; color: #94a3b8; font-weight: 600;">Viñeta:</span>
+                  <select 
+                    style="padding: 0.22rem 0.45rem; font-size: 0.78rem; border-radius: 8px; background: rgba(0,0,0,0.45); border: 1.5px solid #00f5d4; color: #ffffff; cursor: pointer; outline: none; max-width: 145px; font-weight: 700;"
+                    onchange="window.ProjectWizard.updateCurrentSlideBulletStyle(this.value)"
+                  >
+                    ${this.BULLET_TYPES.map(bt => `
+                      <option value="${bt.id}" ${(currentSlide.bulletStyle === bt.id || (!currentSlide.bulletStyle && bt.id === '✦')) ? 'selected' : ''}>
+                        ${bt.name}
+                      </option>
+                    `).join('')}
+                  </select>
+                </div>
+
+                <!-- Selector de Fuente -->
+                <div style="display: flex; align-items: center; gap: 0.3rem;" title="Cambiar tipo de letra de las viñetas">
+                  <span style="font-size: 0.72rem; color: #94a3b8; font-weight: 600;">Fuente:</span>
+                  <select 
+                    style="padding: 0.22rem 0.45rem; font-size: 0.78rem; border-radius: 8px; background: rgba(0,0,0,0.45); border: 1px solid rgba(255,255,255,0.2); color: #ffffff; cursor: pointer; outline: none; max-width: 140px;"
+                    onchange="window.ProjectWizard.updateCurrentSlideFont('bulletsFont', this.value)"
+                  >
+                    ${this.SLIDE_FONTS.map(f => `
+                      <option value="${f.family}" style="font-family: ${f.family};" ${(currentSlide.bulletsFont === f.family || (!currentSlide.bulletsFont && f.id === 'Outfit')) ? 'selected' : ''}>
+                        ${f.name}
+                      </option>
+                    `).join('')}
+                  </select>
+                </div>
+
+                <!-- Selector de Color -->
+                <div style="display: flex; align-items: center; gap: 0.35rem;" title="Elegir color de las viñetas">
+                  <span style="font-size: 0.72rem; color: #94a3b8; font-weight: 600;">Color</span>
+                  <div 
+                    id="color-preview-bulletsColor" 
+                    style="position: relative; width: 22px; height: 22px; border-radius: 50%; background: ${currentSlide.bulletsColor || '#ffffff'}; border: 2.5px solid rgba(255,255,255,0.8); box-shadow: 0 0 10px ${currentSlide.bulletsColor || '#ffffff'}88; cursor: pointer; transition: transform 0.2s ease;"
+                    onmouseenter="this.style.transform='scale(1.2)'"
+                    onmouseleave="this.style.transform='scale(1)'"
+                  >
+                    <input 
+                      type="color" 
+                      value="${currentSlide.bulletsColor || '#ffffff'}" 
+                      style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer;"
+                      oninput="window.ProjectWizard.updateCurrentSlideColor('bulletsColor', this.value)"
+                      onchange="window.ProjectWizard.updateCurrentSlideColor('bulletsColor', this.value)"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
             <textarea 
-              id="gdn-slide-bullets" 
-              class="gdn-textarea" 
               rows="3" 
-              placeholder="Punto clave 1&#10;Punto clave 2&#10;Punto clave 3"
+              id="input-bulletsColor"
+              placeholder="Punto clave 1&#10;Punto clave 2..." 
+              style="width: 100%; padding: 0.75rem 1rem; border-radius: 10px; background: rgba(0,0,0,0.3); border: 1.5px solid rgba(255,255,255,0.2); color: ${currentSlide.bulletsColor || '#ffffff'}; font-family: ${currentSlide.bulletsFont || "'Outfit', sans-serif"}; font-size: 0.95rem; outline: none; resize: vertical; box-sizing: border-box;"
               oninput="window.ProjectWizard.updateActiveSlideBullets(this.value)"
             >${this.escapeHtml((currentSlide.bullets || []).join('\n'))}</textarea>
           </div>
 
-          <!-- Multimedia: Imagen o Video -->
-          <div class="gdn-field" style="margin-bottom: 0.9rem;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.35rem;">
-              <label class="gdn-label" for="gdn-slide-media" style="font-size: 0.88rem; font-weight: 700; margin-bottom: 0;">
-                <span>${curLayout === 'video' ? 'URL del Video (YouTube / Vimeo / MP4)' : 'URL de Imagen o Ilustración'}</span>
+          <!-- Fila 4: URL de Imagen de Apoyo + Notas del Docente (Privadas) -->
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem; margin-bottom: 0;">
+            <!-- URL de Imagen / Video -->
+            <div>
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem;">
+                <label style="font-size: 0.85rem; font-weight: 800; margin: 0; color: #ffffff;">
+                  ${curLayout === 'video' ? 'URL del Video (YouTube / Vimeo / MP4)' : 'URL de Imagen de Apoyo'}
+                </label>
+                <input 
+                  type="file" 
+                  id="gdn-wizard-slide-img-input" 
+                  accept="image/*" 
+                  style="display: none;" 
+                  onchange="if(this.files && this.files[0]) window.ProjectWizard.handleWizardSlideMediaUpload(this.files[0])"
+                />
+                <button 
+                  type="button" 
+                  class="btn btn-outline" 
+                  style="font-size: 0.72rem; padding: 0.15rem 0.55rem; border-color: #00f5d4; color: #00f5d4;" 
+                  onclick="document.getElementById('gdn-wizard-slide-img-input').click()"
+                >
+                  📷 Subir local
+                </button>
+              </div>
+              <input 
+                type="text" 
+                id="gdn-slide-media" 
+                value="${this.escapeHtml(currentSlide.media || '')}" 
+                placeholder="https://..." 
+                style="width: 100%; padding: 0.75rem 1rem; border-radius: 10px; background: rgba(0,0,0,0.3); border: 1.5px solid rgba(255,255,255,0.2); color: #ffffff; font-size: 0.88rem; outline: none; box-sizing: border-box;"
+                oninput="window.ProjectWizard.updateActiveSlideField('media', this.value)"
+              />
+            </div>
+
+            <!-- Notas del Docente (Privadas) -->
+            <div>
+              <label style="display: block; font-size: 0.85rem; font-weight: 800; margin-bottom: 0.4rem; color: #ffffff;">
+                Notas del Docente (Privadas)
               </label>
               <input 
-                type="file" 
-                id="gdn-wizard-slide-img-input" 
-                accept="image/*" 
-                style="display: none;" 
-                onchange="if(this.files && this.files[0]) window.ProjectWizard.handleWizardSlideMediaUpload(this.files[0])"
+                type="text" 
+                id="gdn-slide-notes" 
+                value="${this.escapeHtml(currentSlide.notes || currentSlide.teacherNotes || '')}" 
+                placeholder="Puntos a recordar al exponer..." 
+                style="width: 100%; padding: 0.75rem 1rem; border-radius: 10px; background: rgba(0,0,0,0.3); border: 1.5px solid rgba(255,255,255,0.2); color: #ffffff; font-size: 0.88rem; outline: none; box-sizing: border-box;"
+                oninput="window.ProjectWizard.updateActiveSlideField('notes', this.value)"
               />
-              <button 
-                type="button" 
-                class="btn btn-outline" 
-                style="font-size: 0.74rem; padding: 0.2rem 0.6rem; border-color: #00f5d4; color: #00f5d4;" 
-                onclick="document.getElementById('gdn-wizard-slide-img-input').click()"
-              >
-                📷 Subir imagen local
-              </button>
             </div>
-            <input 
-              type="text" 
-              id="gdn-slide-media" 
-              class="gdn-input" 
-              value="${this.escapeHtml(currentSlide.media || '')}" 
-              placeholder="${curLayout === 'video' ? 'https://www.youtube.com/watch?v=...' : 'https://ejemplo.com/imagen.jpg o sube un archivo'}"
-              oninput="window.ProjectWizard.updateActiveSlideField('media', this.value)"
-            />
           </div>
 
-          <!-- Notas del Presentador -->
-          <div class="gdn-field" style="margin-bottom: 0;">
-            <label class="gdn-label" for="gdn-slide-notes" style="font-size: 0.88rem; font-weight: 700;">
-              <span>Notas del orador / Guion de exposición <span style="font-weight: 400; font-size: 0.78rem; color: var(--gdn-text-sec);">(Uso personal)</span></span>
-            </label>
-            <input 
-              type="text" 
-              id="gdn-slide-notes" 
-              class="gdn-input" 
-              value="${this.escapeHtml(currentSlide.notes || '')}" 
-              placeholder="Apuntes clave para cuando proyectes esta diapositiva..."
-              oninput="window.ProjectWizard.updateActiveSlideField('notes', this.value)"
-            />
-          </div>
         </div>
 
         <!-- Columna Derecha: Vista Previa Interactiva en Vivo -->
@@ -2440,6 +2767,18 @@ collectCurrentStepInputs() {
     const bullets = Array.isArray(s.bullets) ? s.bullets : [];
     const media = s.media || '';
 
+    const titleColor = s.titleColor || th.titleColor;
+    const titleFont = s.titleFont || "'Space Grotesk', sans-serif";
+    const subtitleColor = s.subtitleColor || th.subtitleColor;
+    const subtitleFont = s.subtitleFont || "'Outfit', sans-serif";
+    const contentColor = s.contentColor || th.contentColor;
+    const contentFont = s.contentFont || "'Outfit', sans-serif";
+    const bulletsColor = s.bulletsColor || s.contentColor || th.contentColor;
+    const bulletsFont = s.bulletsFont || "'Outfit', sans-serif";
+    const bIcon = (s.bulletStyle === 'custom')
+      ? (s.bulletEmoji || '✦')
+      : (s.bulletStyle || s.bulletIcon || '✦');
+
     if (curLayout === 'full') {
       return `
         <div style="width: 100%; height: 100%; min-height: 420px; background: ${curBg}; display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; padding: 1.5rem; box-sizing: border-box; text-align: center;">
@@ -2452,16 +2791,16 @@ collectCurrentStepInputs() {
             />
           ` : `
             <div style="max-width: 90%;">
-              <h2 style="font-size: clamp(1.4rem, 2.8vw, 2.2rem); font-weight: 900; color: ${th.titleColor}; margin: 0 0 0.75rem; text-shadow: 0 2px 10px rgba(0,0,0,0.6);">
+              <h2 style="font-size: clamp(1.4rem, 2.8vw, 2.2rem); font-weight: 900; color: ${titleColor}; font-family: ${titleFont}; margin: 0 0 0.75rem; text-shadow: 0 2px 10px rgba(0,0,0,0.6);">
                 ${this.escapeHtml(title)}
               </h2>
               ${subtitle ? `
-                <h4 style="font-size: 1.05rem; font-weight: 700; color: ${th.subtitleColor}; margin: 0 0 1rem; text-transform: uppercase; letter-spacing: 0.05em;">
+                <h4 style="font-size: 1.05rem; font-weight: 700; color: ${subtitleColor}; font-family: ${subtitleFont}; margin: 0 0 1rem; text-transform: uppercase; letter-spacing: 0.05em;">
                   ${this.escapeHtml(subtitle)}
                 </h4>
               ` : ''}
               ${content ? `
-                <p style="font-size: 0.95rem; color: ${th.contentColor}; line-height: 1.6; margin: 0 auto; max-width: 650px;">
+                <p style="font-size: 0.95rem; color: ${contentColor}; font-family: ${contentFont}; line-height: 1.6; margin: 0 auto; max-width: 650px;">
                   ${this.escapeHtml(content)}
                 </p>
               ` : ''}
@@ -2474,24 +2813,25 @@ collectCurrentStepInputs() {
     if (curLayout === 'center') {
       return `
         <div style="width: 100%; height: 100%; min-height: 420px; background: ${curBg}; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 2.25rem 1.75rem; box-sizing: border-box; text-align: center;">
-          <h2 style="font-size: clamp(1.4rem, 2.8vw, 2.1rem); font-weight: 900; color: ${th.titleColor}; margin: 0 0 0.6rem; text-shadow: 0 2px 12px rgba(0,0,0,0.7);">
+          <h2 style="font-size: clamp(1.4rem, 2.8vw, 2.1rem); font-weight: 900; color: ${titleColor}; font-family: ${titleFont}; margin: 0 0 0.6rem; text-shadow: 0 2px 12px rgba(0,0,0,0.7);">
             ${this.escapeHtml(title)}
           </h2>
           ${subtitle ? `
-            <div style="font-size: 1rem; font-weight: 800; color: ${th.subtitleColor}; margin-bottom: 1.25rem; text-transform: uppercase; letter-spacing: 0.06em;">
+            <div style="font-size: 1rem; font-weight: 800; color: ${subtitleColor}; font-family: ${subtitleFont}; margin-bottom: 1.25rem; text-transform: uppercase; letter-spacing: 0.06em;">
               ${this.escapeHtml(subtitle)}
             </div>
           ` : ''}
           ${content ? `
-            <p style="font-size: 0.92rem; color: ${th.contentColor}; line-height: 1.65; max-width: 620px; margin: 0 auto 1.25rem;">
+            <p style="font-size: 0.92rem; color: ${contentColor}; font-family: ${contentFont}; line-height: 1.65; max-width: 620px; margin: 0 auto 1.25rem;">
               ${this.escapeHtml(content)}
             </p>
           ` : ''}
           ${bullets.length > 0 ? `
             <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 0.65rem; max-width: 680px; margin-top: 0.5rem;">
               ${bullets.map(b => `
-                <div style="background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); padding: 0.45rem 0.9rem; border-radius: 999px; font-size: 0.84rem; color: ${th.contentColor}; font-weight: 600;">
-                  ✨ ${this.escapeHtml(b)}
+                <div style="background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); padding: 0.45rem 0.9rem; border-radius: 999px; font-size: 0.84rem; color: ${bulletsColor}; font-family: ${bulletsFont}; font-weight: 600; display: inline-flex; align-items: center; gap: 0.4rem;">
+                  <span style="color: ${subtitleColor};">${bIcon}</span>
+                  <span>${this.escapeHtml(b)}</span>
                 </div>
               `).join('')}
             </div>
@@ -2505,23 +2845,28 @@ collectCurrentStepInputs() {
       return `
         <div style="width: 100%; height: 100%; min-height: 420px; background: ${curBg}; padding: 1.75rem; box-sizing: border-box; display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; align-items: center;">
           <div>
-            <h3 style="font-size: 1.35rem; font-weight: 900; color: ${th.titleColor}; margin: 0 0 0.4rem; text-shadow: 0 2px 8px rgba(0,0,0,0.5);">
+            <h3 style="font-size: 1.35rem; font-weight: 900; color: ${titleColor}; font-family: ${titleFont}; margin: 0 0 0.4rem; text-shadow: 0 2px 8px rgba(0,0,0,0.5);">
               ${this.escapeHtml(title)}
             </h3>
             ${subtitle ? `
-              <div style="font-size: 0.88rem; font-weight: 700; color: ${th.subtitleColor}; margin-bottom: 0.85rem; text-transform: uppercase;">
+              <div style="font-size: 0.88rem; font-weight: 700; color: ${subtitleColor}; font-family: ${subtitleFont}; margin-bottom: 0.85rem; text-transform: uppercase;">
                 ${this.escapeHtml(subtitle)}
               </div>
             ` : ''}
             ${content ? `
-              <p style="font-size: 0.86rem; color: ${th.contentColor}; line-height: 1.55; margin-bottom: 0.85rem;">
+              <p style="font-size: 0.86rem; color: ${contentColor}; font-family: ${contentFont}; line-height: 1.55; margin-bottom: 0.85rem;">
                 ${this.escapeHtml(content)}
               </p>
             ` : ''}
             ${bullets.length > 0 ? `
-              <ul style="margin: 0; padding-left: 1.2rem; font-size: 0.82rem; color: ${th.contentColor}; line-height: 1.6;">
-                ${bullets.map(b => `<li style="margin-bottom: 0.35rem;">${this.escapeHtml(b)}</li>`).join('')}
-              </ul>
+              <div style="margin: 0; display: flex; flex-direction: column; gap: 0.35rem; font-size: 0.82rem; color: ${bulletsColor}; font-family: ${bulletsFont}; line-height: 1.6;">
+                ${bullets.map(b => `
+                  <div style="display: flex; align-items: flex-start; gap: 0.45rem;">
+                    <span style="color: ${subtitleColor}; line-height: 1;">${bIcon}</span>
+                    <span>${this.escapeHtml(b)}</span>
+                  </div>
+                `).join('')}
+              </div>
             ` : ''}
           </div>
           <div style="border-radius: 12px; overflow: hidden; background: #000; min-height: 220px; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 25px rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.15);">
@@ -2548,24 +2893,24 @@ collectCurrentStepInputs() {
     return `
       <div style="width: 100%; height: 100%; min-height: 420px; background: ${curBg}; padding: 1.85rem 1.6rem; box-sizing: border-box; display: grid; grid-template-columns: 1.15fr 0.95fr; gap: 1.25rem; align-items: center;">
         <div>
-          <h3 style="font-size: 1.35rem; font-weight: 900; color: ${th.titleColor}; margin: 0 0 0.45rem; line-height: 1.25; text-shadow: 0 2px 10px rgba(0,0,0,0.6);">
+          <h3 style="font-size: 1.35rem; font-weight: 900; color: ${titleColor}; font-family: ${titleFont}; margin: 0 0 0.45rem; line-height: 1.25; text-shadow: 0 2px 10px rgba(0,0,0,0.6);">
             ${this.escapeHtml(title)}
           </h3>
           ${subtitle ? `
-            <div style="font-size: 0.88rem; font-weight: 700; color: ${th.subtitleColor}; margin-bottom: 0.9rem; text-transform: uppercase; letter-spacing: 0.05em;">
+            <div style="font-size: 0.88rem; font-weight: 700; color: ${subtitleColor}; font-family: ${subtitleFont}; margin-bottom: 0.9rem; text-transform: uppercase; letter-spacing: 0.05em;">
               ${this.escapeHtml(subtitle)}
             </div>
           ` : ''}
           ${content ? `
-            <p style="font-size: 0.86rem; color: ${th.contentColor}; line-height: 1.6; margin-bottom: 1rem;">
+            <p style="font-size: 0.86rem; color: ${contentColor}; font-family: ${contentFont}; line-height: 1.6; margin-bottom: 1rem;">
               ${this.escapeHtml(content)}
             </p>
           ` : ''}
           ${bullets.length > 0 ? `
             <div style="display: flex; flex-direction: column; gap: 0.45rem;">
               ${bullets.map(b => `
-                <div style="display: flex; align-items: flex-start; gap: 0.5rem; font-size: 0.83rem; color: ${th.contentColor}; line-height: 1.45;">
-                  <span style="color: ${th.accent || '#00f5d4'}; font-weight: 900; font-size: 0.9rem; line-height: 1;">✦</span>
+                <div style="display: flex; align-items: flex-start; gap: 0.5rem; font-size: 0.83rem; color: ${bulletsColor}; font-family: ${bulletsFont}; line-height: 1.45;">
+                  <span style="color: ${subtitleColor || th.accent || '#00f5d4'}; font-weight: 900; font-size: 0.9rem; line-height: 1;">${bIcon}</span>
                   <span>${this.escapeHtml(b)}</span>
                 </div>
               `).join('')}
@@ -2724,6 +3069,78 @@ collectCurrentStepInputs() {
       previewBox.innerHTML = this.renderSlidePreviewInner(cur, activeTheme, cur.bgColor, cur.layout);
     }
     this.triggerFieldAutoSave();
+  },
+
+  toggleSlideThemesPicker() {
+    this.showSlideThemesPicker = !this.showSlideThemesPicker;
+    if (window.soundEngine && window.soundEngine.playClick) window.soundEngine.playClick();
+    if (window.ProjectsView) window.ProjectsView.render();
+  },
+
+  updateCurrentSlideFont(fontField, value) {
+    const slides = this.draft.slides || [];
+    const cur = slides[this.activeSlideIndex];
+    if (!cur) return;
+    cur[fontField] = value;
+    this.refreshLiveSlidePreview();
+    this.triggerFieldAutoSave();
+  },
+
+  updateCurrentSlideColor(colorField, value) {
+    const slides = this.draft.slides || [];
+    const cur = slides[this.activeSlideIndex];
+    if (!cur) return;
+    cur[colorField] = value;
+    const previewEl = document.getElementById('color-preview-' + colorField);
+    if (previewEl) {
+      previewEl.style.background = value;
+      previewEl.style.boxShadow = `0 0 10px ${value}88`;
+    }
+    const inputEl = document.getElementById('input-' + colorField);
+    if (inputEl) {
+      inputEl.style.color = value;
+    }
+    this.refreshLiveSlidePreview();
+    this.triggerFieldAutoSave();
+  },
+
+  updateCurrentSlideBulletStyle(style) {
+    const slides = this.draft.slides || [];
+    const cur = slides[this.activeSlideIndex];
+    if (!cur) return;
+    cur.bulletStyle = style;
+    this.refreshLiveSlidePreview();
+    this.triggerFieldAutoSave();
+    if (window.ProjectsView) window.ProjectsView.render();
+  },
+
+  updateCurrentSlideBulletEmoji(emoji) {
+    const slides = this.draft.slides || [];
+    const cur = slides[this.activeSlideIndex];
+    if (!cur) return;
+    cur.bulletEmoji = emoji;
+    this.refreshLiveSlidePreview();
+    this.triggerFieldAutoSave();
+  },
+
+  selectQuickBulletEmoji(emoji) {
+    const slides = this.draft.slides || [];
+    const cur = slides[this.activeSlideIndex];
+    if (!cur) return;
+    cur.bulletStyle = 'custom';
+    cur.bulletEmoji = emoji;
+    this.refreshLiveSlidePreview();
+    this.triggerFieldAutoSave();
+    if (window.ProjectsView) window.ProjectsView.render();
+  },
+
+  refreshLiveSlidePreview() {
+    const previewBox = document.getElementById('gdn-slide-live-preview-box');
+    if (!previewBox) return;
+    const slides = this.draft.slides || [];
+    const cur = slides[this.activeSlideIndex] || {};
+    const th = this.SLIDE_THEMES.find(t => t.id === (cur.themeId || 'cosmos')) || this.SLIDE_THEMES[0];
+    previewBox.innerHTML = this.renderSlidePreviewInner(cur, th, cur.bgColor || th.bg, cur.layout);
   },
 
   updateActiveSlideBullets(rawText) {
