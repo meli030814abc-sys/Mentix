@@ -877,6 +877,65 @@ window.ProjectsView = {
     const isAdmin = this.isAdminUser();
     // Asegurar que existan los proyectos estructurados en la base de datos
     if (!window.appState.challenges) window.appState.challenges = [];
+
+    // Integrar proyectos y borradores del Asistente Inteligente (mentix_govdata_wizard_drafts)
+    try {
+      const rawDrafts = localStorage.getItem('mentix_govdata_wizard_drafts');
+      if (rawDrafts) {
+        const wizardDrafts = JSON.parse(rawDrafts);
+        if (Array.isArray(wizardDrafts)) {
+          wizardDrafts.forEach(wd => {
+            if (wd && wd.id) {
+              const exIdx = window.appState.challenges.findIndex(c => c && c.id === wd.id);
+              const formatted = {
+                id: wd.id,
+                title: wd.title || wd.landingConfig?.publicName || 'Proyecto GovData',
+                subtitle: wd.subtitle || 'Proyecto GovData Nexus',
+                description: wd.shortDescription || wd.description || wd.fullDescription || 'Proyecto documentado con el Asistente Inteligente GovData Nexus.',
+                projectType: wd.projectType || 'presentation',
+                isGovDataProject: true,
+                category: wd.category || 'tecnologia',
+                categoryName: wd.categoryName || 'Tecnología & Programación',
+                author: wd.author || wd.teamLead || 'Docente / Estudiante',
+                authorRole: wd.authorRole || 'student',
+                status: wd.status || (wd.publicationStatus === 'published' ? 'completed' : 'in_progress'),
+                publicationStatus: wd.publicationStatus || 'pending_approval',
+                approvalStatus: wd.approvalStatus || 'pending',
+                isPublic: wd.isPublic === true,
+                image: wd.mainImage || wd.thumbnailImage || wd.banner || 'assets/projects_ui/card_data_gov.png',
+                banner: wd.banner || wd.mainImage || 'assets/projects_ui/card_data_gov.png',
+                createdAt: wd.createdAt || new Date().toISOString(),
+                updatedAt: wd.updatedAt || new Date().toISOString(),
+                govdata: wd
+              };
+              if (exIdx >= 0) {
+                window.appState.challenges[exIdx] = { ...formatted, ...window.appState.challenges[exIdx], title: wd.title || window.appState.challenges[exIdx].title };
+              } else {
+                window.appState.challenges.unshift(formatted);
+              }
+            }
+          });
+        }
+      }
+    } catch(e) {}
+
+    // Integrar proyectos de bóvedas personales
+    try {
+      for (let i = 0; i < localStorage.length; i++) {
+        const k = localStorage.key(i);
+        if (k && k.startsWith('mentix_user_projects_')) {
+          const vault = JSON.parse(localStorage.getItem(k) || '[]');
+          if (Array.isArray(vault)) {
+            vault.forEach(vp => {
+              if (vp && vp.id && !window.appState.challenges.some(c => c && c.id === vp.id)) {
+                window.appState.challenges.unshift(vp);
+              }
+            });
+          }
+        }
+      }
+    } catch(e) {}
+
     const hasDBProjects = window.appState.challenges.some(c => 
       c.projectType === 'presentation' || c.projectType === 'video' || c.projectType === 'document' || c.projectType === 'url' || 
       c.isGovDataProject || c.project_type || c.is_gov_data_project

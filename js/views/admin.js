@@ -46,7 +46,86 @@ window.AdminView = {
   getRealProjects() {
     let raw = (window.appState && Array.isArray(window.appState.challenges)) ? window.appState.challenges : [];
     
-    // Si DEFAULT_PROJECTS existe y no están en raw, integrarlos
+    // 1. Integrar proyectos del Asistente Inteligente (mentix_govdata_wizard_drafts)
+    try {
+      const rawDrafts = localStorage.getItem('mentix_govdata_wizard_drafts');
+      if (rawDrafts) {
+        const wizardDrafts = JSON.parse(rawDrafts);
+        if (Array.isArray(wizardDrafts)) {
+          wizardDrafts.forEach(wd => {
+            if (wd && wd.id) {
+              const exIdx = raw.findIndex(c => c && c.id === wd.id);
+              const formatted = {
+                id: wd.id,
+                title: wd.title || wd.landingConfig?.publicName || 'Proyecto GovData',
+                subtitle: wd.subtitle || 'Proyecto GovData Nexus',
+                description: wd.shortDescription || wd.description || wd.fullDescription || 'Proyecto documentado con el Asistente Inteligente GovData Nexus.',
+                projectType: wd.projectType || 'presentation',
+                isGovDataProject: true,
+                category: wd.category || 'tecnologia',
+                categoryName: wd.categoryName || 'Tecnología & Programación',
+                author: wd.author || wd.teamLead || 'Docente / Estudiante',
+                authorRole: wd.authorRole || 'student',
+                status: wd.status || (wd.publicationStatus === 'published' ? 'completed' : 'in_progress'),
+                publicationStatus: wd.publicationStatus || 'pending_approval',
+                approvalStatus: wd.approvalStatus || 'pending',
+                isPublic: wd.isPublic === true,
+                image: wd.mainImage || wd.thumbnailImage || wd.banner || 'assets/projects_ui/card_data_gov.png',
+                banner: wd.banner || wd.mainImage || 'assets/projects_ui/card_data_gov.png',
+                createdAt: wd.createdAt || new Date().toISOString(),
+                updatedAt: wd.updatedAt || new Date().toISOString(),
+                govdata: wd
+              };
+              if (exIdx >= 0) {
+                raw[exIdx] = { ...formatted, ...raw[exIdx], title: wd.title || raw[exIdx].title };
+              } else {
+                raw.unshift(formatted);
+                if (window.appState && Array.isArray(window.appState.challenges)) {
+                  window.appState.challenges.unshift(formatted);
+                }
+              }
+            }
+          });
+        }
+      }
+    } catch(e) {}
+
+    // 2. Integrar proyectos guardados en bóvedas de usuario
+    try {
+      for (let i = 0; i < localStorage.length; i++) {
+        const k = localStorage.key(i);
+        if (k && k.startsWith('mentix_user_projects_')) {
+          const vault = JSON.parse(localStorage.getItem(k) || '[]');
+          if (Array.isArray(vault)) {
+            vault.forEach(vp => {
+              if (vp && vp.id && !raw.some(c => c && c.id === vp.id)) {
+                raw.unshift(vp);
+                if (window.appState && Array.isArray(window.appState.challenges)) {
+                  window.appState.challenges.unshift(vp);
+                }
+              }
+            });
+          }
+        }
+      }
+    } catch(e) {}
+
+    // 3. Integrar proyectos guardados en te_reto_challenges y mentix_projects
+    try {
+      const stored = localStorage.getItem('te_reto_challenges') || localStorage.getItem('mentix_challenges');
+      if (stored) {
+        const list = JSON.parse(stored);
+        if (Array.isArray(list)) {
+          list.forEach(item => {
+            if (item && item.id && !raw.some(c => c && c.id === item.id)) {
+              raw.push(item);
+            }
+          });
+        }
+      }
+    } catch(e) {}
+
+    // 4. Si DEFAULT_PROJECTS existe y no están en raw, integrarlos
     if (typeof DEFAULT_PROJECTS !== 'undefined' && Array.isArray(DEFAULT_PROJECTS)) {
       DEFAULT_PROJECTS.forEach(dp => {
         if (!raw.some(c => c && c.id === dp.id)) {

@@ -399,6 +399,16 @@ window.ProjectWizard = {
       console.warn('Aviso al guardar borrador local:', e);
     }
 
+    // Sincronizar inmediatamente con window.appState.challenges y el almacenamiento global para que aparezca en Admin y en Proyectos
+    try {
+      this.syncProjectRecordToAppState(this.draft.publicationStatus || 'pending_approval');
+      if (typeof saveGlobalState === 'function') {
+        saveGlobalState(window.appState);
+      }
+    } catch (e) {
+      console.warn('Aviso al sincronizar borrador con appState:', e);
+    }
+
     // 2. Guardar en Supabase (base de datos en la nube sin inventar datos)
     let supabaseSaved = false;
     if (window.supabaseService) {
