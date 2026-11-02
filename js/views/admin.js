@@ -40,6 +40,50 @@ window.AdminView = {
   },
 
   /**
+   * Obtiene exclusivamente los proyectos reales estructurados (presentaciones, videos, documentos, URLs, GovData)
+   * EXCLUYENDO completamente los cuestionarios de preguntas / retos gamificados de trivia.
+   */
+  getRealProjects() {
+    let raw = (window.appState && Array.isArray(window.appState.challenges)) ? window.appState.challenges : [];
+    
+    // Si DEFAULT_PROJECTS existe y no están en raw, integrarlos
+    if (typeof DEFAULT_PROJECTS !== 'undefined' && Array.isArray(DEFAULT_PROJECTS)) {
+      DEFAULT_PROJECTS.forEach(dp => {
+        if (!raw.some(c => c && c.id === dp.id)) {
+          raw.push({ ...dp });
+        }
+      });
+    }
+
+    return raw.filter(c => {
+      if (!c || !c.id || c.deleted || c.is_deleted) return false;
+      // Excluir retos de tipo quiz/cuestionario
+      if (c.projectType === 'quiz') return false;
+      // Si tiene preguntas de trivia pero NINGÚN componente de proyecto real (slides, video, doc, url, govdata)
+      if (!c.projectType && Array.isArray(c.questions) && c.questions.length > 0 && !c.isGovDataProject && !c.slides && !c.videoUrl && !c.docContent && !c.resourceWebUrl) {
+        return false;
+      }
+      // Si el título empieza por "reto" o "desafío" y no tiene artefactos de proyecto estructurado
+      const titleLower = (c.title || '').toLowerCase().trim();
+      if ((titleLower.startsWith('reto ') || titleLower.startsWith('desafío ') || titleLower.startsWith('desafio ')) && !c.slides && !c.videoUrl && !c.docContent && !c.resourceWebUrl && !c.isGovDataProject) {
+        return false;
+      }
+      // Solo proyectos con tipos de proyecto válidos o contenido estructurado
+      return c.projectType === 'presentation' || 
+             c.projectType === 'video' || 
+             c.projectType === 'document' || 
+             c.projectType === 'url' || 
+             c.isGovDataProject || 
+             c.is_gov_data_project || 
+             (Array.isArray(c.slides) && c.slides.length > 0) || 
+             c.videoUrl || 
+             c.docContent || 
+             c.resourceWebUrl || 
+             (c.id && String(c.id).startsWith('proj_'));
+    });
+  },
+
+  /**
    * Comprobar si el usuario actual tiene permisos de Administrador
    */
   isAdminUser() {
@@ -185,7 +229,7 @@ window.AdminView = {
             <button class="admin-nav-item ${this.activeTab === 'projects' ? 'active' : ''}" onclick="window.AdminView.switchTab('projects')">
               <span class="admin-nav-icon">📁</span>
               <span class="admin-nav-label sidebar-hideable">Mis Proyectos</span>
-              <span class="admin-nav-badge sidebar-hideable">${(window.appState && window.appState.challenges ? window.appState.challenges.length : 0)}</span>
+              <span class="admin-nav-badge sidebar-hideable">${this.getRealProjects().length}</span>
             </button>
             <button class="admin-nav-item ${this.activeTab === 'teacher' ? 'active' : ''}" onclick="window.AdminView.switchTab('teacher')">
               <span class="admin-nav-icon">📋</span>
@@ -498,7 +542,7 @@ window.AdminView = {
    * 1. DASHBOARD EJECUTIVO
    */
   templateDashboard() {
-    const projects = (window.appState && window.appState.challenges) ? window.appState.challenges : [];
+    const projects = this.getRealProjects();
     const users = (window.appState && window.appState.users) ? window.appState.users : [];
     const categories = (window.appState && window.appState.categories) ? window.appState.categories : [];
 
@@ -721,7 +765,7 @@ window.AdminView = {
    * 2. GESTIÓN VISUAL DE PROYECTOS (VISTA DE TARJETAS Y TABLA)
    */
   templateProjects() {
-    const rawProjects = (window.appState && window.appState.challenges) ? window.appState.challenges : [];
+    const rawProjects = this.getRealProjects();
     const categories = (window.appState && window.appState.categories) ? window.appState.categories : [];
 
     // Filtrado
@@ -758,7 +802,7 @@ window.AdminView = {
       <div class="admin-breadcrumbs">
         <span>Inicio</span>
         <span class="sep">/</span>
-        <span class="active">Mis Proyectos & Moderación</span>
+        <span class="active">Mis Proyectos</span>
       </div>
 
       <!-- HERO BANNER INSTITUCIONAL DEL ROBOT (SOLO PARA ADMINS CON BOTONES DE ACCIÓN) -->
@@ -837,8 +881,8 @@ window.AdminView = {
       <!-- Header del Módulo -->
       <div class="admin-section-header">
         <div>
-          <h2>Explorador & Moderación de Proyectos</h2>
-          <p>Supervisa los retos creados por estudiantes y docentes, controla su visibilidad pública y estados.</p>
+          <h2>Mis Proyectos</h2>
+          <p>Supervisa, administra y gestiona exclusivamente los proyectos educativos de la plataforma.</p>
         </div>
         <div class="admin-header-actions">
           <button class="btn btn-outline" onclick="window.AdminView.exportProjectsCSV()">
@@ -1460,7 +1504,7 @@ window.AdminView = {
    */
   templateCategories() {
     const categories = (window.appState && window.appState.categories) ? window.appState.categories : [];
-    const projects = (window.appState && window.appState.challenges) ? window.appState.challenges : [];
+    const projects = this.getRealProjects();
 
     return `
       <!-- Breadcrumbs -->
@@ -1512,7 +1556,7 @@ window.AdminView = {
    * 5. REPORTES Y ANALÍTICA
    */
   templateReports() {
-    const projects = (window.appState && window.appState.challenges) ? window.appState.challenges : [];
+    const projects = this.getRealProjects();
     const users = (window.appState && window.appState.users) ? window.appState.users : [];
 
     return `
@@ -2873,7 +2917,7 @@ window.AdminView = {
   // ==========================================
 
   exportProjectsCSV() {
-    const projects = (window.appState && window.appState.challenges) ? window.appState.challenges : [];
+    const projects = this.getRealProjects();
     if (projects.length === 0) {
       this.showToast('No hay proyectos para exportar', 'warning');
       return;
