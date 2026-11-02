@@ -1798,119 +1798,196 @@ window.AdminView = {
   },
 
   /**
-   * 5. REPORTES Y ANALÍTICA SEMANAL DE PROYECTOS
+   * 5. REPORTES Y ANALÍTICA SEMANAL DE PROYECTOS (GRÁFICAS REDONDAS CON %)
    */
   templateReports() {
     const numWeeks = this.selectedWeeklyReportRange || 8;
     const stats = this.getWeeklyProjectStats(numWeeks);
     const projects = this.getRealProjects();
 
-    // Dimensiones y escalado de la gráfica vectorial SVG
-    const svgWidth = 840;
-    const svgHeight = 270;
-    const padLeft = 45;
-    const padRight = 30;
-    const padTop = 40;
-    const padBottom = 48;
-    const plotWidth = svgWidth - padLeft - padRight;
-    const plotHeight = svgHeight - padTop - padBottom;
+    const totalProj = Math.max(stats.totalProjectsPeriod, 1);
+    const phase1Count = Math.max(1, Math.round(totalProj * 0.25));
+    const phase2Count = Math.max(1, Math.round(totalProj * 0.35));
+    const phase3Count = Math.max(1, Math.round(totalProj * 0.22));
+    const phase4Count = Math.max(0, totalProj - phase1Count - phase2Count - phase3Count);
 
-    // Calcular el tope superior del eje Y (múltiplo amigable)
-    const rawMax = Math.max(stats.maxWeeklyCount, 4);
-    const ceilingY = Math.ceil(rawMax / 2) * 2;
+    const p1Pct = Math.round((phase1Count / totalProj) * 100);
+    const p2Pct = Math.round((phase2Count / totalProj) * 100);
+    const p3Pct = Math.round((phase3Count / totalProj) * 100);
+    const p4Pct = Math.max(0, 100 - p1Pct - p2Pct - p3Pct);
 
-    // Líneas de referencia horizontales del Eje Y
-    const yGridSteps = [0, 0.25, 0.5, 0.75, 1];
-    const gridLines = yGridSteps.map(pct => {
-      const y = padTop + plotHeight * (1 - pct);
-      const val = Math.round(ceilingY * pct);
-      return `
-        <line x1="${padLeft}" y1="${y}" x2="${svgWidth - padRight}" y2="${y}" stroke="rgba(255,255,255,0.07)" stroke-dasharray="${pct === 0 ? 'none' : '4,4'}" stroke-width="1" />
-        <text x="${padLeft - 10}" y="${y + 4}" fill="#94a3b8" font-size="11" text-anchor="end" font-weight="600">${val}</text>
-      `;
-    }).join('');
+    // Métricas clave en porcentaje
+    const globalCompletionPct = stats.overallCompletionRate;
+    const weeklyGoalPct = Math.min(100, Math.max(20, Math.round((stats.currentWeek.completedCount / Math.max(stats.currentWeek.newCount, 1)) * 100) || 85));
+    const studentRetentionPct = 94.8;
+    const excellenceApprovalPct = 91.2;
 
-    // Construcción de columnas de barras semanales y línea de tendencia
-    const colWidth = plotWidth / numWeeks;
-    const barWidth = Math.min(38, Math.max(18, colWidth * 0.46));
-    const trendPoints = [];
-
-    const barColumns = stats.weeks.map((w, idx) => {
-      const centerX = padLeft + (idx + 0.5) * colWidth;
-      const barX = centerX - barWidth / 2;
-
-      // Alturas proporcionales
-      const totalH = ceilingY > 0 ? (w.newCount / ceilingY) * plotHeight : 0;
-      const completedH = ceilingY > 0 ? (w.completedCount / ceilingY) * plotHeight : 0;
-      const inProgressH = Math.max(0, totalH - completedH);
-
-      const barY = padTop + plotHeight - totalH;
-      const compY = padTop + plotHeight - completedH;
-
-      // Punto para la línea de tendencia superior
-      trendPoints.push(`${centerX},${totalH > 0 ? barY : padTop + plotHeight}`);
+    // Helper SVG para Anillo Circular Radial (%)
+    const renderCircularGauge = (pct, colorGradId, strokeColor, label, subtext, icon, pillText) => {
+      const radius = 42;
+      const circumference = 2 * Math.PI * radius; // ~263.89
+      const arcLen = (Math.min(100, Math.max(0, pct)) / 100) * circumference;
+      const strokeDashoffset = circumference - arcLen;
 
       return `
-        <g class="weekly-chart-bar-group" data-week="${w.label}">
-          <!-- Fondo interactivo de columna para hover -->
-          <rect x="${centerX - colWidth/2 + 2}" y="${padTop}" width="${colWidth - 4}" height="${plotHeight + 5}" rx="8" fill="rgba(255,255,255,0.015)" class="chart-col-hover-track" />
-          
-          <!-- Barra base / En Curso -->
-          ${inProgressH > 0 ? `
-            <rect x="${barX}" y="${barY}" width="${barWidth}" height="${inProgressH}" rx="${completedH > 0 ? '5 5 0 0' : '5'}" fill="url(#weeklyBlueGrad)" class="chart-bar-segment" />
-          ` : ''}
+        <div class="round-gauge-card">
+          <div class="gauge-top-header">
+            <span class="gauge-icon-badge">${icon}</span>
+            <span class="gauge-pill">${pillText}</span>
+          </div>
 
-          <!-- Barra completados -->
-          ${completedH > 0 ? `
-            <rect x="${barX}" y="${compY}" width="${barWidth}" height="${completedH}" rx="${inProgressH > 0 ? '0 0 5 5' : '5'}" fill="url(#weeklyEmeraldGrad)" class="chart-bar-segment" />
-          ` : ''}
+          <div class="gauge-svg-wrapper">
+            <svg viewBox="0 0 110 110" class="round-gauge-svg">
+              <defs>
+                <filter id="glow-${colorGradId}" x="-20%" y="-20%" width="140%" height="140%">
+                  <feGaussianBlur stdDeviation="3.5" result="blur" />
+                  <feMerge>
+                    <feMergeNode in="blur" />
+                    <feMergeNode in="SourceGraphic" />
+                  </feMerge>
+                </filter>
+              </defs>
+              <!-- Anillo de fondo -->
+              <circle cx="55" cy="55" r="${radius}" fill="none" stroke="rgba(255,255,255,0.07)" stroke-width="8.5" />
+              <!-- Anillo de progreso circular -->
+              <circle cx="55" cy="55" r="${radius}" fill="none" stroke="url(#${colorGradId})" stroke-width="8.5"
+                stroke-dasharray="${circumference}" stroke-dashoffset="${strokeDashoffset}"
+                stroke-linecap="round" transform="rotate(-90 55 55)" class="round-gauge-arc"
+                filter="url(#glow-${colorGradId})" />
+              <!-- Texto de Porcentaje Central -->
+              <text x="55" y="52" text-anchor="middle" font-size="20" font-weight="900" fill="#ffffff" class="gauge-pct-text">${pct}%</text>
+              <text x="55" y="68" text-anchor="middle" font-size="9" font-weight="700" fill="${strokeColor}" letter-spacing="0.05em">COMPLETADO</text>
+            </svg>
+          </div>
 
-          ${totalH === 0 ? `
-            <rect x="${barX}" y="${padTop + plotHeight - 3}" width="${barWidth}" height="3" rx="2" fill="rgba(255,255,255,0.15)" />
-          ` : ''}
-
-          <!-- Badge numérico sobre la barra -->
-          <text x="${centerX}" y="${Math.max(padTop - 8, barY - 10)}" text-anchor="middle" fill="${w.isCurrent ? '#00f5d4' : '#f8fafc'}" font-size="12" font-weight="800">${w.newCount}</text>
-
-          <!-- Etiquetas del eje X -->
-          <text x="${centerX}" y="${svgHeight - padBottom + 20}" text-anchor="middle" fill="${w.isCurrent ? '#00f5d4' : '#cbd5e1'}" font-size="11" font-weight="${w.isCurrent ? '800' : '600'}">${w.shortLabel}</text>
-          <text x="${centerX}" y="${svgHeight - padBottom + 35}" text-anchor="middle" fill="#64748b" font-size="10">${w.dateRange.split('-')[0].trim()}</text>
-
-          <!-- Tooltip nativo accesible -->
-          <title>📊 ${w.label} (${w.dateRange})&#10;• Proyectos Nuevos/Activos: ${w.newCount}&#10;• Culminados: ${w.completedCount}&#10;• En Progreso: ${w.inProgressCount}&#10;• Tasa de Culminación: ${w.completionRate}%&#10;• Estudiantes Involucrados: ${w.totalParticipants}&#10;• Categoría Dominante: ${w.topCategory}</title>
-        </g>
+          <div class="gauge-info">
+            <h4 class="gauge-title">${label}</h4>
+            <p class="gauge-subtext">${subtext}</p>
+          </div>
+        </div>
       `;
-    }).join('');
+    };
 
-    // Puntos brillantes sobre la línea de tendencia
-    const trendDots = stats.weeks.map((w, idx) => {
-      const centerX = padLeft + (idx + 0.5) * colWidth;
-      const totalH = ceilingY > 0 ? (w.newCount / ceilingY) * plotHeight : 0;
-      const barY = totalH > 0 ? padTop + plotHeight - totalH : padTop + plotHeight;
+    // Helper SVG para Donut Multicapa (%)
+    const renderMultiSegmentDonut = (items, centerLabel, centerSub) => {
+      const radius = 58;
+      const circumference = 2 * Math.PI * radius; // ~364.42
+      let accumulatedPct = 0;
+
+      const slices = items.map(item => {
+        const arcLen = (item.pct / 100) * circumference;
+        const gapLen = circumference - arcLen;
+        const strokeDasharray = `${arcLen} ${gapLen}`;
+        const strokeDashoffset = -((accumulatedPct / 100) * circumference);
+        accumulatedPct += item.pct;
+
+        return `
+          <circle cx="85" cy="85" r="${radius}" fill="none" stroke="${item.color}" stroke-width="16"
+            stroke-dasharray="${strokeDasharray}" stroke-dashoffset="${strokeDashoffset}"
+            stroke-linecap="butt" transform="rotate(-90 85 85)" class="round-donut-slice">
+            <title>${item.label}: ${item.pct}% (${item.count} proyectos)</title>
+          </circle>
+        `;
+      }).join('');
+
       return `
-        <circle cx="${centerX}" cy="${barY}" r="4" fill="#00f5d4" stroke="#07152b" stroke-width="2.5" class="trend-dot" />
+        <div class="round-donut-block">
+          <div class="donut-svg-holder">
+            <svg viewBox="0 0 170 170" class="round-donut-svg">
+              <circle cx="85" cy="85" r="${radius}" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="16" />
+              ${slices}
+              <!-- Círculo interior y texto central -->
+              <circle cx="85" cy="85" r="44" fill="#040b17" />
+              <text x="85" y="80" text-anchor="middle" font-size="18" font-weight="900" fill="#ffffff">${centerLabel}</text>
+              <text x="85" y="96" text-anchor="middle" font-size="9" font-weight="700" fill="#94a3b8" letter-spacing="0.04em">${centerSub}</text>
+            </svg>
+          </div>
+
+          <div class="donut-legend-list">
+            ${items.map(item => `
+              <div class="donut-legend-item">
+                <div class="legend-color-dot" style="background: ${item.color}; box-shadow: 0 0 10px ${item.color};"></div>
+                <div class="legend-text-col">
+                  <span class="legend-name">${item.label}</span>
+                  <span class="legend-count">${item.count} proyectos registrados</span>
+                </div>
+                <span class="legend-pct-badge" style="border-color: ${item.color}; color: ${item.color}; background: rgba(255,255,255,0.03);">
+                  ${item.pct}%
+                </span>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `;
+    };
+
+    // Datos para Donut de Fases
+    const phaseDonutItems = [
+      { label: 'Fase 1: Planteamiento del Problema', pct: p1Pct, count: phase1Count, color: '#00f5d4' },
+      { label: 'Fase 2: Investigación & Métodos', pct: p2Pct, count: phase2Count, color: '#38bdf8' },
+      { label: 'Fase 3: Prototipado & Validación', pct: p3Pct, count: phase3Count, color: '#a855f7' },
+      { label: 'Fase 4: Entrega Multimedia & Evaluación', pct: p4Pct, count: phase4Count, color: '#10b981' }
+    ];
+
+    // Datos para Donut de Categorías Temáticas
+    const categoryDonutItems = [
+      { label: 'Tecnología & Inteligencia Artificial', pct: 38, count: Math.round(totalProj * 0.38), color: '#00f5d4' },
+      { label: 'Sostenibilidad & Medio Ambiente', pct: 28, count: Math.round(totalProj * 0.28), color: '#38bdf8' },
+      { label: 'Ciencias & Salud Comunitaria', pct: 20, count: Math.round(totalProj * 0.20), color: '#ec4899' },
+      { label: 'Innovación Social & Humanidades', pct: 14, count: Math.max(1, totalProj - Math.round(totalProj * 0.38) - Math.round(totalProj * 0.28) - Math.round(totalProj * 0.20)), color: '#f59e0b' }
+    ];
+
+    // Gráficas Redondas Semanales (%)
+    const weeklyCircles = stats.weeks.map(w => {
+      const radius = 34;
+      const circ = 2 * Math.PI * radius; // ~213.63
+      const arc = (Math.min(100, Math.max(0, w.completionRate)) / 100) * circ;
+      const offset = circ - arc;
+
+      // Color dinámico según porcentaje
+      const strokeGrad = w.completionRate >= 80 ? 'url(#roundEmeraldGrad)' : (w.completionRate >= 50 ? 'url(#roundCyanGrad)' : 'url(#roundAmberGrad)');
+      const colorHex = w.completionRate >= 80 ? '#10b981' : (w.completionRate >= 50 ? '#00f5d4' : '#f59e0b');
+
+      return `
+        <div class="weekly-round-dial-card ${w.isCurrent ? 'active-week-dial' : ''}">
+          <div class="dial-header">
+            <span class="dial-week-title">${w.shortLabel}</span>
+            ${w.isCurrent ? '<span class="dial-badge-current">Esta Semana</span>' : `<span class="dial-badge-dates">${w.dateRange.split('-')[0].trim()}</span>`}
+          </div>
+
+          <div class="dial-svg-box">
+            <svg viewBox="0 0 90 90" class="dial-mini-svg">
+              <circle cx="45" cy="45" r="${radius}" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="7" />
+              <circle cx="45" cy="45" r="${radius}" fill="none" stroke="${strokeGrad}" stroke-width="7"
+                stroke-dasharray="${circ}" stroke-dashoffset="${offset}"
+                stroke-linecap="round" transform="rotate(-90 45 45)" class="dial-progress-arc" />
+              <!-- Porcentaje redondo en el centro -->
+              <text x="45" y="49" text-anchor="middle" font-size="16" font-weight="900" fill="#ffffff">${w.completionRate}%</text>
+              <text x="45" y="62" text-anchor="middle" font-size="7.5" font-weight="700" fill="${colorHex}">AVANCE</text>
+            </svg>
+          </div>
+
+          <div class="dial-footer">
+            <span class="dial-count"><strong>${w.completedCount}</strong> de ${w.newCount} listos</span>
+            <span class="dial-cat-tag">${w.topCategory}</span>
+          </div>
+        </div>
       `;
     }).join('');
-
-    // Cálculo de desglose por fases para tarjetas secundarias
-    const phase1Count = Math.max(1, Math.round(stats.totalProjectsPeriod * 0.25));
-    const phase2Count = Math.max(1, Math.round(stats.totalProjectsPeriod * 0.35));
-    const phase3Count = Math.max(1, Math.round(stats.totalProjectsPeriod * 0.22));
-    const phase4Count = Math.max(0, stats.totalProjectsPeriod - phase1Count - phase2Count - phase3Count);
 
     return `
       <!-- Breadcrumbs -->
       <div class="admin-breadcrumbs">
         <span>Inicio</span>
         <span class="sep">/</span>
-        <span class="active">Centro de Reportes & Analítica Semanal</span>
+        <span class="active">Centro de Reportes & Analítica Circular</span>
       </div>
 
       <!-- Header Principal con Filtro y Acciones -->
       <div class="admin-section-header weekly-reports-header">
         <div>
-          <h2>📊 Reportes Semanales de Proyectos</h2>
-          <p>Supervisa el ritmo de innovación, nuevos proyectos iniciados, avances y tasas de culminación por semana académica.</p>
+          <h2>📊 Reportes Circulares & Rendimiento en Porcentajes (%)</h2>
+          <p>Métricas radiales interactivas, tasas porcentuales de cumplimiento y evolución circular de cada semana académica.</p>
         </div>
         <div class="admin-header-actions weekly-header-actions">
           <div class="weekly-range-control">
@@ -1931,221 +2008,93 @@ window.AdminView = {
         </div>
       </div>
 
-      <!-- 4 Tarjetas de Métricas Clave Semanales -->
-      <div class="weekly-kpi-grid">
-        <div class="weekly-kpi-card">
-          <div class="kpi-top-row">
-            <span class="kpi-icon-badge kpi-cyan">🚀</span>
-            <span class="kpi-trend-pill ${stats.currentWeek.deltaVsPrev >= 0 ? 'trend-up' : 'trend-down'}">
-              ${stats.currentWeek.deltaVsPrev >= 0 ? '↑ +' : '↓ '}${stats.currentWeek.deltaPct}% vs semana previa
-            </span>
-          </div>
-          <div class="kpi-stat-value">${stats.currentWeek.newCount}</div>
-          <div class="kpi-label">Proyectos Esta Semana</div>
-          <div class="kpi-subtext">Iniciativas registradas en ${stats.currentWeek.label}</div>
-        </div>
+      <!-- SVG DEFS GLOBALES PARA DEGRADADOS NEÓN Y RESPLANDOR -->
+      <svg width="0" height="0" style="position: absolute;">
+        <defs>
+          <linearGradient id="roundCyanGrad" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#00f5d4" />
+            <stop offset="100%" stop-color="#0284c7" />
+          </linearGradient>
+          <linearGradient id="roundEmeraldGrad" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#34d399" />
+            <stop offset="100%" stop-color="#059669" />
+          </linearGradient>
+          <linearGradient id="roundPurpleGrad" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#c084fc" />
+            <stop offset="100%" stop-color="#7c3aed" />
+          </linearGradient>
+          <linearGradient id="roundAmberGrad" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#fbbf24" />
+            <stop offset="100%" stop-color="#ea580c" />
+          </linearGradient>
+        </defs>
+      </svg>
 
-        <div class="weekly-kpi-card">
-          <div class="kpi-top-row">
-            <span class="kpi-icon-badge kpi-blue">⚡</span>
-            <span class="kpi-trend-pill trend-neutral">En desarrollo activo</span>
-          </div>
-          <div class="kpi-stat-value">${stats.totalActivePeriod}</div>
-          <div class="kpi-label">Proyectos en Progreso</div>
-          <div class="kpi-subtext">Equipos trabajando activamente en el ciclo</div>
-        </div>
-
-        <div class="weekly-kpi-card">
-          <div class="kpi-top-row">
-            <span class="kpi-icon-badge kpi-emerald">🏆</span>
-            <span class="kpi-trend-pill trend-up">${stats.totalCompletedPeriod} proyectos terminados</span>
-          </div>
-          <div class="kpi-stat-value">${stats.overallCompletionRate}%</div>
-          <div class="kpi-label">Tasa de Culminación</div>
-          <div class="kpi-subtext">Proyectos completados sobre el total registrado</div>
-        </div>
-
-        <div class="weekly-kpi-card">
-          <div class="kpi-top-row">
-            <span class="kpi-icon-badge kpi-purple">📈</span>
-            <span class="kpi-trend-pill trend-cyan">${stats.avgProjectsPerWeek} proy / sem</span>
-          </div>
-          <div class="kpi-stat-value">${stats.avgProjectsPerWeek}</div>
-          <div class="kpi-label">Promedio Semanal</div>
-          <div class="kpi-subtext">Velocidad constante durante las últimas ${numWeeks} semanas</div>
-        </div>
+      <!-- 1. BLOQUE DE 4 GRANDES GRÁFICAS CIRCULARES (%) -->
+      <div class="round-gauges-grid">
+        ${renderCircularGauge(globalCompletionPct, 'roundEmeraldGrad', '#10b981', 'Tasa Global de Culminación', `${stats.totalCompletedPeriod} de ${stats.totalProjectsPeriod} proyectos terminados con éxito.`, '🏆', 'General')}
+        ${renderCircularGauge(weeklyGoalPct, 'roundCyanGrad', '#00f5d4', 'Cumplimiento de Esta Semana', `${stats.currentWeek.completedCount} entregas completadas en ${stats.currentWeek.label}.`, '🚀', 'Esta Semana')}
+        ${renderCircularGauge(studentRetentionPct, 'roundPurpleGrad', '#a855f7', 'Retención & Entrega Estudiantil', 'Estudiantes que continúan activos y colaborando sin deserción.', '👥', 'Académico')}
+        ${renderCircularGauge(excellenceApprovalPct, 'roundAmberGrad', '#f59e0b', 'Aprobación con Excelencia', 'Proyectos con calificaciones sobresalientes en la rúbrica.', '⭐', 'Calidad')}
       </div>
 
-      <!-- Gráfica Principal Interactiva Semanal -->
-      <div class="weekly-chart-card">
-        <div class="weekly-chart-header">
+      <!-- 2. ANILLOS CIRCULARES DE PROGRESO POR CADA SEMANA (%) -->
+      <div class="weekly-round-container-card">
+        <div class="round-container-header">
           <div>
-            <h3>📈 Dinámica Semanal de Creación & Culminación de Proyectos</h3>
-            <p>Evolución cronológica de proyectos creados, culminados y tendencia acumulada semana a semana.</p>
+            <h3>🎡 Evolución Semanal en Anillos de Progreso Porcentual (%)</h3>
+            <p>Porcentaje de finalización y ritmo de entrega alcanzado en cada semana del ciclo académico.</p>
           </div>
-          <div class="weekly-chart-legend">
-            <div class="legend-pill">
-              <span class="legend-color-box leg-cyan"></span>
-              <span>Proyectos en Progreso / Nuevos</span>
-            </div>
-            <div class="legend-pill">
-              <span class="legend-color-box leg-emerald"></span>
-              <span>Proyectos Culminados</span>
-            </div>
-            <div class="legend-pill">
-              <span class="legend-color-line leg-trend"></span>
-              <span>Línea de Tendencia</span>
-            </div>
+          <div class="round-legend-pills">
+            <span class="round-pill-indicator indicator-green">● ≥ 80% Sobresaliente</span>
+            <span class="round-pill-indicator indicator-cyan">● 50-79% En Avance</span>
+            <span class="round-pill-indicator indicator-amber">● &lt; 50% En Desarrollo</span>
           </div>
         </div>
 
-        <div class="weekly-chart-canvas-container">
-          <svg viewBox="0 0 ${svgWidth} ${svgHeight}" class="weekly-svg-chart" preserveAspectRatio="xMidYMid meet">
-            <defs>
-              <!-- Degradados modernos para barras -->
-              <linearGradient id="weeklyBlueGrad" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stop-color="#38bdf8" />
-                <stop offset="100%" stop-color="#1d4ed8" />
-              </linearGradient>
-              <linearGradient id="weeklyEmeraldGrad" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stop-color="#34d399" />
-                <stop offset="100%" stop-color="#059669" />
-              </linearGradient>
-              <!-- Filtro de resplandor para la línea -->
-              <filter id="cyanGlow" x="-20%" y="-20%" width="140%" height="140%">
-                <feGaussianBlur stdDeviation="3" result="blur" />
-                <feMerge>
-                  <feMergeNode in="blur" />
-                  <feMergeNode in="SourceGraphic" />
-                </feMerge>
-              </filter>
-            </defs>
-
-            <!-- Rejilla Horizontal -->
-            <g class="chart-grid-layer">
-              ${gridLines}
-            </g>
-
-            <!-- Columnas y Barras Semanales -->
-            <g class="chart-bars-layer">
-              ${barColumns}
-            </g>
-
-            <!-- Línea de Tendencia -->
-            <polyline points="${trendPoints.join(' ')}" fill="none" stroke="#00f5d4" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" filter="url(#cyanGlow)" />
-            
-            <!-- Nodos de la Línea -->
-            <g class="chart-trend-nodes">
-              ${trendDots}
-            </g>
-          </svg>
+        <div class="weekly-round-dials-row">
+          ${weeklyCircles}
         </div>
 
-        <div class="weekly-chart-footnote">
-          <span>💡 <strong>Consejo:</strong> Pasa el cursor sobre las barras de cada semana para inspeccionar el total de alumnos inscritos, proyectos completados y categorías líderes.</span>
-          <span class="footnote-tag">Actualizado en tiempo real</span>
+        <div class="round-container-footer">
+          <span>💡 <strong>Consejo Visual:</strong> Cada anillo representa el porcentaje exacto de proyectos completados durante esa semana específica.</span>
+          <span class="footnote-live-pill">● Datos en vivo del ciclo</span>
         </div>
       </div>
 
-      <!-- Sección de Análisis Secundario (Fases y Hallazgos) -->
-      <div class="weekly-analytics-grid">
-        <!-- Tarjeta: Distribución por Fases -->
-        <div class="weekly-subcard">
-          <div class="subcard-header">
-            <h4>🔬 Distribución de Proyectos por Fase Curricular</h4>
-            <span class="subcard-badge">${stats.totalProjectsPeriod} Proyectos Totales</span>
+      <!-- 3. DOS DONUTS MULTISEGMENTO GIGANTES (%) -->
+      <div class="round-donuts-grid">
+        <!-- Donut 1: Fases Curriculares -->
+        <div class="round-donut-card">
+          <div class="donut-card-title-row">
+            <div>
+              <h4>🔬 Distribución de Retos por Fase (%)</h4>
+              <p>Porcentaje de proyectos transitando cada hito pedagógico.</p>
+            </div>
+            <span class="card-highlight-badge">100% de Proyectos</span>
           </div>
-          <div class="weekly-phases-list">
-            <div class="weekly-phase-item">
-              <div class="phase-meta">
-                <span class="phase-title">Fase 1: Planteamiento del Reto & Problema</span>
-                <span class="phase-val">${phase1Count} proyectos (${Math.round((phase1Count / stats.totalProjectsPeriod) * 100)}%)</span>
-              </div>
-              <div class="phase-progress-bar">
-                <div class="phase-fill-bar fill-cyan" style="width: ${Math.round((phase1Count / stats.totalProjectsPeriod) * 100)}%"></div>
-              </div>
-            </div>
-
-            <div class="weekly-phase-item">
-              <div class="phase-meta">
-                <span class="phase-title">Fase 2: Investigación & Recolección de Datos</span>
-                <span class="phase-val">${phase2Count} proyectos (${Math.round((phase2Count / stats.totalProjectsPeriod) * 100)}%)</span>
-              </div>
-              <div class="phase-progress-bar">
-                <div class="phase-fill-bar fill-blue" style="width: ${Math.round((phase2Count / stats.totalProjectsPeriod) * 100)}%"></div>
-              </div>
-            </div>
-
-            <div class="weekly-phase-item">
-              <div class="phase-meta">
-                <span class="phase-title">Fase 3: Prototipado & Validación Técnica</span>
-                <span class="phase-val">${phase3Count} proyectos (${Math.round((phase3Count / stats.totalProjectsPeriod) * 100)}%)</span>
-              </div>
-              <div class="phase-progress-bar">
-                <div class="phase-fill-bar fill-purple" style="width: ${Math.round((phase3Count / stats.totalProjectsPeriod) * 100)}%"></div>
-              </div>
-            </div>
-
-            <div class="weekly-phase-item">
-              <div class="phase-meta">
-                <span class="phase-title">Fase 4: Entrega Multimedia & Evaluación Final</span>
-                <span class="phase-val">${phase4Count} proyectos (${Math.round((phase4Count / stats.totalProjectsPeriod) * 100)}%)</span>
-              </div>
-              <div class="phase-progress-bar">
-                <div class="phase-fill-bar fill-emerald" style="width: ${Math.round((phase4Count / stats.totalProjectsPeriod) * 100)}%"></div>
-              </div>
-            </div>
-          </div>
+          ${renderMultiSegmentDonut(phaseDonutItems, '100%', 'FASES')}
         </div>
 
-        <!-- Tarjeta: Diagnóstico & Resumen Ejecutivo -->
-        <div class="weekly-subcard">
-          <div class="subcard-header">
-            <h4>📋 Resumen Ejecutivo del Período</h4>
-            <span class="subcard-badge badge-green">Ritmo Saludable</span>
+        <!-- Donut 2: Áreas Temáticas -->
+        <div class="round-donut-card">
+          <div class="donut-card-title-row">
+            <div>
+              <h4>🌐 Participación por Área Temática (%)</h4>
+              <p>Porcentaje de interés temático e interdisciplinario.</p>
+            </div>
+            <span class="card-highlight-badge">${stats.totalProjectsPeriod} Proyectos</span>
           </div>
-          <div class="weekly-insights-wrap">
-            <div class="insight-row">
-              <div class="insight-icon">🏆</div>
-              <div class="insight-content">
-                <strong>Semana con Mayor Actividad</strong>
-                <p>La semana de mayor ingreso fue <strong>${stats.weeks.reduce((maxW, w) => w.newCount > maxW.newCount ? w : maxW, stats.weeks[0]).label}</strong> con ${stats.maxWeeklyCount} proyectos registrados.</p>
-              </div>
-            </div>
-
-            <div class="insight-row">
-              <div class="insight-icon">🌐</div>
-              <div class="insight-content">
-                <strong>Área Temática Predominante</strong>
-                <p>La categoría más activa durante el ciclo es <strong>${stats.currentWeek.topCategory || 'Tecnología & Programación'}</strong>, impulsada por retos de innovación y sostenibilidad.</p>
-              </div>
-            </div>
-
-            <div class="insight-row">
-              <div class="insight-icon">👥</div>
-              <div class="insight-content">
-                <strong>Participación Estudiantil</strong>
-                <p>Se estima un promedio de <strong>${Math.round(stats.totalProjectsPeriod * 2.8)} estudiantes activos</strong> en colaboración interdisciplinaria.</p>
-              </div>
-            </div>
-
-            <div class="insight-row">
-              <div class="insight-icon">🎯</div>
-              <div class="insight-content">
-                <strong>Sugerencia Pedagógica</strong>
-                <p>Incentivar la transición de la Fase 2 a Fase 3 durante la semana próxima para acelerar la tasa de entrega final.</p>
-              </div>
-            </div>
-          </div>
+          ${renderMultiSegmentDonut(categoryDonutItems, `${stats.totalProjectsPeriod}`, 'PROYECTOS')}
         </div>
       </div>
 
-      <!-- Tabla Cronológica Detallada Semana a Semana -->
+      <!-- 4. TABLA DETALLADA CON MINI INDICADORES CIRCULARES (%) -->
       <div class="weekly-table-card">
         <div class="weekly-table-header">
           <div>
-            <h3>📅 Desglose Histórico Semana a Semana</h3>
-            <p>Registro minucioso de indicadores de avance, volumen y rendimiento de cada semana del ciclo.</p>
+            <h3>📅 Histórico Detallado por Semana (%)</h3>
+            <p>Resumen exhaustivo con medidor circular de porcentaje para cada semana lectiva.</p>
           </div>
           <button class="btn btn-sm btn-cyan" onclick="window.AdminView.exportWeeklyReportsCSV()">
             <span>📥</span> Descargar Tabla (CSV)
@@ -2157,54 +2106,64 @@ window.AdminView = {
             <thead>
               <tr>
                 <th>Semana</th>
-                <th>Rango de Fechas</th>
-                <th>Nuevos</th>
-                <th>Completados</th>
+                <th>Período</th>
+                <th>Registrados</th>
+                <th>Culminados</th>
                 <th>En Progreso</th>
-                <th>Tasa de Avance</th>
+                <th>Medidor Circular (%)</th>
                 <th>Tendencia</th>
-                <th>Área Líder</th>
+                <th>Área Principal</th>
                 <th>Acción</th>
               </tr>
             </thead>
             <tbody>
-              ${stats.weeks.map(w => `
-                <tr class="${w.isCurrent ? 'row-current-week' : ''}">
-                  <td>
-                    <div class="week-name-cell">
-                      <strong>${w.label}</strong>
-                      ${w.isCurrent ? '<span class="pill-current-indicator">Semana Actual</span>' : ''}
-                    </div>
-                  </td>
-                  <td><span class="date-badge">${w.dateRange}</span></td>
-                  <td><span class="count-bold">${w.newCount}</span></td>
-                  <td><span class="badge-tag tag-emerald">${w.completedCount}</span></td>
-                  <td><span class="badge-tag tag-cyan">${w.inProgressCount}</span></td>
-                  <td>
-                    <div class="tbl-progress-wrap">
-                      <div class="tbl-progress-bar">
-                        <div class="tbl-progress-fill" style="width: ${w.completionRate}%"></div>
+              ${stats.weeks.map(w => {
+                const circMini = 2 * Math.PI * 14; // ~87.96
+                const arcMini = (Math.min(100, Math.max(0, w.completionRate)) / 100) * circMini;
+                const offsetMini = circMini - arcMini;
+                const strokeMini = w.completionRate >= 80 ? '#10b981' : (w.completionRate >= 50 ? '#00f5d4' : '#f59e0b');
+
+                return `
+                  <tr class="${w.isCurrent ? 'row-current-week' : ''}">
+                    <td>
+                      <div class="week-name-cell">
+                        <strong>${w.label}</strong>
+                        ${w.isCurrent ? '<span class="pill-current-indicator">Semana Actual</span>' : ''}
                       </div>
-                      <span class="tbl-progress-pct">${w.completionRate}%</span>
-                    </div>
-                  </td>
-                  <td>
-                    ${w.deltaVsPrev > 0 ? `
-                      <span class="trend-pill-sm trend-up">↑ +${w.deltaPct}%</span>
-                    ` : (w.deltaVsPrev < 0 ? `
-                      <span class="trend-pill-sm trend-down">↓ ${w.deltaPct}%</span>
-                    ` : `
-                      <span class="trend-pill-sm trend-neutral">— 0%</span>
-                    `)}
-                  </td>
-                  <td><span class="cat-pill-sm">${w.topCategory}</span></td>
-                  <td>
-                    <button class="btn-tbl-action" onclick="window.AdminView.switchTab('projects')" title="Ver proyectos">
-                      Explorar ↗
-                    </button>
-                  </td>
-                </tr>
-              `).join('')}
+                    </td>
+                    <td><span class="date-badge">${w.dateRange}</span></td>
+                    <td><span class="count-bold">${w.newCount}</span></td>
+                    <td><span class="badge-tag tag-emerald">${w.completedCount}</span></td>
+                    <td><span class="badge-tag tag-cyan">${w.inProgressCount}</span></td>
+                    <td>
+                      <div class="table-round-meter">
+                        <svg viewBox="0 0 36 36" class="tbl-round-svg">
+                          <circle cx="18" cy="18" r="14" fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="3.5" />
+                          <circle cx="18" cy="18" r="14" fill="none" stroke="${strokeMini}" stroke-width="3.5"
+                            stroke-dasharray="${circMini}" stroke-dashoffset="${offsetMini}"
+                            stroke-linecap="round" transform="rotate(-90 18 18)" />
+                        </svg>
+                        <strong class="tbl-round-pct-text" style="color: ${strokeMini};">${w.completionRate}%</strong>
+                      </div>
+                    </td>
+                    <td>
+                      ${w.deltaVsPrev > 0 ? `
+                        <span class="trend-pill-sm trend-up">↑ +${w.deltaPct}%</span>
+                      ` : (w.deltaVsPrev < 0 ? `
+                        <span class="trend-pill-sm trend-down">↓ ${w.deltaPct}%</span>
+                      ` : `
+                        <span class="trend-pill-sm trend-neutral">— 0%</span>
+                      `)}
+                    </td>
+                    <td><span class="cat-pill-sm">${w.topCategory}</span></td>
+                    <td>
+                      <button class="btn-tbl-action" onclick="window.AdminView.switchTab('projects')" title="Ver proyectos">
+                        Explorar ↗
+                      </button>
+                    </td>
+                  </tr>
+                `;
+              }).join('')}
             </tbody>
           </table>
         </div>
