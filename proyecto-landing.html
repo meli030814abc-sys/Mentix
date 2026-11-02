@@ -683,13 +683,17 @@
 
     function resolveBannerContrast({ bgValue, bannerUrl, titleColor, textColor, accentColor, currentTheme }) {
       let isDarkBg = true;
-      if (bannerUrl) {
-        isDarkBg = currentTheme !== 'light';
-      } else if (bgValue) {
-        const lum = getColorLuminance(bgValue);
-        isDarkBg = lum < 0.48;
+      if (bgValue && typeof bgValue === 'string') {
+        const bgLower = bgValue.toLowerCase();
+        if (['marfil-light', 'marfil', 'aurora-clean', 'aurora-clara', 'coral-suave'].includes(bgLower)) {
+          isDarkBg = false;
+        } else if (bgLower.startsWith('#') || bgLower.startsWith('rgb')) {
+          isDarkBg = getColorLuminance(bgValue) < 0.52;
+        } else {
+          isDarkBg = true;
+        }
       } else {
-        isDarkBg = currentTheme === 'dark';
+        isDarkBg = true;
       }
 
       let finalTitle = titleColor;
@@ -700,8 +704,8 @@
       const textLum = finalText ? getColorLuminance(finalText) : (isDarkBg ? 0.8 : 0.2);
 
       if (isDarkBg) {
-        if (!finalTitle || titleLum < 0.45) finalTitle = '#ffffff';
-        if (!finalText || textLum < 0.38) finalText = '#cbd5e1';
+        if (!finalTitle || titleLum < 0.5) finalTitle = '#ffffff';
+        if (!finalText || textLum < 0.45) finalText = '#e2e8f0';
       } else {
         if (!finalTitle || titleLum >= 0.45) finalTitle = '#091e2d';
         if (!finalText || textLum >= 0.45) finalText = '#334155';
@@ -713,20 +717,20 @@
         textColor: finalText,
         accentColor: finalAccent,
         bannerUrlGradient: isDarkBg
-          ? 'linear-gradient(rgba(5, 10, 24, 0.82), rgba(8, 14, 30, 0.92))'
-          : 'linear-gradient(rgba(255, 255, 255, 0.86), rgba(241, 245, 249, 0.94))',
+          ? 'linear-gradient(rgba(5, 10, 24, 0.85), rgba(8, 14, 30, 0.94))'
+          : 'linear-gradient(rgba(255, 255, 255, 0.88), rgba(241, 245, 249, 0.95))',
         titleShadow: isDarkBg
-          ? 'text-shadow: 0 2px 14px rgba(0,0,0,0.85), 0 0 4px rgba(0,0,0,0.9);'
+          ? 'text-shadow: 0 3px 20px rgba(0,0,0,0.95), 0 0 35px rgba(0, 245, 212, 0.35);'
           : 'text-shadow: 0 1px 3px rgba(255,255,255,0.8);',
         descShadow: isDarkBg
-          ? 'text-shadow: 0 1px 8px rgba(0,0,0,0.75);'
+          ? 'text-shadow: 0 2px 10px rgba(0,0,0,0.9);'
           : '',
         gradientSpanStyle: isDarkBg
-          ? 'background: linear-gradient(135deg, #00f5d4 0%, #00e5be 60%, #38bdf8 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;'
-          : 'background: linear-gradient(135deg, #0284c7 0%, #2563eb 60%, #4338ca 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;',
+          ? 'background: linear-gradient(135deg, #00f5d4 0%, #00e5be 60%, #38bdf8 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: none;'
+          : 'background: linear-gradient(135deg, #0284c7 0%, #2563eb 60%, #4338ca 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: none;',
         eyebrowStyle: isDarkBg
-          ? 'background: rgba(0, 245, 212, 0.15); border: 1px solid rgba(0, 245, 212, 0.45); color: #00f5d4;'
-          : 'background: rgba(2, 132, 199, 0.12); border: 1px solid rgba(2, 132, 199, 0.35); color: #0369a1;'
+          ? 'background: rgba(0, 245, 212, 0.16); border: 1.5px solid rgba(0, 245, 212, 0.6); color: #00f5d4; font-weight: 800;'
+          : 'background: rgba(2, 132, 199, 0.12); border: 1.5px solid rgba(2, 132, 199, 0.45); color: #0369a1; font-weight: 800;'
       };
     }
 
