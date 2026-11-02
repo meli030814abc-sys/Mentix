@@ -1,4 +1,4 @@
-/**
+﻿/**
  * ✨ GOVDATA NEXUS — ASISTENTE INTELIGENTE PARA CREAR PROYECTOS (WIZARD PASO A PASO)
  * Integrado con el Módulo de Proyectos existente y la Landing Page (renderLandingPageView / proyecto-landing.html)
  */
@@ -5030,7 +5030,9 @@ collectCurrentStepInputs() {
       window.appState.challenges.unshift(record);
     }
 
-    if (typeof saveGlobalState === 'function') {
+    if (typeof window.saveUserProject === 'function') {
+      window.saveUserProject(record);
+    } else if (typeof saveGlobalState === 'function') {
       saveGlobalState(window.appState);
     }
 

@@ -1571,7 +1571,11 @@ Sin embargo, los funcionarios consideran que existen elementos suficientes para 
       window.appRouter.checkMedals('creator');
     }
 
-    saveGlobalState(window.appState);
+    if (typeof window.saveUserProject === 'function') {
+      window.saveUserProject(c);
+    } else {
+      saveGlobalState(window.appState);
+    }
 
     // Publicar inmediatamente en la nube global de MENTIX
     if (window.appRouter && window.appRouter.pushChallengeToCloud) {

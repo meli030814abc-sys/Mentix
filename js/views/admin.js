@@ -1562,11 +1562,17 @@ window.AdminView = {
     if (!p) return;
 
     p.visibility = p.visibility === 'private' ? 'public' : 'private';
+    p.isPublic = p.visibility !== 'private';
+    p.accessMode = p.visibility !== 'private' ? 'public' : 'private';
 
-    try {
-      localStorage.setItem('mentix_challenges', JSON.stringify(projects));
-      localStorage.setItem('mentix_projects', JSON.stringify(projects));
-    } catch(e) {}
+    if (typeof saveGlobalState === 'function') {
+      saveGlobalState(window.appState);
+    } else {
+      try {
+        localStorage.setItem('mentix_challenges', JSON.stringify(projects));
+        localStorage.setItem('mentix_projects', JSON.stringify(projects));
+      } catch(e) {}
+    }
 
     this.logAuditEvent(`Visibilidad cambiada: "${p.title}" a ${p.visibility}`, 'Proyectos');
     this.showToast(`Proyecto marcado como ${p.visibility === 'private' ? 'Privado' : 'Público'}`, 'success');
@@ -1583,9 +1589,28 @@ window.AdminView = {
     projects = projects.filter(item => item.id !== projectId);
     window.appState.challenges = projects;
 
+    if (typeof saveGlobalState === 'function') {
+      saveGlobalState(window.appState);
+    } else {
+      try {
+        localStorage.setItem('mentix_challenges', JSON.stringify(projects));
+        localStorage.setItem('mentix_projects', JSON.stringify(projects));
+      } catch(e) {}
+    }
+    // Limpiar de bóvedas personales si el admin lo elimina
     try {
-      localStorage.setItem('mentix_challenges', JSON.stringify(projects));
-      localStorage.setItem('mentix_projects', JSON.stringify(projects));
+      for (let i = 0; i < localStorage.length; i++) {
+        const k = localStorage.key(i);
+        if (k && k.startsWith('mentix_user_projects_')) {
+          const raw = localStorage.getItem(k);
+          if (raw) {
+            const list = JSON.parse(raw);
+            if (Array.isArray(list) && list.some(item => item.id === projectId)) {
+              localStorage.setItem(k, JSON.stringify(list.filter(item => item.id !== projectId)));
+            }
+          }
+        }
+      }
     } catch(e) {}
 
     this.logAuditEvent(`Proyecto eliminado: "${pTitle}"`, 'Proyectos');

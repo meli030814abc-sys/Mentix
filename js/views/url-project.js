@@ -1,4 +1,4 @@
-/**
+﻿/**
  * 🔗 MENTIX - Vista de Enlaces Web / Recursos URL (url-project.js)
  * Permite incrustar y enlazar recursos web interactivos, simuladores, GeoGebra, Wikipedia, formularios, etc.
  */
@@ -214,8 +214,10 @@ window.UrlProjectView = {
 
   cancelEdit() {
     this.isEditing = false;
-    if (this.fromStudentCreate || this.currentProject?.fromStudentCreate || this.currentProject?._isStudentDraft) {
-      const cancelId = this.currentProject?.id;
+    const p = this.currentProject;
+    const isPublished = p && (p.publicationStatus === 'published' || p.status === 'completed' || p._isStudentDraft === false || p.fromStudentCreate === false);
+    if (!isPublished && (this.fromStudentCreate || p?.fromStudentCreate || p?._isStudentDraft)) {
+      const cancelId = p?.id;
       if (window.ProjectsView && typeof window.ProjectsView.returnToStudentCreateStep2 === 'function') {
         window.ProjectsView.returnToStudentCreateStep2(cancelId);
         return;
@@ -263,13 +265,17 @@ window.UrlProjectView = {
       window.appState.challenges.unshift(p);
     }
 
-    saveGlobalState(window.appState);
-    if (window.appRouter && window.appRouter.pushChallengeToCloud) {
-      window.appRouter.pushChallengeToCloud(p);
-    }
     if (p) {
       delete p.fromStudentCreate;
       delete p._isStudentDraft;
+    }
+    if (typeof window.saveUserProject === 'function') {
+      window.saveUserProject(p, u);
+    } else {
+      saveGlobalState(window.appState);
+      if (window.appRouter && window.appRouter.pushChallengeToCloud) {
+        window.appRouter.pushChallengeToCloud(p);
+      }
     }
     this.fromStudentCreate = false;
     if (window.ProjectsView && typeof window.ProjectsView.clearStudentCreateDraft === 'function') {

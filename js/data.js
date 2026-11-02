@@ -1,4 +1,4 @@
-/**
+﻿/**
  * 🔥 MENTIX - Almacén de Datos Predeterminados
  * Categorías, Niveles XP, Medallas, Retos de ejemplo completos y Usuarios
  */
@@ -475,7 +475,53 @@ function loadInitialState() {
   ];
 
   let challenges = [];
-  if (storedChallenges) {
+  // 1. Cargar retos desde te_reto_challenges y claves secundarias
+  const rawSources = [
+    storedChallenges,
+    localStorage.getItem('mentix_challenges'),
+    localStorage.getItem('mentix_projects')
+  ];
+
+  for (const src of rawSources) {
+    if (!src) continue;
+    try {
+      const parsed = JSON.parse(src);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        const cleaned = deepCleanMojibake(parsed.filter(c => c && c.id && !OLD_MOCK_IDS.includes(c.id)));
+        cleaned.forEach(c => {
+          if (!challenges.some(existing => existing.id === c.id)) {
+            challenges.push(c);
+          }
+        });
+      }
+    } catch(e) {}
+  }
+
+  // 2. Recuperar SIEMPRE todos los proyectos de las bóvedas de cada persona
+  try {
+    for (let i = 0; i < localStorage.length; i++) {
+      const k = localStorage.key(i);
+      if (k && (k.startsWith('mentix_user_projects_') || k === 'mentix_govdata_wizard_drafts')) {
+        const rawVault = localStorage.getItem(k);
+        if (rawVault) {
+          const userProjList = JSON.parse(rawVault);
+          if (Array.isArray(userProjList)) {
+            userProjList.forEach(up => {
+              if (up && up.id) {
+                const exIdx = challenges.findIndex(c => c && c.id === up.id);
+                if (exIdx >= 0) {
+                  challenges[exIdx] = { ...challenges[exIdx], ...up };
+                } else {
+                  challenges.unshift(up);
+                }
+              }
+            });
+          }
+        }
+      }
+    }
+  } catch(e) {}
+  if (false && storedChallenges) {
     try {
       const parsed = JSON.parse(storedChallenges);
       if (Array.isArray(parsed) && parsed.length > 0) {
@@ -505,7 +551,7 @@ function loadInitialState() {
   // Asegurar que existan los proyectos estructurados en la base de datos
   if (typeof DEFAULT_PROJECTS !== 'undefined') {
     DEFAULT_PROJECTS.forEach(defProj => {
-      const existingIndex = challenges.findIndex(c => c && (c.id === defProj.id || c.title === defProj.title));
+      const existingIndex = challenges.findIndex(c => c && c.id === defProj.id);
       if (existingIndex < 0) {
         challenges.push({ ...defProj });
       } else {
@@ -573,9 +619,33 @@ function loadInitialState() {
 
 function saveGlobalState(state) {
   try {
-    if (state.challenges) localStorage.setItem('te_reto_challenges', JSON.stringify(state.challenges));
+    if (state.challenges) {
+      const dataStr = JSON.stringify(state.challenges);
+      localStorage.setItem('te_reto_challenges', dataStr);
+      localStorage.setItem('mentix_challenges', dataStr);
+      localStorage.setItem('mentix_projects', dataStr);
+    }
   } catch (err) {
-    console.warn('⚠️ Alerta de almacenamiento local (QuotaExceeded):', err);
+    console.warn('⚠️ Alerta de almacenamiento local (QuotaExceeded), aplicando compresión segura:', err);
+    try {
+      if (Array.isArray(state.challenges)) {
+        const lightweight = state.challenges.map(c => {
+          if (!c) return c;
+          const clone = { ...c };
+          if (clone.image && typeof clone.image === 'string' && clone.image.length > 150000) {
+            delete clone.image;
+          }
+          if (clone.banner && typeof clone.banner === 'string' && clone.banner.length > 150000) {
+            delete clone.banner;
+          }
+          return clone;
+        });
+        const lightStr = JSON.stringify(lightweight);
+        localStorage.setItem('te_reto_challenges', lightStr);
+        localStorage.setItem('mentix_challenges', lightStr);
+        localStorage.setItem('mentix_projects', lightStr);
+      }
+    } catch(err2) {}
   }
   try {
     if (state.users) localStorage.setItem('te_reto_users', JSON.stringify(state.users));
@@ -595,3 +665,71 @@ function saveGlobalState(state) {
     console.warn('Error guardando estado secundario:', e);
   }
 }
+
+/**
+ * 🛡️ Bóveda de Persistencia Personal por Usuario (Garantiza que ningún proyecto se borre jamás)
+ */
+window.saveUserProject = function(project, user = null) {
+  if (!project || !project.id) return;
+  const u = user || (window.appState && window.appState.currentUser) || {};
+  const userKey = u.id || u.username || u.email || 'usuario_mentix';
+
+  // Asignar autoría explícita
+  project.authorId = project.authorId || u.id || userKey;
+  project.author = project.author || u.name || u.username || 'Estudiante';
+  project.authorEmail = project.authorEmail || u.email || '';
+  project.authorAvatar = project.authorAvatar || u.avatar || '🎓';
+  project.authorRole = project.authorRole || u.role || 'student';
+  project.updatedAt = new Date().toISOString();
+
+  // 1. Guardar en appState global
+  if (!window.appState) window.appState = { challenges: [] };
+  if (!Array.isArray(window.appState.challenges)) window.appState.challenges = [];
+  const idx = window.appState.challenges.findIndex(c => c && c.id === project.id);
+  if (idx >= 0) {
+    window.appState.challenges[idx] = { ...window.appState.challenges[idx], ...project };
+  } else {
+    window.appState.challenges.unshift(project);
+  }
+
+  // 2. Guardar en bóveda personal inmutable de este usuario
+  try {
+    const vaultKey = 'mentix_user_projects_' + userKey;
+    const existingRaw = localStorage.getItem(vaultKey);
+    let vault = existingRaw ? JSON.parse(existingRaw) : [];
+    if (!Array.isArray(vault)) vault = [];
+    const vIdx = vault.findIndex(p => p && p.id === project.id);
+    if (vIdx >= 0) {
+      vault[vIdx] = { ...vault[vIdx], ...project };
+    } else {
+      vault.unshift(project);
+    }
+    localStorage.setItem(vaultKey, JSON.stringify(vault));
+  } catch (e) {
+    console.warn('Advertencia guardando en bóveda personal:', e);
+  }
+
+  // 3. Persistir en almacenamiento global (te_reto_challenges y mentix_challenges)
+  saveGlobalState(window.appState);
+
+  // 4. Sincronizar en la nube
+  if (window.appRouter && typeof window.appRouter.pushChallengeToCloud === 'function') {
+    window.appRouter.pushChallengeToCloud(project);
+  } else if (window.supabaseService && typeof window.supabaseService.saveChallengeToSupabase === 'function') {
+    window.supabaseService.saveChallengeToSupabase(project);
+  }
+};
+
+window.getUserProjects = function(user = null) {
+  const u = user || (window.appState && window.appState.currentUser) || {};
+  const userKey = u.id || u.username || u.email || 'usuario_mentix';
+  try {
+    const vaultKey = 'mentix_user_projects_' + userKey;
+    const raw = localStorage.getItem(vaultKey);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed)) return parsed;
+    }
+  } catch (e) {}
+  return [];
+};

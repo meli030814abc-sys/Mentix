@@ -1,4 +1,4 @@
-/**
+﻿/**
  * 🔥 MENTIX - Vista de Proyectos & Retos (Projects View)
  * Gestión integral de proyectos educativos: Diapositivas, Videos interactivos y Quizzes gamificados.
  */
@@ -896,17 +896,11 @@ window.ProjectsView = {
       if (!c || !c.id) return false;
       if (c.deleted || c.is_deleted) return false;
       if (c.projectType === 'quiz') return false;
+      // Solo descartar cuestionarios gamificados puros de preguntas (Retos)
       if (!c.projectType && Array.isArray(c.questions) && c.questions.length > 0 && !c.isGovDataProject && !c.slides && !c.videoUrl && !c.docContent && !c.resourceWebUrl) {
         return false;
       }
-      return c.projectType === 'presentation' || 
-             c.projectType === 'video' || 
-             c.projectType === 'document' || 
-             c.projectType === 'url' || 
-             c.projectType === 'wizard' ||
-             c.isGovDataProject || 
-             c.is_gov_data_project || 
-             c.govdata;
+      return true;
     });
 
     const navEl = document.getElementById('main-navbar');
@@ -992,7 +986,15 @@ window.ProjectsView = {
 
     // Filtrar por pestañas (Todos, Mis Proyectos, En Proceso, Completados, Favoritos)
     if (this.currentFilterTab === 'mine') {
-      displayList = displayList.filter(c => window.appRouter ? window.appRouter.isChallengeOwner(c) : false);
+      displayList = displayList.filter(c => {
+        if (window.appRouter && window.appRouter.isChallengeOwner(c)) return true;
+        if (c.authorId && u && (c.authorId === u.id || c.authorId === 'usr_' + u.id)) return true;
+        const cAuthor = (c.author || '').trim().toLowerCase();
+        const uName = (u?.name || '').trim().toLowerCase();
+        const uUser = (u?.username || '').trim().toLowerCase();
+        if (cAuthor && (cAuthor === uName || cAuthor === uUser)) return true;
+        return false;
+      });
     } else if (this.currentFilterTab === 'in_progress') {
       displayList = displayList.filter(c => c.status === 'in_progress' || c.publicationStatus === 'draft' || c.publicationStatus === 'in_preparation');
     } else if (this.currentFilterTab === 'completed') {
@@ -1947,23 +1949,20 @@ window.ProjectsView = {
       ];
     }
 
-    // Guardar en estado global
-    if (!Array.isArray(window.appState.challenges)) {
-      window.appState.challenges = [];
-    }
-    window.appState.challenges.unshift(newProject);
-
-    if (typeof saveGlobalState === 'function') {
-      saveGlobalState(window.appState);
+    // Guardar con garantía inmutable en bóveda personal y estado global
+    if (typeof window.saveUserProject === 'function') {
+      window.saveUserProject(newProject, currentUser);
     } else {
-      localStorage.setItem('te_reto_state', JSON.stringify(window.appState));
-    }
-
-    // Sincronizar inmediatamente a la nube de Supabase
-    if (window.appRouter && typeof window.appRouter.pushChallengeToCloud === 'function') {
-      window.appRouter.pushChallengeToCloud(newProject);
-    } else if (window.supabaseService && typeof window.supabaseService.saveChallengeToSupabase === 'function') {
-      window.supabaseService.saveChallengeToSupabase(newProject);
+      if (!Array.isArray(window.appState.challenges)) {
+        window.appState.challenges = [];
+      }
+      window.appState.challenges.unshift(newProject);
+      if (typeof saveGlobalState === 'function') {
+        saveGlobalState(window.appState);
+      }
+      if (window.appRouter && typeof window.appRouter.pushChallengeToCloud === 'function') {
+        window.appRouter.pushChallengeToCloud(newProject);
+      }
     }
 
     // Preservar borrador de datos del estudiante para no perderlos si cancela
@@ -1998,16 +1997,27 @@ window.ProjectsView = {
 
   returnToStudentCreateStep2(cleanUpProjectId = null) {
     if (cleanUpProjectId) {
-      if (Array.isArray(window.appState?.challenges)) {
-        window.appState.challenges = window.appState.challenges.filter(c => c.id !== cleanUpProjectId);
-        if (typeof saveGlobalState === 'function') {
-          saveGlobalState(window.appState);
-        } else {
-          localStorage.setItem('te_reto_state', JSON.stringify(window.appState));
+      const existing = Array.isArray(window.appState?.challenges)
+        ? window.appState.challenges.find(c => c && c.id === cleanUpProjectId)
+        : null;
+      // ¡NUNCA borrar un proyecto que ya fue publicado o guardado!
+      const isPublishedOrSaved = existing && (
+        existing.publicationStatus === 'published' ||
+        existing.status === 'completed' ||
+        existing.isPublic === true ||
+        existing._isStudentDraft === false ||
+        existing.fromStudentCreate === false
+      );
+      if (!isPublishedOrSaved) {
+        if (Array.isArray(window.appState?.challenges)) {
+          window.appState.challenges = window.appState.challenges.filter(c => c.id !== cleanUpProjectId);
+          if (typeof saveGlobalState === 'function') {
+            saveGlobalState(window.appState);
+          }
         }
-      }
-      if (window.supabaseService && typeof window.supabaseService.deleteChallengeFromSupabase === 'function') {
-        window.supabaseService.deleteChallengeFromSupabase(cleanUpProjectId);
+        if (window.supabaseService && typeof window.supabaseService.deleteChallengeFromSupabase === 'function') {
+          window.supabaseService.deleteChallengeFromSupabase(cleanUpProjectId);
+        }
       }
     }
 

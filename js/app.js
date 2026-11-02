@@ -1,4 +1,4 @@
-/**
+﻿/**
  * 🔥 TE RETO - Orquestador Principal y Enrutador SPA (app.js)
  * Conecta todas las vistas, modales, autenticación, experiencia XP y sonido.
  */
@@ -1343,15 +1343,16 @@ class AppRouter {
   isChallengeOwner(challenge) {
     if (!challenge) return false;
     const u = window.appState?.currentUser;
-    if (!u || u.isGuest) return false;
+    if (!u) return false;
 
-    // Permisos: Melisa puede editar TODO; además cada autor puede editar sus propios cuestionarios.
-    const cleanName = (u.name || '').trim().toLowerCase();
-    const cleanEmail = (u.email || '').trim().toLowerCase();
+    const clean = s => String(s || '').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    const cleanName = clean(u.name);
+    const cleanUsername = clean(u.username);
+    const cleanEmail = clean(u.email);
     const isMelisa = cleanName === 'melisa' || cleanEmail === 'meli030814abc@gmail.com';
 
     // Si el reto de AGILE Y SCRUM no tiene autor definido, asignarlo a Melisa
-    const cleanTitle = (challenge.title || '').trim().toLowerCase();
+    const cleanTitle = clean(challenge.title);
     const isAgileScrum = (cleanTitle.includes('agile') && cleanTitle.includes('scrum')) || challenge.id === 'reto_1792180343870';
     if (isMelisa && isAgileScrum && (!challenge.author || challenge.author === 'Profesor' || challenge.author === 'Comunidad')) {
       challenge.author = u.name || 'Melisa';
@@ -1363,10 +1364,29 @@ class AppRouter {
     // AGILE Y SCRUM sigue siendo exclusivo de Melisa
     if (isAgileScrum) return false;
 
-    // Autor del cuestionario: por id, correo o nombre exacto
-    if (challenge.authorId && u.id && String(challenge.authorId) === String(u.id)) return true;
-    if (challenge.authorEmail && cleanEmail && challenge.authorEmail.trim().toLowerCase() === cleanEmail) return true;
-    if (challenge.author && cleanName && challenge.author.trim().toLowerCase() === cleanName) return true;
+    // Autor del proyecto/cuestionario: por id, correo, nombre o username
+    const currentId = String(u.id || '').trim();
+    const authorId = String(challenge.authorId || challenge.creatorId || '').trim();
+    const authorEmail = clean(challenge.authorEmail);
+    const authorName = clean(challenge.author || challenge.creatorName || challenge.teamLead);
+    const authorsConfigList = clean(challenge.authorsConfig?.authorsList);
+    const authorsConfigEmails = clean(challenge.authorsConfig?.authorsEmails);
+
+    if (currentId && authorId && (authorId === currentId || authorId === 'usr_' + currentId)) return true;
+    if (cleanEmail && (authorEmail === cleanEmail || authorsConfigEmails.includes(cleanEmail))) return true;
+    if (cleanName && (authorName === cleanName || authorsConfigList.includes(cleanName))) return true;
+    if (cleanUsername && (authorName === cleanUsername || authorsConfigList.includes(cleanUsername))) return true;
+
+    // Verificar si el proyecto reside en la bóveda personal del usuario
+    try {
+      const userKey = u.id || u.username || u.email;
+      if (userKey) {
+        const vault = JSON.parse(localStorage.getItem('mentix_user_projects_' + userKey) || '[]');
+        if (Array.isArray(vault) && vault.some(p => p && p.id === challenge.id)) {
+          return true;
+        }
+      }
+    } catch(e) {}
 
     return false;
   }
