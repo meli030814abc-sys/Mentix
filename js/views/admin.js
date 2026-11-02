@@ -17,6 +17,10 @@ window.AdminView = {
     role: 'all',
     status: 'all'
   },
+  resourceFilter: {
+    search: '',
+    type: 'all'
+  },
   auditFilter: {
     search: '',
     module: 'all'
@@ -26,14 +30,108 @@ window.AdminView = {
   activeModalTab: 'general',
 
   /**
+   * Obtener URL del banner hero del robot
+   */
+  getHeroBannerUrl() {
+    const saved = localStorage.getItem('mentix_admin_hero_banner') || localStorage.getItem('mentix_projects_hero_banner');
+    if (saved) return saved;
+    if (window.appState && window.appState.projectsHeroBanner) return window.appState.projectsHeroBanner;
+    return 'assets/projects_ui/robot_hero_banner.png';
+  },
+
+  /**
+   * Comprobar si el usuario actual tiene permisos de Administrador
+   */
+  isAdminUser() {
+    const u = window.appState && window.appState.currentUser;
+    if (!u) return false;
+    const r = (u.role || '').toLowerCase().trim();
+    if (r === 'admin' || r === 'administrador' || u.isAdmin === true) return true;
+    if (localStorage.getItem('mentix_admin_override') === 'true') return true;
+    return false;
+  },
+
+  /**
+   * Permitir el acceso en modo administrador para pruebas o usuarios autorizados
+   */
+  simulateAdminLogin() {
+    if (window.appState) {
+      if (!window.appState.currentUser) {
+        window.appState.currentUser = {
+          id: 'admin_master',
+          name: 'Administrador Mentix',
+          email: 'admin@mentix.edu',
+          role: 'admin',
+          isAdmin: true
+        };
+      } else {
+        window.appState.currentUser.role = 'admin';
+        window.appState.currentUser.isAdmin = true;
+      }
+    }
+    localStorage.setItem('mentix_admin_override', 'true');
+    this.logAuditEvent('Inicio de sesión en Modo Administrador autorizado', 'Seguridad');
+    this.showToast('Acceso como Administrador habilitado', 'success');
+    this.render();
+  },
+
+  /**
    * Inicialización y renderizado principal
    */
   render() {
     const container = document.getElementById('view-admin');
     if (!container) return;
 
+    // Control estricto de acceso exclusivo para administradores
+    if (!this.isAdminUser()) {
+      const u = window.appState && window.appState.currentUser;
+      container.innerHTML = `
+        <div class="admin-unauthorized-wrapper">
+          <div class="admin-unauthorized-card">
+            <div class="admin-unauth-header">
+              <div class="admin-brain-logo large">
+                <svg viewBox="0 0 100 100" class="admin-brain-svg" width="60" height="60">
+                  <defs>
+                    <linearGradient id="brainGradPinkUnauth" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stop-color="#ff007f" />
+                      <stop offset="100%" stop-color="#d946ef" />
+                    </linearGradient>
+                    <linearGradient id="brainGradCyanUnauth" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stop-color="#00f5d4" />
+                      <stop offset="100%" stop-color="#0066ff" />
+                    </linearGradient>
+                  </defs>
+                  <path d="M 47,15 C 38,15 28,18 22,25 C 16,32 15,40 18,48 C 14,53 14,61 17,68 C 20,75 27,82 36,84 C 42,85 46,81 47,78 Z" fill="url(#brainGradPinkUnauth)"/>
+                  <path d="M 28,32 C 34,30 40,36 44,38 M 24,52 C 30,50 36,54 44,53 M 28,70 C 35,68 40,73 45,71" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" fill="none" opacity="0.85"/>
+                  <path d="M 53,15 C 62,15 72,18 78,25 C 84,32 85,40 82,48 C 86,53 86,61 83,68 C 80,75 73,82 64,84 C 58,85 54,81 53,78 Z" fill="url(#brainGradCyanUnauth)"/>
+                  <path d="M 72,32 C 66,30 60,36 56,38 M 76,52 C 70,50 64,54 56,53 M 72,70 C 65,68 60,73 55,71" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" fill="none" opacity="0.85"/>
+                </svg>
+              </div>
+              <span class="unauth-security-badge">🔒 ACCESO RESTRINGIDO</span>
+            </div>
+
+            <h2>Panel Exclusivo de Administradores</h2>
+            <p class="unauth-desc">
+              Esta sección contiene los controles ejecutivos de configuración, ajustes de diseño de robots, reportes y gestión de roles de Mentix. Tu cuenta actual (<strong>${u ? u.name : 'Invitado'}</strong>) tiene rol de <strong>${u ? (u.role || 'Estudiante') : 'Sin sesión'}</strong>.
+            </p>
+
+            <div class="unauth-actions">
+              <button class="btn btn-cyan" onclick="window.appRouter.navigate('projects')">
+                <span>🚀</span> Volver al Portal de Proyectos
+              </button>
+              <button class="btn btn-outline" onclick="window.AdminView.simulateAdminLogin()">
+                <span>🔑</span> Entrar en Modo Administrador
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+      return;
+    }
+
     // Sincronizar datos globales
     this.ensureAuditLogs();
+    this.ensureResources();
     this.sidebarCollapsed = localStorage.getItem('mentix_admin_sidebar_collapsed') === 'true';
 
     // Inyectar layout SaaS completo
@@ -43,49 +141,77 @@ window.AdminView = {
         <!-- SIDEBAR LATERAL AZUL OSCURO -->
         <aside class="mentix-admin-sidebar" id="admin-sidebar">
           <div class="admin-sidebar-header">
-            <div class="admin-brand-icon">
-              <span>⚡</span>
-            </div>
-            <div class="admin-brand-text">
-              <h3>MENTIX</h3>
-              <span>CENTRO ADMINISTRATIVO</span>
+            <div class="admin-brand-wrap" onclick="window.AdminView.switchTab('dashboard')">
+              <div class="admin-brain-logo">
+                <svg viewBox="0 0 100 100" class="admin-brain-svg" width="38" height="38">
+                  <defs>
+                    <linearGradient id="brainGradPink" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stop-color="#ff007f" />
+                      <stop offset="100%" stop-color="#d946ef" />
+                    </linearGradient>
+                    <linearGradient id="brainGradCyan" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stop-color="#00f5d4" />
+                      <stop offset="100%" stop-color="#0066ff" />
+                    </linearGradient>
+                    <filter id="brainGlow" x="-20%" y="-20%" width="140%" height="140%">
+                      <feGaussianBlur stdDeviation="2.5" result="blur" />
+                      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                    </filter>
+                  </defs>
+                  <!-- Hemisferio Izquierdo Magenta/Rosa -->
+                  <path d="M 47,15 C 38,15 28,18 22,25 C 16,32 15,40 18,48 C 14,53 14,61 17,68 C 20,75 27,82 36,84 C 42,85 46,81 47,78 Z" fill="url(#brainGradPink)" filter="url(#brainGlow)"/>
+                  <path d="M 28,32 C 34,30 40,36 44,38 M 24,52 C 30,50 36,54 44,53 M 28,70 C 35,68 40,73 45,71" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" fill="none" opacity="0.85"/>
+                  <!-- Hemisferio Derecho Cyan/Azul Eléctrico -->
+                  <path d="M 53,15 C 62,15 72,18 78,25 C 84,32 85,40 82,48 C 86,53 86,61 83,68 C 80,75 73,82 64,84 C 58,85 54,81 53,78 Z" fill="url(#brainGradCyan)" filter="url(#brainGlow)"/>
+                  <path d="M 72,32 C 66,30 60,36 56,38 M 76,52 C 70,50 64,54 56,53 M 72,70 C 65,68 60,73 55,71" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" fill="none" opacity="0.85"/>
+                </svg>
+              </div>
+              <div class="admin-brand-text sidebar-hideable">
+                <h3 class="admin-brand-title">MEN<span>TI</span>X</h3>
+                <span class="admin-brand-slogan">Aprende · Crea · Innova</span>
+              </div>
             </div>
             <button class="admin-sidebar-toggle-btn" title="Contraer menú" onclick="window.AdminView.toggleSidebar()">
               <span>◀</span>
             </button>
           </div>
 
-          <!-- Navegación del Sidebar -->
+          <!-- Navegación del Sidebar (Idéntico a la imagen) -->
           <nav class="admin-sidebar-nav">
             <button class="admin-nav-item ${this.activeTab === 'dashboard' ? 'active' : ''}" onclick="window.AdminView.switchTab('dashboard')">
-              <span class="admin-nav-icon">📊</span>
-              <span class="admin-nav-label">Dashboard</span>
+              <span class="admin-nav-icon">🏠</span>
+              <span class="admin-nav-label sidebar-hideable">Inicio</span>
             </button>
             <button class="admin-nav-item ${this.activeTab === 'projects' ? 'active' : ''}" onclick="window.AdminView.switchTab('projects')">
-              <span class="admin-nav-icon">🚀</span>
-              <span class="admin-nav-label">Proyectos</span>
-              <span class="admin-nav-badge">${(window.appState && window.appState.challenges ? window.appState.challenges.length : 0)}</span>
+              <span class="admin-nav-icon">📁</span>
+              <span class="admin-nav-label sidebar-hideable">Mis Proyectos</span>
+              <span class="admin-nav-badge sidebar-hideable">${(window.appState && window.appState.challenges ? window.appState.challenges.length : 0)}</span>
             </button>
-            <button class="admin-nav-item ${this.activeTab === 'users' ? 'active' : ''}" onclick="window.AdminView.switchTab('users')">
+            <button class="admin-nav-item ${this.activeTab === 'teacher' ? 'active' : ''}" onclick="window.AdminView.switchTab('teacher')">
+              <span class="admin-nav-icon">📋</span>
+              <span class="admin-nav-label sidebar-hideable">Panel Docente</span>
+            </button>
+            <button class="admin-nav-item ${this.activeTab === 'evaluations' ? 'active' : ''}" onclick="window.AdminView.switchTab('evaluations')">
+              <span class="admin-nav-icon">📝</span>
+              <span class="admin-nav-label sidebar-hideable">Evaluaciones</span>
+            </button>
+            <button class="admin-nav-item ${this.activeTab === 'resources' ? 'active' : ''}" onclick="window.AdminView.switchTab('resources')">
+              <span class="admin-nav-icon">📂</span>
+              <span class="admin-nav-label sidebar-hideable">Recursos</span>
+              <span class="admin-nav-badge sidebar-hideable" id="admin-resources-count-badge">6</span>
+            </button>
+            <button class="admin-nav-item ${this.activeTab === 'community' || this.activeTab === 'roles' ? 'active' : ''}" onclick="window.AdminView.switchTab('community')">
               <span class="admin-nav-icon">👥</span>
-              <span class="admin-nav-label">Usuarios</span>
-              <span class="admin-nav-badge">${(window.appState && window.appState.users ? window.appState.users.length : 0)}</span>
-            </button>
-            <button class="admin-nav-item ${this.activeTab === 'categories' ? 'active' : ''}" onclick="window.AdminView.switchTab('categories')">
-              <span class="admin-nav-icon">🏷️</span>
-              <span class="admin-nav-label">Categorías</span>
+              <span class="admin-nav-label sidebar-hideable">Comunidad</span>
+              <span class="admin-nav-badge sidebar-hideable">${(window.appState && window.appState.users ? window.appState.users.length : 0)}</span>
             </button>
             <button class="admin-nav-item ${this.activeTab === 'reports' ? 'active' : ''}" onclick="window.AdminView.switchTab('reports')">
-              <span class="admin-nav-icon">📈</span>
-              <span class="admin-nav-label">Reportes</span>
+              <span class="admin-nav-icon">📊</span>
+              <span class="admin-nav-label sidebar-hideable">Reportes</span>
             </button>
-            <button class="admin-nav-item ${this.activeTab === 'audit' ? 'active' : ''}" onclick="window.AdminView.switchTab('audit')">
-              <span class="admin-nav-icon">🛡️</span>
-              <span class="admin-nav-label">Auditoría</span>
-            </button>
-            <button class="admin-nav-item ${this.activeTab === 'settings' ? 'active' : ''}" onclick="window.AdminView.switchTab('settings')">
+            <button class="admin-nav-item ${this.activeTab === 'settings' || this.activeTab === 'design' ? 'active' : ''}" onclick="window.AdminView.switchTab('settings')">
               <span class="admin-nav-icon">⚙️</span>
-              <span class="admin-nav-label">Configuración</span>
+              <span class="admin-nav-label sidebar-hideable">Configuración</span>
             </button>
           </nav>
 
@@ -198,6 +324,8 @@ window.AdminView = {
    * Cambiar de sección en el sidebar
    */
   switchTab(tabName) {
+    if (tabName === 'design') tabName = 'settings';
+    if (tabName === 'roles' || tabName === 'users') tabName = 'community';
     this.activeTab = tabName;
     
     // Actualizar clase activa en nav
@@ -228,24 +356,142 @@ window.AdminView = {
       case 'projects':
         content.innerHTML = this.templateProjects();
         break;
-      case 'users':
-        content.innerHTML = this.templateUsers();
+      case 'teacher':
+        content.innerHTML = this.templateTeacher();
         break;
-      case 'categories':
-        content.innerHTML = this.templateCategories();
+      case 'evaluations':
+        content.innerHTML = this.templateEvaluations();
+        break;
+      case 'resources':
+        content.innerHTML = this.templateResources();
+        break;
+      case 'community':
+      case 'roles':
+      case 'users':
+        content.innerHTML = this.templateRoles();
         break;
       case 'reports':
         content.innerHTML = this.templateReports();
         break;
+      case 'settings':
+      case 'design':
+        content.innerHTML = this.templateDesign();
+        break;
+      case 'categories':
+        content.innerHTML = this.templateCategories();
+        break;
       case 'audit':
         content.innerHTML = this.templateAudit();
-        break;
-      case 'settings':
-        content.innerHTML = this.templateSettings();
         break;
       default:
         content.innerHTML = this.templateDashboard();
     }
+  },
+
+  templateTeacher() {
+    return `
+      <div class="admin-breadcrumbs">
+        <span>Inicio</span>
+        <span class="sep">/</span>
+        <span class="active">Panel Docente</span>
+      </div>
+      <div class="admin-section-header">
+        <div>
+          <h2>Panel Docente & Mentoría Académica</h2>
+          <p>Supervisa los cursos activos, asignaciones de retos y acompañamiento pedagógico a estudiantes.</p>
+        </div>
+        <div class="admin-header-actions">
+          <button class="btn btn-cyan" onclick="window.appRouter.navigate('teacher')">
+            <span>👨‍🏫</span> Abrir Panel Docente Completo
+          </button>
+        </div>
+      </div>
+      <div class="admin-roles-overview-grid">
+        <div class="admin-role-card role-card-teacher">
+          <div class="role-card-top">
+            <span class="role-card-icon">📚</span>
+            <span class="role-card-badge">Activo</span>
+          </div>
+          <h3>Cursos & Grupos</h3>
+          <p>4 Grupos activos en formulación de proyectos tecnológicos y de ciencias.</p>
+        </div>
+        <div class="admin-role-card role-card-admin">
+          <div class="role-card-top">
+            <span class="role-card-icon">🚀</span>
+            <span class="role-card-badge">12 Retos</span>
+          </div>
+          <h3>Retos en Desarrollo</h3>
+          <p>Proyectos estudiantiles en fase de prototipado y validación de hipótesis.</p>
+        </div>
+        <div class="admin-role-card role-card-student">
+          <div class="role-card-top">
+            <span class="role-card-icon">📝</span>
+            <span class="role-card-badge">8 Entregas</span>
+          </div>
+          <h3>Entregas Pendientes</h3>
+          <p>Entregas listas para revisión y retroalimentación docente con rúbrica.</p>
+        </div>
+      </div>
+    `;
+  },
+
+  templateEvaluations() {
+    return `
+      <div class="admin-breadcrumbs">
+        <span>Inicio</span>
+        <span class="sep">/</span>
+        <span class="active">Evaluaciones & Rúbricas</span>
+      </div>
+      <div class="admin-section-header">
+        <div>
+          <h2>Centro de Evaluaciones & Rúbricas Oficiales</h2>
+          <p>Gestiona los criterios de calificación, ponderaciones y rúbricas de proyectos de innovación.</p>
+        </div>
+        <div class="admin-header-actions">
+          <button class="btn btn-cyan" onclick="window.AdminView.switchTab('resources')">
+            <span>📝</span> Ver Rúbricas en Recursos
+          </button>
+        </div>
+      </div>
+      <div class="admin-table-card">
+        <table class="admin-data-table">
+          <thead>
+            <tr>
+              <th>Criterio de Evaluación</th>
+              <th>Ponderación</th>
+              <th>Público Objetivo</th>
+              <th>Estado</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Impacto y Pertinencia Social</strong></td>
+              <td>25%</td>
+              <td>Todos los Proyectos</td>
+              <td><span class="perm-yes">✅ Activo</span></td>
+            </tr>
+            <tr>
+              <td><strong>Rigor Técnico & Prototipado</strong></td>
+              <td>30%</td>
+              <td>Robótica, IA y Software</td>
+              <td><span class="perm-yes">✅ Activo</span></td>
+            </tr>
+            <tr>
+              <td><strong>Pitch y Comunicación (Diapositivas / Video)</strong></td>
+              <td>25%</td>
+              <td>Presentaciones y Videos</td>
+              <td><span class="perm-yes">✅ Activo</span></td>
+            </tr>
+            <tr>
+              <td><strong>Originalidad e Innovación</strong></td>
+              <td>20%</td>
+              <td>Todos los Proyectos</td>
+              <td><span class="perm-yes">✅ Activo</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    `;
   },
 
   /**
@@ -512,7 +758,80 @@ window.AdminView = {
       <div class="admin-breadcrumbs">
         <span>Inicio</span>
         <span class="sep">/</span>
-        <span class="active">Gestión de Proyectos Estudiantiles</span>
+        <span class="active">Mis Proyectos & Moderación</span>
+      </div>
+
+      <!-- HERO BANNER INSTITUCIONAL DEL ROBOT (SOLO PARA ADMINS CON BOTONES DE ACCIÓN) -->
+      <div class="saas-hero-banner-wrapper" style="position: relative; width: 100%; border-radius: 20px; overflow: hidden; margin-bottom: 1.75rem; box-shadow: 0 12px 35px rgba(2, 40, 100, 0.16); background: #071739;">
+        <img 
+          id="mentix-admin-projects-hero-banner-img"
+          src="${this.getHeroBannerUrl()}" 
+          alt="Banner de Robot de Proyectos Mentix" 
+          style="width: 100%; height: auto; max-height: 270px; display: block; object-fit: cover; filter: brightness(1.08) contrast(1.05); image-rendering: high-quality;" 
+        />
+
+        <!-- BOTÓN FLOTANTE EXCLUSIVO DE ADMINISTRADOR PARA CAMBIAR BANNER -->
+        <div style="position: absolute; top: 1rem; right: 1.25rem; z-index: 10;">
+          <button 
+            type="button" 
+            onclick="window.AdminView.switchTab('settings')" 
+            title="Cambiar Banner de Proyectos y Banner de Robot (Exclusivo Administrador)"
+            style="display: inline-flex; align-items: center; gap: 0.5rem; background: rgba(7, 23, 57, 0.92); backdrop-filter: blur(10px); color: #00f5d4; border: 2px solid #00f5d4; border-radius: 9999px; padding: 0.45rem 1.15rem; font-size: 0.84rem; font-weight: 900; cursor: pointer; box-shadow: 0 0 20px rgba(0, 245, 212, 0.45); transition: all 0.25s ease;"
+          >
+            <span style="font-size: 1.1rem;">🤖</span>
+            <span>Cambiar Banner (Modo Administrador)</span>
+            <span style="background: #00f5d4; color: #071739; padding: 0.1rem 0.4rem; border-radius: 999px; font-size: 0.7rem; font-weight: 900;">ADMIN</span>
+          </button>
+        </div>
+
+        <!-- BOTONES PRINCIPALES DE ACCIÓN INTEGRADOS EN EL BANNER -->
+        <div class="mentix-banner-action-row" style="position: absolute; left: 3.5%; bottom: 8.5%; z-index: 5; display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;">
+          
+          <button 
+            type="button" 
+            onclick="window.ProjectsView ? window.ProjectsView.openJoinProjectModal() : window.appRouter.navigate('projects', { viewMode: 'join' })" 
+            title="Unirse a un código"
+            class="mentix-hero-action-btn"
+            style="display: inline-flex; align-items: center; gap: 0.45rem; background: linear-gradient(135deg, #f72585 0%, #b5179e 100%); color: #ffffff; border: none; border-radius: 9999px; padding: 0.52rem 1.25rem; font-size: 0.9rem; font-weight: 800; cursor: pointer; box-shadow: 0 4px 16px rgba(247, 37, 133, 0.45); transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); white-space: nowrap;"
+          >
+            <span style="font-size: 1rem;">🎮</span>
+            <span>Unirse a un código</span>
+          </button>
+
+          <button 
+            type="button" 
+            onclick="window.appRouter.navigate('projects', { viewMode: 'create' })" 
+            title="Crear Proyecto"
+            class="mentix-hero-action-btn"
+            style="display: inline-flex; align-items: center; gap: 0.45rem; background: linear-gradient(135deg, #00d2ff 0%, #0077ff 100%); color: #ffffff; border: none; border-radius: 9999px; padding: 0.52rem 1.25rem; font-size: 0.9rem; font-weight: 800; cursor: pointer; box-shadow: 0 4px 16px rgba(0, 180, 255, 0.48); transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); white-space: nowrap;"
+          >
+            <span style="font-size: 1rem;">➕</span>
+            <span>Crear Proyecto</span>
+          </button>
+
+          <button 
+            type="button" 
+            onclick="window.ProjectsView ? window.ProjectsView.openCreateCodeModal() : window.AdminView.showToast('Generador de código disponible')" 
+            title="Crear Código de Proyecto"
+            class="mentix-hero-action-btn"
+            style="display: inline-flex; align-items: center; gap: 0.45rem; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: #ffffff; border: none; border-radius: 9999px; padding: 0.52rem 1.25rem; font-size: 0.9rem; font-weight: 800; cursor: pointer; box-shadow: 0 4px 16px rgba(16, 185, 129, 0.45); transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); white-space: nowrap;"
+          >
+            <span style="font-size: 1rem;">🔑</span>
+            <span>Crear Código</span>
+          </button>
+
+          <button 
+            type="button" 
+            onclick="window.appRouter.openCategoryModal ? window.appRouter.openCategoryModal() : window.AdminView.switchTab('categories')" 
+            title="Categorías"
+            class="mentix-hero-action-btn"
+            style="display: inline-flex; align-items: center; gap: 0.45rem; background: linear-gradient(135deg, #4f46e5 0%, #3730a3 100%); color: #ffffff; border: none; border-radius: 9999px; padding: 0.52rem 1.25rem; font-size: 0.9rem; font-weight: 800; cursor: pointer; box-shadow: 0 4px 16px rgba(79, 70, 229, 0.45); transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); white-space: nowrap;"
+          >
+            <span style="font-size: 1rem;">🏷️</span>
+            <span>Categorías</span>
+          </button>
+
+        </div>
       </div>
 
       <!-- Header del Módulo -->
@@ -525,7 +844,7 @@ window.AdminView = {
           <button class="btn btn-outline" onclick="window.AdminView.exportProjectsCSV()">
             <span>📥</span> Exportar CSV
           </button>
-          <button class="btn btn-cyan" onclick="window.appRouter.navigate('projects')">
+          <button class="btn btn-cyan" onclick="window.appRouter.navigate('projects', { viewMode: 'create' })">
             <span>➕</span> Crear Proyecto
           </button>
         </div>
@@ -580,62 +899,93 @@ window.AdminView = {
   },
 
   /**
-   * Vista de Cuadrícula de Tarjetas de Proyectos
+   * Vista de Cuadrícula de Tarjetas de Proyectos (Diseño Idéntico a Imagen 2)
    */
   renderProjectCardsGrid(projects) {
     return `
       <div class="admin-projects-grid">
         ${projects.map(p => {
-          const isPublic = p.visibility !== 'private';
           const isCompleted = p.status === 'completed' || p.stage === 'completed';
-          const coverImage = p.image || p.cover || 'assets/student_create_bg.jpg';
-          const creatorName = p.creatorName || p.author || 'Estudiante Mentix';
-          const creatorAvatar = p.creatorAvatar || '🎓';
-          const categoryName = p.category || 'General';
-          const dateStr = p.createdAt ? new Date(p.createdAt).toLocaleDateString('es-CO') : 'Reciente';
+          const coverImage = p.image || p.cover || p.banner || 'assets/student_create_bg.jpg';
+          const title = p.title || 'Gobierno de Datos en la Práctica';
+          const description = p.description || 'Metodologías ágiles para la gobernanza moderna de información y toma de decisiones.';
+          
+          let dateStr = '12 Abr 2025';
+          if (p.createdAt) {
+            try {
+              const d = new Date(p.createdAt);
+              if (!isNaN(d.getTime())) {
+                dateStr = d.toLocaleDateString('es-CO', { day: 'numeric', month: 'short', year: 'numeric' });
+              }
+            } catch(e) {}
+          }
+          
+          const participants = p.participantsCount || (p.collaborators ? p.collaborators.length : null) || 24;
+          const rating = p.rating || '4.8';
 
           return `
             <div class="admin-project-card">
-              <!-- Portada y Badges -->
-              <div class="card-cover-wrapper">
-                <img src="${coverImage}" alt="${p.title}" class="card-cover-img" onerror="this.onerror=null; this.src='assets/student_create_bg.jpg';">
-                <div class="card-badges-overlay">
-                  <span class="badge-status ${isCompleted ? 'status-completed' : 'status-in-progress'}">
-                    ${isCompleted ? '🏆 Completado' : '⚡ En Proceso'}
-                  </span>
-                  <span class="badge-visibility ${isPublic ? 'vis-public' : 'vis-private'}">
-                    ${isPublic ? '🌐 Público' : '🔒 Privado'}
-                  </span>
+              <!-- Portada con Badges y Acciones Flotantes Superiores (Idéntico a Imagen 2) -->
+              <div class="admin-card-banner">
+                <img src="${coverImage}" alt="${title}" class="admin-card-cover-img" onerror="this.onerror=null; this.src='assets/student_create_bg.jpg';">
+                
+                <div class="admin-card-badge-row">
+                  <!-- Badge Izquierdo de Estado -->
+                  <div class="admin-card-status-badge ${isCompleted ? 'completed' : 'in-progress'}">
+                    <span>${isCompleted ? '✔' : '⚡'}</span>
+                    <span>${isCompleted ? 'Completado' : 'En Proceso'}</span>
+                  </div>
+
+                  <!-- Botones Flotantes Derechos -->
+                  <div class="admin-card-top-actions">
+                    <button class="btn-card-robot-banner" title="Personalizar banner del robot" onclick="window.AdminView.switchTab('design')">
+                      <span>🤖</span> Banner
+                    </button>
+                    <button class="btn-card-trash" title="Eliminar proyecto" onclick="window.AdminView.deleteProject('${p.id}')">
+                      🗑️
+                    </button>
+                    <button class="btn-card-more" title="Más opciones del proyecto" onclick="window.AdminView.openProjectDetailModal('${p.id}')">
+                      •••
+                    </button>
+                  </div>
                 </div>
               </div>
 
-              <!-- Cuerpo de la Tarjeta -->
-              <div class="card-body">
-                <div class="card-category-tag">
-                  <span>🏷️ ${categoryName}</span>
-                </div>
-                <h3 class="card-title" title="${p.title}">${p.title}</h3>
-                <p class="card-desc">${p.description ? p.description.slice(0, 110) + '...' : 'Sin descripción registrada para este reto académico.'}</p>
-                
-                <!-- Info del Creador y Fecha -->
-                <div class="card-author-row">
-                  <div class="author-avatar">${creatorAvatar}</div>
-                  <div class="author-details">
-                    <span class="author-name">${creatorName}</span>
-                    <span class="card-date">Creado el ${dateStr}</span>
+              <!-- Contenido de la Tarjeta -->
+              <div class="admin-card-body">
+                <h3 class="admin-card-title" title="${title}">${title}</h3>
+                <p class="admin-card-desc">${description}</p>
+
+                <!-- Fila de Metadatos: Fecha, Participantes y Puntuación -->
+                <div class="admin-card-meta-row">
+                  <div class="meta-item">
+                    <span class="meta-icon">📅</span>
+                    <span class="meta-text">${dateStr}</span>
+                  </div>
+                  <div class="meta-item">
+                    <span class="meta-icon">👥</span>
+                    <span class="meta-text">${participants}</span>
+                  </div>
+                  <div class="meta-item">
+                    <span class="meta-icon">⭐</span>
+                    <span class="meta-text">${rating}</span>
                   </div>
                 </div>
 
-                <!-- Footer de Acciones Rápidas -->
-                <div class="card-footer-actions">
-                  <button class="btn btn-sm btn-outline" onclick="window.AdminView.openProjectDetailModal('${p.id}')">
-                    <span>👁️</span> Detalle
+                <!-- Botones Inferiores: Ver Detalles y Compartir -->
+                <div class="admin-card-actions-row">
+                  <button class="btn-card-details" onclick="window.AdminView.openProjectDetailModal('${p.id}')">
+                    Ver Detalles →
                   </button>
-                  <button class="btn btn-sm ${isPublic ? 'btn-outline-gold' : 'btn-outline-cyan'}" onclick="window.AdminView.toggleProjectVisibility('${p.id}')" title="Alternar público/privado">
-                    ${isPublic ? '🔒 Ocultar' : '🌐 Publicar'}
-                  </button>
-                  <button class="btn btn-sm btn-danger-ghost" onclick="window.AdminView.deleteProject('${p.id}')" title="Eliminar proyecto">
-                    <span>🗑️</span>
+                  <button class="btn-card-share" onclick="window.AdminView.shareProject('${p.id}')">
+                    <span>Compartir</span>
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                      <circle cx="18" cy="5" r="3"></circle>
+                      <circle cx="6" cy="12" r="3"></circle>
+                      <circle cx="18" cy="19" r="3"></circle>
+                      <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+                      <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+                    </svg>
                   </button>
                 </div>
               </div>
@@ -719,9 +1069,9 @@ window.AdminView = {
   },
 
   /**
-   * 3. GESTIÓN DE USUARIOS
+   * 3. CONFIGURACIÓN DE ROLES & USUARIOS
    */
-  templateUsers() {
+  templateRoles() {
     const rawUsers = (window.appState && window.appState.users) ? window.appState.users : [];
     
     // Filtro
@@ -743,19 +1093,23 @@ window.AdminView = {
       return true;
     });
 
+    const adminCount = rawUsers.filter(u => u.role === 'admin').length;
+    const teacherCount = rawUsers.filter(u => u.role === 'teacher').length;
+    const studentCount = rawUsers.filter(u => u.role === 'student' || !u.role).length;
+
     return `
       <!-- Breadcrumbs -->
       <div class="admin-breadcrumbs">
         <span>Inicio</span>
         <span class="sep">/</span>
-        <span class="active">Gestión de Usuarios y Cuentas</span>
+        <span class="active">Configuración de Roles & Permisos</span>
       </div>
 
       <!-- Header -->
       <div class="admin-section-header">
         <div>
-          <h2>Directorio de Usuarios & Roles Institucionales</h2>
-          <p>Administra las cuentas de estudiantes, docentes y administradores con control de acceso granular.</p>
+          <h2>Configuración de Roles & Permisos Institucionales</h2>
+          <p>Administra las cuentas de estudiantes, docentes y administradores con control de acceso granular y asignación inmediata de roles.</p>
         </div>
         <div class="admin-header-actions">
           <button class="btn btn-cyan" onclick="window.AdminView.openCreateUserModal()">
@@ -764,30 +1118,136 @@ window.AdminView = {
         </div>
       </div>
 
-      <!-- Barra de Filtros -->
+      <!-- Tarjetas de Roles Principales -->
+      <div class="admin-roles-overview-grid">
+        <div class="admin-role-card role-card-admin">
+          <div class="role-card-top">
+            <span class="role-card-icon">🛡️</span>
+            <span class="role-card-badge">${adminCount} Cuentas</span>
+          </div>
+          <h3>Super Administrador</h3>
+          <p>Control total del backend, personalización del robot y banners, gestión de usuarios, recursos y auditoría completa.</p>
+          <ul class="role-caps-list">
+            <li>✅ Acceso exclusivo a panel administrativo</li>
+            <li>✅ Cambio de banner de robot & colores</li>
+            <li>✅ Moderación y eliminación global</li>
+          </ul>
+        </div>
+
+        <div class="admin-role-card role-card-teacher">
+          <div class="role-card-top">
+            <span class="role-card-icon">👨‍🏫</span>
+            <span class="role-card-badge">${teacherCount} Cuentas</span>
+          </div>
+          <h3>Docente / Mentor</h3>
+          <p>Creación y asignación de retos académicos, revisión de proyectos de estudiantes y evaluación con rúbricas oficiales.</p>
+          <ul class="role-caps-list">
+            <li>✅ Gestión de proyectos y retos de curso</li>
+            <li>✅ Rúbricas y retroalimentación didáctica</li>
+            <li>✅ Visualización de analítica de alumnos</li>
+          </ul>
+        </div>
+
+        <div class="admin-role-card role-card-student">
+          <div class="role-card-top">
+            <span class="role-card-icon">🎓</span>
+            <span class="role-card-badge">${studentCount} Cuentas</span>
+          </div>
+          <h3>Estudiante Creador</h3>
+          <p>Creación de proyectos multimedia interactivos (públicos y privados), diapositivas, videos y documentos con IA.</p>
+          <ul class="role-caps-list">
+            <li>✅ Creación de proyectos en 4 formatos</li>
+            <li>✅ Publicación y Landing Pages públicas</li>
+            <li>✅ Participación en desafíos y XP</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Matriz de Permisos del Sistema -->
+      <div class="admin-card" style="margin-bottom: 1.5rem;">
+        <div class="admin-card-header">
+          <div>
+            <h3>Matriz de Permisos por Rol</h3>
+            <p>Capacidades autorizadas en cada módulo de Mentix según el tipo de cuenta autenticada.</p>
+          </div>
+          <span class="badge-tag tag-cyan">Políticas de Seguridad Activas</span>
+        </div>
+        <div class="admin-permissions-table-wrap">
+          <table class="admin-permissions-table">
+            <thead>
+              <tr>
+                <th>Capacidad / Módulo</th>
+                <th style="text-align: center;">🎓 Estudiante</th>
+                <th style="text-align: center;">👨‍🏫 Docente</th>
+                <th style="text-align: center;">🛡️ Administrador</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Crear proyectos interactivos</strong> (Públicos / Privados)</td>
+                <td style="text-align: center;"><span class="perm-yes">✅ Sí</span></td>
+                <td style="text-align: center;"><span class="perm-yes">✅ Sí</span></td>
+                <td style="text-align: center;"><span class="perm-yes">✅ Sí</span></td>
+              </tr>
+              <tr>
+                <td><strong>Editor de Diapositivas, Videos y Documentos</strong></td>
+                <td style="text-align: center;"><span class="perm-yes">✅ Sí</span></td>
+                <td style="text-align: center;"><span class="perm-yes">✅ Sí</span></td>
+                <td style="text-align: center;"><span class="perm-yes">✅ Sí</span></td>
+              </tr>
+              <tr>
+                <td><strong>Modificar Banner de Robot de Proyectos y Temas de Diseño</strong></td>
+                <td style="text-align: center;"><span class="perm-no">❌ No</span></td>
+                <td style="text-align: center;"><span class="perm-no">❌ No</span></td>
+                <td style="text-align: center;"><span class="perm-yes">✅ Exclusivo</span></td>
+              </tr>
+              <tr>
+                <td><strong>Gestionar Biblioteca de Recursos y Plantillas</strong></td>
+                <td style="text-align: center;"><span class="perm-readonly">👁️ Solo Descarga</span></td>
+                <td style="text-align: center;"><span class="perm-yes">✅ Crear Guías</span></td>
+                <td style="text-align: center;"><span class="perm-yes">✅ Control Total</span></td>
+              </tr>
+              <tr>
+                <td><strong>Asignar Roles, Suspender Cuentas y Crear Administradores</strong></td>
+                <td style="text-align: center;"><span class="perm-no">❌ No</span></td>
+                <td style="text-align: center;"><span class="perm-no">❌ No</span></td>
+                <td style="text-align: center;"><span class="perm-yes">✅ Exclusivo</span></td>
+              </tr>
+              <tr>
+                <td><strong>Exportar Reportes Globales y Registros de Auditoría</strong></td>
+                <td style="text-align: center;"><span class="perm-no">❌ No</span></td>
+                <td style="text-align: center;"><span class="perm-readonly">📊 Reporte Curso</span></td>
+                <td style="text-align: center;"><span class="perm-yes">✅ Exclusivo</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Barra de Filtros del Directorio -->
       <div class="admin-filter-bar">
         <div class="filter-search-box">
           <span class="search-icon">🔍</span>
-          <input type="text" placeholder="Buscar por nombre o correo electrónico..." value="${this.userFilter.search}" oninput="window.AdminView.setUserSearch(this.value)">
+          <input type="text" placeholder="Buscar usuario por nombre o correo electrónico..." value="${this.userFilter.search}" oninput="window.AdminView.setUserSearch(this.value)">
         </div>
 
         <div class="filter-pills">
           <button class="filter-pill ${this.userFilter.role === 'all' ? 'active' : ''}" onclick="window.AdminView.setUserRoleFilter('all')">Todos (${rawUsers.length})</button>
-          <button class="filter-pill ${this.userFilter.role === 'admin' ? 'active' : ''}" onclick="window.AdminView.setUserRoleFilter('admin')">Administradores</button>
-          <button class="filter-pill ${this.userFilter.role === 'teacher' ? 'active' : ''}" onclick="window.AdminView.setUserRoleFilter('teacher')">Docentes</button>
-          <button class="filter-pill ${this.userFilter.role === 'student' ? 'active' : ''}" onclick="window.AdminView.setUserRoleFilter('student')">Estudiantes</button>
+          <button class="filter-pill ${this.userFilter.role === 'admin' ? 'active' : ''}" onclick="window.AdminView.setUserRoleFilter('admin')">Administradores (${adminCount})</button>
+          <button class="filter-pill ${this.userFilter.role === 'teacher' ? 'active' : ''}" onclick="window.AdminView.setUserRoleFilter('teacher')">Docentes (${teacherCount})</button>
+          <button class="filter-pill ${this.userFilter.role === 'student' ? 'active' : ''}" onclick="window.AdminView.setUserRoleFilter('student')">Estudiantes (${studentCount})</button>
           <button class="filter-pill ${this.userFilter.status === 'blocked' ? 'active' : ''}" onclick="window.AdminView.setUserStatusFilter('blocked')">Bloqueados</button>
         </div>
       </div>
 
-      <!-- Tabla de Usuarios -->
+      <!-- Tabla de Usuarios y Cambio Directo de Rol -->
       <div class="admin-table-card">
         <table class="admin-data-table">
           <thead>
             <tr>
               <th>Usuario</th>
               <th>Correo Institucional</th>
-              <th>Rol en Mentix</th>
+              <th>Rol Actual (Asignación Rápida)</th>
               <th>Estado</th>
               <th>Nivel / XP</th>
               <th>Último Acceso</th>
@@ -797,9 +1257,6 @@ window.AdminView = {
           <tbody>
             ${users.map(u => {
               const isBlocked = !!u.isBlocked;
-              const roleBadge = u.role === 'admin' ? '<span class="role-badge role-admin">🛡️ Administrador</span>' :
-                                u.role === 'teacher' ? '<span class="role-badge role-teacher">👨‍🏫 Docente</span>' :
-                                '<span class="role-badge role-student">🎓 Estudiante</span>';
 
               return `
                 <tr>
@@ -813,7 +1270,13 @@ window.AdminView = {
                     </div>
                   </td>
                   <td><span class="table-email">${u.email || 'sin-correo@mentix.edu'}</span></td>
-                  <td>${roleBadge}</td>
+                  <td>
+                    <select class="admin-role-select" onchange="window.AdminView.changeUserRole('${u.id}', this.value)">
+                      <option value="admin" ${u.role === 'admin' ? 'selected' : ''}>🛡️ Administrador</option>
+                      <option value="teacher" ${u.role === 'teacher' ? 'selected' : ''}>👨‍🏫 Docente</option>
+                      <option value="student" ${u.role === 'student' || !u.role ? 'selected' : ''}>🎓 Estudiante</option>
+                    </select>
+                  </td>
                   <td>
                     <span class="badge-status ${isBlocked ? 'status-blocked' : 'status-active'}">
                       ${isBlocked ? '🚫 Bloqueado' : '🟢 Activo'}
@@ -841,6 +1304,153 @@ window.AdminView = {
             }).join('')}
           </tbody>
         </table>
+      </div>
+    `;
+  },
+
+  /**
+   * Alias de compatibilidad
+   */
+  templateUsers() {
+    return this.templateRoles();
+  },
+
+  /**
+   * 4. GESTIÓN DE RECURSOS DIDÁCTICOS Y PLANTILLAS
+   */
+  templateResources() {
+    this.ensureResources();
+    const resources = this.getResources();
+    
+    // Filtro
+    let list = resources.filter(r => {
+      if (this.resourceFilter.search) {
+        const q = this.resourceFilter.search.toLowerCase();
+        const mTitle = (r.title || '').toLowerCase().includes(q);
+        const mDesc = (r.description || '').toLowerCase().includes(q);
+        if (!mTitle && !mDesc) return false;
+      }
+      if (this.resourceFilter.type !== 'all') {
+        if (r.type !== this.resourceFilter.type) return false;
+      }
+      return true;
+    });
+
+    const totalCount = resources.length;
+    const slidesCount = resources.filter(r => r.type === 'presentation').length;
+    const docsCount = resources.filter(r => r.type === 'document').length;
+    const assetsCount = resources.filter(r => r.type === 'assets' || r.type === 'multimedia').length;
+
+    return `
+      <!-- Breadcrumbs -->
+      <div class="admin-breadcrumbs">
+        <span>Inicio</span>
+        <span class="sep">/</span>
+        <span class="active">Recursos Didácticos & Plantillas</span>
+      </div>
+
+      <!-- Header -->
+      <div class="admin-section-header">
+        <div>
+          <h2>Biblioteca de Recursos & Plantillas Didácticas</h2>
+          <p>Gestiona plantillas de diapositivas oficiales, guías en PDF, rúbricas de evaluación y kits de assets para creadores.</p>
+        </div>
+        <div class="admin-header-actions">
+          <button class="btn btn-outline" onclick="window.AdminView.resetDefaultResources()">
+            <span>🔄</span> Restaurar Oficiales
+          </button>
+          <button class="btn btn-cyan" onclick="window.AdminView.openAddResourceModal()">
+            <span>➕</span> Subir / Agregar Recurso
+          </button>
+        </div>
+      </div>
+
+      <!-- KPIs de Recursos -->
+      <div class="admin-kpi-grid" style="margin-bottom: 1.5rem;">
+        <div class="admin-kpi-card">
+          <div class="kpi-icon-box cyan"><span>📦</span></div>
+          <div class="kpi-content">
+            <span class="kpi-label">Total Recursos Activos</span>
+            <div class="kpi-value-row"><span class="kpi-value">${totalCount}</span></div>
+            <span class="kpi-trend positive">Disponibles en el sistema</span>
+          </div>
+        </div>
+
+        <div class="admin-kpi-card">
+          <div class="kpi-icon-box purple"><span>📊</span></div>
+          <div class="kpi-content">
+            <span class="kpi-label">Plantillas Diapositivas</span>
+            <div class="kpi-value-row"><span class="kpi-value">${slidesCount}</span></div>
+            <span class="kpi-trend positive">Para exposiciones y pitch</span>
+          </div>
+        </div>
+
+        <div class="admin-kpi-card">
+          <div class="kpi-icon-box gold"><span>📝</span></div>
+          <div class="kpi-content">
+            <span class="kpi-label">Guías & Rúbricas Oficiales</span>
+            <div class="kpi-value-row"><span class="kpi-value">${docsCount}</span></div>
+            <span class="kpi-trend positive">Documentos pedagógicos</span>
+          </div>
+        </div>
+
+        <div class="admin-kpi-card">
+          <div class="kpi-icon-box green"><span>🎨</span></div>
+          <div class="kpi-content">
+            <span class="kpi-label">Kits de Assets & Multimedia</span>
+            <div class="kpi-value-row"><span class="kpi-value">${assetsCount}</span></div>
+            <span class="kpi-trend positive">Ilustraciones y vectores</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Barra de Filtros -->
+      <div class="admin-filter-bar">
+        <div class="filter-search-box">
+          <span class="search-icon">🔍</span>
+          <input type="text" placeholder="Buscar recurso por título o descripción..." value="${this.resourceFilter.search}" oninput="window.AdminView.setResourceSearch(this.value)">
+        </div>
+
+        <div class="filter-pills">
+          <button class="filter-pill ${this.resourceFilter.type === 'all' ? 'active' : ''}" onclick="window.AdminView.setResourceTypeFilter('all')">Todos (${totalCount})</button>
+          <button class="filter-pill ${this.resourceFilter.type === 'presentation' ? 'active' : ''}" onclick="window.AdminView.setResourceTypeFilter('presentation')">Diapositivas (${slidesCount})</button>
+          <button class="filter-pill ${this.resourceFilter.type === 'document' ? 'active' : ''}" onclick="window.AdminView.setResourceTypeFilter('document')">Guías & Rúbricas (${docsCount})</button>
+          <button class="filter-pill ${this.resourceFilter.type === 'assets' ? 'active' : ''}" onclick="window.AdminView.setResourceTypeFilter('assets')">Assets Gráficos</button>
+          <button class="filter-pill ${this.resourceFilter.type === 'multimedia' ? 'active' : ''}" onclick="window.AdminView.setResourceTypeFilter('multimedia')">Multimedia</button>
+          <button class="filter-pill ${this.resourceFilter.type === 'links' ? 'active' : ''}" onclick="window.AdminView.setResourceTypeFilter('links')">APIs & Enlaces</button>
+        </div>
+      </div>
+
+      <!-- Cuadrícula de Tarjetas de Recursos -->
+      <div class="admin-resources-grid">
+        ${list.map(r => `
+          <div class="admin-resource-card">
+            <div class="resource-card-top">
+              <div class="resource-icon-badge">${r.icon || '📄'}</div>
+              <div class="resource-badges-wrap">
+                <span class="badge-tag tag-cyan">${r.category || 'Recurso'}</span>
+                <span class="badge-tag tag-purple">${r.audience || 'Todos'}</span>
+              </div>
+            </div>
+
+            <h3 class="resource-title">${r.title}</h3>
+            <p class="resource-desc">${r.description || 'Recurso didáctico integrado en Mentix Academy.'}</p>
+
+            <div class="resource-meta-row">
+              <span class="resource-format">📁 ${r.format || 'Formato Mentix'}</span>
+              <span class="resource-date">🕒 ${r.updatedAt || 'Reciente'}</span>
+            </div>
+
+            <div class="resource-actions-bar">
+              <button class="btn btn-sm btn-cyan" onclick="window.AdminView.downloadResource('${r.id}')">
+                <span>📥</span> Descargar / Usar
+              </button>
+              <button class="btn-icon danger" title="Eliminar recurso" onclick="window.AdminView.deleteResource('${r.id}')">
+                🗑️
+              </button>
+            </div>
+          </div>
+        `).join('')}
       </div>
     `;
   },
@@ -1039,10 +1649,10 @@ window.AdminView = {
   },
 
   /**
-   * 7. CONFIGURACIÓN VISUAL Y PARÁMETROS GLOBALES
+   * 7. AJUSTES DEL DISEÑO (BANNER DE ROBOT, TEMAS, NEÓN)
    */
-  templateSettings() {
-    const heroBanner = localStorage.getItem('mentix_admin_hero_banner') || 'assets/projects_ui/robot_hero_banner.png';
+  templateDesign() {
+    const heroBanner = localStorage.getItem('mentix_admin_hero_banner') || localStorage.getItem('mentix_projects_hero_banner') || 'assets/projects_ui/robot_hero_banner.png';
     const s = this.getSavedDesign();
 
     return `
@@ -1050,20 +1660,24 @@ window.AdminView = {
       <div class="admin-breadcrumbs">
         <span>Inicio</span>
         <span class="sep">/</span>
-        <span class="active">Centro de Configuración y Personalización</span>
+        <span class="active">Ajustes del Diseño & Personalización</span>
       </div>
 
       <!-- Header -->
       <div class="admin-section-header">
         <div>
-          <h2>Configuración del Sistema & Personalización Visual</h2>
-          <p>Ajusta el banner institucional del robot, temas cromáticos, estilos visuales y opciones avanzadas.</p>
+          <h2>Ajustes del Diseño & Personalización Visual (Exclusivo Administrador)</h2>
+          <p>Personaliza el banner del robot de proyectos, temas cromáticos, estilos visuales y colores de acento neón de Mentix.</p>
         </div>
         <div class="admin-header-actions">
           <button class="btn btn-outline" onclick="window.AdminView.resetDesignDefaults()">
             <span>🔄</span> Restablecer Todo
           </button>
           <button class="btn btn-cyan" onclick="window.AdminView.saveDesignSettings()">
+            <span>💾</span> Guardar y Aplicar Cambios
+          </button>
+        </div>
+      </div>
             <span>💾</span> Guardar Cambios
           </button>
         </div>
@@ -1172,6 +1786,13 @@ window.AdminView = {
 
       </div>
     `;
+  },
+
+  /**
+   * Alias de compatibilidad
+   */
+  templateSettings() {
+    return this.templateDesign();
   },
 
   // ==========================================
@@ -1618,6 +2239,27 @@ window.AdminView = {
     this.renderActiveTab();
   },
 
+  shareProject(projectId) {
+    const projects = (window.appState && window.appState.challenges) ? window.appState.challenges : [];
+    const p = projects.find(item => item.id === projectId);
+    const title = p ? p.title : 'Proyecto';
+    const landingUrl = `${window.location.origin}${window.location.pathname}#landing-${projectId}`;
+
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(landingUrl).then(() => {
+        this.showToast(`Enlace de "${title}" copiado al portapapeles`, 'success');
+      }).catch(() => {
+        this.showToast('Enlace de Landing Page generado', 'info');
+      });
+    } else {
+      this.showToast('Enlace de Landing Page generado', 'info');
+    }
+
+    if (window.ProjectsView && typeof window.ProjectsView.openProjectLanding === 'function') {
+      window.ProjectsView.openProjectLanding(projectId);
+    }
+  },
+
   toggleUserBlock(userId) {
     const users = (window.appState && window.appState.users) ? window.appState.users : [];
     const u = users.find(item => item.id === userId);
@@ -1699,6 +2341,286 @@ window.AdminView = {
     this.renderActiveTab();
   },
 
+  changeUserRole(userId, newRole) {
+    let users = (window.appState && window.appState.users) ? window.appState.users : [];
+    const u = users.find(item => item.id === userId);
+    if (!u) return;
+
+    const oldRole = u.role || 'student';
+    u.role = newRole;
+    u.isAdmin = (newRole === 'admin');
+
+    try {
+      localStorage.setItem('mentix_users', JSON.stringify(users));
+    } catch(e) {}
+
+    this.logAuditEvent(`Rol de usuario actualizado: ${u.name} (${oldRole} ➔ ${newRole})`, 'Roles');
+    this.showToast(`Rol de ${u.name} actualizado a ${newRole}`, 'success');
+    this.renderActiveTab();
+  },
+
+  setResourceSearch(val) {
+    this.resourceFilter.search = val;
+    this.renderActiveTab();
+  },
+
+  setResourceTypeFilter(type) {
+    this.resourceFilter.type = type;
+    this.renderActiveTab();
+  },
+
+  getDefaultResources() {
+    return [
+      {
+        id: 'res_pitch_deck',
+        title: 'Plantilla Pitch Deck Proyectos (Diapositivas)',
+        type: 'presentation',
+        category: 'Plantilla',
+        audience: 'Estudiantes',
+        icon: '📊',
+        description: 'Estructura interactiva de 6 diapositivas lista para presentar proyectos ante docentes y jurados.',
+        url: '#',
+        format: 'Diapositivas Mentix',
+        updatedAt: '2026-11-01'
+      },
+      {
+        id: 'res_guia_robotica',
+        title: 'Guía Pedagógica de Proyectos STEM & Robótica',
+        type: 'document',
+        category: 'Guía',
+        audience: 'Docentes & Estudiantes',
+        icon: '🤖',
+        description: 'Manual paso a paso para formular proyectos de innovación, prototipado y robótica educativa.',
+        url: '#',
+        format: 'PDF / Documento',
+        updatedAt: '2026-11-01'
+      },
+      {
+        id: 'res_rubrica_evaluacion',
+        title: 'Rúbrica Oficial de Evaluación de Proyectos Mentix',
+        type: 'document',
+        category: 'Rúbrica',
+        audience: 'Docentes',
+        icon: '📝',
+        description: 'Matriz de valoración con 5 criterios: impacto social, originalidad, rigor técnico, presentación y viabilidad.',
+        url: '#',
+        format: 'Rúbrica Docente',
+        updatedAt: '2026-11-01'
+      },
+      {
+        id: 'res_kit_grafico',
+        title: 'Pack de Recursos Gráficos & Iconografía Cyberpunk',
+        type: 'assets',
+        category: 'Multimedia',
+        audience: 'Estudiantes',
+        icon: '🎨',
+        description: 'Colección de vectores, stickers e ilustraciones futuristas para embellecer diapositivas y portadas.',
+        url: '#',
+        format: 'Pack Gráfico ZIP',
+        updatedAt: '2026-11-01'
+      },
+      {
+        id: 'res_guia_pitch_video',
+        title: 'Guía de Grabación & Pitch en Video para Proyectos',
+        type: 'multimedia',
+        category: 'Tutorial',
+        audience: 'Estudiantes',
+        icon: '🎬',
+        description: 'Consejos de iluminación, guion de 90 segundos y estructura para proyectos en formato video.',
+        url: '#',
+        format: 'Guía Audiovisual',
+        updatedAt: '2026-11-01'
+      },
+      {
+        id: 'res_directorio_apis',
+        title: 'Directorio de APIs Abiertas & Datos para Estudiantes',
+        type: 'links',
+        category: 'Herramientas',
+        audience: 'Estudiantes',
+        icon: '🌐',
+        description: 'Lista curada de APIs de astronomía (NASA), clima, biodiversidad y datos abiertos para proyectos.',
+        url: 'https://github.com/public-apis/public-apis',
+        format: 'Directorio Web',
+        updatedAt: '2026-11-01'
+      }
+    ];
+  },
+
+  ensureResources() {
+    if (!localStorage.getItem('mentix_admin_resources')) {
+      localStorage.setItem('mentix_admin_resources', JSON.stringify(this.getDefaultResources()));
+    }
+    const badge = document.getElementById('admin-resources-count-badge');
+    if (badge) {
+      badge.textContent = this.getResources().length;
+    }
+  },
+
+  getResources() {
+    try {
+      const data = localStorage.getItem('mentix_admin_resources');
+      return data ? JSON.parse(data) : this.getDefaultResources();
+    } catch(e) {
+      return this.getDefaultResources();
+    }
+  },
+
+  resetDefaultResources() {
+    if (!confirm('¿Deseas restaurar el catálogo oficial de recursos didácticos de Mentix?')) return;
+    localStorage.setItem('mentix_admin_resources', JSON.stringify(this.getDefaultResources()));
+    this.showToast('Recursos oficiales restaurados', 'success');
+    this.ensureResources();
+    this.renderActiveTab();
+  },
+
+  openAddResourceModal() {
+    const modalRoot = document.getElementById('admin-modal-root');
+    if (!modalRoot) return;
+
+    modalRoot.innerHTML = `
+      <div class="admin-modal-overlay" onclick="window.AdminView.handleModalBackdropClick(event)">
+        <div class="admin-modal-window modal-md">
+          <div class="admin-modal-header">
+            <div class="modal-title-wrap">
+              <span class="modal-icon">📦</span>
+              <div>
+                <h3>Nuevo Recurso / Plantilla Didáctica</h3>
+                <span class="modal-sub">Publica diapositivas, guías o recursos para la comunidad</span>
+              </div>
+            </div>
+            <button class="modal-close-btn" onclick="window.AdminView.closeModal()">✕</button>
+          </div>
+
+          <form onsubmit="window.AdminView.handleCreateResourceSubmit(event)" class="admin-modal-form">
+            <div class="form-section">
+              <h4>1. Datos del Recurso</h4>
+              <div class="form-row">
+                <label>Título del Recurso *</label>
+                <input type="text" id="new-res-title" required placeholder="Ej: Plantilla Pitch Maker para Estudiantes">
+              </div>
+              <div class="form-row">
+                <label>Descripción Breve *</label>
+                <textarea id="new-res-desc" required rows="2" placeholder="Explica cómo deben utilizar este recurso los estudiantes o docentes..."></textarea>
+              </div>
+            </div>
+
+            <div class="form-section">
+              <h4>2. Tipo y Destinatarios</h4>
+              <div class="form-grid-2">
+                <div class="form-row">
+                  <label>Tipo de Recurso *</label>
+                  <select id="new-res-type" required>
+                    <option value="presentation">Diapositivas / Presentación</option>
+                    <option value="document">Guía o Documento PDF</option>
+                    <option value="assets">Kit Gráfico / Assets</option>
+                    <option value="multimedia">Video / Multimedia</option>
+                    <option value="links">Enlace Externo / API</option>
+                  </select>
+                </div>
+                <div class="form-row">
+                  <label>Dirigido a *</label>
+                  <select id="new-res-audience" required>
+                    <option value="Estudiantes">Estudiantes Creadores</option>
+                    <option value="Docentes">Docentes & Mentores</option>
+                    <option value="Todos">Toda la Comunidad</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-row">
+                <label>Enlace o Archivo de Referencia (URL / Doc) *</label>
+                <input type="text" id="new-res-url" required placeholder="https://... o nombre del recurso" value="#">
+              </div>
+            </div>
+
+            <div class="admin-modal-footer">
+              <button type="button" class="btn btn-outline" onclick="window.AdminView.closeModal()">Cancelar</button>
+              <button type="submit" class="btn btn-cyan"><span>💾</span> Publicar Recurso</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    `;
+  },
+
+  handleCreateResourceSubmit(e) {
+    e.preventDefault();
+    const title = document.getElementById('new-res-title').value.trim();
+    const desc = document.getElementById('new-res-desc').value.trim();
+    const type = document.getElementById('new-res-type').value;
+    const audience = document.getElementById('new-res-audience').value;
+    const url = document.getElementById('new-res-url').value.trim();
+
+    const iconMap = {
+      presentation: '📊',
+      document: '📝',
+      assets: '🎨',
+      multimedia: '🎬',
+      links: '🌐'
+    };
+
+    const newRes = {
+      id: 'res_' + Date.now(),
+      title,
+      description: desc,
+      type,
+      category: type === 'presentation' ? 'Plantilla' : (type === 'document' ? 'Guía' : 'Recurso'),
+      audience,
+      url,
+      icon: iconMap[type] || '📦',
+      format: type === 'presentation' ? 'Diapositivas Mentix' : (type === 'document' ? 'PDF Oficial' : 'Recurso Web'),
+      updatedAt: new Date().toISOString().slice(0, 10)
+    };
+
+    const list = this.getResources();
+    list.unshift(newRes);
+    try {
+      localStorage.setItem('mentix_admin_resources', JSON.stringify(list));
+    } catch(err) {}
+
+    this.logAuditEvent(`Nuevo recurso didáctico publicado: "${title}"`, 'Recursos');
+    this.showToast('Recurso publicado exitosamente', 'success');
+    this.closeModal();
+    this.ensureResources();
+    this.renderActiveTab();
+  },
+
+  deleteResource(resId) {
+    if (!confirm('¿Deseas eliminar este recurso didáctico?')) return;
+    let list = this.getResources();
+    const item = list.find(r => r.id === resId);
+    list = list.filter(r => r.id !== resId);
+    try {
+      localStorage.setItem('mentix_admin_resources', JSON.stringify(list));
+    } catch(err) {}
+
+    this.logAuditEvent(`Recurso didáctico eliminado: ${item ? item.title : resId}`, 'Recursos');
+    this.showToast('Recurso eliminado', 'info');
+    this.ensureResources();
+    this.renderActiveTab();
+  },
+
+  downloadResource(resId) {
+    const list = this.getResources();
+    const item = list.find(r => r.id === resId);
+    if (!item) return;
+
+    if (item.type === 'presentation') {
+      this.showToast(`Cargando plantilla de diapositivas "${item.title}"...`, 'success');
+      setTimeout(() => {
+        window.appRouter.navigate('projects', { viewMode: 'create' });
+      }, 700);
+    } else {
+      this.showToast(`Descargando recurso: ${item.title}`, 'success');
+      const blob = new Blob([JSON.stringify(item, null, 2)], { type: 'application/json' });
+      const dlUrl = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = dlUrl;
+      a.download = `${item.title.toLowerCase().replace(/[^a-z0-9]/g, '_')}.json`;
+      a.click();
+      URL.revokeObjectURL(dlUrl);
+    }
+  },
+
   filterBySpecificCategory(catId) {
     this.projectFilter.category = catId;
     this.switchTab('projects');
@@ -1771,11 +2693,15 @@ window.AdminView = {
 
   setRobotBannerPreset(bannerPath) {
     localStorage.setItem('mentix_admin_hero_banner', bannerPath);
+    localStorage.setItem('mentix_projects_hero_banner', bannerPath);
+    if (window.appState) {
+      window.appState.projectsHeroBanner = bannerPath;
+    }
     const img = document.getElementById('admin-banner-preview-img');
     if (img) img.src = bannerPath;
 
-    this.logAuditEvent(`Banner de proyectos actualizado a preset: ${bannerPath}`, 'Configuración');
-    this.showToast('Banner de proyectos actualizado correctamente', 'success');
+    this.logAuditEvent(`Banner de proyectos actualizado a preset: ${bannerPath}`, 'Diseño');
+    this.showToast('Banner del robot actualizado para toda la plataforma', 'success');
   },
 
   handleCustomBannerUpload(e) {
@@ -1786,11 +2712,15 @@ window.AdminView = {
     reader.onload = (evt) => {
       const dataUrl = evt.target.result;
       localStorage.setItem('mentix_admin_hero_banner', dataUrl);
+      localStorage.setItem('mentix_projects_hero_banner', dataUrl);
+      if (window.appState) {
+        window.appState.projectsHeroBanner = dataUrl;
+      }
       const img = document.getElementById('admin-banner-preview-img');
       if (img) img.src = dataUrl;
 
-      this.logAuditEvent('Banner personalizado subido por el administrador', 'Configuración');
-      this.showToast('Banner personalizado guardado con éxito', 'success');
+      this.logAuditEvent('Banner personalizado de robot subido por el administrador', 'Diseño');
+      this.showToast('Banner personalizado guardado y activado globalmente', 'success');
     };
     reader.readAsDataURL(file);
   },
