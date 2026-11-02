@@ -815,6 +815,11 @@ window.AdminView = {
             </div>
           </div>
           <div class="admin-quick-actions-grid">
+            <button class="quick-action-tile" onclick="window.AdminView.switchTab('reports')">
+              <span class="tile-icon">📊</span>
+              <span class="tile-title">Gráficas & Reportes (%)</span>
+              <span class="tile-desc">Métricas circulares y semanales</span>
+            </button>
             <button class="quick-action-tile" onclick="window.AdminView.switchTab('projects')">
               <span class="tile-icon">🚀</span>
               <span class="tile-title">Moderar Proyectos</span>
@@ -1823,40 +1828,37 @@ window.AdminView = {
     const excellenceApprovalPct = 91.2;
 
     // Helper SVG para Anillo Circular Radial (%)
-    const renderCircularGauge = (pct, colorGradId, strokeColor, label, subtext, icon, pillText) => {
+    const renderCircularGauge = (pct, color1, color2, label, subtext, icon, pillText, gradKey) => {
       const radius = 42;
       const circumference = 2 * Math.PI * radius; // ~263.89
       const arcLen = (Math.min(100, Math.max(0, pct)) / 100) * circumference;
       const strokeDashoffset = circumference - arcLen;
+      const gradId = `gGrad_${gradKey}`;
 
       return `
         <div class="round-gauge-card">
           <div class="gauge-top-header">
             <span class="gauge-icon-badge">${icon}</span>
-            <span class="gauge-pill">${pillText}</span>
+            <span class="gauge-pill" style="color: ${color1}; border-color: ${color1};">${pillText}</span>
           </div>
 
           <div class="gauge-svg-wrapper">
-            <svg viewBox="0 0 110 110" class="round-gauge-svg">
+            <svg viewBox="0 0 110 110" width="125" height="125" class="round-gauge-svg" style="display:block; margin:0 auto; overflow:visible;">
               <defs>
-                <filter id="glow-${colorGradId}" x="-20%" y="-20%" width="140%" height="140%">
-                  <feGaussianBlur stdDeviation="3.5" result="blur" />
-                  <feMerge>
-                    <feMergeNode in="blur" />
-                    <feMergeNode in="SourceGraphic" />
-                  </feMerge>
-                </filter>
+                <linearGradient id="${gradId}" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="${color1}" />
+                  <stop offset="100%" stop-color="${color2}" />
+                </linearGradient>
               </defs>
               <!-- Anillo de fondo -->
-              <circle cx="55" cy="55" r="${radius}" fill="none" stroke="rgba(255,255,255,0.07)" stroke-width="8.5" />
-              <!-- Anillo de progreso circular -->
-              <circle cx="55" cy="55" r="${radius}" fill="none" stroke="url(#${colorGradId})" stroke-width="8.5"
+              <circle cx="55" cy="55" r="${radius}" fill="none" stroke="rgba(255,255,255,0.09)" stroke-width="9" />
+              <!-- Anillo de progreso circular con fallback -->
+              <circle cx="55" cy="55" r="${radius}" fill="none" stroke="${color1}" stroke="url(#${gradId})" stroke-width="9"
                 stroke-dasharray="${circumference}" stroke-dashoffset="${strokeDashoffset}"
-                stroke-linecap="round" transform="rotate(-90 55 55)" class="round-gauge-arc"
-                filter="url(#glow-${colorGradId})" />
+                stroke-linecap="round" transform="rotate(-90 55 55)" class="round-gauge-arc" />
               <!-- Texto de Porcentaje Central -->
               <text x="55" y="52" text-anchor="middle" font-size="20" font-weight="900" fill="#ffffff" class="gauge-pct-text">${pct}%</text>
-              <text x="55" y="68" text-anchor="middle" font-size="9" font-weight="700" fill="${strokeColor}" letter-spacing="0.05em">COMPLETADO</text>
+              <text x="55" y="68" text-anchor="middle" font-size="8.5" font-weight="800" fill="${color1}" letter-spacing="0.05em">COMPLETADO</text>
             </svg>
           </div>
 
@@ -1882,7 +1884,7 @@ window.AdminView = {
         accumulatedPct += item.pct;
 
         return `
-          <circle cx="85" cy="85" r="${radius}" fill="none" stroke="${item.color}" stroke-width="16"
+          <circle cx="85" cy="85" r="${radius}" fill="none" stroke="${item.color}" stroke-width="17"
             stroke-dasharray="${strokeDasharray}" stroke-dashoffset="${strokeDashoffset}"
             stroke-linecap="butt" transform="rotate(-90 85 85)" class="round-donut-slice">
             <title>${item.label}: ${item.pct}% (${item.count} proyectos)</title>
@@ -1893,12 +1895,12 @@ window.AdminView = {
       return `
         <div class="round-donut-block">
           <div class="donut-svg-holder">
-            <svg viewBox="0 0 170 170" class="round-donut-svg">
-              <circle cx="85" cy="85" r="${radius}" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="16" />
+            <svg viewBox="0 0 170 170" width="170" height="170" class="round-donut-svg" style="display:block; overflow:visible;">
+              <circle cx="85" cy="85" r="${radius}" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="17" />
               ${slices}
               <!-- Círculo interior y texto central -->
-              <circle cx="85" cy="85" r="44" fill="#040b17" />
-              <text x="85" y="80" text-anchor="middle" font-size="18" font-weight="900" fill="#ffffff">${centerLabel}</text>
+              <circle cx="85" cy="85" r="44" fill="#040b17" stroke="rgba(255,255,255,0.08)" stroke-width="1.5" />
+              <text x="85" y="80" text-anchor="middle" font-size="19" font-weight="900" fill="#ffffff">${centerLabel}</text>
               <text x="85" y="96" text-anchor="middle" font-size="9" font-weight="700" fill="#94a3b8" letter-spacing="0.04em">${centerSub}</text>
             </svg>
           </div>
@@ -1938,15 +1940,16 @@ window.AdminView = {
     ];
 
     // Gráficas Redondas Semanales (%)
-    const weeklyCircles = stats.weeks.map(w => {
+    const weeklyCircles = stats.weeks.map((w, idx) => {
       const radius = 34;
       const circ = 2 * Math.PI * radius; // ~213.63
       const arc = (Math.min(100, Math.max(0, w.completionRate)) / 100) * circ;
       const offset = circ - arc;
 
-      // Color dinámico según porcentaje
-      const strokeGrad = w.completionRate >= 80 ? 'url(#roundEmeraldGrad)' : (w.completionRate >= 50 ? 'url(#roundCyanGrad)' : 'url(#roundAmberGrad)');
-      const colorHex = w.completionRate >= 80 ? '#10b981' : (w.completionRate >= 50 ? '#00f5d4' : '#f59e0b');
+      // Color dinámico según porcentaje con gradiente local
+      const color1 = w.completionRate >= 80 ? '#34d399' : (w.completionRate >= 50 ? '#00f5d4' : '#fbbf24');
+      const color2 = w.completionRate >= 80 ? '#059669' : (w.completionRate >= 50 ? '#0284c7' : '#ea580c');
+      const dialGradId = `dialGrad_${idx}`;
 
       return `
         <div class="weekly-round-dial-card ${w.isCurrent ? 'active-week-dial' : ''}">
@@ -1956,14 +1959,20 @@ window.AdminView = {
           </div>
 
           <div class="dial-svg-box">
-            <svg viewBox="0 0 90 90" class="dial-mini-svg">
-              <circle cx="45" cy="45" r="${radius}" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="7" />
-              <circle cx="45" cy="45" r="${radius}" fill="none" stroke="${strokeGrad}" stroke-width="7"
+            <svg viewBox="0 0 90 90" width="90" height="90" class="dial-mini-svg" style="display:block; margin:0 auto; overflow:visible;">
+              <defs>
+                <linearGradient id="${dialGradId}" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="${color1}" />
+                  <stop offset="100%" stop-color="${color2}" />
+                </linearGradient>
+              </defs>
+              <circle cx="45" cy="45" r="${radius}" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="7.5" />
+              <circle cx="45" cy="45" r="${radius}" fill="none" stroke="${color1}" stroke="url(#${dialGradId})" stroke-width="7.5"
                 stroke-dasharray="${circ}" stroke-dashoffset="${offset}"
                 stroke-linecap="round" transform="rotate(-90 45 45)" class="dial-progress-arc" />
               <!-- Porcentaje redondo en el centro -->
               <text x="45" y="49" text-anchor="middle" font-size="16" font-weight="900" fill="#ffffff">${w.completionRate}%</text>
-              <text x="45" y="62" text-anchor="middle" font-size="7.5" font-weight="700" fill="${colorHex}">AVANCE</text>
+              <text x="45" y="62" text-anchor="middle" font-size="7.5" font-weight="800" fill="${color1}">AVANCE</text>
             </svg>
           </div>
 
@@ -2008,34 +2017,12 @@ window.AdminView = {
         </div>
       </div>
 
-      <!-- SVG DEFS GLOBALES PARA DEGRADADOS NEÓN Y RESPLANDOR -->
-      <svg width="0" height="0" style="position: absolute;">
-        <defs>
-          <linearGradient id="roundCyanGrad" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0%" stop-color="#00f5d4" />
-            <stop offset="100%" stop-color="#0284c7" />
-          </linearGradient>
-          <linearGradient id="roundEmeraldGrad" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0%" stop-color="#34d399" />
-            <stop offset="100%" stop-color="#059669" />
-          </linearGradient>
-          <linearGradient id="roundPurpleGrad" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0%" stop-color="#c084fc" />
-            <stop offset="100%" stop-color="#7c3aed" />
-          </linearGradient>
-          <linearGradient id="roundAmberGrad" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0%" stop-color="#fbbf24" />
-            <stop offset="100%" stop-color="#ea580c" />
-          </linearGradient>
-        </defs>
-      </svg>
-
       <!-- 1. BLOQUE DE 4 GRANDES GRÁFICAS CIRCULARES (%) -->
       <div class="round-gauges-grid">
-        ${renderCircularGauge(globalCompletionPct, 'roundEmeraldGrad', '#10b981', 'Tasa Global de Culminación', `${stats.totalCompletedPeriod} de ${stats.totalProjectsPeriod} proyectos terminados con éxito.`, '🏆', 'General')}
-        ${renderCircularGauge(weeklyGoalPct, 'roundCyanGrad', '#00f5d4', 'Cumplimiento de Esta Semana', `${stats.currentWeek.completedCount} entregas completadas en ${stats.currentWeek.label}.`, '🚀', 'Esta Semana')}
-        ${renderCircularGauge(studentRetentionPct, 'roundPurpleGrad', '#a855f7', 'Retención & Entrega Estudiantil', 'Estudiantes que continúan activos y colaborando sin deserción.', '👥', 'Académico')}
-        ${renderCircularGauge(excellenceApprovalPct, 'roundAmberGrad', '#f59e0b', 'Aprobación con Excelencia', 'Proyectos con calificaciones sobresalientes en la rúbrica.', '⭐', 'Calidad')}
+        ${renderCircularGauge(globalCompletionPct, '#34d399', '#059669', 'Tasa Global de Culminación', `${stats.totalCompletedPeriod} de ${stats.totalProjectsPeriod} proyectos terminados con éxito.`, '🏆', 'General', 'emerald')}
+        ${renderCircularGauge(weeklyGoalPct, '#00f5d4', '#0284c7', 'Cumplimiento de Esta Semana', `${stats.currentWeek.completedCount} entregas completadas en ${stats.currentWeek.label}.`, '🚀', 'Esta Semana', 'cyan')}
+        ${renderCircularGauge(studentRetentionPct, '#c084fc', '#7c3aed', 'Retención & Entrega Estudiantil', 'Estudiantes que continúan activos y colaborando sin deserción.', '👥', 'Académico', 'purple')}
+        ${renderCircularGauge(excellenceApprovalPct, '#fbbf24', '#ea580c', 'Aprobación con Excelencia', 'Proyectos con calificaciones sobresalientes en la rúbrica.', '⭐', 'Calidad', 'amber')}
       </div>
 
       <!-- 2. ANILLOS CIRCULARES DE PROGRESO POR CADA SEMANA (%) -->
