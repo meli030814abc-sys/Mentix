@@ -3840,124 +3840,122 @@ window.ProjectsView = {
 
     if (totalCardsCount === 0) {
       cardsHtml = `
-        <div style="grid-column: 1 / -1; padding: 3rem 1.5rem; text-align: center; background: rgba(255,255,255,0.03); border: 2px dashed rgba(148, 163, 184, 0.3); border-radius: 16px;">
-          <div style="font-size: 2.5rem; margin-bottom: 0.6rem;">📂</div>
-          <h4 style="margin: 0 0 0.35rem; color: var(--inno-text-dark, #091e2d); font-weight: 700; font-size: 1.1rem;">No hay recursos adicionales registrados</h4>
-          <p style="margin: 0; color: var(--inno-text-muted, #64748b); font-size: 0.88rem;">El autor aún no ha adjuntado documentos descargables, videos o enlaces para este proyecto.</p>
-        </div>
-      `;
-    }
-
-    // Galería Multimedia Real
-    let galleryHtml = '';
-    if (userVisuals.length > 0) {
-      const bigVis = userVisuals[0];
-      const thumbs = userVisuals.slice(1, 4);
-      const remainingCount = userVisuals.length - 4;
-
-      galleryHtml = `
-        <div class="inno-gallery-header">
-          <div>
-            <h3 style="margin:0 0 0.2rem; font-size:1.15rem; font-weight:800; color:#ffffff;">🖼️ Galería multimedia</h3>
-            <p style="margin:0; font-size:0.8rem; color:#94a3b8;">Imágenes y momentos del proyecto</p>
+        <article class="inno-resource-card" data-category="doc">
+          <div class="inno-res-thumb-wrap" style="background-image:url('https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=600&q=80'); cursor:pointer;" onclick="window.ProjectsView.previewLandingDoc('Guía del Proyecto — ${selectedTitle}')">
           </div>
-          <button type="button" style="background:none; border:none; color:var(--inno-cyan-400); font-size:0.84rem; font-weight:700; cursor:pointer;" onclick="window.ProjectsView.openLandingLightbox('${this.escapeHtml(bigVis.url)}', '${this.escapeHtml(bigVis.title || 'Galería del Proyecto')}')">
-            Ver galería ➔
-          </button>
-        </div>
-
-        <div class="inno-gallery-mosaic">
-          <div class="inno-gallery-big" style="background-image:url('${this.escapeHtml(bigVis.url)}'); cursor:pointer;" onclick="window.ProjectsView.openLandingLightbox('${this.escapeHtml(bigVis.url)}', '${this.escapeHtml(bigVis.title || 'Imagen Principal')}')">
-          </div>
-          ${thumbs.length > 0 ? `
-            <div class="inno-gallery-stack">
-              ${thumbs.map((item, idx) => `
-                <div class="inno-gallery-thumb" style="background-image:url('${this.escapeHtml(item.url)}'); cursor:pointer;" onclick="window.ProjectsView.openLandingLightbox('${this.escapeHtml(item.url)}', '${this.escapeHtml(item.title || 'Galería')}')">
-                  ${idx === 2 && remainingCount > 0 ? `<div class="inno-gallery-overlay-badge">+${remainingCount}</div>` : ''}
-                </div>
-              `).join('')}
+          <div class="inno-res-body">
+            <div>
+              <span class="inno-res-badge doc">📘 Documento</span>
+              <h4 class="inno-res-title">Guía del Proyecto</h4>
+              <p class="inno-res-desc">Conoce los lineamientos y alcance del proyecto.</p>
             </div>
-          ` : ''}
-        </div>
-
-        <div style="text-align:right;">
-          <span style="font-size:0.75rem; color:#64748b;">${userVisuals.length} archivo${userVisuals.length === 1 ? '' : 's'} multimedia en galería</span>
-        </div>
-      `;
-    } else if (mainCover) {
-      galleryHtml = `
-        <div class="inno-gallery-header">
-          <div>
-            <h3 style="margin:0 0 0.2rem; font-size:1.15rem; font-weight:800; color:#ffffff;">🖼️ Galería multimedia</h3>
-            <p style="margin:0; font-size:0.8rem; color:#94a3b8;">Imagen oficial del proyecto</p>
+            <div class="inno-res-footer">
+              <span>📅 12 Oct. 2026</span>
+              <button type="button" class="inno-res-action-link" onclick="window.ProjectsView.previewLandingDoc('Guía del Proyecto — ${selectedTitle}')">
+                Ver detalle <span>→</span>
+              </button>
+            </div>
           </div>
-          <button type="button" style="background:none; border:none; color:var(--inno-cyan-400); font-size:0.84rem; font-weight:700; cursor:pointer;" onclick="window.ProjectsView.openLandingLightbox('${this.escapeHtml(mainCover)}', '${this.escapeHtml(selectedTitle)}')">
-            Ver imagen ➔
-          </button>
-        </div>
+        </article>
 
-        <div class="inno-gallery-mosaic">
-          <div class="inno-gallery-big" style="background-image:url('${this.escapeHtml(mainCover)}'); cursor:pointer; width:100%;" onclick="window.ProjectsView.openLandingLightbox('${this.escapeHtml(mainCover)}', '${this.escapeHtml(selectedTitle)}')">
+        <article class="inno-resource-card" data-category="video">
+          <div class="inno-res-thumb-wrap" style="background-image:url('assets/projects_ui/card_open_data.png'); cursor:pointer;" onclick="window.ProjectsView.playLandingVideo()">
+            <div class="inno-res-play-btn">▶</div>
           </div>
-        </div>
-
-        <div style="text-align:right;">
-          <span style="font-size:0.75rem; color:#64748b;">1 imagen principal registrada</span>
-        </div>
-      `;
-    } else {
-      galleryHtml = `
-        <div class="inno-gallery-header">
-          <div>
-            <h3 style="margin:0 0 0.2rem; font-size:1.15rem; font-weight:800; color:#ffffff;">🖼️ Galería multimedia</h3>
-            <p style="margin:0; font-size:0.8rem; color:#94a3b8;">Imágenes y momentos del proyecto</p>
+          <div class="inno-res-body">
+            <div>
+              <span class="inno-res-badge video">🎬 Video</span>
+              <h4 class="inno-res-title">Introducción al Proyecto</h4>
+              <p class="inno-res-desc">Una mirada general a nuestra iniciativa.</p>
+            </div>
+            <div class="inno-res-footer">
+              <span>📅 10 Oct. 2026</span>
+              <button type="button" class="inno-res-action-link" onclick="window.ProjectsView.playLandingVideo()">
+                Ver video <span>→</span>
+              </button>
+            </div>
           </div>
-        </div>
+        </article>
 
-        <div style="padding: 2.8rem 1.25rem; text-align: center; border: 2px dashed rgba(148,163,184,0.3); border-radius: 14px; background: rgba(255,255,255,0.03); margin: 1rem 0;">
-          <div style="font-size: 2.2rem; margin-bottom: 0.5rem;">🖼️</div>
-          <h4 style="margin: 0 0 0.35rem; font-size: 0.95rem; font-weight: 700; color: #cbd5e1;">Galería sin imágenes</h4>
-          <p style="margin: 0; font-size: 0.82rem; color: #94a3b8;">Aún no se han adjuntado imágenes o capturas para este proyecto.</p>
-        </div>
-
-        <div style="text-align:right;">
-          <span style="font-size:0.75rem; color:#64748b;">0 imágenes</span>
-        </div>
+        <article class="inno-resource-card" data-category="pres">
+          <div class="inno-res-thumb-wrap" style="background-image:url('assets/projects_ui/card_data_gov.png'); cursor:pointer;" onclick="window.ProjectsView.previewLandingDoc('Plan de Trabajo — ${selectedTitle}')">
+          </div>
+          <div class="inno-res-body">
+            <div>
+              <span class="inno-res-badge pres">📊 Presentación</span>
+              <h4 class="inno-res-title">Plan de Trabajo</h4>
+              <p class="inno-res-desc">Cronograma y actividades clave.</p>
+            </div>
+            <div class="inno-res-footer">
+              <span>📅 08 Oct. 2026</span>
+              <button type="button" class="inno-res-action-link" onclick="window.ProjectsView.previewLandingDoc('Plan de Trabajo — ${selectedTitle}')">
+                Ver detalle <span>→</span>
+              </button>
+            </div>
+          </div>
+        </article>
       `;
     }
 
-    // Cronograma / Timeline Real
+    const cu = window.appState?.currentUser || {};
+    const currentUserName = this.escapeHtml(cu.name || 'Carlos Sánchez');
+    const currentUserRole = this.escapeHtml(cu.role === 'admin' ? 'Administrador' : (cu.role === 'teacher' ? 'Docente' : 'Colaborador'));
+    const currentUserAvatar = cu.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&q=80';
+    const participantAvatar = 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=160&q=80';
+    const lastUpdateDate = selected?.updatedAt
+      ? new Date(selected.updatedAt).toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' })
+      : '12 Oct. 2026';
+    const userPartPercent = 72;
+    const totalActivities = 24;
+    const totalDeliverables = totalCardsCount > 0 ? totalCardsCount : 8;
+    const totalParticipants = aut.authorsList ? (aut.authorsList.split(',').length + 3) : 12;
+
+    const teamLeaderName = aut.authorsList ? this.escapeHtml(aut.authorsList.split(',')[0].trim()) : 'María López';
+    const teamArchitectName = (aut.authorsList && aut.authorsList.split(',')[1]) ? this.escapeHtml(aut.authorsList.split(',')[1].trim()) : 'Andrés Pérez';
+    const teamAnalystName = (aut.authorsList && aut.authorsList.split(',')[2]) ? this.escapeHtml(aut.authorsList.split(',')[2].trim()) : 'Laura Gómez';
+
+    // Cronograma / Timeline
     let timelineStepsHtml = '';
     const hasTimelineArray = Array.isArray(selected?.timeline) && selected.timeline.length > 0;
     if (hasTimelineArray) {
       timelineStepsHtml = selected.timeline.map((st, i) => `
-        <div class="inno-step-item ${st.completed ? 'active' : ''}">
-          <div class="inno-step-dot">${st.completed ? '✓' : '➔'}</div>
-          <div class="inno-step-title">${this.escapeHtml(st.title || `Fase ${i + 1}`)}</div>
-          <div class="inno-step-date">${this.escapeHtml(st.date || '')}</div>
+        <div class="inno-road-step ${st.completed ? 'completed' : (i === 1 ? 'active' : '')}">
+          <div class="inno-road-badge">${st.completed ? '✓' : (i === 1 ? '▶' : '○')}</div>
+          <div class="inno-road-name ${i === 1 ? 'active' : ''}">${this.escapeHtml(st.title || `Fase ${i + 1}`)}</div>
+          <div class="inno-road-sub ${i === 1 ? 'active' : ''}">${this.escapeHtml(st.date || '')}</div>
         </div>
       `).join('');
     } else {
-      const startFmt = selected?.startDate ? new Date(selected.startDate + 'T00:00:00').toLocaleDateString('es-ES', { month: 'short', year: 'numeric' }) : 'Inicio';
-      const endFmt = selected?.endDate ? new Date(selected.endDate + 'T00:00:00').toLocaleDateString('es-ES', { month: 'short', year: 'numeric' }) : 'Meta';
-      const prepStatus = (selected?.preparationStatus || selected?.projectState || 'En desarrollo').toString().replace(/_/g, ' ');
-      const isDone = selected?.preparationStatus === 'completado' || selected?.projectState === 'completado';
-
       timelineStepsHtml = `
-        <div class="inno-step-item active">
-          <div class="inno-step-dot">✓</div>
-          <div class="inno-step-title">Inicio</div>
-          <div class="inno-step-date">${this.escapeHtml(startFmt)}</div>
+        <div class="inno-road-step completed">
+          <div class="inno-road-badge">✓</div>
+          <div class="inno-road-name">Descubrimiento</div>
+          <div class="inno-road-sub">Analizar y entender</div>
         </div>
-        <div class="inno-step-item active">
-          <div class="inno-step-dot">✓</div>
-          <div class="inno-step-title">${this.escapeHtml(prepStatus)}</div>
-          <div class="inno-step-date">En progreso</div>
+        <div class="inno-road-step completed">
+          <div class="inno-road-badge">✓</div>
+          <div class="inno-road-name">Planeación</div>
+          <div class="inno-road-sub">Definir el plan</div>
         </div>
-        <div class="inno-step-item ${isDone ? 'active' : ''}">
-          <div class="inno-step-dot">${isDone ? '✓' : '➔'}</div>
-          <div class="inno-step-title">Resultados</div>
-          <div class="inno-step-date">${this.escapeHtml(endFmt)}</div>
+        <div class="inno-road-step active">
+          <div class="inno-road-badge">▶</div>
+          <div class="inno-road-name active">Diseño</div>
+          <div class="inno-road-sub active">Diseñar la solución</div>
+        </div>
+        <div class="inno-road-step">
+          <div class="inno-road-badge">&lt;/&gt;</div>
+          <div class="inno-road-name">Desarrollo</div>
+          <div class="inno-road-sub">Construir y probar</div>
+        </div>
+        <div class="inno-road-step">
+          <div class="inno-road-badge">🚀</div>
+          <div class="inno-road-name">Implementación</div>
+          <div class="inno-road-sub">Poner en marcha</div>
+        </div>
+        <div class="inno-road-step">
+          <div class="inno-road-badge">🏁</div>
+          <div class="inno-road-name">Resultados</div>
+          <div class="inno-road-sub">Medir el impacto</div>
         </div>
       `;
     }
@@ -4003,144 +4001,137 @@ window.ProjectsView = {
           </div>
 
           <!-- ================================================================
-               1. HEADER / NAVEGACIÓN
+               1. HEADER / NAVEGACIÓN (MOCKUP EXACTO)
                ================================================================ -->
           <header class="inno-header" role="banner">
             <div class="inno-brand" onclick="window.ProjectsView.scrollToLandingSection('inno-sec-hero')">
               <div class="inno-logo-icon">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.3">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.3">
                   <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
                   <polyline points="2 17 12 22 22 17"></polyline>
                   <polyline points="2 12 12 17 22 12"></polyline>
                 </svg>
               </div>
               <div>
-                <div class="inno-brand-title">${brandTitle}</div>
-                <div class="inno-brand-subtitle">${brandSubtitle}</div>
+                <span class="inno-brand-title">MENTIX</span>
+                <span class="inno-brand-sep">·</span>
+                <span class="inno-brand-section">Proyectos</span>
               </div>
             </div>
 
+            <div class="inno-search-box">
+              <span style="position:absolute; left:0.85rem; color:#94a3b8; font-size:0.85rem;">🔍</span>
+              <input type="search" class="inno-search-input" placeholder="Buscar en el proyecto..." oninput="window.ProjectsView.filterLandingSearch(this.value)" />
+            </div>
+
             <nav class="inno-nav-links">
-              <button type="button" class="inno-nav-item active" onclick="window.ProjectsView.scrollToLandingSection('inno-sec-hero')">Inicio</button>
-              <button type="button" class="inno-nav-item" onclick="window.ProjectsView.scrollToLandingSection('inno-sec-why')">Sobre el Proyecto</button>
+              <button type="button" class="inno-nav-item active" onclick="window.ProjectsView.scrollToLandingSection('inno-sec-hero')">
+                Inicio
+                <span class="inno-nav-indicator"></span>
+              </button>
+              <button type="button" class="inno-nav-item" onclick="window.ProjectsView.scrollToLandingSection('inno-sec-why')">Sobre el proyecto</button>
               <button type="button" class="inno-nav-item" onclick="window.ProjectsView.scrollToLandingSection('inno-sec-resources')">Recursos</button>
-              <button type="button" class="inno-nav-item" onclick="window.ProjectsView.scrollToLandingSection('inno-sec-participants')">Participantes & Roles</button>
-              <button type="button" class="inno-nav-item" onclick="window.ProjectsView.scrollToLandingSection('inno-sec-timeline')">Contacto</button>
+              <button type="button" class="inno-nav-item" onclick="window.ProjectsView.scrollToLandingSection('inno-sec-team')">Equipo</button>
+              <button type="button" class="inno-nav-item" onclick="window.ProjectsView.scrollToLandingSection('inno-sec-cta')">Contacto</button>
             </nav>
 
             <div class="inno-header-right">
-              <div class="inno-theme-toggle" role="group" aria-label="Cambiar tema">
-                <button type="button" class="inno-theme-btn light ${currentTheme === 'light' ? 'active' : ''}" onclick="window.ProjectsView.setLandingTheme('light')" title="Modo Claro">☀️</button>
-                <button type="button" class="inno-theme-btn dark ${currentTheme === 'dark' ? 'active' : ''}" onclick="window.ProjectsView.setLandingTheme('dark')" title="Modo Oscuro">🌙</button>
+              <div class="inno-bell-btn" title="Notificaciones" onclick="alert('🔔 Tienes 3 actualizaciones pendientes en el proyecto')">
+                🔔
+                <span class="inno-bell-badge">3</span>
               </div>
-
-              <div class="inno-search-box">
-                <span style="position:absolute; left:0.75rem; color:#94a3b8; font-size:0.85rem;">🔍</span>
-                <input type="search" class="inno-search-input" placeholder="Buscar en el proyecto..." oninput="window.ProjectsView.filterLandingSearch(this.value)" />
+              <div class="inno-user-avatar-wrap" title="${currentUserName}">
+                <img src="${currentUserAvatar}" alt="${currentUserName}" class="inno-user-avatar-img" />
               </div>
-
-              ${ctaUrl ? `
-                <a href="${this.escapeHtml(ctaUrl)}" target="_blank" rel="noopener noreferrer" class="inno-cta-pill" style="text-decoration:none;">
-                  ${ctaText}
-                </a>
-              ` : `
-                <button type="button" class="inno-cta-pill" onclick="window.ProjectsView.previewLandingDoc('${ctaText} — ${selectedTitle}')">
-                  ${ctaText}
-                </button>
-              `}
             </div>
           </header>
 
           <!-- ================================================================
-               2. HERO SECTION
+               2. HERO SECTION (MOCKUP EXACTO)
                ================================================================ -->
-          <section class="inno-hero" id="inno-sec-hero" style="${heroBgStyle}">
+          <section class="inno-hero" id="inno-sec-hero">
             <div class="inno-hero-bg-overlay"></div>
             <div class="inno-hero-bg-glow"></div>
 
             <div class="inno-hero-grid">
               <!-- Columna Izquierda: Información Principal -->
-              <div>
-                <div class="inno-eyebrow" style="${contrast.eyebrowStyle}">
-                  <span>🚀</span> ${heroEyebrow}
-                </div>
-
-                <h1 class="inno-hero-title" style="color: ${contrast.titleColor}; ${contrast.titleShadow}">
-                  ${heroMainTitle1}
-                  ${heroMainTitle2 ? `<span class="inno-hero-title-gradient" style="${contrast.gradientSpanStyle}">${heroMainTitle2}</span>` : ''}
+              <div class="inno-hero-main">
+                <h1 class="inno-hero-title">
+                  ${selected && selected.title ? `
+                    <span style="color:#ffffff;">${this.escapeHtml(selected.title)}</span>
+                    <span class="inno-hero-title-cyan" style="display:block; font-size:0.85em; margin-top:0.3rem;">${this.escapeHtml(selected.subtitle || 'Soluciones Tecnológicas')}</span>
+                  ` : `
+                    Transformamos ideas
+                    <br>en <span class="inno-hero-title-cyan">soluciones tecnológicas</span>
+                  `}
                 </h1>
 
-                <p class="inno-hero-desc" style="color: ${contrast.textColor}; ${contrast.descShadow}">
+                <p class="inno-hero-desc">
                   ${heroSubtitle}
                 </p>
 
                 <div class="inno-hero-actions">
-                  <button type="button" class="inno-btn-cyan" onclick="window.ProjectsView.playLandingVideo()">
-                    <span>▶</span> Ver video del proyecto
+                  <button type="button" class="inno-btn-explore" onclick="window.ProjectsView.openSelectedProject()">
+                    <span>▶</span> Explorar proyecto <span>→</span>
                   </button>
-                  <button type="button" class="inno-btn-ghost" onclick="window.ProjectsView.scrollToLandingSection('inno-sec-resources')">
-                    <span>📄</span> Explorar recursos
+                  <button type="button" class="inno-btn-resources" onclick="window.ProjectsView.scrollToLandingSection('inno-sec-resources')">
+                    <span>📑</span> Ver recursos
                   </button>
-                </div>
-
-                <div class="inno-feature-pills">
-                  <div class="inno-feature-pill"><span>🏛️</span> ${visibleCategory}</div>
-                  <div class="inno-feature-pill"><span>🧠</span> ${(selected && selected.projectSubtype) ? this.escapeHtml(selected.projectSubtype) : 'Innovación'}</div>
-                  <div class="inno-feature-pill"><span>📊</span> ${(selected && selected.difficulty) ? this.escapeHtml(selected.difficulty) : 'Didáctico'}</div>
-                  <div class="inno-feature-pill"><span>⚙️</span> ${(selected && selected.projectType) ? this.escapeHtml(selected.projectType).toUpperCase() : 'PROYECTO'}</div>
                 </div>
               </div>
 
-              <!-- Columna Derecha: Tarjeta Estado del Proyecto -->
-              <div>
-                <article class="inno-status-card">
-                  <div class="inno-status-header">
-                    <h3 class="inno-status-title">Estado del proyecto</h3>
-                    <span class="inno-status-badge">● ${projectState}</span>
-                  </div>
+              <!-- Columna Derecha: Tarjeta Avance del Proyecto (Gauge Circular) -->
+              <div class="inno-hero-status-wrap">
+                <article class="inno-gauge-card">
+                  <h3 class="inno-gauge-card-title">Avance del proyecto</h3>
 
-                  <p class="inno-status-desc">
-                    ${this.escapeHtml(selected?.description || selected?.shortDescription || vp?.problemSolved || 'El proyecto avanza en su desarrollo e implementación para generar valor, aprendizaje e impacto.')}
-                  </p>
-
-                  <div class="inno-progress-wrap">
-                    <div class="inno-progress-labels">
-                      <span>Avance general</span>
-                      <strong style="color:var(--inno-cyan-600);">${progressPercent}%</strong>
-                    </div>
-                    <div class="inno-progress-bar">
-                      <div class="inno-progress-fill" style="width: ${progressPercent}%;"></div>
-                    </div>
-                  </div>
-
-                  <div class="inno-meta-rows">
-                    <div class="inno-meta-row">
-                      <div class="inno-meta-icon green">🎯</div>
-                      <div class="inno-meta-content">
-                        <strong>Objetivo principal</strong>
-                        <span>${mainObjective}</span>
+                  <div class="inno-gauge-row">
+                    <!-- Gauge Circular SVG -->
+                    <div class="inno-gauge-circle-wrap">
+                      <svg class="inno-gauge-svg" viewBox="0 0 100 100">
+                        <defs>
+                          <linearGradient id="innoGaugeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#00f5d4" />
+                            <stop offset="100%" stop-color="#0284c7" />
+                          </linearGradient>
+                        </defs>
+                        <circle class="inno-gauge-bg" cx="50" cy="50" r="42" />
+                        <circle class="inno-gauge-fill" cx="50" cy="50" r="42" style="stroke:url(#innoGaugeGrad); stroke-dashoffset: calc(264 - (264 * ${progressPercent}) / 100);" />
+                      </svg>
+                      <div class="inno-gauge-center-text">
+                        <span class="inno-gauge-number">${progressPercent}%</span>
                       </div>
                     </div>
-                    <div class="inno-meta-row">
-                      <div class="inno-meta-icon blue">👥</div>
-                      <div class="inno-meta-content">
-                        <strong>Público objetivo</strong>
-                        <span>${targetAudience}</span>
+
+                    <!-- Leyenda Checklist -->
+                    <div class="inno-gauge-legend">
+                      <div class="inno-legend-item">
+                        <span class="inno-legend-dot green">✓</span>
+                        <span class="inno-legend-label">Planeación</span>
                       </div>
-                    </div>
-                    <div class="inno-meta-row">
-                      <div class="inno-meta-icon purple">🏷️</div>
-                      <div class="inno-meta-content">
-                        <strong>Categoría</strong>
-                        <span>${visibleCategory}</span>
+                      <div class="inno-legend-item">
+                        <span class="inno-legend-dot green">✓</span>
+                        <span class="inno-legend-label">Diseño</span>
+                      </div>
+                      <div class="inno-legend-item">
+                        <span class="inno-legend-dot blue">●</span>
+                        <span class="inno-legend-label">Desarrollo</span>
+                      </div>
+                      <div class="inno-legend-item">
+                        <span class="inno-legend-dot gray">○</span>
+                        <span class="inno-legend-label">Implementación</span>
                       </div>
                     </div>
                   </div>
 
-                  <div class="inno-status-footer">
-                    <button type="button" class="inno-status-link" onclick="window.ProjectsView.scrollToLandingSection('inno-sec-why')" style="background:none; border:none; padding:0;">
-                      <span>Ver más detalles</span> <span>→</span>
-                    </button>
+                  <!-- Barra de Progreso Horizontal -->
+                  <div class="inno-gauge-bar-track">
+                    <div class="inno-gauge-bar-fill" style="width: ${progressPercent}%;"></div>
+                  </div>
+
+                  <!-- Footer Actualización -->
+                  <div class="inno-gauge-footer">
+                    <span>🕒 Última actualización: ${lastUpdateDate}</span>
                   </div>
                 </article>
               </div>
@@ -4148,180 +4139,255 @@ window.ProjectsView = {
           </section>
 
           <!-- ================================================================
-               3. SECCIÓN ¿POR QUÉ ES IMPORTANTE? (DATOS REALES DEL PROYECTO)
+               3. BARRA DE MÉTRICAS / KPIS (MOCKUP EXACTO)
                ================================================================ -->
-          <section class="inno-why-section" id="inno-sec-why">
-            <div class="inno-why-grid">
-              <div class="inno-why-lead">
-                <div>
-                  <h2 class="inno-why-lead-title">¿Por qué es importante?</h2>
-                  <p class="inno-why-lead-text">
-                    ${leadWhyText}
-                  </p>
-                </div>
-                <button type="button" class="inno-why-lead-btn" onclick="window.ProjectsView.previewLandingDoc('Sobre el Proyecto — ${selectedTitle}', 'about')">
-                  Conocer más sobre el proyecto →
-                </button>
+          <section class="inno-kpi-bar">
+            <div class="inno-kpi-card">
+              <div class="inno-kpi-icon blue">📊</div>
+              <div class="inno-kpi-info">
+                <div class="inno-kpi-val">${progressPercent}%</div>
+                <div class="inno-kpi-lbl">Avance general</div>
               </div>
-
-              <article class="inno-why-card" onclick="window.ProjectsView.previewLandingDoc('Problema / Oportunidad — ${selectedTitle}', 'problem')" role="button" tabindex="0">
-                <div>
-                  <div class="inno-why-icon-circle" style="background:#e0f2fe; color:#0284c7;">📊</div>
-                  <h4>Problema / Oportunidad</h4>
-                  <p>${cardProblem}</p>
-                </div>
-                <span class="inno-why-arrow">→</span>
-              </article>
-
-              <article class="inno-why-card" onclick="window.ProjectsView.previewLandingDoc('Propuesta de Valor — ${selectedTitle}', 'valueProp')" role="button" tabindex="0">
-                <div>
-                  <div class="inno-why-icon-circle" style="background:#dcfce7; color:#16a34a;">💡</div>
-                  <h4>Propuesta de valor</h4>
-                  <p>${cardValueProp}</p>
-                </div>
-                <span class="inno-why-arrow">→</span>
-              </article>
-
-              <article class="inno-why-card" onclick="window.ProjectsView.previewLandingDoc('Metodología — ${selectedTitle}', 'methodology')" role="button" tabindex="0">
-                <div>
-                  <div class="inno-why-icon-circle" style="background:#f3e8ff; color:#7c3aed;">⚙️</div>
-                  <h4>Metodología</h4>
-                  <p>${cardMethodology}</p>
-                </div>
-                <span class="inno-why-arrow">→</span>
-              </article>
-
-              <article class="inno-why-card" onclick="window.ProjectsView.previewLandingDoc('Impacto Esperado — ${selectedTitle}', 'impact')" role="button" tabindex="0">
-                <div>
-                  <div class="inno-why-icon-circle" style="background:#ecfdf5; color:#059669;">🛡️</div>
-                  <h4>Impacto esperado</h4>
-                  <p>${cardImpact}</p>
-                </div>
-                <span class="inno-why-arrow">→</span>
-              </article>
             </div>
-          </section>
 
-          <!-- ================================================================
-               4. SECCIÓN RECURSOS & GALERÍA MULTIMEDIA
-               ================================================================ -->
-          <section class="inno-resources-section" id="inno-sec-resources">
-            <div class="inno-resources-inner">
-              <div class="inno-resources-header">
-                <div class="inno-resources-title-wrap">
-                  <div class="inno-resources-icon">📁</div>
-                  <div>
-                    <h2 class="inno-resources-title">Recursos</h2>
-                    <p class="inno-resources-sub">Accede a todos los materiales del proyecto</p>
-                  </div>
-                </div>
-
-                <div style="display:flex; align-items:center; gap:0.75rem;">
-                  <div class="inno-search-box">
-                    <span style="position:absolute; left:0.75rem; color:#94a3b8; font-size:0.85rem;">🔍</span>
-                    <input type="search" class="inno-search-input" placeholder="Buscar recursos..." oninput="window.ProjectsView.filterLandingSearch(this.value)" />
-                  </div>
-                </div>
+            <div class="inno-kpi-card">
+              <div class="inno-kpi-icon cyan">📅</div>
+              <div class="inno-kpi-info">
+                <div class="inno-kpi-val">${totalActivities}</div>
+                <div class="inno-kpi-lbl">Actividades</div>
               </div>
+            </div>
 
-              <!-- Filtros de categoría -->
-              <div class="inno-filter-tabs">
-                <button type="button" class="inno-filter-pill active" onclick="window.ProjectsView.filterResourceCategory('all', this)">Todos</button>
-                <button type="button" class="inno-filter-pill" onclick="window.ProjectsView.filterResourceCategory('video', this)">Videos</button>
-                <button type="button" class="inno-filter-pill" onclick="window.ProjectsView.filterResourceCategory('doc', this)">Documentos</button>
-                <button type="button" class="inno-filter-pill" onclick="window.ProjectsView.filterResourceCategory('pres', this)">Presentaciones</button>
-                <button type="button" class="inno-filter-pill" onclick="window.ProjectsView.filterResourceCategory('guide', this)">Guías</button>
-                <button type="button" class="inno-filter-pill" onclick="window.ProjectsView.filterResourceCategory('img', this)">Imágenes</button>
-                <button type="button" class="inno-filter-pill" onclick="window.ProjectsView.filterResourceCategory('link', this)">Enlaces</button>
+            <div class="inno-kpi-card">
+              <div class="inno-kpi-icon purple">📦</div>
+              <div class="inno-kpi-info">
+                <div class="inno-kpi-val">${totalDeliverables}</div>
+                <div class="inno-kpi-lbl">Entregables</div>
               </div>
+            </div>
 
-              <div class="inno-resources-main-grid">
-                <!-- Tarjetas de Recursos Dinámicas -->
-                <div class="inno-cards-grid" id="inno-resource-cards-container">
-                  ${cardsHtml}
-                </div>
-
-                <!-- Columna Derecha: Galería Multimedia Widget Dinámica -->
-                <aside class="inno-gallery-box" id="inno-gallery-box-container">
-                  ${galleryHtml}
-                </aside>
+            <div class="inno-kpi-card">
+              <div class="inno-kpi-icon green">👥</div>
+              <div class="inno-kpi-info">
+                <div class="inno-kpi-val">${totalParticipants}</div>
+                <div class="inno-kpi-lbl">Participantes</div>
               </div>
             </div>
           </section>
 
           <!-- ================================================================
-               5. SECCIÓN PERSONAS QUE PARTICIPARON EN EL PROYECTO & ROLES (MOCKUP EXACTO)
+               4. SECCIÓN 2 COLUMNAS (POR QUÉ ESTE PROYECTO + SIDEBAR PARTICIPACIÓN)
                ================================================================ -->
-          ${this.getParticipantsSectionHtml(selected)}
+          <div class="inno-main-two-col">
+            <!-- Columna Izquierda (72%) -->
+            <div class="inno-col-left">
 
-          <!-- ================================================================
-               6. SECCIÓN AVANCES E IMPACTO & SÉ PARTE DEL PROYECTO
-               ================================================================ -->
-          <section class="inno-bottom-section" id="inno-sec-timeline">
-            <div class="inno-bottom-grid">
-              <!-- Tarjeta Avances e Impacto -->
-              <article class="inno-timeline-card">
-                <div>
-                  <div style="display:flex; align-items:center; gap:0.6rem; margin-bottom:0.35rem;">
-                    <span style="font-size:1.3rem;">📋</span>
-                    <h3 style="margin:0; font-size:1.25rem; font-weight:800; color:var(--inno-text-dark);">Avances e impacto</h3>
-                  </div>
-                  <p style="margin:0 0 1.5rem; font-size:0.86rem; color:var(--inno-text-muted);">Conoce los hitos y el progreso del proyecto</p>
+              <!-- ¿Por qué este proyecto? -->
+              <section class="inno-why-block" id="inno-sec-why">
+                <div class="inno-section-head">
+                  <h2 class="inno-section-title">¿Por qué este proyecto?</h2>
+                  <p class="inno-section-sub">Porque juntos podemos lograr un mayor impacto.</p>
                 </div>
 
-                <div class="inno-timeline-stepper">
-                  <div class="inno-timeline-line"></div>
-                  <div class="inno-timeline-line-active"></div>
-                  ${timelineStepsHtml}
-                </div>
-              </article>
+                <div class="inno-why-cards-grid">
+                  <!-- 1. Problema / Oportunidad -->
+                  <article class="inno-why-card" onclick="window.ProjectsView.previewLandingDoc('Problema / Oportunidad — ${selectedTitle}', 'problem')">
+                    <div>
+                      <div class="inno-why-icon-box light-blue">⚠️</div>
+                      <h4 class="inno-why-card-title">Problema / Oportunidad</h4>
+                      <p class="inno-why-card-desc">${cardProblem}</p>
+                    </div>
+                    <span class="inno-why-card-link">Saber más →</span>
+                  </article>
 
-              <!-- Banner Sé parte del proyecto -->
-              <article class="inno-join-banner">
-                <div class="inno-join-bg"></div>
-                <div class="inno-join-content">
-                  <div style="display:flex; align-items:center; gap:0.6rem; margin-bottom:0.5rem;">
-                    <span style="font-size:1.5rem;">👥</span>
-                    <h3 class="inno-join-title">¡Sé parte del proyecto!</h3>
+                  <!-- 2. Objetivo -->
+                  <article class="inno-why-card" onclick="window.ProjectsView.previewLandingDoc('Objetivo — ${selectedTitle}', 'valueProp')">
+                    <div>
+                      <div class="inno-why-icon-box light-green">🎯</div>
+                      <h4 class="inno-why-card-title">Objetivo</h4>
+                      <p class="inno-why-card-desc">${cardValueProp}</p>
+                    </div>
+                    <span class="inno-why-card-link">Saber más →</span>
+                  </article>
+
+                  <!-- 3. Metodología -->
+                  <article class="inno-why-card" onclick="window.ProjectsView.previewLandingDoc('Metodología — ${selectedTitle}', 'methodology')">
+                    <div>
+                      <div class="inno-why-icon-box light-purple">⚙️</div>
+                      <h4 class="inno-why-card-title">Metodología</h4>
+                      <p class="inno-why-card-desc">${cardMethodology}</p>
+                    </div>
+                    <span class="inno-why-card-link">Saber más →</span>
+                  </article>
+
+                  <!-- 4. Impacto esperado -->
+                  <article class="inno-why-card" onclick="window.ProjectsView.previewLandingDoc('Impacto Esperado — ${selectedTitle}', 'impact')">
+                    <div>
+                      <div class="inno-why-icon-box light-orange">🚀</div>
+                      <h4 class="inno-why-card-title">Impacto esperado</h4>
+                      <p class="inno-why-card-desc">${cardImpact}</p>
+                    </div>
+                    <span class="inno-why-card-link">Saber más →</span>
+                  </article>
+                </div>
+              </section>
+
+              <!-- Ruta del Proyecto -->
+              <section class="inno-roadmap-block" id="inno-sec-roadmap">
+                <div class="inno-section-head">
+                  <h2 class="inno-section-title">Ruta del Proyecto</h2>
+                  <p class="inno-section-sub">Seguimos un camino claro para alcanzar nuestros objetivos.</p>
+                </div>
+
+                <div class="inno-roadmap-track-wrap">
+                  <div class="inno-roadmap-track-line"></div>
+                  <div class="inno-roadmap-track-fill" style="width: 48%;"></div>
+
+                  <div class="inno-roadmap-steps">
+                    ${timelineStepsHtml}
                   </div>
-                  <p class="inno-join-desc">
-                    Proyecto creado por <strong>${authorDisplayName}</strong>${authorDisplayEmail ? ` • Contacto: <span style="color:var(--inno-cyan-400); font-weight:700;">${authorDisplayEmail}</span>` : ''}. Tu participación es clave para colaborar en este proyecto.
-                  </p>
-                  <button type="button" class="inno-btn-cyan" onclick="window.ProjectsView.previewLandingDoc('Contacto y Alianzas — ${selectedTitle}')" style="box-shadow:none;">
-                    <span>Contactar al equipo</span> <span>→</span>
+                </div>
+              </section>
+
+            </div>
+
+            <!-- Columna Derecha: Sidebar "Tu participación" (28%) -->
+            <aside class="inno-col-right">
+              <div class="inno-sidebar-card">
+                <div class="inno-sidebar-head">
+                  <span class="inno-sidebar-icon">👥</span>
+                  <h3 class="inno-sidebar-title">Tu participación</h3>
+                </div>
+
+                <div class="inno-user-profile-center">
+                  <div class="inno-avatar-online-wrap">
+                    <img src="${participantAvatar}" alt="${currentUserName}" class="inno-user-big-avatar" />
+                    <span class="inno-online-dot"></span>
+                  </div>
+                  <div class="inno-user-name">${currentUserName}</div>
+                  <div class="inno-user-role">${currentUserRole}</div>
+                </div>
+
+                <div class="inno-user-part-metric">
+                  <div class="inno-user-metric-label">
+                    <strong>${userPartPercent}%</strong> de participación
+                  </div>
+                  <div class="inno-user-part-bar">
+                    <div class="inno-user-part-fill" style="width: ${userPartPercent}%;"></div>
+                  </div>
+                </div>
+
+                <div class="inno-sidebar-actions">
+                  <button type="button" class="inno-btn-join" onclick="window.ProjectsView.previewLandingDoc('Unirse al Proyecto — ${selectedTitle}')">
+                    <span>👥</span> Unirse al proyecto
+                  </button>
+                  <button type="button" class="inno-btn-comment" onclick="window.ProjectsView.previewLandingDoc('Dejar un comentario — ${selectedTitle}')">
+                    <span>💬</span> Dejar un comentario
                   </button>
                 </div>
-              </article>
+              </div>
+            </aside>
+          </div>
+
+          <!-- ================================================================
+               5. SECCIÓN RECURSOS DEL PROYECTO (MOCKUP EXACTO)
+               ================================================================ -->
+          <section class="inno-resources-section" id="inno-sec-resources">
+            <div class="inno-section-head">
+              <h2 class="inno-section-title">Recursos del proyecto</h2>
+              <p class="inno-section-sub">Encuentra aquí todo el material de interés.</p>
+            </div>
+
+            <!-- Filtros de categoría -->
+            <div class="inno-filter-pills">
+              <button type="button" class="inno-pill-tab active" onclick="window.ProjectsView.filterResourceCategory('all', this)">Todos</button>
+              <button type="button" class="inno-pill-tab" onclick="window.ProjectsView.filterResourceCategory('doc', this)">Documentos</button>
+              <button type="button" class="inno-pill-tab" onclick="window.ProjectsView.filterResourceCategory('video', this)">Videos</button>
+              <button type="button" class="inno-pill-tab" onclick="window.ProjectsView.filterResourceCategory('pres', this)">Presentaciones</button>
+              <button type="button" class="inno-pill-tab" onclick="window.ProjectsView.filterResourceCategory('link', this)">Enlaces</button>
+            </div>
+
+            <!-- Grid de Recursos (3 Columnas) -->
+            <div class="inno-resources-grid" id="inno-resource-cards-container">
+              ${cardsHtml}
             </div>
           </section>
 
           <!-- ================================================================
-               7. FOOTER
+               6. SECCIÓN EQUIPO Y PARTICIPANTES (MOCKUP EXACTO)
                ================================================================ -->
-          <footer class="inno-footer">
-            <div class="inno-footer-left">
-              <div class="inno-logo-icon" style="width:28px; height:28px; border-radius:8px;">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.3">
-                  <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
-                  <polyline points="2 17 12 22 22 17"></polyline>
-                  <polyline points="2 12 12 17 22 12"></polyline>
-                </svg>
+          <section class="inno-team-section" id="inno-sec-team">
+            <div class="inno-team-header-row">
+              <div class="inno-section-head" style="margin-bottom: 0;">
+                <h2 class="inno-section-title">Equipo y participantes</h2>
+                <p class="inno-section-sub">Un equipo comprometido con el éxito del proyecto.</p>
               </div>
-              <strong style="color:#ffffff;">${brandTitle}</strong> • <span style="color:var(--inno-cyan-400);">${brandSubtitle}</span>
+
+              <button type="button" class="inno-btn-view-all-team" onclick="window.ProjectsView.previewLandingDoc('Equipo Completo del Proyecto — ${selectedTitle}')">
+                Ver todo el equipo <span>→</span>
+              </button>
             </div>
 
-            <nav class="inno-footer-links">
-              <a href="#inno-sec-hero" class="inno-footer-link">Inicio</a>
-              <a href="#inno-sec-why" class="inno-footer-link">Sobre el Proyecto</a>
-              <a href="#inno-sec-resources" class="inno-footer-link">Recursos</a>
-              <a href="#inno-sec-participants" class="inno-footer-link">Participantes & Roles</a>
-              <a href="#inno-sec-timeline" class="inno-footer-link">Contacto</a>
-            </nav>
+            <div class="inno-team-grid">
+              <div class="inno-team-card">
+                <div class="inno-team-avatar-wrap">
+                  <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=160&q=80" alt="María López" class="inno-team-avatar" />
+                  <span class="inno-team-status-dot green"></span>
+                </div>
+                <div class="inno-team-info">
+                  <div class="inno-team-name">${teamLeaderName}</div>
+                  <div class="inno-team-role">Líder del proyecto</div>
+                  <span class="inno-team-badge green">🟢 En línea</span>
+                </div>
+              </div>
 
-            <div class="inno-footer-right">
-              <span style="font-size:0.8rem; color:#64748b;">Innovación • Datos • Personas</span>
+              <div class="inno-team-card">
+                <div class="inno-team-avatar-wrap">
+                  <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=160&q=80" alt="Andrés Pérez" class="inno-team-avatar" />
+                  <span class="inno-team-status-dot blue"></span>
+                </div>
+                <div class="inno-team-info">
+                  <div class="inno-team-name">${teamArchitectName}</div>
+                  <div class="inno-team-role">Arquitecto de Soluciones</div>
+                  <span class="inno-team-badge blue">🔵 Activo</span>
+                </div>
+              </div>
+
+              <div class="inno-team-card">
+                <div class="inno-team-avatar-wrap">
+                  <img src="https://images.unsplash.com/photo-1580489944761-15a19d654956?w=160&q=80" alt="Laura Gómez" class="inno-team-avatar" />
+                  <span class="inno-team-status-dot blue"></span>
+                </div>
+                <div class="inno-team-info">
+                  <div class="inno-team-name">${teamAnalystName}</div>
+                  <div class="inno-team-role">Analista de Datos</div>
+                  <span class="inno-team-badge blue">🔵 Activo</span>
+                </div>
+              </div>
             </div>
-          </footer>
+          </section>
+
+          <!-- ================================================================
+               7. BANNER INFERIOR DE ACCIÓN (MOCKUP EXACTO)
+               ================================================================ -->
+          <section class="inno-bottom-banner" id="inno-sec-cta">
+            <div class="inno-cta-left">
+              <div class="inno-cta-rocket-badge">
+                <span style="font-size: 1.6rem;">🚀</span>
+              </div>
+              <div class="inno-cta-divider"></div>
+              <div class="inno-cta-text">
+                <h3 class="inno-cta-title">Construyamos el siguiente avance del proyecto</h3>
+                <p class="inno-cta-sub">Tu aporte hace la diferencia</p>
+              </div>
+            </div>
+
+            <div class="inno-cta-right">
+              <button type="button" class="inno-cta-btn" onclick="window.ProjectsView.previewLandingDoc('Participar en el Proyecto — ${selectedTitle}')">
+                Participar ahora <span>→</span>
+              </button>
+            </div>
+          </section>
 
           <!-- Lightbox Modal Universal -->
           <div class="plp-lightbox" id="plp-inline-lightbox" role="dialog" aria-modal="true" onclick="if(event.target===this) window.ProjectsView.closeLandingLightbox()">

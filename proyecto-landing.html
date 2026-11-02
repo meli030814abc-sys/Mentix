@@ -37,30 +37,44 @@
   <div class="plp-wrapper" id="inno-app-root" data-theme="light">
 
     <!-- ====================================================================
-         1. HEADER / NAVEGACIÓN STICKY
+         1. HEADER / NAVEGACIÓN (MOCKUP EXACTO)
          ==================================================================== -->
     <header class="inno-header" role="banner">
       <a href="#inno-sec-hero" class="inno-brand" style="text-decoration:none;">
         <div class="inno-logo-icon">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.3">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.3">
             <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
             <polyline points="2 17 12 22 22 17"></polyline>
             <polyline points="2 12 12 17 22 12"></polyline>
           </svg>
         </div>
         <div>
-          <div class="inno-brand-title">Gobierno de Datos e IA</div>
-          <div class="inno-brand-subtitle">PROYECTO INNOVATECH</div>
+          <span class="inno-brand-title">MENTIX</span>
+          <span class="inno-brand-sep">·</span>
+          <span class="inno-brand-section">Proyectos</span>
         </div>
       </a>
 
+      <div class="inno-search-box">
+        <span style="position:absolute; left:0.85rem; color:#94a3b8; font-size:0.85rem;">🔍</span>
+        <input
+          type="search"
+          class="inno-search-input"
+          id="inno-header-search"
+          placeholder="Buscar en el proyecto..."
+          oninput="filterLandingSearch(this.value)"
+        />
+      </div>
+
       <nav class="inno-nav-links">
-        <a href="#inno-sec-hero" class="inno-nav-item active">Inicio</a>
-        <a href="#inno-sec-why" class="inno-nav-item">Sobre el Proyecto</a>
+        <a href="#inno-sec-hero" class="inno-nav-item active">
+          Inicio
+          <span class="inno-nav-indicator"></span>
+        </a>
+        <a href="#inno-sec-why" class="inno-nav-item">Sobre el proyecto</a>
         <a href="#inno-sec-resources" class="inno-nav-item">Recursos</a>
-        <a href="#inno-sec-resources" class="inno-nav-item">Presentaciones</a>
-        <a href="#inno-sec-resources" class="inno-nav-item">Galería</a>
-        <a href="#inno-sec-timeline" class="inno-nav-item">Contacto</a>
+        <a href="#inno-sec-team" class="inno-nav-item">Equipo</a>
+        <a href="#inno-sec-cta" class="inno-nav-item">Contacto</a>
       </nav>
 
       <div class="inno-header-right">
@@ -70,25 +84,19 @@
           <button type="button" class="inno-theme-btn dark" onclick="setLandingTheme('dark')" title="Modo Oscuro">🌙</button>
         </div>
 
-        <div class="inno-search-box">
-          <span style="position:absolute; left:0.75rem; color:#94a3b8; font-size:0.85rem;">🔍</span>
-          <input
-            type="search"
-            class="inno-search-input"
-            id="inno-header-search"
-            placeholder="Buscar en el proyecto..."
-            oninput="filterLandingSearch(this.value)"
-          />
+        <div class="inno-bell-btn" title="Notificaciones" onclick="alert('🔔 Tienes 3 actualizaciones en este proyecto')">
+          🔔
+          <span class="inno-bell-badge">3</span>
         </div>
 
-        <button type="button" class="inno-cta-pill" id="inno-header-cta" onclick="previewLandingDoc('Unirse / Colaborar — Gobierno de Datos e IA')">
-          Unirse / Colaborar
-        </button>
+        <div class="inno-user-avatar-wrap">
+          <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&q=80" alt="Usuario" class="inno-user-avatar-img" id="inno-header-avatar" />
+        </div>
       </div>
     </header>
 
     <!-- ====================================================================
-         2. HERO SECTION
+         2. HERO SECTION (MOCKUP EXACTO)
          ==================================================================== -->
     <section class="inno-hero" id="inno-sec-hero">
       <div class="inno-hero-bg-overlay"></div>
@@ -96,87 +104,78 @@
 
       <div class="inno-hero-grid">
         <!-- Columna Izquierda: Información Principal -->
-        <div>
-          <div class="inno-eyebrow" id="inno-hero-eyebrow">
-            <span>🚀</span> ECOSISTEMA TECNOLÓGICO &amp; GOBERNANZA INTELIGENTE
-          </div>
-
+        <div class="inno-hero-main">
           <h1 class="inno-hero-title">
-            <span id="inno-hero-title-main">Proyecto</span>
-            <span class="inno-hero-title-gradient" id="inno-hero-title-sub" style="display:none;"></span>
+            <span id="inno-hero-title-main">Transformamos ideas</span>
+            <br>en <span class="inno-hero-title-cyan" id="inno-hero-title-sub">soluciones tecnológicas</span>
           </h1>
 
           <p class="inno-hero-desc" id="inno-hero-desc">
-            Impulsamos la transformación digital de las organizaciones mediante el gobierno de datos y la inteligencia artificial, para generar valor, transparencia y mejores decisiones.
+            Un espacio central para conocer, seguir y participar en el proyecto.
           </p>
 
           <div class="inno-hero-actions">
-            <button type="button" class="inno-btn-cyan" onclick="playLandingVideo()">
-              <span>▶</span> Ver video del proyecto
+            <button type="button" class="inno-btn-explore" onclick="scrollToSection('inno-sec-why')">
+              <span>▶</span> Explorar proyecto <span>→</span>
             </button>
-            <button type="button" class="inno-btn-ghost" onclick="scrollToSection('inno-sec-resources')">
-              <span>📄</span> Explorar recursos
+            <button type="button" class="inno-btn-resources" onclick="scrollToSection('inno-sec-resources')">
+              <span>📑</span> Ver recursos
             </button>
-          </div>
-
-          <div class="inno-feature-pills">
-            <div class="inno-feature-pill"><span>🏛️</span> Gobierno de Datos</div>
-            <div class="inno-feature-pill"><span>🧠</span> Inteligencia Artificial</div>
-            <div class="inno-feature-pill"><span>📊</span> Analítica Avanzada</div>
-            <div class="inno-feature-pill"><span>⚙️</span> Transformación Digital</div>
           </div>
         </div>
 
-        <!-- Columna Derecha: Tarjeta Estado del Proyecto -->
-        <div>
-          <article class="inno-status-card">
-            <div class="inno-status-header">
-              <h3 class="inno-status-title">Estado del proyecto</h3>
-              <span class="inno-status-badge" id="inno-card-badge">● En ejecución</span>
-            </div>
+        <!-- Columna Derecha: Tarjeta Avance del Proyecto -->
+        <div class="inno-hero-status-wrap">
+          <article class="inno-gauge-card">
+            <h3 class="inno-gauge-card-title">Avance del proyecto</h3>
 
-            <p class="inno-status-desc" id="inno-card-desc">
-              El proyecto avanza en su desarrollo e implementación para generar valor, aprendizaje e impacto.
-            </p>
-
-            <div class="inno-progress-wrap">
-              <div class="inno-progress-labels">
-                <span>Avance general</span>
-                <strong style="color:var(--inno-cyan-600);" id="inno-card-progress-num">68%</strong>
-              </div>
-              <div class="inno-progress-bar">
-                <div class="inno-progress-fill" id="inno-card-progress-bar" style="width: 68%;"></div>
-              </div>
-            </div>
-
-            <div class="inno-meta-rows">
-              <div class="inno-meta-row">
-                <div class="inno-meta-icon green">🎯</div>
-                <div class="inno-meta-content">
-                  <strong>Objetivo principal</strong>
-                  <span id="inno-card-obj">Fortalecimiento del gobierno de datos</span>
+            <div class="inno-gauge-row">
+              <!-- Gauge Circular SVG -->
+              <div class="inno-gauge-circle-wrap">
+                <svg class="inno-gauge-svg" viewBox="0 0 100 100">
+                  <defs>
+                    <linearGradient id="innoGaugeGradStandalone" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stop-color="#00f5d4" />
+                      <stop offset="100%" stop-color="#0284c7" />
+                    </linearGradient>
+                  </defs>
+                  <circle class="inno-gauge-bg" cx="50" cy="50" r="42" />
+                  <circle class="inno-gauge-fill" id="inno-card-gauge-circle" cx="50" cy="50" r="42" style="stroke:url(#innoGaugeGradStandalone); stroke-dashoffset: 95;" />
+                </svg>
+                <div class="inno-gauge-center-text">
+                  <span class="inno-gauge-number" id="inno-card-progress-num">64%</span>
                 </div>
               </div>
-              <div class="inno-meta-row">
-                <div class="inno-meta-icon blue">👥</div>
-                <div class="inno-meta-content">
-                  <strong>Público objetivo</strong>
-                  <span id="inno-card-aud">Entidades públicas y ciudadanía</span>
+
+              <!-- Leyenda Checklist -->
+              <div class="inno-gauge-legend">
+                <div class="inno-legend-item">
+                  <span class="inno-legend-dot green">✓</span>
+                  <span class="inno-legend-label">Planeación</span>
                 </div>
-              </div>
-              <div class="inno-meta-row">
-                <div class="inno-meta-icon purple">🏷️</div>
-                <div class="inno-meta-content">
-                  <strong>Categoría</strong>
-                  <span id="inno-card-cat">Gobierno de Datos / IA</span>
+                <div class="inno-legend-item">
+                  <span class="inno-legend-dot green">✓</span>
+                  <span class="inno-legend-label">Diseño</span>
+                </div>
+                <div class="inno-legend-item">
+                  <span class="inno-legend-dot blue">●</span>
+                  <span class="inno-legend-label">Desarrollo</span>
+                </div>
+                <div class="inno-legend-item">
+                  <span class="inno-legend-dot gray">○</span>
+                  <span class="inno-legend-label">Implementación</span>
                 </div>
               </div>
             </div>
 
-            <div class="inno-status-footer">
-              <a href="#inno-sec-why" class="inno-status-link">
-                <span>Ver más detalles</span> <span>→</span>
-              </a>
+            <!-- Barra de Progreso Horizontal -->
+            <div class="inno-gauge-bar-track">
+              <div class="inno-gauge-bar-fill" id="inno-card-progress-bar" style="width: 64%;"></div>
+            </div>
+
+            <!-- Footer Actualización -->
+            <div class="inno-gauge-footer">
+              <span>🕒 Última actualización: <span id="inno-card-updated-date">12 Oct. 2026</span></span>
             </div>
           </article>
         </div>
@@ -184,214 +183,340 @@
     </section>
 
     <!-- ====================================================================
-         3. SECCIÓN ¿POR QUÉ ES IMPORTANTE?
+         3. BARRA DE MÉTRICAS / KPIS (MOCKUP EXACTO)
          ==================================================================== -->
-    <section class="inno-why-section" id="inno-sec-why">
-      <div class="inno-why-grid">
-        <div class="inno-why-lead">
-          <div>
-            <h2 class="inno-why-lead-title">¿Por qué es importante?</h2>
-            <p class="inno-why-lead-text" id="inno-why-lead-desc">
-              El acceso, la calidad y el uso responsable de los datos, junto con la inteligencia artificial, permiten a las organizaciones tomar decisiones más informadas, mejorar la eficiencia y generar un mayor impacto social.
-            </p>
-          </div>
-          <button type="button" class="inno-why-lead-btn" onclick="previewLandingDoc('Sobre el Proyecto', 'about')">
-            Conocer más sobre el proyecto →
-          </button>
+    <section class="inno-kpi-bar" style="max-width: 1320px; margin: 0 auto 2rem; padding: 0 1rem;">
+      <div class="inno-kpi-card">
+        <div class="inno-kpi-icon blue">📊</div>
+        <div class="inno-kpi-info">
+          <div class="inno-kpi-val" id="inno-kpi-progress">64%</div>
+          <div class="inno-kpi-lbl">Avance general</div>
         </div>
+      </div>
 
-        <article class="inno-why-card" onclick="previewLandingDoc('Problema / Oportunidad', 'problem')" role="button" tabindex="0">
-          <div>
-            <div class="inno-why-icon-circle" style="background:#e0f2fe; color:#0284c7;">📊</div>
-            <h4>Problema / Oportunidad</h4>
-            <p id="inno-why-card-problem">La falta de datos confiables y la limitada analítica impiden una gestión pública más efectiva.</p>
-          </div>
-          <span class="inno-why-arrow">→</span>
-        </article>
+      <div class="inno-kpi-card">
+        <div class="inno-kpi-icon cyan">📅</div>
+        <div class="inno-kpi-info">
+          <div class="inno-kpi-val" id="inno-kpi-activities">24</div>
+          <div class="inno-kpi-lbl">Actividades</div>
+        </div>
+      </div>
 
-        <article class="inno-why-card" onclick="previewLandingDoc('Propuesta de Valor', 'valueProp')" role="button" tabindex="0">
-          <div>
-            <div class="inno-why-icon-circle" style="background:#dcfce7; color:#16a34a;">💡</div>
-            <h4>Propuesta de valor</h4>
-            <p id="inno-why-card-valueprop">Un ecosistema de datos e IA que facilita la toma de decisiones y la transparencia.</p>
-          </div>
-          <span class="inno-why-arrow">→</span>
-        </article>
+      <div class="inno-kpi-card">
+        <div class="inno-kpi-icon purple">📦</div>
+        <div class="inno-kpi-info">
+          <div class="inno-kpi-val" id="inno-kpi-deliverables">8</div>
+          <div class="inno-kpi-lbl">Entregables</div>
+        </div>
+      </div>
 
-        <article class="inno-why-card" onclick="previewLandingDoc('Metodología', 'methodology')" role="button" tabindex="0">
-          <div>
-            <div class="inno-why-icon-circle" style="background:#f3e8ff; color:#7c3aed;">⚙️</div>
-            <h4>Metodología</h4>
-            <p id="inno-why-card-methodology">Gobierno de datos, analítica avanzada y tecnologías de IA aplicadas al sector público.</p>
-          </div>
-          <span class="inno-why-arrow">→</span>
-        </article>
-
-        <article class="inno-why-card" onclick="previewLandingDoc('Impacto Esperado', 'impact')" role="button" tabindex="0">
-          <div>
-            <div class="inno-why-icon-circle" style="background:#ecfdf5; color:#059669;">🛡️</div>
-            <h4>Impacto esperado</h4>
-            <p id="inno-why-card-impact">Más transparencia, eficiencia y participación ciudadana en todos los niveles.</p>
-          </div>
-          <span class="inno-why-arrow">→</span>
-        </article>
+      <div class="inno-kpi-card">
+        <div class="inno-kpi-icon green">👥</div>
+        <div class="inno-kpi-info">
+          <div class="inno-kpi-val" id="inno-kpi-participants">12</div>
+          <div class="inno-kpi-lbl">Participantes</div>
+        </div>
       </div>
     </section>
 
     <!-- ====================================================================
-         4. SECCIÓN RECURSOS & GALERÍA MULTIMEDIA
+         4. SECCIÓN 2 COLUMNAS (POR QUÉ ESTE PROYECTO + SIDEBAR PARTICIPACIÓN)
          ==================================================================== -->
-    <section class="inno-resources-section" id="inno-sec-resources">
-      <div class="inno-resources-inner">
-        <div class="inno-resources-header">
-          <div class="inno-resources-title-wrap">
-            <div class="inno-resources-icon">📁</div>
-            <div>
-              <h2 class="inno-resources-title">Recursos</h2>
-              <p class="inno-resources-sub">Accede a todos los materiales del proyecto</p>
-            </div>
+    <div class="inno-main-two-col" style="max-width: 1320px; margin: 0 auto 2.5rem; padding: 0 1rem;">
+      <!-- Columna Izquierda (72%) -->
+      <div class="inno-col-left">
+
+        <!-- ¿Por qué este proyecto? -->
+        <section class="inno-why-block" id="inno-sec-why">
+          <div class="inno-section-head">
+            <h2 class="inno-section-title">¿Por qué este proyecto?</h2>
+            <p class="inno-section-sub">Porque juntos podemos lograr un mayor impacto.</p>
           </div>
 
-          <div style="display:flex; align-items:center; gap:0.75rem;">
-            <div class="inno-search-box">
-              <span style="position:absolute; left:0.75rem; color:#94a3b8; font-size:0.85rem;">🔍</span>
-              <input
-                type="search"
-                class="inno-search-input"
-                placeholder="Buscar recursos..."
-                oninput="filterLandingSearch(this.value)"
-              />
-            </div>
-            <select style="background:#ffffff; border:1px solid #cbd5e1; border-radius:999px; padding:0.45rem 1rem; font-size:0.84rem; font-weight:700; color:#334155; outline:none; cursor:pointer;">
-              <option>Más recientes ▾</option>
-              <option>Más descargados</option>
-              <option>Por categoría</option>
-            </select>
-          </div>
-        </div>
-
-        <!-- Filtros de categoría -->
-        <div class="inno-filter-tabs">
-          <button type="button" class="inno-filter-pill active" onclick="filterResourceCategory('all', this)">Todos</button>
-          <button type="button" class="inno-filter-pill" onclick="filterResourceCategory('video', this)">Videos</button>
-          <button type="button" class="inno-filter-pill" onclick="filterResourceCategory('doc', this)">Documentos</button>
-          <button type="button" class="inno-filter-pill" onclick="filterResourceCategory('pres', this)">Presentaciones</button>
-          <button type="button" class="inno-filter-pill" onclick="filterResourceCategory('guide', this)">Guías</button>
-          <button type="button" class="inno-filter-pill" onclick="filterResourceCategory('img', this)">Imágenes</button>
-          <button type="button" class="inno-filter-pill" onclick="filterResourceCategory('link', this)">Enlaces</button>
-        </div>
-
-        <div class="inno-resources-main-grid">
-          <!-- Tarjetas de Recursos Dinámicas -->
-          <div class="inno-cards-grid" id="inno-resource-cards-container">
-            <div style="grid-column: 1 / -1; padding: 3rem 1.5rem; text-align: center; background: rgba(255,255,255,0.03); border: 2px dashed rgba(148, 163, 184, 0.3); border-radius: 16px;">
-              <div style="font-size: 2.5rem; margin-bottom: 0.6rem;">📂</div>
-              <h4 style="margin: 0 0 0.35rem; color: var(--inno-text-dark, #091e2d); font-weight: 700; font-size: 1.1rem;">Cargando recursos del proyecto...</h4>
-              <p style="margin: 0; color: var(--inno-text-muted, #64748b); font-size: 0.88rem;">Explora los documentos y materiales cargados por el autor.</p>
-            </div>
-          </div>
-
-          <!-- Columna Derecha: Galería Multimedia Widget Dinámica -->
-          <aside class="inno-gallery-box" id="inno-gallery-container">
-            <div class="inno-gallery-header">
+          <div class="inno-why-cards-grid">
+            <!-- 1. Problema / Oportunidad -->
+            <article class="inno-why-card" onclick="previewLandingDoc('Problema / Oportunidad', 'problem')">
               <div>
-                <h3 style="margin:0 0 0.2rem; font-size:1.15rem; font-weight:800; color:#ffffff;">🖼️ Galería multimedia</h3>
-                <p style="margin:0; font-size:0.8rem; color:#94a3b8;">Imágenes y momentos del proyecto</p>
+                <div class="inno-why-icon-box light-blue">⚠️</div>
+                <h4 class="inno-why-card-title">Problema / Oportunidad</h4>
+                <p class="inno-why-card-desc" id="inno-why-card-problem">Identificamos un reto clave para transformar.</p>
+              </div>
+              <span class="inno-why-card-link">Saber más →</span>
+            </article>
+
+            <!-- 2. Objetivo -->
+            <article class="inno-why-card" onclick="previewLandingDoc('Objetivo', 'valueProp')">
+              <div>
+                <div class="inno-why-icon-box light-green">🎯</div>
+                <h4 class="inno-why-card-title">Objetivo</h4>
+                <p class="inno-why-card-desc" id="inno-why-card-valueprop">Definimos metas claras y alcanzables.</p>
+              </div>
+              <span class="inno-why-card-link">Saber más →</span>
+            </article>
+
+            <!-- 3. Metodología -->
+            <article class="inno-why-card" onclick="previewLandingDoc('Metodología', 'methodology')">
+              <div>
+                <div class="inno-why-icon-box light-purple">⚙️</div>
+                <h4 class="inno-why-card-title">Metodología</h4>
+                <p class="inno-why-card-desc" id="inno-why-card-methodology">Aplicamos las mejores prácticas y herramientas.</p>
+              </div>
+              <span class="inno-why-card-link">Saber más →</span>
+            </article>
+
+            <!-- 4. Impacto esperado -->
+            <article class="inno-why-card" onclick="previewLandingDoc('Impacto Esperado', 'impact')">
+              <div>
+                <div class="inno-why-icon-box light-orange">🚀</div>
+                <h4 class="inno-why-card-title">Impacto esperado</h4>
+                <p class="inno-why-card-desc" id="inno-why-card-impact">Generamos valor e innovación.</p>
+              </div>
+              <span class="inno-why-card-link">Saber más →</span>
+            </article>
+          </div>
+        </section>
+
+        <!-- Ruta del Proyecto -->
+        <section class="inno-roadmap-block" id="inno-sec-roadmap">
+          <div class="inno-section-head">
+            <h2 class="inno-section-title">Ruta del Proyecto</h2>
+            <p class="inno-section-sub">Seguimos un camino claro para alcanzar nuestros objetivos.</p>
+          </div>
+
+          <div class="inno-roadmap-track-wrap">
+            <div class="inno-roadmap-track-line"></div>
+            <div class="inno-roadmap-track-fill" style="width: 48%;"></div>
+
+            <div class="inno-roadmap-steps">
+              <div class="inno-road-step completed">
+                <div class="inno-road-badge">✓</div>
+                <div class="inno-road-name">Descubrimiento</div>
+                <div class="inno-road-sub">Analizar y entender</div>
+              </div>
+              <div class="inno-road-step completed">
+                <div class="inno-road-badge">✓</div>
+                <div class="inno-road-name">Planeación</div>
+                <div class="inno-road-sub">Definir el plan</div>
+              </div>
+              <div class="inno-road-step active">
+                <div class="inno-road-badge">▶</div>
+                <div class="inno-road-name active">Diseño</div>
+                <div class="inno-road-sub active">Diseñar la solución</div>
+              </div>
+              <div class="inno-road-step">
+                <div class="inno-road-badge">&lt;/&gt;</div>
+                <div class="inno-road-name">Desarrollo</div>
+                <div class="inno-road-sub">Construir y probar</div>
+              </div>
+              <div class="inno-road-step">
+                <div class="inno-road-badge">🚀</div>
+                <div class="inno-road-name">Implementación</div>
+                <div class="inno-road-sub">Poner en marcha</div>
+              </div>
+              <div class="inno-road-step">
+                <div class="inno-road-badge">🏁</div>
+                <div class="inno-road-name">Resultados</div>
+                <div class="inno-road-sub">Medir el impacto</div>
               </div>
             </div>
-            <div style="padding: 2.8rem 1.25rem; text-align: center; border: 2px dashed rgba(148,163,184,0.3); border-radius: 14px; background: rgba(255,255,255,0.03); margin: 1rem 0;">
-              <div style="font-size: 2.2rem; margin-bottom: 0.5rem;">🖼️</div>
-              <h4 style="margin: 0 0 0.35rem; font-size: 0.95rem; font-weight: 700; color: #cbd5e1;">Galería sin imágenes</h4>
-              <p style="margin: 0; font-size: 0.82rem; color: #94a3b8;">Aún no se han adjuntado imágenes para este proyecto.</p>
-            </div>
-          </aside>
-        </div>
+          </div>
+        </section>
+
       </div>
-    </section>
 
-    <!-- ====================================================================
-         5. SECCIÓN AVANCES E IMPACTO & SÉ PARTE DEL PROYECTO
-         ==================================================================== -->
-    <section class="inno-bottom-section" id="inno-sec-timeline">
-      <div class="inno-bottom-grid">
-        <!-- Tarjeta Avances e Impacto -->
-        <article class="inno-timeline-card">
-          <div>
-            <div style="display:flex; align-items:center; gap:0.6rem; margin-bottom:0.35rem;">
-              <span style="font-size:1.3rem;">📋</span>
-              <h3 style="margin:0; font-size:1.25rem; font-weight:800; color:var(--inno-text-dark);">Avances e impacto</h3>
-            </div>
-            <p style="margin:0 0 1.5rem; font-size:0.86rem; color:var(--inno-text-muted);">Conoce los hitos y el progreso del proyecto</p>
+      <!-- Columna Derecha: Sidebar "Tu participación" (28%) -->
+      <aside class="inno-col-right">
+        <div class="inno-sidebar-card">
+          <div class="inno-sidebar-head">
+            <span class="inno-sidebar-icon">👥</span>
+            <h3 class="inno-sidebar-title">Tu participación</h3>
           </div>
 
-          <div class="inno-timeline-stepper" id="inno-timeline-stepper">
-            <div class="inno-timeline-line"></div>
-            <div class="inno-timeline-line-active"></div>
-            <div class="inno-step-item active">
-              <div class="inno-step-dot">●</div>
-              <div class="inno-step-title">Inicio</div>
-              <div class="inno-step-date">Inicio</div>
+          <div class="inno-user-profile-center">
+            <div class="inno-avatar-online-wrap">
+              <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=160&q=80" alt="Carlos Sánchez" class="inno-user-big-avatar" id="inno-sidebar-user-avatar" />
+              <span class="inno-online-dot"></span>
             </div>
-            <div class="inno-step-item active">
-              <div class="inno-step-dot">●</div>
-              <div class="inno-step-title">En desarrollo</div>
-              <div class="inno-step-date">En progreso</div>
+            <div class="inno-user-name" id="inno-sidebar-user-name">Carlos Sánchez</div>
+            <div class="inno-user-role" id="inno-sidebar-user-role">Colaborador</div>
+          </div>
+
+          <div class="inno-user-part-metric">
+            <div class="inno-user-metric-label">
+              <strong>72%</strong> de participación
             </div>
-            <div class="inno-step-item">
-              <div class="inno-step-dot">○</div>
-              <div class="inno-step-title">Resultados</div>
-              <div class="inno-step-date">Meta</div>
+            <div class="inno-user-part-bar">
+              <div class="inno-user-part-fill" style="width: 72%;"></div>
             </div>
           </div>
-        </article>
 
-        <!-- Banner Sé parte del proyecto -->
-        <article class="inno-join-banner">
-          <div class="inno-join-bg"></div>
-          <div class="inno-join-content">
-            <div style="display:flex; align-items:center; gap:0.6rem; margin-bottom:0.5rem;">
-              <span style="font-size:1.5rem;">👥</span>
-              <h3 class="inno-join-title">¡Sé parte del proyecto!</h3>
-            </div>
-            <p class="inno-join-desc">
-              Tu participación es clave para construir un futuro más transparente e inteligente.
-            </p>
-            <button type="button" class="inno-btn-cyan" onclick="previewLandingDoc('Contacto y Alianzas — Gobierno de Datos e IA')" style="box-shadow:none;">
-              <span>Contactar al equipo</span> <span>→</span>
+          <div class="inno-sidebar-actions">
+            <button type="button" class="inno-btn-join" onclick="previewLandingDoc('Unirse al Proyecto')">
+              <span>👥</span> Unirse al proyecto
+            </button>
+            <button type="button" class="inno-btn-comment" onclick="previewLandingDoc('Dejar un comentario')">
+              <span>💬</span> Dejar un comentario
             </button>
           </div>
+        </div>
+      </aside>
+    </div>
+
+    <!-- ====================================================================
+         5. SECCIÓN RECURSOS DEL PROYECTO (MOCKUP EXACTO)
+         ==================================================================== -->
+    <section class="inno-resources-section" id="inno-sec-resources" style="max-width: 1320px; margin: 0 auto 2.75rem; padding: 0 1rem;">
+      <div class="inno-section-head">
+        <h2 class="inno-section-title">Recursos del proyecto</h2>
+        <p class="inno-section-sub">Encuentra aquí todo el material de interés.</p>
+      </div>
+
+      <!-- Filtros de categoría -->
+      <div class="inno-filter-pills">
+        <button type="button" class="inno-pill-tab active" onclick="filterResourceCategory('all', this)">Todos</button>
+        <button type="button" class="inno-pill-tab" onclick="filterResourceCategory('doc', this)">Documentos</button>
+        <button type="button" class="inno-pill-tab" onclick="filterResourceCategory('video', this)">Videos</button>
+        <button type="button" class="inno-pill-tab" onclick="filterResourceCategory('pres', this)">Presentaciones</button>
+        <button type="button" class="inno-pill-tab" onclick="filterResourceCategory('link', this)">Enlaces</button>
+      </div>
+
+      <!-- Grid de Recursos (3 Columnas) -->
+      <div class="inno-resources-grid" id="inno-resource-cards-container">
+        <!-- Card 1 -->
+        <article class="inno-resource-card" data-category="doc">
+          <div class="inno-res-thumb-wrap" style="background-image:url('https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=600&q=80'); cursor:pointer;" onclick="previewLandingDoc('Guía del Proyecto')">
+          </div>
+          <div class="inno-res-body">
+            <div>
+              <span class="inno-res-badge doc">📘 Documento</span>
+              <h4 class="inno-res-title">Guía del Proyecto</h4>
+              <p class="inno-res-desc">Conoce los lineamientos y alcance del proyecto.</p>
+            </div>
+            <div class="inno-res-footer">
+              <span>📅 12 Oct. 2026</span>
+              <button type="button" class="inno-res-action-link" onclick="previewLandingDoc('Guía del Proyecto')">
+                Ver detalle <span>→</span>
+              </button>
+            </div>
+          </div>
+        </article>
+
+        <!-- Card 2 -->
+        <article class="inno-resource-card" data-category="video">
+          <div class="inno-res-thumb-wrap" style="background-image:url('assets/projects_ui/card_open_data.png'); cursor:pointer;" onclick="playLandingVideo()">
+            <div class="inno-res-play-btn">▶</div>
+          </div>
+          <div class="inno-res-body">
+            <div>
+              <span class="inno-res-badge video">🎬 Video</span>
+              <h4 class="inno-res-title">Introducción al Proyecto</h4>
+              <p class="inno-res-desc">Una mirada general a nuestra iniciativa.</p>
+            </div>
+            <div class="inno-res-footer">
+              <span>📅 10 Oct. 2026</span>
+              <button type="button" class="inno-res-action-link" onclick="playLandingVideo()">
+                Ver video <span>→</span>
+              </button>
+            </div>
+          </div>
+        </article>
+
+        <!-- Card 3 -->
+        <article class="inno-resource-card" data-category="pres">
+          <div class="inno-res-thumb-wrap" style="background-image:url('assets/projects_ui/card_data_gov.png'); cursor:pointer;" onclick="previewLandingDoc('Plan de Trabajo')">
+          </div>
+          <div class="inno-res-body">
+            <div>
+              <span class="inno-res-badge pres">📊 Presentación</span>
+              <h4 class="inno-res-title">Plan de Trabajo</h4>
+              <p class="inno-res-desc">Cronograma y actividades clave.</p>
+            </div>
+            <div class="inno-res-footer">
+              <span>📅 08 Oct. 2026</span>
+              <button type="button" class="inno-res-action-link" onclick="previewLandingDoc('Plan de Trabajo')">
+                Ver detalle <span>→</span>
+              </button>
+            </div>
+          </div>
         </article>
       </div>
     </section>
 
     <!-- ====================================================================
-         6. FOOTER
+         6. SECCIÓN EQUIPO Y PARTICIPANTES (MOCKUP EXACTO)
          ==================================================================== -->
-    <footer class="inno-footer">
-      <div class="inno-footer-left">
-        <div class="inno-logo-icon" style="width:28px; height:28px; border-radius:8px;">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.3">
-            <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
-            <polyline points="2 17 12 22 22 17"></polyline>
-            <polyline points="2 12 12 17 22 12"></polyline>
-          </svg>
+    <section class="inno-team-section" id="inno-sec-team" style="max-width: 1320px; margin: 0 auto 2.75rem; padding: 0 1rem;">
+      <div class="inno-team-header-row">
+        <div class="inno-section-head" style="margin-bottom: 0;">
+          <h2 class="inno-section-title">Equipo y participantes</h2>
+          <p class="inno-section-sub">Un equipo comprometido con el éxito del proyecto.</p>
         </div>
-        <strong style="color:#ffffff;">Plataforma Educativa</strong> • <span style="color:var(--inno-cyan-400);">Mentix</span>
+
+        <button type="button" class="inno-btn-view-all-team" onclick="previewLandingDoc('Equipo Completo del Proyecto')">
+          Ver todo el equipo <span>→</span>
+        </button>
       </div>
 
-      <nav class="inno-footer-links">
-        <a href="#inno-sec-hero" class="inno-footer-link">Inicio</a>
-        <a href="#inno-sec-why" class="inno-footer-link">Sobre el Proyecto</a>
-        <a href="#inno-sec-resources" class="inno-footer-link">Recursos</a>
-        <a href="#inno-sec-resources" class="inno-footer-link">Presentaciones</a>
-        <a href="#inno-sec-resources" class="inno-footer-link">Galería</a>
-        <a href="#inno-sec-timeline" class="inno-footer-link">Contacto</a>
-      </nav>
+      <div class="inno-team-grid">
+        <div class="inno-team-card">
+          <div class="inno-team-avatar-wrap">
+            <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=160&q=80" alt="María López" class="inno-team-avatar" />
+            <span class="inno-team-status-dot green"></span>
+          </div>
+          <div class="inno-team-info">
+            <div class="inno-team-name">María López</div>
+            <div class="inno-team-role">Líder del proyecto</div>
+            <span class="inno-team-badge green">🟢 En línea</span>
+          </div>
+        </div>
 
-      <div class="inno-footer-right">
-        <span style="font-size:0.8rem; color:#64748b;">Innovación • Datos • Personas</span>
+        <div class="inno-team-card">
+          <div class="inno-team-avatar-wrap">
+            <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=160&q=80" alt="Andrés Pérez" class="inno-team-avatar" />
+            <span class="inno-team-status-dot blue"></span>
+          </div>
+          <div class="inno-team-info">
+            <div class="inno-team-name">Andrés Pérez</div>
+            <div class="inno-team-role">Arquitecto de Soluciones</div>
+            <span class="inno-team-badge blue">🔵 Activo</span>
+          </div>
+        </div>
+
+        <div class="inno-team-card">
+          <div class="inno-team-avatar-wrap">
+            <img src="https://images.unsplash.com/photo-1580489944761-15a19d654956?w=160&q=80" alt="Laura Gómez" class="inno-team-avatar" />
+            <span class="inno-team-status-dot blue"></span>
+          </div>
+          <div class="inno-team-info">
+            <div class="inno-team-name">Laura Gómez</div>
+            <div class="inno-team-role">Analista de Datos</div>
+            <span class="inno-team-badge blue">🔵 Activo</span>
+          </div>
+        </div>
       </div>
-    </footer>
+    </section>
+
+    <!-- ====================================================================
+         7. BANNER INFERIOR DE ACCIÓN (MOCKUP EXACTO)
+         ==================================================================== -->
+    <section class="inno-bottom-banner" id="inno-sec-cta" style="max-width: 1320px; margin: 0 auto 3rem; box-sizing: border-box;">
+      <div class="inno-cta-left">
+        <div class="inno-cta-rocket-badge">
+          <span style="font-size: 1.6rem;">🚀</span>
+        </div>
+        <div class="inno-cta-divider"></div>
+        <div class="inno-cta-text">
+          <h3 class="inno-cta-title">Construyamos el siguiente avance del proyecto</h3>
+          <p class="inno-cta-sub">Tu aporte hace la diferencia</p>
+        </div>
+      </div>
+
+      <div class="inno-cta-right">
+        <button type="button" class="inno-cta-btn" onclick="previewLandingDoc('Participar en el Proyecto')">
+          Participar ahora <span>→</span>
+        </button>
+      </div>
+    </section>
 
     <!-- Lightbox Modal Universal -->
     <div class="plp-lightbox" id="plp-standalone-lightbox" role="dialog" aria-modal="true" onclick="if(event.target===this) closeLandingLightbox()">
@@ -853,7 +978,7 @@
         }
 
         const pub = activeProject.publication || {};
-        const vp = activeProject.valueProposition || {};
+        const valProp = activeProject.valueProposition || vp || {};
         const des = activeProject.designConfig || activeProject.govdata?.designConfig || {};
 
         // Actualización dinámica de avance general
@@ -862,6 +987,10 @@
         if (cardProgNum) cardProgNum.textContent = `${progressPercent}%`;
         const cardProgBar = document.getElementById('inno-card-progress-bar');
         if (cardProgBar) cardProgBar.style.width = `${progressPercent}%`;
+        const cardGaugeCircle = document.getElementById('inno-card-gauge-circle');
+        if (cardGaugeCircle) cardGaugeCircle.style.strokeDashoffset = `calc(264 - (264 * ${progressPercent}) / 100)`;
+        const kpiProg = document.getElementById('inno-kpi-progress');
+        if (kpiProg) kpiProg.textContent = `${progressPercent}%`;
 
         // Contraste automático inteligente en Banner y Encabezado
         const currentTheme = document.body.getAttribute('data-theme') || 'light';
