@@ -985,10 +985,13 @@ window.AdminView = {
                     <button class="btn-card-robot-banner" title="Personalizar banner del robot" onclick="window.AdminView.switchTab('design')">
                       <span>🤖</span> Banner
                     </button>
+                    <button class="btn-card-edit" title="Editar proyecto" onclick="window.AdminView.openEditProjectModal('${p.id}')">
+                      ✏️
+                    </button>
                     <button class="btn-card-trash" title="Eliminar proyecto" onclick="window.AdminView.deleteProject('${p.id}')">
                       🗑️
                     </button>
-                    <button class="btn-card-more" title="Más opciones del proyecto" onclick="window.AdminView.openProjectDetailModal('${p.id}')">
+                    <button class="btn-card-more" title="Editar y más opciones" onclick="window.AdminView.openEditProjectModal('${p.id}')">
                       •••
                     </button>
                   </div>
@@ -1096,6 +1099,7 @@ window.AdminView = {
                   <td class="table-date">${dateStr}</td>
                   <td style="text-align: right;">
                     <div class="table-actions">
+                      <button class="btn-icon" title="Editar proyecto" onclick="window.AdminView.openEditProjectModal('${p.id}')">✏️</button>
                       <button class="btn-icon" title="Ver detalle" onclick="window.AdminView.openProjectDetailModal('${p.id}')">👁️</button>
                       <button class="btn-icon" title="Alternar visibilidad" onclick="window.AdminView.toggleProjectVisibility('${p.id}')">
                         ${isPublic ? '🔒' : '🌐'}
@@ -1870,7 +1874,12 @@ window.AdminView = {
                 <span class="modal-sub">ID: ${p.id} • Categoría: ${p.category || 'General'}</span>
               </div>
             </div>
-            <button class="modal-close-btn" onclick="window.AdminView.closeModal()">✕</button>
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+              <button class="btn btn-sm btn-cyan" style="font-weight: 800;" onclick="window.AdminView.openEditProjectModal('${p.id}')">
+                <span>✏️</span> Editar Proyecto
+              </button>
+              <button class="modal-close-btn" onclick="window.AdminView.closeModal()">✕</button>
+            </div>
           </div>
 
           <!-- Pestañas del Modal -->
@@ -1897,6 +1906,9 @@ window.AdminView = {
           <!-- Modal Footer -->
           <div class="admin-modal-footer">
             <button class="btn btn-outline" onclick="window.AdminView.closeModal()">Cerrar</button>
+            <button class="btn btn-outline" style="border-color: #00f5d4; color: #00f5d4; font-weight: 800;" onclick="window.AdminView.openEditProjectModal('${p.id}')">
+              <span>✏️</span> Editar Proyecto
+            </button>
             <button class="btn btn-cyan" onclick="window.AdminView.toggleProjectVisibility('${p.id}'); window.AdminView.closeModal();">
               ${p.visibility === 'private' ? 'Hacer Público' : 'Hacer Privado'}
             </button>
@@ -2301,6 +2313,359 @@ window.AdminView = {
 
     if (window.ProjectsView && typeof window.ProjectsView.openProjectLanding === 'function') {
       window.ProjectsView.openProjectLanding(projectId);
+    }
+  },
+
+  escapeHtml(str) {
+    if (!str) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  },
+
+  /**
+   * Modal de Edición de Proyectos para Administradores
+   */
+  openEditProjectModal(projectId) {
+    const raw = this.getRealProjects();
+    const p = raw.find(item => item.id === projectId) || (window.appState?.challenges || []).find(item => item.id === projectId);
+    if (!p) {
+      this.showToast('No se encontró el proyecto para editar', 'error');
+      return;
+    }
+
+    const categories = (window.appState && window.appState.categories) ? window.appState.categories : [];
+    const isCompleted = p.status === 'completed' || p.stage === 'completed';
+    const isReview = p.status === 'review';
+    const isPublic = p.visibility !== 'private';
+    const currentRating = p.rating || '4.8';
+    const currentStudents = p.participantsCount || (p.collaborators ? p.collaborators.length : null) || p.students || 24;
+    const coverImage = p.image || p.cover || p.banner || 'assets/student_create_bg.jpg';
+
+    const modalRoot = document.getElementById('admin-modal-root');
+    if (!modalRoot) return;
+
+    modalRoot.innerHTML = `
+      <div class="admin-modal-overlay" onclick="window.AdminView.handleModalBackdropClick(event)">
+        <div class="admin-modal-window modal-lg" style="max-width: 780px;">
+          
+          <!-- Modal Header -->
+          <div class="admin-modal-header" style="border-bottom: 1px solid #1e293b; padding-bottom: 1rem;">
+            <div class="modal-title-wrap">
+              <span class="modal-icon" style="background: rgba(0, 245, 212, 0.15); color: #00f5d4; border-radius: 12px; padding: 0.5rem; font-size: 1.3rem;">✏️</span>
+              <div>
+                <h3 style="margin: 0; font-size: 1.25rem; font-weight: 800; color: #ffffff;">Editar Proyecto</h3>
+                <span class="modal-sub" style="color: #94a3b8; font-size: 0.82rem;">ID: <code>${p.id}</code> • Modo Administrador</span>
+              </div>
+            </div>
+            <button class="modal-close-btn" onclick="window.AdminView.closeModal()" style="font-size: 1.2rem; cursor: pointer; background: transparent; border: none; color: #94a3b8;">✕</button>
+          </div>
+
+          <!-- Modal Body Formulario -->
+          <div class="admin-modal-body" style="padding: 1.5rem 0; max-height: 70vh; overflow-y: auto;">
+            <form id="admin-edit-project-form" onsubmit="window.AdminView.submitProjectEdit(event, '${p.id}')">
+              
+              <!-- Fila 1: Título y Categoría -->
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.25rem;">
+                <div class="form-group">
+                  <label style="display: block; font-size: 0.85rem; font-weight: 700; color: #cbd5e1; margin-bottom: 0.35rem;">
+                    Título del Proyecto *
+                  </label>
+                  <input 
+                    type="text" 
+                    id="edit-proj-title" 
+                    value="${this.escapeHtml(p.title || '')}" 
+                    required 
+                    style="width: 100%; background: #0b1528; border: 1.5px solid #1e293b; border-radius: 10px; color: #ffffff; padding: 0.65rem 0.85rem; font-size: 0.92rem; outline: none;"
+                    onfocus="this.style.borderColor='#00f5d4'"
+                    onblur="this.style.borderColor='#1e293b'"
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label style="display: block; font-size: 0.85rem; font-weight: 700; color: #cbd5e1; margin-bottom: 0.35rem;">
+                    Categoría Académica
+                  </label>
+                  <select 
+                    id="edit-proj-category" 
+                    style="width: 100%; background: #0b1528; border: 1.5px solid #1e293b; border-radius: 10px; color: #ffffff; padding: 0.65rem 0.85rem; font-size: 0.92rem; outline: none; cursor: pointer;"
+                  >
+                    ${categories.map(c => `
+                      <option value="${c.id}" ${p.category === c.id ? 'selected' : ''}>
+                        ${c.icon || '🏷️'} ${c.name}
+                      </option>
+                    `).join('')}
+                    ${!categories.some(c => c.id === p.category) ? `<option value="${p.category || 'general'}" selected>${p.category || 'General'}</option>` : ''}
+                  </select>
+                </div>
+              </div>
+
+              <!-- Fila 2: Subtítulo o Resumen Corto -->
+              <div class="form-group" style="margin-bottom: 1.25rem;">
+                <label style="display: block; font-size: 0.85rem; font-weight: 700; color: #cbd5e1; margin-bottom: 0.35rem;">
+                  Subtítulo / Breve Resumen
+                </label>
+                <input 
+                  type="text" 
+                  id="edit-proj-subtitle" 
+                  value="${this.escapeHtml(p.subtitle || p.description || '')}" 
+                  style="width: 100%; background: #0b1528; border: 1.5px solid #1e293b; border-radius: 10px; color: #ffffff; padding: 0.65rem 0.85rem; font-size: 0.92rem; outline: none;"
+                  placeholder="Ej: Metodologías ágiles para la gobernanza de información"
+                />
+              </div>
+
+              <!-- Fila 3: Descripción Detallada -->
+              <div class="form-group" style="margin-bottom: 1.25rem;">
+                <label style="display: block; font-size: 0.85rem; font-weight: 700; color: #cbd5e1; margin-bottom: 0.35rem;">
+                  Descripción Detallada
+                </label>
+                <textarea 
+                  id="edit-proj-description" 
+                  rows="3" 
+                  style="width: 100%; background: #0b1528; border: 1.5px solid #1e293b; border-radius: 10px; color: #ffffff; padding: 0.65rem 0.85rem; font-size: 0.92rem; outline: none; resize: vertical;"
+                >${this.escapeHtml(p.description || '')}</textarea>
+              </div>
+
+              <!-- Fila 4: Estado, Visibilidad, Participantes y Rating -->
+              <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.85rem; margin-bottom: 1.25rem;">
+                <div class="form-group">
+                  <label style="display: block; font-size: 0.82rem; font-weight: 700; color: #cbd5e1; margin-bottom: 0.35rem;">
+                    Estado
+                  </label>
+                  <select id="edit-proj-status" style="width: 100%; background: #0b1528; border: 1.5px solid #1e293b; border-radius: 10px; color: #ffffff; padding: 0.6rem 0.65rem; font-size: 0.88rem; outline: none;">
+                    <option value="completed" ${isCompleted ? 'selected' : ''}>✔ Completado</option>
+                    <option value="in_progress" ${(!isCompleted && !isReview) ? 'selected' : ''}>⚡ En Proceso</option>
+                    <option value="review" ${isReview ? 'selected' : ''}>⏳ En Revisión</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label style="display: block; font-size: 0.82rem; font-weight: 700; color: #cbd5e1; margin-bottom: 0.35rem;">
+                    Visibilidad
+                  </label>
+                  <select id="edit-proj-visibility" style="width: 100%; background: #0b1528; border: 1.5px solid #1e293b; border-radius: 10px; color: #ffffff; padding: 0.6rem 0.65rem; font-size: 0.88rem; outline: none;">
+                    <option value="public" ${isPublic ? 'selected' : ''}>🌐 Público</option>
+                    <option value="private" ${!isPublic ? 'selected' : ''}>🔒 Privado</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label style="display: block; font-size: 0.82rem; font-weight: 700; color: #cbd5e1; margin-bottom: 0.35rem;">
+                    Participantes 👥
+                  </label>
+                  <input type="number" id="edit-proj-students" min="0" value="${currentStudents}" style="width: 100%; background: #0b1528; border: 1.5px solid #1e293b; border-radius: 10px; color: #ffffff; padding: 0.6rem 0.65rem; font-size: 0.88rem; outline: none;" />
+                </div>
+
+                <div class="form-group">
+                  <label style="display: block; font-size: 0.82rem; font-weight: 700; color: #cbd5e1; margin-bottom: 0.35rem;">
+                    Rating ⭐
+                  </label>
+                  <input type="number" step="0.1" min="1" max="5" id="edit-proj-rating" value="${currentRating}" style="width: 100%; background: #0b1528; border: 1.5px solid #1e293b; border-radius: 10px; color: #ffffff; padding: 0.6rem 0.65rem; font-size: 0.88rem; outline: none;" />
+                </div>
+              </div>
+
+              <!-- Fila 5: Imagen de Portada / Banner con Previsualización -->
+              <div class="form-group" style="margin-bottom: 1.25rem;">
+                <label style="display: block; font-size: 0.85rem; font-weight: 700; color: #cbd5e1; margin-bottom: 0.35rem;">
+                  URL Imagen de Portada o Banner
+                </label>
+                <div style="display: flex; gap: 0.75rem; align-items: center;">
+                  <input 
+                    type="text" 
+                    id="edit-proj-cover" 
+                    value="${this.escapeHtml(coverImage)}" 
+                    style="flex: 1; background: #0b1528; border: 1.5px solid #1e293b; border-radius: 10px; color: #ffffff; padding: 0.65rem 0.85rem; font-size: 0.92rem; outline: none;"
+                    oninput="document.getElementById('edit-cover-preview').src = this.value || 'assets/student_create_bg.jpg'"
+                  />
+                  <img 
+                    id="edit-cover-preview" 
+                    src="${coverImage}" 
+                    alt="Preview" 
+                    style="width: 65px; height: 42px; object-fit: cover; border-radius: 8px; border: 1.5px solid #00f5d4;" 
+                    onerror="this.onerror=null; this.src='assets/student_create_bg.jpg';"
+                  />
+                </div>
+                <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem;">
+                  <button type="button" class="btn btn-sm btn-outline" style="font-size: 0.75rem; padding: 0.25rem 0.5rem;" onclick="document.getElementById('edit-proj-cover').value='assets/projects_ui/robot_hero_banner.png'; document.getElementById('edit-cover-preview').src='assets/projects_ui/robot_hero_banner.png';">
+                    🤖 Usar Banner Robot
+                  </button>
+                  <button type="button" class="btn btn-sm btn-outline" style="font-size: 0.75rem; padding: 0.25rem 0.5rem;" onclick="document.getElementById('edit-proj-cover').value='assets/student_create_bg.jpg'; document.getElementById('edit-cover-preview').src='assets/student_create_bg.jpg';">
+                    🌌 Usar Cosmos
+                  </button>
+                </div>
+              </div>
+
+              <!-- Banner de Edición Profunda del Contenido Interactivo -->
+              <div style="background: linear-gradient(135deg, rgba(0, 245, 212, 0.08) 0%, rgba(124, 58, 237, 0.12) 100%); border: 1.5px dashed #00f5d4; border-radius: 14px; padding: 1rem 1.25rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-top: 1.25rem;">
+                <div>
+                  <h4 style="margin: 0 0 0.25rem 0; font-size: 0.95rem; color: #00f5d4; font-weight: 800;">
+                    🎨 Edición Completa de Contenido & Diapositivas
+                  </h4>
+                  <p style="margin: 0; font-size: 0.82rem; color: #cbd5e1;">
+                    Modifica diapositivas, textos, videos, notas y recursos interactivos directamente en el diseñador.
+                  </p>
+                </div>
+                <button 
+                  type="button" 
+                  class="btn btn-cyan" 
+                  style="font-size: 0.85rem; font-weight: 900; white-space: nowrap; padding: 0.55rem 1.1rem;" 
+                  onclick="window.AdminView.editProjectContent('${p.id}')"
+                >
+                  Abrir Diseñador ➜
+                </button>
+              </div>
+
+              <!-- Modal Footer -->
+              <div class="admin-modal-footer" style="border-top: 1px solid #1e293b; padding-top: 1.25rem; margin-top: 1.5rem; display: flex; justify-content: flex-end; gap: 0.75rem;">
+                <button type="button" class="btn btn-outline" onclick="window.AdminView.closeModal()">
+                  Cancelar
+                </button>
+                <button type="submit" class="btn btn-cyan" style="font-weight: 900; padding: 0.65rem 1.5rem; box-shadow: 0 0 15px rgba(0, 245, 212, 0.45);">
+                  <span>💾</span> Guardar Cambios
+                </button>
+              </div>
+
+            </form>
+          </div>
+
+        </div>
+      </div>
+    `;
+  },
+
+  submitProjectEdit(event, projectId) {
+    if (event) event.preventDefault();
+    
+    const title = (document.getElementById('edit-proj-title')?.value || '').trim();
+    if (!title) {
+      this.showToast('El título del proyecto es obligatorio', 'warning');
+      return;
+    }
+
+    const categoryId = document.getElementById('edit-proj-category')?.value || 'general';
+    const subtitle = (document.getElementById('edit-proj-subtitle')?.value || '').trim();
+    const description = (document.getElementById('edit-proj-description')?.value || '').trim();
+    const status = document.getElementById('edit-proj-status')?.value || 'completed';
+    const visibility = document.getElementById('edit-proj-visibility')?.value || 'public';
+    const students = parseInt(document.getElementById('edit-proj-students')?.value || '24', 10);
+    const rating = (document.getElementById('edit-proj-rating')?.value || '4.8').trim();
+    const cover = (document.getElementById('edit-proj-cover')?.value || '').trim();
+
+    if (!window.appState.challenges) window.appState.challenges = [];
+    let p = window.appState.challenges.find(item => item && item.id === projectId);
+
+    if (!p) {
+      if (typeof DEFAULT_PROJECTS !== 'undefined') {
+        const dp = DEFAULT_PROJECTS.find(d => d.id === projectId);
+        if (dp) {
+          p = { ...dp };
+          window.appState.challenges.push(p);
+        }
+      }
+    }
+
+    if (!p) {
+      this.showToast('No se encontró el proyecto a actualizar', 'error');
+      return;
+    }
+
+    // Actualizar campos del proyecto
+    p.title = title;
+    p.subtitle = subtitle;
+    p.description = description || subtitle || title;
+    p.category = categoryId;
+    
+    const cats = window.appState.categories || [];
+    const catObj = cats.find(c => c.id === categoryId);
+    if (catObj) p.categoryName = catObj.name;
+
+    p.status = status;
+    p.stage = status;
+    p.visibility = visibility;
+    p.isPublic = (visibility !== 'private');
+    p.accessMode = (visibility !== 'private') ? 'public' : 'private';
+    p.rating = rating;
+    p.students = students;
+    p.participantsCount = students;
+    if (cover) {
+      p.image = cover;
+      p.cover = cover;
+      p.banner = cover;
+    }
+
+    // Guardar cambios globalmente
+    if (typeof saveGlobalState === 'function') {
+      saveGlobalState(window.appState);
+    } else {
+      try {
+        localStorage.setItem('mentix_challenges', JSON.stringify(window.appState.challenges));
+        localStorage.setItem('mentix_projects', JSON.stringify(window.appState.challenges));
+        localStorage.setItem('te_reto_challenges', JSON.stringify(window.appState.challenges));
+      } catch(e) {}
+    }
+
+    // Actualizar en bóvedas de usuario si existe
+    try {
+      for (let i = 0; i < localStorage.length; i++) {
+        const k = localStorage.key(i);
+        if (k && k.startsWith('mentix_user_projects_')) {
+          const raw = localStorage.getItem(k);
+          if (raw) {
+            let list = JSON.parse(raw);
+            if (Array.isArray(list)) {
+              const idx = list.findIndex(item => item && item.id === projectId);
+              if (idx >= 0) {
+                list[idx] = { ...list[idx], ...p };
+                localStorage.setItem(k, JSON.stringify(list));
+              }
+            }
+          }
+        }
+      }
+    } catch(e) {}
+
+    this.logAuditEvent(`Proyecto editado: "${title}"`, 'Proyectos');
+    this.closeModal();
+    this.showToast(`✨ ¡Proyecto "${title}" actualizado exitosamente!`, 'success');
+    this.renderActiveTab();
+  },
+
+  editProjectContent(projectId) {
+    this.closeModal();
+    const p = (window.appState.challenges || []).find(item => item && item.id === projectId);
+    if (!p) {
+      this.showToast('No se encontró el proyecto', 'error');
+      return;
+    }
+
+    const type = p.projectType || (p.slides ? 'presentation' : 'presentation');
+    if (type === 'video') {
+      if (window.appRouter && typeof window.appRouter.editVideo === 'function') {
+        window.appRouter.editVideo(projectId);
+      } else {
+        window.appRouter.navigate('video', { id: projectId, edit: true });
+      }
+    } else if (type === 'document') {
+      if (window.appRouter && typeof window.appRouter.editDocument === 'function') {
+        window.appRouter.editDocument(projectId);
+      } else {
+        window.appRouter.navigate('document', { id: projectId, edit: true });
+      }
+    } else if (type === 'url') {
+      if (window.appRouter && typeof window.appRouter.editUrl === 'function') {
+        window.appRouter.editUrl(projectId);
+      } else {
+        window.appRouter.navigate('url', { id: projectId, edit: true });
+      }
+    } else {
+      if (window.appRouter && typeof window.appRouter.editPresentation === 'function') {
+        window.appRouter.editPresentation(projectId);
+      } else {
+        window.appRouter.navigate('presentation', { id: projectId, edit: true });
+      }
     }
   },
 

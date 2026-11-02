@@ -1336,6 +1336,28 @@
   transform: scale(1.05);
 }
 
+/* Botón ✏️ Editar Proyecto */
+.btn-card-edit {
+  background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+  color: #ffffff;
+  border: none;
+  border-radius: 10px;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 0.95rem;
+  box-shadow: 0 2px 8px rgba(2, 132, 199, 0.4);
+  transition: all 0.2s ease;
+}
+.btn-card-edit:hover {
+  background: linear-gradient(135deg, #0369a1 0%, #075985 100%);
+  transform: scale(1.08);
+  box-shadow: 0 4px 12px rgba(2, 132, 199, 0.6);
+}
+
 /* Botón 🗑️ Papelera */
 .btn-card-trash {
   background: #ef4444;

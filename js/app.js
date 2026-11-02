@@ -1,4 +1,4 @@
-﻿/**
+/**
  * 🔥 TE RETO - Orquestador Principal y Enrutador SPA (app.js)
  * Conecta todas las vistas, modales, autenticación, experiencia XP y sonido.
  */
@@ -1344,6 +1344,12 @@ class AppRouter {
     if (!challenge) return false;
     const u = window.appState?.currentUser;
     if (!u) return false;
+
+    // Los administradores tienen permisos globales para editar y moderar cualquier proyecto o reto
+    const roleLower = String(u.role || '').toLowerCase().trim();
+    if (roleLower === 'admin' || roleLower === 'administrador' || u.isAdmin === true || localStorage.getItem('mentix_admin_override') === 'true') {
+      return true;
+    }
 
     const clean = s => String(s || '').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
     const cleanName = clean(u.name);
