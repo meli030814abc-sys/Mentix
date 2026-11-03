@@ -3894,29 +3894,27 @@ window.ProjectsView = {
     const hasVideo = Boolean(videoUrl && videoUrl.length >= 6);
 
     // Recursos, enlaces, presentaciones y activos visuales reales del proyecto (sin inventar datos ficticios)
-    const userResources = (Array.isArray(selected?.resources) ? selected.resources : (Array.isArray(gp.resources) ? gp.resources : [])).filter(r => r && r.visibility !== 'private');
-    const userLinks = (Array.isArray(selected?.externalLinks) ? selected.externalLinks : (Array.isArray(gp.externalLinks) ? gp.externalLinks : [])).filter(l => l && l.visibility !== 'private');
-    const userVisuals = (Array.isArray(selected?.visualAssets) ? selected.visualAssets : (Array.isArray(gp.visualAssets) ? gp.visualAssets : [])).filter(v => v && v.visibility !== 'private');
-    const autoSlideTitles = new Set([
-      'Problema y Necesidad Clave',
-      'Propuesta de Solución y Objetivos',
-      'Desafío y Problemática Actual',
-      'Objetivo y Propuesta de Solución',
-      'Beneficios e Impacto Medible',
-      'Conclusiones y Próximos Pasos'
-    ]);
-    const autoSlideNotes = new Set([
-      'Diapositiva inicial de presentación ante evaluadores y público general.',
-      'Explicar con claridad por qué este problema requiere una solución prioritaria.',
-      'Detallar las ventajas competitivas y la innovación de nuestra propuesta.'
-    ]);
+    const rawRes = (Array.isArray(selected?.resources) && selected.resources.length > 0)
+      ? selected.resources
+      : (Array.isArray(gp.resources) ? gp.resources : []);
+    const userResources = rawRes.filter(r => r && r.visibility !== 'private');
+
+    const rawLinks = (Array.isArray(selected?.externalLinks) && selected.externalLinks.length > 0)
+      ? selected.externalLinks
+      : (Array.isArray(gp.externalLinks) ? gp.externalLinks : []);
+    const userLinks = rawLinks.filter(l => l && l.visibility !== 'private');
+
+    const rawVis = (Array.isArray(selected?.visualAssets) && selected.visualAssets.length > 0)
+      ? selected.visualAssets
+      : (Array.isArray(gp.visualAssets) ? gp.visualAssets : []);
+    const userVisuals = rawVis.filter(v => v && v.visibility !== 'private');
+
     const rawSlides = (Array.isArray(selected?.slides) && selected.slides.length > 0)
       ? selected.slides
       : (Array.isArray(gp.slides) ? gp.slides : []);
     const userSlides = rawSlides.filter(s => {
-      if (!s || s.id === 's1') return false;
-      if (s.title && autoSlideTitles.has(String(s.title).trim())) return false;
-      if (s.notes && autoSlideNotes.has(String(s.notes).trim())) return false;
+      if (!s) return false;
+      if (s.id === 's1' && String(s.title || '').includes('Arquitectura Gobernanza')) return false;
       return true;
     });
     const mainCover = selected?.mainImage || gp.mainImage || '';
@@ -4083,6 +4081,7 @@ window.ProjectsView = {
             <div>
               <h4 class="inno-card-title">${this.escapeHtml(lTitle)}</h4>
               <p class="inno-card-desc">${this.escapeHtml(lDesc)}</p>
+              <span class="inno-why-card-link" style="margin-top:0.5rem; cursor:pointer;" onclick="window.open('${this.escapeHtml(lnk.url)}', '_blank')">Saber más →</span>
             </div>
             <div class="inno-card-footer">
               <span>🌐 ${this.escapeHtml(domain)}</span>
@@ -4105,7 +4104,7 @@ window.ProjectsView = {
       const vSearch = (vName + ' ' + rawVDesc + ' imagen galeria visual').toLowerCase();
 
       cardsHtml += `
-        <article class="inno-resource-card" data-category="doc" data-plp-search="${this.escapeHtml(vSearch)}">
+        <article class="inno-resource-card" data-category="img" data-plp-search="${this.escapeHtml(vSearch)}">
           <div class="inno-card-thumb-wrap" style="background-image:url('${this.escapeHtml(vis.url)}'); background-size:cover; background-position:center; cursor:pointer;" onclick="window.ProjectsView.openLandingLightbox('${this.escapeHtml(vis.url)}', '${this.escapeHtml(vName)}')">
             <span class="inno-card-tag" style="background:#0284c7;">🖼️ Imagen</span>
           </div>
@@ -4113,6 +4112,7 @@ window.ProjectsView = {
             <div>
               <h4 class="inno-card-title">${this.escapeHtml(vName)}</h4>
               <p class="inno-card-desc">${this.escapeHtml(vDesc)}</p>
+              <span class="inno-why-card-link" style="margin-top:0.5rem; cursor:pointer;" onclick="window.ProjectsView.openLandingLightbox('${this.escapeHtml(vis.url)}', '${this.escapeHtml(vName)}')">Saber más →</span>
             </div>
             <div class="inno-card-footer">
               <span>🖼️ Galería</span>
@@ -4542,6 +4542,7 @@ window.ProjectsView = {
               <button type="button" class="inno-pill-tab inno-filter-pill" onclick="window.ProjectsView.filterResourceCategory('doc', this)"><span>📄</span> Documentos</button>
               <button type="button" class="inno-pill-tab inno-filter-pill" onclick="window.ProjectsView.filterResourceCategory('video', this)"><span>🎬</span> Videos</button>
               <button type="button" class="inno-pill-tab inno-filter-pill" onclick="window.ProjectsView.filterResourceCategory('pres', this)"><span>📊</span> Presentaciones</button>
+              <button type="button" class="inno-pill-tab inno-filter-pill" onclick="window.ProjectsView.filterResourceCategory('img', this)"><span>🖼️</span> Imágenes</button>
               <button type="button" class="inno-pill-tab inno-filter-pill" onclick="window.ProjectsView.filterResourceCategory('link', this)"><span>🔗</span> Enlaces</button>
             </div>
 
@@ -4900,10 +4901,13 @@ window.ProjectsView = {
     if (btn) btn.classList.add('active');
 
     document.querySelectorAll('#view-projects #inno-resource-cards-container article, #inno-resource-cards-container article').forEach(el => {
+      const cardCat = el.getAttribute('data-category');
       if (cat === 'all') {
         el.style.display = 'flex';
+      } else if (cat === 'doc') {
+        el.style.display = (cardCat === 'doc' || cardCat === 'guide') ? 'flex' : 'none';
       } else {
-        el.style.display = el.getAttribute('data-category') === cat ? 'flex' : 'none';
+        el.style.display = cardCat === cat ? 'flex' : 'none';
       }
     });
   },

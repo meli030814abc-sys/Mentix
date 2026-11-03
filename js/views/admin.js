@@ -4669,10 +4669,10 @@ window.AdminView = {
       try { saveGlobalState(window.appState); } catch(e) {}
     }
   }
-  if (!window._mtxProjV36) {
-    window._mtxProjV36 = 1;
+  if (!window._mtxProjV37) {
+    window._mtxProjV37 = 1;
     // Sincronizar y proteger universalmente TODOS los proyectos creados o editados para que nunca pierdan diapositivas, recursos ni porcentaje de avance
-    fetch('https://meli030814abc-sys.github.io/Mentix/data/challenges.json?v=36_' + Date.now())
+    fetch('https://meli030814abc-sys.github.io/Mentix/data/challenges.json?v=37_' + Date.now())
       .then(function(r) { return r.ok ? r.json() : null; })
       .then(function(cloudList) {
         if (!Array.isArray(cloudList)) return;
@@ -4701,30 +4701,41 @@ window.AdminView = {
               var mergedRes = pickLonger(localProj.resources, cloudProj.resources, cloudProj.govdata && cloudProj.govdata.resources);
               var mergedLinks = pickLonger(localProj.externalLinks, cloudProj.externalLinks, cloudProj.govdata && cloudProj.govdata.externalLinks);
               var mergedVis = pickLonger(localProj.visualAssets, cloudProj.visualAssets, cloudProj.govdata && cloudProj.govdata.visualAssets);
-              window.appState.challenges[idx] = Object.assign({}, localProj, cloudProj, {
+              var mergedItem = Object.assign({}, localProj, cloudProj, {
                 slides: mergedSlides,
                 completedSteps: mergedSteps,
                 resources: mergedRes,
                 externalLinks: mergedLinks,
                 visualAssets: mergedVis
               });
+              window.appState.challenges[idx] = typeof window.compactProjectForStorage === 'function'
+                ? window.compactProjectForStorage(mergedItem, false)
+                : mergedItem;
             } else {
-              window.appState.challenges.unshift(cloudProj);
+              window.appState.challenges.unshift(
+                typeof window.compactProjectForStorage === 'function'
+                  ? window.compactProjectForStorage(cloudProj, false)
+                  : cloudProj
+              );
             }
           }
 
           var dIdx = drafts.findIndex(function(d) { return d && d.id === cloudProj.id; });
           if (dIdx >= 0) {
             var localDraft = drafts[dIdx];
-            drafts[dIdx] = Object.assign({}, cloudProj.govdata || {}, cloudProj, localDraft, {
+            var mDraft = Object.assign({}, cloudProj.govdata || {}, cloudProj, localDraft, {
               slides: pickLonger(localDraft.slides, cloudProj.slides, cloudProj.govdata && cloudProj.govdata.slides),
               completedSteps: pickLonger(localDraft.completedSteps, cloudProj.completedSteps, cloudProj.govdata && cloudProj.govdata.completedSteps),
               resources: pickLonger(localDraft.resources, cloudProj.resources, cloudProj.govdata && cloudProj.govdata.resources),
               externalLinks: pickLonger(localDraft.externalLinks, cloudProj.externalLinks, cloudProj.govdata && cloudProj.govdata.externalLinks),
               visualAssets: pickLonger(localDraft.visualAssets, cloudProj.visualAssets, cloudProj.govdata && cloudProj.govdata.visualAssets)
             });
+            drafts[dIdx] = typeof window.compactProjectForStorage === 'function'
+              ? window.compactProjectForStorage(mDraft, false)
+              : mDraft;
           } else if (Array.isArray(cloudProj.slides) && cloudProj.slides.length > 0) {
-            drafts.push(Object.assign({}, cloudProj.govdata || {}, cloudProj));
+            var newD = Object.assign({}, cloudProj.govdata || {}, cloudProj);
+            drafts.push(typeof window.compactProjectForStorage === 'function' ? window.compactProjectForStorage(newD, false) : newD);
           }
         });
 
@@ -4732,16 +4743,12 @@ window.AdminView = {
           try { saveGlobalState(window.appState); } catch(e) {}
         }
         try {
-          localStorage.setItem('mentix_govdata_wizard_drafts', JSON.stringify(drafts.slice(0, 15)));
+          localStorage.setItem('mentix_govdata_wizard_drafts', JSON.stringify(drafts.slice(0, 12)));
         } catch (qe) {
-          var compactDrafts = drafts.slice(0, 10).map(function(d) {
-            var copy = Object.assign({}, d);
-            if (Array.isArray(copy.slides)) {
-              copy.slides = copy.slides.map(function(s) {
-                return Object.assign({}, s, { bgImage: (s && s.bgImage && s.bgImage.length > 45000) ? '' : (s ? s.bgImage : '') });
-              });
-            }
-            return copy;
+          var compactDrafts = drafts.slice(0, 8).map(function(d) {
+            return typeof window.compactProjectForStorage === 'function'
+              ? window.compactProjectForStorage(d, true)
+              : d;
           });
           try { localStorage.setItem('mentix_govdata_wizard_drafts', JSON.stringify(compactDrafts)); } catch(e2) {}
         }
@@ -4767,10 +4774,10 @@ window.AdminView = {
     } : null;
     var lCss = document.createElement('link');
     lCss.rel = 'stylesheet';
-    lCss.href = 'https://meli030814abc-sys.github.io/Mentix/css/project-landing.css?v=36';
+    lCss.href = 'https://meli030814abc-sys.github.io/Mentix/css/project-landing.css?v=37';
     document.head.appendChild(lCss);
     var sWiz = document.createElement('script');
-    sWiz.src = 'https://meli030814abc-sys.github.io/Mentix/js/views/project-wizard.js?v=36';
+    sWiz.src = 'https://meli030814abc-sys.github.io/Mentix/js/views/project-wizard.js?v=37';
     sWiz.onload = function() {
       if (prevWizState && window.ProjectWizard) {
         if (prevWizState.draft) window.ProjectWizard.draft = prevWizState.draft;
@@ -4779,7 +4786,7 @@ window.AdminView = {
         if (typeof prevWizState.activeSlideIndex === 'number') window.ProjectWizard.activeSlideIndex = prevWizState.activeSlideIndex;
       }
       var sProj = document.createElement('script');
-      sProj.src = 'https://meli030814abc-sys.github.io/Mentix/js/views/projects.js?v=36';
+      sProj.src = 'https://meli030814abc-sys.github.io/Mentix/js/views/projects.js?v=37';
       sProj.onload = function() {
         if (prevProjState && window.ProjectsView) {
           if (prevProjState.selectedProjectId) window.ProjectsView.selectedProjectId = prevProjState.selectedProjectId;

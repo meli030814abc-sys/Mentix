@@ -413,7 +413,10 @@ function fixOptionShape(shape, optIdx) {
 }
 
 function deepCleanMojibake(val) {
-  if (typeof val === 'string') return fixMojibake(val);
+  if (typeof val === 'string') {
+    if (val.length > 10000 || val.startsWith('data:')) return val;
+    return fixMojibake(val);
+  }
   if (Array.isArray(val)) return val.map(deepCleanMojibake);
   if (val && typeof val === 'object') {
     const res = {};
@@ -435,20 +438,71 @@ window.fixMojibake = fixMojibake;
 window.fixOptionShape = fixOptionShape;
 window.deepCleanMojibake = deepCleanMojibake;
 
+window.compactProjectForStorage = function(proj, stripLargeDataUrls = false) {
+  if (!proj || typeof proj !== 'object') return proj;
+  const clone = { ...proj };
+  if (clone.govdata && typeof clone.govdata === 'object') {
+    const g = { ...clone.govdata };
+    delete g.slides;
+    delete g.resources;
+    delete g.visualAssets;
+    clone.govdata = g;
+  }
+  if (stripLargeDataUrls) {
+    const maxLen = 65000;
+    if (typeof clone.image === 'string' && clone.image.startsWith('data:') && clone.image.length > maxLen) delete clone.image;
+    if (typeof clone.banner === 'string' && clone.banner.startsWith('data:') && clone.banner.length > maxLen) delete clone.banner;
+    if (typeof clone.mainImage === 'string' && clone.mainImage.startsWith('data:') && clone.mainImage.length > maxLen) clone.mainImage = '';
+    if (typeof clone.thumbnailImage === 'string' && clone.thumbnailImage.startsWith('data:') && clone.thumbnailImage.length > maxLen) clone.thumbnailImage = '';
+    if (Array.isArray(clone.slides)) {
+      clone.slides = clone.slides.map(s => {
+        if (!s || typeof s !== 'object') return s;
+        const sc = { ...s };
+        if (typeof sc.media === 'string' && sc.media.startsWith('data:') && sc.media.length > maxLen) sc.media = '';
+        if (typeof sc.bgImage === 'string' && sc.bgImage.startsWith('data:') && sc.bgImage.length > maxLen) sc.bgImage = '';
+        if (typeof sc.imageUrl === 'string' && sc.imageUrl.startsWith('data:') && sc.imageUrl.length > maxLen) sc.imageUrl = '';
+        return sc;
+      });
+    }
+    if (Array.isArray(clone.resources)) {
+      clone.resources = clone.resources.map(r => {
+        if (!r || typeof r !== 'object') return r;
+        const rc = { ...r };
+        if (typeof rc.url === 'string' && rc.url.startsWith('data:') && rc.url.length > maxLen) rc.url = '';
+        return rc;
+      });
+    }
+    if (Array.isArray(clone.visualAssets)) {
+      clone.visualAssets = clone.visualAssets.map(v => {
+        if (!v || typeof v !== 'object') return v;
+        const vc = { ...v };
+        if (typeof vc.url === 'string' && vc.url.startsWith('data:') && vc.url.length > maxLen) vc.url = '';
+        return vc;
+      });
+    }
+  }
+  return clone;
+};
+
 // Helper para inicializar o recuperar almacenamiento con desinfección automática
 function loadInitialState() {
+  // Liberar claves duplicadas antiguas que triplicaban el uso de localStorage
+  try {
+    if (localStorage.getItem('te_reto_challenges')) {
+      localStorage.removeItem('mentix_challenges');
+      localStorage.removeItem('mentix_projects');
+    }
+  } catch (e) {}
+
   // Purgar almacenamiento local si contiene texto corrupto (mojibake)
   ['te_reto_challenges', 'te_reto_users', 'te_reto_groups'].forEach(key => {
-    const raw = localStorage.getItem(key);
-    if (raw && (/ðŸ|Ã¡|Ã³|Ã©|Ã­|Ãº|Ã±|âœ|â¬|âš|\u251C|\u252C|\u00D4\u00F6/.test(raw))) {
-      console.log(`[Auto-Clean] Desinfectando entrada de localStorage: ${key}`);
-      try {
+    try {
+      const raw = localStorage.getItem(key);
+      if (raw && raw.length < 1500000 && (/ðŸ|Ã¡|Ã³|Ã©|Ã­|Ãº|Ã±|âœ|â¬|âš|\u251C|\u252C|\u00D4\u00F6/.test(raw))) {
         const cleaned = deepCleanMojibake(JSON.parse(raw));
         localStorage.setItem(key, JSON.stringify(cleaned));
-      } catch (err) {
-        localStorage.removeItem(key);
       }
-    }
+    } catch (err) {}
   });
 
   const storedChallenges = localStorage.getItem('te_reto_challenges');
@@ -504,6 +558,13 @@ function loadInitialState() {
   }
 
   // 2. Recuperar SIEMPRE todos los proyectos de las bóvedas de cada persona
+  const pickLongerArr = (...arrs) => {
+    let best = [];
+    for (const a of arrs) {
+      if (Array.isArray(a) && a.length > best.length) best = a;
+    }
+    return best;
+  };
   try {
     for (let i = 0; i < localStorage.length; i++) {
       const k = localStorage.key(i);
@@ -521,6 +582,13 @@ function loadInitialState() {
                   challenges[exIdx] = {
                     ...prev,
                     ...up,
+                    slides: pickLongerArr(up.slides, prev.slides, up.govdata?.slides, prev.govdata?.slides),
+                    resources: pickLongerArr(up.resources, prev.resources, up.govdata?.resources, prev.govdata?.resources),
+                    externalLinks: pickLongerArr(up.externalLinks, prev.externalLinks, up.govdata?.externalLinks, prev.govdata?.externalLinks),
+                    visualAssets: pickLongerArr(up.visualAssets, prev.visualAssets, up.govdata?.visualAssets, prev.govdata?.visualAssets),
+                    completedSteps: pickLongerArr(up.completedSteps, prev.completedSteps, up.govdata?.completedSteps, prev.govdata?.completedSteps),
+                    videoConfig: (up.videoConfig?.url ? up.videoConfig : (prev.videoConfig?.url ? prev.videoConfig : (up.videoConfig || prev.videoConfig || {}))),
+                    videoUrl: up.videoUrl || up.videoConfig?.url || prev.videoUrl || prev.videoConfig?.url || '',
                     approvalStatus: keepApproved ? 'approved' : (up.approvalStatus || prev.approvalStatus),
                     publicationStatus: keepApproved ? 'published' : (up.publicationStatus || prev.publicationStatus),
                     status: keepApproved ? 'completed' : (up.status || prev.status),
@@ -635,7 +703,18 @@ function loadInitialState() {
     }
   });
 
-  localStorage.setItem('te_reto_challenges', JSON.stringify(challenges));
+  // Compactar duplicados internos en govdata y persistir de forma 100% segura contra QuotaExceededError
+  challenges = challenges.map(c => window.compactProjectForStorage(c, false));
+  try {
+    localStorage.setItem('te_reto_challenges', JSON.stringify(challenges));
+  } catch (qErr) {
+    try {
+      localStorage.removeItem('mentix_challenges');
+      localStorage.removeItem('mentix_projects');
+      const light = challenges.map(c => window.compactProjectForStorage(c, true));
+      localStorage.setItem('te_reto_challenges', JSON.stringify(light));
+    } catch (qErr2) {}
+  }
 
   const BLOCKED_CATS = ['fhjr', 'kj'];
   const isBlockedCat = (cat) => {
@@ -667,44 +746,42 @@ function loadInitialState() {
   // Eliminar definitivamente las categorías de prueba 'fhjr' y 'kj'
   BLOCKED_CATS.forEach(b => catMap.delete(b));
   const categories = Array.from(catMap.values()).filter(c => !isBlockedCat(c));
-  localStorage.setItem('te_reto_categories', JSON.stringify(categories));
+  try {
+    localStorage.setItem('te_reto_categories', JSON.stringify(categories));
+  } catch (e) {}
+
+  let parsedUsers = DEFAULT_USERS;
+  try { if (storedUsers) parsedUsers = JSON.parse(storedUsers); } catch(e) {}
+  let parsedCurrentUser = DEFAULT_USERS[0];
+  try { if (storedCurrentUser) parsedCurrentUser = JSON.parse(storedCurrentUser); } catch(e) {}
 
   return {
     challenges: challenges,
-    users: storedUsers ? JSON.parse(storedUsers) : DEFAULT_USERS,
-    currentUser: storedCurrentUser ? JSON.parse(storedCurrentUser) : DEFAULT_USERS[0],
+    users: parsedUsers,
+    currentUser: parsedCurrentUser,
     groups: groups,
     categories: categories
   };
 }
 
 function saveGlobalState(state) {
+  if (!state) return;
   try {
-    if (state.challenges) {
-      const dataStr = JSON.stringify(state.challenges);
-      localStorage.setItem('te_reto_challenges', dataStr);
-      localStorage.setItem('mentix_challenges', dataStr);
-      localStorage.setItem('mentix_projects', dataStr);
+    localStorage.removeItem('mentix_challenges');
+    localStorage.removeItem('mentix_projects');
+  } catch (e) {}
+
+  try {
+    if (Array.isArray(state.challenges)) {
+      const deduped = state.challenges.map(c => window.compactProjectForStorage(c, false));
+      localStorage.setItem('te_reto_challenges', JSON.stringify(deduped));
     }
   } catch (err) {
     console.warn('⚠️ Alerta de almacenamiento local (QuotaExceeded), aplicando compresión segura:', err);
     try {
       if (Array.isArray(state.challenges)) {
-        const lightweight = state.challenges.map(c => {
-          if (!c) return c;
-          const clone = { ...c };
-          if (clone.image && typeof clone.image === 'string' && clone.image.length > 150000) {
-            delete clone.image;
-          }
-          if (clone.banner && typeof clone.banner === 'string' && clone.banner.length > 150000) {
-            delete clone.banner;
-          }
-          return clone;
-        });
-        const lightStr = JSON.stringify(lightweight);
-        localStorage.setItem('te_reto_challenges', lightStr);
-        localStorage.setItem('mentix_challenges', lightStr);
-        localStorage.setItem('mentix_projects', lightStr);
+        const lightweight = state.challenges.map(c => window.compactProjectForStorage(c, true));
+        localStorage.setItem('te_reto_challenges', JSON.stringify(lightweight));
       }
     } catch(err2) {}
   }
@@ -728,7 +805,7 @@ function saveGlobalState(state) {
 }
 
 /**
- * 🛡️ Bóveda de Persistencia Personal por Usuario (Garantiza que ningún proyecto se borre jamás)
+ * 🛡️ Bóveda de Persistencia Personal por Usuario (Garantiza que ningún proyecto ni recurso se borre jamás)
  */
 window.saveUserProject = function(project, user = null) {
   if (!project || !project.id) return;
@@ -743,14 +820,38 @@ window.saveUserProject = function(project, user = null) {
   project.authorRole = project.authorRole || u.role || 'student';
   project.updatedAt = new Date().toISOString();
 
+  const mergeResourcesSafe = (prev, next) => {
+    const merged = { ...(prev || {}), ...(next || {}) };
+    if ((!Array.isArray(next.slides) || next.slides.length === 0) && Array.isArray(prev?.slides) && prev.slides.length > 0) {
+      merged.slides = prev.slides;
+    }
+    if ((!Array.isArray(next.resources) || next.resources.length === 0) && Array.isArray(prev?.resources) && prev.resources.length > 0) {
+      merged.resources = prev.resources;
+    }
+    if ((!Array.isArray(next.externalLinks) || next.externalLinks.length === 0) && Array.isArray(prev?.externalLinks) && prev.externalLinks.length > 0) {
+      merged.externalLinks = prev.externalLinks;
+    }
+    if ((!Array.isArray(next.visualAssets) || next.visualAssets.length === 0) && Array.isArray(prev?.visualAssets) && prev.visualAssets.length > 0) {
+      merged.visualAssets = prev.visualAssets;
+    }
+    if (!next.videoConfig?.url && prev?.videoConfig?.url) {
+      merged.videoConfig = prev.videoConfig;
+      merged.videoUrl = prev.videoUrl || prev.videoConfig.url;
+    }
+    return window.compactProjectForStorage(merged, false);
+  };
+
   // 1. Guardar en appState global
   if (!window.appState) window.appState = { challenges: [] };
   if (!Array.isArray(window.appState.challenges)) window.appState.challenges = [];
   const idx = window.appState.challenges.findIndex(c => c && c.id === project.id);
+  let finalProject = project;
   if (idx >= 0) {
-    window.appState.challenges[idx] = { ...window.appState.challenges[idx], ...project };
+    finalProject = mergeResourcesSafe(window.appState.challenges[idx], project);
+    window.appState.challenges[idx] = finalProject;
   } else {
-    window.appState.challenges.unshift(project);
+    finalProject = window.compactProjectForStorage(project, false);
+    window.appState.challenges.unshift(finalProject);
   }
 
   // 2. Guardar en bóveda personal inmutable de este usuario
@@ -759,25 +860,30 @@ window.saveUserProject = function(project, user = null) {
     const existingRaw = localStorage.getItem(vaultKey);
     let vault = existingRaw ? JSON.parse(existingRaw) : [];
     if (!Array.isArray(vault)) vault = [];
-    const vIdx = vault.findIndex(p => p && p.id === project.id);
+    const vIdx = vault.findIndex(p => p && p.id === finalProject.id);
     if (vIdx >= 0) {
-      vault[vIdx] = { ...vault[vIdx], ...project };
+      vault[vIdx] = mergeResourcesSafe(vault[vIdx], finalProject);
     } else {
-      vault.unshift(project);
+      vault.unshift(finalProject);
     }
-    localStorage.setItem(vaultKey, JSON.stringify(vault));
+    try {
+      localStorage.setItem(vaultKey, JSON.stringify(vault.slice(0, 20)));
+    } catch (qErr) {
+      const compactVault = vault.slice(0, 15).map(p => window.compactProjectForStorage(p, true));
+      localStorage.setItem(vaultKey, JSON.stringify(compactVault));
+    }
   } catch (e) {
     console.warn('Advertencia guardando en bóveda personal:', e);
   }
 
-  // 3. Persistir en almacenamiento global (te_reto_challenges y mentix_challenges)
+  // 3. Persistir en almacenamiento global (te_reto_challenges)
   saveGlobalState(window.appState);
 
   // 4. Sincronizar en la nube
   if (window.appRouter && typeof window.appRouter.pushChallengeToCloud === 'function') {
-    window.appRouter.pushChallengeToCloud(project);
+    window.appRouter.pushChallengeToCloud(finalProject);
   } else if (window.supabaseService && typeof window.supabaseService.saveChallengeToSupabase === 'function') {
-    window.supabaseService.saveChallengeToSupabase(project);
+    window.supabaseService.saveChallengeToSupabase(finalProject);
   }
 };
 

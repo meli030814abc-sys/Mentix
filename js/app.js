@@ -30,8 +30,19 @@ class AppRouter {
     }
     this.syncDesignWithCloud();
 
-    // Cargar estado inicial
-    window.appState = loadInitialState();
+    // Cargar estado inicial con respaldo anti-fallos
+    try {
+      window.appState = loadInitialState();
+    } catch (initErr) {
+      console.warn('Recuperando estado inicial tras excepción:', initErr);
+      window.appState = {
+        challenges: typeof DEFAULT_CHALLENGES !== 'undefined' ? [...DEFAULT_CHALLENGES] : [],
+        users: typeof DEFAULT_USERS !== 'undefined' ? [...DEFAULT_USERS] : [],
+        currentUser: typeof DEFAULT_USERS !== 'undefined' ? DEFAULT_USERS[0] : { id: 'u1', name: 'Docente', role: 'admin' },
+        groups: typeof DEFAULT_GROUPS !== 'undefined' ? [...DEFAULT_GROUPS] : [],
+        categories: typeof DEFAULT_CATEGORIES !== 'undefined' ? [...DEFAULT_CATEGORIES] : []
+      };
+    }
 
     // Actualizar navbar
     this.updateNavbar();
@@ -1413,12 +1424,15 @@ class AppRouter {
         window.supabaseService.saveChallengeToSupabase(challenge);
       }
       challenge.updatedAt = new Date().toISOString();
+      const cleanChallenge = typeof window.compactProjectForStorage === 'function'
+        ? window.compactProjectForStorage(challenge, false)
+        : challenge;
 
       const apiBase = this.getApiBase();
       const res = await fetch(`${apiBase}/api/challenges`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ challenge })
+        body: JSON.stringify({ challenge: cleanChallenge })
       });
       if (res.ok) {
         let persisted = false; try { const j = await res.json(); persisted = !!(j && j.persisted); } catch (e) {} this.lastCloudPersisted = persisted; console.log('☁️ Reto enviado a MENTIX Cloud (persistido: ' + persisted + '):', challenge.title);
@@ -1531,7 +1545,7 @@ class AppRouter {
               try { appMap = JSON.parse(localStorage.getItem('mentix_approved_projects_map') || '{}') || {}; } catch(e) {}
               const isApprovedHere = !!(appMap[c.id]) || existing.approvalStatus === 'approved' || c.approvalStatus === 'approved';
               const mergedItem = { ...existing, ...c };
-              // Preservar siempre la versión que tenga más diapositivas y más pasos completados para no perder avances nunca
+              // Preservar siempre la versión que tenga más diapositivas, recursos, enlaces, imágenes y pasos completados para no perder avances nunca
               if (Array.isArray(existing.slides) && (!Array.isArray(c.slides) || existing.slides.length > c.slides.length)) {
                 mergedItem.slides = existing.slides;
               }
@@ -1540,6 +1554,16 @@ class AppRouter {
               }
               if (Array.isArray(existing.resources) && (!Array.isArray(c.resources) || existing.resources.length > c.resources.length)) {
                 mergedItem.resources = existing.resources;
+              }
+              if (Array.isArray(existing.externalLinks) && (!Array.isArray(c.externalLinks) || existing.externalLinks.length > c.externalLinks.length)) {
+                mergedItem.externalLinks = existing.externalLinks;
+              }
+              if (Array.isArray(existing.visualAssets) && (!Array.isArray(c.visualAssets) || existing.visualAssets.length > c.visualAssets.length)) {
+                mergedItem.visualAssets = existing.visualAssets;
+              }
+              if (existing.videoConfig?.url && !c.videoConfig?.url) {
+                mergedItem.videoConfig = existing.videoConfig;
+                mergedItem.videoUrl = existing.videoUrl || existing.videoConfig.url;
               }
               if (isApprovedHere && c.approvalStatus !== 'rejected') {
                 mergedItem.approvalStatus = 'approved';

@@ -164,16 +164,16 @@ window.ProjectWizard = {
         startDate: existingProject.startDate || gp.startDate || todayStr,
         endDate: existingProject.endDate || gp.endDate || '',
         valueProp: {
-          problemSolved: gp.valueProp?.problemSolved || existingProject.problemStatement || '',
-          howItWorks: gp.valueProp?.howItWorks || '',
-          forWhom: gp.valueProp?.forWhom || existingProject.targetAudience || '',
-          differentiator: gp.valueProp?.differentiator || '',
-          keyFeatures: Array.isArray(gp.valueProp?.keyFeatures) ? gp.valueProp.keyFeatures : [],
-          resultsAndBenefits: gp.valueProp?.resultsAndBenefits || existingProject.benefits || '',
-          prerequisites: gp.valueProp?.prerequisites || '',
-          visitorAction: gp.valueProp?.visitorAction || 'Unirse / Colaborar',
-          commercialPitch: gp.valueProp?.commercialPitch || '',
-          faqs: Array.isArray(gp.valueProp?.faqs) ? gp.valueProp.faqs : []
+          problemSolved: existingProject.valueProp?.problemSolved || gp.valueProp?.problemSolved || existingProject.problemStatement || '',
+          howItWorks: existingProject.valueProp?.howItWorks || gp.valueProp?.howItWorks || '',
+          forWhom: existingProject.valueProp?.forWhom || gp.valueProp?.forWhom || existingProject.targetAudience || '',
+          differentiator: existingProject.valueProp?.differentiator || gp.valueProp?.differentiator || '',
+          keyFeatures: Array.isArray(existingProject.valueProp?.keyFeatures) && existingProject.valueProp.keyFeatures.length > 0 ? existingProject.valueProp.keyFeatures : (Array.isArray(gp.valueProp?.keyFeatures) ? gp.valueProp.keyFeatures : []),
+          resultsAndBenefits: existingProject.valueProp?.resultsAndBenefits || gp.valueProp?.resultsAndBenefits || existingProject.benefits || '',
+          prerequisites: existingProject.valueProp?.prerequisites || gp.valueProp?.prerequisites || '',
+          visitorAction: existingProject.valueProp?.visitorAction || gp.valueProp?.visitorAction || 'Unirse / Colaborar',
+          commercialPitch: existingProject.valueProp?.commercialPitch || gp.valueProp?.commercialPitch || '',
+          faqs: Array.isArray(existingProject.valueProp?.faqs) && existingProject.valueProp.faqs.length > 0 ? existingProject.valueProp.faqs : (Array.isArray(gp.valueProp?.faqs) ? gp.valueProp.faqs : [])
         },
         videoConfig: {
           sourceType: existingProject.videoConfig?.sourceType || gp.videoConfig?.sourceType || 'url',
@@ -182,15 +182,15 @@ window.ProjectWizard = {
           title: existingProject.videoConfig?.title || gp.videoConfig?.title || '',
           description: existingProject.videoConfig?.description || gp.videoConfig?.description || '',
           isPublic: existingProject.videoConfig?.isPublic !== undefined ? existingProject.videoConfig.isPublic : true,
-          verified: Boolean(existingProject.videoConfig?.verified || gp.videoConfig?.verified)
+          verified: Boolean(existingProject.videoConfig?.verified || gp.videoConfig?.verified || existingProject.videoConfig?.url || existingProject.videoUrl)
         },
-        resources: Array.isArray(existingProject.resources) ? JSON.parse(JSON.stringify(existingProject.resources)) : (Array.isArray(gp.resources) ? JSON.parse(JSON.stringify(gp.resources)) : []),
-        slides: Array.isArray(existingProject.slides) ? JSON.parse(JSON.stringify(existingProject.slides)) : (Array.isArray(gp.slides) ? JSON.parse(JSON.stringify(gp.slides)) : []),
+        resources: Array.isArray(existingProject.resources) && existingProject.resources.length > 0 ? JSON.parse(JSON.stringify(existingProject.resources)) : (Array.isArray(gp.resources) ? JSON.parse(JSON.stringify(gp.resources)) : []),
+        slides: Array.isArray(existingProject.slides) && existingProject.slides.length > 0 ? JSON.parse(JSON.stringify(existingProject.slides)) : (Array.isArray(gp.slides) ? JSON.parse(JSON.stringify(gp.slides)) : []),
         mainImage: existingProject.mainImage || existingProject.banner || gp.mainImage || '',
         thumbnailImage: existingProject.thumbnailImage || gp.thumbnailImage || '',
         useDefaultImage: existingProject.useDefaultImage !== undefined ? existingProject.useDefaultImage : true,
-        visualAssets: Array.isArray(existingProject.visualAssets) ? JSON.parse(JSON.stringify(existingProject.visualAssets)) : (Array.isArray(gp.visualAssets) ? JSON.parse(JSON.stringify(gp.visualAssets)) : []),
-        externalLinks: Array.isArray(existingProject.externalLinks) ? JSON.parse(JSON.stringify(existingProject.externalLinks)) : (Array.isArray(gp.externalLinks) ? JSON.parse(JSON.stringify(gp.externalLinks)) : []),
+        visualAssets: Array.isArray(existingProject.visualAssets) && existingProject.visualAssets.length > 0 ? JSON.parse(JSON.stringify(existingProject.visualAssets)) : (Array.isArray(gp.visualAssets) ? JSON.parse(JSON.stringify(gp.visualAssets)) : []),
+        externalLinks: Array.isArray(existingProject.externalLinks) && existingProject.externalLinks.length > 0 ? JSON.parse(JSON.stringify(existingProject.externalLinks)) : (Array.isArray(gp.externalLinks) ? JSON.parse(JSON.stringify(gp.externalLinks)) : []),
         landingConfig: {
           publicName: existingProject.landingConfig?.publicName || gp.landingConfig?.publicName || existingProject.title || '',
           slug: existingProject.slug || existingProject.landingConfig?.slug || gp.landingConfig?.slug || this.slugify(existingProject.title || 'proyecto-govdata'),
@@ -204,8 +204,8 @@ window.ProjectWizard = {
           featuredVideoPublic: existingProject.landingConfig?.featuredVideoPublic !== false
         },
         publicationStatus: existingProject.publicationStatus || gp.publicationStatus || 'draft',
-        completedSteps: Array.isArray(gp.completedSteps) ? gp.completedSteps : [1],
-        currentStep: Number(gp.currentStep || 1),
+        completedSteps: Array.isArray(existingProject.completedSteps) && existingProject.completedSteps.length > 0 ? existingProject.completedSteps : (Array.isArray(gp.completedSteps) ? gp.completedSteps : [1]),
+        currentStep: Number(existingProject.currentStep || gp.currentStep || 1),
         author: existingProject.author || u.name || u.username || 'Docente / Líder',
         authorId: existingProject.authorId || u.id || u.username || '',
         authorEmail: existingProject.authorEmail || u.email || '',
@@ -363,6 +363,45 @@ window.ProjectWizard = {
     }, 600);
   },
 
+  compressImageFile(file, maxWidth = 1280, quality = 0.74) {
+    return new Promise((resolve) => {
+      if (!file) return resolve('');
+      const reader = new FileReader();
+      reader.onerror = () => resolve('');
+      reader.onload = (e) => {
+        const rawDataUrl = e.target?.result || '';
+        if (!rawDataUrl || file.type === 'image/svg+xml' || rawDataUrl.length < 70000) {
+          return resolve(rawDataUrl);
+        }
+        const img = new Image();
+        img.onerror = () => resolve(rawDataUrl);
+        img.onload = () => {
+          try {
+            let w = img.naturalWidth || img.width || 800;
+            let h = img.naturalHeight || img.height || 600;
+            if (w > maxWidth) {
+              h = Math.round((h * maxWidth) / w);
+              w = maxWidth;
+            }
+            const canvas = document.createElement('canvas');
+            canvas.width = w;
+            canvas.height = h;
+            const ctx = canvas.getContext('2d');
+            ctx.fillStyle = '#071124';
+            ctx.fillRect(0, 0, w, h);
+            ctx.drawImage(img, 0, 0, w, h);
+            const compressed = canvas.toDataURL('image/jpeg', quality);
+            resolve(compressed.length < rawDataUrl.length ? compressed : rawDataUrl);
+          } catch (err) {
+            resolve(rawDataUrl);
+          }
+        };
+        img.src = rawDataUrl;
+      };
+      reader.readAsDataURL(file);
+    });
+  },
+
   async saveDraftToStorage(silent = true) {
     if (!this.draft) return;
     this.collectCurrentStepInputs();
@@ -390,24 +429,18 @@ window.ProjectWizard = {
       this.draft.calculatedProgress = this.draft.progress;
     }
 
-    // 1. Guardar en almacenamiento local (con protección anti-QuotaExceededError para que nunca quede un borrador viejo)
+    // 1. Guardar en almacenamiento local (con protección anti-QuotaExceededError para que nunca se pierdan recursos)
     try {
       const all = this.getAllSavedDrafts().filter(d => d && d.id !== this.draft.id);
       all.unshift(this.draft);
       try {
-        localStorage.setItem('mentix_govdata_wizard_drafts', JSON.stringify(all.slice(0, 20)));
+        localStorage.setItem('mentix_govdata_wizard_drafts', JSON.stringify(all.slice(0, 15)));
       } catch (quotaErr) {
-        // Si las diapositivas con imágenes superan la cuota de localStorage, guardar primero solo el proyecto activo o versión compacta
         try {
           localStorage.setItem('mentix_govdata_wizard_drafts', JSON.stringify([this.draft]));
         } catch (quotaErr2) {
-          const compactDraft = JSON.parse(JSON.stringify(this.draft));
-          if (Array.isArray(compactDraft.slides)) {
-            compactDraft.slides = compactDraft.slides.map(s => ({
-              ...s,
-              bgImage: (s.bgImage && s.bgImage.length > 45000) ? '' : s.bgImage
-            }));
-          }
+          const compactFn = window.compactProjectForStorage || (p => p);
+          const compactDraft = compactFn(this.draft, true);
           localStorage.setItem('mentix_govdata_wizard_drafts', JSON.stringify([compactDraft]));
         }
       }
@@ -719,13 +752,18 @@ collectCurrentStepInputs() {
       const s = this.draft.slides[curIdx];
       if (s) {
         if (val('gdn-slide-title') !== null) s.title = val('gdn-slide-title').trim();
+        else if (val('input-titleColor') !== null) s.title = val('input-titleColor').trim();
         if (val('gdn-slide-subtitle') !== null) s.subtitle = val('gdn-slide-subtitle').trim();
+        else if (val('input-subtitleColor') !== null) s.subtitle = val('input-subtitleColor').trim();
         if (val('gdn-slide-content') !== null) s.content = val('gdn-slide-content').trim();
+        else if (val('input-contentColor') !== null) s.content = val('input-contentColor').trim();
         if (val('gdn-slide-layout') !== null) s.layout = val('gdn-slide-layout');
         if (val('gdn-slide-media') !== null) s.media = val('gdn-slide-media').trim();
         if (val('gdn-slide-notes') !== null) s.notes = val('gdn-slide-notes').trim();
         if (val('gdn-slide-bullets') !== null) {
           s.bullets = val('gdn-slide-bullets').split('\n').map(b => b.replace(/^[-*•]\s*/, '').trim()).filter(Boolean);
+        } else if (val('input-bulletsColor') !== null) {
+          s.bullets = val('input-bulletsColor').split('\n').map(b => b.replace(/^[-*•]\s*/, '').trim()).filter(Boolean);
         }
       }
     }
@@ -3185,15 +3223,11 @@ collectCurrentStepInputs() {
   async handleWizardSlideMediaUpload(file) {
     if (!file) return;
     try {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const dataUrl = e.target.result;
-        this.updateActiveSlideField('media', dataUrl);
-        const input = document.getElementById('gdn-slide-media');
-        if (input) input.value = dataUrl;
-        this.saveDraftToStorage(true);
-      };
-      reader.readAsDataURL(file);
+      const dataUrl = await this.compressImageFile(file, 1280, 0.74);
+      this.updateActiveSlideField('media', dataUrl);
+      const input = document.getElementById('gdn-slide-media');
+      if (input) input.value = dataUrl;
+      this.saveDraftToStorage(true);
     } catch (err) {
       console.warn('Error reading slide media:', err);
     }
@@ -3304,28 +3338,24 @@ collectCurrentStepInputs() {
 
     // 4. Imagen directa (.png, .jpg, .webp, etc.)
     if (file.type && file.type.startsWith('image/')) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const dataUrl = e.target.result;
-        if (!Array.isArray(this.draft.slides)) this.draft.slides = [];
-        this.draft.slides.push({
-          id: 'slide_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
-          title: baseName,
-          subtitle: '',
-          content: '',
-          bullets: [],
-          layout: 'full',
-          media: dataUrl,
-          notes: '',
-          bgColor: '#000000',
-          themeId: 'cosmos'
-        });
-        this.activeSlideIndex = this.draft.slides.length - 1;
-        this.saveDraftToStorage(true);
-        alert(`✅ Imagen agregada como nueva diapositiva en pantalla completa.`);
-        if (window.ProjectsView) window.ProjectsView.render();
-      };
-      reader.readAsDataURL(file);
+      const dataUrl = await this.compressImageFile(file, 1280, 0.74);
+      if (!Array.isArray(this.draft.slides)) this.draft.slides = [];
+      this.draft.slides.push({
+        id: 'slide_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
+        title: baseName,
+        subtitle: '',
+        content: '',
+        bullets: [],
+        layout: 'full',
+        media: dataUrl,
+        notes: '',
+        bgColor: '#000000',
+        themeId: 'cosmos'
+      });
+      this.activeSlideIndex = this.draft.slides.length - 1;
+      this.saveDraftToStorage(true);
+      alert(`✅ Imagen agregada como nueva diapositiva en pantalla completa.`);
+      if (window.ProjectsView) window.ProjectsView.render();
       return;
     }
 
@@ -3727,8 +3757,10 @@ collectCurrentStepInputs() {
         if (up && up.url) fileUrl = up.url;
       }
 
-      // Leer contenido para archivos pequeños o texto para permitir descarga real y análisis IA autorizado
-      if (!fileUrl && file.size <= 3.5 * 1024 * 1024) {
+      // Comprimir imágenes o leer archivos ligeros para no exceder la cuota de almacenamiento local y conservar todos los recursos
+      if (!fileUrl && file.type && file.type.startsWith('image/')) {
+        fileUrl = await this.compressImageFile(file, 1280, 0.74);
+      } else if (!fileUrl && file.size <= 450 * 1024) {
         fileUrl = await new Promise((resolve) => {
           const reader = new FileReader();
           reader.onload = () => resolve(reader.result || '');
@@ -3981,12 +4013,7 @@ collectCurrentStepInputs() {
       return;
     }
     this.collectCurrentStepInputs();
-    const dataUrl = await new Promise((resolve) => {
-      const r = new FileReader();
-      r.onload = () => resolve(r.result || '');
-      r.onerror = () => resolve('');
-      r.readAsDataURL(file);
-    });
+    const dataUrl = await this.compressImageFile(file, 1280, 0.74);
     if (target === 'main') this.draft.mainImage = dataUrl;
     else this.draft.thumbnailImage = dataUrl;
     this.saveDraftToStorage(true);
@@ -3999,12 +4026,7 @@ collectCurrentStepInputs() {
     for (let i = 0; i < fileList.length; i++) {
       const f = fileList[i];
       if (!f.type.startsWith('image/')) continue;
-      const dataUrl = await new Promise((resolve) => {
-        const r = new FileReader();
-        r.onload = () => resolve(r.result || '');
-        r.onerror = () => resolve('');
-        r.readAsDataURL(f);
-      });
+      const dataUrl = await this.compressImageFile(f, 1280, 0.74);
       this.draft.visualAssets.push({
         id: 'vis_' + Date.now() + '_' + i,
         title: f.name.replace(/\.[^/.]+$/, '').replace(/[_-]+/g, ' '),
@@ -5038,7 +5060,13 @@ collectCurrentStepInputs() {
       authorsConfig: d.authorsConfig || { authorsList: d.author || '', authorsEmails: d.authorEmail || '', authorsRole: 'Líder del Proyecto', authorsInstitution: '', collaborators: '' },
       tags: d.landingConfig?.tags || ['Gobierno de Datos', 'IA'],
       displayOrder: Number(d.landingConfig?.displayOrder || 1),
-      govdata: JSON.parse(JSON.stringify(d)),
+      govdata: (() => {
+        const g = { ...d };
+        delete g.slides;
+        delete g.resources;
+        delete g.visualAssets;
+        return JSON.parse(JSON.stringify(g));
+      })(),
       author: d.authorsConfig?.authorsList || d.author || 'Docente',
       authorId: d.authorId || '',
       authorEmail: d.authorsConfig?.authorsEmails || d.authorEmail || '',
