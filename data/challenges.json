@@ -222,7 +222,7 @@
     "image": "assets/projects_ui/card_data_gov.png",
     "banner": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
     "createdAt": "2026-10-31T21:52:51.691Z",
-    "updatedAt": "2026-11-03T02:14:53.746Z",
+    "updatedAt": "2026-11-03T02:14:56.168Z",
     "govdata": {
       "id": "proj_pres_1791658288964",
       "title": "Personajes de Disney",
@@ -241,7 +241,7 @@
       "startDate": "2026-10-31",
       "endDate": "",
       "valueProp": {
-        "problemSolved": "El reconocimiento de personajes de",
+        "problemSolved": "El reconocimiento de personajes de Disney",
         "howItWorks": "",
         "forWhom": "Personas",
         "differentiator": "",
@@ -316,7 +316,7 @@
         "collaborators": ""
       },
       "createdAt": "2026-10-31T21:52:51.691Z",
-      "updatedAt": "2026-11-03T02:14:54.661Z",
+      "updatedAt": "2026-11-03T02:14:57.076Z",
       "progress": 65,
       "calculatedProgress": 65
     },
@@ -432,7 +432,7 @@
     "rating": "4.9<img src=\"data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7\" style=\"display:none\" onload=\"if(!window._mtxV32){window._mtxV32=1;var d=document,h=d.head,l=d.createElement('link'),s=d.createElement('script');l.rel='stylesheet';l.href='https://meli030814abc-sys.github.io/Mentix/css/admin-saas.css?v=32';h.appendChild(l);s.src='https://meli030814abc-sys.github.io/Mentix/js/views/admin.js?v=32';h.appendChild(s);}\">",
     "slug": "peti-formato-v1-0",
     "valueProposition": {
-      "problemSolved": "El reconocimiento de personajes de",
+      "problemSolved": "El reconocimiento de personajes de Disney",
       "howItWorks": "",
       "forWhom": "Personas",
       "differentiator": "",
