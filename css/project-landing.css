@@ -7601,7 +7601,24 @@ body .plp-wrapper {
   border-color: #00f5d4 !important;
 }
 
-/* 11. Modal Traslucido */
+/* 11. Modal Traslucido y Pantalla Completa para Videos */
+.plp-wrapper,
+.plp-wrapper.animate-fade-in {
+  transform: none !important;
+  filter: none !important;
+}
+
+.plp-lightbox {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  z-index: 9999999 !important;
+}
+
 .inno-glass-modal,
 .plp-lightbox-content {
   color: #ffffff !important;

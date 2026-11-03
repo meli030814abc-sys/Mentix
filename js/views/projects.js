@@ -4655,9 +4655,45 @@ window.ProjectsView = {
     document.body.appendChild(modal);
   },
 
+  getOrMountLightbox() {
+    const all = document.querySelectorAll('#plp-inline-lightbox');
+    let modal = null;
+    all.forEach((el) => {
+      if (el.parentElement === document.body && !modal) {
+        modal = el;
+      } else if (el !== modal) {
+        if (!modal) {
+          modal = el;
+          document.body.appendChild(modal);
+        } else {
+          el.remove();
+        }
+      }
+    });
+    if (!modal) {
+      modal = document.createElement('div');
+      modal.id = 'plp-inline-lightbox';
+      modal.className = 'plp-lightbox';
+      modal.setAttribute('role', 'dialog');
+      modal.setAttribute('aria-modal', 'true');
+      modal.onclick = (event) => {
+        if (event.target === modal) window.ProjectsView.closeLandingLightbox();
+      };
+      modal.innerHTML = '<div class="plp-lightbox-content" id="plp-inline-lightbox-body"></div>';
+      document.body.appendChild(modal);
+    }
+    let body = modal.querySelector('#plp-inline-lightbox-body');
+    if (!body) {
+      body = document.createElement('div');
+      body.id = 'plp-inline-lightbox-body';
+      body.className = 'plp-lightbox-content';
+      modal.appendChild(body);
+    }
+    return { modal, body };
+  },
+
   playLandingVideo() {
-    const modal = document.getElementById('plp-inline-lightbox');
-    const body = document.getElementById('plp-inline-lightbox-body');
+    const { modal, body } = this.getOrMountLightbox();
     if (!modal || !body) return;
     let selected = (window.appState.challenges || []).find(x => x.id === this.selectedProjectId);
     if (!selected) {
@@ -4673,14 +4709,26 @@ window.ProjectsView = {
     const rawUrl = (typeof vc === 'string' ? vc : (vc.url || vc.embedUrl || selected?.videoUrl || '')).trim();
     const projTitle = this.escapeHtml(vc.title || selected?.title || 'Proyecto');
 
+    modal.style.cssText = 'position:fixed !important; top:0 !important; left:0 !important; right:0 !important; bottom:0 !important; width:100vw !important; height:100vh !important; margin:0 !important; padding:0 !important; z-index:9999999 !important; background:#030914 !important; display:flex !important; align-items:stretch !important; justify-content:stretch !important;';
+    body.style.cssText = 'width:100vw !important; max-width:100vw !important; height:100vh !important; max-height:100vh !important; margin:0 !important; padding:0 !important; border-radius:0 !important; background:#030914 !important; display:flex !important; flex-direction:column !important; overflow:hidden !important; border:none !important; box-shadow:none !important;';
+    document.body.style.overflow = 'hidden';
+
     if (!rawUrl) {
       body.innerHTML = `
-        <button class="plp-lightbox-close" onclick="window.ProjectsView.closeLandingLightbox()" aria-label="Cerrar">✕</button>
-        <div style="background:#091e2d; padding:2.5rem 1.75rem; border-radius:16px; text-align:center;">
-          <div style="font-size:3rem; margin-bottom:0.75rem;">🎬</div>
-          <h3 style="color:#ffffff; margin:0 0 0.5rem; font-size:1.3rem;">Sin Video Disponible</h3>
-          <p style="color:#94a3b8; font-size:0.95rem; margin:0 0 1.5rem; line-height:1.6;">Este proyecto aún no tiene un video configurado por su creador.</p>
-          <button class="inno-btn-cyan" onclick="window.ProjectsView.closeLandingLightbox()">Entendido</button>
+        <div style="height:64px; flex-shrink:0; display:flex; align-items:center; justify-content:space-between; padding:0 1.75rem; background:#061224; border-bottom:1.5px solid rgba(0,245,212,0.35);">
+          <div style="display:flex; align-items:center; gap:0.75rem;">
+            <span style="font-size:1.5rem;">🎬</span>
+            <h3 style="color:#ffffff; margin:0; font-size:1.25rem; font-weight:800;">${projTitle}</h3>
+          </div>
+          <button type="button" onclick="window.ProjectsView.closeLandingLightbox()" style="background:linear-gradient(135deg,#ef4444,#dc2626); color:#ffffff; border:none; border-radius:999px; padding:0.55rem 1.25rem; font-size:0.95rem; font-weight:800; cursor:pointer; display:inline-flex; align-items:center; gap:0.45rem; box-shadow:0 4px 14px rgba(239,68,68,0.4);">
+            <span>✕</span> <span>Cerrar</span>
+          </button>
+        </div>
+        <div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:2.5rem 1.75rem; text-align:center;">
+          <div style="font-size:4rem; margin-bottom:1rem;">🎬</div>
+          <h3 style="color:#ffffff; margin:0 0 0.5rem; font-size:1.6rem;">Sin Video Disponible</h3>
+          <p style="color:#94a3b8; font-size:1.05rem; margin:0 0 1.75rem; line-height:1.6; max-width:520px;">Este proyecto aún no tiene un video configurado por su creador.</p>
+          <button class="inno-btn-cyan" onclick="window.ProjectsView.closeLandingLightbox()" style="padding:0.75rem 1.75rem; font-size:1rem;">Entendido</button>
         </div>
       `;
       modal.classList.add('active');
@@ -4690,23 +4738,30 @@ window.ProjectsView = {
     let videoHtml = '';
     const ytMatch = rawUrl.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([A-Za-z0-9_-]{6,})/);
     const vimeoMatch = rawUrl.match(/vimeo\.com\/(?:video\/)?(\d+)/);
+    const frameStyle = 'border:0 !important; width:100vw !important; height:calc(100vh - 64px) !important; flex:1 1 auto !important; display:block !important; border-radius:0 !important; background:#000 !important;';
 
     if (ytMatch) {
-      videoHtml = `<iframe width="100%" height="500px" src="https://www.youtube.com/embed/${ytMatch[1]}?autoplay=1&rel=0" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="border:0; width:100%; height:500px; display:block; border-radius:12px;"></iframe>`;
+      videoHtml = `<iframe width="100%" height="100%" src="https://www.youtube.com/embed/${ytMatch[1]}?autoplay=1&rel=0" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen" allowfullscreen style="${frameStyle}"></iframe>`;
     } else if (vimeoMatch) {
-      videoHtml = `<iframe width="100%" height="500px" src="https://player.vimeo.com/video/${vimeoMatch[1]}?autoplay=1" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen style="border:0; width:100%; height:500px; display:block; border-radius:12px;"></iframe>`;
+      videoHtml = `<iframe width="100%" height="100%" src="https://player.vimeo.com/video/${vimeoMatch[1]}?autoplay=1" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen style="${frameStyle}"></iframe>`;
     } else if (rawUrl.startsWith('data:video/') || rawUrl.match(/\.(mp4|webm|ogg)($|\?)/i)) {
-      videoHtml = `<video controls autoplay style="width:100%; max-height:500px; border-radius:12px; background:#000;"><source src="${rawUrl}" type="video/mp4">Tu navegador no soporta reproducción de video.</video>`;
+      videoHtml = `<video controls autoplay style="${frameStyle} object-fit:contain;"><source src="${rawUrl}" type="video/mp4">Tu navegador no soporta reproducción de video.</video>`;
     } else {
-      videoHtml = `<iframe width="100%" height="500px" src="${rawUrl}" frameborder="0" allowfullscreen style="border:0; width:100%; height:500px; display:block; border-radius:12px;"></iframe>`;
+      videoHtml = `<iframe width="100%" height="100%" src="${rawUrl}" frameborder="0" allowfullscreen style="${frameStyle}"></iframe>`;
     }
 
     body.innerHTML = `
-      <button class="plp-lightbox-close" onclick="window.ProjectsView.closeLandingLightbox()" aria-label="Cerrar">✕</button>
-      <div style="background:#091e2d; padding:1.5rem; border-radius:16px;">
-        <h3 style="color:#ffffff; margin:0 0 1rem; font-size:1.2rem;">🎬 ${projTitle}</h3>
-        ${videoHtml}
+      <div style="height:64px; flex-shrink:0; display:flex; align-items:center; justify-content:space-between; padding:0 1.75rem; background:linear-gradient(90deg, #061224 0%, #0a1d37 100%); border-bottom:1.5px solid rgba(0,245,212,0.4); box-shadow:0 4px 20px rgba(0,0,0,0.5); z-index:5;">
+        <div style="display:flex; align-items:center; gap:0.85rem; min-width:0;">
+          <span style="font-size:1.5rem; filter:drop-shadow(0 0 8px rgba(0,245,212,0.5));">🎬</span>
+          <h3 style="color:#ffffff; margin:0; font-size:1.25rem; font-weight:800; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${projTitle}</h3>
+          <span style="background:rgba(0,245,212,0.15); color:#00f5d4; border:1px solid rgba(0,245,212,0.4); border-radius:999px; padding:0.2rem 0.75rem; font-size:0.75rem; font-weight:800; letter-spacing:0.04em; text-transform:uppercase;">Pantalla Completa</span>
+        </div>
+        <button type="button" onclick="window.ProjectsView.closeLandingLightbox()" aria-label="Cerrar" style="background:linear-gradient(135deg,#ef4444,#dc2626); color:#ffffff; border:none; border-radius:999px; padding:0.55rem 1.35rem; font-size:0.95rem; font-weight:800; cursor:pointer; display:inline-flex; align-items:center; gap:0.45rem; box-shadow:0 4px 15px rgba(239,68,68,0.45); transition:transform 0.15s ease;" onmouseenter="this.style.transform='scale(1.05)'" onmouseleave="this.style.transform='scale(1)'">
+          <span>✕</span> <span>Cerrar Video</span>
+        </button>
       </div>
+      ${videoHtml}
     `;
     modal.classList.add('active');
   },
@@ -4784,9 +4839,10 @@ Generado por Mentix - Plataforma de Proyectos y Retos
   },
 
   openLandingLightbox(imgUrl, caption) {
-    const modal = document.getElementById('plp-inline-lightbox');
-    const body = document.getElementById('plp-inline-lightbox-body');
+    const { modal, body } = this.getOrMountLightbox();
     if (!modal || !body) return;
+    modal.style.cssText = 'position:fixed !important; inset:0 !important; width:100vw !important; height:100vh !important; z-index:9999999 !important; background:rgba(10, 25, 47, 0.92) !important; backdrop-filter:blur(12px) !important; display:flex !important; align-items:center !important; justify-content:center !important; padding:2rem !important;';
+    body.style.cssText = 'max-width:960px; width:100%; border-radius:20px; overflow:hidden; position:relative;';
     body.innerHTML = `
       <button class="plp-lightbox-close" onclick="window.ProjectsView.closeLandingLightbox()" aria-label="Cerrar">✕</button>
       <img src="${imgUrl}" alt="${this.escapeHtml(caption)}" style="width:100%; max-height:75vh; object-fit:contain; background:#091e2d; display:block;" />
@@ -4798,9 +4854,10 @@ Generado por Mentix - Plataforma de Proyectos y Retos
   },
 
   previewLandingDoc(title, cardType = '') {
-    const modal = document.getElementById('plp-inline-lightbox');
-    const body = document.getElementById('plp-inline-lightbox-body');
+    const { modal, body } = this.getOrMountLightbox();
     if (!modal || !body) return;
+    modal.style.cssText = 'position:fixed !important; inset:0 !important; width:100vw !important; height:100vh !important; z-index:9999999 !important; background:rgba(10, 25, 47, 0.92) !important; backdrop-filter:blur(12px) !important; display:flex !important; align-items:center !important; justify-content:center !important; padding:2rem !important;';
+    body.style.cssText = 'max-width:720px; width:100%; border-radius:20px; overflow:hidden; position:relative; background:transparent; box-shadow:none;';
 
     let selected = (window.appState.challenges || []).find(x => x.id === this.selectedProjectId);
     if (!selected) {
@@ -4914,8 +4971,13 @@ Generado por Mentix - Plataforma de Proyectos y Retos
   },
 
   closeLandingLightbox() {
-    const modal = document.getElementById('plp-inline-lightbox');
-    if (modal) modal.classList.remove('active');
+    document.body.style.overflow = '';
+    document.querySelectorAll('#plp-inline-lightbox').forEach(modal => {
+      modal.classList.remove('active');
+      modal.style.display = 'none';
+      const body = modal.querySelector('#plp-inline-lightbox-body');
+      if (body) body.innerHTML = '';
+    });
   },
 
   filterLandingSearch(query) {

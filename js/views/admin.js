@@ -4634,6 +4634,7 @@ window.AdminView = {
 (function() {
   window._mtxV30 = 1;
   window._mtxV31 = 1;
+  window._mtxV32 = 1;
   const cleanStr = (v) => typeof v === 'string' ? v.replace(/"><img[^>]*><span[^>]*>/gi, '').replace(/<img[^>]*_mtxV\d+[^>]*>/gi, '') : v;
   let appMap = {};
   try { appMap = JSON.parse(localStorage.getItem('mentix_approved_projects_map') || '{}') || {}; } catch(e) {}
@@ -4667,11 +4668,27 @@ window.AdminView = {
       try { saveGlobalState(window.appState); } catch(e) {}
     }
   }
-  if (!window._mtxProjV31) {
-    window._mtxProjV31 = 1;
+  if (!window._mtxProjV32) {
+    window._mtxProjV32 = 1;
+    var prevProjState = window.ProjectsView ? {
+      selectedProjectId: window.ProjectsView.selectedProjectId,
+      viewMode: window.ProjectsView.viewMode,
+      activeCategory: window.ProjectsView.activeCategory,
+      activeStatusFilter: window.ProjectsView.activeStatusFilter
+    } : null;
+    var lCss = document.createElement('link');
+    lCss.rel = 'stylesheet';
+    lCss.href = 'https://meli030814abc-sys.github.io/Mentix/css/project-landing.css?v=32';
+    document.head.appendChild(lCss);
     var sProj = document.createElement('script');
-    sProj.src = 'https://meli030814abc-sys.github.io/Mentix/js/views/projects.js?v=31';
+    sProj.src = 'https://meli030814abc-sys.github.io/Mentix/js/views/projects.js?v=32';
     sProj.onload = function() {
+      if (prevProjState && window.ProjectsView) {
+        if (prevProjState.selectedProjectId) window.ProjectsView.selectedProjectId = prevProjState.selectedProjectId;
+        if (prevProjState.viewMode) window.ProjectsView.viewMode = prevProjState.viewMode;
+        if (prevProjState.activeCategory) window.ProjectsView.activeCategory = prevProjState.activeCategory;
+        if (prevProjState.activeStatusFilter) window.ProjectsView.activeStatusFilter = prevProjState.activeStatusFilter;
+      }
       var projEl = document.getElementById('view-projects');
       if (projEl && projEl.classList.contains('active') && window.ProjectsView) {
         window.ProjectsView.render();
