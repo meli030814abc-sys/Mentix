@@ -206,7 +206,7 @@
   {
     "id": "proj_pres_1791658288964",
     "title": "PETI Formato v1.0",
-    "subtitle": "Peti",
+    "subtitle": "Proyecto GovData Nexus",
     "description": "PETI Formato v1.0 es un proyecto de Gobierno de Datos e IA que aborda datos.",
     "projectType": "presentation",
     "isGovDataProject": true,
@@ -222,11 +222,11 @@
     "image": "assets/projects_ui/card_data_gov.png",
     "banner": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
     "createdAt": "2026-10-31T21:52:51.691Z",
-    "updatedAt": "2026-11-03T02:10:20.078Z",
+    "updatedAt": "2026-11-03T02:10:21.675Z",
     "govdata": {
       "id": "proj_pres_1791658288964",
       "title": "",
-      "subtitle": "Peti",
+      "subtitle": "",
       "shortDescription": "PETI Formato v1.0 es un proyecto de Gobierno de Datos e IA que aborda datos.",
       "fullDescription": "PETI Formato v1.0 es un proyecto de Gobierno de Datos e IA que aborda datos.",
       "category": "matematicas",
@@ -311,9 +311,9 @@
         "collaborators": ""
       },
       "createdAt": "2026-10-31T21:52:51.691Z",
-      "updatedAt": "2026-11-03T02:10:20.976Z",
-      "progress": 55,
-      "calculatedProgress": 55
+      "updatedAt": "2026-11-03T02:10:22.590Z",
+      "progress": 50,
+      "calculatedProgress": 50
     },
     "authorAvatar": "🦊",
     "plays": 0,
