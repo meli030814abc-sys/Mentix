@@ -2796,7 +2796,7 @@ window.ProjectsView = {
       c.projectType === 'presentation' || c.projectType === 'video' || c.projectType === 'document' || c.projectType === 'url' || c.isGovDataProject || c.isProject
     );
 
-    // 1. Buscar en mentix_custom_project_codes
+    // 1. Buscar en mentix_custom_project_codes (localStorage + sessionStorage + memoria + nube)
     const savedCodes = this.getSavedProjectCodes();
     const matchedCustom = savedCodes.find(sc => String(sc.code || '').trim().toLowerCase() === lower);
 
@@ -2806,7 +2806,7 @@ window.ProjectsView = {
       matchedProject = challenges.find(c => String(c.id).trim() === String(matchedCustom.projectId).trim());
     }
 
-    // 2. Buscar en proyectos por id, pin, slug, code o título
+    // 2. Buscar en proyectos por id, pin, slug, code, customProjectCodes o título
     if (!matchedProject) {
       matchedProject = projectItems.find(c => {
         const cId = String(c.id || '').trim().toLowerCase();
@@ -2818,16 +2818,14 @@ window.ProjectsView = {
         if (cId === lower || cPin === lower || cCode === lower || cSlug === lower) return true;
         if (cleanDigits && cPin && cPin.replace(/\D/g, '') === cleanDigits) return true;
         if (cTitle === lower) return true;
+        if (Array.isArray(c.customProjectCodes) && c.customProjectCodes.some(item => String(item?.code || item || '').trim().toLowerCase() === lower)) {
+          return true;
+        }
         return false;
       });
     }
 
-    // 3. Si coincide con un código de maestro pero sin projectId explícito, abrir el proyecto asociado o destacado
-    if (!matchedProject && matchedCustom) {
-      matchedProject = projectItems.find(c => c.isGovDataProject || c.slug === 'innovatech-nexus') || projectItems[0];
-    }
-
-    // 4. Buscar en todos los retos
+    // 3. Buscar en todos los retos
     if (!matchedProject) {
       matchedProject = challenges.find(c => {
         const cId = String(c.id || '').trim().toLowerCase();
@@ -2840,22 +2838,27 @@ window.ProjectsView = {
       });
     }
 
-    // 5. Buscar en borradores del asistente de proyectos
+    // 4. Buscar en borradores del asistente de proyectos
     if (!matchedProject && window.ProjectWizard && window.ProjectWizard.getAllSavedDrafts) {
       const drafts = window.ProjectWizard.getAllSavedDrafts();
       const matchedDraft = drafts.find(d => {
         const dId = String(d.id || '').trim().toLowerCase();
         const dTitle = String(d.title || '').trim().toLowerCase();
-        return dId === lower || (d.code && String(d.code).toLowerCase() === lower) || dTitle === lower;
+        return dId === lower || (d.code && String(d.code).toLowerCase() === lower) || (d.joinedCode && String(d.joinedCode).toLowerCase() === lower) || dTitle === lower;
       });
       if (matchedDraft) {
+        try { localStorage.setItem('mentix_active_join_code', clean); } catch (e) {}
         if (window.soundEngine && window.soundEngine.playSuccess) window.soundEngine.playSuccess();
         window.ProjectWizard.openWizard(matchedDraft.id, 1);
         return;
       }
     }
 
-    if (matchedProject) {
+    // Guardar el código activo con el que el usuario se está uniendo
+    try { localStorage.setItem('mentix_active_join_code', clean); } catch (e) {}
+    try { sessionStorage.setItem('mentix_active_join_code', clean); } catch (e) {}
+
+    if (matchedProject && !matchedCustom) {
       if (window.soundEngine && window.soundEngine.playSuccess) {
         window.soundEngine.playSuccess();
       } else if (window.soundEngine && window.soundEngine.playClick) {
@@ -2865,33 +2868,31 @@ window.ProjectsView = {
       return;
     }
 
-    // Si coincide con código personalizado creado por el profesor
-    if (matchedCustom) {
-      if (window.soundEngine && window.soundEngine.playSuccess) window.soundEngine.playSuccess();
-      window.ProjectWizard.openWizard(matchedCustom.projectId || null, 1);
-      return;
+    // 5. Si coincide con código creado por el profesor (o es un código compartido por el docente como pROYECT),
+    // registrarlo si aún no estaba sincronizado localmente y abrir el asistente de proyecto de inmediato
+    if (!matchedCustom) {
+      const updatedCodes = [
+        { code: clean, author: 'Docente', createdAt: new Date().toLocaleString() },
+        ...savedCodes.filter(sc => String(sc.code || '').trim().toLowerCase() !== lower)
+      ];
+      this.persistCustomProjectCodes(updatedCodes);
     }
 
-    // Código no encontrado: dar opción directa de crear proyecto con este código
-    if (window.soundEngine && window.soundEngine.playError) {
-      window.soundEngine.playError();
+    if (window.soundEngine && window.soundEngine.playSuccess) {
+      window.soundEngine.playSuccess();
+    } else if (window.soundEngine && window.soundEngine.playClick) {
+      window.soundEngine.playClick();
     }
-    if (errEl) {
-      errEl.innerHTML = `
-        <div style="margin-bottom: 0.5rem;">❌ Código <strong>${this.escapeHtml(clean)}</strong> no encontrado.</div>
-        <div style="font-weight: 500; font-size: 0.82rem; opacity: 0.9; margin-bottom: 0.65rem;">Puedes verificarlo con tu docente o iniciar un nuevo proyecto con este código:</div>
-        <button type="button" onclick="window.ProjectWizard.openWizard(null, 1);" style="background: linear-gradient(135deg, #10b981, #059669); color: #fff; border: none; padding: 0.45rem 1rem; border-radius: 8px; font-weight: 800; font-size: 0.85rem; cursor: pointer; box-shadow: 0 4px 12px rgba(16,185,129,0.35);">
-          ✨ Crear Proyecto Ahora
-        </button>
-      `;
-      errEl.style.display = 'block';
-    } else {
-      if (confirm(`El código "${clean}" no existe aún. ¿Deseas iniciar la creación de un nuevo proyecto?`)) {
-        window.ProjectWizard.openWizard(null, 1);
-        return;
-      }
+
+    const targetId = (matchedCustom && matchedCustom.projectId) ? matchedCustom.projectId : null;
+    if (window.ProjectWizard && typeof window.ProjectWizard.openWizard === 'function') {
+      window.ProjectWizard.openWizard(targetId, 1).then(() => {
+        if (window.ProjectWizard.draft) {
+          window.ProjectWizard.draft.code = clean;
+          window.ProjectWizard.draft.joinedCode = clean;
+        }
+      }).catch(() => {});
     }
-    if (input) input.select();
   },
 
 
@@ -4989,14 +4990,93 @@ Generado por Mentix - Plataforma de Proyectos y Retos
   },
 
   getSavedProjectCodes() {
+    const merged = [];
+    const seen = new Set();
+    const addEntry = (item) => {
+      if (!item) return;
+      const codeStr = typeof item === 'string' ? item.trim() : String(item.code || '').trim();
+      if (!codeStr) return;
+      const key = codeStr.toLowerCase();
+      if (seen.has(key)) return;
+      seen.add(key);
+      merged.push(typeof item === 'object' ? { ...item, code: codeStr } : { code: codeStr, author: 'Profesor', createdAt: '' });
+    };
+
+    if (this.lastCreatedCode) {
+      addEntry({ code: this.lastCreatedCode, author: 'Profesor', createdAt: new Date().toLocaleString() });
+    }
+    if (Array.isArray(this._memoryCustomCodes)) {
+      this._memoryCustomCodes.forEach(addEntry);
+    }
+    if (Array.isArray(window._mentixCustomCodes)) {
+      window._mentixCustomCodes.forEach(addEntry);
+    }
     try {
-      const raw = localStorage.getItem('mentix_custom_project_codes');
-      if (raw) {
-        const parsed = JSON.parse(raw);
-        if (Array.isArray(parsed)) return parsed;
+      const rawSession = sessionStorage.getItem('mentix_custom_project_codes');
+      if (rawSession) {
+        const parsedSession = JSON.parse(rawSession);
+        if (Array.isArray(parsedSession)) parsedSession.forEach(addEntry);
       }
     } catch (e) {}
-    return [];
+    try {
+      const rawLocal = localStorage.getItem('mentix_custom_project_codes');
+      if (rawLocal) {
+        const parsedLocal = JSON.parse(rawLocal);
+        if (Array.isArray(parsedLocal)) parsedLocal.forEach(addEntry);
+      }
+    } catch (e) {}
+    try {
+      const challenges = window.appState?.challenges || [];
+      challenges.forEach(c => {
+        if (!c) return;
+        if (Array.isArray(c.customProjectCodes)) {
+          c.customProjectCodes.forEach(addEntry);
+        }
+      });
+    } catch (e) {}
+
+    return merged;
+  },
+
+  persistCustomProjectCodes(codes) {
+    const cleanCodes = Array.isArray(codes) ? codes : [];
+    this._memoryCustomCodes = cleanCodes;
+    window._mentixCustomCodes = cleanCodes;
+
+    try {
+      sessionStorage.setItem('mentix_custom_project_codes', JSON.stringify(cleanCodes));
+    } catch (e) {}
+
+    try {
+      localStorage.setItem('mentix_custom_project_codes', JSON.stringify(cleanCodes));
+    } catch (quotaErr) {
+      // Si localStorage está lleno por imágenes base64 en borradores, liberar espacio automáticamente y reintentar
+      try {
+        ['mentix_govdata_wizard_drafts', 'te_reto_challenges', 'mentix_challenges', 'mentix_projects'].forEach(k => {
+          const val = localStorage.getItem(k);
+          if (val && val.length > 250000) {
+            const compacted = val.replace(/data:image\/[^;]+;base64,[A-Za-z0-9+/=]{30000,}/g, 'assets/projects_ui/card_data_gov.png');
+            localStorage.setItem(k, compacted);
+          }
+        });
+        localStorage.setItem('mentix_custom_project_codes', JSON.stringify(cleanCodes));
+      } catch (e2) {}
+    }
+
+    // Sincronizar también en appState y la nube para que los códigos funcionen en todos los navegadores y dispositivos
+    try {
+      if (window.appState && Array.isArray(window.appState.challenges) && window.appState.challenges.length > 0) {
+        window.appState.challenges[0].customProjectCodes = cleanCodes;
+        if (typeof saveGlobalState === 'function') {
+          saveGlobalState(window.appState);
+        }
+        fetch('/api/challenges', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ challenges: window.appState.challenges })
+        }).catch(() => {});
+      }
+    } catch (e) {}
   },
 
   saveCustomProjectCode() {
@@ -5032,12 +5112,12 @@ Generado por Mentix - Plataforma de Proyectos y Retos
     };
     codes.unshift(newEntry);
 
+    this.lastCreatedCode = rawCode;
+    this.persistCustomProjectCodes(codes);
     try {
-      localStorage.setItem('mentix_custom_project_codes', JSON.stringify(codes));
       localStorage.removeItem('te_reto_room_closed_' + rawCode);
     } catch (e) {}
 
-    this.lastCreatedCode = rawCode;
     if (window.soundEngine) window.soundEngine.playClick();
     this.render();
   },
@@ -5056,11 +5136,11 @@ Generado por Mentix - Plataforma de Proyectos y Retos
   },
 
   deleteCustomProjectCode(code) {
-    const codes = this.getSavedProjectCodes().filter(item => item.code !== code);
-    try {
-      localStorage.setItem('mentix_custom_project_codes', JSON.stringify(codes));
-    } catch (e) {}
-    if (this.lastCreatedCode === code) this.lastCreatedCode = null;
+    if (this.lastCreatedCode && String(this.lastCreatedCode).toLowerCase() === String(code).toLowerCase()) {
+      this.lastCreatedCode = null;
+    }
+    const codes = this.getSavedProjectCodes().filter(item => String(item.code).toLowerCase() !== String(code).toLowerCase());
+    this.persistCustomProjectCodes(codes);
     if (window.soundEngine) window.soundEngine.playClick();
     this.render();
   },
