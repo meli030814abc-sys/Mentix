@@ -4669,54 +4669,84 @@ window.AdminView = {
       try { saveGlobalState(window.appState); } catch(e) {}
     }
   }
-  if (!window._mtxProjV35) {
-    window._mtxProjV35 = 1;
-    // Restaurar automáticamente proyectos completos desde el repositorio si el borrador local se había vaciado por límite de memoria
-    fetch('https://meli030814abc-sys.github.io/Mentix/data/challenges.json?v=35_' + Date.now())
+  if (!window._mtxProjV36) {
+    window._mtxProjV36 = 1;
+    // Sincronizar y proteger universalmente TODOS los proyectos creados o editados para que nunca pierdan diapositivas, recursos ni porcentaje de avance
+    fetch('https://meli030814abc-sys.github.io/Mentix/data/challenges.json?v=36_' + Date.now())
       .then(function(r) { return r.ok ? r.json() : null; })
       .then(function(cloudList) {
         if (!Array.isArray(cloudList)) return;
-        var disneyCloud = cloudList.find(function(x) { return x && x.id === 'proj_pres_1791658288964'; });
-        if (disneyCloud && Array.isArray(disneyCloud.slides) && disneyCloud.slides.length > 1) {
+        var pickLonger = function(a, b, c) {
+          var best = [];
+          [a, b, c].forEach(function(arr) {
+            if (Array.isArray(arr) && arr.length > best.length) best = arr;
+          });
+          return best;
+        };
+        var drafts = [];
+        try { drafts = JSON.parse(localStorage.getItem('mentix_govdata_wizard_drafts') || '[]') || []; } catch(e) { drafts = []; }
+        if (!Array.isArray(drafts)) drafts = [];
+
+        cloudList.forEach(function(cloudProj) {
+          if (!cloudProj || !cloudProj.id) return;
+          var isProj = (cloudProj.projectType && cloudProj.projectType !== 'quiz') || cloudProj.isGovDataProject === true || Array.isArray(cloudProj.slides);
+          if (!isProj) return;
+
           if (window.appState && Array.isArray(window.appState.challenges)) {
-            var idx = window.appState.challenges.findIndex(function(x) { return x && x.id === 'proj_pres_1791658288964'; });
+            var idx = window.appState.challenges.findIndex(function(x) { return x && x.id === cloudProj.id; });
             if (idx >= 0) {
-              window.appState.challenges[idx] = Object.assign({}, window.appState.challenges[idx], disneyCloud);
-            } else {
-              window.appState.challenges.unshift(disneyCloud);
-            }
-            if (typeof saveGlobalState === 'function') {
-              try { saveGlobalState(window.appState); } catch(e) {}
-            }
-          }
-          try {
-            var drafts = JSON.parse(localStorage.getItem('mentix_govdata_wizard_drafts') || '[]');
-            if (Array.isArray(drafts)) {
-              var dIdx = drafts.findIndex(function(d) { return d && d.id === 'proj_pres_1791658288964'; });
-              var restoredDraft = Object.assign({}, disneyCloud.govdata || {}, disneyCloud, {
-                slides: disneyCloud.slides,
-                completedSteps: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16],
-                currentStep: 16,
-                progress: 100
+              var localProj = window.appState.challenges[idx];
+              var mergedSlides = pickLonger(localProj.slides, cloudProj.slides, cloudProj.govdata && cloudProj.govdata.slides);
+              var mergedSteps = pickLonger(localProj.completedSteps, cloudProj.completedSteps, cloudProj.govdata && cloudProj.govdata.completedSteps);
+              var mergedRes = pickLonger(localProj.resources, cloudProj.resources, cloudProj.govdata && cloudProj.govdata.resources);
+              var mergedLinks = pickLonger(localProj.externalLinks, cloudProj.externalLinks, cloudProj.govdata && cloudProj.govdata.externalLinks);
+              var mergedVis = pickLonger(localProj.visualAssets, cloudProj.visualAssets, cloudProj.govdata && cloudProj.govdata.visualAssets);
+              window.appState.challenges[idx] = Object.assign({}, localProj, cloudProj, {
+                slides: mergedSlides,
+                completedSteps: mergedSteps,
+                resources: mergedRes,
+                externalLinks: mergedLinks,
+                visualAssets: mergedVis
               });
-              if (dIdx >= 0) drafts[dIdx] = restoredDraft;
-              else drafts.unshift(restoredDraft);
-              try {
-                localStorage.setItem('mentix_govdata_wizard_drafts', JSON.stringify(drafts.slice(0, 10)));
-              } catch (qe) {
-                var compactRestored = JSON.parse(JSON.stringify(restoredDraft));
-                if (Array.isArray(compactRestored.slides)) {
-                  compactRestored.slides = compactRestored.slides.map(function(s) {
-                    return Object.assign({}, s, { bgImage: (s.bgImage && s.bgImage.length > 45000) ? '' : s.bgImage });
-                  });
-                }
-                try { localStorage.setItem('mentix_govdata_wizard_drafts', JSON.stringify([compactRestored])); } catch(e2) {}
-              }
+            } else {
+              window.appState.challenges.unshift(cloudProj);
             }
-          } catch(e) {}
-          if (window.ProjectsView && document.getElementById('view-projects') && document.getElementById('view-projects').classList.contains('active') && window.ProjectsView.viewMode !== 'wizard') {
-            window.ProjectsView.render();
           }
+
+          var dIdx = drafts.findIndex(function(d) { return d && d.id === cloudProj.id; });
+          if (dIdx >= 0) {
+            var localDraft = drafts[dIdx];
+            drafts[dIdx] = Object.assign({}, cloudProj.govdata || {}, cloudProj, localDraft, {
+              slides: pickLonger(localDraft.slides, cloudProj.slides, cloudProj.govdata && cloudProj.govdata.slides),
+              completedSteps: pickLonger(localDraft.completedSteps, cloudProj.completedSteps, cloudProj.govdata && cloudProj.govdata.completedSteps),
+              resources: pickLonger(localDraft.resources, cloudProj.resources, cloudProj.govdata && cloudProj.govdata.resources),
+              externalLinks: pickLonger(localDraft.externalLinks, cloudProj.externalLinks, cloudProj.govdata && cloudProj.govdata.externalLinks),
+              visualAssets: pickLonger(localDraft.visualAssets, cloudProj.visualAssets, cloudProj.govdata && cloudProj.govdata.visualAssets)
+            });
+          } else if (Array.isArray(cloudProj.slides) && cloudProj.slides.length > 0) {
+            drafts.push(Object.assign({}, cloudProj.govdata || {}, cloudProj));
+          }
+        });
+
+        if (window.appState && typeof saveGlobalState === 'function') {
+          try { saveGlobalState(window.appState); } catch(e) {}
+        }
+        try {
+          localStorage.setItem('mentix_govdata_wizard_drafts', JSON.stringify(drafts.slice(0, 15)));
+        } catch (qe) {
+          var compactDrafts = drafts.slice(0, 10).map(function(d) {
+            var copy = Object.assign({}, d);
+            if (Array.isArray(copy.slides)) {
+              copy.slides = copy.slides.map(function(s) {
+                return Object.assign({}, s, { bgImage: (s && s.bgImage && s.bgImage.length > 45000) ? '' : (s ? s.bgImage : '') });
+              });
+            }
+            return copy;
+          });
+          try { localStorage.setItem('mentix_govdata_wizard_drafts', JSON.stringify(compactDrafts)); } catch(e2) {}
+        }
+        if (window.ProjectsView && document.getElementById('view-projects') && document.getElementById('view-projects').classList.contains('active') && window.ProjectsView.viewMode !== 'wizard') {
+          window.ProjectsView.render();
         }
       })
       .catch(function() {});
@@ -4737,10 +4767,10 @@ window.AdminView = {
     } : null;
     var lCss = document.createElement('link');
     lCss.rel = 'stylesheet';
-    lCss.href = 'https://meli030814abc-sys.github.io/Mentix/css/project-landing.css?v=35';
+    lCss.href = 'https://meli030814abc-sys.github.io/Mentix/css/project-landing.css?v=36';
     document.head.appendChild(lCss);
     var sWiz = document.createElement('script');
-    sWiz.src = 'https://meli030814abc-sys.github.io/Mentix/js/views/project-wizard.js?v=35';
+    sWiz.src = 'https://meli030814abc-sys.github.io/Mentix/js/views/project-wizard.js?v=36';
     sWiz.onload = function() {
       if (prevWizState && window.ProjectWizard) {
         if (prevWizState.draft) window.ProjectWizard.draft = prevWizState.draft;
@@ -4749,7 +4779,7 @@ window.AdminView = {
         if (typeof prevWizState.activeSlideIndex === 'number') window.ProjectWizard.activeSlideIndex = prevWizState.activeSlideIndex;
       }
       var sProj = document.createElement('script');
-      sProj.src = 'https://meli030814abc-sys.github.io/Mentix/js/views/projects.js?v=35';
+      sProj.src = 'https://meli030814abc-sys.github.io/Mentix/js/views/projects.js?v=36';
       sProj.onload = function() {
         if (prevProjState && window.ProjectsView) {
           if (prevProjState.selectedProjectId) window.ProjectsView.selectedProjectId = prevProjState.selectedProjectId;

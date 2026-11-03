@@ -416,8 +416,9 @@ window.ProjectWizard = {
     }
 
     // Sincronizar inmediatamente con window.appState.challenges y el almacenamiento global para que aparezca en Admin y en Proyectos
+    let syncedRecord = null;
     try {
-      this.syncProjectRecordToAppState(this.draft.publicationStatus || 'pending_approval');
+      syncedRecord = this.syncProjectRecordToAppState(this.draft.publicationStatus || 'pending_approval');
       if (typeof saveGlobalState === 'function') {
         saveGlobalState(window.appState);
       }
@@ -425,7 +426,7 @@ window.ProjectWizard = {
       console.warn('Aviso al sincronizar borrador con appState:', e);
     }
 
-    // 2. Guardar en Supabase (base de datos en la nube sin inventar datos)
+    // 2. Guardar en Supabase y en la nube global (para que todos los proyectos conserven sus diapositivas, recursos y avances)
     let supabaseSaved = false;
     if (window.supabaseService) {
       const u = window.appState?.currentUser || {};
@@ -446,10 +447,17 @@ window.ProjectWizard = {
       // Si el proyecto ya tiene título, sincronizar también el registro en challenges / govdata_projects
       if (this.draft.title && this.draft.title.trim()) {
         try {
-          const fullRecord = this.buildChallengeCompatibleRecord();
+          const fullRecord = syncedRecord || this.buildChallengeCompatibleRecord();
           window.supabaseService.saveGovDataProject(fullRecord);
         } catch (err) {}
       }
+    }
+
+    if (this.draft.title && this.draft.title.trim() && window.appRouter && typeof window.appRouter.pushChallengeToCloud === 'function') {
+      try {
+        const cloudRec = syncedRecord || this.buildChallengeCompatibleRecord();
+        window.appRouter.pushChallengeToCloud(cloudRec);
+      } catch (errCloud) {}
     }
 
     const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
@@ -5013,13 +5021,18 @@ collectCurrentStepInputs() {
       isPublic: pubStatus === 'published' && approvalStatus === 'approved',
       startDate: d.startDate || '',
       endDate: d.endDate || '',
+      currentStep: Number(d.currentStep) || Number(this.currentStep) || 1,
+      completedSteps: Array.isArray(d.completedSteps) ? d.completedSteps : [],
+      progress: Number(d.progress) || 0,
+      calculatedProgress: Number(d.calculatedProgress || d.progress) || 0,
+      valueProp: d.valueProp || {},
       valueProposition: d.valueProp || {},
       videoUrl: d.videoConfig?.url || '',
       videoConfig: d.videoConfig || {},
-      resources: d.resources || [],
-      visualAssets: d.visualAssets || [],
+      resources: Array.isArray(d.resources) ? d.resources : [],
+      visualAssets: Array.isArray(d.visualAssets) ? d.visualAssets : [],
       slides: Array.isArray(d.slides) ? d.slides : [],
-      externalLinks: d.externalLinks || [],
+      externalLinks: Array.isArray(d.externalLinks) ? d.externalLinks : [],
       landingConfig: d.landingConfig || {},
       designConfig: d.designConfig || { themeId: 'cosmos', fontFamily: 'Montserrat', titleColor: '#ffffff', textColor: '#cbd5e1', accentColor: '#00f5d4', bannerStyle: 'gradient-cosmos', bannerUrl: '' },
       authorsConfig: d.authorsConfig || { authorsList: d.author || '', authorsEmails: d.authorEmail || '', authorsRole: 'Líder del Proyecto', authorsInstitution: '', collaborators: '' },
@@ -5043,7 +5056,24 @@ collectCurrentStepInputs() {
 
     const idx = window.appState.challenges.findIndex(c => c && c.id === record.id);
     if (idx >= 0) {
-      window.appState.challenges[idx] = { ...window.appState.challenges[idx], ...record };
+      const prev = window.appState.challenges[idx];
+      if ((!record.slides || record.slides.length === 0) && Array.isArray(prev.slides) && prev.slides.length > 0) {
+        record.slides = prev.slides;
+        if (record.govdata) record.govdata.slides = prev.slides;
+      }
+      if ((!record.resources || record.resources.length === 0) && Array.isArray(prev.resources) && prev.resources.length > 0) {
+        record.resources = prev.resources;
+        if (record.govdata) record.govdata.resources = prev.resources;
+      }
+      if ((!record.externalLinks || record.externalLinks.length === 0) && Array.isArray(prev.externalLinks) && prev.externalLinks.length > 0) {
+        record.externalLinks = prev.externalLinks;
+        if (record.govdata) record.govdata.externalLinks = prev.externalLinks;
+      }
+      if ((!record.visualAssets || record.visualAssets.length === 0) && Array.isArray(prev.visualAssets) && prev.visualAssets.length > 0) {
+        record.visualAssets = prev.visualAssets;
+        if (record.govdata) record.govdata.visualAssets = prev.visualAssets;
+      }
+      window.appState.challenges[idx] = { ...prev, ...record };
     } else {
       window.appState.challenges.unshift(record);
     }
@@ -5111,6 +5141,10 @@ collectCurrentStepInputs() {
 
     const canPub = forcePublish;
     const targetStatus = canPub ? 'published' : 'pending_approval';
+    this.draft.completedSteps = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16];
+    this.draft.currentStep = 16;
+    this.draft.progress = 100;
+    this.draft.calculatedProgress = 100;
     const rec = this.syncProjectRecordToAppState(targetStatus);
 
     // Guardar siempre como pendiente de autorización a menos que sea publicación forzada por admin

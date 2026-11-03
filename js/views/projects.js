@@ -3633,8 +3633,76 @@ window.ProjectsView = {
     return (lastSpace > 60 ? cut.slice(0, lastSpace) : cut).replace(/[.,;:!\-\s]+$/, '') + '...';
   },
 
-  calculateProjectProgress(p) {
-    if (!p) return 0;
+  /**
+   * Fusiona universalmente los datos de cualquier proyecto desde challenges, borradores del asistente y govdata,
+   * garantizando que todos los proyectos creados o editados conserven siempre sus presentaciones, recursos, enlaces, textos y avances.
+   */
+  getMergedProjectRecord(projectId, fallbackObj = null) {
+    const id = projectId || fallbackObj?.id || this.selectedProjectId;
+    const fromChallenges = id ? (window.appState?.challenges || []).find(x => x && x.id === id) : null;
+    let fromDrafts = null;
+    if (id) {
+      try {
+        const drafts = JSON.parse(localStorage.getItem('mentix_govdata_wizard_drafts') || '[]');
+        if (Array.isArray(drafts)) {
+          fromDrafts = drafts.find(d => d && d.id === id) || null;
+        }
+      } catch (e) {}
+    }
+    const fromActiveWiz = (id && window.ProjectWizard?.draft && window.ProjectWizard.draft.id === id)
+      ? window.ProjectWizard.draft
+      : null;
+
+    const base = fallbackObj || fromChallenges || fromDrafts || fromActiveWiz;
+    if (!base) return null;
+
+    const gp1 = fallbackObj?.govdata || {};
+    const gp2 = fromChallenges?.govdata || {};
+    const gp3 = fromDrafts?.govdata || {};
+
+    const pickLongerArr = (...arrs) => {
+      let best = [];
+      for (const a of arrs) {
+        if (Array.isArray(a) && a.length > best.length) best = a;
+      }
+      return best;
+    };
+    const pickLongerStr = (...strs) => {
+      let best = '';
+      for (const s of strs) {
+        if (typeof s === 'string' && s.trim().length > best.trim().length) best = s;
+      }
+      return best;
+    };
+
+    const merged = {
+      ...gp1,
+      ...gp2,
+      ...gp3,
+      ...(fromDrafts || {}),
+      ...(fromChallenges || {}),
+      ...(fallbackObj || {}),
+      ...(fromActiveWiz || {})
+    };
+
+    merged.slides = pickLongerArr(fromActiveWiz?.slides, fallbackObj?.slides, fromChallenges?.slides, fromDrafts?.slides, gp1.slides, gp2.slides, gp3.slides);
+    merged.resources = pickLongerArr(fromActiveWiz?.resources, fallbackObj?.resources, fromChallenges?.resources, fromDrafts?.resources, gp1.resources, gp2.resources, gp3.resources);
+    merged.externalLinks = pickLongerArr(fromActiveWiz?.externalLinks, fallbackObj?.externalLinks, fromChallenges?.externalLinks, fromDrafts?.externalLinks, gp1.externalLinks, gp2.externalLinks, gp3.externalLinks);
+    merged.visualAssets = pickLongerArr(fromActiveWiz?.visualAssets, fallbackObj?.visualAssets, fromChallenges?.visualAssets, fromDrafts?.visualAssets, gp1.visualAssets, gp2.visualAssets, gp3.visualAssets);
+    merged.completedSteps = pickLongerArr(fromActiveWiz?.completedSteps, fallbackObj?.completedSteps, fromChallenges?.completedSteps, fromDrafts?.completedSteps, gp1.completedSteps, gp2.completedSteps, gp3.completedSteps);
+
+    merged.fullDescription = pickLongerStr(fromActiveWiz?.fullDescription, fallbackObj?.fullDescription, fromChallenges?.fullDescription, fromDrafts?.fullDescription, gp1.fullDescription, gp2.fullDescription, gp3.fullDescription);
+    merged.shortDescription = pickLongerStr(fromActiveWiz?.shortDescription, fallbackObj?.shortDescription, fromChallenges?.shortDescription, fromDrafts?.shortDescription, gp1.shortDescription, gp2.shortDescription, gp3.shortDescription, merged.description);
+    merged.problemStatement = pickLongerStr(fromActiveWiz?.problemStatement, fallbackObj?.problemStatement, fromChallenges?.problemStatement, fromDrafts?.problemStatement, gp1.problemStatement, gp2.problemStatement, gp3.problemStatement);
+    merged.mainObjective = pickLongerStr(fromActiveWiz?.mainObjective, fallbackObj?.mainObjective, fromChallenges?.mainObjective, fromDrafts?.mainObjective, gp1.mainObjective, gp2.mainObjective, gp3.mainObjective);
+    merged.benefits = pickLongerStr(fromActiveWiz?.benefits, fallbackObj?.benefits, fromChallenges?.benefits, fromDrafts?.benefits, gp1.benefits, gp2.benefits, gp3.benefits);
+
+    return merged;
+  },
+
+  calculateProjectProgress(rawProj) {
+    if (!rawProj) return 0;
+    const p = this.getMergedProjectRecord(rawProj.id, rawProj) || rawProj;
     const gp = p.govdata || {};
     const vp = p.valueProp || p.valueProposition || gp.valueProp || {};
     let score = 0;
@@ -3739,16 +3807,8 @@ window.ProjectsView = {
   renderLandingPageView(container, allProjects = []) {
     this.currentSlideIndex = 0;
     const currentTheme = this.getLandingTheme();
-    let selected = allProjects.find(x => x.id === this.selectedProjectId) || (window.appState.challenges || []).find(x => x.id === this.selectedProjectId);
-    if (!selected) {
-      try {
-        const drafts = JSON.parse(localStorage.getItem('mentix_govdata_wizard_drafts') || '[]');
-        selected = drafts.find(d => d && d.id === this.selectedProjectId);
-      } catch (e) {}
-    }
-    if (!selected && window.ProjectWizard?.draft && window.ProjectWizard.draft.id === this.selectedProjectId) {
-      selected = window.ProjectWizard.draft;
-    }
+    const rawFound = allProjects.find(x => x && x.id === this.selectedProjectId) || (window.appState?.challenges || []).find(x => x && x.id === this.selectedProjectId);
+    let selected = this.getMergedProjectRecord(this.selectedProjectId, rawFound);
     if (selected) {
       try {
         localStorage.setItem('mentix_active_landing_project', JSON.stringify(selected));
@@ -3867,7 +3927,7 @@ window.ProjectsView = {
     // 0. Tarjeta de Presentación Real (solo si el usuario subió o creó láminas en Mentix)
     if (userSlides.length > 0) {
       totalCardsCount++;
-      const sThumb = userSlides[0]?.media || userSlides[0]?.imageUrl || mainCover || 'assets/projects_ui/card_data_gov.png';
+      const sThumb = userSlides[0]?.bgImage || userSlides[0]?.media || userSlides[0]?.imageUrl || mainCover || 'assets/projects_ui/card_data_gov.png';
       const sTitle = selectedTitle ? `Presentación: ${selectedTitle}` : (userSlides[0]?.title || 'Presentación Interactiva');
       const slideNames = userSlides.map((s, i) => s.title || `Lámina ${i + 1}`).join(', ');
       const sDesc = this.truncateCardText(`Incluye ${userSlides.length} ${userSlides.length === 1 ? 'lámina' : 'láminas'}: ${slideNames}`, 120);
@@ -3920,6 +3980,7 @@ window.ProjectsView = {
             <div>
               <h4 class="inno-card-title">${this.escapeHtml(vTitle)}</h4>
               <p class="inno-card-desc">${this.escapeHtml(vDesc)}</p>
+              <span class="inno-why-card-link" style="margin-top:0.5rem; cursor:pointer;" onclick="window.ProjectsView.playLandingVideo()">Saber más →</span>
             </div>
             <div class="inno-card-footer">
               <span>🎬 ${this.escapeHtml(vFile)}</span>
@@ -3990,7 +4051,7 @@ window.ProjectsView = {
             <div>
               <h4 class="inno-card-title">${this.escapeHtml(name)}</h4>
               <p class="inno-card-desc">${this.escapeHtml(desc)}</p>
-              ${rawDesc.length > 120 ? `<span class="inno-why-card-link" style="margin-top:0.5rem; cursor:pointer;" onclick="window.ProjectsView.previewLandingDoc('${this.escapeHtml(name)}')">Saber más →</span>` : ''}
+              <span class="inno-why-card-link" style="margin-top:0.5rem; cursor:pointer;" onclick="window.ProjectsView.previewLandingDoc('${this.escapeHtml(name)}')">Saber más →</span>
             </div>
             <div class="inno-card-footer">
               <span>📅 ${this.escapeHtml(dateStr)} • 💾 ${this.escapeHtml(sizeStr)}</span>
@@ -4848,14 +4909,7 @@ window.ProjectsView = {
   },
 
   downloadLandingDoc(filename) {
-    let selected = (window.appState.challenges || []).find(x => x.id === this.selectedProjectId);
-    if (!selected) {
-      try {
-        const drafts = JSON.parse(localStorage.getItem('mentix_govdata_wizard_drafts') || '[]');
-        selected = drafts.find(d => d && d.id === this.selectedProjectId);
-      } catch (e) {}
-    }
-    if (!selected && window.ProjectWizard?.draft) selected = window.ProjectWizard.draft;
+    let selected = this.getMergedProjectRecord(this.selectedProjectId);
 
     const gp = selected?.govdata || {};
     const vp = selected?.valueProp || selected?.valueProposition || gp.valueProp || {};
@@ -4913,16 +4967,7 @@ Generado por Mentix - Plataforma de Proyectos y Retos
     modal.style.cssText = 'position:fixed !important; inset:0 !important; width:100vw !important; height:100vh !important; z-index:9999999 !important; background:rgba(10, 25, 47, 0.92) !important; backdrop-filter:blur(12px) !important; display:flex !important; align-items:center !important; justify-content:center !important; padding:2rem !important;';
     body.style.cssText = 'max-width:720px; width:100%; border-radius:20px; overflow:hidden; position:relative; background:transparent; box-shadow:none;';
 
-    let selected = (window.appState.challenges || []).find(x => x.id === this.selectedProjectId);
-    if (!selected) {
-      try {
-        const drafts = JSON.parse(localStorage.getItem('mentix_govdata_wizard_drafts') || '[]');
-        selected = drafts.find(d => d && d.id === this.selectedProjectId);
-      } catch (e) {}
-    }
-    if (!selected && window.ProjectWizard?.draft) {
-      selected = window.ProjectWizard.draft;
-    }
+    let selected = this.getMergedProjectRecord(this.selectedProjectId);
 
     const projTitle = this.escapeHtml((selected && (selected.landingConfig?.publicName || selected.title)) || 'Proyecto');
     const isDark = (document.querySelector('.plp-wrapper')?.getAttribute('data-theme') || this.getLandingTheme()) === 'dark';
@@ -5030,13 +5075,7 @@ Generado por Mentix - Plataforma de Proyectos y Retos
     const body = lb.body;
     if (!modal || !body) return;
 
-    let selected = (window.appState?.challenges || []).find(x => x.id === this.selectedProjectId);
-    if (!selected) {
-      try {
-        const drafts = JSON.parse(localStorage.getItem('mentix_govdata_wizard_drafts') || '[]');
-        selected = drafts.find(d => d && d.id === this.selectedProjectId);
-      } catch (e) {}
-    }
+    let selected = this.getMergedProjectRecord(this.selectedProjectId);
     const gp = (selected && selected.govdata) ? selected.govdata : {};
     const rawSlides = Array.isArray(selected?.slides) ? selected.slides : (Array.isArray(gp.slides) ? gp.slides : []);
     const slides = rawSlides.filter(s => s && s.id !== 's1');
