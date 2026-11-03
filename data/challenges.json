@@ -222,7 +222,7 @@
     "image": "assets/projects_ui/card_data_gov.png",
     "banner": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
     "createdAt": "2026-10-31T21:52:51.691Z",
-    "updatedAt": "2026-11-03T02:54:23.955Z",
+    "updatedAt": "2026-11-03T02:54:33.124Z",
     "govdata": {
       "id": "proj_pres_1791658288964",
       "title": "Personajes de Disney",
@@ -275,7 +275,7 @@
             "O Problema u oportunidad",
             "El inventario y la facturación necesitan información organizada y confiable."
           ],
-          "layout": "split",
+          "layout": "full",
           "media": "",
           "notes": "",
           "bgColor": "#0b091a",
@@ -339,7 +339,7 @@
         "collaborators": ""
       },
       "createdAt": "2026-10-31T21:52:51.691Z",
-      "updatedAt": "2026-11-03T02:54:24.845Z",
+      "updatedAt": "2026-11-03T02:54:33.976Z",
       "progress": 90,
       "calculatedProgress": 90
     },
@@ -360,7 +360,7 @@
           "O Problema u oportunidad",
           "El inventario y la facturación necesitan información organizada y confiable."
         ],
-        "layout": "split",
+        "layout": "full",
         "media": "",
         "notes": "",
         "bgColor": "#0b091a",
