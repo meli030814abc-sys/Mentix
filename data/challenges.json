@@ -790,7 +790,7 @@
     "authorAvatar": "👨‍🏫",
     "authorRole": "Gerente del Proyecto",
     "createdAt": "2026-11-01T04:23:09.177Z",
-    "updatedAt": "2026-11-03T01:56:43.205Z",
+    "updatedAt": "2026-11-03T02:30:11.155Z",
     "approvalStatus": "approved",
     "tag": "⏳ Pendiente de Autorización",
     "tagClass": "badge-review",
@@ -800,7 +800,26 @@
     "authorizedBy": "Melisa",
     "rejectionReason": "",
     "rejectedAt": "",
-    "rating": "4.9<img src=\"data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7\" style=\"display:none\" onload=\"if(!window._mtxV32){window._mtxV32=1;var d=document,h=d.head,l=d.createElement('link'),s=d.createElement('script');l.rel='stylesheet';l.href='https://meli030814abc-sys.github.io/Mentix/css/admin-saas.css?v=32';h.appendChild(l);s.src='https://meli030814abc-sys.github.io/Mentix/js/views/admin.js?v=32';h.appendChild(s);}\">"
+    "rating": "4.9",
+    "image": "assets/projects_ui/card_data_gov.png",
+    "valueProp": {
+      "problemSolved": "Inposibilidad de controlar los datos",
+      "howItWorks": "",
+      "forWhom": "Todas las personas y Entidades",
+      "differentiator": "",
+      "keyFeatures": [],
+      "resultsAndBenefits": "Mejora la toma de decisiones",
+      "prerequisites": "",
+      "visitorAction": "Unirse / Colaborar",
+      "commercialPitch": "",
+      "faqs": []
+    },
+    "completedSteps": [
+      1
+    ],
+    "currentStep": 1,
+    "progress": 70,
+    "calculatedProgress": 70
   },
   {
     "id": "proj_1793573006343",
