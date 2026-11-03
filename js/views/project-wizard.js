@@ -183,13 +183,14 @@ window.ProjectWizard = {
           fileName: existingProject.videoConfig?.fileName || gp.videoConfig?.fileName || '',
           title: existingProject.videoConfig?.title || gp.videoConfig?.title || '',
           description: existingProject.videoConfig?.description || gp.videoConfig?.description || '',
+          thumbnailUrl: existingProject.videoConfig?.thumbnailUrl || gp.videoConfig?.thumbnailUrl || '',
           isPublic: existingProject.videoConfig?.isPublic !== undefined ? existingProject.videoConfig.isPublic : true,
           verified: Boolean(existingProject.videoConfig?.verified || gp.videoConfig?.verified || existingProject.videoConfig?.url || existingProject.videoUrl)
         },
         resources: Array.isArray(existingProject.resources) && existingProject.resources.length > 0 ? JSON.parse(JSON.stringify(existingProject.resources)) : (Array.isArray(gp.resources) ? JSON.parse(JSON.stringify(gp.resources)) : []),
         slides: Array.isArray(existingProject.slides) && existingProject.slides.length > 0 ? JSON.parse(JSON.stringify(existingProject.slides)) : (Array.isArray(gp.slides) ? JSON.parse(JSON.stringify(gp.slides)) : []),
-        mainImage: existingProject.mainImage || existingProject.banner || gp.mainImage || '',
-        thumbnailImage: existingProject.thumbnailImage || gp.thumbnailImage || '',
+        mainImage: existingProject.mainImage || existingProject.banner || existingProject.image || gp.mainImage || gp.banner || gp.image || '',
+        thumbnailImage: existingProject.thumbnailImage || existingProject.mainImage || gp.thumbnailImage || '',
         useDefaultImage: existingProject.useDefaultImage !== undefined ? existingProject.useDefaultImage : true,
         visualAssets: Array.isArray(existingProject.visualAssets) && existingProject.visualAssets.length > 0 ? JSON.parse(JSON.stringify(existingProject.visualAssets)) : (Array.isArray(gp.visualAssets) ? JSON.parse(JSON.stringify(gp.visualAssets)) : []),
         externalLinks: Array.isArray(existingProject.externalLinks) && existingProject.externalLinks.length > 0 ? JSON.parse(JSON.stringify(existingProject.externalLinks)) : (Array.isArray(gp.externalLinks) ? JSON.parse(JSON.stringify(gp.externalLinks)) : []),
@@ -365,14 +366,14 @@ window.ProjectWizard = {
     }, 600);
   },
 
-  compressImageFile(file, maxWidth = 1280, quality = 0.74) {
+  compressImageFile(file, maxWidth = 960, quality = 0.72) {
     return new Promise((resolve) => {
       if (!file) return resolve('');
       const reader = new FileReader();
       reader.onerror = () => resolve('');
       reader.onload = (e) => {
         const rawDataUrl = e.target?.result || '';
-        if (!rawDataUrl || file.type === 'image/svg+xml' || rawDataUrl.length < 70000) {
+        if (!rawDataUrl || file.type === 'image/svg+xml' || rawDataUrl.length < 50000) {
           return resolve(rawDataUrl);
         }
         const img = new Image();
@@ -404,11 +405,18 @@ window.ProjectWizard = {
     });
   },
 
-  async saveDraftToStorage(silent = true) {
+  async saveDraftToStorage(silent = true, skipCollect = false) {
     if (!this.draft) return;
-    this.collectCurrentStepInputs();
+    if (!skipCollect) {
+      this.collectCurrentStepInputs();
+    }
     this.draft.currentStep = this.currentStep;
     this.draft.updatedAt = new Date().toISOString();
+
+    // Respaldar inmediatamente en la bóveda de imágenes
+    if (window.MentixImageVault) {
+      window.MentixImageVault.backupProjectImages(this.draft);
+    }
 
     if (!this.draft.landingConfig) this.draft.landingConfig = {};
     if (!this.draft.landingConfig.publicName && this.draft.title) {
@@ -538,12 +546,17 @@ window.ProjectWizard = {
       };
 
       if (savedDraft || savedChallenge) {
-        const base = { ...(savedChallenge || {}), ...(gov || {}), ...(savedDraft || {}) };
-        base.slides = pickLongerArr(savedDraft?.slides, savedChallenge?.slides, gov?.slides);
-        base.completedSteps = pickLongerArr(savedDraft?.completedSteps, savedChallenge?.completedSteps, gov?.completedSteps);
-        base.resources = pickLongerArr(savedDraft?.resources, savedChallenge?.resources, gov?.resources);
-        base.externalLinks = pickLongerArr(savedDraft?.externalLinks, savedChallenge?.externalLinks, gov?.externalLinks);
-        base.visualAssets = pickLongerArr(savedDraft?.visualAssets, savedChallenge?.visualAssets, gov?.visualAssets);
+        let base = (typeof window.mergeProjectPreservingImages === 'function')
+          ? window.mergeProjectPreservingImages(savedChallenge, savedDraft)
+          : { ...(savedChallenge || {}), ...(gov || {}), ...(savedDraft || {}) };
+        if (gov && typeof window.mergeProjectPreservingImages === 'function') {
+          base = window.mergeProjectPreservingImages(base, gov);
+        }
+        base.slides = pickLongerArr(savedDraft?.slides, savedChallenge?.slides, gov?.slides, base.slides);
+        base.completedSteps = pickLongerArr(savedDraft?.completedSteps, savedChallenge?.completedSteps, gov?.completedSteps, base.completedSteps);
+        base.resources = pickLongerArr(savedDraft?.resources, savedChallenge?.resources, gov?.resources, base.resources);
+        base.externalLinks = pickLongerArr(savedDraft?.externalLinks, savedChallenge?.externalLinks, gov?.externalLinks, base.externalLinks);
+        base.visualAssets = pickLongerArr(savedDraft?.visualAssets, savedChallenge?.visualAssets, gov?.visualAssets, base.visualAssets);
         base.fullDescription = pickLongerStr(savedDraft?.fullDescription, savedChallenge?.fullDescription, gov?.fullDescription);
         base.shortDescription = pickLongerStr(savedDraft?.shortDescription, savedChallenge?.shortDescription, gov?.shortDescription, savedChallenge?.description);
         base.problemStatement = pickLongerStr(savedDraft?.problemStatement, savedChallenge?.problemStatement, gov?.problemStatement);
@@ -738,7 +751,13 @@ collectCurrentStepInputs() {
 
     if (val('gdn-video-title') !== null) this.draft.videoConfig.title = val('gdn-video-title').trim();
     if (val('gdn-video-desc') !== null) this.draft.videoConfig.description = val('gdn-video-desc').trim();
-    if (val('gdn-video-thumb') !== null) this.draft.videoConfig.thumbnailUrl = val('gdn-video-thumb').trim();
+    if (val('gdn-video-thumb') !== null) {
+      const vThumbVal = val('gdn-video-thumb').trim();
+      // Si el input está vacío pero el borrador ya tenía una imagen en base64 recién cargada, no sobrescribir a vacío
+      if (vThumbVal || !this.draft.videoConfig.thumbnailUrl?.startsWith('data:image/')) {
+        this.draft.videoConfig.thumbnailUrl = vThumbVal;
+      }
+    }
     if (val('gdn-video-url') !== null) {
       const newUrl = val('gdn-video-url').trim();
       if (newUrl !== this.draft.videoConfig.url) {
@@ -761,7 +780,12 @@ collectCurrentStepInputs() {
         if (val('gdn-slide-content') !== null) s.content = val('gdn-slide-content').trim();
         else if (val('input-contentColor') !== null) s.content = val('input-contentColor').trim();
         if (val('gdn-slide-layout') !== null) s.layout = val('gdn-slide-layout');
-        if (val('gdn-slide-media') !== null) s.media = val('gdn-slide-media').trim();
+        if (val('gdn-slide-media') !== null) {
+          const sMediaVal = val('gdn-slide-media').trim();
+          if (sMediaVal || !s.media?.startsWith('data:image/')) {
+            s.media = sMediaVal;
+          }
+        }
         if (val('gdn-slide-notes') !== null) s.notes = val('gdn-slide-notes').trim();
         if (val('gdn-slide-bullets') !== null) {
           s.bullets = val('gdn-slide-bullets').split('\n').map(b => b.replace(/^[-*•]\s*/, '').trim()).filter(Boolean);
@@ -771,8 +795,18 @@ collectCurrentStepInputs() {
       }
     }
 
-    if (val('gdn-main-image') !== null) this.draft.mainImage = val('gdn-main-image').trim();
-    if (val('gdn-thumb-image') !== null) this.draft.thumbnailImage = val('gdn-thumb-image').trim();
+    if (val('gdn-main-image') !== null) {
+      const mVal = val('gdn-main-image').trim();
+      if (mVal || !this.draft.mainImage?.startsWith('data:image/')) {
+        this.draft.mainImage = mVal;
+      }
+    }
+    if (val('gdn-thumb-image') !== null) {
+      const tVal = val('gdn-thumb-image').trim();
+      if (tVal || !this.draft.thumbnailImage?.startsWith('data:image/')) {
+        this.draft.thumbnailImage = tVal;
+      }
+    }
     if (checked('gdn-use-default-img') !== null) this.draft.useDefaultImage = checked('gdn-use-default-img');
 
     if (val('gdn-pub-name') !== null) this.draft.landingConfig.publicName = val('gdn-pub-name').trim();
@@ -1228,9 +1262,20 @@ collectCurrentStepInputs() {
         </div>
 
         <div id="gdn-banner-url-box" class="gdn-field" style="margin-bottom:1.25rem; display:${dc.bannerStyle === 'custom-url' ? 'block' : 'none'};">
-          <label class="gdn-label" for="gdn-design-banner-url">URL de Imagen para el Banner / Encabezado</label>
-          <input type="url" id="gdn-design-banner-url" class="gdn-input" value="${this.escapeHtml(dc.bannerUrl || '')}" placeholder="https://ejemplo.com/mi-banner-educativo.jpg" />
-          <div class="gdn-help">Pega el enlace directo a una imagen horizontal en alta definición (1920x600 px recomendado).</div>
+          <label class="gdn-label" for="gdn-design-banner-url">URL o Archivo de Imagen para el Banner / Encabezado</label>
+          <div style="display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap;">
+            <input type="url" id="gdn-design-banner-url" class="gdn-input" style="flex:1; min-width:240px;" value="${this.escapeHtml(dc.bannerUrl || '')}" placeholder="https://ejemplo.com/mi-banner-educativo.jpg o sube un archivo" oninput="window.ProjectWizard.triggerFieldAutoSave();" />
+            <input type="file" id="gdn-design-banner-file" accept="image/*" style="display:none;" onchange="window.ProjectWizard.handleDesignBannerUpload(this.files)" />
+            <button type="button" class="plp-doc-btn outline" style="width:auto; padding:0.55rem 0.95rem; font-size:0.85rem;" onclick="document.getElementById('gdn-design-banner-file').click()">
+              📷 Subir imagen de banner
+            </button>
+            ${dc.bannerUrl ? `
+              <button type="button" class="plp-doc-btn outline" style="width:auto; padding:0.55rem 0.75rem; font-size:0.85rem; color:#ef4444; border-color:#fca5a5;" onclick="window.ProjectWizard.clearDesignBanner()">
+                🗑️
+              </button>
+            ` : ''}
+          </div>
+          <div class="gdn-help">Pega el enlace o sube una imagen horizontal en alta definición (1920x600 px recomendado). Se guardará automáticamente en tu proyecto.</div>
         </div>
 
         <!-- Indicador de Contraste Inteligente Automático -->
@@ -1259,6 +1304,36 @@ collectCurrentStepInputs() {
 
       </div>
     `;
+  },
+
+  async handleDesignBannerUpload(fileList) {
+    if (!fileList || !fileList[0]) return;
+    const file = fileList[0];
+    if (!file.type || !file.type.startsWith('image/')) {
+      alert('⚠️ Selecciona un archivo de imagen válido para el banner.');
+      return;
+    }
+    this.collectCurrentStepInputs();
+    const dataUrl = await this.compressImageFile(file, 1280, 0.72);
+    if (!this.draft.designConfig) this.draft.designConfig = {};
+    this.draft.designConfig.bannerUrl = dataUrl;
+    this.draft.designConfig.bannerStyle = 'custom-url';
+    if (!this.draft.mainImage) {
+      this.draft.mainImage = dataUrl;
+    }
+    const inp = document.getElementById('gdn-design-banner-url');
+    if (inp) inp.value = dataUrl;
+    this.saveDraftToStorage(true, true);
+    if (window.ProjectsView) window.ProjectsView.render();
+  },
+
+  clearDesignBanner() {
+    if (!this.draft.designConfig) return;
+    this.draft.designConfig.bannerUrl = '';
+    const inp = document.getElementById('gdn-design-banner-url');
+    if (inp) inp.value = '';
+    this.saveDraftToStorage(true, true);
+    if (window.ProjectsView) window.ProjectsView.render();
   },
 
   selectDesignTheme(themeId) {
@@ -2070,7 +2145,9 @@ collectCurrentStepInputs() {
     if (!this.draft.videoConfig.title) {
       this.draft.videoConfig.title = file.name.replace(/\.[^/.]+$/, '');
     }
-    this.saveDraftToStorage(true);
+    const inpUrl = document.getElementById('gdn-video-url');
+    if (inpUrl) inpUrl.value = finalUrl;
+    this.saveDraftToStorage(true, true);
     if (window.ProjectsView) window.ProjectsView.render();
   },
 
@@ -2086,7 +2163,7 @@ collectCurrentStepInputs() {
       isPublic: true,
       verified: false
     };
-    this.saveDraftToStorage(true);
+    this.saveDraftToStorage(true, true);
     if (window.ProjectsView) window.ProjectsView.render();
   },
 
@@ -2098,10 +2175,12 @@ collectCurrentStepInputs() {
       return;
     }
     this.collectCurrentStepInputs();
-    const dataUrl = await this.compressImageFile(file, 800, 0.74);
+    const dataUrl = await this.compressImageFile(file, 800, 0.72);
     if (!this.draft.videoConfig) this.draft.videoConfig = {};
     this.draft.videoConfig.thumbnailUrl = dataUrl;
-    this.saveDraftToStorage(true);
+    const inpThumb = document.getElementById('gdn-video-thumb');
+    if (inpThumb) inpThumb.value = dataUrl;
+    this.saveDraftToStorage(true, true);
     if (window.ProjectsView) window.ProjectsView.render();
   },
 
@@ -3278,11 +3357,12 @@ collectCurrentStepInputs() {
   async handleWizardSlideMediaUpload(file) {
     if (!file) return;
     try {
-      const dataUrl = await this.compressImageFile(file, 1280, 0.74);
+      this.collectCurrentStepInputs();
+      const dataUrl = await this.compressImageFile(file, 960, 0.72);
       this.updateActiveSlideField('media', dataUrl);
       const input = document.getElementById('gdn-slide-media');
       if (input) input.value = dataUrl;
-      this.saveDraftToStorage(true);
+      this.saveDraftToStorage(true, true);
     } catch (err) {
       console.warn('Error reading slide media:', err);
     }
@@ -3319,7 +3399,7 @@ collectCurrentStepInputs() {
             themeId: s.themeId || 'cosmos'
           }));
           this.activeSlideIndex = 0;
-          this.saveDraftToStorage(true);
+          this.saveDraftToStorage(true, true);
           alert(`✅ ¡Presentación JSON importada! Se cargaron ${this.draft.slides.length} diapositivas.`);
           if (window.ProjectsView) window.ProjectsView.render();
           return;
@@ -3349,7 +3429,7 @@ collectCurrentStepInputs() {
               themeId: 'cosmos'
             }));
             this.activeSlideIndex = 0;
-            this.saveDraftToStorage(true);
+            this.saveDraftToStorage(true, true);
             alert(`✅ ¡Documento PDF procesado! Se generaron ${extracted.length} diapositivas de alta definición en pantalla completa.`);
             if (window.ProjectsView) window.ProjectsView.render();
             return;
@@ -3380,7 +3460,7 @@ collectCurrentStepInputs() {
               themeId: 'cosmos'
             }));
             this.activeSlideIndex = 0;
-            this.saveDraftToStorage(true);
+            this.saveDraftToStorage(true, true);
             alert(`✅ ¡PowerPoint procesado con éxito! Se importaron ${extracted.length} diapositivas.`);
             if (window.ProjectsView) window.ProjectsView.render();
             return;
@@ -3393,7 +3473,7 @@ collectCurrentStepInputs() {
 
     // 4. Imagen directa (.png, .jpg, .webp, etc.)
     if (file.type && file.type.startsWith('image/')) {
-      const dataUrl = await this.compressImageFile(file, 1280, 0.74);
+      const dataUrl = await this.compressImageFile(file, 960, 0.72);
       if (!Array.isArray(this.draft.slides)) this.draft.slides = [];
       this.draft.slides.push({
         id: 'slide_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
@@ -3408,7 +3488,7 @@ collectCurrentStepInputs() {
         themeId: 'cosmos'
       });
       this.activeSlideIndex = this.draft.slides.length - 1;
-      this.saveDraftToStorage(true);
+      this.saveDraftToStorage(true, true);
       alert(`✅ Imagen agregada como nueva diapositiva en pantalla completa.`);
       if (window.ProjectsView) window.ProjectsView.render();
       return;
@@ -3961,7 +4041,7 @@ collectCurrentStepInputs() {
   setResourcePresetCover(idx, coverVal) {
     if (this.draft?.resources?.[idx]) {
       this.draft.resources[idx].thumbnailUrl = coverVal || '';
-      this.saveDraftToStorage(true);
+      this.saveDraftToStorage(true, true);
       if (window.ProjectsView) window.ProjectsView.render();
     }
   },
@@ -3974,9 +4054,9 @@ collectCurrentStepInputs() {
       return;
     }
     this.collectCurrentStepInputs();
-    const dataUrl = await this.compressImageFile(file, 720, 0.74);
+    const dataUrl = await this.compressImageFile(file, 720, 0.72);
     this.draft.resources[idx].thumbnailUrl = dataUrl;
-    this.saveDraftToStorage(true);
+    this.saveDraftToStorage(true, true);
     if (window.ProjectsView) window.ProjectsView.render();
   },
 
@@ -3987,7 +4067,7 @@ collectCurrentStepInputs() {
     const temp = arr[idx];
     arr[idx] = arr[target];
     arr[target] = temp;
-    this.saveDraftToStorage(true);
+    this.saveDraftToStorage(true, true);
     if (window.ProjectsView) window.ProjectsView.render();
   },
 
@@ -4006,9 +4086,22 @@ collectCurrentStepInputs() {
       current.format = ext;
       current.sizeBytes = f.size;
       current.sizeLabel = this.formatBytes(f.size);
-      current.url = URL.createObjectURL(f);
+
+      if (f.type && f.type.startsWith('image/')) {
+        current.url = await this.compressImageFile(f, 960, 0.72);
+      } else if (f.size <= 500 * 1024) {
+        current.url = await new Promise((resolve) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result || '');
+          reader.onerror = () => resolve('');
+          reader.readAsDataURL(f);
+        });
+      } else {
+        current.url = URL.createObjectURL(f);
+      }
+
       current.uploadedAt = new Date().toISOString();
-      this.saveDraftToStorage(true);
+      this.saveDraftToStorage(true, true);
       if (window.ProjectsView) window.ProjectsView.render();
     };
     inp.click();
@@ -4019,7 +4112,7 @@ collectCurrentStepInputs() {
     if (!current) return;
     if (!confirm(`⚠️ ¿Estás seguro de eliminar el recurso "${current.name}"? Esta acción no se puede deshacer.`)) return;
     this.draft.resources.splice(idx, 1);
-    this.saveDraftToStorage(true);
+    this.saveDraftToStorage(true, true);
     if (window.ProjectsView) window.ProjectsView.render();
   },
 
@@ -4051,18 +4144,34 @@ collectCurrentStepInputs() {
 
         <div class="gdn-field-grid">
           <div class="gdn-field">
-            <label class="gdn-label" for="gdn-main-image">Imagen principal o portada (URL o archivo)</label>
-            <input type="text" id="gdn-main-image" class="gdn-input" value="${this.escapeHtml(d.mainImage)}" placeholder="https://images.unsplash.com/..." />
-            <div style="margin-top:0.45rem;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.25rem;">
+              <label class="gdn-label" for="gdn-main-image" style="margin:0;">Imagen principal o portada (URL o archivo)</label>
+              ${d.mainImage ? `
+                <button type="button" onclick="window.ProjectWizard.clearCoverImage('main')" style="background:none; border:none; color:#ef4444; font-size:0.75rem; font-weight:700; cursor:pointer;">
+                  🗑️ Quitar imagen
+                </button>
+              ` : ''}
+            </div>
+            <input type="text" id="gdn-main-image" class="gdn-input" value="${this.escapeHtml(d.mainImage)}" placeholder="https://images.unsplash.com/... o sube una imagen" oninput="window.ProjectWizard.triggerFieldAutoSave();" />
+            <div style="margin-top:0.45rem; display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap;">
               <input type="file" accept="image/png,image/jpeg,image/webp,image/svg+xml" onchange="window.ProjectWizard.handleCoverUpload(this.files, 'main')" style="font-size:0.8rem;" />
+              ${d.mainImage && d.mainImage.startsWith('data:image/') ? '<span style="font-size:0.74rem; color:#10b981; font-weight:700;">✔ Imagen local cargada</span>' : ''}
             </div>
           </div>
 
           <div class="gdn-field">
-            <label class="gdn-label" for="gdn-thumb-image">Imagen de miniatura para tarjetas (opcional)</label>
-            <input type="text" id="gdn-thumb-image" class="gdn-input" value="${this.escapeHtml(d.thumbnailImage)}" placeholder="Si se deja vacío, usará la portada principal" />
-            <div style="margin-top:0.45rem;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.25rem;">
+              <label class="gdn-label" for="gdn-thumb-image" style="margin:0;">Imagen de miniatura para tarjetas (opcional)</label>
+              ${d.thumbnailImage ? `
+                <button type="button" onclick="window.ProjectWizard.clearCoverImage('thumb')" style="background:none; border:none; color:#ef4444; font-size:0.75rem; font-weight:700; cursor:pointer;">
+                  🗑️ Quitar imagen
+                </button>
+              ` : ''}
+            </div>
+            <input type="text" id="gdn-thumb-image" class="gdn-input" value="${this.escapeHtml(d.thumbnailImage)}" placeholder="Si se deja vacío, usará la portada principal" oninput="window.ProjectWizard.triggerFieldAutoSave();" />
+            <div style="margin-top:0.45rem; display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap;">
               <input type="file" accept="image/png,image/jpeg,image/webp" onchange="window.ProjectWizard.handleCoverUpload(this.files, 'thumb')" style="font-size:0.8rem;" />
+              ${d.thumbnailImage && d.thumbnailImage.startsWith('data:image/') ? '<span style="font-size:0.74rem; color:#10b981; font-weight:700;">✔ Imagen local cargada</span>' : ''}
             </div>
           </div>
         </div>
@@ -4142,6 +4251,20 @@ collectCurrentStepInputs() {
     `;
   },
 
+  clearCoverImage(target) {
+    if (target === 'main') {
+      this.draft.mainImage = '';
+      const inp = document.getElementById('gdn-main-image');
+      if (inp) inp.value = '';
+    } else {
+      this.draft.thumbnailImage = '';
+      const inp = document.getElementById('gdn-thumb-image');
+      if (inp) inp.value = '';
+    }
+    this.saveDraftToStorage(true, true);
+    if (window.ProjectsView) window.ProjectsView.render();
+  },
+
   async handleCoverUpload(fileList, target) {
     if (!fileList || !fileList[0]) return;
     const file = fileList[0];
@@ -4150,10 +4273,17 @@ collectCurrentStepInputs() {
       return;
     }
     this.collectCurrentStepInputs();
-    const dataUrl = await this.compressImageFile(file, 1280, 0.74);
-    if (target === 'main') this.draft.mainImage = dataUrl;
-    else this.draft.thumbnailImage = dataUrl;
-    this.saveDraftToStorage(true);
+    const dataUrl = await this.compressImageFile(file, 960, 0.72);
+    if (target === 'main') {
+      this.draft.mainImage = dataUrl;
+      const inp = document.getElementById('gdn-main-image');
+      if (inp) inp.value = dataUrl;
+    } else {
+      this.draft.thumbnailImage = dataUrl;
+      const inp = document.getElementById('gdn-thumb-image');
+      if (inp) inp.value = dataUrl;
+    }
+    this.saveDraftToStorage(true, true);
     if (window.ProjectsView) window.ProjectsView.render();
   },
 
@@ -4163,7 +4293,7 @@ collectCurrentStepInputs() {
     for (let i = 0; i < fileList.length; i++) {
       const f = fileList[i];
       if (!f.type.startsWith('image/')) continue;
-      const dataUrl = await this.compressImageFile(f, 1280, 0.74);
+      const dataUrl = await this.compressImageFile(f, 960, 0.72);
       this.draft.visualAssets.push({
         id: 'vis_' + Date.now() + '_' + i,
         title: f.name.replace(/\.[^/.]+$/, '').replace(/[_-]+/g, ' '),
@@ -4173,7 +4303,7 @@ collectCurrentStepInputs() {
         visibility: 'public'
       });
     }
-    this.saveDraftToStorage(true);
+    this.saveDraftToStorage(true, true);
     if (window.ProjectsView) window.ProjectsView.render();
   },
 
@@ -4200,7 +4330,9 @@ collectCurrentStepInputs() {
     const item = this.draft.visualAssets[idx];
     if (!item || !item.url) return;
     this.draft.mainImage = item.url;
-    this.saveDraftToStorage(true);
+    const inp = document.getElementById('gdn-main-image');
+    if (inp) inp.value = item.url;
+    this.saveDraftToStorage(true, true);
     if (window.ProjectsView) window.ProjectsView.render();
   },
 
@@ -4464,7 +4596,7 @@ collectCurrentStepInputs() {
   setExternalLinkPresetCover(idx, coverVal) {
     if (this.draft?.externalLinks?.[idx]) {
       this.draft.externalLinks[idx].thumbnailUrl = coverVal || '';
-      this.saveDraftToStorage(true);
+      this.saveDraftToStorage(true, true);
       if (window.ProjectsView) window.ProjectsView.render();
     }
   },
@@ -4477,9 +4609,9 @@ collectCurrentStepInputs() {
       return;
     }
     this.collectCurrentStepInputs();
-    const dataUrl = await this.compressImageFile(file, 720, 0.74);
+    const dataUrl = await this.compressImageFile(file, 720, 0.72);
     this.draft.externalLinks[idx].thumbnailUrl = dataUrl;
-    this.saveDraftToStorage(true);
+    this.saveDraftToStorage(true, true);
     if (window.ProjectsView) window.ProjectsView.render();
   },
 

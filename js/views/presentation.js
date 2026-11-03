@@ -728,7 +728,7 @@ window.PresentationView = {
             <div>
               <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem;">
                 <label style="font-size: 0.85rem; font-weight: 800; margin: 0; color: var(--text-primary);">
-                  🖼️ Link Portada / Banner (En Proyectos)
+                  🖼️ Portada / Banner (En Proyectos)
                 </label>
               </div>
               <div style="display: flex; gap: 0.6rem; align-items: center;">
@@ -736,10 +736,14 @@ window.PresentationView = {
                   type="text" 
                   id="edit-pres-banner" 
                   value="${this.escapeHtml(p.banner || '')}" 
-                  placeholder="https://... enlace de imagen de portada" 
+                  placeholder="https://... o sube una imagen" 
                   style="flex: 1; padding: 0.75rem 1rem; border-radius: 10px; background: rgba(0,0,0,0.3); border: 1.5px solid var(--border-color); color: var(--text-primary); font-size: 0.95rem; outline: none;"
                   oninput="window.PresentationView.setBanner(this.value)"
                 />
+                <input type="file" id="edit-pres-banner-file" accept="image/*" style="display:none;" onchange="window.PresentationView.handleBannerUpload(this.files)" />
+                <button type="button" class="btn btn-outline" style="padding: 0.65rem 0.9rem; font-size: 0.82rem; font-weight: 800; white-space: nowrap;" onclick="document.getElementById('edit-pres-banner-file').click()">
+                  📷 Subir
+                </button>
                 <!-- Miniatura de Vista Previa -->
                 <div 
                   id="edit-pres-banner-preview-box" 
@@ -1442,6 +1446,61 @@ window.PresentationView = {
       const catLabel = document.getElementById('edit-pres-cat-label');
       if (catLabel) catLabel.textContent = `${cat.icon || ''} ${cat.name}`;
     }
+  },
+
+  async handleBannerUpload(fileList) {
+    if (!fileList || !fileList[0]) return;
+    const file = fileList[0];
+    if (!file.type || !file.type.startsWith('image/')) {
+      alert('⚠️ Por favor selecciona un archivo de imagen válido.');
+      return;
+    }
+    let dataUrl = '';
+    if (window.ProjectWizard && typeof window.ProjectWizard.compressImageFile === 'function') {
+      dataUrl = await window.ProjectWizard.compressImageFile(file, 960, 0.72);
+    } else {
+      dataUrl = await new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result || '');
+        reader.onerror = () => resolve('');
+        reader.readAsDataURL(file);
+      });
+    }
+    const inp = document.getElementById('edit-pres-banner');
+    if (inp) inp.value = dataUrl;
+    this.setBanner(dataUrl);
+  },
+
+  async handleSlideMediaUpload(fileList) {
+    if (!fileList || !fileList[0] || !this.currentProject.slides[this.currentSlideIndex]) return;
+    const file = fileList[0];
+    if (!file.type || !file.type.startsWith('image/')) {
+      alert('⚠️ Por favor selecciona un archivo de imagen válido.');
+      return;
+    }
+    let dataUrl = '';
+    if (window.ProjectWizard && typeof window.ProjectWizard.compressImageFile === 'function') {
+      dataUrl = await window.ProjectWizard.compressImageFile(file, 960, 0.72);
+    } else {
+      dataUrl = await new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result || '');
+        reader.onerror = () => resolve('');
+        reader.readAsDataURL(file);
+      });
+    }
+    this.updateCurrentSlideField('media', dataUrl);
+    const inp = document.getElementById('input-slide-media');
+    if (inp) inp.value = dataUrl;
+    const p = this.currentProject;
+    if (window.appState && window.appState.challenges) {
+      const idx = window.appState.challenges.findIndex(c => c.id === p.id);
+      if (idx >= 0) {
+        window.appState.challenges[idx] = p;
+        if (typeof saveGlobalState === 'function') saveGlobalState(window.appState);
+      }
+    }
+    this.renderEditor(document.getElementById('view-presentation'));
   },
 
   setBanner(url) {
@@ -2402,8 +2461,12 @@ Espacio para evaluar comprensión y debatir ideas principales con el grupo.
 
     if (!isVideoLayout) {
       return '<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">' +
-        '<div><label style="display: block; font-size: 0.85rem; font-weight: 800; margin-bottom: 0.4rem;">URL de Imagen de Apoyo</label>' +
-        '<input type="text" value="' + e(currentSlide.media) + '" placeholder="https://..." style="' + inputStyle + '" oninput="window.PresentationView.updateCurrentSlideField(\'media\', this.value)" /></div>' +
+        '<div><label style="display: block; font-size: 0.85rem; font-weight: 800; margin-bottom: 0.4rem;">Imagen de Apoyo (URL o Archivo)</label>' +
+        '<div style="display: flex; gap: 0.5rem; align-items: center;">' +
+        '<input type="text" id="input-slide-media" value="' + e(currentSlide.media) + '" placeholder="https://... o sube una imagen" style="flex: 1; ' + inputStyle + '" oninput="window.PresentationView.updateCurrentSlideField(\'media\', this.value)" />' +
+        '<input type="file" id="input-slide-media-file" accept="image/*" style="display: none;" onchange="window.PresentationView.handleSlideMediaUpload(this.files)" />' +
+        '<button type="button" class="btn btn-outline" style="padding: 0.65rem 0.85rem; font-size: 0.8rem; font-weight: 800; white-space: nowrap;" onclick="document.getElementById(\'input-slide-media-file\').click()">📷 Subir</button>' +
+        '</div></div>' +
         '<div>' + notes + '</div></div>';
     }
 

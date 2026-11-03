@@ -438,9 +438,355 @@ window.fixMojibake = fixMojibake;
 window.fixOptionShape = fixOptionShape;
 window.deepCleanMojibake = deepCleanMojibake;
 
+// ============================================================================
+// 🛡️ MENTIX IMAGE VAULT (IndexedDB + Memoria)
+// Garantiza que ninguna imagen cargada (portada, diapositivas, recursos, videos)
+// se borre jamás por límites de tamaño o cuota de localStorage.
+// ============================================================================
+(function() {
+  const DB_NAME = 'mentix_image_vault_db';
+  const STORE_NAME = 'images';
+  let dbPromise = null;
+  const memoryCache = new Map();
+
+  function getDB() {
+    if (dbPromise) return dbPromise;
+    if (typeof indexedDB === 'undefined') return Promise.resolve(null);
+    dbPromise = new Promise((resolve) => {
+      try {
+        const req = indexedDB.open(DB_NAME, 1);
+        req.onupgradeneeded = (e) => {
+          const db = e.target.result;
+          if (!db.objectStoreNames.contains(STORE_NAME)) {
+            db.createObjectStore(STORE_NAME);
+          }
+        };
+        req.onsuccess = (e) => resolve(e.target.result);
+        req.onerror = () => resolve(null);
+      } catch (err) {
+        resolve(null);
+      }
+    });
+    return dbPromise;
+  }
+
+  window.MentixImageVault = {
+    set(key, dataUrl) {
+      if (!key || typeof dataUrl !== 'string' || !dataUrl.startsWith('data:image/')) return;
+      memoryCache.set(key, dataUrl);
+      getDB().then((db) => {
+        if (!db) return;
+        try {
+          const tx = db.transaction(STORE_NAME, 'readwrite');
+          tx.objectStore(STORE_NAME).put(dataUrl, key);
+        } catch (e) {}
+      });
+    },
+
+    get(key) {
+      if (!key) return null;
+      if (memoryCache.has(key)) return memoryCache.get(key);
+      return null;
+    },
+
+    async getAsync(key) {
+      if (!key) return null;
+      if (memoryCache.has(key)) return memoryCache.get(key);
+      const db = await getDB();
+      if (!db) return null;
+      return new Promise((resolve) => {
+        try {
+          const tx = db.transaction(STORE_NAME, 'readonly');
+          const req = tx.objectStore(STORE_NAME).get(key);
+          req.onsuccess = () => {
+            const val = req.result || null;
+            if (val) memoryCache.set(key, val);
+            resolve(val);
+          };
+          req.onerror = () => resolve(null);
+        } catch (e) {
+          resolve(null);
+        }
+      });
+    },
+
+    // Respalda todas las imágenes detectadas dentro de un proyecto
+    backupProjectImages(proj) {
+      if (!proj || typeof proj !== 'object') return;
+      const id = proj.id;
+      if (!id) return;
+
+      const saveIfData = (prop, val) => {
+        if (typeof val === 'string' && val.startsWith('data:image/')) {
+          this.set(`${id}__${prop}`, val);
+        }
+      };
+
+      saveIfData('mainImage', proj.mainImage);
+      saveIfData('thumbnailImage', proj.thumbnailImage);
+      saveIfData('banner', proj.banner);
+      saveIfData('image', proj.image);
+      saveIfData('entityLogo', proj.entityLogo);
+      if (proj.designConfig) saveIfData('designBanner', proj.designConfig.bannerUrl);
+      if (proj.videoConfig) saveIfData('videoThumb', proj.videoConfig.thumbnailUrl);
+
+      if (Array.isArray(proj.slides)) {
+        proj.slides.forEach((s, idx) => {
+          if (!s) return;
+          saveIfData(`slide_${idx}_media`, s.media);
+          saveIfData(`slide_${idx}_imageUrl`, s.imageUrl);
+          saveIfData(`slide_${idx}_bgImage`, s.bgImage);
+        });
+      }
+      if (Array.isArray(proj.resources)) {
+        proj.resources.forEach((r, idx) => {
+          if (!r) return;
+          saveIfData(`res_${idx}_thumb`, r.thumbnailUrl);
+          saveIfData(`res_${idx}_url`, r.url);
+        });
+      }
+      if (Array.isArray(proj.externalLinks)) {
+        proj.externalLinks.forEach((l, idx) => {
+          if (!l) return;
+          saveIfData(`link_${idx}_thumb`, l.thumbnailUrl);
+        });
+      }
+      if (Array.isArray(proj.visualAssets)) {
+        proj.visualAssets.forEach((v, idx) => {
+          if (!v) return;
+          saveIfData(`vis_${idx}_url`, v.url);
+        });
+      }
+      if (Array.isArray(proj.questions)) {
+        proj.questions.forEach((q, idx) => {
+          if (!q) return;
+          saveIfData(`q_${idx}_media`, q.media);
+        });
+      }
+    },
+
+    // Restaura imágenes guardadas en la bóveda si faltan o están vacías
+    restoreProjectImages(proj) {
+      if (!proj || typeof proj !== 'object') return proj;
+      const id = proj.id;
+      if (!id) return proj;
+
+      const pickRestored = (prop, currentVal) => {
+        if (typeof currentVal === 'string' && currentVal.startsWith('data:image/')) return currentVal;
+        const vaulted = this.get(`${id}__${prop}`);
+        return (vaulted && vaulted.startsWith('data:image/')) ? vaulted : (currentVal || '');
+      };
+
+      proj.mainImage = pickRestored('mainImage', proj.mainImage);
+      proj.thumbnailImage = pickRestored('thumbnailImage', proj.thumbnailImage);
+      proj.banner = pickRestored('banner', proj.banner) || proj.mainImage;
+      proj.image = pickRestored('image', proj.image) || proj.mainImage;
+      if (proj.entityLogo !== undefined) {
+        proj.entityLogo = pickRestored('entityLogo', proj.entityLogo);
+      }
+      if (proj.designConfig) {
+        proj.designConfig.bannerUrl = pickRestored('designBanner', proj.designConfig.bannerUrl);
+      }
+      if (proj.videoConfig) {
+        proj.videoConfig.thumbnailUrl = pickRestored('videoThumb', proj.videoConfig.thumbnailUrl);
+      }
+      if (Array.isArray(proj.slides)) {
+        proj.slides.forEach((s, idx) => {
+          if (!s) return;
+          s.media = pickRestored(`slide_${idx}_media`, s.media);
+          s.imageUrl = pickRestored(`slide_${idx}_imageUrl`, s.imageUrl);
+          s.bgImage = pickRestored(`slide_${idx}_bgImage`, s.bgImage);
+        });
+      }
+      if (Array.isArray(proj.resources)) {
+        proj.resources.forEach((r, idx) => {
+          if (!r) return;
+          r.thumbnailUrl = pickRestored(`res_${idx}_thumb`, r.thumbnailUrl);
+          r.url = pickRestored(`res_${idx}_url`, r.url);
+        });
+      }
+      if (Array.isArray(proj.externalLinks)) {
+        proj.externalLinks.forEach((l, idx) => {
+          if (!l) return;
+          l.thumbnailUrl = pickRestored(`link_${idx}_thumb`, l.thumbnailUrl);
+        });
+      }
+      if (Array.isArray(proj.visualAssets)) {
+        proj.visualAssets.forEach((v, idx) => {
+          if (!v) return;
+          v.url = pickRestored(`vis_${idx}_url`, v.url);
+        });
+      }
+      if (Array.isArray(proj.questions)) {
+        proj.questions.forEach((q, idx) => {
+          if (!q) return;
+          q.media = pickRestored(`q_${idx}_media`, q.media);
+        });
+      }
+      return proj;
+    }
+  };
+})();
+
+// Helper inteligente universal: fusiona dos versiones de un proyecto preservando siempre
+// todas las imágenes (portadas, diapositivas, recursos, videos) sin sobreescribir con valores vacíos
+window.mergeProjectPreservingImages = function(existing, incoming) {
+  if (!existing && !incoming) return null;
+  if (!existing) return incoming;
+  if (!incoming) return existing;
+
+  const pickImage = (a, b) => {
+    const isGood = s => typeof s === 'string' && s.trim().length > 0;
+    if (isGood(b) && b.startsWith('data:image/')) return b;
+    if (isGood(a) && a.startsWith('data:image/')) return a;
+    if (isGood(b)) return b;
+    if (isGood(a)) return a;
+    return '';
+  };
+
+  const merged = { ...existing, ...incoming };
+
+  // 1. Portadas y Banners principales
+  merged.mainImage = pickImage(existing.mainImage, incoming.mainImage);
+  merged.thumbnailImage = pickImage(existing.thumbnailImage, incoming.thumbnailImage);
+  merged.banner = pickImage(existing.banner, incoming.banner) || merged.mainImage;
+  merged.image = pickImage(existing.image, incoming.image) || merged.mainImage;
+  if (existing.entityLogo || incoming.entityLogo) {
+    merged.entityLogo = pickImage(existing.entityLogo, incoming.entityLogo);
+  }
+
+  // 2. Configuración de Diseño y Banner
+  if (existing.designConfig || incoming.designConfig) {
+    merged.designConfig = {
+      ...(existing.designConfig || {}),
+      ...(incoming.designConfig || {})
+    };
+    merged.designConfig.bannerUrl = pickImage(
+      existing.designConfig?.bannerUrl,
+      incoming.designConfig?.bannerUrl
+    );
+  }
+
+  // 3. Configuración de Video
+  if (existing.videoConfig || incoming.videoConfig) {
+    merged.videoConfig = {
+      ...(existing.videoConfig || {}),
+      ...(incoming.videoConfig || {})
+    };
+    merged.videoConfig.thumbnailUrl = pickImage(
+      existing.videoConfig?.thumbnailUrl,
+      incoming.videoConfig?.thumbnailUrl
+    );
+    merged.videoConfig.url = incoming.videoConfig?.url || existing.videoConfig?.url || '';
+  }
+
+  // 4. Diapositivas: fusionar respetando láminas que tengan imágenes cargadas
+  const exSlides = Array.isArray(existing.slides) ? existing.slides : [];
+  const inSlides = Array.isArray(incoming.slides) ? incoming.slides : [];
+  if (exSlides.length > 0 || inSlides.length > 0) {
+    const targetLen = Math.max(exSlides.length, inSlides.length);
+    const resultSlides = [];
+    for (let i = 0; i < targetLen; i++) {
+      const sA = exSlides[i];
+      const sB = inSlides[i];
+      if (sA && sB) {
+        resultSlides.push({
+          ...sA,
+          ...sB,
+          media: pickImage(sA.media, sB.media),
+          imageUrl: pickImage(sA.imageUrl, sB.imageUrl),
+          bgImage: pickImage(sA.bgImage, sB.bgImage)
+        });
+      } else {
+        resultSlides.push(sB || sA);
+      }
+    }
+    merged.slides = resultSlides;
+  }
+
+  // 5. Recursos: fusionar miniaturas y URLs
+  const exRes = Array.isArray(existing.resources) ? existing.resources : [];
+  const inRes = Array.isArray(incoming.resources) ? incoming.resources : [];
+  if (exRes.length > 0 || inRes.length > 0) {
+    const targetLen = Math.max(exRes.length, inRes.length);
+    const resultRes = [];
+    for (let i = 0; i < targetLen; i++) {
+      const rA = exRes[i];
+      const rB = inRes[i];
+      if (rA && rB) {
+        resultRes.push({
+          ...rA,
+          ...rB,
+          thumbnailUrl: pickImage(rA.thumbnailUrl, rB.thumbnailUrl),
+          url: (rB.url && rB.url.startsWith('data:')) ? rB.url : (rA.url && rA.url.startsWith('data:') ? rA.url : (rB.url || rA.url || ''))
+        });
+      } else {
+        resultRes.push(rB || rA);
+      }
+    }
+    merged.resources = resultRes;
+  }
+
+  // 6. Enlaces Externos
+  const exLinks = Array.isArray(existing.externalLinks) ? existing.externalLinks : [];
+  const inLinks = Array.isArray(incoming.externalLinks) ? incoming.externalLinks : [];
+  if (exLinks.length > 0 || inLinks.length > 0) {
+    const targetLen = Math.max(exLinks.length, inLinks.length);
+    const resultLinks = [];
+    for (let i = 0; i < targetLen; i++) {
+      const lA = exLinks[i];
+      const lB = inLinks[i];
+      if (lA && lB) {
+        resultLinks.push({
+          ...lA,
+          ...lB,
+          thumbnailUrl: pickImage(lA.thumbnailUrl, lB.thumbnailUrl)
+        });
+      } else {
+        resultLinks.push(lB || lA);
+      }
+    }
+    merged.externalLinks = resultLinks;
+  }
+
+  // 7. Galería Visual
+  const exVis = Array.isArray(existing.visualAssets) ? existing.visualAssets : [];
+  const inVis = Array.isArray(incoming.visualAssets) ? incoming.visualAssets : [];
+  if (exVis.length > 0 || inVis.length > 0) {
+    const targetLen = Math.max(exVis.length, inVis.length);
+    const resultVis = [];
+    for (let i = 0; i < targetLen; i++) {
+      const vA = exVis[i];
+      const vB = inVis[i];
+      if (vA && vB) {
+        resultVis.push({
+          ...vA,
+          ...vB,
+          url: pickImage(vA.url, vB.url)
+        });
+      } else {
+        resultVis.push(vB || vA);
+      }
+    }
+    merged.visualAssets = resultVis;
+  }
+
+  if (window.MentixImageVault) {
+    window.MentixImageVault.backupProjectImages(merged);
+  }
+
+  return merged;
+};
+
 window.compactProjectForStorage = function(proj, stripLargeDataUrls = false) {
   if (!proj || typeof proj !== 'object') return proj;
   const clone = { ...proj };
+
+  // Siempre respaldar las imágenes en la bóveda inmutable antes de compactar
+  if (window.MentixImageVault) {
+    window.MentixImageVault.backupProjectImages(clone);
+  }
+
   if (clone.govdata && typeof clone.govdata === 'object') {
     const g = { ...clone.govdata };
     delete g.slides;
@@ -448,8 +794,11 @@ window.compactProjectForStorage = function(proj, stripLargeDataUrls = false) {
     delete g.visualAssets;
     clone.govdata = g;
   }
+
   if (stripLargeDataUrls) {
-    const maxLen = 65000;
+    // Si localStorage está al límite, mantener las imágenes de hasta 180KB en texto
+    // y para las mayores, MentixImageVault las conserva intactas en IndexedDB para restaurarlas al abrir
+    const maxLen = 180000;
     if (typeof clone.image === 'string' && clone.image.startsWith('data:') && clone.image.length > maxLen) delete clone.image;
     if (typeof clone.banner === 'string' && clone.banner.startsWith('data:') && clone.banner.length > maxLen) delete clone.banner;
     if (typeof clone.mainImage === 'string' && clone.mainImage.startsWith('data:') && clone.mainImage.length > maxLen) clone.mainImage = '';
@@ -579,16 +928,18 @@ function loadInitialState() {
                 if (exIdx >= 0) {
                   const prev = challenges[exIdx];
                   const keepApproved = prev.approvalStatus === 'approved' || up.approvalStatus === 'approved';
+                  const merged = (typeof window.mergeProjectPreservingImages === 'function')
+                    ? window.mergeProjectPreservingImages(prev, up)
+                    : { ...prev, ...up };
                   challenges[exIdx] = {
-                    ...prev,
-                    ...up,
-                    slides: pickLongerArr(up.slides, prev.slides, up.govdata?.slides, prev.govdata?.slides),
-                    resources: pickLongerArr(up.resources, prev.resources, up.govdata?.resources, prev.govdata?.resources),
-                    externalLinks: pickLongerArr(up.externalLinks, prev.externalLinks, up.govdata?.externalLinks, prev.govdata?.externalLinks),
-                    visualAssets: pickLongerArr(up.visualAssets, prev.visualAssets, up.govdata?.visualAssets, prev.govdata?.visualAssets),
-                    completedSteps: pickLongerArr(up.completedSteps, prev.completedSteps, up.govdata?.completedSteps, prev.govdata?.completedSteps),
-                    videoConfig: (up.videoConfig?.url ? up.videoConfig : (prev.videoConfig?.url ? prev.videoConfig : (up.videoConfig || prev.videoConfig || {}))),
-                    videoUrl: up.videoUrl || up.videoConfig?.url || prev.videoUrl || prev.videoConfig?.url || '',
+                    ...merged,
+                    slides: pickLongerArr(up.slides, prev.slides, up.govdata?.slides, prev.govdata?.slides, merged.slides),
+                    resources: pickLongerArr(up.resources, prev.resources, up.govdata?.resources, prev.govdata?.resources, merged.resources),
+                    externalLinks: pickLongerArr(up.externalLinks, prev.externalLinks, up.govdata?.externalLinks, prev.govdata?.externalLinks, merged.externalLinks),
+                    visualAssets: pickLongerArr(up.visualAssets, prev.visualAssets, up.govdata?.visualAssets, prev.govdata?.visualAssets, merged.visualAssets),
+                    completedSteps: pickLongerArr(up.completedSteps, prev.completedSteps, up.govdata?.completedSteps, prev.govdata?.completedSteps, merged.completedSteps),
+                    videoConfig: (up.videoConfig?.url ? up.videoConfig : (prev.videoConfig?.url ? prev.videoConfig : (merged.videoConfig || up.videoConfig || prev.videoConfig || {}))),
+                    videoUrl: up.videoUrl || up.videoConfig?.url || prev.videoUrl || prev.videoConfig?.url || merged.videoUrl || '',
                     approvalStatus: keepApproved ? 'approved' : (up.approvalStatus || prev.approvalStatus),
                     publicationStatus: keepApproved ? 'published' : (up.publicationStatus || prev.publicationStatus),
                     status: keepApproved ? 'completed' : (up.status || prev.status),
@@ -704,7 +1055,10 @@ function loadInitialState() {
   });
 
   // Compactar duplicados internos en govdata y persistir de forma 100% segura contra QuotaExceededError
-  challenges = challenges.map(c => window.compactProjectForStorage(c, false));
+  challenges = challenges.map(c => {
+    if (window.MentixImageVault) window.MentixImageVault.restoreProjectImages(c);
+    return window.compactProjectForStorage(c, false);
+  });
   try {
     localStorage.setItem('te_reto_challenges', JSON.stringify(challenges));
   } catch (qErr) {
@@ -872,7 +1226,10 @@ window.saveUserProject = function(project, user = null) {
   project.updatedAt = new Date().toISOString();
 
   const mergeResourcesSafe = (prev, next) => {
-    const merged = { ...(prev || {}), ...(next || {}) };
+    let merged = (typeof window.mergeProjectPreservingImages === 'function')
+      ? window.mergeProjectPreservingImages(prev, next)
+      : { ...(prev || {}), ...(next || {}) };
+
     if ((!Array.isArray(next.slides) || next.slides.length === 0) && Array.isArray(prev?.slides) && prev.slides.length > 0) {
       merged.slides = prev.slides;
     }

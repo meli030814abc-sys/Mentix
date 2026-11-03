@@ -347,16 +347,22 @@ window.CreatorView = {
             </div>
 
             <div>
-              <label style="display: block; font-weight: 700; margin-bottom: 0.5rem; font-size: 0.9rem;">Imagen de Portada (URL)</label>
-              <input 
-                type="text" 
-                id="challenge-banner" 
-                value="${c.banner || ''}" 
-                placeholder="https://images.unsplash..."
-                style="width: 100%; padding: 0.65rem; border-radius: var(--border-radius-md); background: var(--bg-card); border: 1px solid var(--border-color); color: var(--text-primary); font-size: 0.85rem;"
-                onchange="window.CreatorView.currentChallenge.banner = this.value"
-                oninput="window.CreatorView.currentChallenge.banner = this.value"
-              />
+              <label style="display: block; font-weight: 700; margin-bottom: 0.5rem; font-size: 0.9rem;">Imagen de Portada (URL o Subir)</label>
+              <div style="display: flex; gap: 0.4rem; align-items: center;">
+                <input 
+                  type="text" 
+                  id="challenge-banner" 
+                  value="${c.banner || ''}" 
+                  placeholder="https://... o sube una imagen"
+                  style="flex: 1; padding: 0.65rem; border-radius: var(--border-radius-md); background: var(--bg-card); border: 1px solid var(--border-color); color: var(--text-primary); font-size: 0.85rem;"
+                  onchange="window.CreatorView.currentChallenge.banner = this.value"
+                  oninput="window.CreatorView.currentChallenge.banner = this.value"
+                />
+                <input type="file" id="challenge-banner-file" accept="image/*" style="display:none;" onchange="window.CreatorView.handleChallengeBannerUpload(this.files)" />
+                <button type="button" class="btn btn-outline" style="padding: 0.55rem 0.75rem; font-size: 0.8rem; font-weight: 700; white-space: nowrap;" onclick="document.getElementById('challenge-banner-file').click()">
+                  📷 Subir
+                </button>
+              </div>
             </div>
           </div>
 
@@ -888,11 +894,18 @@ window.CreatorView = {
           ${q.mediaType !== 'none' ? `
             <input 
               type="text" 
+              id="q_media_${idx}"
               placeholder="Pega la URL de la ${q.mediaType}..."
               value="${this.escapeAttr(q.media || '')}"
               style="flex: 1; min-width: 200px; padding: 0.35rem 0.65rem; border-radius: 6px; background: var(--bg-card); border: 1px solid var(--border-color); color: var(--text-primary); font-size: 0.85rem;"
               onchange="window.CreatorView.updateQuestionParam(${idx}, 'media', this.value)"
             />
+            ${q.mediaType === 'image' ? `
+              <input type="file" id="q_media_file_${idx}" accept="image/*" style="display:none;" onchange="window.CreatorView.handleQuestionMediaUpload(${idx}, this.files)" />
+              <button type="button" class="btn btn-outline" style="padding: 0.3rem 0.65rem; font-size: 0.78rem;" onclick="document.getElementById('q_media_file_${idx}').click()">
+                📷 Subir
+              </button>
+            ` : ''}
           ` : ''}
         </div>
 
@@ -1355,6 +1368,53 @@ Sin embargo, los funcionarios consideran que existen elementos suficientes para 
       }
     }
     return true;
+  },
+
+  async handleChallengeBannerUpload(fileList) {
+    if (!fileList || !fileList[0]) return;
+    const file = fileList[0];
+    if (!file.type || !file.type.startsWith('image/')) {
+      alert('⚠️ Por favor selecciona un archivo de imagen válido.');
+      return;
+    }
+    let dataUrl = '';
+    if (window.ProjectWizard && typeof window.ProjectWizard.compressImageFile === 'function') {
+      dataUrl = await window.ProjectWizard.compressImageFile(file, 960, 0.72);
+    } else {
+      dataUrl = await new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result || '');
+        reader.onerror = () => resolve('');
+        reader.readAsDataURL(file);
+      });
+    }
+    this.currentChallenge.banner = dataUrl;
+    const bannerInp = document.getElementById('challenge-banner');
+    if (bannerInp) bannerInp.value = dataUrl;
+  },
+
+  async handleQuestionMediaUpload(qIdx, fileList) {
+    if (!fileList || !fileList[0] || !this.currentChallenge?.questions?.[qIdx]) return;
+    const file = fileList[0];
+    if (!file.type || !file.type.startsWith('image/')) {
+      alert('⚠️ Por favor selecciona un archivo de imagen válido.');
+      return;
+    }
+    let dataUrl = '';
+    if (window.ProjectWizard && typeof window.ProjectWizard.compressImageFile === 'function') {
+      dataUrl = await window.ProjectWizard.compressImageFile(file, 800, 0.72);
+    } else {
+      dataUrl = await new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result || '');
+        reader.onerror = () => resolve('');
+        reader.readAsDataURL(file);
+      });
+    }
+    this.currentChallenge.questions[qIdx].media = dataUrl;
+    this.currentChallenge.questions[qIdx].mediaType = 'image';
+    const inp = document.getElementById('q_media_' + qIdx);
+    if (inp) inp.value = dataUrl;
   },
 
   async handleEntityLogoUpload(file) {

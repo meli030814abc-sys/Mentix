@@ -1551,7 +1551,10 @@ class AppRouter {
               let appMap = {};
               try { appMap = JSON.parse(localStorage.getItem('mentix_approved_projects_map') || '{}') || {}; } catch(e) {}
               const isApprovedHere = !!(appMap[c.id]) || existing.approvalStatus === 'approved' || c.approvalStatus === 'approved';
-              const mergedItem = { ...existing, ...c };
+              const mergedItem = (typeof window.mergeProjectPreservingImages === 'function')
+                ? window.mergeProjectPreservingImages(existing, c)
+                : { ...existing, ...c };
+
               // Preservar siempre la versión que tenga más diapositivas, recursos, enlaces, imágenes y pasos completados para no perder avances nunca
               if (Array.isArray(existing.slides) && (!Array.isArray(c.slides) || existing.slides.length > c.slides.length)) {
                 mergedItem.slides = existing.slides;
