@@ -222,7 +222,7 @@
     "image": "assets/projects_ui/card_data_gov.png",
     "banner": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
     "createdAt": "2026-10-31T21:52:51.691Z",
-    "updatedAt": "2026-11-03T02:16:51.762Z",
+    "updatedAt": "2026-11-03T02:16:57.982Z",
     "govdata": {
       "id": "proj_pres_1791658288964",
       "title": "Personajes de Disney",
@@ -267,7 +267,7 @@
         "sourceType": "url",
         "url": "https://www.youtube.com/watch?v=9J5cfMx5CsE&utm_source=chatgpt.com",
         "fileName": "",
-        "title": "Video Explicativo: PETI Formato v1.0",
+        "title": "T",
         "description": "",
         "isPublic": true,
         "verified": true
@@ -330,7 +330,7 @@
         "collaborators": ""
       },
       "createdAt": "2026-10-31T21:52:51.691Z",
-      "updatedAt": "2026-11-03T02:16:52.689Z",
+      "updatedAt": "2026-11-03T02:16:58.893Z",
       "progress": 65,
       "calculatedProgress": 65
     },
@@ -377,7 +377,7 @@
       "sourceType": "url",
       "url": "https://www.youtube.com/watch?v=9J5cfMx5CsE&utm_source=chatgpt.com",
       "fileName": "",
-      "title": "Video Explicativo: PETI Formato v1.0",
+      "title": "T",
       "description": "",
       "isPublic": true,
       "verified": true
