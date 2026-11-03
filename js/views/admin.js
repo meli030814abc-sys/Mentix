@@ -4644,7 +4644,6 @@ window.AdminView = {
         if (!c) return;
         if (c.creatorName) c.creatorName = cleanStr(c.creatorName);
         if (c.author) c.author = cleanStr(c.author);
-        if (c.rating) c.rating = cleanStr(c.rating);
         if (appMap[c.id] || c.approvalStatus === 'approved') {
           c.approvalStatus = 'approved';
           c.publicationStatus = 'published';
