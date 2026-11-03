@@ -1199,15 +1199,15 @@
         "approvalStatus":  "approved",
         "authorizedAt":  "2026-11-03T01:38:52.450Z",
         "authorizedBy":  "Melisa",
-        "rejectionReason":  "",
-        "rejectedAt":  "",
         "publicationStatus":  "published",
         "status":  "completed",
         "stage":  "completed",
         "isPublic":  true,
         "accessMode":  "public",
         "tag":  "✔ Completado",
-        "tagClass":  "badge-completed"
+        "tagClass":  "badge-completed",
+        "rejectionReason":  "",
+        "rejectedAt":  ""
     },
     {
         "id":  "proj_1793573006343",
