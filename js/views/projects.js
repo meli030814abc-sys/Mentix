@@ -1966,6 +1966,46 @@ window.ProjectsView = {
     }
   },
 
+  setStudentCreatePresetCover(coverVal) {
+    if (!this.createDraft) this.createDraft = {};
+    const titleInput = document.getElementById('student-proj-title');
+    const authorInput = document.getElementById('student-proj-author');
+    const summaryInput = document.getElementById('student-proj-summary');
+    const descInput = document.getElementById('student-proj-desc');
+    if (titleInput) this.createDraft.title = titleInput.value;
+    if (authorInput) this.createDraft.author = authorInput.value;
+    if (summaryInput) this.createDraft.summary = summaryInput.value;
+    if (descInput) this.createDraft.description = descInput.value;
+    this.createDraft.coverUrl = coverVal || '';
+    try {
+      localStorage.setItem('te_reto_student_create_draft', JSON.stringify(this.createDraft));
+    } catch (e) {}
+    if (this.viewMode === 'create') {
+      this.render();
+    }
+  },
+
+  async handleStudentCreateCoverUpload(fileList) {
+    if (!fileList || !fileList[0]) return;
+    const file = fileList[0];
+    if (!file.type || !file.type.startsWith('image/')) {
+      alert('⚠️ Por favor selecciona un archivo de imagen válido.');
+      return;
+    }
+    let dataUrl = '';
+    if (window.ProjectWizard && typeof window.ProjectWizard.compressImageFile === 'function') {
+      dataUrl = await window.ProjectWizard.compressImageFile(file, 960, 0.75);
+    } else {
+      dataUrl = await new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result || '');
+        reader.onerror = () => resolve('');
+        reader.readAsDataURL(file);
+      });
+    }
+    this.setStudentCreatePresetCover(dataUrl);
+  },
+
   goToCreateProjectStep(step) {
     if (window.soundEngine && window.soundEngine.playClick) window.soundEngine.playClick();
 
@@ -1996,11 +2036,13 @@ window.ProjectsView = {
         return;
       }
 
+      const coverInput = document.getElementById('student-proj-cover');
       this.createDraft = {
         title: title,
         author: author,
         summary: summary,
         description: (descInput?.value || this.createDraft?.description || '').trim(),
+        coverUrl: (coverInput?.value || this.createDraft?.coverUrl || '').trim(),
         isPublic: this.createDraft?.isPublic !== false
       };
       try {
@@ -2013,6 +2055,7 @@ window.ProjectsView = {
       const authorInput = document.getElementById('student-proj-author') || document.getElementById('proj-create-author');
       const summaryInput = document.getElementById('student-proj-summary') || document.getElementById('proj-create-summary');
       const descInput = document.getElementById('student-proj-desc') || document.getElementById('proj-create-description');
+      const coverInput = document.getElementById('student-proj-cover');
 
       if (titleInput || authorInput) {
         this.createDraft = {
@@ -2020,6 +2063,7 @@ window.ProjectsView = {
           author: (authorInput?.value || this.createDraft?.author || '').trim(),
           summary: (summaryInput?.value || this.createDraft?.summary || '').trim(),
           description: (descInput?.value || this.createDraft?.description || '').trim(),
+          coverUrl: (coverInput?.value || this.createDraft?.coverUrl || '').trim(),
           isPublic: this.createDraft?.isPublic !== false
         };
         try {
@@ -2065,6 +2109,10 @@ window.ProjectsView = {
       .replace(/^-+|-+$/g, '') || ('proyecto-' + Date.now());
 
     const newId = 'proj_' + format + '_' + Date.now();
+    const chosenCover = (draft.coverUrl || '').trim();
+    const resolvedCover = chosenCover
+      ? this.getSmartResourceCover({ title: title, thumbnailUrl: chosenCover, type: format === 'document' ? 'doc' : format }, format === 'presentation' ? 'pres' : (format === 'video' ? 'video' : (format === 'url' ? 'link' : 'doc')), 0)
+      : '';
 
     const newProject = {
       id: newId,
@@ -2082,7 +2130,9 @@ window.ProjectsView = {
       difficulty: 'Medio',
       timePerQuestion: 25,
       plays: 0,
-      banner: '',
+      banner: resolvedCover,
+      mainImage: resolvedCover,
+      thumbnailImage: resolvedCover,
       shortDescription: finalSummary,
       description: description,
       fullDescription: description,
@@ -2155,6 +2205,7 @@ window.ProjectsView = {
           url: '',
           type: 'ppt',
           format: 'PPT',
+          thumbnailUrl: chosenCover,
           description: finalSummary
         }
       ];
@@ -2164,6 +2215,7 @@ window.ProjectsView = {
         url: '',
         title: title,
         description: finalSummary,
+        thumbnailUrl: chosenCover,
         chapters: []
       };
     } else if (format === 'document') {
@@ -2174,6 +2226,7 @@ window.ProjectsView = {
           url: '',
           type: 'doc',
           format: 'DOC',
+          thumbnailUrl: chosenCover,
           description: finalSummary
         }
       ];
@@ -2184,6 +2237,7 @@ window.ProjectsView = {
           title: title,
           url: '',
           category: 'Enlace Web',
+          thumbnailUrl: chosenCover,
           description: finalSummary
         }
       ];
@@ -2445,6 +2499,69 @@ window.ProjectsView = {
               placeholder="Detalla toda la información de tu proyecto educativo para estructurar las secciones de la Landing Page..." 
               style="width: 100%; font-size: 1.2rem; line-height: 1.6; padding: 1.15rem 1.4rem; border-radius: 14px; background: rgba(5, 10, 24, 0.95) !important; border: 2px solid rgba(244, 114, 182, 0.35) !important; color: #ffffff !important; outline: none; box-sizing: border-box; resize: vertical;"
             >${this.escapeHtml(d.description || '')}</textarea>
+          </div>
+
+          <!-- PANTALLA 4.5: Portada / Miniatura para la Landing Page y sus Recursos (Opcional con Banner Automático) -->
+          <div style="background: rgba(12, 20, 48, 0.75); border: 1.5px solid rgba(16, 185, 129, 0.55); border-radius: 20px; padding: 1.75rem 1.9rem; box-shadow: 0 8px 30px rgba(0,0,0,0.3);">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.6rem; flex-wrap: wrap; gap: 0.5rem;">
+              <label for="student-proj-cover" style="display: flex; align-items: center; gap: 0.6rem; font-size: 1.35rem !important; font-weight: 900 !important; color: #34d399 !important; text-shadow: 0 0 16px rgba(52, 211, 153, 0.75);">
+                <span style="font-size: 1.5rem;">🖼️</span> Portada del Proyecto y sus Recursos (Opcional)
+              </label>
+              <span style="font-size: 0.82rem; font-weight: 900; background: rgba(16,185,129,0.22); color: #6ee7b7; border: 1px solid rgba(16,185,129,0.6); padding: 0.3rem 0.85rem; border-radius: 9999px;">
+                ${d.coverUrl ? '✨ Portada Personalizada' : '🪄 Portada Automática Acorde al Recurso'}
+              </span>
+            </div>
+            <p style="font-size: 0.95rem; color: #cbd5e1; margin: 0 0 1rem;">
+              Sube tu propia imagen de portada, pega una URL o elige un banner temático. <strong>Si lo dejas vacío, Mentix asignará automáticamente una portada acorde</strong> (Libro, Documento PDF, Guía, Encuesta, Presentación o Video).
+            </p>
+
+            <div style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; margin-bottom: 1rem;">
+              <img
+                src="${this.escapeHtml(this.getSmartResourceCover({ title: d.title || 'Mi Proyecto', thumbnailUrl: d.coverUrl || '' }, 'doc', 0))}"
+                alt="Vista previa de portada"
+                style="width: 150px; height: 86px; object-fit: cover; border-radius: 12px; border: 2px solid #34d399; flex-shrink: 0; box-shadow: 0 6px 18px rgba(0,0,0,0.45);"
+              />
+              <div style="flex: 1; min-width: 240px; display: flex; flex-direction: column; gap: 0.6rem;">
+                <div style="display: flex; gap: 0.55rem; flex-wrap: wrap;">
+                  <input
+                    type="text"
+                    id="student-proj-cover"
+                    value="${this.escapeHtml(d.coverUrl || '')}"
+                    placeholder="Pega URL de portada o déjalo vacío para miniatura automática..."
+                    oninput="if(!window.ProjectsView.createDraft) window.ProjectsView.createDraft={}; window.ProjectsView.createDraft.coverUrl=this.value;"
+                    style="flex: 1; min-width: 200px; font-size: 0.98rem; padding: 0.75rem 1rem; border-radius: 12px; background: rgba(5, 10, 24, 0.95); border: 1.5px solid rgba(52, 211, 153, 0.4); color: #ffffff; outline: none;"
+                  />
+                  <input type="file" id="student-proj-cover-file" accept="image/*" style="display:none;" onchange="window.ProjectsView.handleStudentCreateCoverUpload(this.files)" />
+                  <button type="button" onclick="document.getElementById('student-proj-cover-file').click()" style="background: linear-gradient(135deg, #10b981, #059669); color: #ffffff; border: none; border-radius: 12px; padding: 0.75rem 1.15rem; font-weight: 800; font-size: 0.9rem; cursor: pointer; white-space: nowrap;">
+                    📷 Subir Portada
+                  </button>
+                  ${d.coverUrl ? `
+                    <button type="button" onclick="window.ProjectsView.setStudentCreatePresetCover('')" style="background: rgba(255,255,255,0.1); color: #cbd5e1; border: 1px solid rgba(255,255,255,0.25); border-radius: 12px; padding: 0.75rem 0.95rem; font-weight: 700; font-size: 0.85rem; cursor: pointer;">
+                      ↺ Automática
+                    </button>
+                  ` : ''}
+                </div>
+                <div style="display: flex; gap: 0.45rem; flex-wrap: wrap; align-items: center;">
+                  <span style="font-size: 0.8rem; color: #94a3b8; font-weight: 700;">Banners rápidos:</span>
+                  ${[
+                    { val: '', label: '🪄 Automático' },
+                    { val: 'preset:book', label: '📖 Libro / Lectura' },
+                    { val: 'preset:pdf_0', label: '📕 Documento PDF' },
+                    { val: 'preset:guide', label: '📘 Guía / Manual' },
+                    { val: 'preset:survey', label: '📋 Encuesta / Formulario' },
+                    { val: 'preset:excel', label: '📊 Datos / Excel' },
+                    { val: 'assets/projects_ui/card_ai_society.png', label: '🤖 IA & Tecnología' },
+                    { val: 'assets/projects_ui/card_data_gov.png', label: '🏛️ Gobernanza' }
+                  ].map(b => `
+                    <button
+                      type="button"
+                      onclick="window.ProjectsView.setStudentCreatePresetCover('${b.val}')"
+                      style="background: ${(d.coverUrl || '') === b.val ? 'rgba(16,185,129,0.28)' : 'rgba(255,255,255,0.07)'}; color: ${(d.coverUrl || '') === b.val ? '#6ee7b7' : '#cbd5e1'}; border: 1px solid ${(d.coverUrl || '') === b.val ? '#34d399' : 'rgba(255,255,255,0.18)'}; border-radius: 999px; padding: 0.28rem 0.7rem; font-size: 0.78rem; font-weight: 800; cursor: pointer;"
+                    >${b.label}</button>
+                  `).join('')}
+                </div>
+              </div>
+            </div>
           </div>
 
           <!-- PANTALLA 5: ¿Quieres que tu proyecto sea público o privado? -->
@@ -3804,6 +3921,377 @@ window.ProjectsView = {
     return Math.min(100, Math.max(score, (title.length >= 3 ? 10 : 0)));
   },
 
+  buildThematicCoverSvg(themeKey, rawTitle = '', rawSubtitle = '') {
+    const cleanSvgText = (str, maxLen) => {
+      const s = String(str || '')
+        .replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}]/gu, '')
+        .replace(/[_-]+/g, ' ')
+        .trim();
+      const cut = s.length > maxLen ? s.slice(0, maxLen - 1).trim() + '…' : s;
+      return cut
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    };
+
+    const titleLine1 = cleanSvgText(rawTitle || 'Recurso Oficial', 26);
+    const subLabel = cleanSvgText(rawSubtitle || 'MATERIAL DEL PROYECTO', 28).toUpperCase();
+
+    const themes = {
+      book: {
+        bg1: '#1a0b2e', bg2: '#3b1561', bg3: '#7c2d12',
+        accent: '#fbbf24', accent2: '#f472b6',
+        kicker: subLabel || 'LIBRO Y LECTURA',
+        illust: `
+          <g transform="translate(490, 62)">
+            <circle cx="115" cy="115" r="105" fill="#fbbf24" fill-opacity="0.12"/>
+            <path d="M25 65 C60 52, 95 58, 115 74 L115 190 C95 174, 60 168, 25 180 Z" fill="#1e1b4b" stroke="#fbbf24" stroke-width="4" stroke-linejoin="round"/>
+            <path d="M205 65 C170 52, 135 58, 115 74 L115 190 C135 174, 170 168, 205 180 Z" fill="#311042" stroke="#fbbf24" stroke-width="4" stroke-linejoin="round"/>
+            <path d="M32 56 C64 44, 95 50, 115 66 L115 182 C95 166, 64 160, 32 172 Z" fill="#fffbeb" fill-opacity="0.95"/>
+            <path d="M198 56 C166 44, 135 50, 115 66 L115 182 C135 166, 166 160, 198 172 Z" fill="#fef3c7" fill-opacity="0.92"/>
+            <line x1="115" y1="64" x2="115" y2="188" stroke="#d97706" stroke-width="4"/>
+            <path d="M115 180 L115 215 L125 205 L135 215 L135 178 Z" fill="#ef4444"/>
+            <line x1="48" y1="84" x2="98" y2="88" stroke="#92400e" stroke-width="3.5" stroke-linecap="round"/>
+            <line x1="48" y1="102" x2="98" y2="106" stroke="#b45309" stroke-width="3" stroke-linecap="round" stroke-opacity="0.7"/>
+            <line x1="48" y1="120" x2="92" y2="124" stroke="#b45309" stroke-width="3" stroke-linecap="round" stroke-opacity="0.7"/>
+            <line x1="48" y1="138" x2="88" y2="142" stroke="#b45309" stroke-width="3" stroke-linecap="round" stroke-opacity="0.5"/>
+            <line x1="132" y1="88" x2="182" y2="84" stroke="#92400e" stroke-width="3.5" stroke-linecap="round"/>
+            <line x1="132" y1="106" x2="182" y2="102" stroke="#b45309" stroke-width="3" stroke-linecap="round" stroke-opacity="0.7"/>
+            <rect x="132" y="118" width="48" height="30" rx="5" fill="#f59e0b" fill-opacity="0.35" stroke="#d97706" stroke-width="2"/>
+            <circle cx="65" cy="30" r="5" fill="#fbbf24"/>
+            <circle cx="170" cy="26" r="4" fill="#f472b6"/>
+            <circle cx="115" cy="18" r="6" fill="#00f5d4"/>
+          </g>
+        `
+      },
+      guide: {
+        bg1: '#042f2e', bg2: '#065f46', bg3: '#0f172a',
+        accent: '#34d399', accent2: '#00f5d4',
+        kicker: subLabel || 'GUÍA Y MANUAL PRÁCTICO',
+        illust: `
+          <g transform="translate(500, 52)">
+            <circle cx="105" cy="120" r="105" fill="#10b981" fill-opacity="0.14"/>
+            <rect x="35" y="25" width="140" height="190" rx="14" fill="#064e3b" stroke="#34d399" stroke-width="4"/>
+            <rect x="47" y="37" width="116" height="166" rx="10" fill="#ecfdf5" fill-opacity="0.95"/>
+            <rect x="26" y="48" width="18" height="10" rx="4" fill="#00f5d4"/>
+            <rect x="26" y="84" width="18" height="10" rx="4" fill="#00f5d4"/>
+            <rect x="26" y="120" width="18" height="10" rx="4" fill="#00f5d4"/>
+            <rect x="26" y="156" width="18" height="10" rx="4" fill="#00f5d4"/>
+            <circle cx="105" cy="88" r="26" fill="#10b981" fill-opacity="0.2" stroke="#059669" stroke-width="3"/>
+            <polygon points="105,68 113,88 105,108 97,88" fill="#059669"/>
+            <line x1="65" y1="134" x2="145" y2="134" stroke="#047857" stroke-width="4" stroke-linecap="round"/>
+            <line x1="65" y1="152" x2="135" y2="152" stroke="#059669" stroke-width="3.5" stroke-linecap="round" stroke-opacity="0.7"/>
+            <line x1="65" y1="170" x2="120" y2="170" stroke="#059669" stroke-width="3.5" stroke-linecap="round" stroke-opacity="0.5"/>
+          </g>
+        `
+      },
+      survey: {
+        bg1: '#0c1938', bg2: '#1e1b4b', bg3: '#0f3460',
+        accent: '#00f5d4', accent2: '#f97316',
+        kicker: subLabel || 'ENCUESTA Y RESULTADOS',
+        illust: `
+          <g transform="translate(495, 48)">
+            <circle cx="110" cy="125" r="105" fill="#00f5d4" fill-opacity="0.12"/>
+            <rect x="28" y="30" width="138" height="186" rx="14" fill="#0f172a" stroke="#38bdf8" stroke-width="3.5"/>
+            <rect x="68" y="18" width="58" height="22" rx="8" fill="#f97316"/>
+            <rect x="44" y="58" width="20" height="20" rx="5" fill="#10b981"/>
+            <polyline points="49,68 54,73 61,63" fill="none" stroke="#ffffff" stroke-width="3" stroke-linecap="round"/>
+            <line x1="74" y1="64" x2="146" y2="64" stroke="#e2e8f0" stroke-width="4" stroke-linecap="round"/>
+            <line x1="74" y1="74" x2="124" y2="74" stroke="#94a3b8" stroke-width="3" stroke-linecap="round"/>
+            <rect x="44" y="94" width="20" height="20" rx="5" fill="#00f5d4"/>
+            <polyline points="49,104 54,109 61,99" fill="none" stroke="#0f172a" stroke-width="3" stroke-linecap="round"/>
+            <line x1="74" y1="100" x2="142" y2="100" stroke="#e2e8f0" stroke-width="4" stroke-linecap="round"/>
+            <line x1="74" y1="110" x2="118" y2="110" stroke="#94a3b8" stroke-width="3" stroke-linecap="round"/>
+            <rect x="46" y="168" width="18" height="30" rx="4" fill="#38bdf8"/>
+            <rect x="72" y="148" width="18" height="50" rx="4" fill="#00f5d4"/>
+            <rect x="98" y="132" width="18" height="66" rx="4" fill="#f97316"/>
+            <rect x="124" y="118" width="18" height="80" rx="4" fill="#a855f7"/>
+          </g>
+        `
+      },
+      pdf_0: {
+        bg1: '#2a0a18', bg2: '#4c1127', bg3: '#0f172a',
+        accent: '#fb923c', accent2: '#f43f5e',
+        kicker: subLabel || 'DOCUMENTO PDF OFICIAL',
+        illust: `
+          <g transform="translate(500, 48)">
+            <circle cx="105" cy="125" r="102" fill="#f97316" fill-opacity="0.14"/>
+            <rect x="46" y="24" width="132" height="178" rx="12" fill="#1e293b" stroke="#64748b" stroke-width="2" transform="rotate(6 112 113)"/>
+            <path d="M34 28 H134 L168 62 V202 C168 209 162 214 155 214 H34 C27 214 22 209 22 202 V40 C22 33 27 28 34 28 Z" fill="#fff7ed" stroke="#fb923c" stroke-width="3.5"/>
+            <path d="M134 28 V62 H168 Z" fill="#fed7aa"/>
+            <rect x="8" y="54" width="76" height="32" rx="8" fill="#ea580c"/>
+            <text x="46" y="76" font-family="Arial, sans-serif" font-weight="900" font-size="18" fill="#ffffff" text-anchor="middle">PDF</text>
+            <line x1="42" y1="108" x2="146" y2="108" stroke="#9a3412" stroke-width="4.5" stroke-linecap="round"/>
+            <line x1="42" y1="126" x2="136" y2="126" stroke="#c2410c" stroke-width="3.5" stroke-linecap="round" stroke-opacity="0.75"/>
+            <line x1="42" y1="142" x2="142" y2="142" stroke="#c2410c" stroke-width="3.5" stroke-linecap="round" stroke-opacity="0.6"/>
+            <rect x="42" y="158" width="102" height="36" rx="6" fill="#ffedd5" stroke="#fb923c" stroke-width="2"/>
+            <circle cx="62" cy="176" r="10" fill="#ea580c"/>
+            <line x1="80" y1="172" x2="132" y2="172" stroke="#9a3412" stroke-width="3" stroke-linecap="round"/>
+            <line x1="80" y1="182" x2="116" y2="182" stroke="#c2410c" stroke-width="2.5" stroke-linecap="round"/>
+          </g>
+        `
+      },
+      pdf_1: {
+        bg1: '#081c38', bg2: '#0c3559', bg3: '#1e1b4b',
+        accent: '#38bdf8', accent2: '#00f5d4',
+        kicker: subLabel || 'DOCUMENTO Y LECTURA PDF',
+        illust: `
+          <g transform="translate(500, 48)">
+            <circle cx="105" cy="125" r="102" fill="#38bdf8" fill-opacity="0.14"/>
+            <rect x="46" y="24" width="132" height="178" rx="12" fill="#0f172a" stroke="#38bdf8" stroke-width="2" transform="rotate(-5 112 113)"/>
+            <path d="M34 28 H134 L168 62 V202 C168 209 162 214 155 214 H34 C27 214 22 209 22 202 V40 C22 33 27 28 34 28 Z" fill="#f0f9ff" stroke="#38bdf8" stroke-width="3.5"/>
+            <path d="M134 28 V62 H168 Z" fill="#bae6fd"/>
+            <rect x="8" y="54" width="76" height="32" rx="8" fill="#0284c7"/>
+            <text x="46" y="76" font-family="Arial, sans-serif" font-weight="900" font-size="18" fill="#ffffff" text-anchor="middle">PDF</text>
+            <line x1="42" y1="108" x2="146" y2="108" stroke="#0369a1" stroke-width="4.5" stroke-linecap="round"/>
+            <line x1="42" y1="126" x2="136" y2="126" stroke="#0284c7" stroke-width="3.5" stroke-linecap="round" stroke-opacity="0.75"/>
+            <rect x="42" y="144" width="46" height="48" rx="6" fill="#e0f2fe" stroke="#0284c7" stroke-width="2"/>
+            <rect x="96" y="144" width="48" height="20" rx="5" fill="#0284c7" fill-opacity="0.25"/>
+            <rect x="96" y="172" width="48" height="20" rx="5" fill="#00f5d4" fill-opacity="0.35"/>
+          </g>
+        `
+      },
+      pdf_2: {
+        bg1: '#1a0933', bg2: '#31105a', bg3: '#091e2d',
+        accent: '#c084fc', accent2: '#00f5d4',
+        kicker: subLabel || 'INFORME Y DOCUMENTO PDF',
+        illust: `
+          <g transform="translate(500, 48)">
+            <circle cx="105" cy="125" r="102" fill="#c084fc" fill-opacity="0.14"/>
+            <path d="M34 28 H134 L168 62 V202 C168 209 162 214 155 214 H34 C27 214 22 209 22 202 V40 C22 33 27 28 34 28 Z" fill="#faf5ff" stroke="#a855f7" stroke-width="3.5"/>
+            <path d="M134 28 V62 H168 Z" fill="#e9d5ff"/>
+            <rect x="8" y="54" width="76" height="32" rx="8" fill="#7c3aed"/>
+            <text x="46" y="76" font-family="Arial, sans-serif" font-weight="900" font-size="18" fill="#ffffff" text-anchor="middle">PDF</text>
+            <circle cx="95" cy="126" r="28" fill="#f3e8ff" stroke="#7c3aed" stroke-width="4"/>
+            <path d="M95 98 A28 28 0 0 1 123 126 L95 126 Z" fill="#7c3aed"/>
+            <line x1="42" y1="172" x2="146" y2="172" stroke="#6b21a8" stroke-width="4" stroke-linecap="round"/>
+            <line x1="42" y1="188" x2="122" y2="188" stroke="#9333ea" stroke-width="3" stroke-linecap="round" stroke-opacity="0.7"/>
+          </g>
+        `
+      },
+      word: {
+        bg1: '#0a1936', bg2: '#1e3a8a', bg3: '#0f172a',
+        accent: '#60a5fa', accent2: '#38bdf8',
+        kicker: subLabel || 'DOCUMENTO EDITORIAL WORD',
+        illust: `
+          <g transform="translate(500, 48)">
+            <circle cx="105" cy="125" r="102" fill="#3b82f6" fill-opacity="0.15"/>
+            <rect x="28" y="28" width="140" height="186" rx="12" fill="#eff6ff" stroke="#3b82f6" stroke-width="3.5"/>
+            <rect x="10" y="52" width="74" height="32" rx="8" fill="#2563eb"/>
+            <text x="47" y="74" font-family="Arial, sans-serif" font-weight="900" font-size="17" fill="#ffffff" text-anchor="middle">DOCX</text>
+            <line x1="48" y1="106" x2="148" y2="106" stroke="#1d4ed8" stroke-width="4.5" stroke-linecap="round"/>
+            <line x1="48" y1="124" x2="148" y2="124" stroke="#2563eb" stroke-width="3.5" stroke-linecap="round" stroke-opacity="0.75"/>
+            <line x1="48" y1="142" x2="136" y2="142" stroke="#2563eb" stroke-width="3.5" stroke-linecap="round" stroke-opacity="0.7"/>
+            <line x1="48" y1="160" x2="142" y2="160" stroke="#2563eb" stroke-width="3.5" stroke-linecap="round" stroke-opacity="0.6"/>
+            <line x1="48" y1="178" x2="112" y2="178" stroke="#2563eb" stroke-width="3.5" stroke-linecap="round" stroke-opacity="0.5"/>
+          </g>
+        `
+      },
+      excel: {
+        bg1: '#052e16', bg2: '#065f46', bg3: '#091e2d',
+        accent: '#4ade80', accent2: '#00f5d4',
+        kicker: subLabel || 'DATOS Y HOJA DE CÁLCULO',
+        illust: `
+          <g transform="translate(495, 48)">
+            <circle cx="110" cy="125" r="102" fill="#22c55e" fill-opacity="0.14"/>
+            <rect x="24" y="34" width="154" height="176" rx="12" fill="#f0fdf4" stroke="#16a34a" stroke-width="3.5"/>
+            <rect x="8" y="52" width="76" height="32" rx="8" fill="#16a34a"/>
+            <text x="46" y="74" font-family="Arial, sans-serif" font-weight="900" font-size="16" fill="#ffffff" text-anchor="middle">XLSX</text>
+            <rect x="42" y="100" width="54" height="22" rx="4" fill="#bbf7d0"/>
+            <rect x="104" y="100" width="54" height="22" rx="4" fill="#dcfce7"/>
+            <rect x="42" y="130" width="54" height="22" rx="4" fill="#dcfce7"/>
+            <rect x="104" y="130" width="54" height="22" rx="4" fill="#bbf7d0"/>
+            <rect x="42" y="160" width="54" height="22" rx="4" fill="#bbf7d0"/>
+            <rect x="104" y="160" width="54" height="22" rx="4" fill="#86efac"/>
+          </g>
+        `
+      },
+      pres: {
+        bg1: '#170936', bg2: '#3b0764', bg3: '#0c1938',
+        accent: '#c084fc', accent2: '#00f5d4',
+        kicker: subLabel || 'PRESENTACIÓN INTERACTIVA',
+        illust: `
+          <g transform="translate(485, 54)">
+            <circle cx="115" cy="115" r="102" fill="#a855f7" fill-opacity="0.16"/>
+            <rect x="18" y="34" width="186" height="128" rx="12" fill="#1e1b4b" stroke="#00f5d4" stroke-width="3.5"/>
+            <rect x="32" y="50" width="84" height="14" rx="4" fill="#c084fc"/>
+            <rect x="32" y="74" width="72" height="8" rx="4" fill="#94a3b8"/>
+            <rect x="32" y="90" width="66" height="8" rx="4" fill="#94a3b8"/>
+            <rect x="32" y="106" width="78" height="8" rx="4" fill="#94a3b8"/>
+            <circle cx="156" cy="96" r="30" fill="#7c3aed" stroke="#00f5d4" stroke-width="3"/>
+            <path d="M156 66 A30 30 0 0 1 186 96 L156 96 Z" fill="#00f5d4"/>
+            <line x1="111" y1="162" x2="111" y2="192" stroke="#00f5d4" stroke-width="4"/>
+            <line x1="76" y1="192" x2="146" y2="192" stroke="#00f5d4" stroke-width="4" stroke-linecap="round"/>
+          </g>
+        `
+      },
+      zip: {
+        bg1: '#271505', bg2: '#5c2d0c', bg3: '#0f172a',
+        accent: '#fbbf24', accent2: '#fb923c',
+        kicker: subLabel || 'PAQUETE DE RECURSOS ZIP',
+        illust: `
+          <g transform="translate(500, 52)">
+            <circle cx="105" cy="120" r="100" fill="#f59e0b" fill-opacity="0.14"/>
+            <rect x="30" y="34" width="144" height="168" rx="14" fill="#fffbeb" stroke="#f59e0b" stroke-width="3.5"/>
+            <rect x="92" y="34" width="20" height="90" fill="#fde68a" stroke="#d97706" stroke-width="2" stroke-dasharray="6,4"/>
+            <rect x="84" y="118" width="36" height="28" rx="6" fill="#d97706"/>
+            <text x="102" y="182" font-family="Arial, sans-serif" font-weight="900" font-size="20" fill="#92400e" text-anchor="middle">ZIP</text>
+          </g>
+        `
+      },
+      link: {
+        bg1: '#04262c', bg2: '#064e3b', bg3: '#0f172a',
+        accent: '#00f5d4', accent2: '#34d399',
+        kicker: subLabel || 'PORTAL Y RECURSO WEB',
+        illust: `
+          <g transform="translate(485, 52)">
+            <circle cx="115" cy="120" r="102" fill="#00f5d4" fill-opacity="0.12"/>
+            <rect x="18" y="34" width="186" height="142" rx="12" fill="#091e2d" stroke="#10b981" stroke-width="3.5"/>
+            <line x1="18" y1="62" x2="204" y2="62" stroke="#10b981" stroke-width="2"/>
+            <circle cx="36" cy="48" r="5" fill="#ef4444"/>
+            <circle cx="52" cy="48" r="5" fill="#fbbf24"/>
+            <circle cx="68" cy="48" r="5" fill="#10b981"/>
+            <circle cx="111" cy="118" r="36" fill="none" stroke="#00f5d4" stroke-width="3"/>
+            <ellipse cx="111" cy="118" rx="18" ry="36" fill="none" stroke="#00f5d4" stroke-width="2.5"/>
+            <line x1="75" y1="118" x2="147" y2="118" stroke="#00f5d4" stroke-width="2.5"/>
+          </g>
+        `
+      },
+      video: {
+        bg1: '#06152d', bg2: '#0c3b6e', bg3: '#1e1b4b',
+        accent: '#38bdf8', accent2: '#00f5d4',
+        kicker: subLabel || 'VIDEO MULTIMEDIA OFICIAL',
+        illust: `
+          <g transform="translate(485, 52)">
+            <circle cx="115" cy="120" r="102" fill="#38bdf8" fill-opacity="0.15"/>
+            <rect x="18" y="36" width="186" height="136" rx="14" fill="#091e2d" stroke="#38bdf8" stroke-width="3.5"/>
+            <circle cx="111" cy="104" r="32" fill="#0284c7" stroke="#00f5d4" stroke-width="3"/>
+            <polygon points="103,88 103,120 129,104" fill="#ffffff"/>
+          </g>
+        `
+      }
+    };
+
+    const t = themes[themeKey] || themes.pdf_0;
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 360" width="800" height="360">
+      <defs>
+        <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="${t.bg1}"/>
+          <stop offset="55%" stop-color="${t.bg2}"/>
+          <stop offset="100%" stop-color="${t.bg3}"/>
+        </linearGradient>
+        <radialGradient id="glow" cx="75%" cy="45%" r="55%">
+          <stop offset="0%" stop-color="${t.accent}" stop-opacity="0.28"/>
+          <stop offset="100%" stop-color="${t.accent}" stop-opacity="0"/>
+        </radialGradient>
+      </defs>
+      <rect width="800" height="360" fill="url(#bg)"/>
+      <rect width="800" height="360" fill="url(#glow)"/>
+      <g stroke="#ffffff" stroke-opacity="0.05" stroke-width="1">
+        <line x1="0" y1="90" x2="800" y2="90"/>
+        <line x1="0" y1="180" x2="800" y2="180"/>
+        <line x1="0" y1="270" x2="800" y2="270"/>
+        <line x1="200" y1="0" x2="200" y2="360"/>
+        <line x1="400" y1="0" x2="400" y2="360"/>
+        <line x1="600" y1="0" x2="600" y2="360"/>
+      </g>
+      <g transform="translate(46, 118)">
+        <rect x="0" y="0" width="380" height="34" rx="17" fill="#ffffff" fill-opacity="0.1" stroke="${t.accent}" stroke-width="1.5" stroke-opacity="0.6"/>
+        <circle cx="20" cy="17" r="5" fill="${t.accent}"/>
+        <text x="36" y="22" font-family="Arial, Helvetica, sans-serif" font-weight="800" font-size="13" fill="${t.accent}" letter-spacing="1.2">${t.kicker}</text>
+        <text x="2" y="78" font-family="Arial, Helvetica, sans-serif" font-weight="900" font-size="29" fill="#ffffff">${titleLine1}</text>
+        <rect x="2" y="98" width="95" height="5" rx="2.5" fill="${t.accent}"/>
+        <rect x="106" y="98" width="38" height="5" rx="2.5" fill="${t.accent2}"/>
+        <text x="2" y="132" font-family="Arial, Helvetica, sans-serif" font-weight="700" font-size="14" fill="#cbd5e1">MENTIX • Recurso verificado del proyecto</text>
+      </g>
+      ${t.illust}
+    </svg>`;
+
+    return 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
+  },
+
+  getSmartResourceCover(item = {}, kind = 'doc', idx = 0) {
+    if (!item) item = {};
+    const customThumb = (item.thumbnailUrl || item.coverUrl || item.previewUrl || '').trim();
+    if (customThumb && !customThumb.startsWith('preset:')) {
+      return customThumb;
+    }
+    if (item.url && typeof item.url === 'string' && item.url.startsWith('data:image/')) {
+      return item.url;
+    }
+
+    const title = String(item.name || item.title || 'Recurso del Proyecto').trim();
+    const desc = String(item.description || item.caption || '').trim();
+    const cat = String(item.category || '').toLowerCase();
+    const type = String(item.type || '').toLowerCase();
+    const fmt = String(item.format || '').toUpperCase();
+    const haystack = (title + ' ' + desc + ' ' + cat + ' ' + type + ' ' + fmt).toLowerCase();
+
+    if (customThumb.startsWith('preset:')) {
+      const pKey = customThumb.replace('preset:', '').trim();
+      return this.buildThematicCoverSvg(pKey, title, item.category || '');
+    }
+
+    if (kind === 'video' || type === 'video') {
+      const rawUrl = String(item.url || item.embedUrl || '').trim();
+      const ytMatch = rawUrl.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([A-Za-z0-9_-]{6,})/);
+      if (ytMatch) {
+        return `https://img.youtube.com/vi/${ytMatch[1]}/hqdefault.jpg`;
+      }
+      return this.buildThematicCoverSvg('video', title, 'VIDEO EXPLICATIVO');
+    }
+
+    if (kind === 'pres' || type === 'ppt' || fmt.includes('PPT') || cat.includes('presentac')) {
+      return this.buildThematicCoverSvg('pres', title, 'PRESENTACIÓN');
+    }
+
+    if (kind === 'link') {
+      if (/survey|formulario|encuesta|forms\.gle|google\.com\/forms|quiz|test|result/i.test(haystack + ' ' + (item.url || ''))) {
+        return this.buildThematicCoverSvg('survey', title, 'FORMULARIO / ENCUESTA');
+      }
+      if (/libro|lectura|biblioteca|ebook|articulo|artículo|paper/i.test(haystack)) {
+        return this.buildThematicCoverSvg('book', title, 'LECTURA Y BIBLIOTECA WEB');
+      }
+      return this.buildThematicCoverSvg('link', title, item.category || 'RECURSO WEB');
+    }
+
+    // Detectar Libros, Lecturas, Cuentos, E-books
+    if (type === 'book' || /libro|lectura|cuento|novela|ebook|bibliotec|literatur|capítulo|capitulo|historia/i.test(haystack)) {
+      return this.buildThematicCoverSvg('book', title, 'LIBRO Y LECTURA');
+    }
+
+    // Detectar Encuestas, Formularios, Resultados, Cuestionarios
+    if (type === 'survey' || /survey|formulario|encuesta|results|resultado|cuestionario|evaluaci/i.test(haystack)) {
+      return this.buildThematicCoverSvg('survey', title, 'ENCUESTA Y RESULTADOS');
+    }
+
+    // Detectar Guías, Manuales, Cartillas, Apuntes
+    if (type === 'guide' || type === 'manual' || /guía|guia|manual|cartilla|instructivo|tutorial|apuntes/i.test(haystack)) {
+      return this.buildThematicCoverSvg('guide', title, 'GUÍA Y MANUAL');
+    }
+
+    // Detectar Hojas de Cálculo Excel / CSV / Datos
+    if (type === 'excel' || fmt.match(/XLS|CSV/) || /excel|dataset|estadístic|estadistic|tabla|presupuesto|métrica/i.test(haystack)) {
+      return this.buildThematicCoverSvg('excel', title, 'HOJA DE DATOS');
+    }
+
+    // Detectar Documentos Word
+    if (type === 'word' || fmt.match(/DOC|DOCX/) && !fmt.includes('PDF')) {
+      return this.buildThematicCoverSvg('word', title, 'DOCUMENTO EDITORIAL');
+    }
+
+    // Detectar Paquetes ZIP
+    if (type === 'zip' || fmt.includes('ZIP') || fmt.includes('RAR')) {
+      return this.buildThematicCoverSvg('zip', title, 'PAQUETE DESCARGABLE');
+    }
+
+    // Documentos PDF / Oficiales (rotando entre 3 diseños ejecutivos para que varios PDFs seguidos se vean variados y atractivos)
+    const pdfVariant = 'pdf_' + (Math.abs(Number(idx) || 0) % 3);
+    return this.buildThematicCoverSvg(pdfVariant, title, 'DOCUMENTO PDF OFICIAL');
+  },
+
   renderLandingPageView(container, allProjects = []) {
     this.currentSlideIndex = 0;
     const currentTheme = this.getLandingTheme();
@@ -3925,8 +4413,9 @@ window.ProjectsView = {
     // 0. Tarjeta de Presentación Real (solo si el usuario subió o creó láminas en Mentix)
     if (userSlides.length > 0) {
       totalCardsCount++;
-      const sThumb = userSlides[0]?.bgImage || userSlides[0]?.media || userSlides[0]?.imageUrl || mainCover || 'assets/projects_ui/card_data_gov.png';
       const sTitle = selectedTitle ? `Presentación: ${selectedTitle}` : (userSlides[0]?.title || 'Presentación Interactiva');
+      const customPresCover = selected?.presentationCoverUrl || gp.presentationCoverUrl || '';
+      const sThumb = customPresCover || userSlides[0]?.bgImage || userSlides[0]?.media || userSlides[0]?.imageUrl || mainCover || this.getSmartResourceCover({ title: sTitle, type: 'ppt' }, 'pres', 0);
       const slideNames = userSlides.map((s, i) => s.title || `Lámina ${i + 1}`).join(', ');
       const sDesc = this.truncateCardText(`Incluye ${userSlides.length} ${userSlides.length === 1 ? 'lámina' : 'láminas'}: ${slideNames}`, 120);
       const sSearch = (sTitle + ' ' + slideNames + ' presentacion diapositivas mentix').toLowerCase();
@@ -3956,21 +4445,17 @@ window.ProjectsView = {
     // 1. Tarjeta de Video Real (si el usuario lo configuró)
     if (hasVideo) {
       totalCardsCount++;
-      let videoThumb = '';
-      const ytMatch = videoUrl.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([A-Za-z0-9_-]{6,})/);
-      if (ytMatch) {
-        videoThumb = `https://img.youtube.com/vi/${ytMatch[1]}/hqdefault.jpg`;
-      } else if (mainCover) {
-        videoThumb = mainCover;
-      }
       const vTitle = vc.title || (selectedTitle ? `Video: ${selectedTitle}` : 'Video explicativo del proyecto');
+      const videoThumb = (vc.thumbnailUrl && vc.thumbnailUrl.trim())
+        ? this.getSmartResourceCover({ title: vTitle, thumbnailUrl: vc.thumbnailUrl, url: videoUrl }, 'video', 0)
+        : (this.getSmartResourceCover({ title: vTitle, url: videoUrl }, 'video', 0) || mainCover);
       const vDesc = this.truncateCardText(vc.description || 'Conoce los objetivos y el alcance de la iniciativa.', 120);
       const vSearch = (vTitle + ' ' + vDesc + ' video explicativo multimedia').toLowerCase();
       const vFile = vc.fileName || 'Video oficial';
 
       cardsHtml += `
         <article class="inno-resource-card" data-category="video" data-plp-search="${this.escapeHtml(vSearch)}">
-          <div class="inno-card-thumb-wrap" style="${videoThumb ? `background-image:url('${this.escapeHtml(videoThumb)}'); background-size:cover; background-position:center;` : 'background:linear-gradient(135deg, #091e2d 0%, #0284c7 100%);'} cursor:pointer;" onclick="window.ProjectsView.playLandingVideo()">
+          <div class="inno-card-thumb-wrap" style="background-image:url('${this.escapeHtml(videoThumb)}'); background-size:cover; background-position:center; cursor:pointer;" onclick="window.ProjectsView.playLandingVideo()">
             <span class="inno-card-tag" style="background:#0284c7;">▶ Video</span>
             <div class="inno-card-play-btn">▶</div>
           </div>
@@ -3991,7 +4476,7 @@ window.ProjectsView = {
       `;
     }
 
-    // 2. Tarjetas de Documentos Reales
+    // 2. Tarjetas de Documentos, Libros, Guías y Archivos Reales
     userResources.forEach((res, idx) => {
       totalCardsCount++;
       const name = res.name || res.title || `Documento ${idx + 1}`;
@@ -4000,6 +4485,7 @@ window.ProjectsView = {
       const type = (res.type || '').toLowerCase();
       const fmt = (res.format || '').toUpperCase();
       const cat = (res.category || '').toLowerCase();
+      const nameLower = name.toLowerCase();
 
       let dataCat = 'doc';
       let tagColor = '#ea580c';
@@ -4009,6 +4495,14 @@ window.ProjectsView = {
         dataCat = 'pres';
         tagColor = '#7c3aed';
         tagLabel = '📽️ Presentación';
+      } else if (type === 'book' || cat.includes('libro') || /libro|lectura|cuento|ebook|bibliotec/i.test(nameLower)) {
+        dataCat = 'doc';
+        tagColor = '#d97706';
+        tagLabel = '📖 Libro';
+      } else if (type === 'survey' || cat.includes('encuesta') || /survey|formulario|encuesta|cuestionario/i.test(nameLower)) {
+        dataCat = 'doc';
+        tagColor = '#0d9488';
+        tagLabel = '📋 ' + (fmt || 'Formulario');
       } else if (type === 'guide' || type === 'manual' || cat.includes('gu') || cat.includes('manual')) {
         dataCat = 'guide';
         tagColor = '#059669';
@@ -4031,7 +4525,7 @@ window.ProjectsView = {
         tagLabel = '📦 ZIP';
       }
 
-      const thumbUrl = res.thumbnailUrl || res.previewUrl || ((res.url && res.url.startsWith('data:image/')) ? res.url : '');
+      const thumbUrl = this.getSmartResourceCover(res, 'doc', idx);
       const rSearch = (name + ' ' + rawDesc + ' ' + tagLabel + ' ' + (res.category || '')).toLowerCase();
       const dateStr = res.date || res.updatedAt || 'Reciente';
       const sizeStr = res.sizeLabel || (res.sizeBytes ? (res.sizeBytes / 1024 / 1024).toFixed(1) + ' MB' : 'Archivo');
@@ -4042,7 +4536,7 @@ window.ProjectsView = {
 
       cardsHtml += `
         <article class="inno-resource-card" data-category="${dataCat}" data-plp-search="${this.escapeHtml(rSearch)}">
-          <div class="inno-card-thumb-wrap" style="${thumbUrl ? `background-image:url('${this.escapeHtml(thumbUrl)}'); background-size:cover; background-position:center;` : 'background:linear-gradient(135deg, #091e2d 0%, #1e293b 100%);'} cursor:pointer;" onclick="${actionFn}">
+          <div class="inno-card-thumb-wrap" style="background-image:url('${this.escapeHtml(thumbUrl)}'); background-size:cover; background-position:center; cursor:pointer;" onclick="${actionFn}">
             <span class="inno-card-tag" style="background:${tagColor};">${tagLabel}</span>
           </div>
           <div class="inno-card-body">
@@ -4071,10 +4565,11 @@ window.ProjectsView = {
       const lCat = lnk.category || 'Enlace Web';
       const lSearch = (lTitle + ' ' + rawLDesc + ' ' + lCat + ' enlace link').toLowerCase();
       const domain = lnk.url ? lnk.url.replace(/^https?:\/\//i, '').split('/')[0] : 'Web';
+      const linkThumb = this.getSmartResourceCover(lnk, 'link', idx);
 
       cardsHtml += `
         <article class="inno-resource-card" data-category="link" data-plp-search="${this.escapeHtml(lSearch)}">
-          <div class="inno-card-thumb-wrap" style="background:linear-gradient(135deg, #064e3b 0%, #091e2d 100%); cursor:pointer;" onclick="window.open('${this.escapeHtml(lnk.url)}', '_blank')">
+          <div class="inno-card-thumb-wrap" style="background-image:url('${this.escapeHtml(linkThumb)}'); background-size:cover; background-position:center; cursor:pointer;" onclick="window.open('${this.escapeHtml(lnk.url)}', '_blank')">
             <span class="inno-card-tag" style="background:#10b981;">🔗 ${this.escapeHtml(lCat)}</span>
           </div>
           <div class="inno-card-body">

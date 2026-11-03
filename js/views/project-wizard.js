@@ -89,7 +89,9 @@ window.ProjectWizard = {
 
   resourceCategories: [
     'Documentación',
+    'Libros y lecturas',
     'Guías y manuales',
+    'Encuestas y formularios',
     'Presentaciones',
     'Imágenes y material gráfico',
     'Videos',
@@ -736,6 +738,7 @@ collectCurrentStepInputs() {
 
     if (val('gdn-video-title') !== null) this.draft.videoConfig.title = val('gdn-video-title').trim();
     if (val('gdn-video-desc') !== null) this.draft.videoConfig.description = val('gdn-video-desc').trim();
+    if (val('gdn-video-thumb') !== null) this.draft.videoConfig.thumbnailUrl = val('gdn-video-thumb').trim();
     if (val('gdn-video-url') !== null) {
       const newUrl = val('gdn-video-url').trim();
       if (newUrl !== this.draft.videoConfig.url) {
@@ -1946,6 +1949,42 @@ collectCurrentStepInputs() {
           </div>
         </div>
 
+        <div class="gdn-field" style="margin-top:0.85rem; padding:0.9rem 1rem; background:var(--gdn-subtle); border:1px dashed var(--gdn-border); border-radius:12px;">
+          <label class="gdn-label" for="gdn-video-thumb" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem;">
+            <span>🖼️ Portada / Miniatura del video en la Landing Page (Opcional)</span>
+            <span style="font-size:0.75rem; color:#059669; font-weight:800;">
+              ${vc.thumbnailUrl ? '✨ Portada personalizada activa' : '🪄 Miniatura automática (YouTube o Banner Multimedia)'}
+            </span>
+          </label>
+          <div style="display:flex; gap:0.75rem; align-items:center; flex-wrap:wrap; margin-top:0.45rem;">
+            <img
+              src="${this.escapeHtml(window.ProjectsView && window.ProjectsView.getSmartResourceCover ? window.ProjectsView.getSmartResourceCover({ title: vc.title || this.draft.title || 'Video', thumbnailUrl: vc.thumbnailUrl || '', url: vc.url || '' }, 'video', 0) : '')}"
+              alt="Portada del video"
+              style="width:112px; height:64px; object-fit:cover; border-radius:8px; border:1.5px solid #0284c7; flex-shrink:0;"
+            />
+            <div style="flex:1; min-width:220px; display:flex; gap:0.45rem; flex-wrap:wrap;">
+              <input
+                type="text"
+                id="gdn-video-thumb"
+                class="gdn-input"
+                style="flex:1; min-width:180px; padding:0.5rem 0.75rem; font-size:0.83rem;"
+                value="${this.escapeHtml(vc.thumbnailUrl || '')}"
+                placeholder="URL de portada o déjalo vacío para miniatura automática..."
+                oninput="window.ProjectWizard.draft.videoConfig.thumbnailUrl = this.value; window.ProjectWizard.triggerFieldAutoSave();"
+              />
+              <input type="file" id="gdn-video-thumb-file" accept="image/*" style="display:none;" onchange="window.ProjectWizard.handleVideoCoverUpload(this.files)" />
+              <button type="button" class="plp-doc-btn outline" style="width:auto; padding:0.45rem 0.85rem; font-size:0.8rem;" onclick="document.getElementById('gdn-video-thumb-file').click()">
+                📷 Subir portada
+              </button>
+              ${vc.thumbnailUrl ? `
+                <button type="button" class="plp-doc-btn outline" style="width:auto; padding:0.45rem 0.75rem; font-size:0.78rem;" onclick="window.ProjectWizard.draft.videoConfig.thumbnailUrl=''; window.ProjectWizard.saveDraftToStorage(true); if(window.ProjectsView) window.ProjectsView.render();">
+                  ↺ Automática
+                </button>
+              ` : ''}
+            </div>
+          </div>
+        </div>
+
         <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:0.75rem; padding:0.85rem 1rem; background:var(--gdn-subtle); border-radius:10px; margin-top:0.5rem;">
           <div>
             <strong style="font-size:0.88rem; color:var(--gdn-text);">Visibilidad pública del video en la Landing Page</strong>
@@ -2043,9 +2082,25 @@ collectCurrentStepInputs() {
       fileName: '',
       title: '',
       description: '',
+      thumbnailUrl: '',
       isPublic: true,
       verified: false
     };
+    this.saveDraftToStorage(true);
+    if (window.ProjectsView) window.ProjectsView.render();
+  },
+
+  async handleVideoCoverUpload(fileList) {
+    if (!fileList || !fileList[0]) return;
+    const file = fileList[0];
+    if (!file.type || !file.type.startsWith('image/')) {
+      alert('⚠️ Selecciona un archivo de imagen válido para la portada del video.');
+      return;
+    }
+    this.collectCurrentStepInputs();
+    const dataUrl = await this.compressImageFile(file, 800, 0.74);
+    if (!this.draft.videoConfig) this.draft.videoConfig = {};
+    this.draft.videoConfig.thumbnailUrl = dataUrl;
     this.saveDraftToStorage(true);
     if (window.ProjectsView) window.ProjectsView.render();
   },
@@ -3603,11 +3658,17 @@ collectCurrentStepInputs() {
           </div>
         ` : `
           <div style="display:flex; flex-direction:column; gap:1rem;">
-            ${resources.map((res, idx) => `
+            ${resources.map((res, idx) => {
+              const autoCoverPreview = (window.ProjectsView && typeof window.ProjectsView.getSmartResourceCover === 'function')
+                ? window.ProjectsView.getSmartResourceCover(res, 'doc', idx)
+                : '';
+              return `
               <div style="padding:1.1rem; background:var(--gdn-bg); border:1.5px solid ${res.visibility === 'private' ? 'rgba(245,158,11,0.45)' : 'var(--gdn-border)'}; border-radius:12px;">
                 <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:0.75rem; margin-bottom:0.75rem;">
-                  <div style="display:flex; align-items:center; gap:0.65rem; flex:1; min-width:220px;">
-                    <span style="font-size:1.5rem;">${this.getResourceIcon(res.format)}</span>
+                  <div style="display:flex; align-items:center; gap:0.8rem; flex:1; min-width:240px;">
+                    <div style="width:112px; height:66px; border-radius:10px; overflow:hidden; border:1.5px solid rgba(16,185,129,0.45); background:#091e2d; flex-shrink:0; position:relative; box-shadow:0 4px 12px rgba(0,0,0,0.2);">
+                      ${autoCoverPreview ? `<img src="${this.escapeHtml(autoCoverPreview)}" alt="Portada" style="width:100%; height:100%; object-fit:cover; display:block;" />` : `<div style="display:flex;align-items:center;justify-content:center;height:100%;font-size:1.5rem;">${this.getResourceIcon(res.format)}</div>`}
+                    </div>
                     <div style="flex:1;">
                       <input
                         type="text"
@@ -3622,7 +3683,7 @@ collectCurrentStepInputs() {
                         <span>•</span>
                         <span>${this.escapeHtml(res.sizeLabel || 'Enlace externo')}</span>
                         <span>•</span>
-                        <span style="color:#10b981; font-weight:700;">✔ ${res.status === 'verified' ? 'Cargado y verificado' : 'Listo'}</span>
+                        <span style="color:#10b981; font-weight:700;">✔ ${res.thumbnailUrl ? 'Portada personalizada' : 'Portada temática automática'}</span>
                       </div>
                     </div>
                   </div>
@@ -3645,18 +3706,20 @@ collectCurrentStepInputs() {
                   </div>
 
                   <div>
-                    <label class="gdn-label" style="font-size:0.76rem;">Tipo de recurso</label>
+                    <label class="gdn-label" style="font-size:0.76rem;">Tipo de recurso (define miniatura automática)</label>
                     <select class="gdn-select" style="padding:0.45rem 0.7rem; font-size:0.82rem;" onchange="window.ProjectWizard.updateResourceField(${idx}, 'type', this.value)">
                       ${[
-                        { id: 'pdf', label: 'Documento PDF' },
-                        { id: 'guide', label: 'Guía de usuario' },
-                        { id: 'manual', label: 'Manual técnico' },
-                        { id: 'word', label: 'Documento Word' },
-                        { id: 'excel', label: 'Hoja de cálculo Excel / CSV' },
-                        { id: 'ppt', label: 'Presentación PowerPoint' },
-                        { id: 'image', label: 'Imagen / Infografía' },
-                        { id: 'zip', label: 'Paquete comprimido ZIP' },
-                        { id: 'other', label: 'Otro formato autorizado' }
+                        { id: 'pdf', label: '📕 Documento PDF / Informe' },
+                        { id: 'book', label: '📖 Libro / Lectura / E-Book' },
+                        { id: 'guide', label: '📘 Guía de usuario / Cartilla' },
+                        { id: 'manual', label: '📗 Manual técnico' },
+                        { id: 'survey', label: '📋 Encuesta / Formulario / Resultados' },
+                        { id: 'word', label: '📝 Documento Word / Escrito' },
+                        { id: 'excel', label: '📊 Hoja de cálculo Excel / CSV' },
+                        { id: 'ppt', label: '📽️ Presentación PowerPoint' },
+                        { id: 'image', label: '🖼️ Imagen / Infografía' },
+                        { id: 'zip', label: '📦 Paquete comprimido ZIP' },
+                        { id: 'other', label: '📄 Otro formato autorizado' }
                       ].map(t => `<option value="${t.id}" ${res.type === t.id ? 'selected' : ''}>${t.label}</option>`).join('')}
                     </select>
                   </div>
@@ -3667,6 +3730,46 @@ collectCurrentStepInputs() {
                       <option value="public" ${res.visibility !== 'private' ? 'selected' : ''}>🌐 Público (Visible en Landing Page)</option>
                       <option value="private" ${res.visibility === 'private' ? 'selected' : ''}>🔒 Privado (Uso interno / Oculto)</option>
                     </select>
+                  </div>
+                </div>
+
+                <!-- Control de Portada / Miniatura del Recurso -->
+                <div style="margin-top:0.65rem; padding:0.65rem 0.8rem; background:var(--gdn-subtle); border:1px dashed var(--gdn-border); border-radius:10px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:0.55rem;">
+                  <span style="font-size:0.78rem; font-weight:800; color:var(--gdn-text);">🖼️ Portada / Miniatura en Landing Page:</span>
+                  <div style="display:flex; gap:0.45rem; flex:1; min-width:240px; flex-wrap:wrap; align-items:center;">
+                    <select
+                      class="gdn-select"
+                      style="width:auto; max-width:210px; padding:0.38rem 0.6rem; font-size:0.78rem; font-weight:700;"
+                      onchange="window.ProjectWizard.setResourcePresetCover(${idx}, this.value)"
+                    >
+                      <option value="" ${!res.thumbnailUrl ? 'selected' : ''}>🪄 Automática (Acorde al tipo)</option>
+                      <option value="preset:book" ${res.thumbnailUrl === 'preset:book' ? 'selected' : ''}>📖 Banner Libro / Lectura</option>
+                      <option value="preset:pdf_0" ${res.thumbnailUrl === 'preset:pdf_0' ? 'selected' : ''}>📕 Banner Documento PDF</option>
+                      <option value="preset:guide" ${res.thumbnailUrl === 'preset:guide' ? 'selected' : ''}>📘 Banner Guía / Manual</option>
+                      <option value="preset:survey" ${res.thumbnailUrl === 'preset:survey' ? 'selected' : ''}>📋 Banner Encuesta / Resultados</option>
+                      <option value="preset:excel" ${res.thumbnailUrl === 'preset:excel' ? 'selected' : ''}>📊 Banner Datos / Excel</option>
+                      <option value="preset:word" ${res.thumbnailUrl === 'preset:word' ? 'selected' : ''}>📝 Banner Documento Word</option>
+                      <option value="assets/projects_ui/card_ai_society.png" ${res.thumbnailUrl === 'assets/projects_ui/card_ai_society.png' ? 'selected' : ''}>🤖 Ilustración IA & Sociedad</option>
+                      <option value="assets/projects_ui/card_data_gov.png" ${res.thumbnailUrl === 'assets/projects_ui/card_data_gov.png' ? 'selected' : ''}>🏛️ Ilustración Gobernanza</option>
+                      <option value="assets/projects_ui/card_open_data.png" ${res.thumbnailUrl === 'assets/projects_ui/card_open_data.png' ? 'selected' : ''}>🌐 Ilustración Datos Abiertos</option>
+                    </select>
+                    <input
+                      type="text"
+                      class="gdn-input"
+                      style="flex:1; min-width:160px; padding:0.38rem 0.65rem; font-size:0.78rem;"
+                      value="${this.escapeHtml((res.thumbnailUrl && !res.thumbnailUrl.startsWith('preset:')) ? res.thumbnailUrl : '')}"
+                      placeholder="O pega URL de imagen de portada..."
+                      oninput="window.ProjectWizard.updateResourceField(${idx}, 'thumbnailUrl', this.value)"
+                    />
+                    <input type="file" id="gdn-res-cover-file-${idx}" accept="image/*" style="display:none;" onchange="window.ProjectWizard.uploadResourceCover(${idx}, this.files)" />
+                    <button type="button" class="plp-doc-btn outline" style="width:auto; padding:0.35rem 0.75rem; font-size:0.76rem; font-weight:800;" onclick="document.getElementById('gdn-res-cover-file-${idx}').click()">
+                      📷 Subir portada
+                    </button>
+                    ${res.thumbnailUrl ? `
+                      <button type="button" class="plp-doc-btn outline" style="width:auto; padding:0.35rem 0.6rem; font-size:0.74rem;" onclick="window.ProjectWizard.setResourcePresetCover(${idx}, '')">
+                        ↺ Auto
+                      </button>
+                    ` : ''}
                   </div>
                 </div>
 
@@ -3681,7 +3784,7 @@ collectCurrentStepInputs() {
                   />
                 </div>
               </div>
-            `).join('')}
+            `}).join('')}
           </div>
         `}
       </div>
@@ -3741,6 +3844,7 @@ collectCurrentStepInputs() {
       }
 
       const ext = (file.name.split('.').pop() || 'DOC').toUpperCase();
+      const lowerFileName = file.name.toLowerCase();
       let category = 'Documentación';
       let rType = 'pdf';
       if (['PPT', 'PPTX'].includes(ext)) { category = 'Presentaciones'; rType = 'ppt'; }
@@ -3748,6 +3852,17 @@ collectCurrentStepInputs() {
       else if (['XLS', 'XLSX', 'CSV'].includes(ext)) { category = 'Documentación'; rType = 'excel'; }
       else if (['DOC', 'DOCX'].includes(ext)) { category = 'Guías y manuales'; rType = 'word'; }
       else if (ext === 'ZIP') { category = 'Otros recursos'; rType = 'zip'; }
+
+      if (/libro|lectura|cuento|novela|ebook|bibliotec/i.test(lowerFileName)) {
+        category = 'Libros y lecturas';
+        rType = 'book';
+      } else if (/survey|formulario|encuesta|cuestionario|results/i.test(lowerFileName)) {
+        category = 'Encuestas y formularios';
+        rType = 'survey';
+      } else if (/guía|guia|manual|cartilla|instructivo/i.test(lowerFileName) && rType === 'pdf') {
+        category = 'Guías y manuales';
+        rType = 'guide';
+      }
 
       let fileUrl = '';
       let textPreview = '';
@@ -3837,10 +3952,32 @@ collectCurrentStepInputs() {
     if (this.draft?.resources?.[idx]) {
       this.draft.resources[idx][field] = value;
       this.saveDraftToStorage(true);
-      if (field === 'visibility') {
+      if (field === 'visibility' || field === 'type' || field === 'category') {
         if (window.ProjectsView) window.ProjectsView.render();
       }
     }
+  },
+
+  setResourcePresetCover(idx, coverVal) {
+    if (this.draft?.resources?.[idx]) {
+      this.draft.resources[idx].thumbnailUrl = coverVal || '';
+      this.saveDraftToStorage(true);
+      if (window.ProjectsView) window.ProjectsView.render();
+    }
+  },
+
+  async uploadResourceCover(idx, fileList) {
+    if (!fileList || !fileList[0] || !this.draft?.resources?.[idx]) return;
+    const file = fileList[0];
+    if (!file.type || !file.type.startsWith('image/')) {
+      alert('⚠️ Selecciona un archivo de imagen válido para la portada.');
+      return;
+    }
+    this.collectCurrentStepInputs();
+    const dataUrl = await this.compressImageFile(file, 720, 0.74);
+    this.draft.resources[idx].thumbnailUrl = dataUrl;
+    this.saveDraftToStorage(true);
+    if (window.ProjectsView) window.ProjectsView.render();
   },
 
   moveResource(idx, direction) {
@@ -4143,24 +4280,33 @@ collectCurrentStepInputs() {
           </div>
         ` : `
           <div style="display:flex; flex-direction:column; gap:0.95rem;">
-            ${links.map((lnk, idx) => `
+            ${links.map((lnk, idx) => {
+              const linkCoverPreview = (window.ProjectsView && typeof window.ProjectsView.getSmartResourceCover === 'function')
+                ? window.ProjectsView.getSmartResourceCover(lnk, 'link', idx)
+                : '';
+              return `
               <div style="padding:1.15rem; background:#ffffff; border:1.5px solid #cbd5e1; border-radius:14px; box-shadow:0 3px 10px rgba(15,23,42,0.03);">
-                <div class="gdn-field-grid">
-                  <div>
-                    <label class="gdn-label" style="font-size:0.78rem; font-weight:800; color:#0f172a; margin-bottom:0.35rem;">Nombre o Título del Enlace</label>
-                    <input type="text" class="gdn-input" style="padding:0.55rem 0.8rem; font-weight:700;" value="${this.escapeHtml(lnk.title)}" placeholder="Ej: Repositorio Oficial en GitHub" oninput="window.ProjectWizard.updateExternalLink(${idx}, 'title', this.value)" />
+                <div style="display:flex; gap:0.85rem; align-items:flex-start; flex-wrap:wrap;">
+                  <div style="width:112px; height:66px; border-radius:10px; overflow:hidden; border:1.5px solid #10b981; background:#091e2d; flex-shrink:0;">
+                    ${linkCoverPreview ? `<img src="${this.escapeHtml(linkCoverPreview)}" alt="Portada enlace" style="width:100%; height:100%; object-fit:cover; display:block;" />` : ''}
                   </div>
+                  <div class="gdn-field-grid" style="flex:1; min-width:240px;">
+                    <div>
+                      <label class="gdn-label" style="font-size:0.78rem; font-weight:800; color:#0f172a; margin-bottom:0.35rem;">Nombre o Título del Enlace</label>
+                      <input type="text" class="gdn-input" style="padding:0.55rem 0.8rem; font-weight:700;" value="${this.escapeHtml(lnk.title)}" placeholder="Ej: Repositorio Oficial en GitHub" oninput="window.ProjectWizard.updateExternalLink(${idx}, 'title', this.value)" />
+                    </div>
 
-                  <div>
-                    <label class="gdn-label" style="font-size:0.78rem; font-weight:800; color:#0f172a; margin-bottom:0.35rem; display:flex; justify-content:space-between;">
-                      <span>Dirección Web (URL)</span>
-                      <span style="color:${lnk.verified ? '#10b981' : '#64748b'}; font-weight:800; font-size:0.75rem;">
-                        ${lnk.verified ? '✔ Enlace comprobado' : '⏳ Sin comprobar'}
-                      </span>
-                    </label>
-                    <div style="display:flex; gap:0.45rem;">
-                      <input type="url" class="gdn-input" style="padding:0.55rem 0.8rem; flex:1;" value="${this.escapeHtml(lnk.url)}" placeholder="https://..." oninput="window.ProjectWizard.updateExternalLink(${idx}, 'url', this.value)" />
-                      <button type="button" class="btn" style="background:#0f172a !important; color:#ffffff !important; border:none !important; padding:0.55rem 0.95rem !important; font-size:0.78rem !important; font-weight:700 !important; border-radius:8px !important; cursor:pointer !important; white-space:nowrap !important;" onclick="window.ProjectWizard.verifyExternalLink(${idx})">Comprobar</button>
+                    <div>
+                      <label class="gdn-label" style="font-size:0.78rem; font-weight:800; color:#0f172a; margin-bottom:0.35rem; display:flex; justify-content:space-between;">
+                        <span>Dirección Web (URL)</span>
+                        <span style="color:${lnk.verified ? '#10b981' : '#64748b'}; font-weight:800; font-size:0.75rem;">
+                          ${lnk.verified ? '✔ Enlace comprobado' : '⏳ Sin comprobar'}
+                        </span>
+                      </label>
+                      <div style="display:flex; gap:0.45rem;">
+                        <input type="url" class="gdn-input" style="padding:0.55rem 0.8rem; flex:1;" value="${this.escapeHtml(lnk.url)}" placeholder="https://..." oninput="window.ProjectWizard.updateExternalLink(${idx}, 'url', this.value)" />
+                        <button type="button" class="btn" style="background:#0f172a !important; color:#ffffff !important; border:none !important; padding:0.55rem 0.95rem !important; font-size:0.78rem !important; font-weight:700 !important; border-radius:8px !important; cursor:pointer !important; white-space:nowrap !important;" onclick="window.ProjectWizard.verifyExternalLink(${idx})">Comprobar</button>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -4182,6 +4328,37 @@ collectCurrentStepInputs() {
                   </div>
                 </div>
 
+                <!-- Control de Portada / Miniatura del Enlace -->
+                <div style="margin-top:0.65rem; padding:0.6rem 0.8rem; background:#f8fafc; border:1px dashed #cbd5e1; border-radius:10px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:0.5rem;">
+                  <span style="font-size:0.78rem; font-weight:800; color:#0f172a;">🖼️ Portada del enlace en Landing Page:</span>
+                  <div style="display:flex; gap:0.45rem; flex:1; min-width:220px; flex-wrap:wrap; align-items:center;">
+                    <select
+                      class="gdn-select"
+                      style="width:auto; max-width:200px; padding:0.35rem 0.6rem; font-size:0.78rem; font-weight:700;"
+                      onchange="window.ProjectWizard.setExternalLinkPresetCover(${idx}, this.value)"
+                    >
+                      <option value="" ${!lnk.thumbnailUrl ? 'selected' : ''}>🪄 Automática (Acorde al enlace)</option>
+                      <option value="preset:link" ${lnk.thumbnailUrl === 'preset:link' ? 'selected' : ''}>🌐 Banner Portal Web</option>
+                      <option value="preset:book" ${lnk.thumbnailUrl === 'preset:book' ? 'selected' : ''}>📖 Banner Libro / Artículo</option>
+                      <option value="preset:survey" ${lnk.thumbnailUrl === 'preset:survey' ? 'selected' : ''}>📋 Banner Encuesta / Formulario</option>
+                      <option value="assets/projects_ui/card_ai_society.png" ${lnk.thumbnailUrl === 'assets/projects_ui/card_ai_society.png' ? 'selected' : ''}>🤖 Ilustración IA & Sociedad</option>
+                      <option value="assets/projects_ui/card_open_data.png" ${lnk.thumbnailUrl === 'assets/projects_ui/card_open_data.png' ? 'selected' : ''}>📊 Ilustración Datos Abiertos</option>
+                    </select>
+                    <input
+                      type="text"
+                      class="gdn-input"
+                      style="flex:1; min-width:150px; padding:0.35rem 0.6rem; font-size:0.78rem;"
+                      value="${this.escapeHtml((lnk.thumbnailUrl && !lnk.thumbnailUrl.startsWith('preset:')) ? lnk.thumbnailUrl : '')}"
+                      placeholder="O pega URL de imagen de portada..."
+                      oninput="window.ProjectWizard.updateExternalLink(${idx}, 'thumbnailUrl', this.value)"
+                    />
+                    <input type="file" id="gdn-lnk-cover-file-${idx}" accept="image/*" style="display:none;" onchange="window.ProjectWizard.uploadExternalLinkCover(${idx}, this.files)" />
+                    <button type="button" class="btn" style="background:#0f172a !important; color:#ffffff !important; border:none !important; padding:0.38rem 0.75rem !important; font-size:0.76rem !important; font-weight:800 !important; border-radius:8px !important; cursor:pointer !important;" onclick="document.getElementById('gdn-lnk-cover-file-${idx}').click()">
+                      📷 Subir portada
+                    </button>
+                  </div>
+                </div>
+
                 <div style="display:flex; justify-content:space-between; align-items:center; gap:0.75rem; margin-top:0.75rem; flex-wrap:wrap;">
                   <input type="text" class="gdn-input" style="flex:1; min-width:220px; padding:0.5rem 0.75rem; font-size:0.84rem;" value="${this.escapeHtml(lnk.description || '')}" placeholder="Descripción opcional (ej: Código fuente y arquitectura)..." oninput="window.ProjectWizard.updateExternalLink(${idx}, 'description', this.value)" />
                   <div style="display:flex; gap:0.4rem;">
@@ -4191,7 +4368,7 @@ collectCurrentStepInputs() {
                   </div>
                 </div>
               </div>
-            `).join('')}
+            `}).join('')}
           </div>
         `}
       </div>
@@ -4280,6 +4457,28 @@ collectCurrentStepInputs() {
   deleteExternalLink(idx) {
     if (!confirm('¿Eliminar este enlace externo del proyecto?')) return;
     this.draft.externalLinks.splice(idx, 1);
+    this.saveDraftToStorage(true);
+    if (window.ProjectsView) window.ProjectsView.render();
+  },
+
+  setExternalLinkPresetCover(idx, coverVal) {
+    if (this.draft?.externalLinks?.[idx]) {
+      this.draft.externalLinks[idx].thumbnailUrl = coverVal || '';
+      this.saveDraftToStorage(true);
+      if (window.ProjectsView) window.ProjectsView.render();
+    }
+  },
+
+  async uploadExternalLinkCover(idx, fileList) {
+    if (!fileList || !fileList[0] || !this.draft?.externalLinks?.[idx]) return;
+    const file = fileList[0];
+    if (!file.type || !file.type.startsWith('image/')) {
+      alert('⚠️ Selecciona un archivo de imagen válido para la portada del enlace.');
+      return;
+    }
+    this.collectCurrentStepInputs();
+    const dataUrl = await this.compressImageFile(file, 720, 0.74);
+    this.draft.externalLinks[idx].thumbnailUrl = dataUrl;
     this.saveDraftToStorage(true);
     if (window.ProjectsView) window.ProjectsView.render();
   },
