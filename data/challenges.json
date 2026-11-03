@@ -222,7 +222,7 @@
     "image": "assets/projects_ui/card_data_gov.png",
     "banner": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
     "createdAt": "2026-10-31T21:52:51.691Z",
-    "updatedAt": "2026-11-03T02:16:18.156Z",
+    "updatedAt": "2026-11-03T02:16:25.273Z",
     "govdata": {
       "id": "proj_pres_1791658288964",
       "title": "Personajes de Disney",
@@ -265,12 +265,12 @@
       },
       "videoConfig": {
         "sourceType": "url",
-        "url": "https://www.youtube.com/watch?v=B1gW2ivlQDs",
+        "url": "",
         "fileName": "",
         "title": "Video Explicativo: PETI Formato v1.0",
         "description": "",
         "isPublic": true,
-        "verified": true
+        "verified": false
       },
       "resources": [],
       "slides": [],
@@ -330,7 +330,7 @@
         "collaborators": ""
       },
       "createdAt": "2026-10-31T21:52:51.691Z",
-      "updatedAt": "2026-11-03T02:16:19.073Z",
+      "updatedAt": "2026-11-03T02:16:26.166Z",
       "progress": 65,
       "calculatedProgress": 65
     },
@@ -375,12 +375,12 @@
     },
     "videoConfig": {
       "sourceType": "url",
-      "url": "https://www.youtube.com/watch?v=B1gW2ivlQDs",
+      "url": "",
       "fileName": "",
       "title": "Video Explicativo: PETI Formato v1.0",
       "description": "",
       "isPublic": true,
-      "verified": true
+      "verified": false
     },
     "resources": [],
     "mainImage": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
@@ -468,7 +468,7 @@
       "commercialPitch": "",
       "faqs": []
     },
-    "videoUrl": "https://www.youtube.com/watch?v=B1gW2ivlQDs",
+    "videoUrl": "",
     "tags": [
       "Gobierno de Datos",
       "IA",
