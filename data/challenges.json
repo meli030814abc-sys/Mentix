@@ -222,7 +222,7 @@
     "image": "assets/projects_ui/card_data_gov.png",
     "banner": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
     "createdAt": "2026-10-31T21:52:51.691Z",
-    "updatedAt": "2026-11-03T02:16:03.767Z",
+    "updatedAt": "2026-11-03T02:16:14.072Z",
     "govdata": {
       "id": "proj_pres_1791658288964",
       "title": "Personajes de Disney",
@@ -303,9 +303,10 @@
         4,
         5,
         6,
-        7
+        7,
+        8
       ],
-      "currentStep": 8,
+      "currentStep": 9,
       "author": "Eimy",
       "authorId": "user_1791496180841",
       "authorEmail": "gatitaxd679@gmail.com",
@@ -328,7 +329,7 @@
         "collaborators": ""
       },
       "createdAt": "2026-10-31T21:52:51.691Z",
-      "updatedAt": "2026-11-03T02:16:04.697Z",
+      "updatedAt": "2026-11-03T02:16:14.969Z",
       "progress": 65,
       "calculatedProgress": 65
     },
