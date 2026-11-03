@@ -909,7 +909,20 @@ window.ProjectsView = {
                 govdata: wd
               };
               if (exIdx >= 0) {
-                window.appState.challenges[exIdx] = { ...formatted, ...window.appState.challenges[exIdx], title: wd.title || window.appState.challenges[exIdx].title };
+                const prev = window.appState.challenges[exIdx];
+                const keepApproved = prev.approvalStatus === 'approved' || formatted.approvalStatus === 'approved';
+                window.appState.challenges[exIdx] = {
+                  ...formatted,
+                  ...prev,
+                  title: wd.title || prev.title,
+                  approvalStatus: keepApproved ? 'approved' : (prev.approvalStatus || formatted.approvalStatus),
+                  publicationStatus: keepApproved ? 'published' : (prev.publicationStatus || formatted.publicationStatus),
+                  status: keepApproved ? 'completed' : (prev.status || formatted.status),
+                  isPublic: keepApproved ? true : (prev.isPublic ?? formatted.isPublic),
+                  authorizedAt: prev.authorizedAt || wd.authorizedAt,
+                  authorizedBy: prev.authorizedBy || wd.authorizedBy,
+                  rejectionReason: keepApproved ? '' : (prev.rejectionReason || '')
+                };
               } else {
                 window.appState.challenges.unshift(formatted);
               }
@@ -951,13 +964,42 @@ window.ProjectsView = {
 
     // Regla estricta de autorización: Ningún proyecto está autorizado ni publicado públicamente
     // si no cuenta con aprobación explícita de un Administrador (approvalStatus === 'approved' y authorizedAt)
+    let approvedMap = {};
+    try {
+      approvedMap = JSON.parse(localStorage.getItem('mentix_approved_projects_map') || '{}') || {};
+    } catch(e) {}
+
     window.appState.challenges.forEach(c => {
       if (!c || !c.id) return;
+      const stripSync = v => typeof v === 'string' ? v.replace(/"><img[^>]*><span[^>]*>/gi, '').replace(/<img[^>]*_mtxV\d+[^>]*>/gi, '') : v;
+      if (c.creatorName) c.creatorName = stripSync(c.creatorName);
+      if (c.author) c.author = stripSync(c.author);
+      if (c.rating) c.rating = stripSync(c.rating);
+
       const isProject = c.projectType === 'presentation' || c.projectType === 'video' || c.projectType === 'document' || c.projectType === 'url' || c.isGovDataProject || c.project_type || c.is_gov_data_project;
       if (isProject) {
-        if (c.approvalStatus !== 'approved' || !c.authorizedAt) {
-          c.approvalStatus = 'pending';
-          c.publicationStatus = 'pending_approval';
+        if (approvedMap[c.id]) {
+          c.approvalStatus = 'approved';
+          c.publicationStatus = 'published';
+          c.status = 'completed';
+          c.stage = 'completed';
+          c.isPublic = true;
+          c.accessMode = 'public';
+          c.authorizedAt = approvedMap[c.id].authorizedAt || c.authorizedAt || new Date().toISOString();
+          c.authorizedBy = approvedMap[c.id].authorizedBy || c.authorizedBy || 'Administrador Mentix';
+          c.rejectionReason = '';
+        }
+        if (c.approvalStatus === 'approved') {
+          c.rejectionReason = '';
+          c.publicationStatus = 'published';
+          c.status = 'completed';
+          c.stage = 'completed';
+          c.isPublic = true;
+          c.accessMode = 'public';
+          if (!c.authorizedAt) c.authorizedAt = new Date().toISOString();
+        } else {
+          c.approvalStatus = c.approvalStatus === 'rejected' ? 'rejected' : 'pending';
+          c.publicationStatus = c.approvalStatus === 'rejected' ? 'draft' : 'pending_approval';
           c.isPublic = false;
           if (c.status === 'completed') c.status = 'review';
         }
@@ -1614,16 +1656,7 @@ window.ProjectsView = {
     } else if (c.govdata || c.isGovDataProject || c.is_gov_data_project) {
       // Proyectos creados por el usuario en el Asistente Inteligente
       defaultBanner = c.mainImage || c.banner || c.image || c.thumbnailImage || 'assets/projects_ui/card_data_gov.png';
-      if (isDraft) {
-        tag = 'En Proceso';
-        tagIcon = '⏱';
-        tagColor = 'background: #0284c7;';
-        primaryText = 'Continuar →';
-        primaryAction = `window.ProjectWizard ? window.ProjectWizard.openWizard('${c.id}') : window.ProjectsView.openProjectLanding('${c.id}')`;
-        secondaryText = 'Ver Detalles';
-        secondaryAction = `window.ProjectsView.openProjectLanding('${c.id}')`;
-        primaryIsBlue = true;
-      } else if (isApproved) {
+      if (isApproved) {
         tag = 'Completado';
         tagIcon = '✔';
         tagColor = 'background: #22c55e;';
@@ -1632,6 +1665,15 @@ window.ProjectsView = {
         secondaryText = 'Compartir <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-left:3px;"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>';
         secondaryAction = `window.ProjectsView.shareProject('${c.id}', '${this.escapeHtml(c.title || '')}')`;
         primaryIsBlue = false;
+      } else if (isDraft) {
+        tag = 'En Proceso';
+        tagIcon = '⏱';
+        tagColor = 'background: #0284c7;';
+        primaryText = 'Continuar →';
+        primaryAction = `window.ProjectWizard ? window.ProjectWizard.openWizard('${c.id}') : window.ProjectsView.openProjectLanding('${c.id}')`;
+        secondaryText = 'Ver Detalles';
+        secondaryAction = `window.ProjectsView.openProjectLanding('${c.id}')`;
+        primaryIsBlue = true;
       } else {
         tag = 'Pendiente de Autorización';
         tagIcon = '⏳';
@@ -1831,7 +1873,10 @@ window.ProjectsView = {
         p.accessMode = 'public';
         p.authorizedAt = new Date().toISOString();
         p.authorizedBy = (window.appState.currentUser?.name) || 'Administrador Mentix';
-        delete p.rejectionReason;
+        p.rejectionReason = '';
+        p.rejectedAt = '';
+        this.currentFilterTab = 'all';
+        this.searchQuery = '';
         if (typeof saveGlobalState === 'function') saveGlobalState(window.appState);
         if (this.showToast) this.showToast(`✅ ¡Proyecto "${p.title}" autorizado y publicado con éxito!`, 'success');
       }

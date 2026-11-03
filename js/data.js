@@ -516,7 +516,19 @@ function loadInitialState() {
               if (up && up.id) {
                 const exIdx = challenges.findIndex(c => c && c.id === up.id);
                 if (exIdx >= 0) {
-                  challenges[exIdx] = { ...challenges[exIdx], ...up };
+                  const prev = challenges[exIdx];
+                  const keepApproved = prev.approvalStatus === 'approved' || up.approvalStatus === 'approved';
+                  challenges[exIdx] = {
+                    ...prev,
+                    ...up,
+                    approvalStatus: keepApproved ? 'approved' : (up.approvalStatus || prev.approvalStatus),
+                    publicationStatus: keepApproved ? 'published' : (up.publicationStatus || prev.publicationStatus),
+                    status: keepApproved ? 'completed' : (up.status || prev.status),
+                    isPublic: keepApproved ? true : (up.isPublic ?? prev.isPublic),
+                    authorizedAt: prev.authorizedAt || up.authorizedAt,
+                    authorizedBy: prev.authorizedBy || up.authorizedBy,
+                    rejectionReason: keepApproved ? '' : (up.rejectionReason || prev.rejectionReason || '')
+                  };
                 } else {
                   challenges.unshift(up);
                 }
@@ -582,13 +594,39 @@ function loadInitialState() {
 
   // Regla estricta de autorización previa por Administrador:
   // Ningún proyecto se considera autorizado ni publicado a menos que cuente con aprobación explícita del Admin
+  let approvedMap = {};
+  try {
+    approvedMap = JSON.parse(localStorage.getItem('mentix_approved_projects_map') || '{}') || {};
+  } catch(e) {}
+
   challenges.forEach(c => {
     if (!c || !c.id) return;
     const isProject = c.projectType === 'presentation' || c.projectType === 'video' || c.projectType === 'document' || c.projectType === 'url' || c.isGovDataProject || c.project_type || c.is_gov_data_project;
     if (isProject) {
-      if (c.approvalStatus !== 'approved' || !c.authorizedAt) {
-        c.approvalStatus = 'pending';
-        c.publicationStatus = 'pending_approval';
+      if (approvedMap[c.id]) {
+        c.approvalStatus = 'approved';
+        c.publicationStatus = 'published';
+        c.status = 'completed';
+        c.stage = 'completed';
+        c.isPublic = true;
+        c.accessMode = 'public';
+        c.authorizedAt = approvedMap[c.id].authorizedAt || c.authorizedAt || new Date().toISOString();
+        c.authorizedBy = approvedMap[c.id].authorizedBy || c.authorizedBy || 'Administrador Mentix';
+        c.rejectionReason = '';
+      }
+      if (c.approvalStatus === 'approved') {
+        c.rejectionReason = '';
+        c.publicationStatus = 'published';
+        c.status = 'completed';
+        c.stage = 'completed';
+        c.isPublic = true;
+        c.accessMode = 'public';
+        if (!c.authorizedAt) c.authorizedAt = new Date().toISOString();
+        c.tag = '✔ Completado';
+        c.tagClass = 'badge-completed';
+      } else {
+        c.approvalStatus = c.approvalStatus === 'rejected' ? 'rejected' : 'pending';
+        c.publicationStatus = c.approvalStatus === 'rejected' ? 'draft' : 'pending_approval';
         c.isPublic = false;
         c.status = (c.status === 'in_progress' && c.publicationStatus === 'draft') ? 'in_progress' : 'review';
         c.tag = '⏳ Pendiente de Autorización';

@@ -1527,7 +1527,24 @@ class AppRouter {
           } else {
             const existing = map.get(c.id);
             if ((Array.isArray(c.questions) && c.questions.length > 0) || isProjectItem) {
-              map.set(c.id, { ...existing, ...c });
+              let appMap = {};
+              try { appMap = JSON.parse(localStorage.getItem('mentix_approved_projects_map') || '{}') || {}; } catch(e) {}
+              const isApprovedHere = !!(appMap[c.id]) || existing.approvalStatus === 'approved' || c.approvalStatus === 'approved';
+              const mergedItem = { ...existing, ...c };
+              if (isApprovedHere && c.approvalStatus !== 'rejected') {
+                mergedItem.approvalStatus = 'approved';
+                mergedItem.publicationStatus = 'published';
+                mergedItem.status = 'completed';
+                mergedItem.stage = 'completed';
+                mergedItem.isPublic = true;
+                mergedItem.accessMode = 'public';
+                mergedItem.rejectionReason = '';
+                mergedItem.authorizedAt = appMap[c.id]?.authorizedAt || existing.authorizedAt || c.authorizedAt || new Date().toISOString();
+                mergedItem.authorizedBy = appMap[c.id]?.authorizedBy || existing.authorizedBy || c.authorizedBy || 'Administrador Mentix';
+              } else if (c.approvalStatus === 'approved') {
+                mergedItem.rejectionReason = '';
+              }
+              map.set(c.id, mergedItem);
             }
           }
         });
