@@ -222,7 +222,7 @@
     "image": "assets/projects_ui/card_data_gov.png",
     "banner": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
     "createdAt": "2026-10-31T21:52:51.691Z",
-    "updatedAt": "2026-11-03T02:15:53.878Z",
+    "updatedAt": "2026-11-03T02:15:55.736Z",
     "govdata": {
       "id": "proj_pres_1791658288964",
       "title": "Personajes de Disney",
@@ -244,7 +244,7 @@
         "problemSolved": "Facilita el reconocimiento e identificación de personajes de Disney, permitiendo conocer sus nombres, películas, historias y características.",
         "howItWorks": "Reúne una gran colección de personajes de Disney, organizados por películas, categorías y universos. Los usuarios pueden explorar imágenes, descubrir personajes, consultar información y participar en juegos de reconocimiento.",
         "forWhom": "Niños, adolescentes, jóvenes, adultos y todas las personas amantes de Disney, sus películas y personajes.",
-        "differentiator": "",
+        "differentiator": "Ofrece un universo amplio de personajes clásicos y modernos en un solo lugar, con imágenes, información, curiosidades y experiencias interactivas que combinan entretenimiento, aprendizaje y diversión.",
         "keyFeatures": [],
         "resultsAndBenefits": "Aprender la calidad",
         "prerequisites": "",
@@ -317,7 +317,7 @@
         "collaborators": ""
       },
       "createdAt": "2026-10-31T21:52:51.691Z",
-      "updatedAt": "2026-11-03T02:15:54.793Z",
+      "updatedAt": "2026-11-03T02:15:56.663Z",
       "progress": 65,
       "calculatedProgress": 65
     },
@@ -436,7 +436,7 @@
       "problemSolved": "Facilita el reconocimiento e identificación de personajes de Disney, permitiendo conocer sus nombres, películas, historias y características.",
       "howItWorks": "Reúne una gran colección de personajes de Disney, organizados por películas, categorías y universos. Los usuarios pueden explorar imágenes, descubrir personajes, consultar información y participar en juegos de reconocimiento.",
       "forWhom": "Niños, adolescentes, jóvenes, adultos y todas las personas amantes de Disney, sus películas y personajes.",
-      "differentiator": "",
+      "differentiator": "Ofrece un universo amplio de personajes clásicos y modernos en un solo lugar, con imágenes, información, curiosidades y experiencias interactivas que combinan entretenimiento, aprendizaje y diversión.",
       "keyFeatures": [],
       "resultsAndBenefits": "Aprender la calidad",
       "prerequisites": "",
