@@ -219,7 +219,7 @@
     "image": "nosequeestudiar.net/site/assets/files/217/medicina-mano-medica.jpg",
     "banner": "nosequeestudiar.net/site/assets/files/217/medicina-mano-medica.jpg",
     "createdAt": "2026-10-31T21:52:51.691Z",
-    "updatedAt": "2026-11-03T03:28:56.447Z",
+    "updatedAt": "2026-11-03T03:28:59.198Z",
     "govdata": {
       "id": "proj_pres_1791658288964",
       "title": "Personajes de Disney",
@@ -294,7 +294,7 @@
         12,
         13
       ],
-      "currentStep": 14,
+      "currentStep": 13,
       "author": "Eimy",
       "authorId": "user_1791496180841",
       "authorEmail": "gatitaxd679@gmail.com",
@@ -317,7 +317,7 @@
         "collaborators": ""
       },
       "createdAt": "2026-10-31T21:52:51.691Z",
-      "updatedAt": "2026-11-03T03:28:56.992Z",
+      "updatedAt": "2026-11-03T03:28:59.951Z",
       "progress": 95,
       "calculatedProgress": 95
     },
@@ -486,7 +486,7 @@
       12,
       13
     ],
-    "currentStep": 14,
+    "currentStep": 13,
     "designConfig": {
       "themeId": "cyberpunk",
       "fontFamily": "Montserrat",
