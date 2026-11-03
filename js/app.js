@@ -1319,18 +1319,25 @@ class AppRouter {
         return ['fhjr', 'kj'].includes(cid) || ['fhjr', 'kj'].includes(cname);
       };
 
-      // SIEMPRE garantizar las DEFAULT_CATEGORIES completas como base inmutable
+      // SIEMPRE garantizar las DEFAULT_CATEGORIES completas como base inmutable en español limpio
+      const sanitizeCat = (c) => (typeof window.sanitizeCategoryRecord === 'function' ? window.sanitizeCategoryRecord(c) : c);
       const map = new Map();
       (DEFAULT_CATEGORIES || []).forEach(c => {
-        if (!isBlocked(c)) map.set(c.id, c);
+        if (!isBlocked(c)) map.set(c.id, sanitizeCat(c));
       });
       (window.appState.categories || []).forEach(c => {
-        if (!isBlocked(c)) map.set(c.id, c);
+        if (!isBlocked(c)) {
+          const sc = sanitizeCat(c);
+          if (sc) map.set(sc.id, sc);
+        }
       });
 
       if (Array.isArray(cloudCategories) && cloudCategories.length > 0) {
         cloudCategories.forEach(c => {
-          if (!isBlocked(c)) map.set(c.id, c);
+          if (!isBlocked(c)) {
+            const sc = sanitizeCat(c);
+            if (sc) map.set(sc.id, sc);
+          }
         });
       }
 

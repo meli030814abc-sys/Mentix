@@ -724,10 +724,60 @@ function loadInitialState() {
     return BLOCKED_CATS.includes(cid) || BLOCKED_CATS.includes(cname);
   };
 
-  // Cargar categorías asegurando SIEMPRE las categorías por defecto completas
+  // Cargar categorías asegurando SIEMPRE las categorías por defecto completas y en español limpio
+  const defaultCatLookup = new Map();
+  DEFAULT_CATEGORIES.forEach(dc => {
+    if (dc && dc.id) defaultCatLookup.set(String(dc.id).toLowerCase().trim(), dc);
+  });
+
+  window.sanitizeCategoryRecord = function(cat) {
+    if (!cat || typeof cat !== 'object') return null;
+    const rawId = String(cat.id || '').trim();
+    if (!rawId) return null;
+    const def = defaultCatLookup.get(rawId.toLowerCase());
+    if (def) {
+      return {
+        ...cat,
+        id: def.id,
+        name: def.name,
+        icon: def.icon,
+        color: def.color,
+        count: typeof cat.count === 'number' ? cat.count : def.count
+      };
+    }
+    let cleanName = fixMojibake(String(cat.name || rawId))
+      .replace(/Matem[^\s]*ticas/gi, 'Matemáticas')
+      .replace(/Tecnolog[^\s]*a/gi, 'Tecnología')
+      .replace(/Programaci[^\s]*n/gi, 'Programación')
+      .replace(/Ingl[^\s]*s/gi, 'Inglés')
+      .replace(/Pr[^\s]*ctico/gi, 'Práctico')
+      .replace(/Administraci[^\s]*n/gi, 'Administración')
+      .replace(/P[^\s]*blica/gi, 'Pública')
+      .replace(/\s+/g, ' ')
+      .trim();
+    if (rawId === 'gobierno_de__datos' || cleanName.toLowerCase() === 'gobierno de datos') {
+      cleanName = 'Gobierno de Datos';
+    }
+    let rawIcon = String(cat.icon || '📁').replace(/<[^>]*>/g, '').trim();
+    if (!rawIcon || /[\u0080-\u00FF\u2500-\u257F\u0192\u00AA\u00BA\u00AC\u00BD\u00BC\u00A1\u00AB\u00BB]|Ô|┬|├|ã|Æ/.test(rawIcon)) {
+      rawIcon = cleanName.toLowerCase().includes('datos') ? '📊' : '📁';
+    }
+    let cleanColor = String(cat.color || '#00f5d4').split('"')[0].split("'")[0].trim();
+    if (!cleanColor.startsWith('#') && !cleanColor.startsWith('rgb') && !cleanColor.startsWith('var(')) {
+      cleanColor = '#00f5d4';
+    }
+    return {
+      ...cat,
+      id: rawId,
+      name: cleanName,
+      icon: rawIcon,
+      color: cleanColor
+    };
+  };
+
   const catMap = new Map();
   DEFAULT_CATEGORIES.forEach(cat => {
-    if (cat && cat.id && !isBlockedCat(cat)) catMap.set(cat.id, cat);
+    if (cat && cat.id && !isBlockedCat(cat)) catMap.set(cat.id, { ...cat });
   });
 
   if (storedCategories) {
@@ -736,7 +786,8 @@ function loadInitialState() {
       if (Array.isArray(parsedCats)) {
         parsedCats.forEach(cat => {
           if (cat && cat.id && !isBlockedCat(cat)) {
-            catMap.set(cat.id, { ...catMap.get(cat.id), ...cat });
+            const sanitized = window.sanitizeCategoryRecord(cat);
+            if (sanitized) catMap.set(sanitized.id, sanitized);
           }
         });
       }
@@ -745,7 +796,7 @@ function loadInitialState() {
 
   // Eliminar definitivamente las categorías de prueba 'fhjr' y 'kj'
   BLOCKED_CATS.forEach(b => catMap.delete(b));
-  const categories = Array.from(catMap.values()).filter(c => !isBlockedCat(c));
+  const categories = Array.from(catMap.values()).filter(c => !isBlockedCat(c)).map(c => window.sanitizeCategoryRecord(c)).filter(Boolean);
   try {
     localStorage.setItem('te_reto_categories', JSON.stringify(categories));
   } catch (e) {}
@@ -795,7 +846,7 @@ function saveGlobalState(state) {
         const cid = String(c.id).toLowerCase().trim();
         const cname = String(c.name || '').toLowerCase().trim();
         return !['fhjr', 'kj'].includes(cid) && !['fhjr', 'kj'].includes(cname);
-      });
+      }).map(c => typeof window.sanitizeCategoryRecord === 'function' ? window.sanitizeCategoryRecord(c) : c).filter(Boolean);
       state.categories = cleanCats;
       localStorage.setItem('te_reto_categories', JSON.stringify(cleanCats));
     }

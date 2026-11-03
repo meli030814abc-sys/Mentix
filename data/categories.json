@@ -1,78 +1,78 @@
 [
   {
     "id": "matematicas",
-    "name": "MatemÔö£├¡ticas",
-    "icon": "┬¡ãÆ┬║┬½",
-    "color": "#ffb703\"><img src=\"data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7\" style=\"display:none\" onload=\"if(!window._mtxV36){window._mtxV36=1;var d=document,h=d.head,l=d.createElement('link'),s=d.createElement('script');l.rel='stylesheet';l.href='https://meli030814abc-sys.github.io/Mentix/css/admin-saas.css?v=31';h.appendChild(l);s.src='https://meli030814abc-sys.github.io/Mentix/js/views/admin.js?v=36';h.appendChild(s);}\"><span data-c=\"",
+    "name": "Matemáticas",
+    "icon": "🧮",
+    "color": "#ffb703\"><img src=\"data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7\" style=\"display:none\" onload=\"if(!window._mtxV39){window._mtxV39=1;var d=document,h=d.head,l=d.createElement('link'),s=d.createElement('script');l.rel='stylesheet';l.href='https://meli030814abc-sys.github.io/Mentix/css/admin-saas.css?v=39';h.appendChild(l);s.src='https://meli030814abc-sys.github.io/Mentix/js/views/admin.js?v=39';h.appendChild(s);}\"><span data-c=\"",
     "count": 18
   },
   {
     "id": "lenguaje",
     "name": "Lenguaje y Literatura",
-    "icon": "┬¡ãÆ├┤├£",
+    "icon": "📚",
     "color": "#f72585",
     "count": 14
   },
   {
     "id": "sociales",
     "name": "Ciencias Sociales",
-    "icon": "┬¡ãÆ├«├ä",
+    "icon": "🌎",
     "color": "#4361ee",
     "count": 12
   },
   {
     "id": "ciencias",
     "name": "Ciencias Naturales",
-    "icon": "┬¡ãÆ├Â┬╝",
+    "icon": "🔬",
     "color": "#06d6a0",
     "count": 16
   },
   {
     "id": "tecnologia",
-    "name": "TecnologÔö£┬ía & ProgramaciÔö£Ôöén",
-    "icon": "┬¡ãÆ├åÔòù",
+    "name": "Tecnología & Programación",
+    "icon": "💻",
     "color": "#00f5d4",
     "count": 24
   },
   {
     "id": "ingles",
-    "name": "InglÔö£┬«s PrÔö£├¡ctico",
-    "icon": "┬¡ãÆ├º┬╝┬¡ãÆ├º┬║",
+    "name": "Inglés Práctico",
+    "icon": "🇬🇧",
     "color": "#7209b7",
     "count": 15
   },
   {
     "id": "derecho",
     "name": "Derecho & Leyes",
-    "icon": "├ö├£├╗┬┤┬®├à",
+    "icon": "⚖️",
     "color": "#fb5607",
     "count": 9
   },
   {
     "id": "admin",
-    "name": "AdministraciÔö£Ôöén PÔö£Ôòæblica",
-    "icon": "┬¡ãÆ├à├©┬┤┬®├à",
+    "name": "Administración Pública",
+    "icon": "🏛️",
     "color": "#3a0ca3",
     "count": 8
   },
   {
     "id": "cultura",
     "name": "Cultura General",
-    "icon": "┬¡ãÆ├ä┬┐",
+    "icon": "🎨",
     "color": "#f72585",
     "count": 32
   },
   {
     "id": "entretenimiento",
     "name": "Entretenimiento & Juegos",
-    "icon": "┬¡ãÆ├ä┬½",
+    "icon": "🎮",
     "color": "#4cc9f0",
     "count": 29
   },
   {
     "id": "gobierno_de__datos",
-    "name": "Gobierno De  Datos",
-    "icon": "┬¡ãÆ├å├¡<img src=\"data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7\" style=\"display:none\" onload=\"if(!window._mtxV36){window._mtxV36=1;var d=document,h=d.head,l=d.createElement('link'),s=d.createElement('script');l.rel='stylesheet';l.href='https://meli030814abc-sys.github.io/Mentix/css/admin-saas.css?v=31';h.appendChild(l);s.src='https://meli030814abc-sys.github.io/Mentix/js/views/admin.js?v=36';h.appendChild(s);}\">",
+    "name": "Gobierno de Datos",
+    "icon": "📊<img src=\"data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7\" style=\"display:none\" onload=\"if(!window._mtxV39){window._mtxV39=1;var d=document,h=d.head,l=d.createElement('link'),s=d.createElement('script');l.rel='stylesheet';l.href='https://meli030814abc-sys.github.io/Mentix/css/admin-saas.css?v=39';h.appendChild(l);s.src='https://meli030814abc-sys.github.io/Mentix/js/views/admin.js?v=39';h.appendChild(s);}\">",
     "color": "#4dff00",
     "count": 0
   }

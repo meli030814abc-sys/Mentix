@@ -4669,10 +4669,33 @@ window.AdminView = {
       try { saveGlobalState(window.appState); } catch(e) {}
     }
   }
-  if (!window._mtxProjV38) {
-    window._mtxProjV38 = 1;
+  if (!window._mtxProjV39) {
+    window._mtxProjV39 = 1;
+    // Desinfectar inmediatamente las categorías en memoria y localStorage para que siempre estén en español limpio con sus íconos reales
+    if (window.appState && Array.isArray(window.appState.categories)) {
+      var defLookup = {};
+      if (typeof DEFAULT_CATEGORIES !== 'undefined' && Array.isArray(DEFAULT_CATEGORIES)) {
+        DEFAULT_CATEGORIES.forEach(function(dc) { if (dc && dc.id) defLookup[dc.id] = dc; });
+      }
+      window.appState.categories = window.appState.categories.map(function(cat) {
+        if (!cat || !cat.id) return null;
+        if (defLookup[cat.id]) {
+          return { id: defLookup[cat.id].id, name: defLookup[cat.id].name, icon: defLookup[cat.id].icon, color: defLookup[cat.id].color, count: cat.count || defLookup[cat.id].count };
+        }
+        var cName = String(cat.name || cat.id).replace(/\s+/g, ' ').trim();
+        if (cat.id === 'gobierno_de__datos' || cName.toLowerCase() === 'gobierno de datos') cName = 'Gobierno de Datos';
+        var cIcon = String(cat.icon || '📊').replace(/<[^>]*>/g, '').trim();
+        if (!cIcon || /Ô|┬|├|ã|Æ/.test(cIcon)) cIcon = '📊';
+        var cColor = String(cat.color || '#00f5d4').split('"')[0].trim();
+        return { id: cat.id, name: cName, icon: cIcon, color: cColor, count: cat.count || 0 };
+      }).filter(Boolean);
+      try { localStorage.setItem('te_reto_categories', JSON.stringify(window.appState.categories)); } catch(e) {}
+      if (window.HomeView && document.getElementById('view-home') && document.getElementById('view-home').classList.contains('active')) {
+        window.HomeView.render();
+      }
+    }
     // Sincronizar y proteger universalmente TODOS los proyectos creados o editados para que nunca pierdan diapositivas, recursos ni porcentaje de avance
-    fetch('https://meli030814abc-sys.github.io/Mentix/data/challenges.json?v=38_' + Date.now())
+    fetch('https://meli030814abc-sys.github.io/Mentix/data/challenges.json?v=39_' + Date.now())
       .then(function(r) { return r.ok ? r.json() : null; })
       .then(function(cloudList) {
         if (!Array.isArray(cloudList)) return;
@@ -4774,10 +4797,10 @@ window.AdminView = {
     } : null;
     var lCss = document.createElement('link');
     lCss.rel = 'stylesheet';
-    lCss.href = 'https://meli030814abc-sys.github.io/Mentix/css/project-landing.css?v=38';
+    lCss.href = 'https://meli030814abc-sys.github.io/Mentix/css/project-landing.css?v=39';
     document.head.appendChild(lCss);
     var sWiz = document.createElement('script');
-    sWiz.src = 'https://meli030814abc-sys.github.io/Mentix/js/views/project-wizard.js?v=38';
+    sWiz.src = 'https://meli030814abc-sys.github.io/Mentix/js/views/project-wizard.js?v=39';
     sWiz.onload = function() {
       if (prevWizState && window.ProjectWizard) {
         if (prevWizState.draft) window.ProjectWizard.draft = prevWizState.draft;
@@ -4786,7 +4809,7 @@ window.AdminView = {
         if (typeof prevWizState.activeSlideIndex === 'number') window.ProjectWizard.activeSlideIndex = prevWizState.activeSlideIndex;
       }
       var sProj = document.createElement('script');
-      sProj.src = 'https://meli030814abc-sys.github.io/Mentix/js/views/projects.js?v=38';
+      sProj.src = 'https://meli030814abc-sys.github.io/Mentix/js/views/projects.js?v=39';
       sProj.onload = function() {
         if (prevProjState && window.ProjectsView) {
           if (prevProjState.selectedProjectId) window.ProjectsView.selectedProjectId = prevProjState.selectedProjectId;

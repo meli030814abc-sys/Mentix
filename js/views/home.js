@@ -94,12 +94,15 @@ window.HomeView = {
     // En MENTIX, los Retos son exclusivamente Quizzes con modos de juego
     let quizChallenges = (window.appState.challenges || []).filter(c => !c.projectType || c.projectType === 'quiz');
     const defaultCatIds = new Set((typeof DEFAULT_CATEGORIES !== 'undefined' ? DEFAULT_CATEGORIES : []).map(c => c.id));
+    if (Array.isArray(window.appState.categories) && typeof window.sanitizeCategoryRecord === 'function') {
+      window.appState.categories = window.appState.categories.map(c => window.sanitizeCategoryRecord(c)).filter(Boolean);
+    }
     const categories = (window.appState.categories || []).filter(c => {
       if (!c || !c.id) return false;
       const cid = String(c.id).toLowerCase().trim();
       const cname = String(c.name || '').toLowerCase().trim();
       return !['fhjr', 'kj'].includes(cid) && !['fhjr', 'kj'].includes(cname);
-    });
+    }).map(c => typeof window.sanitizeCategoryRecord === 'function' ? window.sanitizeCategoryRecord(c) : c);
     const currentUser = window.appState.currentUser;
     const currentUserId = currentUser?.id || '';
     const currentUserEmail = currentUser?.email || '';
