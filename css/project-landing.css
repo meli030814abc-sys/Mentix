@@ -7691,3 +7691,117 @@ body .plp-wrapper {
 .plp-wrapper strong {
   color: #ffffff !important;
 }
+
+/* ==========================================================================
+   13. ESPACIADO ELEGANTE Y SEPARACIÓN DE BORDES ("NO PEGADO A LA PARED")
+   Márgenes laterales generosos, alineación unificada y centrado perfecto
+   ========================================================================== */
+
+/* Contenedor envolvente en la vista SPA */
+.plp-page-container {
+  max-width: 1360px !important;
+  margin: 0 auto !important;
+  padding: 1.25rem clamp(1.25rem, 3.5vw, 2.75rem) 4rem !important;
+  box-sizing: border-box !important;
+  width: 100% !important;
+}
+
+/* Tarjeta contenedora de la landing page */
+.plp-wrapper {
+  box-sizing: border-box !important;
+  width: 100% !important;
+  border-radius: 24px !important;
+  overflow: hidden !important;
+}
+
+/* En standalone (proyecto-landing.html) */
+body #inno-app-root.plp-wrapper {
+  box-sizing: border-box !important;
+  width: 100% !important;
+  padding: 0 0 4rem 0 !important;
+}
+
+/* Header de la landing con buen espaciado interno */
+.inno-header,
+.plp-wrapper .inno-header {
+  padding: 0.9rem clamp(1.5rem, 3.5vw, 3rem) !important;
+  box-sizing: border-box !important;
+  width: 100% !important;
+}
+
+/* Unificación geométrica: TODAS las secciones principales comparten la misma anchura máxima,
+   centrado perfecto con margin auto y separación garantizada de las paredes de la pantalla */
+.inno-hero,
+.plp-wrapper .inno-hero,
+.inno-kpi-bar,
+.plp-wrapper .inno-kpi-bar,
+.inno-main-two-col,
+.plp-wrapper .inno-main-two-col,
+.inno-resources-section,
+.plp-wrapper .inno-resources-section,
+.inno-team-section,
+.plp-wrapper .inno-team-section,
+.inno-bottom-banner,
+.plp-wrapper .inno-bottom-banner {
+  max-width: 1260px !important;
+  width: calc(100% - clamp(1.75rem, 4vw, 3.5rem)) !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  box-sizing: border-box !important;
+}
+
+/* Hero Section: Tarjeta destacada con padding interno confortable */
+.inno-hero,
+.plp-wrapper .inno-hero {
+  margin-top: 1.75rem !important;
+  margin-bottom: 2rem !important;
+  padding: clamp(2rem, 3.5vw, 3rem) clamp(1.75rem, 3vw, 2.75rem) !important;
+  border-radius: 24px !important;
+  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.45) !important;
+}
+
+.inno-hero-grid,
+.plp-wrapper .inno-hero-grid {
+  max-width: 100% !important;
+  width: 100% !important;
+  margin: 0 !important;
+  box-sizing: border-box !important;
+}
+
+/* Barra de KPIs */
+.inno-kpi-bar,
+.plp-wrapper .inno-kpi-bar {
+  margin-bottom: 2.25rem !important;
+  padding: 0 !important;
+}
+
+/* Sección 2 Columnas (¿Por qué este proyecto? + Sidebar Participación) */
+.inno-main-two-col,
+.plp-wrapper .inno-main-two-col {
+  margin-bottom: 2.75rem !important;
+  padding: 0 !important;
+}
+
+/* Recursos del Proyecto */
+.inno-resources-section,
+.plp-wrapper .inno-resources-section {
+  margin-bottom: 2.75rem !important;
+  padding: 0 !important;
+  background: transparent !important;
+  border: none !important;
+}
+
+/* Equipo y Participantes */
+.inno-team-section,
+.plp-wrapper .inno-team-section {
+  margin-bottom: 2.75rem !important;
+  padding: 0 !important;
+}
+
+/* Banner de Acción Inferior */
+.inno-bottom-banner,
+.plp-wrapper .inno-bottom-banner {
+  margin-bottom: 3.5rem !important;
+  padding: 2.25rem clamp(1.5rem, 3vw, 2.75rem) !important;
+  border-radius: 24px !important;
+}

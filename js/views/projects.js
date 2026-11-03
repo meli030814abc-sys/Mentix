@@ -4698,7 +4698,7 @@ window.ProjectsView = {
       : 'proyecto-landing.html';
 
     container.innerHTML = `
-      <div style="max-width: 1400px; margin: 0 auto; padding: 0.25rem 0.5rem 3rem;">
+      <div class="plp-page-container" style="max-width: 1360px; margin: 0 auto; padding: 1.25rem clamp(1.25rem, 3.5vw, 2.75rem) 4rem; box-sizing: border-box;">
         <div class="plp-wrapper animate-fade-in" data-theme="${currentTheme}" style="font-family: '${customFont}', sans-serif;">
 
           <!-- Barra de Control Mentix -->
