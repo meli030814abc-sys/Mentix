@@ -2825,16 +2825,25 @@
    ========================================================================== */
 
 /* 1. Rejilla de los 4 Grandes Medidores Circulares Radiales (%) */
-.round-gauges-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 1.25rem;
-  margin-bottom: 2rem;
+.mentix-admin-content {
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow-x: hidden;
 }
 
-@media (max-width: 1200px) {
+.round-gauges-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+@media (max-width: 1280px) {
   .round-gauges-grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
@@ -2848,7 +2857,9 @@
   background: linear-gradient(145deg, #09172e 0%, #040c1a 100%);
   border: 1.5px solid rgba(56, 189, 248, 0.22);
   border-radius: 20px;
-  padding: 1.5rem 1.25rem;
+  padding: 1.25rem 1rem;
+  min-width: 0;
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
   align-items: center;
