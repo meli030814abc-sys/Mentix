@@ -7379,6 +7379,9 @@ body .plp-wrapper {
   border: 1.5px solid rgba(0, 245, 212, 0.35) !important;
   box-shadow: 0 12px 34px rgba(0, 0, 0, 0.55), 0 0 18px rgba(0, 245, 212, 0.12) !important;
   color: #ffffff !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: space-between !important;
 }
 
 .inno-why-card-title,
@@ -7397,14 +7400,42 @@ body .plp-wrapper {
 .plp-wrapper .inno-why-card p {
   color: #e2e8f0 !important;
   font-size: 1.02rem !important;
-  line-height: 1.65 !important;
+  line-height: 1.6 !important;
+  display: -webkit-box !important;
+  -webkit-line-clamp: 3 !important;
+  -webkit-box-orient: vertical !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  max-height: 4.85em !important;
+  word-break: break-word !important;
 }
 
 .inno-why-card-link,
 .plp-wrapper .inno-why-card-link {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 0.45rem !important;
+  margin-top: auto !important;
+  padding: 0.48rem 1.15rem !important;
+  border-radius: 9999px !important;
+  background: rgba(6, 40, 52, 0.88) !important;
+  border: 1.5px solid rgba(0, 245, 212, 0.48) !important;
   color: #00f5d4 !important;
   font-weight: 800 !important;
-  font-size: 0.95rem !important;
+  font-size: 0.92rem !important;
+  width: fit-content !important;
+  box-shadow: 0 4px 14px rgba(0, 245, 212, 0.16) !important;
+  transition: all 0.2s ease !important;
+  cursor: pointer !important;
+}
+
+.inno-why-card-link:hover,
+.plp-wrapper .inno-why-card-link:hover {
+  background: linear-gradient(135deg, #00f5d4 0%, #0284c7 100%) !important;
+  color: #071739 !important;
+  border-color: #00f5d4 !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 6px 20px rgba(0, 245, 212, 0.35) !important;
 }
 
 /* 7. Ruta del Proyecto / Timeline */
@@ -7540,8 +7571,15 @@ body .plp-wrapper {
 .inno-card-desc,
 .plp-wrapper .inno-card-desc {
   color: #e2e8f0 !important;
-  font-size: 1.05rem !important;
-  line-height: 1.6 !important;
+  font-size: 1.02rem !important;
+  line-height: 1.55 !important;
+  display: -webkit-box !important;
+  -webkit-line-clamp: 3 !important;
+  -webkit-box-orient: vertical !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  max-height: 4.7em !important;
+  word-break: break-word !important;
 }
 
 .inno-res-footer,

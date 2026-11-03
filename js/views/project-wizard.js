@@ -390,11 +390,27 @@ window.ProjectWizard = {
       this.draft.calculatedProgress = this.draft.progress;
     }
 
-    // 1. Guardar en almacenamiento local
+    // 1. Guardar en almacenamiento local (con protección anti-QuotaExceededError para que nunca quede un borrador viejo)
     try {
       const all = this.getAllSavedDrafts().filter(d => d && d.id !== this.draft.id);
       all.unshift(this.draft);
-      localStorage.setItem('mentix_govdata_wizard_drafts', JSON.stringify(all.slice(0, 30)));
+      try {
+        localStorage.setItem('mentix_govdata_wizard_drafts', JSON.stringify(all.slice(0, 20)));
+      } catch (quotaErr) {
+        // Si las diapositivas con imágenes superan la cuota de localStorage, guardar primero solo el proyecto activo o versión compacta
+        try {
+          localStorage.setItem('mentix_govdata_wizard_drafts', JSON.stringify([this.draft]));
+        } catch (quotaErr2) {
+          const compactDraft = JSON.parse(JSON.stringify(this.draft));
+          if (Array.isArray(compactDraft.slides)) {
+            compactDraft.slides = compactDraft.slides.map(s => ({
+              ...s,
+              bgImage: (s.bgImage && s.bgImage.length > 45000) ? '' : s.bgImage
+            }));
+          }
+          localStorage.setItem('mentix_govdata_wizard_drafts', JSON.stringify([compactDraft]));
+        }
+      }
     } catch (e) {
       console.warn('Aviso al guardar borrador local:', e);
     }
@@ -460,16 +476,52 @@ window.ProjectWizard = {
     let existing = null;
 
     if (projectId) {
-      const savedDraft = this.getAllSavedDrafts().find(d => d.id === projectId);
-      const savedChallenge = (window.appState?.challenges || []).find(c => c.id === projectId);
-      existing = savedDraft || savedChallenge || null;
+      const savedDraft = this.getAllSavedDrafts().find(d => d && d.id === projectId);
+      const savedChallenge = (window.appState?.challenges || []).find(c => c && c.id === projectId);
+      const gov = savedChallenge?.govdata || {};
+      const pickLongerArr = (...arrs) => {
+        let best = [];
+        for (const a of arrs) {
+          if (Array.isArray(a) && a.length > best.length) best = a;
+        }
+        return best;
+      };
+      const pickLongerStr = (...strs) => {
+        let best = '';
+        for (const s of strs) {
+          if (typeof s === 'string' && s.trim().length > best.trim().length) best = s;
+        }
+        return best;
+      };
+
+      if (savedDraft || savedChallenge) {
+        const base = { ...(savedChallenge || {}), ...(gov || {}), ...(savedDraft || {}) };
+        base.slides = pickLongerArr(savedDraft?.slides, savedChallenge?.slides, gov?.slides);
+        base.completedSteps = pickLongerArr(savedDraft?.completedSteps, savedChallenge?.completedSteps, gov?.completedSteps);
+        base.resources = pickLongerArr(savedDraft?.resources, savedChallenge?.resources, gov?.resources);
+        base.externalLinks = pickLongerArr(savedDraft?.externalLinks, savedChallenge?.externalLinks, gov?.externalLinks);
+        base.visualAssets = pickLongerArr(savedDraft?.visualAssets, savedChallenge?.visualAssets, gov?.visualAssets);
+        base.fullDescription = pickLongerStr(savedDraft?.fullDescription, savedChallenge?.fullDescription, gov?.fullDescription);
+        base.shortDescription = pickLongerStr(savedDraft?.shortDescription, savedChallenge?.shortDescription, gov?.shortDescription, savedChallenge?.description);
+        base.problemStatement = pickLongerStr(savedDraft?.problemStatement, savedChallenge?.problemStatement, gov?.problemStatement);
+        base.mainObjective = pickLongerStr(savedDraft?.mainObjective, savedChallenge?.mainObjective, gov?.mainObjective);
+        base.valueProp = pickLongerStr(savedDraft?.valueProp, savedChallenge?.valueProp, gov?.valueProp);
+        base.benefits = pickLongerStr(savedDraft?.benefits, savedChallenge?.benefits, gov?.benefits);
+        base.currentStep = Math.max(Number(savedDraft?.currentStep) || 1, Number(savedChallenge?.currentStep) || 1, Number(gov?.currentStep) || 1);
+        existing = base;
+      }
 
       // Buscar datos reales guardados en Supabase
       if (window.supabaseService && window.supabaseService.client) {
         try {
           const cloudDraft = await window.supabaseService.loadWizardDraft(projectId);
           if (cloudDraft) {
-            existing = { ...(existing || {}), ...cloudDraft };
+            const mergedCloud = { ...(existing || {}), ...cloudDraft };
+            mergedCloud.slides = pickLongerArr(existing?.slides, cloudDraft?.slides);
+            mergedCloud.completedSteps = pickLongerArr(existing?.completedSteps, cloudDraft?.completedSteps);
+            mergedCloud.resources = pickLongerArr(existing?.resources, cloudDraft?.resources);
+            mergedCloud.externalLinks = pickLongerArr(existing?.externalLinks, cloudDraft?.externalLinks);
+            existing = mergedCloud;
           }
         } catch (e) {
           console.warn('Aviso cargando borrador de Supabase:', e);

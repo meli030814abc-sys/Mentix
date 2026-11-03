@@ -1784,8 +1784,8 @@ window.ProjectsView = {
             ${this.escapeHtml(c.title)}
           </h3>
 
-          <p class="saas-card-desc" style="font-size: 0.81rem; color: #475569; margin: 0 0 0.85rem; line-height: 1.42; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; flex: 1;">
-            ${this.escapeHtml(desc)}
+          <p class="saas-card-desc" style="font-size: 0.81rem; color: #475569; margin: 0 0 0.85rem; line-height: 1.42; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis; max-height: 2.85em; flex: 1;">
+            ${this.escapeHtml(this.truncateCardText(desc, 115))}
           </p>
 
           <!-- Metadata Row -->
@@ -3624,24 +3624,35 @@ window.ProjectsView = {
     };
   },
 
+  truncateCardText(rawText, maxLen = 135) {
+    const str = String(rawText || '').replace(/\s+/g, ' ').trim();
+    if (!str) return '';
+    if (str.length <= maxLen) return str;
+    const cut = str.slice(0, maxLen);
+    const lastSpace = cut.lastIndexOf(' ');
+    return (lastSpace > 60 ? cut.slice(0, lastSpace) : cut).replace(/[.,;:!\-\s]+$/, '') + '...';
+  },
+
   calculateProjectProgress(p) {
     if (!p) return 0;
+    const gp = p.govdata || {};
+    const vp = p.valueProp || p.valueProposition || gp.valueProp || {};
     let score = 0;
 
-    // 1. Nombre / Título del proyecto (base 5% si solo puso el nombre)
-    const title = (p.title || '').trim();
+    // 1. Nombre / Título del proyecto
+    const title = (p.title || gp.title || '').trim();
     if (title.length >= 3) {
       score += 5;
     }
 
     // 2. Subtítulo o lema descriptivo
-    const subtitle = (p.subtitle || '').trim();
+    const subtitle = (p.subtitle || gp.subtitle || '').trim();
     if (subtitle.length >= 3) {
       score += 5;
     }
 
-    // 3. Descripción (corta o general)
-    const desc = (p.description || p.shortDescription || '').trim();
+    // 3. Descripción (corta o completa)
+    const desc = (p.fullDescription || gp.fullDescription || p.description || p.shortDescription || gp.shortDescription || '').trim();
     if (desc.length >= 15) {
       score += 10;
     } else if (desc.length > 0) {
@@ -3649,18 +3660,18 @@ window.ProjectsView = {
     }
 
     // 4. Categoría y clasificación
-    if (p.category || p.categoryName || p.categoryId) {
+    if (p.category || p.categoryName || p.categoryId || gp.category || gp.categoryName) {
       score += 5;
     }
 
     // 5. Configuración de diseño y banner (Paso 4)
-    const des = p.designConfig || p.govdata?.designConfig;
+    const des = p.designConfig || gp.designConfig;
     if (des && (des.themeId || des.bannerUrl || des.bannerStyle)) {
       score += 10;
     }
 
     // 6. Autores y correos de contacto (Paso 5)
-    const aut = p.authorsConfig || p.govdata?.authorsConfig;
+    const aut = p.authorsConfig || gp.authorsConfig;
     if (aut && (aut.authorsList || aut.authorsEmails || p.authorEmail)) {
       score += 10;
     } else if (p.author && p.author !== 'Docente' && p.author !== 'Estudiante') {
@@ -3668,62 +3679,61 @@ window.ProjectsView = {
     }
 
     // 7. Problema y objetivo principal (Paso 6)
-    const obj = (p.mainObjective || p.govdata?.problemSolved || p.valueProposition?.problemSolved || '').trim();
+    const obj = (p.mainObjective || gp.mainObjective || p.problemStatement || gp.problemStatement || vp.problemSolved || '').trim();
     if (obj.length >= 10) {
-      score += 10;
-    } else if (obj.length > 0) {
-      score += 5;
-    }
-
-    // 8. Público objetivo y propuesta de valor (Paso 7)
-    const aud = (p.targetAudience || p.valueProposition?.targetAudience || '').trim();
-    if (aud.length >= 5) {
-      score += 5;
-    }
-
-    // 9. Cronograma / fechas clave (Paso 8)
-    const timeline = p.timeline || p.govdata?.timeline || [];
-    if ((Array.isArray(timeline) && timeline.length > 0) || p.startDate || p.endDate) {
-      score += 5;
-    }
-
-    // 10. Recursos y documentos adjuntos (Paso 11) - hasta 15%
-    const resources = p.resources || p.govdata?.resources || p.documents || [];
-    const resCount = Array.isArray(resources) ? resources.length : 0;
-    if (resCount >= 3) {
       score += 15;
-    } else if (resCount >= 2) {
-      score += 12;
-    } else if (resCount === 1) {
+    } else if (obj.length > 0) {
       score += 8;
     }
 
+    // 8. Público objetivo, beneficios y propuesta de valor (Paso 7)
+    const aud = (p.targetAudience || gp.targetAudience || vp.forWhom || vp.howItWorks || p.benefits || gp.benefits || '').trim();
+    if (aud.length >= 3) {
+      score += 10;
+    }
+
+    // 9. Cronograma / fechas clave (Paso 8)
+    const timeline = p.timeline || gp.timeline || [];
+    if ((Array.isArray(timeline) && timeline.length > 0) || p.startDate || gp.startDate || p.endDate || gp.endDate) {
+      score += 5;
+    }
+
+    // 10. Recursos, presentaciones o enlaces (Pasos 11-14)
+    const resources = p.resources || gp.resources || p.documents || [];
+    const slides = (Array.isArray(p.slides) && p.slides.length > 0) ? p.slides : (gp.slides || []);
+    const links = p.externalLinks || gp.externalLinks || [];
+    const visuals = p.visualAssets || gp.visualAssets || [];
+    const totalAssets = (Array.isArray(resources) ? resources.length : 0) +
+                        (Array.isArray(slides) ? slides.length : 0) +
+                        (Array.isArray(links) ? links.length : 0) +
+                        (Array.isArray(visuals) ? visuals.length : 0);
+    if (totalAssets >= 3) {
+      score += 15;
+    } else if (totalAssets >= 1) {
+      score += 10;
+    }
+
     // 11. Video explicativo o demostrativo (Paso 10)
-    const vid = p.video || p.govdata?.video;
+    const vid = p.videoConfig || gp.videoConfig || p.video || gp.video;
     const vidUrl = (typeof vid === 'string' ? vid : (vid?.youtubeUrl || vid?.url || p.videoUrl || '')).trim();
     if (vidUrl.length >= 8) {
       score += 5;
     }
 
-    // 12. Activos visuales o diapositivas (Paso 12)
-    const slides = p.slides || [];
-    const visuals = p.visualAssets || p.govdata?.visualAssets || [];
-    if (slides.length >= 2 || visuals.length >= 1) {
-      score += 5;
+    // 12. Pasos completados en el asistente
+    const compSteps = Array.isArray(p.completedSteps) ? p.completedSteps : (Array.isArray(gp.completedSteps) ? gp.completedSteps : []);
+    if (compSteps.length > 0) {
+      const stepPct = Math.round((Math.min(16, compSteps.length) / 16) * 100);
+      score = Math.max(score, stepPct);
     }
 
-    // 13. Publicación oficial (Paso 14-15) - 10%
-    const isPublished = p.publicationStatus === 'published' || p.isPublished === true || p.projectState === 'publicado' || p.projectState === 'en_ejecucion';
+    // 13. Publicación / Autorización oficial
+    const isPublished = p.publicationStatus === 'published' || p.approvalStatus === 'approved' || p.isPublished === true || p.status === 'completed' || p.projectState === 'publicado';
     if (isPublished) {
-      score += 10;
+      score = Math.max(score + 10, 95);
     }
 
-    // Borradores no alcanzan el 100% hasta ser publicados oficialmente
-    if (!isPublished && score >= 95) {
-      score = 90;
-    }
-
-    return Math.min(100, Math.max(score, (title.length >= 3 ? 5 : 0)));
+    return Math.min(100, Math.max(score, (title.length >= 3 ? 10 : 0)));
   },
 
   renderLandingPageView(container, allProjects = []) {
@@ -3757,10 +3767,11 @@ window.ProjectsView = {
     const heroEyebrow = this.escapeHtml((selected && (selected.subtitle || selected.categoryName)) || '🚀 Proyecto Educativo & Didáctico');
     const heroMainTitle1 = selected ? this.escapeHtml(pub.landingTitle || selected.title || cfg.heroTitle) : cfg.heroTitle;
     const heroMainTitle2 = (selected && selected.subtitle) ? this.escapeHtml(selected.subtitle) : '';
-    const heroSubtitle = this.escapeHtml(
+    const heroSubtitle = this.escapeHtml(this.truncateCardText(
       (selected && (pub.publicDescription || selected.shortDescription || selected.description || gp.shortDescription)) ||
-      cfg.heroSub
-    );
+      cfg.heroSub,
+      180
+    ));
 
     const ctaText = this.escapeHtml((selected && (pub.ctaText || selected.ctaText || vp.visitorAction)) || cfg.btnExplore);
     const ctaUrl = (selected && (pub.ctaUrl || selected.ctaUrl)) || '';
@@ -3769,27 +3780,32 @@ window.ProjectsView = {
     const visibleCategory = this.escapeHtml((selected && (selected.categoryName || pub.visibleCategory)) || 'General');
     const projectState = this.escapeHtml((selected && (selected.preparationStatus || selected.projectState || 'En desarrollo')).toString().replace(/_/g, ' '));
 
-    const cardProblem = this.escapeHtml(
+    const cardProblem = this.escapeHtml(this.truncateCardText(
       (selected && (selected.problemStatement || gp.problemStatement || vp.problemSolved)) ||
       (selected && (selected.shortDescription || gp.shortDescription)) ||
-      cfg.problemDesc
-    );
-    const cardValueProp = this.escapeHtml(
+      cfg.problemDesc,
+      125
+    ));
+    const cardValueProp = this.escapeHtml(this.truncateCardText(
       (selected && (vp.howItWorks || selected.mainObjective || gp.mainObjective)) ||
-      cfg.goalDesc
-    );
-    const cardMethodology = this.escapeHtml(
+      cfg.goalDesc,
+      125
+    ));
+    const cardMethodology = this.escapeHtml(this.truncateCardText(
       (selected && (selected.fullDescription || gp.fullDescription || (Array.isArray(vp.keyFeatures) && vp.keyFeatures.length ? vp.keyFeatures.join(', ') : '') || selected.projectSubtype)) ||
-      cfg.methodDesc
-    );
-    const cardImpact = this.escapeHtml(
+      cfg.methodDesc,
+      125
+    ));
+    const cardImpact = this.escapeHtml(this.truncateCardText(
       (selected && (selected.benefits || gp.benefits || vp.resultsAndBenefits)) ||
-      cfg.impactDesc
-    );
-    const leadWhyText = this.escapeHtml(
+      cfg.impactDesc,
+      125
+    ));
+    const leadWhyText = this.escapeHtml(this.truncateCardText(
       (selected && (selected.shortDescription || gp.shortDescription || selected.description || selected.mainObjective)) ||
-      'Conoce los objetivos, el problema identificado y el impacto positivo de este proyecto.'
-    );
+      'Conoce los objetivos, el problema identificado y el impacto positivo de este proyecto.',
+      160
+    ));
 
     const des = (selected && (selected.designConfig || selected.govdata?.designConfig)) || {};
     const aut = (selected && (selected.authorsConfig || selected.govdata?.authorsConfig)) || {};
@@ -3834,7 +3850,9 @@ window.ProjectsView = {
       'Explicar con claridad por qué este problema requiere una solución prioritaria.',
       'Detallar las ventajas competitivas y la innovación de nuestra propuesta.'
     ]);
-    const rawSlides = Array.isArray(selected?.slides) ? selected.slides : (Array.isArray(gp.slides) ? gp.slides : []);
+    const rawSlides = (Array.isArray(selected?.slides) && selected.slides.length > 0)
+      ? selected.slides
+      : (Array.isArray(gp.slides) ? gp.slides : []);
     const userSlides = rawSlides.filter(s => {
       if (!s || s.id === 's1') return false;
       if (s.title && autoSlideTitles.has(String(s.title).trim())) return false;
@@ -3851,8 +3869,9 @@ window.ProjectsView = {
       totalCardsCount++;
       const sThumb = userSlides[0]?.media || userSlides[0]?.imageUrl || mainCover || 'assets/projects_ui/card_data_gov.png';
       const sTitle = selectedTitle ? `Presentación: ${selectedTitle}` : (userSlides[0]?.title || 'Presentación Interactiva');
-      const sDesc = `${userSlides.length} ${userSlides.length === 1 ? 'diapositiva creada o subida' : 'diapositivas creadas o subidas'} en Mentix.`;
-      const sSearch = (sTitle + ' ' + sDesc + ' presentacion diapositivas mentix').toLowerCase();
+      const slideNames = userSlides.map((s, i) => s.title || `Lámina ${i + 1}`).join(', ');
+      const sDesc = this.truncateCardText(`Incluye ${userSlides.length} ${userSlides.length === 1 ? 'lámina' : 'láminas'}: ${slideNames}`, 120);
+      const sSearch = (sTitle + ' ' + slideNames + ' presentacion diapositivas mentix').toLowerCase();
 
       cardsHtml += `
         <article class="inno-resource-card" data-category="pres" data-plp-search="${this.escapeHtml(sSearch)}">
@@ -3863,6 +3882,7 @@ window.ProjectsView = {
             <div>
               <h4 class="inno-card-title">${this.escapeHtml(sTitle)}</h4>
               <p class="inno-card-desc">${this.escapeHtml(sDesc)}</p>
+              <span class="inno-why-card-link" style="margin-top:0.5rem; cursor:pointer;" onclick="window.ProjectsView.openLandingSlidesModal(0)">Saber más →</span>
             </div>
             <div class="inno-card-footer">
               <span>📽️ ${userSlides.length} ${userSlides.length === 1 ? 'lámina' : 'láminas'}</span>
@@ -3886,7 +3906,7 @@ window.ProjectsView = {
         videoThumb = mainCover;
       }
       const vTitle = vc.title || (selectedTitle ? `Video: ${selectedTitle}` : 'Video explicativo del proyecto');
-      const vDesc = vc.description || 'Conoce los objetivos y el alcance de la iniciativa.';
+      const vDesc = this.truncateCardText(vc.description || 'Conoce los objetivos y el alcance de la iniciativa.', 120);
       const vSearch = (vTitle + ' ' + vDesc + ' video explicativo multimedia').toLowerCase();
       const vFile = vc.fileName || 'Video oficial';
 
@@ -3916,7 +3936,8 @@ window.ProjectsView = {
     userResources.forEach((res, idx) => {
       totalCardsCount++;
       const name = res.name || res.title || `Documento ${idx + 1}`;
-      const desc = res.description || 'Material oficial y recurso de apoyo del proyecto.';
+      const rawDesc = res.description || 'Material oficial y recurso de apoyo del proyecto.';
+      const desc = this.truncateCardText(rawDesc, 120);
       const type = (res.type || '').toLowerCase();
       const fmt = (res.format || '').toUpperCase();
       const cat = (res.category || '').toLowerCase();
@@ -3952,7 +3973,7 @@ window.ProjectsView = {
       }
 
       const thumbUrl = res.thumbnailUrl || res.previewUrl || ((res.url && res.url.startsWith('data:image/')) ? res.url : '');
-      const rSearch = (name + ' ' + desc + ' ' + tagLabel + ' ' + (res.category || '')).toLowerCase();
+      const rSearch = (name + ' ' + rawDesc + ' ' + tagLabel + ' ' + (res.category || '')).toLowerCase();
       const dateStr = res.date || res.updatedAt || 'Reciente';
       const sizeStr = res.sizeLabel || (res.sizeBytes ? (res.sizeBytes / 1024 / 1024).toFixed(1) + ' MB' : 'Archivo');
 
@@ -3969,6 +3990,7 @@ window.ProjectsView = {
             <div>
               <h4 class="inno-card-title">${this.escapeHtml(name)}</h4>
               <p class="inno-card-desc">${this.escapeHtml(desc)}</p>
+              ${rawDesc.length > 120 ? `<span class="inno-why-card-link" style="margin-top:0.5rem; cursor:pointer;" onclick="window.ProjectsView.previewLandingDoc('${this.escapeHtml(name)}')">Saber más →</span>` : ''}
             </div>
             <div class="inno-card-footer">
               <span>📅 ${this.escapeHtml(dateStr)} • 💾 ${this.escapeHtml(sizeStr)}</span>
@@ -3985,9 +4007,10 @@ window.ProjectsView = {
     userLinks.forEach((lnk, idx) => {
       totalCardsCount++;
       const lTitle = lnk.title || `Enlace ${idx + 1}`;
-      const lDesc = lnk.description || lnk.url || 'Enlace externo';
+      const rawLDesc = lnk.description || lnk.url || 'Enlace externo';
+      const lDesc = this.truncateCardText(rawLDesc, 120);
       const lCat = lnk.category || 'Enlace Web';
-      const lSearch = (lTitle + ' ' + lDesc + ' ' + lCat + ' enlace link').toLowerCase();
+      const lSearch = (lTitle + ' ' + rawLDesc + ' ' + lCat + ' enlace link').toLowerCase();
       const domain = lnk.url ? lnk.url.replace(/^https?:\/\//i, '').split('/')[0] : 'Web';
 
       cardsHtml += `
@@ -4004,6 +4027,36 @@ window.ProjectsView = {
               <span>🌐 ${this.escapeHtml(domain)}</span>
               <button type="button" class="inno-card-action-btn inno-res-btn-action" onclick="window.open('${this.escapeHtml(lnk.url)}', '_blank')" title="Visitar enlace">
                 <span>🔗</span> Visitar enlace
+              </button>
+            </div>
+          </div>
+        </article>
+      `;
+    });
+
+    // 4. Tarjetas de Imágenes y Activos Visuales Reales (Paso 13)
+    userVisuals.forEach((vis, idx) => {
+      if (!vis || !vis.url) return;
+      totalCardsCount++;
+      const vName = vis.title || `Imagen del Proyecto ${idx + 1}`;
+      const rawVDesc = vis.caption || vis.description || 'Activo visual oficial del proyecto.';
+      const vDesc = this.truncateCardText(rawVDesc, 120);
+      const vSearch = (vName + ' ' + rawVDesc + ' imagen galeria visual').toLowerCase();
+
+      cardsHtml += `
+        <article class="inno-resource-card" data-category="doc" data-plp-search="${this.escapeHtml(vSearch)}">
+          <div class="inno-card-thumb-wrap" style="background-image:url('${this.escapeHtml(vis.url)}'); background-size:cover; background-position:center; cursor:pointer;" onclick="window.ProjectsView.openLandingLightbox('${this.escapeHtml(vis.url)}', '${this.escapeHtml(vName)}')">
+            <span class="inno-card-tag" style="background:#0284c7;">🖼️ Imagen</span>
+          </div>
+          <div class="inno-card-body">
+            <div>
+              <h4 class="inno-card-title">${this.escapeHtml(vName)}</h4>
+              <p class="inno-card-desc">${this.escapeHtml(vDesc)}</p>
+            </div>
+            <div class="inno-card-footer">
+              <span>🖼️ Galería</span>
+              <button type="button" class="inno-card-action-btn inno-res-btn-action" onclick="window.ProjectsView.openLandingLightbox('${this.escapeHtml(vis.url)}', '${this.escapeHtml(vName)}')" title="Ver imagen">
+                <span>👁️</span> Ver imagen
               </button>
             </div>
           </div>
@@ -4234,15 +4287,15 @@ window.ProjectsView = {
                         <span class="inno-legend-label">Planeación</span>
                       </div>
                       <div class="inno-legend-item">
-                        <span class="inno-legend-dot green">✓</span>
+                        <span class="inno-legend-dot ${progressPercent >= 40 ? 'green' : 'blue'}">${progressPercent >= 40 ? '✓' : '●'}</span>
                         <span class="inno-legend-label">Diseño</span>
                       </div>
                       <div class="inno-legend-item">
-                        <span class="inno-legend-dot blue">●</span>
+                        <span class="inno-legend-dot ${progressPercent >= 70 ? 'green' : (progressPercent >= 40 ? 'blue' : 'gray')}">${progressPercent >= 70 ? '✓' : (progressPercent >= 40 ? '●' : '○')}</span>
                         <span class="inno-legend-label">Desarrollo</span>
                       </div>
                       <div class="inno-legend-item">
-                        <span class="inno-legend-dot gray">○</span>
+                        <span class="inno-legend-dot ${progressPercent >= 85 ? 'green' : (progressPercent >= 70 ? 'blue' : 'gray')}">${progressPercent >= 85 ? '✓' : (progressPercent >= 70 ? '●' : '○')}</span>
                         <span class="inno-legend-label">Implementación</span>
                       </div>
                     </div>

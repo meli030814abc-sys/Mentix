@@ -4669,8 +4669,58 @@ window.AdminView = {
       try { saveGlobalState(window.appState); } catch(e) {}
     }
   }
-  if (!window._mtxProjV34) {
-    window._mtxProjV34 = 1;
+  if (!window._mtxProjV35) {
+    window._mtxProjV35 = 1;
+    // Restaurar automáticamente proyectos completos desde el repositorio si el borrador local se había vaciado por límite de memoria
+    fetch('https://meli030814abc-sys.github.io/Mentix/data/challenges.json?v=35_' + Date.now())
+      .then(function(r) { return r.ok ? r.json() : null; })
+      .then(function(cloudList) {
+        if (!Array.isArray(cloudList)) return;
+        var disneyCloud = cloudList.find(function(x) { return x && x.id === 'proj_pres_1791658288964'; });
+        if (disneyCloud && Array.isArray(disneyCloud.slides) && disneyCloud.slides.length > 1) {
+          if (window.appState && Array.isArray(window.appState.challenges)) {
+            var idx = window.appState.challenges.findIndex(function(x) { return x && x.id === 'proj_pres_1791658288964'; });
+            if (idx >= 0) {
+              window.appState.challenges[idx] = Object.assign({}, window.appState.challenges[idx], disneyCloud);
+            } else {
+              window.appState.challenges.unshift(disneyCloud);
+            }
+            if (typeof saveGlobalState === 'function') {
+              try { saveGlobalState(window.appState); } catch(e) {}
+            }
+          }
+          try {
+            var drafts = JSON.parse(localStorage.getItem('mentix_govdata_wizard_drafts') || '[]');
+            if (Array.isArray(drafts)) {
+              var dIdx = drafts.findIndex(function(d) { return d && d.id === 'proj_pres_1791658288964'; });
+              var restoredDraft = Object.assign({}, disneyCloud.govdata || {}, disneyCloud, {
+                slides: disneyCloud.slides,
+                completedSteps: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16],
+                currentStep: 16,
+                progress: 100
+              });
+              if (dIdx >= 0) drafts[dIdx] = restoredDraft;
+              else drafts.unshift(restoredDraft);
+              try {
+                localStorage.setItem('mentix_govdata_wizard_drafts', JSON.stringify(drafts.slice(0, 10)));
+              } catch (qe) {
+                var compactRestored = JSON.parse(JSON.stringify(restoredDraft));
+                if (Array.isArray(compactRestored.slides)) {
+                  compactRestored.slides = compactRestored.slides.map(function(s) {
+                    return Object.assign({}, s, { bgImage: (s.bgImage && s.bgImage.length > 45000) ? '' : s.bgImage });
+                  });
+                }
+                try { localStorage.setItem('mentix_govdata_wizard_drafts', JSON.stringify([compactRestored])); } catch(e2) {}
+              }
+            }
+          } catch(e) {}
+          if (window.ProjectsView && document.getElementById('view-projects') && document.getElementById('view-projects').classList.contains('active') && window.ProjectsView.viewMode !== 'wizard') {
+            window.ProjectsView.render();
+          }
+        }
+      })
+      .catch(function() {});
+
     var prevProjState = window.ProjectsView ? {
       selectedProjectId: window.ProjectsView.selectedProjectId,
       viewMode: window.ProjectsView.viewMode,
@@ -4687,10 +4737,10 @@ window.AdminView = {
     } : null;
     var lCss = document.createElement('link');
     lCss.rel = 'stylesheet';
-    lCss.href = 'https://meli030814abc-sys.github.io/Mentix/css/project-landing.css?v=34';
+    lCss.href = 'https://meli030814abc-sys.github.io/Mentix/css/project-landing.css?v=35';
     document.head.appendChild(lCss);
     var sWiz = document.createElement('script');
-    sWiz.src = 'https://meli030814abc-sys.github.io/Mentix/js/views/project-wizard.js?v=34';
+    sWiz.src = 'https://meli030814abc-sys.github.io/Mentix/js/views/project-wizard.js?v=35';
     sWiz.onload = function() {
       if (prevWizState && window.ProjectWizard) {
         if (prevWizState.draft) window.ProjectWizard.draft = prevWizState.draft;
@@ -4699,7 +4749,7 @@ window.AdminView = {
         if (typeof prevWizState.activeSlideIndex === 'number') window.ProjectWizard.activeSlideIndex = prevWizState.activeSlideIndex;
       }
       var sProj = document.createElement('script');
-      sProj.src = 'https://meli030814abc-sys.github.io/Mentix/js/views/projects.js?v=34';
+      sProj.src = 'https://meli030814abc-sys.github.io/Mentix/js/views/projects.js?v=35';
       sProj.onload = function() {
         if (prevProjState && window.ProjectsView) {
           if (prevProjState.selectedProjectId) window.ProjectsView.selectedProjectId = prevProjState.selectedProjectId;
@@ -4710,7 +4760,7 @@ window.AdminView = {
           if (prevProjState._memoryCustomCodes) window.ProjectsView._memoryCustomCodes = prevProjState._memoryCustomCodes;
         }
         var projEl = document.getElementById('view-projects');
-        if (projEl && projEl.classList.contains('active') && window.ProjectsView) {
+        if (projEl && projEl.classList.contains('active') && window.ProjectsView && window.ProjectsView.viewMode !== 'wizard') {
           window.ProjectsView.render();
         }
       };

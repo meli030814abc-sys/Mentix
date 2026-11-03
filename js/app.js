@@ -1332,7 +1332,7 @@ class AppRouter {
 
       if (this.currentView === 'home' && window.HomeView) {
         window.HomeView.render();
-      } else if (this.currentView === 'projects' && window.ProjectsView) {
+      } else if (this.currentView === 'projects' && window.ProjectsView && window.ProjectsView.viewMode !== 'wizard') {
         window.ProjectsView.render();
       }
     } catch (e) {
@@ -1495,7 +1495,7 @@ class AppRouter {
         if (window.appState.challenges.length !== before) {
           saveGlobalState(window.appState);
           if (this.currentView === 'home' && window.HomeView) window.HomeView.render();
-          else if (this.currentView === 'projects' && window.ProjectsView) window.ProjectsView.render();
+          else if (this.currentView === 'projects' && window.ProjectsView && window.ProjectsView.viewMode !== 'wizard') window.ProjectsView.render();
         }
       }
 
@@ -1531,6 +1531,16 @@ class AppRouter {
               try { appMap = JSON.parse(localStorage.getItem('mentix_approved_projects_map') || '{}') || {}; } catch(e) {}
               const isApprovedHere = !!(appMap[c.id]) || existing.approvalStatus === 'approved' || c.approvalStatus === 'approved';
               const mergedItem = { ...existing, ...c };
+              // Preservar siempre la versión que tenga más diapositivas y más pasos completados para no perder avances nunca
+              if (Array.isArray(existing.slides) && (!Array.isArray(c.slides) || existing.slides.length > c.slides.length)) {
+                mergedItem.slides = existing.slides;
+              }
+              if (Array.isArray(existing.completedSteps) && (!Array.isArray(c.completedSteps) || existing.completedSteps.length > c.completedSteps.length)) {
+                mergedItem.completedSteps = existing.completedSteps;
+              }
+              if (Array.isArray(existing.resources) && (!Array.isArray(c.resources) || existing.resources.length > c.resources.length)) {
+                mergedItem.resources = existing.resources;
+              }
               if (isApprovedHere && c.approvalStatus !== 'rejected') {
                 mergedItem.approvalStatus = 'approved';
                 mergedItem.publicationStatus = 'published';
@@ -1559,7 +1569,7 @@ class AppRouter {
 
           if (this.currentView === 'home' && window.HomeView) {
             window.HomeView.render();
-          } else if (this.currentView === 'projects' && window.ProjectsView) {
+          } else if (this.currentView === 'projects' && window.ProjectsView && window.ProjectsView.viewMode !== 'wizard') {
             window.ProjectsView.render();
           }
         }
