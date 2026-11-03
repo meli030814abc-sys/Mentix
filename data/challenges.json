@@ -222,7 +222,7 @@
     "image": "assets/projects_ui/card_data_gov.png",
     "banner": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
     "createdAt": "2026-10-31T21:52:51.691Z",
-    "updatedAt": "2026-11-03T02:12:36.446Z",
+    "updatedAt": "2026-11-03T02:12:43.266Z",
     "govdata": {
       "id": "proj_pres_1791658288964",
       "title": "Personajes de Disney",
@@ -287,21 +287,23 @@
       "publicationStatus": "draft",
       "completedSteps": [
         1,
-        2
+        2,
+        3,
+        4
       ],
-      "currentStep": 3,
+      "currentStep": 5,
       "author": "Eimy",
       "authorId": "user_1791496180841",
       "authorEmail": "gatitaxd679@gmail.com",
       "authorAvatar": "🦊",
       "authorRole": "Líder del Proyecto",
       "designConfig": {
-        "themeId": "amatista",
+        "themeId": "ambar",
         "fontFamily": "Montserrat",
-        "titleColor": "#c084fc",
-        "textColor": "#f3e8ff",
-        "accentColor": "#c084fc",
-        "bannerStyle": "gradient-cosmos",
+        "titleColor": "#f59e0b",
+        "textColor": "#fef3c7",
+        "accentColor": "#f59e0b",
+        "bannerStyle": "robot-hero",
         "bannerUrl": ""
       },
       "authorsConfig": {
@@ -312,7 +314,7 @@
         "collaborators": ""
       },
       "createdAt": "2026-10-31T21:52:51.691Z",
-      "updatedAt": "2026-11-03T02:12:37.364Z",
+      "updatedAt": "2026-11-03T02:12:44.181Z",
       "progress": 65,
       "calculatedProgress": 65
     },
@@ -400,12 +402,12 @@
     ],
     "currentStep": 11,
     "designConfig": {
-      "themeId": "amatista",
+      "themeId": "ambar",
       "fontFamily": "Montserrat",
-      "titleColor": "#c084fc",
-      "textColor": "#f3e8ff",
-      "accentColor": "#c084fc",
-      "bannerStyle": "gradient-cosmos",
+      "titleColor": "#f59e0b",
+      "textColor": "#fef3c7",
+      "accentColor": "#f59e0b",
+      "bannerStyle": "robot-hero",
       "bannerUrl": ""
     },
     "authorsConfig": {
