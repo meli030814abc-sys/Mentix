@@ -1958,98 +1958,35 @@ collectCurrentStepInputs() {
   // =========================================================================
   initDefaultSlidesIfEmpty() {
     if (!this.draft) return;
-    if (!Array.isArray(this.draft.slides) || this.draft.slides.length === 0) {
-      const pTitle = (this.draft.title || 'Mi Proyecto Innovador').trim();
-      const pAuthor = (this.draft.author || 'Carlosf').trim();
-      const pSubtitle = this.draft.subtitle && !this.draft.subtitle.startsWith('Por ') ? this.draft.subtitle.trim() : ('Por ' + pAuthor);
-      const pDesc = (this.draft.shortDescription || this.draft.summary || this.draft.fullDescription || 'Descripción del proyecto en desarrollo.').trim();
-      const pCover = this.draft.mainImage || (this.draft.useDefaultImage !== false ? this.defaultCoverImage : '');
-      const pProb = this.draft.problemStatement || 'Identificación del reto o problemática que motiva esta iniciativa.';
-      const pObj = this.draft.mainObjective || 'Objetivo principal para generar impacto tangible en la comunidad.';
-      const pBen = this.draft.benefits || 'Solución accesible, escalable y con resultados medibles.';
-
-      const initialBullets = (Array.isArray(this.draft.bullets) && this.draft.bullets.length > 0)
-        ? this.draft.bullets
-        : [
-            'Líder del proyecto: ' + pAuthor,
-            'Categoría: ' + (this.draft.categoryName || 'Tecnología & Programación'),
-            'Estado: ' + (this.draft.preparationStatus || 'En desarrollo')
-          ];
-
-      this.draft.slides = [
-        {
-          id: 'slide_' + Date.now() + '_1',
-          title: pTitle,
-          subtitle: pSubtitle,
-          content: pDesc,
-          bullets: initialBullets,
-          layout: 'split',
-          media: pCover,
-          notes: 'Diapositiva inicial de presentación ante evaluadores y público general.',
-          bgColor: '#0b091a',
-          themeId: this.draft.designConfig?.themeId || 'cosmos',
-          titleColor: '#ffffff',
-          subtitleColor: '#00f5d4',
-          contentColor: '#cbd5e1',
-          bulletsColor: '#ffffff',
-          titleFont: "'Outfit', sans-serif",
-          subtitleFont: "'Outfit', sans-serif",
-          contentFont: "'Outfit', sans-serif",
-          bulletsFont: "'Outfit', sans-serif",
-          bulletStyle: '✦'
-        },
-        {
-          id: 'slide_' + Date.now() + '_2',
-          title: 'Problema y Necesidad Clave',
-          subtitle: 'El desafío a resolver',
-          content: pProb,
-          bullets: [
-            'Contexto y población afectada',
-            'Oportunidad de mejora e innovación',
-            'Obstáculos actuales detectados en el entorno'
-          ],
-          layout: 'split',
-          media: '',
-          notes: 'Explicar con claridad por qué este problema requiere una solución prioritaria.',
-          bgColor: '#0b091a',
-          themeId: this.draft.designConfig?.themeId || 'cosmos',
-          titleColor: '#ffffff',
-          subtitleColor: '#00f5d4',
-          contentColor: '#cbd5e1',
-          bulletsColor: '#ffffff',
-          titleFont: "'Outfit', sans-serif",
-          subtitleFont: "'Outfit', sans-serif",
-          contentFont: "'Outfit', sans-serif",
-          bulletsFont: "'Outfit', sans-serif",
-          bulletStyle: '✦'
-        },
-        {
-          id: 'slide_' + Date.now() + '_3',
-          title: 'Propuesta de Solución y Objetivos',
-          subtitle: 'Cómo resolvemos el reto',
-          content: pObj,
-          bullets: [
-            pBen.slice(0, 80),
-            'Metodología y tecnología empleada',
-            'Sostenibilidad e impacto positivo comprobable'
-          ],
-          layout: 'split',
-          media: '',
-          notes: 'Detallar las ventajas competitivas y la innovación de nuestra propuesta.',
-          bgColor: '#0b091a',
-          themeId: this.draft.designConfig?.themeId || 'cosmos',
-          titleColor: '#ffffff',
-          subtitleColor: '#00f5d4',
-          contentColor: '#cbd5e1',
-          bulletsColor: '#ffffff',
-          titleFont: "'Outfit', sans-serif",
-          subtitleFont: "'Outfit', sans-serif",
-          contentFont: "'Outfit', sans-serif",
-          bulletsFont: "'Outfit', sans-serif",
-          bulletStyle: '✦'
-        }
-      ];
-      this.activeSlideIndex = 0;
+    if (!Array.isArray(this.draft.slides)) {
+      this.draft.slides = [];
+    } else {
+      // Eliminar cualquier diapositiva que haya sido autogenerada/inventada previamente por plantillas
+      const autoNotes = new Set([
+        'Diapositiva inicial de presentación ante evaluadores y público general.',
+        'Explicar con claridad por qué este problema requiere una solución prioritaria.',
+        'Detallar las ventajas competitivas y la innovación de nuestra propuesta.',
+        'Apertura de la presentación: presentar el título, creadores y motivación general.',
+        'Sensibilizar al público sobre por qué este problema debe resolverse hoy.',
+        'Exponer la propuesta de valor y los pilares funcionales del proyecto.',
+        'Resaltar los beneficios directos para los usuarios finales y evaluadores.',
+        'Cierre con llamado a la acción y espacio para preguntas de la audiencia.'
+      ]);
+      const autoTitles = new Set([
+        'Problema y Necesidad Clave',
+        'Propuesta de Solución y Objetivos',
+        'Desafío y Problemática Actual',
+        'Objetivo y Propuesta de Solución',
+        'Beneficios e Impacto Medible',
+        'Conclusiones y Próximos Pasos'
+      ]);
+      this.draft.slides = this.draft.slides.filter(s => {
+        if (!s) return false;
+        if (s.id === 's1') return false;
+        if (s.notes && autoNotes.has(String(s.notes).trim())) return false;
+        if (s.title && autoTitles.has(String(s.title).trim())) return false;
+        return true;
+      });
     }
     if (typeof this.activeSlideIndex !== 'number' || this.activeSlideIndex < 0) {
       this.activeSlideIndex = 0;
@@ -2073,7 +2010,7 @@ collectCurrentStepInputs() {
     return `
       <!-- Cabecera y Herramientas Rápidas de Diapositivas -->
       <div class="gdn-card" style="margin-bottom: 1.25rem; border: 2px solid rgba(0, 245, 212, 0.35); background: linear-gradient(135deg, rgba(11,9,26,0.95), rgba(20,15,45,0.95)); box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
-        <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 1rem; margin-bottom: 1.2rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 1rem;">
+        <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 1rem; ${slides.length > 0 ? 'margin-bottom: 1.2rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 1rem;' : ''}">
           <div>
             <div style="font-size: 0.82rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; color: #00f5d4; margin-bottom: 0.25rem;">
               📊 Paso 11 del Asistente · Presentaciones y Diapositivas Interactivas
@@ -2085,11 +2022,11 @@ collectCurrentStepInputs() {
               </span>
             </h3>
             <p style="margin: 0.35rem 0 0; font-size: 0.86rem; color: #cbd5e1;">
-              Crea diapositivas interactivas, sube presentaciones desde PowerPoint (.pptx), PDF o texto, o genera láminas automáticas con IA.
+              Sube tu presentación desde PowerPoint (.pptx), PDF o imágenes, o créala directamente desde Mentix (sin inventar láminas automáticas).
             </p>
           </div>
 
-          <!-- Botones de Acción Global -->
+          <!-- Botones de Acción Global: Solo Subir o Crear desde Mentix -->
           <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center;">
             <input 
               type="file" 
@@ -2101,33 +2038,53 @@ collectCurrentStepInputs() {
             <button 
               type="button" 
               class="btn btn-outline" 
-              style="border-color: #7c3aed; color: #c4b5fd; font-weight: 800; font-size: 0.82rem; padding: 0.45rem 0.85rem; display: inline-flex; align-items: center; gap: 0.45rem;"
+              style="border-color: #7c3aed; color: #c4b5fd; font-weight: 800; font-size: 0.85rem; padding: 0.55rem 1rem; display: inline-flex; align-items: center; gap: 0.45rem;"
               onclick="document.getElementById('gdn-wizard-slide-file-input').click()"
-              title="Importar diapositivas desde PowerPoint (.pptx), documentos PDF (.pdf), Mentix (.json) o texto"
+              title="Subir diapositivas desde PowerPoint (.pptx), documentos PDF (.pdf), Mentix (.json) o imágenes"
             >
-              <span>📥</span> Subir Presentación (.pptx, .pdf, texto)
+              <span>📥</span> Subir Presentación (.pptx, .pdf, imágenes)
             </button>
             <button 
               type="button" 
               class="btn btn-cyan" 
-              style="font-weight: 800; font-size: 0.82rem; padding: 0.45rem 0.85rem; display: inline-flex; align-items: center; gap: 0.45rem;"
-              onclick="window.ProjectWizard.generateAiSlidesForProject()"
-              title="Generar 5 diapositivas completas con IA utilizando la información del proyecto"
-            >
-              <span>✨</span> Generar con IA
-            </button>
-            <button 
-              type="button" 
-              class="btn btn-cyan" 
-              style="font-weight: 900; font-size: 0.82rem; padding: 0.45rem 0.95rem; background: linear-gradient(135deg, #10b981, #059669); border: none; color: #fff;"
+              style="font-weight: 900; font-size: 0.85rem; padding: 0.55rem 1.05rem; background: linear-gradient(135deg, #10b981, #059669); border: none; color: #fff;"
               onclick="window.ProjectWizard.addWizardSlide()"
-              title="Añadir una nueva lámina a la presentación"
+              title="Crear una diapositiva desde Mentix"
             >
-              <span>➕</span> Nueva Diapositiva
+              <span>➕</span> Crear Diapositiva en Mentix
             </button>
           </div>
         </div>
 
+        ${slides.length === 0 ? `
+          <div style="margin-top: 1.25rem; padding: 2.5rem 1.5rem; text-align: center; background: rgba(15, 23, 42, 0.75); border: 2px dashed rgba(0, 245, 212, 0.35); border-radius: 16px;">
+            <div style="font-size: 2.8rem; margin-bottom: 0.65rem;">📽️</div>
+            <h4 style="margin: 0 0 0.45rem; font-size: 1.18rem; font-weight: 900; color: #ffffff;">
+              Aún no has subido ni creado ninguna presentación
+            </h4>
+            <p style="margin: 0 auto 1.35rem; max-width: 560px; font-size: 0.9rem; color: #cbd5e1; line-height: 1.55;">
+              El asistente no inventa diapositivas automáticamente. Elige si deseas <strong>subir tu archivo de presentación</strong> o <strong>crearla paso a paso desde Mentix</strong>:
+            </p>
+            <div style="display: flex; justify-content: center; gap: 0.85rem; flex-wrap: wrap;">
+              <button 
+                type="button" 
+                class="btn btn-outline" 
+                style="border: 2px solid #7c3aed; background: rgba(124, 58, 237, 0.15); color: #ffffff; font-weight: 900; font-size: 0.92rem; padding: 0.75rem 1.35rem; border-radius: 12px; display: inline-flex; align-items: center; gap: 0.5rem; cursor: pointer;"
+                onclick="document.getElementById('gdn-wizard-slide-file-input').click()"
+              >
+                <span>📥</span> Subir Presentación (.pptx, .pdf)
+              </button>
+              <button 
+                type="button" 
+                class="btn btn-cyan" 
+                style="font-weight: 900; font-size: 0.92rem; padding: 0.75rem 1.35rem; border-radius: 12px; background: linear-gradient(135deg, #10b981, #059669); border: none; color: #fff; display: inline-flex; align-items: center; gap: 0.5rem; cursor: pointer;"
+                onclick="window.ProjectWizard.addWizardSlide()"
+              >
+                <span>➕</span> Crear Presentación desde Mentix
+              </button>
+            </div>
+          </div>
+        ` : `
         <!-- Tira Horizontal de Diapositivas (Navegación Rápida) -->
         <div style="margin-bottom: 0.75rem;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
@@ -2164,17 +2121,15 @@ collectCurrentStepInputs() {
               >
                 📑 Duplicar
               </button>
-              ${slides.length > 1 ? `
-                <button 
-                  type="button" 
-                  class="btn btn-danger" 
-                  style="padding: 0.2rem 0.55rem; font-size: 0.76rem;" 
-                  onclick="window.ProjectWizard.deleteWizardSlide(${activeIdx})"
-                  title="Eliminar esta diapositiva"
-                >
-                  🗑️ Eliminar
-                </button>
-              ` : ''}
+              <button 
+                type="button" 
+                class="btn btn-danger" 
+                style="padding: 0.2rem 0.55rem; font-size: 0.76rem;" 
+                onclick="window.ProjectWizard.deleteWizardSlide(${activeIdx})"
+                title="Eliminar esta diapositiva"
+              >
+                🗑️ Eliminar
+              </button>
             </div>
           </div>
 
@@ -2226,8 +2181,10 @@ collectCurrentStepInputs() {
             `).join('')}
           </div>
         </details>
+        `}
       </div>
 
+      ${slides.length > 0 ? `
       <!-- Zona de Edición en Dos Columnas: Formulario a la Izquierda y Vista Previa en Vivo a la Derecha -->
       <div style="display: grid; grid-template-columns: minmax(360px, 1.1fr) minmax(360px, 1.2fr); gap: 1.5rem; align-items: start;">
         
@@ -2718,6 +2675,7 @@ collectCurrentStepInputs() {
         </div>
 
       </div>
+      ` : ''}
     `;
   },
 
@@ -2964,10 +2922,10 @@ collectCurrentStepInputs() {
     const num = this.draft.slides.length + 1;
     this.draft.slides.push({
       id: 'slide_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
-      title: `Nueva Diapositiva #${num}`,
+      title: `Diapositiva #${num}`,
       subtitle: '',
-      content: 'Escribe aquí la explicación o detalles clave para esta lámina.',
-      bullets: ['Punto clave destacado 1', 'Punto clave destacado 2'],
+      content: '',
+      bullets: [],
       layout: 'split',
       media: '',
       notes: '',
@@ -2995,10 +2953,7 @@ collectCurrentStepInputs() {
 
   deleteWizardSlide(index) {
     const slides = this.draft.slides || [];
-    if (slides.length <= 1) {
-      alert('La presentación debe contener al menos 1 diapositiva.');
-      return;
-    }
+    if (slides.length === 0) return;
     if (!confirm('¿Deseas eliminar esta diapositiva de la presentación?')) return;
     this.collectCurrentStepInputs();
     slides.splice(index, 1);
@@ -4567,14 +4522,6 @@ collectCurrentStepInputs() {
         <button type="button" class="plp-doc-btn outline" style="justify-content:flex-start; font-size:0.8rem; padding:0.5rem 0.75rem;" onclick="window.ProjectWizard.aiProposeFaqs()">
           ❓ Generar preguntas frecuentes (FAQ)
         </button>
-        ${this.currentStep === 11 ? `
-          <button type="button" class="plp-doc-btn" style="justify-content:flex-start; font-size:0.82rem; padding:0.55rem 0.75rem; background: linear-gradient(135deg, #10b981, #059669); color: #fff; font-weight: 800;" onclick="window.ProjectWizard.generateAiSlidesForProject()">
-            ✨ Generar 5 Diapositivas con IA
-          </button>
-        ` : ''}
-        <button type="button" class="plp-doc-btn outline" style="justify-content:flex-start; font-size:0.8rem; padding:0.5rem 0.75rem;" onclick="window.ProjectWizard.aiSuggestPresentationStructure()">
-          📊 Sugerir diapositivas para la Landing
-        </button>
         <button type="button" class="plp-doc-btn outline" style="justify-content:flex-start; font-size:0.8rem; padding:0.5rem 0.75rem;" onclick="window.ProjectWizard.aiProposeCaseStudy()">
           📁 Proponer Caso Práctico situacional
         </button>
@@ -5019,11 +4966,7 @@ collectCurrentStepInputs() {
       videoConfig: d.videoConfig || {},
       resources: d.resources || [],
       visualAssets: d.visualAssets || [],
-      slides: (Array.isArray(d.slides) && d.slides.length > 0)
-        ? d.slides
-        : (slidesFromVisuals.length > 0 ? slidesFromVisuals : [
-            { id: 's1', title: finalTitle, content: d.shortDescription || d.mainObjective || '', imageUrl: cover, layout: 'split' }
-          ]),
+      slides: Array.isArray(d.slides) ? d.slides : [],
       externalLinks: d.externalLinks || [],
       landingConfig: d.landingConfig || {},
       designConfig: d.designConfig || { themeId: 'cosmos', fontFamily: 'Montserrat', titleColor: '#ffffff', textColor: '#cbd5e1', accentColor: '#00f5d4', bannerStyle: 'gradient-cosmos', bannerUrl: '' },
