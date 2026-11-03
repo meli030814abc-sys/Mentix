@@ -6177,3 +6177,37 @@ body #inno-app-root.plp-wrapper {
   padding: 2.25rem clamp(1.5rem, 3vw, 2.75rem) !important;
   border-radius: 24px !important;
 }
+
+/* Gauge Circular de Avance: Número perfectamente contenido y centrado sin salirse del círculo */
+.inno-gauge-circle-wrap,
+.plp-wrapper .inno-gauge-circle-wrap {
+  width: 104px !important;
+  height: 104px !important;
+  flex-shrink: 0 !important;
+  position: relative !important;
+}
+
+.inno-gauge-center-text,
+.plp-wrapper .inno-gauge-center-text {
+  position: absolute !important;
+  inset: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-align: center !important;
+  padding: 0 4px !important;
+  box-sizing: border-box !important;
+}
+
+.inno-gauge-number,
+.plp-wrapper .inno-gauge-number,
+#inno-card-progress-num {
+  font-size: 1.25rem !important;
+  font-weight: 900 !important;
+  line-height: 1 !important;
+  letter-spacing: -0.03em !important;
+  color: #ffffff !important;
+  text-shadow: 0 0 12px rgba(0, 245, 212, 0.5) !important;
+  white-space: nowrap !important;
+  display: inline-block !important;
+}

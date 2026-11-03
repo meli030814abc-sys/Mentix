@@ -5476,8 +5476,8 @@ body[data-theme="dark"] .plp-lightbox-content {
 
 .inno-gauge-circle-wrap {
   position: relative !important;
-  width: 96px !important;
-  height: 96px !important;
+  width: 104px !important;
+  height: 104px !important;
   flex-shrink: 0 !important;
 }
 
@@ -5490,13 +5490,13 @@ body[data-theme="dark"] .plp-lightbox-content {
 .inno-gauge-bg {
   fill: none !important;
   stroke: #e2e8f0 !important;
-  stroke-width: 9 !important;
+  stroke-width: 8 !important;
 }
 
 .inno-gauge-fill {
   fill: none !important;
   stroke: #0284c7 !important;
-  stroke-width: 9 !important;
+  stroke-width: 8 !important;
   stroke-linecap: round !important;
   stroke-dasharray: 264 !important;
   transition: stroke-dashoffset 0.8s ease !important;
@@ -5508,13 +5508,17 @@ body[data-theme="dark"] .plp-lightbox-content {
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
+  padding: 0 4px !important;
+  box-sizing: border-box !important;
 }
 
 .inno-gauge-number {
-  font-size: 1.65rem !important;
+  font-size: 1.25rem !important;
   font-weight: 900 !important;
   color: #0f172a !important;
-  letter-spacing: -0.02em !important;
+  letter-spacing: -0.03em !important;
+  line-height: 1 !important;
+  white-space: nowrap !important;
 }
 
 .inno-gauge-legend {
@@ -6969,10 +6973,13 @@ body[data-theme="dark"] .plp-lightbox-content {
 }
 
 .inno-gauge-number {
-  font-size: 2rem !important;
+  font-size: 1.25rem !important;
   font-weight: 900 !important;
   color: #ffffff !important;
-  text-shadow: 0 0 18px rgba(0, 245, 212, 0.6) !important;
+  text-shadow: 0 0 14px rgba(0, 245, 212, 0.5) !important;
+  letter-spacing: -0.03em !important;
+  line-height: 1 !important;
+  white-space: nowrap !important;
 }
 
 /* Barra de Progreso Shimmer Animada */
@@ -7306,7 +7313,11 @@ body .plp-wrapper {
 .plp-wrapper .inno-gauge-number {
   color: #ffffff !important;
   font-weight: 900 !important;
-  text-shadow: 0 0 18px rgba(0, 245, 212, 0.6) !important;
+  font-size: 1.25rem !important;
+  letter-spacing: -0.03em !important;
+  line-height: 1 !important;
+  white-space: nowrap !important;
+  text-shadow: 0 0 14px rgba(0, 245, 212, 0.5) !important;
 }
 
 .inno-legend-item,
@@ -7804,4 +7815,38 @@ body #inno-app-root.plp-wrapper {
   margin-bottom: 3.5rem !important;
   padding: 2.25rem clamp(1.5rem, 3vw, 2.75rem) !important;
   border-radius: 24px !important;
+}
+
+/* 14. Gauge Circular de Avance: Número perfectamente contenido y centrado sin salirse del círculo */
+.inno-gauge-circle-wrap,
+.plp-wrapper .inno-gauge-circle-wrap {
+  width: 104px !important;
+  height: 104px !important;
+  flex-shrink: 0 !important;
+  position: relative !important;
+}
+
+.inno-gauge-center-text,
+.plp-wrapper .inno-gauge-center-text {
+  position: absolute !important;
+  inset: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-align: center !important;
+  padding: 0 4px !important;
+  box-sizing: border-box !important;
+}
+
+.inno-gauge-number,
+.plp-wrapper .inno-gauge-number,
+#inno-card-progress-num {
+  font-size: 1.25rem !important;
+  font-weight: 900 !important;
+  line-height: 1 !important;
+  letter-spacing: -0.03em !important;
+  color: #ffffff !important;
+  text-shadow: 0 0 12px rgba(0, 245, 212, 0.5) !important;
+  white-space: nowrap !important;
+  display: inline-block !important;
 }
