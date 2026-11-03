@@ -207,7 +207,7 @@
     "id": "proj_pres_1791658288964",
     "title": "Personajes de Disney",
     "subtitle": "Disney app",
-    "description": "Describe c",
+    "description": "Describe cuna cantidad",
     "projectType": "presentation",
     "isGovDataProject": true,
     "category": "matematicas",
@@ -222,12 +222,12 @@
     "image": "assets/projects_ui/card_data_gov.png",
     "banner": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
     "createdAt": "2026-10-31T21:52:51.691Z",
-    "updatedAt": "2026-11-03T02:10:58.897Z",
+    "updatedAt": "2026-11-03T02:11:03.562Z",
     "govdata": {
       "id": "proj_pres_1791658288964",
       "title": "Personajes de Disney",
       "subtitle": "Disney app",
-      "shortDescription": "Describe c",
+      "shortDescription": "Describe cuna cantidad",
       "fullDescription": "",
       "category": "matematicas",
       "categoryName": "Matemáticas",
@@ -311,9 +311,9 @@
         "collaborators": ""
       },
       "createdAt": "2026-10-31T21:52:51.691Z",
-      "updatedAt": "2026-11-03T02:10:59.810Z",
-      "progress": 55,
-      "calculatedProgress": 55
+      "updatedAt": "2026-11-03T02:11:04.460Z",
+      "progress": 60,
+      "calculatedProgress": 60
     },
     "authorAvatar": "🦊",
     "plays": 0,
@@ -323,7 +323,7 @@
       {
         "id": "s1",
         "title": "Personajes de Disney",
-        "content": "Describe c",
+        "content": "Describe cuna cantidad",
         "imageUrl": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
         "layout": "split"
       }
@@ -331,7 +331,7 @@
     "isImported": true,
     "authorId": "user_1791496180841",
     "authorEmail": "gatitaxd679@gmail.com",
-    "shortDescription": "Describe c",
+    "shortDescription": "Describe cuna cantidad",
     "fullDescription": "",
     "projectSubtype": "Gobierno de Datos e IA",
     "targetAudience": "",
