@@ -222,7 +222,7 @@
     "image": "assets/projects_ui/card_data_gov.png",
     "banner": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
     "createdAt": "2026-10-31T21:52:51.691Z",
-    "updatedAt": "2026-11-03T02:12:22.876Z",
+    "updatedAt": "2026-11-03T02:12:35.321Z",
     "govdata": {
       "id": "proj_pres_1791658288964",
       "title": "Personajes de Disney",
@@ -232,7 +232,7 @@
       "category": "entretenimiento",
       "categoryName": "Entretenimiento & Juegos",
       "projectSubtype": "Gobierno de Datos e IA",
-      "targetAudience": "",
+      "targetAudience": "Perso",
       "problemStatement": "la falta de calidad de dastos en las organizaciones",
       "mainObjective": "Mejorar el pensamiento y la calidad de estos datos",
       "benefits": "Aprender la calidad",
@@ -312,9 +312,9 @@
         "collaborators": ""
       },
       "createdAt": "2026-10-31T21:52:51.691Z",
-      "updatedAt": "2026-11-03T02:12:23.794Z",
-      "progress": 60,
-      "calculatedProgress": 60
+      "updatedAt": "2026-11-03T02:12:36.235Z",
+      "progress": 65,
+      "calculatedProgress": 65
     },
     "authorAvatar": "🦊",
     "plays": 0,
@@ -335,7 +335,7 @@
     "shortDescription": "Describe una cantidad enorme de caracteres o personajes",
     "fullDescription": "Disney reúne un universo gigantesco de personajes mágicos, divertidos, aventureros e inolvidables. Desde los clásicos hasta las nuevas películas, encontramos a Mickey Mouse, Minnie Mouse, Donald Duck, Daisy, Goofy, Pluto, Simba, Nala, Timón, Pumba, Mufasa, Scar, Ariel, Eric, Sebastián, Flounder, Bella, Bestia, Lumière, Ding Dong, Mrs. Potts, Cenicienta, Blancanieves, Aurora, Rapunzel, Flynn Rider, Tiana, Naveen, Mulán, Mushu, Pocahontas, Aladdín, Jasmine, Genio, Jafar, Peter Pan, Campanita, Wendy, Pinocho, Gepetto, Dumbo, Bambi, Tambor, Alicia, Sombrerero Loco, Reina de Corazones, Stitch, Lilo, Moana, Maui, Elsa, Anna, Olaf, Kristoff, Sven, Mirabel, Isabela, Luisa, Bruno, Dolores, Camilo, Antonio, Julieta, Pepa, Félix, Alma, Hércules, Megara, Hades, Tarzán, Jane, Esmeralda, Quasimodo, Mérida, Woody, Buzz Lightyear, Jessie, Rex, Forky, Lotso, Mike Wazowski, Sulley, Boo, Rayo McQueen, Mate, WALL-E, Eve, Remy, Linguini, Carl Fredricksen, Russell, Dug, Alegría, Tristeza, Furia, Temor, Desagrado, Miguel Rivera, Héctor, Ernesto de la Cruz, Baymax, Hiro, Ralph, Vanellope, Judy Hopps, Nick Wilde, entre muchísimos otros.\n\n🌟 También están los villanos más famosos: Maléfica, Úrsula, Cruella de Vil, Gastón, Scar, Jafar, Hades, la Reina Malvada, Capitán Garfio, Dr. Facilier, Madre Gothel, Yzma, Shan Yu, Síndrome y muchos más.\n\n¡Un universo inmenso de historias, magia, amistad, aventuras, princesas, héroes, animales, monstruos, villanos y personajes que han marcado generaciones! 🎬✨",
     "projectSubtype": "Gobierno de Datos e IA",
-    "targetAudience": "",
+    "targetAudience": "Perso",
     "problemStatement": "la falta de calidad de dastos en las organizaciones",
     "mainObjective": "Mejorar el pensamiento y la calidad de estos datos",
     "benefits": "Aprender la calidad",
