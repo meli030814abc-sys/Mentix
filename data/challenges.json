@@ -1414,13 +1414,13 @@
   {
     "id": "proj_1793506989177",
     "slug": "proyecto-govdata",
-    "title": "Proyecto Gobierno de Datos RegistradurÔö£┬ía",
-    "subtitle": "Proyecto de la entidad de Colombia  RegistradurÔö£┬ía REGNEC",
-    "description": "Proyecto de la implementaciÔö£Ôöén del gobierno de datos",
-    "shortDescription": "Proyecto de la implementaciÔö£Ôöén del gobierno de datos",
-    "fullDescription": "Proyecto de la implementaciÔö£Ôöén del gobierno de datos de la RegistradurÔö£┬ía General de la NaciÔö£Ôöén",
+    "title": "Proyecto Gobierno de Datos Registraduría",
+    "subtitle": "Proyecto de la entidad de Colombia  Registraduría REGNEC",
+    "description": "Proyecto de la implementación del gobierno de datos",
+    "shortDescription": "Proyecto de la implementación del gobierno de datos",
+    "fullDescription": "Proyecto de la implementación del gobierno de datos de la Registraduría General de la Nación",
     "category": "tecnologia",
-    "categoryName": "TecnologÔö£┬ía & ProgramaciÔö£Ôöén",
+    "categoryName": "Tecnología & Programación",
     "projectType": "presentation",
     "isGovDataProject": true,
     "projectSubtype": "Gobierno de Datos e IA",
@@ -1460,24 +1460,25 @@
       "title": "Gobierno de Datos",
       "description": "",
       "isPublic": true,
-      "verified": true
+      "verified": true,
+      "thumbnailUrl": ""
     },
     "resources": [],
     "visualAssets": [],
     "slides": [
       {
         "id": "slide_1793587561940_1",
-        "title": "Proyecto Gobierno de Datos RegistradurÔö£┬ía",
-        "subtitle": "Proyecto de la entidad de Colombia  RegistradurÔö£┬ía REGNEC",
-        "content": "Proyecto de la implementaciÔö£Ôöén del gobierno de datos",
+        "title": "Proyecto Gobierno de Datos Registraduría",
+        "subtitle": "Proyecto de la entidad de Colombia  Registraduría REGNEC",
+        "content": "Proyecto de la implementación del gobierno de datos",
         "bullets": [
-          "LÔö£┬íder del proyecto: Carlos Alberto Canon",
-          "CategorÔö£┬ía: TecnologÔö£┬ía & ProgramaciÔö£Ôöén",
+          "Líder del proyecto: Carlos Alberto Canon",
+          "Categoría: Tecnología & Programación",
           "Estado: en_desarrollo"
         ],
         "layout": "split",
         "media": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
-        "notes": "Diapositiva inicial de presentaciÔö£Ôöén ante evaluadores y pÔö£Ôòæblico general.",
+        "notes": "Diapositiva inicial de presentación ante evaluadores y público general.",
         "bgColor": "#0b091a",
         "themeId": "aurora-clara",
         "titleColor": "#ffffff",
@@ -1488,21 +1489,23 @@
         "subtitleFont": "'Outfit', sans-serif",
         "contentFont": "'Outfit', sans-serif",
         "bulletsFont": "'Outfit', sans-serif",
-        "bulletStyle": "├ö┬ú┬¬"
+        "bulletStyle": "✦",
+        "imageUrl": "",
+        "bgImage": ""
       },
       {
         "id": "slide_1793587561940_2",
         "title": "Problema y Necesidad Clave",
-        "subtitle": "El desafÔö£┬ío a resolver",
+        "subtitle": "El desafío a resolver",
         "content": "Inposibilidad de controlar los datos",
         "bullets": [
-          "Contexto y poblaciÔö£Ôöén afectada",
-          "Oportunidad de mejora e innovaciÔö£Ôöén",
-          "ObstÔö£├¡culos actuales detectados en el entorno"
+          "Contexto y población afectada",
+          "Oportunidad de mejora e innovación",
+          "Obstáculos actuales detectados en el entorno"
         ],
         "layout": "split",
         "media": "",
-        "notes": "Explicar con claridad por quÔö£┬« este problema requiere una soluciÔö£Ôöén prioritaria.",
+        "notes": "Explicar con claridad por qué este problema requiere una solución prioritaria.",
         "bgColor": "#0b091a",
         "themeId": "aurora-clara",
         "titleColor": "#ffffff",
@@ -1513,21 +1516,23 @@
         "subtitleFont": "'Outfit', sans-serif",
         "contentFont": "'Outfit', sans-serif",
         "bulletsFont": "'Outfit', sans-serif",
-        "bulletStyle": "├ö┬ú┬¬"
+        "bulletStyle": "✦",
+        "imageUrl": "",
+        "bgImage": ""
       },
       {
         "id": "slide_1793587561940_3",
-        "title": "Propuesta de SoluciÔö£Ôöén y Objetivos",
-        "subtitle": "CÔö£Ôöémo resolvemos el reto",
+        "title": "Propuesta de Solución y Objetivos",
+        "subtitle": "Cómo resolvemos el reto",
         "content": "Solucionar con un modelo de gobierno de datos la estructura de control",
         "bullets": [
           "Mejora la toma de decisiones",
-          "MetodologÔö£┬ía y tecnologÔö£┬ía empleada",
+          "Metodología y tecnología empleada",
           "Sostenibilidad e impacto positivo comprobable"
         ],
         "layout": "split",
         "media": "",
-        "notes": "Detallar las ventajas competitivas y la innovaciÔö£Ôöén de nuestra propuesta.",
+        "notes": "Detallar las ventajas competitivas y la innovación de nuestra propuesta.",
         "bgColor": "#0b091a",
         "themeId": "aurora-clara",
         "titleColor": "#ffffff",
@@ -1538,20 +1543,22 @@
         "subtitleFont": "'Outfit', sans-serif",
         "contentFont": "'Outfit', sans-serif",
         "bulletsFont": "'Outfit', sans-serif",
-        "bulletStyle": "├ö┬ú┬¬"
+        "bulletStyle": "✦",
+        "imageUrl": "",
+        "bgImage": ""
       }
     ],
     "externalLinks": [],
     "landingConfig": {
-      "publicName": "Proyecto Gobierno de Datos RegistradurÔö£┬ía",
+      "publicName": "Proyecto Gobierno de Datos Registraduría",
       "slug": "proyecto-govdata",
-      "landingTitle": "Proyecto Gobierno de Datos RegistradurÔö£┬ía",
-      "publicDescription": "Proyecto de la implementaciÔö£Ôöén del gobierno de datos",
-      "visibleCategory": "TecnologÔö£┬ía & ProgramaciÔö£Ôöén",
+      "landingTitle": "Proyecto Gobierno de Datos Registraduría",
+      "publicDescription": "Proyecto de la implementación del gobierno de datos",
+      "visibleCategory": "Tecnología & Programación",
       "tags": [
         "Gobierno de Datos",
         "IA",
-        "InnovaciÔö£Ôöén"
+        "Innovación"
       ],
       "ctaText": "Unirse / Colaborar",
       "ctaUrl": "#plp-sec-contacto",
@@ -1577,17 +1584,17 @@
     "tags": [
       "Gobierno de Datos",
       "IA",
-      "InnovaciÔö£Ôöén"
+      "Innovación"
     ],
     "displayOrder": 1,
     "govdata": {
       "id": "proj_1793506989177",
-      "title": "Proyecto Gobierno de Datos RegistradurÔö£┬ía",
-      "subtitle": "Proyecto de la entidad de Colombia  RegistradurÔö£┬ía REGNEC",
-      "shortDescription": "Proyecto de la implementaciÔö£Ôöén del gobierno de datos",
-      "fullDescription": "Proyecto de la implementaciÔö£Ôöén del gobierno de datos de la RegistradurÔö£┬ía General de la NaciÔö£Ôöén",
+      "title": "Proyecto Gobierno de Datos Registraduría",
+      "subtitle": "Proyecto de la entidad de Colombia  Registraduría REGNEC",
+      "shortDescription": "Proyecto de la implementación del gobierno de datos",
+      "fullDescription": "Proyecto de la implementación del gobierno de datos de la Registraduría General de la Nación",
       "category": "tecnologia",
-      "categoryName": "TecnologÔö£┬ía & ProgramaciÔö£Ôöén",
+      "categoryName": "Tecnología & Programación",
       "projectSubtype": "Gobierno de Datos e IA",
       "targetAudience": "Todas las personas y Entidades",
       "problemStatement": "Inposibilidad de controlar los datos",
@@ -1623,15 +1630,15 @@
       "useDefaultImage": true,
       "externalLinks": [],
       "landingConfig": {
-        "publicName": "Proyecto Gobierno de Datos RegistradurÔö£┬ía",
+        "publicName": "Proyecto Gobierno de Datos Registraduría",
         "slug": "proyecto-govdata",
-        "landingTitle": "Proyecto Gobierno de Datos RegistradurÔö£┬ía",
-        "publicDescription": "Proyecto de la implementaciÔö£Ôöén del gobierno de datos",
-        "visibleCategory": "TecnologÔö£┬ía & ProgramaciÔö£Ôöén",
+        "landingTitle": "Proyecto Gobierno de Datos Registraduría",
+        "publicDescription": "Proyecto de la implementación del gobierno de datos",
+        "visibleCategory": "Tecnología & Programación",
         "tags": [
           "Gobierno de Datos",
           "IA",
-          "InnovaciÔö£Ôöén"
+          "Innovación"
         ],
         "ctaText": "Unirse / Colaborar",
         "ctaUrl": "#plp-sec-contacto",
@@ -1646,7 +1653,7 @@
       "author": "Carlos Alberto Canon",
       "authorId": "user_1793449738905",
       "authorEmail": "vivianacastanedam@gmail.com",
-      "authorAvatar": "┬¡ãÆ├ª┬┐├ö├ç├¼┬¡ãÆ├à┬¢",
+      "authorAvatar": "­ƒæ¿ÔÇì­ƒÅ½",
       "authorRole": "Gerente del Proyecto",
       "designConfig": {
         "themeId": "aurora-clara",
@@ -1673,12 +1680,12 @@
     "creatorName": "Carlos Alberto Canon",
     "authorId": "user_1793449738905",
     "authorEmail": "vivianacastanedam@gmail.com",
-    "authorAvatar": "┬¡ãÆ├ª┬┐├ö├ç├¼┬¡ãÆ├à┬¢",
+    "authorAvatar": "­ƒæ¿ÔÇì­ƒÅ½",
     "authorRole": "Gerente del Proyecto",
     "createdAt": "2026-11-01T04:23:09.177Z",
-    "updatedAt": "2026-11-03T02:30:58.853Z",
+    "updatedAt": "2026-11-04T01:13:27.683Z",
     "approvalStatus": "approved",
-    "tag": "├ö├àÔöé Pendiente de AutorizaciÔö£Ôöén",
+    "tag": "ÔÅ│ Pendiente de Autorización",
     "tagClass": "badge-review",
     "stage": "completed",
     "accessMode": "public",
