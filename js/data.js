@@ -460,9 +460,119 @@ function deepCleanMojibake(val) {
   }
   return val;
 }
+
+function sanitizeProjectSlides(rawSlides, projectTitle = '') {
+  if (!Array.isArray(rawSlides) || rawSlides.length === 0) return [];
+  
+  const cleanFn = (v) => (typeof v === 'string' && typeof window.fixMojibake === 'function') ? window.fixMojibake(v) : (v || '');
+
+  // 1. Contar ocurrencias de títulos para saber si se repite un banner de curso (ej: "CURSO Diagnostico empresarial")
+  const titleCounts = {};
+  rawSlides.forEach(s => {
+    const t = cleanFn(s?.title || '').trim().toLowerCase();
+    if (t && t.length > 3) titleCounts[t] = (titleCounts[t] || 0) + 1;
+  });
+
+  const isDeckHeader = (t) => {
+    if (!t) return false;
+    const lower = t.toLowerCase().trim();
+    if (titleCounts[lower] >= 2) return true;
+    if (/^(?:curso|diagn[oó]stico\s+empresarial|diplomado|taller)/i.test(lower)) return true;
+    if (projectTitle && lower === cleanFn(projectTitle).toLowerCase().trim()) return true;
+    return false;
+  };
+
+  return rawSlides.map((s, idx) => {
+    if (!s || typeof s !== 'object') return s;
+
+    let title = cleanFn(s.title || `Diapositiva ${idx + 1}`).trim();
+    let subtitle = cleanFn(s.subtitle || '').trim();
+    let content = cleanFn(s.content || '').trim();
+    let bullets = Array.isArray(s.bullets) ? s.bullets.map(cleanFn) : [];
+
+    // Filtrar viñetas de ruido (números sueltos, puntos, tokens de control)
+    bullets = bullets
+      .map(b => b.trim())
+      .filter(b => b && !/^(\d{1,2}|\.|\-)$/.test(b) && !/^(?:INTRO|CONT)\.?$/i.test(b));
+
+    // Si el contenido es en realidad una etiqueta de módulo o clase
+    let moduleTag = '';
+    if (/^(?:m[oó]dulo\s+\d+|clase\s+\d+)/i.test(content)) {
+      moduleTag = content;
+      content = '';
+    }
+
+    // Detectar Objetivo de Aprendizaje en las viñetas
+    let learningObjective = '';
+    const objIdx = bullets.findIndex(b => /^objetivo(?:\s+de\s+aprendizaje)?/i.test(b));
+    if (objIdx >= 0) {
+      if (objIdx + 1 < bullets.length && bullets[objIdx + 1].length > 15) {
+        learningObjective = bullets[objIdx + 1];
+        bullets.splice(objIdx, 2);
+      } else if (bullets[objIdx].length > 30) {
+        learningObjective = bullets[objIdx].replace(/^objetivo(?:\s+de\s+aprendizaje)?[:\s-]*/i, '');
+        bullets.splice(objIdx, 1);
+      } else {
+        bullets.splice(objIdx, 1);
+      }
+    }
+
+    // Si el título actual es el banner general del curso (ej: "CURSO Diagnostico empresarial")
+    if (isDeckHeader(title) && bullets.length > 0) {
+      // Encontrar en bullets la línea que realmente es el título de la diapositiva
+      const topicIdx = bullets.findIndex(b => 
+        b.length < 65 && 
+        !/^(?:en este|las compa|m[uú]ltiples|cuando los|la cultura|exploremos|identificar)/i.test(b) &&
+        !/^(?:🎯|objetivo)/i.test(b)
+      );
+      if (topicIdx >= 0) {
+        title = bullets[topicIdx];
+        bullets.splice(topicIdx, 1);
+      }
+    }
+
+    // Si el contenido quedó vacío, buscar si en bullets hay un párrafo descriptivo largo
+    if (!content && bullets.length > 0) {
+      const descIdx = bullets.findIndex(b => 
+        b.length > 60 || 
+        /^(?:en este|las compa|m[uú]ltiples|cuando los|la cultura|exploremos|identificar)/i.test(b)
+      );
+      if (descIdx >= 0) {
+        content = bullets[descIdx];
+        bullets.splice(descIdx, 1);
+      }
+    }
+
+    // Unificar subtítulo con insignia de módulo si existe
+    if (moduleTag) {
+      if (subtitle && !subtitle.toLowerCase().includes(moduleTag.toLowerCase())) {
+        subtitle = `${subtitle} · ${moduleTag}`;
+      } else if (!subtitle) {
+        subtitle = moduleTag;
+      }
+    }
+
+    // Agregar el objetivo con formato destacado
+    if (learningObjective && !bullets.some(b => b.includes(learningObjective))) {
+      bullets.unshift(`🎯 Objetivo: ${learningObjective}`);
+    }
+
+    return {
+      ...s,
+      title: title.replace(/\s*\.\s*$/, '').trim(),
+      subtitle,
+      content,
+      bullets,
+      layout: s.layout || (s.media ? 'split' : 'full'),
+      bgColor: s.bgColor || '#090e1a'
+    };
+  });
+}
+
 window.fixMojibake = fixMojibake;
 window.fixOptionShape = fixOptionShape;
 window.deepCleanMojibake = deepCleanMojibake;
+window.sanitizeProjectSlides = sanitizeProjectSlides;
 
 // ============================================================================
 // 🛡️ MENTIX IMAGE VAULT (IndexedDB + Memoria)
@@ -878,6 +988,37 @@ function loadInitialState() {
         localStorage.setItem(key, JSON.stringify(cleaned));
       }
     } catch (err) {}
+  });
+
+  // Migración y embellecimiento automático de diapositivas en proyectos ya creados
+  ['te_reto_challenges', 'mentix_challenges', 'mentix_projects', 'mentix_govdata_wizard_drafts', 'mentix_active_landing_project'].forEach(key => {
+    try {
+      const raw = localStorage.getItem(key);
+      if (!raw) return;
+      const parsed = JSON.parse(raw);
+      let changed = false;
+      const upgradeRecord = (rec) => {
+        if (!rec || typeof rec !== 'object') return rec;
+        if (Array.isArray(rec.slides) && rec.slides.length > 0) {
+          rec.slides = sanitizeProjectSlides(rec.slides, rec.title);
+          changed = true;
+        }
+        if (rec.govdata && Array.isArray(rec.govdata.slides) && rec.govdata.slides.length > 0) {
+          rec.govdata.slides = sanitizeProjectSlides(rec.govdata.slides, rec.title || rec.govdata.title);
+          changed = true;
+        }
+        return rec;
+      };
+      let result = parsed;
+      if (Array.isArray(parsed)) {
+        result = parsed.map(upgradeRecord);
+      } else if (parsed && typeof parsed === 'object') {
+        result = upgradeRecord(parsed);
+      }
+      if (changed) {
+        localStorage.setItem(key, JSON.stringify(result));
+      }
+    } catch (e) {}
   });
 
   const storedChallenges = localStorage.getItem('te_reto_challenges');

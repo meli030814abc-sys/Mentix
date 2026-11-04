@@ -3803,6 +3803,9 @@ window.ProjectsView = {
     };
 
     merged.slides = pickLongerArr(fromActiveWiz?.slides, fallbackObj?.slides, fromChallenges?.slides, fromDrafts?.slides, gp1.slides, gp2.slides, gp3.slides);
+    if (typeof window.sanitizeProjectSlides === 'function') {
+      merged.slides = window.sanitizeProjectSlides(merged.slides, merged.title);
+    }
     merged.resources = pickLongerArr(fromActiveWiz?.resources, fallbackObj?.resources, fromChallenges?.resources, fromDrafts?.resources, gp1.resources, gp2.resources, gp3.resources);
     merged.externalLinks = pickLongerArr(fromActiveWiz?.externalLinks, fallbackObj?.externalLinks, fromChallenges?.externalLinks, fromDrafts?.externalLinks, gp1.externalLinks, gp2.externalLinks, gp3.externalLinks);
     merged.visualAssets = pickLongerArr(fromActiveWiz?.visualAssets, fallbackObj?.visualAssets, fromChallenges?.visualAssets, fromDrafts?.visualAssets, gp1.visualAssets, gp2.visualAssets, gp3.visualAssets);
@@ -5577,7 +5580,8 @@ Generado por Mentix - Plataforma de Proyectos y Retos
     let selected = this.getMergedProjectRecord(this.selectedProjectId);
     const gp = (selected && selected.govdata) ? selected.govdata : {};
     const rawSlides = Array.isArray(selected?.slides) ? selected.slides : (Array.isArray(gp.slides) ? gp.slides : []);
-    const slides = rawSlides.filter(s => s && s.id !== 's1');
+    const sanitizedSlides = (typeof window.sanitizeProjectSlides === 'function') ? window.sanitizeProjectSlides(rawSlides, selected?.title) : rawSlides;
+    const slides = sanitizedSlides.filter(s => s && s.id !== 's1');
     if (slides.length === 0) return;
 
     const curIdx = Math.max(0, Math.min(slides.length - 1, index));

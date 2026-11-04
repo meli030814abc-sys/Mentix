@@ -383,7 +383,7 @@ window.PresentationView = {
 
   renderViewer(container) {
     const p = this.currentProject;
-    const slides = p.slides && p.slides.length > 0 ? p.slides : [
+    let slides = p.slides && p.slides.length > 0 ? p.slides : [
       {
         id: 's_default',
         title: p.title || 'Presentación',
@@ -394,6 +394,11 @@ window.PresentationView = {
         teacherNotes: ''
       }
     ];
+
+    if (typeof window.sanitizeProjectSlides === 'function') {
+      slides = window.sanitizeProjectSlides(slides, p.title);
+      p.slides = slides;
+    }
 
     if (this.currentSlideIndex >= slides.length) this.currentSlideIndex = 0;
     if (this.currentSlideIndex < 0) this.currentSlideIndex = slides.length - 1;

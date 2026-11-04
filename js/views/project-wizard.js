@@ -348,7 +348,16 @@ window.ProjectWizard = {
       if (raw) {
         const parsed = JSON.parse(raw);
         if (Array.isArray(parsed)) {
-          return (typeof window.deepCleanMojibake === 'function') ? window.deepCleanMojibake(parsed) : parsed;
+          let list = (typeof window.deepCleanMojibake === 'function') ? window.deepCleanMojibake(parsed) : parsed;
+          if (typeof window.sanitizeProjectSlides === 'function') {
+            list = list.map(d => {
+              if (d && Array.isArray(d.slides) && d.slides.length > 0) {
+                d.slides = window.sanitizeProjectSlides(d.slides, d.title);
+              }
+              return d;
+            });
+          }
+          return list;
         }
       }
     } catch (e) {}
@@ -555,6 +564,9 @@ window.ProjectWizard = {
           base = window.mergeProjectPreservingImages(base, gov);
         }
         base.slides = pickLongerArr(savedDraft?.slides, savedChallenge?.slides, gov?.slides, base.slides);
+        if (typeof window.sanitizeProjectSlides === 'function') {
+          base.slides = window.sanitizeProjectSlides(base.slides, base.title);
+        }
         base.completedSteps = pickLongerArr(savedDraft?.completedSteps, savedChallenge?.completedSteps, gov?.completedSteps, base.completedSteps);
         base.resources = pickLongerArr(savedDraft?.resources, savedChallenge?.resources, gov?.resources, base.resources);
         base.externalLinks = pickLongerArr(savedDraft?.externalLinks, savedChallenge?.externalLinks, gov?.externalLinks, base.externalLinks);
