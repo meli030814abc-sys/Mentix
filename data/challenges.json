@@ -29,15 +29,18 @@
     "isPublic": false,
     "startDate": "2026-11-04",
     "endDate": "",
-    "currentStep": 5,
+    "currentStep": 8,
     "completedSteps": [
       1,
       2,
       3,
-      4
+      4,
+      5,
+      6,
+      7
     ],
-    "progress": 40,
-    "calculatedProgress": 40,
+    "progress": 44,
+    "calculatedProgress": 44,
     "valueProp": {
       "problemSolved": "",
       "howItWorks": "",
@@ -175,14 +178,17 @@
         1,
         2,
         3,
-        4
+        4,
+        5,
+        6,
+        7
       ],
-      "currentStep": 5,
+      "currentStep": 8,
       "author": "Melisa",
       "authorId": "user_1792184134006",
       "authorEmail": "gatitaxd6f79@gmail.com",
       "authorAvatar": "🦄",
-      "authorRole": "admin",
+      "authorRole": "Líder del Proyecto",
       "designConfig": {
         "themeId": "cosmos",
         "fontFamily": "Montserrat",
@@ -200,19 +206,19 @@
         "collaborators": ""
       },
       "createdAt": "2026-11-04T01:10:44.818Z",
-      "updatedAt": "2026-11-04T01:10:49.659Z",
+      "updatedAt": "2026-11-04T01:10:53.235Z",
       "code": "pROYECT",
       "joinedCode": "pROYECT",
-      "progress": 40,
-      "calculatedProgress": 40
+      "progress": 44,
+      "calculatedProgress": 44
     },
     "author": "Melisa",
     "authorId": "user_1792184134006",
     "authorEmail": "gatitaxd6f79@gmail.com",
     "authorAvatar": "🦄",
-    "authorRole": "admin",
+    "authorRole": "Líder del Proyecto",
     "createdAt": "2026-11-04T01:10:44.818Z",
-    "updatedAt": "2026-11-04T01:10:49.773Z",
+    "updatedAt": "2026-11-04T01:10:53.326Z",
     "image": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
     "rejectionReason": ""
   },
