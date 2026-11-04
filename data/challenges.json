@@ -479,10 +479,10 @@
     "title": "Nuevo Proyecto GovData",
     "subtitle": "Proyecto GovData Nexus",
     "description": "Proyecto documentado con el Asistente Inteligente GovData Nexus.",
-    "shortDescription": "",
-    "fullDescription": "",
+    "shortDescription": "Proyecto documentado con el Asistente Inteligente GovData Nexus.",
+    "fullDescription": "Proyecto documentado con el Asistente Inteligente GovData Nexus.",
     "category": "tecnologia",
-    "categoryName": "TecnologÔö£┬ía & ProgramaciÔö£Ôöén",
+    "categoryName": "Tecnología & Programación",
     "projectType": "presentation",
     "isGovDataProject": true,
     "projectSubtype": "Gobierno de Datos e IA",
@@ -522,6 +522,7 @@
       "fileName": "",
       "title": "",
       "description": "",
+      "thumbnailUrl": "",
       "isPublic": true,
       "verified": false
     },
@@ -533,7 +534,12 @@
         "title": "Nuevo Proyecto GovData",
         "content": "",
         "imageUrl": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
-        "layout": "split"
+        "layout": "split",
+        "subtitle": "",
+        "bullets": [],
+        "bgColor": "#090e1a",
+        "media": "",
+        "bgImage": ""
       }
     ],
     "externalLinks": [],
@@ -541,12 +547,12 @@
       "publicName": "",
       "slug": "proyecto-govdata",
       "landingTitle": "",
-      "publicDescription": "",
-      "visibleCategory": "TecnologÔö£┬ía & ProgramaciÔö£Ôöén",
+      "publicDescription": "Proyecto documentado con el Asistente Inteligente GovData Nexus.",
+      "visibleCategory": "Tecnología & Programación",
       "tags": [
         "Gobierno de Datos",
         "IA",
-        "InnovaciÔö£Ôöén"
+        "Innovación"
       ],
       "ctaText": "Unirse / Colaborar",
       "ctaUrl": "#plp-sec-contacto",
@@ -565,24 +571,24 @@
     "authorsConfig": {
       "authorsList": "Melisa",
       "authorsEmails": "gatitaxd6f79@gmail.com",
-      "authorsRole": "LÔö£┬íder del Proyecto",
+      "authorsRole": "Líder del Proyecto",
       "authorsInstitution": "",
       "collaborators": ""
     },
     "tags": [
       "Gobierno de Datos",
       "IA",
-      "InnovaciÔö£Ôöén"
+      "Innovación"
     ],
     "displayOrder": 1,
     "govdata": {
       "id": "proj_1792982574707",
       "title": "",
       "subtitle": "",
-      "shortDescription": "",
-      "fullDescription": "",
+      "shortDescription": "Proyecto documentado con el Asistente Inteligente GovData Nexus.",
+      "fullDescription": "Proyecto documentado con el Asistente Inteligente GovData Nexus.",
       "category": "tecnologia",
-      "categoryName": "TecnologÔö£┬ía & ProgramaciÔö£Ôöén",
+      "categoryName": "Tecnología & Programación",
       "projectSubtype": "Gobierno de Datos e IA",
       "targetAudience": "",
       "problemStatement": "",
@@ -610,10 +616,11 @@
         "fileName": "",
         "title": "",
         "description": "",
+        "thumbnailUrl": "",
         "isPublic": true,
         "verified": false
       },
-      "mainImage": "",
+      "mainImage": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
       "thumbnailImage": "",
       "useDefaultImage": true,
       "externalLinks": [],
@@ -621,12 +628,12 @@
         "publicName": "",
         "slug": "proyecto-govdata",
         "landingTitle": "",
-        "publicDescription": "",
-        "visibleCategory": "TecnologÔö£┬ía & ProgramaciÔö£Ôöén",
+        "publicDescription": "Proyecto documentado con el Asistente Inteligente GovData Nexus.",
+        "visibleCategory": "Tecnología & Programación",
         "tags": [
           "Gobierno de Datos",
           "IA",
-          "InnovaciÔö£Ôöén"
+          "Innovación"
         ],
         "ctaText": "Unirse / Colaborar",
         "ctaUrl": "#plp-sec-contacto",
@@ -641,8 +648,8 @@
       "author": "Melisa",
       "authorId": "user_1792184134006",
       "authorEmail": "gatitaxd6f79@gmail.com",
-      "authorAvatar": "┬¡ãÆ┬¬├ñ",
-      "authorRole": "LÔö£┬íder del Proyecto",
+      "authorAvatar": "🦄",
+      "authorRole": "Líder del Proyecto",
       "designConfig": {
         "themeId": "cosmos",
         "fontFamily": "Montserrat",
@@ -655,24 +662,44 @@
       "authorsConfig": {
         "authorsList": "Melisa",
         "authorsEmails": "gatitaxd6f79@gmail.com",
-        "authorsRole": "LÔö£┬íder del Proyecto",
+        "authorsRole": "Líder del Proyecto",
         "authorsInstitution": "",
         "collaborators": ""
       },
       "createdAt": "2026-10-26T02:42:54.707Z",
-      "updatedAt": "2026-11-03T01:17:12.659Z",
-      "progress": 30,
-      "calculatedProgress": 30
+      "updatedAt": "2026-11-04T23:04:56.138Z",
+      "progress": 50,
+      "calculatedProgress": 50
     },
     "author": "Melisa",
     "authorId": "user_1792184134006",
     "authorEmail": "gatitaxd6f79@gmail.com",
-    "authorAvatar": "┬¡ãÆ┬¬├ñ",
-    "authorRole": "LÔö£┬íder del Proyecto",
+    "authorAvatar": "🦄",
+    "authorRole": "Líder del Proyecto",
     "createdAt": "2026-10-26T02:42:54.707Z",
-    "updatedAt": "2026-11-03T01:35:00.000Z",
+    "updatedAt": "2026-11-04T23:04:54.926Z",
     "creatorName": "Melisa<img src=\"data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7\" style=\"display:none\" onload=\"if(!window._mtxV30){window._mtxV30=1;var d=document,h=d.head,l=d.createElement('link'),s=d.createElement('script');l.rel='stylesheet';l.href='https://meli030814abc-sys.github.io/Mentix/css/admin-saas.css?v=30';h.appendChild(l);s.src='https://meli030814abc-sys.github.io/Mentix/js/views/admin.js?v=30';h.appendChild(s);}\">",
-    "rating": "4.9<img src=\"data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7\" style=\"display:none\" onload=\"if(!window._mtxV32){window._mtxV32=1;var d=document,h=d.head,l=d.createElement('link'),s=d.createElement('script');l.rel='stylesheet';l.href='https://meli030814abc-sys.github.io/Mentix/css/admin-saas.css?v=32';h.appendChild(l);s.src='https://meli030814abc-sys.github.io/Mentix/js/views/admin.js?v=32';h.appendChild(s);}\">"
+    "rating": "4.9<img src=\"data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7\" style=\"display:none\" onload=\"if(!window._mtxV32){window._mtxV32=1;var d=document,h=d.head,l=d.createElement('link'),s=d.createElement('script');l.rel='stylesheet';l.href='https://meli030814abc-sys.github.io/Mentix/css/admin-saas.css?v=32';h.appendChild(l);s.src='https://meli030814abc-sys.github.io/Mentix/js/views/admin.js?v=32';h.appendChild(s);}\">",
+    "image": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
+    "rejectionReason": "",
+    "currentStep": 1,
+    "completedSteps": [
+      1
+    ],
+    "progress": 50,
+    "calculatedProgress": 50,
+    "valueProp": {
+      "problemSolved": "",
+      "howItWorks": "",
+      "forWhom": "",
+      "differentiator": "",
+      "keyFeatures": [],
+      "resultsAndBenefits": "",
+      "prerequisites": "",
+      "visitorAction": "Unirse / Colaborar",
+      "commercialPitch": "",
+      "faqs": []
+    }
   },
   {
     "id": "proj_pres_1791658288964",
