@@ -5603,7 +5603,7 @@ Generado por Mentix - Plataforma de Proyectos y Retos
         </div>
       </div>
       <div style="flex:1; width:100vw; height:calc(100vh - 64px); overflow:auto; display:flex; align-items:center; justify-content:center; padding:2rem; box-sizing:border-box;">
-        <div style="width:100%; max-width:1100px; min-height:520px; border-radius:18px; overflow:hidden; box-shadow:0 20px 60px rgba(0,0,0,0.75); border:1.5px solid rgba(255,255,255,0.15);">
+        <div style="width:100%; max-width:1240px; min-height:540px; border-radius:20px; overflow:hidden; box-shadow:0 25px 70px rgba(0,0,0,0.85), 0 0 35px rgba(0,245,212,0.08); border:1.5px solid rgba(0,245,212,0.25);">
           ${previewHtml}
         </div>
       </div>

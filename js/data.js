@@ -363,7 +363,9 @@ function repairCp850Mojibake(str) {
 function fixMojibake(str) {
   if (typeof str !== 'string') return str;
   str = repairCp850Mojibake(str);
-  return str
+  str = str
+    .replace(/\u251C[\u2502\u2503|]/g, 'ó')
+    .replace(/\u2528/g, 'ó')
     .replace(/\u251C\u00A1/g, 'í')
     .replace(/\u251C\u00ED/g, 'á')
     .replace(/\u251C\u2502/g, 'ó')
@@ -376,7 +378,7 @@ function fixMojibake(str) {
     .replace(/\u251C\u00EC/g, 'Í')
     .replace(/\u251C\u00F4/g, 'Ó')
     .replace(/\u251C\u00DC/g, 'Ú')
-    .replace(/\u251C\u00E6/g, 'Ñ')
+    .replace(/\u251C\u00E6/g, 'Ñ');
     .replace(/\u252C[\u00A1\u00ED]/g, '¡')
     .replace(/\u252C[\u2510\u00BF]/g, '¿')
     .replace(/­ƒªü/g, '🦁')
@@ -402,6 +404,30 @@ function fixMojibake(str) {
     .replace(/ÔÜí/g, '⚡')
     .replace(/­ƒøí´©Å/g, '🛡️')
     .replace(/ƒøí´©Å/g, '🛡️');
+
+  // Reparación semántica de términos frecuentes corrompidos por codificación (CP437 / ANSI)
+  str = str
+    .replace(/\b(introducci)[^\w\s]+(n)\b/gi, '$1ó$2')
+    .replace(/\b(diagn)[^\w\s]+(stico)\b/gi, '$1ó$2')
+    .replace(/\b(m)[^\w\s]+(dulo)\b/gi, '$1ó$2')
+    .replace(/\b(aprender)[^\w\s]+(s)\b/gi, '$1á$2')
+    .replace(/\b(organizaci)[^\w\s]+(n)\b/gi, '$1ó$2')
+    .replace(/\b(pr)[^\w\s]+(ctica[s]?)\b/gi, '$1á$2')
+    .replace(/\b(informaci)[^\w\s]+(n)\b/gi, '$1ó$2')
+    .replace(/\b(t)[^\w\s]+(pico[s]?)\b/gi, '$1ó$2')
+    .replace(/\bpor\s+qu[^\w\s]+\b/gi, 'por qué')
+    .replace(/\b(compa)[^\w\s]+(as)\b/gi, '$1ñí$2')
+    .replace(/\b[^\w\s]+(reas)\b/gi, 'á$1')
+    .replace(/\b(m)[^\w\s]+(ltiple[s]?)\b/gi, '$1ú$2')
+    .replace(/\b(est)[^\w\s]+(n)\b/gi, '$1á$2')
+    .replace(/\b(m)[^\w\s]+(s)\b/gi, '$1á$2')
+    .replace(/\b(producir)[^\w\s]+\b/gi, '$1á')
+    .replace(/\b(sab)[^\w\s]+(a)\b/gi, '$1í$2')
+    .replace(/\b(implementaci)[^\w\s]+(n)\b/gi, '$1ó$2')
+    .replace(/\b(gesti)[^\w\s]+(n)\b/gi, '$1ó$2')
+    .replace(/\b(evaluaci)[^\w\s]+(n)\b/gi, '$1ó$2');
+
+  return str;
 }
 
 function fixOptionShape(shape, optIdx) {
@@ -844,10 +870,10 @@ function loadInitialState() {
   } catch (e) {}
 
   // Purgar almacenamiento local si contiene texto corrupto (mojibake)
-  ['te_reto_challenges', 'te_reto_users', 'te_reto_groups'].forEach(key => {
+  ['te_reto_challenges', 'te_reto_users', 'te_reto_groups', 'mentix_govdata_wizard_drafts', 'mentix_active_landing_project'].forEach(key => {
     try {
       const raw = localStorage.getItem(key);
-      if (raw && raw.length < 1500000 && (/ðŸ|Ã¡|Ã³|Ã©|Ã­|Ãº|Ã±|âœ|â¬|âš|\u251C|\u252C|\u00D4\u00F6/.test(raw))) {
+      if (raw && raw.length < 2500000 && (/ðŸ|Ã¡|Ã³|Ã©|Ã­|Ãº|Ã±|âœ|â¬|âš|\u251C|\u252C|\u2528|\u00D4\u00F6/.test(raw))) {
         const cleaned = deepCleanMojibake(JSON.parse(raw));
         localStorage.setItem(key, JSON.stringify(cleaned));
       }

@@ -347,7 +347,9 @@ window.ProjectWizard = {
       const raw = localStorage.getItem('mentix_govdata_wizard_drafts');
       if (raw) {
         const parsed = JSON.parse(raw);
-        if (Array.isArray(parsed)) return parsed;
+        if (Array.isArray(parsed)) {
+          return (typeof window.deepCleanMojibake === 'function') ? window.deepCleanMojibake(parsed) : parsed;
+        }
       }
     } catch (e) {}
     return [];
@@ -2961,10 +2963,17 @@ collectCurrentStepInputs() {
     const th = theme || this.SLIDE_THEMES.find(t => t.id === (s.themeId || 'cosmos')) || this.SLIDE_THEMES[0];
     const curBg = bg || s.bgColor || th.bg;
     const curLayout = layout || s.layout || 'split';
-    const title = s.title || 'Título de la Lámina';
-    const subtitle = s.subtitle || '';
-    const content = s.content || '';
-    const bullets = Array.isArray(s.bullets) ? s.bullets : [];
+
+    const cleanStr = (val) => {
+      if (!val || typeof val !== 'string') return '';
+      return window.fixMojibake ? window.fixMojibake(val) : val;
+    };
+
+    const title = cleanStr(s.title || 'Título de la Lámina');
+    const subtitle = cleanStr(s.subtitle || '');
+    const content = cleanStr(s.content || '');
+    const rawBullets = Array.isArray(s.bullets) ? s.bullets : [];
+    const bullets = rawBullets.map(cleanStr).filter(Boolean);
     const media = s.media || '';
 
     const titleColor = s.titleColor || th.titleColor;
@@ -2986,7 +2995,7 @@ collectCurrentStepInputs() {
             <img 
               src="${this.escapeHtml(media)}" 
               alt="${this.escapeHtml(title)}" 
-              style="max-width: 100%; max-height: 380px; object-fit: contain; border-radius: 8px; box-shadow: 0 8px 25px rgba(0,0,0,0.6);" 
+              style="max-width: 100%; max-height: 380px; object-fit: contain; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.6);" 
               onerror="this.style.display='none'"
             />
           ` : `
@@ -2995,9 +3004,9 @@ collectCurrentStepInputs() {
                 ${this.escapeHtml(title)}
               </h2>
               ${subtitle ? `
-                <h4 style="font-size: 1.05rem; font-weight: 700; color: ${subtitleColor}; font-family: ${subtitleFont}; margin: 0 0 1rem; text-transform: uppercase; letter-spacing: 0.05em;">
-                  ${this.escapeHtml(subtitle)}
-                </h4>
+                <div style="display: inline-flex; align-items: center; gap: 0.45rem; padding: 0.28rem 0.85rem; border-radius: 999px; background: rgba(0, 245, 212, 0.12); border: 1px solid rgba(0, 245, 212, 0.35); color: ${subtitleColor || '#00f5d4'}; font-family: ${subtitleFont}; font-size: 0.82rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 0.85rem;">
+                  <span>✦</span> ${this.escapeHtml(subtitle)}
+                </div>
               ` : ''}
               ${content ? `
                 <p style="font-size: 0.95rem; color: ${contentColor}; font-family: ${contentFont}; line-height: 1.6; margin: 0 auto; max-width: 650px;">
@@ -3017,8 +3026,8 @@ collectCurrentStepInputs() {
             ${this.escapeHtml(title)}
           </h2>
           ${subtitle ? `
-            <div style="font-size: 1rem; font-weight: 800; color: ${subtitleColor}; font-family: ${subtitleFont}; margin-bottom: 1.25rem; text-transform: uppercase; letter-spacing: 0.06em;">
-              ${this.escapeHtml(subtitle)}
+            <div style="display: inline-flex; align-items: center; gap: 0.45rem; padding: 0.28rem 0.85rem; border-radius: 999px; background: rgba(0, 245, 212, 0.12); border: 1px solid rgba(0, 245, 212, 0.35); color: ${subtitleColor || '#00f5d4'}; font-family: ${subtitleFont}; font-size: 0.82rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 1rem;">
+              <span>✦</span> ${this.escapeHtml(subtitle)}
             </div>
           ` : ''}
           ${content ? `
@@ -3049,8 +3058,8 @@ collectCurrentStepInputs() {
               ${this.escapeHtml(title)}
             </h3>
             ${subtitle ? `
-              <div style="font-size: 0.88rem; font-weight: 700; color: ${subtitleColor}; font-family: ${subtitleFont}; margin-bottom: 0.85rem; text-transform: uppercase;">
-                ${this.escapeHtml(subtitle)}
+              <div style="display: inline-flex; align-items: center; gap: 0.45rem; padding: 0.25rem 0.75rem; border-radius: 999px; background: rgba(0, 245, 212, 0.12); border: 1px solid rgba(0, 245, 212, 0.35); color: ${subtitleColor || '#00f5d4'}; font-family: ${subtitleFont}; font-size: 0.78rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 0.85rem;">
+                <span>✦</span> ${this.escapeHtml(subtitle)}
               </div>
             ` : ''}
             ${content ? `
@@ -3089,49 +3098,67 @@ collectCurrentStepInputs() {
       `;
     }
 
-    // Default: 'split' (Texto a la izquierda, Imagen a la derecha)
+    // Default: 'split' (Texto a la izquierda, Ilustración/Tarjeta a la derecha)
     return `
-      <div style="width: 100%; height: 100%; min-height: 420px; background: ${curBg}; padding: 1.85rem 1.6rem; box-sizing: border-box; display: grid; grid-template-columns: 1.15fr 0.95fr; gap: 1.25rem; align-items: center;">
+      <div style="width: 100%; height: 100%; min-height: 420px; background: ${curBg}; padding: 2rem 1.85rem; box-sizing: border-box; display: grid; grid-template-columns: 1.15fr 0.95fr; gap: 1.65rem; align-items: center;">
         <div>
-          <h3 style="font-size: 1.35rem; font-weight: 900; color: ${titleColor}; font-family: ${titleFont}; margin: 0 0 0.45rem; line-height: 1.25; text-shadow: 0 2px 10px rgba(0,0,0,0.6);">
-            ${this.escapeHtml(title)}
-          </h3>
           ${subtitle ? `
-            <div style="font-size: 0.88rem; font-weight: 700; color: ${subtitleColor}; font-family: ${subtitleFont}; margin-bottom: 0.9rem; text-transform: uppercase; letter-spacing: 0.05em;">
-              ${this.escapeHtml(subtitle)}
+            <div style="display: inline-flex; align-items: center; gap: 0.45rem; padding: 0.28rem 0.85rem; border-radius: 999px; background: rgba(0, 245, 212, 0.12); border: 1px solid rgba(0, 245, 212, 0.35); color: ${subtitleColor || '#00f5d4'}; font-family: ${subtitleFont}; font-size: 0.82rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 0.85rem;">
+              <span>✦</span> ${this.escapeHtml(subtitle)}
             </div>
           ` : ''}
+
+          <h3 style="font-size: clamp(1.35rem, 2.2vw, 1.85rem); font-weight: 900; color: ${titleColor}; font-family: ${titleFont}; margin: 0 0 0.65rem; line-height: 1.25; text-shadow: 0 2px 12px rgba(0,0,0,0.7);">
+            ${this.escapeHtml(title)}
+          </h3>
+
           ${content ? `
-            <p style="font-size: 0.86rem; color: ${contentColor}; font-family: ${contentFont}; line-height: 1.6; margin-bottom: 1rem;">
+            <p style="font-size: 0.9rem; color: ${contentColor}; font-family: ${contentFont}; line-height: 1.6; margin-bottom: 1rem;">
               ${this.escapeHtml(content)}
             </p>
           ` : ''}
+
           ${bullets.length > 0 ? `
-            <div style="display: flex; flex-direction: column; gap: 0.45rem;">
-              ${bullets.map(b => `
-                <div style="display: flex; align-items: flex-start; gap: 0.5rem; font-size: 0.83rem; color: ${bulletsColor}; font-family: ${bulletsFont}; line-height: 1.45;">
-                  <span style="color: ${subtitleColor || th.accent || '#00f5d4'}; font-weight: 900; font-size: 0.9rem; line-height: 1;">${bIcon}</span>
-                  <span>${this.escapeHtml(b)}</span>
-                </div>
-              `).join('')}
+            <div style="display: flex; flex-direction: column; gap: 0.55rem;">
+              ${bullets.map(b => {
+                const isObjective = /^🎯|objetivo(?:\s+de\s+aprendizaje)?/i.test(b);
+                if (isObjective) {
+                  const cleanText = b.replace(/^(?:🎯\s*)?(?:objetivo(?:\s+de\s+aprendizaje)?[:\s-]*)?/i, '');
+                  return `
+                    <div style="background: rgba(124, 58, 237, 0.18); border-left: 3px solid #00f5d4; border-radius: 10px; padding: 0.65rem 0.9rem; font-size: 0.84rem; color: #f1f5f9; font-family: ${bulletsFont}; line-height: 1.5; margin-bottom: 0.35rem; display: flex; align-items: flex-start; gap: 0.55rem; box-shadow: 0 4px 15px rgba(0,0,0,0.3);">
+                      <span style="font-size: 1.15rem; line-height: 1.1; flex-shrink: 0;">🎯</span>
+                      <div>
+                        <strong style="color: #00f5d4; display: block; font-size: 0.76rem; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.2rem;">Objetivo de Aprendizaje</strong>
+                        <span>${this.escapeHtml(cleanText)}</span>
+                      </div>
+                    </div>
+                  `;
+                }
+                return `
+                  <div style="display: flex; align-items: flex-start; gap: 0.55rem; font-size: 0.84rem; color: ${bulletsColor}; font-family: ${bulletsFont}; line-height: 1.48;">
+                    <span style="color: ${subtitleColor || th.accent || '#00f5d4'}; font-weight: 900; font-size: 0.95rem; line-height: 1; flex-shrink: 0; margin-top: 0.15rem;">${bIcon}</span>
+                    <span>${this.escapeHtml(b)}</span>
+                  </div>
+                `;
+              }).join('')}
             </div>
           ` : ''}
         </div>
 
-        <!-- Columna de Imagen / Ilustración -->
-        <div style="border-radius: 12px; overflow: hidden; min-height: 240px; background: rgba(0,0,0,0.35); border: 1.5px solid rgba(255,255,255,0.12); display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 25px rgba(0,0,0,0.5);">
+        <!-- Columna de Imagen / Ilustración / Logo -->
+        <div style="border-radius: 16px; overflow: hidden; min-height: 250px; max-height: 330px; background: #ffffff; border: 1.5px solid rgba(255,255,255,0.22); display: flex; align-items: center; justify-content: center; box-shadow: 0 14px 40px rgba(0,0,0,0.55); padding: 1.25rem; box-sizing: border-box;">
           ${media ? `
             <img 
               src="${this.escapeHtml(media)}" 
               alt="${this.escapeHtml(title)}" 
-              style="width: 100%; height: 100%; max-height: 290px; object-fit: cover; display: block;" 
-              onerror="this.parentElement.innerHTML='<div style=\'padding:1.5rem; text-align:center; color:#94a3b8; font-size:0.8rem;\'>⚠️ No se pudo cargar la imagen</div>';"
+              style="max-width: 100%; max-height: 290px; width: auto; height: auto; object-fit: contain; display: block; margin: 0 auto; filter: drop-shadow(0 6px 14px rgba(0,0,0,0.15));" 
+              onerror="this.parentElement.innerHTML='<div style=\'padding:1.5rem; text-align:center; color:#64748b; font-size:0.8rem;\'>⚠️ No se pudo cargar la imagen</div>';"
             />
           ` : `
             <div style="text-align: center; padding: 1.5rem; color: #64748b;">
               <div style="font-size: 2.2rem; margin-bottom: 0.35rem;">🖼️</div>
-              <div style="font-size: 0.8rem; font-weight: 700; color: #cbd5e1;">Sin imagen asignada</div>
-              <div style="font-size: 0.72rem; color: #94a3b8; margin-top: 0.2rem;">Pega una URL o sube una imagen local</div>
+              <div style="font-size: 0.82rem; font-weight: 700; color: #475569;">Sin imagen asignada</div>
+              <div style="font-size: 0.72rem; color: #64748b; margin-top: 0.2rem;">Pega una URL o sube una imagen local</div>
             </div>
           `}
         </div>
@@ -3449,16 +3476,21 @@ collectCurrentStepInputs() {
           if (extracted && extracted.length > 0) {
             this.draft.slides = extracted.map((s, idx) => ({
               id: s.id || ('slide_' + Date.now() + '_' + idx),
-              title: s.title || `Diapositiva ${idx + 1}`,
-              subtitle: s.subtitle || '',
-              content: s.content || '',
-              bullets: Array.isArray(s.bullets) ? s.bullets : [],
+              title: window.fixMojibake ? window.fixMojibake(s.title || `Diapositiva ${idx + 1}`) : (s.title || `Diapositiva ${idx + 1}`),
+              subtitle: window.fixMojibake ? window.fixMojibake(s.subtitle || '') : (s.subtitle || ''),
+              content: window.fixMojibake ? window.fixMojibake(s.content || '') : (s.content || ''),
+              bullets: Array.isArray(s.bullets) ? s.bullets.map(b => window.fixMojibake ? window.fixMojibake(b) : b) : [],
               layout: s.videoUrl ? 'video' : (s.isFullImage ? 'full' : 'split'),
               media: s.videoUrl || s.media || '',
               notes: s.notes || '',
-              bgColor: '#0b091a',
+              bgColor: '#090e1a',
               themeId: 'cosmos'
             }));
+            if (window.PresentationView && window.PresentationView.pendingPresentationTitle) {
+              if (!this.draft.title || this.draft.title.startsWith('Mi ') || !this.draft.title.trim()) {
+                this.draft.title = window.PresentationView.pendingPresentationTitle;
+              }
+            }
             this.activeSlideIndex = 0;
             this.saveDraftToStorage(true, true);
             alert(`✅ ¡PowerPoint procesado con éxito! Se importaron ${extracted.length} diapositivas.`);

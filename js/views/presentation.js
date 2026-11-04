@@ -494,6 +494,16 @@ window.PresentationView = {
     const isVideoSlide = (currentSlide.layout === 'video') || Boolean(currentSlide.videoUrl && currentSlide.layout !== 'split' && currentSlide.layout !== 'full');
     const hasMedia = Boolean(isVideoSlide ? (currentSlide.videoUrl || currentSlide.media) : currentSlide.media);
 
+    const cleanStr = (val) => {
+      if (!val || typeof val !== 'string') return '';
+      return window.fixMojibake ? window.fixMojibake(val) : val;
+    };
+    const title = cleanStr(currentSlide.title || '');
+    const subtitle = cleanStr(currentSlide.subtitle || '');
+    const content = cleanStr(currentSlide.content || '');
+    const rawBullets = Array.isArray(currentSlide.bullets) ? currentSlide.bullets : [];
+    const bullets = rawBullets.map(cleanStr).filter(Boolean);
+
     return `
       ${isPureVisualSlide ? `
         <!-- Diapositiva Visual en Toda la Pantalla (Lámina de PDF/Canva completa) -->
@@ -505,7 +515,7 @@ window.PresentationView = {
         >
           <img 
             src="${currentSlide.media}" 
-            alt="${this.escapeHtml(currentSlide.title || 'Diapositiva ' + (this.currentSlideIndex + 1))}" 
+            alt="${this.escapeHtml(title || 'Diapositiva ' + (this.currentSlideIndex + 1))}" 
             class="full-slide-img"
             style="width: 100%; height: 100%; max-height: calc(100vh - 210px); min-height: 500px; object-fit: contain; display: block; margin: 0 auto;"
           />
@@ -517,27 +527,40 @@ window.PresentationView = {
             
             <!-- Columna de Textos -->
             <div class="slide-text-col">
-              ${currentSlide.subtitle ? `
-                <div class="slide-custom-subtitle" style="font-family: ${currentSlide.subtitleFont || "'Outfit', sans-serif"} !important; font-size: 1.1rem; color: ${currentSlide.subtitleColor || '#00f5d4'} !important; --slide-subtitle-color: ${currentSlide.subtitleColor || '#00f5d4'}; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 0.6rem;">
-                  ${this.escapeHtml(currentSlide.subtitle)}
+              ${subtitle ? `
+                <div class="slide-custom-subtitle" style="font-family: ${currentSlide.subtitleFont || "'Outfit', sans-serif"} !important; font-size: 0.92rem; color: ${currentSlide.subtitleColor || '#00f5d4'} !important; --slide-subtitle-color: ${currentSlide.subtitleColor || '#00f5d4'}; font-weight: 800; text-transform: uppercase; letter-spacing: 1.2px; margin-bottom: 0.85rem; display: inline-flex; align-items: center; gap: 0.45rem; padding: 0.32rem 0.95rem; border-radius: 999px; background: rgba(0, 245, 212, 0.12); border: 1px solid rgba(0, 245, 212, 0.35);">
+                  <span>✦</span> ${this.escapeHtml(subtitle)}
                 </div>
               ` : ''}
 
-              ${currentSlide.title ? `
-                <h1 class="slide-custom-title" style="font-family: ${currentSlide.titleFont || "'Outfit', sans-serif"} !important; font-size: clamp(2rem, 3.8vw, 3rem); font-weight: 900; line-height: 1.15; margin: 0 0 1.25rem; color: ${currentSlide.titleColor || '#ffffff'} !important; --slide-title-color: ${currentSlide.titleColor || '#ffffff'}; text-shadow: 0 2px 10px rgba(0,0,0,0.5);">
-                  ${this.escapeHtml(currentSlide.title)}
+              ${title ? `
+                <h1 class="slide-custom-title" style="font-family: ${currentSlide.titleFont || "'Outfit', sans-serif"} !important; font-size: clamp(2rem, 3.8vw, 2.9rem); font-weight: 900; line-height: 1.18; margin: 0 0 1.15rem; color: ${currentSlide.titleColor || '#ffffff'} !important; --slide-title-color: ${currentSlide.titleColor || '#ffffff'}; text-shadow: 0 2px 14px rgba(0,0,0,0.7);">
+                  ${this.escapeHtml(title)}
                 </h1>
               ` : ''}
 
-              ${currentSlide.content ? `
-                <p class="slide-custom-content" style="font-family: ${currentSlide.contentFont || "'Inter', sans-serif"} !important; font-size: 1.15rem; color: ${currentSlide.contentColor || '#cbd5e1'} !important; --slide-content-color: ${currentSlide.contentColor || '#cbd5e1'}; line-height: 1.6; margin: 0 0 1.5rem;">
-                  ${this.escapeHtml(currentSlide.content)}
+              ${content ? `
+                <p class="slide-custom-content" style="font-family: ${currentSlide.contentFont || "'Inter', sans-serif"} !important; font-size: 1.1rem; color: ${currentSlide.contentColor || '#cbd5e1'} !important; --slide-content-color: ${currentSlide.contentColor || '#cbd5e1'}; line-height: 1.6; margin: 0 0 1.35rem;">
+                  ${this.escapeHtml(content)}
                 </p>
               ` : ''}
 
-              ${currentSlide.bullets && currentSlide.bullets.length > 0 ? `
-                <div class="slide-bullets-container" style="display: flex; flex-direction: column; gap: 0.85rem;">
-                  ${currentSlide.bullets.map(b => {
+              ${bullets && bullets.length > 0 ? `
+                <div class="slide-bullets-container" style="display: flex; flex-direction: column; gap: 0.75rem;">
+                  ${bullets.map(b => {
+                    const isObjective = /^🎯|objetivo(?:\s+de\s+aprendizaje)?/i.test(b);
+                    if (isObjective) {
+                      const cleanText = b.replace(/^(?:🎯\s*)?(?:objetivo(?:\s+de\s+aprendizaje)?[:\s-]*)?/i, '');
+                      return `
+                        <div style="background: rgba(124, 58, 237, 0.22); border-left: 4px solid #00f5d4; border-radius: 12px; padding: 0.85rem 1.15rem; font-size: 1.05rem; color: #f8fafc; font-family: ${currentSlide.bulletsFont || "'Inter', sans-serif"} !important; line-height: 1.55; margin-bottom: 0.5rem; display: flex; align-items: flex-start; gap: 0.75rem; box-shadow: 0 6px 20px rgba(0,0,0,0.35);">
+                          <span style="font-size: 1.35rem; line-height: 1.1; flex-shrink: 0;">🎯</span>
+                          <div>
+                            <strong style="color: #00f5d4; display: block; font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.25rem;">Objetivo de Aprendizaje</strong>
+                            <span>${this.escapeHtml(cleanText)}</span>
+                          </div>
+                        </div>
+                      `;
+                    }
                     const bIcon = (currentSlide.bulletStyle === 'custom') 
                       ? (currentSlide.bulletEmoji || '🎯') 
                       : (currentSlide.bulletStyle || currentSlide.bulletIcon || '✦');
@@ -552,7 +575,7 @@ window.PresentationView = {
               ` : ''}
             </div>
 
-            <!-- Columna de Media (Video Explicativo o Imagen de Apoyo) -->
+            <!-- Columna de Media (Video Explicativo o Ilustración/Logo en Tarjeta Showcase) -->
             ${hasMedia ? `
               <div class="slide-media-col" style="text-align: center; display: flex; align-items: center; justify-content: center; width: 100%;">
                 ${isVideoSlide ? `
@@ -560,12 +583,14 @@ window.PresentationView = {
                     ${this.renderVideoPlayerHtml(this.parseVideoSource(currentSlide.videoUrl || currentSlide.media))}
                   </div>
                 ` : `
-                  <img 
-                    src="${currentSlide.media}" 
-                    alt="${this.escapeHtml(currentSlide.title || 'Imagen')}" 
-                    class="slide-media-img"
-                    style="max-width: 100%; max-height: calc(100vh - 280px); min-height: 280px; object-fit: contain; border-radius: 18px; border: 2px solid rgba(255,255,255,0.18); box-shadow: 0 12px 35px rgba(0,0,0,0.6);"
-                  />
+                  <div style="border-radius: 20px; overflow: hidden; background: #ffffff; border: 2px solid rgba(255,255,255,0.25); display: flex; align-items: center; justify-content: center; box-shadow: 0 16px 45px rgba(0,0,0,0.55); padding: 1.75rem; width: 100%; max-height: calc(100vh - 270px); min-height: 280px; box-sizing: border-box;">
+                    <img 
+                      src="${currentSlide.media}" 
+                      alt="${this.escapeHtml(title || 'Ilustración')}" 
+                      class="slide-media-img"
+                      style="max-width: 100%; max-height: calc(100vh - 310px); width: auto; height: auto; object-fit: contain; display: block; margin: 0 auto; filter: drop-shadow(0 8px 18px rgba(0,0,0,0.18));"
+                    />
+                  </div>
                 `}
               </div>
             ` : ''}
@@ -2091,7 +2116,8 @@ window.PresentationView = {
       }
       if (slidePaths.length === 0) return null;
 
-      const slides = [];
+      // 1. Extraer datos crudos de cada diapositiva
+      const rawSlidesData = [];
       for (let idx = 0; idx < slidePaths.length; idx++) {
         const path = slidePaths[idx];
         const xml = await readText(path);
@@ -2099,13 +2125,14 @@ window.PresentationView = {
         const file = path.substring(path.lastIndexOf('/') + 1);
         const rels = parseRels(await readText(dir + '/_rels/' + file + '.rels'), dir);
 
-        // Textos
+        // Textos brutos con reparación inmediata de mojibake
         const pMatches = xml.match(/<a:p[ >][\s\S]*?<\/a:p>/g) || [];
-        const lines = pMatches.map(p => {
+        const rawLines = pMatches.map(p => {
           const tMatches = p.match(/<a:t[^>]*>([\s\S]*?)<\/a:t>/g) || [];
-          return tMatches.map(t => t.replace(/<[^>]+>/g, '')).join('')
+          let line = tMatches.map(t => t.replace(/<[^>]+>/g, '')).join('')
             .replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&apos;/g, "'");
-        }).filter(l => l.trim().length > 0);
+          return (window.fixMojibake ? window.fixMojibake(line) : line).trim();
+        }).filter(l => l.length > 0);
 
         // Video: enlace en línea (YouTube, etc.) o archivo incrustado
         let videoUrl = '';
@@ -2125,44 +2152,210 @@ window.PresentationView = {
                 videoUrl = await toDataUrl(vdata, mime);
               } else {
                 videoUrl = URL.createObjectURL(new Blob([vdata], { type: mime }));
-                this.pptxImportWarnings.push(`La diapositiva ${idx + 1} tiene un video incrustado de ${(vdata.length / 1048576).toFixed(1)} MB: se verá en esta sesión, pero para guardarlo permanentemente súbelo a YouTube/Drive y pega el enlace en el editor.`);
+                this.pptxImportWarnings.push(`La diapositiva ${idx + 1} tiene un video incrustado de ${(vdata.length / 1048576).toFixed(1)} MB.`);
               }
             }
           }
         }
 
-        // Imagen principal de la diapositiva (si la hay)
+        // Imágenes: Seleccionar la ilustración principal de la diapositiva (priorizando imágenes de contenido sobre decoraciones repetitivas)
         let imageData = '';
-        const imgRel = relList.find(r => !r.external && /\/image$/i.test(r.type) && IMG_MIME[(r.target.split('.').pop() || '').toLowerCase()]);
-        if (imgRel) {
-          const iext = imgRel.target.split('.').pop().toLowerCase();
-          const idata = await readEntry(imgRel.target);
-          if (idata && idata.length && idata.length <= 2.5 * 1024 * 1024) {
+        const imgRels = relList.filter(r => !r.external && /\/image$/i.test(r.type) && IMG_MIME[(r.target.split('.').pop() || '').toLowerCase()]);
+        let chosenImgRel = null;
+        if (imgRels.length === 1) {
+          chosenImgRel = imgRels[0];
+        } else if (imgRels.length > 1) {
+          let maxScore = -1;
+          for (const ir of imgRels) {
+            const en = entries[ir.target];
+            const size = (en && en.csize) ? en.csize : 0;
+            const ext = (ir.target.split('.').pop() || '').toLowerCase();
+            // Ponderar: PNG y JPG de contenido tienen prioridad sobre GIFs decorativos
+            const score = (ext === 'gif') ? size * 0.4 : size;
+            if (score > maxScore) {
+              maxScore = score;
+              chosenImgRel = ir;
+            }
+          }
+          if (!chosenImgRel) chosenImgRel = imgRels[0];
+        }
+        if (chosenImgRel) {
+          const iext = chosenImgRel.target.split('.').pop().toLowerCase();
+          const idata = await readEntry(chosenImgRel.target);
+          if (idata && idata.length && idata.length <= 3.5 * 1024 * 1024) {
             imageData = await toDataUrl(idata, IMG_MIME[iext]);
           }
         }
 
+        rawSlidesData.push({ idx, lines: rawLines, videoUrl, imageData });
+      }
+
+      // 2. Detectar encabezado común repetido (título de curso o banner como "CURSO Diagnostico empresarial")
+      const lineCounts = {};
+      rawSlidesData.forEach(s => {
+        const seenInSlide = new Set();
+        s.lines.forEach(l => {
+          const norm = l.toLowerCase().replace(/[^\w]/g, '');
+          if (norm.length >= 6 && !seenInSlide.has(norm)) {
+            seenInSlide.add(norm);
+            lineCounts[norm] = (lineCounts[norm] || { text: l, count: 0 });
+            lineCounts[norm].count++;
+          }
+        });
+      });
+      let commonDeckBanner = '';
+      for (const k in lineCounts) {
+        if (lineCounts[k].count >= Math.max(3, Math.floor(rawSlidesData.length * 0.4))) {
+          if (/curso|diagn[oó]stico|diplomado|taller/i.test(lineCounts[k].text) || lineCounts[k].text.length > commonDeckBanner.length) {
+            commonDeckBanner = lineCounts[k].text;
+          }
+        }
+      }
+      if (commonDeckBanner && !this.pendingPresentationTitle) {
+        this.pendingPresentationTitle = commonDeckBanner;
+      }
+
+      // 3. Estructuración semántica inteligente de cada diapositiva
+      const slides = [];
+      for (const item of rawSlidesData) {
+        const { idx, lines: rawLines, videoUrl, imageData } = item;
+        let workingLines = rawLines.slice();
+
+        // Extraer y formatear Objetivo de Aprendizaje si existe
+        let learningObjective = '';
+        const objIdx = workingLines.findIndex(l => /^objetivo(?:\s+de\s+aprendizaje)?/i.test(l));
+        if (objIdx >= 0) {
+          if (objIdx + 1 < workingLines.length && workingLines[objIdx + 1].length > 15) {
+            learningObjective = workingLines[objIdx + 1];
+            workingLines.splice(objIdx, 2);
+          } else if (workingLines[objIdx].length > 30) {
+            learningObjective = workingLines[objIdx].replace(/^objetivo(?:\s+de\s+aprendizaje)?[:\s-]*/i, '');
+            workingLines.splice(objIdx, 1);
+          } else {
+            workingLines.splice(objIdx, 1);
+          }
+        }
+
+        // Detectar etiquetas de módulo / clase
+        let moduleBadge = '';
+        const modIdx = workingLines.findIndex(l => /^m[oó]dulo\s+\d+/i.test(l));
+        if (modIdx >= 0) {
+          moduleBadge = workingLines[modIdx];
+          workingLines.splice(modIdx, 1);
+        }
+        let classBadge = '';
+        const clsIdx = workingLines.findIndex(l => /^clase\s+\d+/i.test(l));
+        if (clsIdx >= 0) {
+          classBadge = workingLines[clsIdx];
+          workingLines.splice(clsIdx, 1);
+        }
+
+        // Detectar y ensamblar fragmentos de palabras rotas
+        const mergeFragments = (arr) => {
+          const out = [];
+          for (let i = 0; i < arr.length; i++) {
+            const cur = arr[i];
+            if (i + 1 < arr.length) {
+              const next = arr[i + 1];
+              if (cur.toLowerCase() === 'silos' && next.toLowerCase() === 'empresariales') {
+                out.push('Silos Empresariales'); i++; continue;
+              }
+              if (cur.toLowerCase() === 'mapa de' && next.toLowerCase() === 'actores') {
+                out.push('Mapa de Actores'); i++; continue;
+              }
+              if (cur.toLowerCase() === 'cultura' && next.toLowerCase() === 'organizacional') {
+                out.push('Cultura Organizacional'); i++; continue;
+              }
+              if (cur.toLowerCase() === 'por que fallan' && /los datos/i.test(next)) {
+                out.push('¿Por qué fallan los datos?'); i++; continue;
+              }
+            }
+            out.push(cur);
+          }
+          return out;
+        };
+        workingLines = mergeFragments(workingLines);
+
+        // Remover palabras huérfanas al final y numeraciones solitarias
+        workingLines = workingLines.filter(l => !/^(?:empresariales|actores|organizacional|\.|\d{1,2})$/i.test(l.trim()));
+
+        // Filtrar el banner general del curso para que no usurpe el título de la diapositiva
+        if (commonDeckBanner) {
+          workingLines = workingLines.filter(l => l.toLowerCase().trim() !== commonDeckBanner.toLowerCase().trim());
+        }
+
+        // Subtítulo compuesto elegante
+        let subtitle = '';
+        if (classBadge && moduleBadge) {
+          subtitle = `${classBadge} · ${moduleBadge}`;
+        } else if (classBadge) {
+          subtitle = classBadge;
+        } else if (moduleBadge) {
+          subtitle = moduleBadge;
+        }
+
+        // Detectar si hay subtítulo temático tipo "INTRO." o "CONT." o "bienvenida"
+        const tagTokens = workingLines.filter(l => /^(?:intro\.?|cont\.?|bienvenida|introducci[oó]n|contenidos)$/i.test(l));
+        if (tagTokens.length > 0) {
+          workingLines = workingLines.filter(l => !/^(?:intro\.?|cont\.?|bienvenida|introducci[oó]n|contenidos)$/i.test(l));
+          if (!subtitle && tagTokens[0]) {
+            subtitle = tagTokens[0].toUpperCase();
+          }
+        }
+
+        // Determinar Título Real de la Diapositiva
+        let title = '';
+        if (workingLines.length > 0) {
+          title = workingLines.shift();
+          if (workingLines.length > 0 && workingLines[0].length < 40 && !subtitle && !learningObjective) {
+            subtitle = workingLines.shift();
+          }
+        } else {
+          title = videoUrl ? `Video ${idx + 1}` : (commonDeckBanner || `Diapositiva ${idx + 1}`);
+        }
+
+        title = title.replace(/\s*\.\s*$/, '').trim();
+
+        // Determinar Contenido (párrafo descriptivo) y Bullets (puntos clave)
+        let content = '';
+        const bullets = [];
+
+        // Si tenemos un Objetivo de Aprendizaje detectado, añadirlo como punto destacado
+        if (learningObjective) {
+          bullets.push(`🎯 Objetivo: ${learningObjective}`);
+        }
+
+        workingLines.forEach(line => {
+          const lClean = line.replace(/^\s*[-*•✦]\s*/, '').trim();
+          if (!lClean) return;
+          if (!content && (lClean.length > 85 || /^(?:en este|las compa|m[uú]ltiples|cuando los|la cultura|exploremos)/i.test(lClean))) {
+            content = lClean;
+          } else {
+            bullets.push(lClean);
+          }
+        });
+
+        // Asegurar saneamiento contra mojibake en todos los campos
+        title = window.fixMojibake ? window.fixMojibake(title) : title;
+        subtitle = window.fixMojibake ? window.fixMojibake(subtitle) : subtitle;
+        content = window.fixMojibake ? window.fixMojibake(content) : content;
+        const cleanedBullets = bullets.map(b => window.fixMojibake ? window.fixMojibake(b) : b);
+
         const base = {
           id: 'slide_' + Date.now() + '_' + idx,
-          title: '', subtitle: '', content: '', bullets: [], media: '', teacherNotes: ''
+          title,
+          subtitle,
+          content,
+          bullets: cleanedBullets,
+          media: imageData || '',
+          teacherNotes: ''
         };
-
-        if (lines.length > 0) {
-          base.title = lines[0];
-          const subtitle = (lines.length > 1 && lines[1].length < 90) ? lines[1] : '';
-          const startIndex = subtitle ? 2 : 1;
-          base.subtitle = subtitle;
-          base.bullets = lines.slice(startIndex, startIndex + 5);
-          base.content = lines.slice(startIndex + 5).join(' ');
-        } else {
-          base.title = videoUrl ? `Video ${idx + 1}` : `Diapositiva ${idx + 1}`;
-        }
 
         if (videoUrl) {
           base.layout = 'video';
           base.videoUrl = videoUrl;
           base.media = videoUrl;
-        } else if (lines.length === 0 && imageData) {
+        } else if (!title && !content && cleanedBullets.length === 0 && imageData) {
           base.layout = 'full';
           base.media = imageData;
           base.isImported = true;
