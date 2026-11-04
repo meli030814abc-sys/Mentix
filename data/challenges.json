@@ -29,16 +29,18 @@
     "isPublic": false,
     "startDate": "2026-11-04",
     "endDate": "",
-    "currentStep": 6,
+    "currentStep": 8,
     "completedSteps": [
       1,
       2,
       3,
       4,
-      5
+      5,
+      6,
+      7
     ],
-    "progress": 40,
-    "calculatedProgress": 40,
+    "progress": 44,
+    "calculatedProgress": 44,
     "valueProp": {
       "problemSolved": "",
       "howItWorks": "",
@@ -177,9 +179,11 @@
         2,
         3,
         4,
-        5
+        5,
+        6,
+        7
       ],
-      "currentStep": 6,
+      "currentStep": 8,
       "author": "Melisa",
       "authorId": "user_1792184134006",
       "authorEmail": "gatitaxd6f79@gmail.com",
@@ -202,11 +206,11 @@
         "collaborators": ""
       },
       "createdAt": "2026-11-04T01:11:52.407Z",
-      "updatedAt": "2026-11-04T01:11:58.883Z",
+      "updatedAt": "2026-11-04T01:12:00.819Z",
       "code": "201",
       "joinedCode": "201",
-      "progress": 40,
-      "calculatedProgress": 40
+      "progress": 44,
+      "calculatedProgress": 44
     },
     "author": "Melisa",
     "authorId": "user_1792184134006",
@@ -214,7 +218,7 @@
     "authorAvatar": "🦄",
     "authorRole": "Líder del Proyecto",
     "createdAt": "2026-11-04T01:11:52.407Z",
-    "updatedAt": "2026-11-04T01:11:58.979Z",
+    "updatedAt": "2026-11-04T01:12:00.910Z",
     "image": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
     "rejectionReason": ""
   },
