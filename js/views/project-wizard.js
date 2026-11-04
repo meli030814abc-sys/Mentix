@@ -3158,12 +3158,12 @@ collectCurrentStepInputs() {
         </div>
 
         <!-- Columna de Imagen / Ilustración / Logo -->
-        <div style="border-radius: 16px; overflow: hidden; min-height: 250px; max-height: 330px; background: #ffffff; border: 1.5px solid rgba(255,255,255,0.22); display: flex; align-items: center; justify-content: center; box-shadow: 0 14px 40px rgba(0,0,0,0.55); padding: 1.25rem; box-sizing: border-box;">
+        <div style="border-radius: 16px; overflow: hidden; min-height: 250px; max-height: 330px; background: rgba(13, 20, 36, 0.65); border: 1.5px solid rgba(255,255,255,0.14); display: flex; align-items: center; justify-content: center; box-shadow: 0 14px 40px rgba(0,0,0,0.55); padding: 0.5rem; box-sizing: border-box; backdrop-filter: blur(8px);">
           ${media ? `
             <img 
               src="${this.escapeHtml(media)}" 
               alt="${this.escapeHtml(title)}" 
-              style="max-width: 100%; max-height: 290px; width: auto; height: auto; object-fit: contain; display: block; margin: 0 auto; filter: drop-shadow(0 6px 14px rgba(0,0,0,0.15));" 
+              style="max-width: 100%; max-height: 310px; width: auto; height: auto; object-fit: contain; border-radius: 12px; display: block; margin: 0 auto; filter: drop-shadow(0 6px 18px rgba(0,0,0,0.35));" 
               onerror="this.parentElement.innerHTML='<div style=\'padding:1.5rem; text-align:center; color:#64748b; font-size:0.8rem;\'>⚠️ No se pudo cargar la imagen</div>';"
             />
           ` : `

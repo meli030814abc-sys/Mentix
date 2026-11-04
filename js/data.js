@@ -378,7 +378,7 @@ function fixMojibake(str) {
     .replace(/\u251C\u00EC/g, 'Í')
     .replace(/\u251C\u00F4/g, 'Ó')
     .replace(/\u251C\u00DC/g, 'Ú')
-    .replace(/\u251C\u00E6/g, 'Ñ');
+    .replace(/\u251C\u00E6/g, 'Ñ')
     .replace(/\u252C[\u00A1\u00ED]/g, '¡')
     .replace(/\u252C[\u2510\u00BF]/g, '¿')
     .replace(/­ƒªü/g, '🦁')
@@ -502,6 +502,13 @@ function sanitizeProjectSlides(rawSlides, projectTitle = '') {
       content = '';
     }
 
+    // Si alguna viñeta es en realidad una etiqueta de módulo o clase, moverla al subtítulo
+    const modBulletIdx = bullets.findIndex(b => /^(?:m[oó]dulo\s+\d+|clase\s+\d+)/i.test(b));
+    if (modBulletIdx >= 0) {
+      if (!moduleTag) moduleTag = bullets[modBulletIdx];
+      bullets.splice(modBulletIdx, 1);
+    }
+
     // Detectar Objetivo de Aprendizaje en las viñetas
     let learningObjective = '';
     const objIdx = bullets.findIndex(b => /^objetivo(?:\s+de\s+aprendizaje)?/i.test(b));
@@ -517,11 +524,24 @@ function sanitizeProjectSlides(rawSlides, projectTitle = '') {
       }
     }
 
-    // Si el título actual es el banner general del curso (ej: "CURSO Diagnostico empresarial")
+    // Tratamiento especial para la Lámina 1 (Portada del Curso)
+    if (idx === 0 || /bienvenida/i.test(subtitle) || /bienvenida/i.test(title)) {
+      const coverTitleIdx = bullets.findIndex(b => /curso\s+de\s+diagn[oó]stico/i.test(b) || (b.length > 25 && /dama/i.test(b)));
+      if (coverTitleIdx >= 0) {
+        title = bullets[coverTitleIdx];
+        bullets.splice(coverTitleIdx, 1);
+      }
+      if (/bienvenida/i.test(subtitle) && !moduleTag) {
+        moduleTag = 'MÓDULO 00';
+      }
+    }
+
+    // Si el título actual sigue siendo el banner general del curso (ej: "CURSO Diagnostico empresarial")
     if (isDeckHeader(title) && bullets.length > 0) {
       // Encontrar en bullets la línea que realmente es el título de la diapositiva
       const topicIdx = bullets.findIndex(b => 
-        b.length < 65 && 
+        b.length < 130 && 
+        !/^(?:m[oó]dulo\s+\d+|clase\s+\d+)/i.test(b) &&
         !/^(?:en este|las compa|m[uú]ltiples|cuando los|la cultura|exploremos|identificar)/i.test(b) &&
         !/^(?:🎯|objetivo)/i.test(b)
       );
@@ -534,8 +554,8 @@ function sanitizeProjectSlides(rawSlides, projectTitle = '') {
     // Si el contenido quedó vacío, buscar si en bullets hay un párrafo descriptivo largo
     if (!content && bullets.length > 0) {
       const descIdx = bullets.findIndex(b => 
-        b.length > 60 || 
-        /^(?:en este|las compa|m[uú]ltiples|cuando los|la cultura|exploremos|identificar)/i.test(b)
+        b.length > 55 || 
+        /^(?:en este|las compa|m[uú]ltiples|cuando los|la cultura|exploremos|identificar|curso\s+de)/i.test(b)
       );
       if (descIdx >= 0) {
         content = bullets[descIdx];
@@ -551,6 +571,9 @@ function sanitizeProjectSlides(rawSlides, projectTitle = '') {
         subtitle = moduleTag;
       }
     }
+
+    // Filtrar viñetas que sean idénticas o redundantes con el título
+    bullets = bullets.filter(b => b.toLowerCase().trim() !== title.toLowerCase().trim());
 
     // Agregar el objetivo con formato destacado
     if (learningObjective && !bullets.some(b => b.includes(learningObjective))) {

@@ -588,12 +588,12 @@ window.PresentationView = {
                     ${this.renderVideoPlayerHtml(this.parseVideoSource(currentSlide.videoUrl || currentSlide.media))}
                   </div>
                 ` : `
-                  <div style="border-radius: 20px; overflow: hidden; background: #ffffff; border: 2px solid rgba(255,255,255,0.25); display: flex; align-items: center; justify-content: center; box-shadow: 0 16px 45px rgba(0,0,0,0.55); padding: 1.75rem; width: 100%; max-height: calc(100vh - 270px); min-height: 280px; box-sizing: border-box;">
+                  <div style="border-radius: 20px; overflow: hidden; background: rgba(13, 20, 36, 0.65); border: 1.5px solid rgba(255,255,255,0.14); display: flex; align-items: center; justify-content: center; box-shadow: 0 16px 45px rgba(0,0,0,0.55); padding: 0.5rem; width: 100%; max-height: calc(100vh - 270px); min-height: 280px; box-sizing: border-box; backdrop-filter: blur(8px);">
                     <img 
                       src="${currentSlide.media}" 
                       alt="${this.escapeHtml(title || 'Ilustración')}" 
                       class="slide-media-img"
-                      style="max-width: 100%; max-height: calc(100vh - 310px); width: auto; height: auto; object-fit: contain; display: block; margin: 0 auto; filter: drop-shadow(0 8px 18px rgba(0,0,0,0.18));"
+                      style="max-width: 100%; max-height: calc(100vh - 290px); width: auto; height: auto; object-fit: contain; border-radius: 14px; display: block; margin: 0 auto; filter: drop-shadow(0 8px 24px rgba(0,0,0,0.45));"
                     />
                   </div>
                 `}
