@@ -3527,6 +3527,16 @@ window.ProjectsView = {
       if (btn.classList.contains(validTheme)) btn.classList.add('active');
       else btn.classList.remove('active');
     });
+    const lbl = document.getElementById('plp-theme-btn-label');
+    if (lbl) {
+      lbl.textContent = validTheme === 'light' ? '🌙 Modo Oscuro' : '☀️ Modo Claro';
+    }
+  },
+
+  toggleLandingTheme() {
+    const current = this.getLandingTheme();
+    const next = current === 'dark' ? 'light' : 'dark';
+    this.setLandingTheme(next);
   },
 
   getLandingConfig() {
@@ -4810,23 +4820,107 @@ window.ProjectsView = {
     }
 
     const cu = window.appState?.currentUser || {};
-    const currentUserName = this.escapeHtml(cu.name || 'Carlos Sánchez');
-    const currentUserRole = this.escapeHtml(cu.role === 'admin' ? 'Administrador' : (cu.role === 'teacher' ? 'Docente' : 'Colaborador'));
+    const currentUserName = this.escapeHtml(cu.name || selected?.author || 'Usuario Mentix');
+    const currentUserRole = this.escapeHtml(cu.role === 'admin' ? 'Administrador' : (cu.role === 'teacher' ? 'Docente' : (selected?.author && selected.author.toLowerCase() === (cu.name || '').toLowerCase() ? 'Autor Principal' : 'Colaborador')));
     const currentUserAvatar = cu.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&q=80';
-    const participantAvatar = 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=160&q=80';
+    const participantAvatar = (selected?.author && selected.author === cu.name && cu.avatar) ? cu.avatar : 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=160&q=80';
     const lastUpdateDate = selected?.updatedAt
       ? new Date(selected.updatedAt).toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' })
-      : '12 Oct. 2026';
-    const userPartPercent = 72;
-    const totalActivities = 24;
-    const totalDeliverables = totalCardsCount > 0 ? totalCardsCount : 8;
-    const totalParticipants = aut.authorsList ? (aut.authorsList.split(',').length + 3) : 12;
+      : (selected?.createdAt ? new Date(selected.createdAt).toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' }) : 'Reciente');
 
-    const teamLeaderName = aut.authorsList ? this.escapeHtml(aut.authorsList.split(',')[0].trim()) : 'María López';
-    const teamArchitectName = (aut.authorsList && aut.authorsList.split(',')[1]) ? this.escapeHtml(aut.authorsList.split(',')[1].trim()) : 'Andrés Pérez';
-    const teamAnalystName = (aut.authorsList && aut.authorsList.split(',')[2]) ? this.escapeHtml(aut.authorsList.split(',')[2].trim()) : 'Laura Gómez';
+    // Equipo 100% REAL del proyecto (sin inventar miembros ficticios)
+    const projectAuthor = (selected?.author || (aut.authorsList ? aut.authorsList.split(',')[0].trim() : '') || cu.name || 'Autor del Proyecto').trim();
+    const rawCollaborators = Array.isArray(selected?.collaborators) ? selected.collaborators : [];
+    const authorsListExtra = aut.authorsList ? aut.authorsList.split(',').slice(1).map(s => s.trim()).filter(Boolean) : [];
+    const allTeamMembers = [];
 
-    // Cronograma / Timeline
+    allTeamMembers.push({
+      name: projectAuthor,
+      role: 'Autor y Creador del Proyecto',
+      avatar: (selected?.author && selected.author === cu.name && cu.avatar) ? cu.avatar : 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=160&q=80',
+      status: '🟢 Creador'
+    });
+
+    authorsListExtra.forEach((name) => {
+      allTeamMembers.push({
+        name,
+        role: 'Co-autor del Proyecto',
+        avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=160&q=80',
+        status: '🔵 Colaborador'
+      });
+    });
+
+    rawCollaborators.forEach((c) => {
+      const colName = typeof c === 'string' ? c : (c.name || c.email || 'Colaborador');
+      const colRole = typeof c === 'object' && c.role ? c.role : 'Colaborador del Proyecto';
+      if (!allTeamMembers.some(m => m.name.toLowerCase() === colName.toLowerCase())) {
+        allTeamMembers.push({
+          name: colName,
+          role: colRole,
+          avatar: (typeof c === 'object' && c.avatar) ? c.avatar : 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=160&q=80',
+          status: '🔵 Colaborador'
+        });
+      }
+    });
+
+    const teamCardsHtml = allTeamMembers.map(m => `
+      <div class="inno-team-card">
+        <div class="inno-team-avatar-wrap">
+          <img src="${this.escapeHtml(m.avatar)}" alt="${this.escapeHtml(m.name)}" class="inno-team-avatar" />
+          <span class="inno-team-status-dot ${m.status.includes('🟢') ? 'green' : 'blue'}"></span>
+        </div>
+        <div class="inno-team-info">
+          <div class="inno-team-name">${this.escapeHtml(m.name)}</div>
+          <div class="inno-team-role">${this.escapeHtml(m.role)}</div>
+          <span class="inno-team-badge ${m.status.includes('🟢') ? 'green' : 'blue'}">${this.escapeHtml(m.status)}</span>
+        </div>
+      </div>
+    `).join('');
+
+    // Métricas 100% REALES del proyecto (sin números inventados)
+    const totalDeliverables = totalCardsCount;
+    const totalParticipants = allTeamMembers.length;
+    const totalActivities = Math.max(userSlides.length + userResources.length + (hasVideo ? 1 : 0) + userLinks.length + userVisuals.length, 1);
+    const userPartPercent = progressPercent;
+
+    // Showcase de Video para llenar el espacio si el proyecto tiene video
+    let videoShowcaseHtml = '';
+    if (hasVideo) {
+      const ytMatch = videoUrl.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([A-Za-z0-9_-]{6,})/);
+      const vTitle = this.escapeHtml(vc.title || (selectedTitle ? `Video: ${selectedTitle}` : 'Video oficial del proyecto'));
+      const vDesc = this.escapeHtml(vc.description || 'Conoce el contenido audiovisual de este proyecto.');
+
+      let playerHtml = '';
+      if (ytMatch) {
+        playerHtml = `<iframe src="https://www.youtube.com/embed/${ytMatch[1]}?rel=0" style="position:absolute; top:0; left:0; width:100%; height:100%; border:0; border-radius:0 0 20px 20px;" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
+      } else if (videoUrl.startsWith('data:video/') || videoUrl.match(/\.(mp4|webm|ogg)($|\?)/i)) {
+        playerHtml = `<video controls style="position:absolute; top:0; left:0; width:100%; height:100%; object-fit:contain; border-radius:0 0 20px 20px; background:#000;"><source src="${this.escapeHtml(videoUrl)}" type="video/mp4"></video>`;
+      } else {
+        playerHtml = `<iframe src="${this.escapeHtml(videoUrl)}" style="position:absolute; top:0; left:0; width:100%; height:100%; border:0; border-radius:0 0 20px 20px;" allowfullscreen></iframe>`;
+      }
+
+      videoShowcaseHtml = `
+        <div class="inno-video-showcase-wrap" style="margin-bottom: 2.25rem;">
+          <div style="padding: 1.15rem 1.75rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; border-bottom: 1.5px solid rgba(255,255,255,0.08); flex-wrap: wrap;">
+            <div style="display: flex; align-items: center; gap: 0.75rem;">
+              <span style="display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 10px; background: rgba(2, 132, 199, 0.2); color: #0284c7; font-size: 1.2rem;">🎬</span>
+              <div>
+                <h3 style="margin: 0; font-size: 1.15rem; font-weight: 900;" class="inno-video-title">${vTitle}</h3>
+                <p style="margin: 0.15rem 0 0; font-size: 0.82rem;" class="inno-video-desc">${vDesc}</p>
+              </div>
+            </div>
+            <button type="button" class="inno-card-action-btn inno-res-btn-action" onclick="window.ProjectsView.playLandingVideo()" style="padding: 0.55rem 1.2rem; font-size: 0.85rem;">
+              <span>⛶</span> Pantalla Completa
+            </button>
+          </div>
+          <div style="position: relative; width: 100%; padding-top: 56.25%; background: #000000; border-radius: 0 0 20px 20px; overflow: hidden;">
+            ${playerHtml}
+          </div>
+        </div>
+      `;
+    }
+
+    // Cronograma / Timeline 100% REAL según el estado verídico de este proyecto
     let timelineStepsHtml = '';
     const hasTimelineArray = Array.isArray(selected?.timeline) && selected.timeline.length > 0;
     if (hasTimelineArray) {
@@ -4838,36 +4932,28 @@ window.ProjectsView = {
         </div>
       `).join('');
     } else {
+      const isPub = selected?.status === 'published' || selected?.isPublic;
+      const isApproved = selected?.approvalStatus === 'approved';
       timelineStepsHtml = `
         <div class="inno-road-step completed">
           <div class="inno-road-badge">✓</div>
-          <div class="inno-road-name">Descubrimiento</div>
-          <div class="inno-road-sub">Analizar y entender</div>
+          <div class="inno-road-name">1. Creación</div>
+          <div class="inno-road-sub">Estructura del proyecto</div>
         </div>
-        <div class="inno-road-step completed">
-          <div class="inno-road-badge">✓</div>
-          <div class="inno-road-name">Planeación</div>
-          <div class="inno-road-sub">Definir el plan</div>
+        <div class="inno-road-step ${totalCardsCount > 0 ? 'completed' : 'active'}">
+          <div class="inno-road-badge">${totalCardsCount > 0 ? '✓' : '▶'}</div>
+          <div class="inno-road-name ${totalCardsCount > 0 ? '' : 'active'}">2. Contenido</div>
+          <div class="inno-road-sub ${totalCardsCount > 0 ? '' : 'active'}">${totalCardsCount > 0 ? `${totalCardsCount} recursos listos` : 'En desarrollo'}</div>
         </div>
-        <div class="inno-road-step active">
-          <div class="inno-road-badge">▶</div>
-          <div class="inno-road-name active">Diseño</div>
-          <div class="inno-road-sub active">Diseñar la solución</div>
+        <div class="inno-road-step ${isApproved ? 'completed' : 'active'}">
+          <div class="inno-road-badge">${isApproved ? '✓' : '▶'}</div>
+          <div class="inno-road-name ${isApproved ? '' : 'active'}">3. Revisión</div>
+          <div class="inno-road-sub ${isApproved ? '' : 'active'}">${isApproved ? 'Aprobado' : 'Validación'}</div>
         </div>
-        <div class="inno-road-step">
-          <div class="inno-road-badge">&lt;/&gt;</div>
-          <div class="inno-road-name">Desarrollo</div>
-          <div class="inno-road-sub">Construir y probar</div>
-        </div>
-        <div class="inno-road-step">
-          <div class="inno-road-badge">🚀</div>
-          <div class="inno-road-name">Implementación</div>
-          <div class="inno-road-sub">Poner en marcha</div>
-        </div>
-        <div class="inno-road-step">
-          <div class="inno-road-badge">🏁</div>
-          <div class="inno-road-name">Resultados</div>
-          <div class="inno-road-sub">Medir el impacto</div>
+        <div class="inno-road-step ${isPub ? 'completed' : ''}">
+          <div class="inno-road-badge">${isPub ? '🚀' : '○'}</div>
+          <div class="inno-road-name ${isPub ? 'active' : ''}">4. Publicación</div>
+          <div class="inno-road-sub ${isPub ? 'active' : ''}">${isPub ? 'Disponible' : 'Por publicar'}</div>
         </div>
       `;
     }
@@ -4884,9 +4970,12 @@ window.ProjectsView = {
           <div class="plp-mentix-bar">
             <div class="plp-mentix-bar-left">
               <span class="plp-mentix-badge">${this.isWizardPreview ? '👁️ Vista Previa del Asistente' : '✨ Landing Page Oficial'}</span>
-              <span style="font-weight: 700; color: #ffffff;">${selectedTitle}</span>
+              <span style="font-weight: 700;">${selectedTitle}</span>
             </div>
             <div class="plp-mentix-actions">
+              <button type="button" class="plp-mentix-btn inno-theme-toggle-btn" onclick="window.ProjectsView.toggleLandingTheme()" title="Alternar entre Modo Claro y Modo Oscuro">
+                <span id="plp-theme-btn-label">${currentTheme === 'light' ? '🌙 Modo Oscuro' : '☀️ Modo Claro'}</span>
+              </button>
               ${this.isWizardPreview ? `
                 <button type="button" class="plp-mentix-btn" onclick="window.ProjectsView.isWizardPreview = false; window.ProjectsView.switchViewMode('wizard')">
                   <span>←</span> Volver al Asistente (Paso 8)
@@ -4948,9 +5037,15 @@ window.ProjectsView = {
             </nav>
 
             <div class="inno-header-right">
-              <div class="inno-bell-btn" title="Notificaciones" onclick="alert('🔔 Tienes 3 actualizaciones pendientes en el proyecto')">
+              <!-- Switch de Modo Claro / Oscuro -->
+              <div class="inno-theme-toggle" role="group" aria-label="Cambiar tema">
+                <button type="button" class="inno-theme-btn light ${currentTheme === 'light' ? 'active' : ''}" onclick="window.ProjectsView.setLandingTheme('light')" title="Modo Claro">☀️</button>
+                <button type="button" class="inno-theme-btn dark ${currentTheme === 'dark' ? 'active' : ''}" onclick="window.ProjectsView.setLandingTheme('dark')" title="Modo Oscuro">🌙</button>
+              </div>
+
+              <div class="inno-bell-btn" title="Notificaciones" onclick="alert('🔔 Tienes las actualizaciones al día')">
                 🔔
-                <span class="inno-bell-badge">3</span>
+                <span class="inno-bell-badge">1</span>
               </div>
               <div class="inno-user-avatar-wrap" title="${currentUserName}">
                 <img src="${currentUserAvatar}" alt="${currentUserName}" class="inno-user-avatar-img" />
@@ -4970,11 +5065,11 @@ window.ProjectsView = {
               <div class="inno-hero-main">
                 <h1 class="inno-hero-title">
                   ${selected && selected.title ? `
-                    <span style="color:#ffffff;">${this.escapeHtml(selected.title)}</span>
+                    <span class="inno-hero-title-text">${this.escapeHtml(selected.title)}</span>
                     <span class="inno-hero-title-cyan" style="display:block; font-size:0.85em; margin-top:0.3rem;">${this.escapeHtml(selected.subtitle || 'Soluciones Tecnológicas')}</span>
                   ` : `
-                    Transformamos ideas
-                    <br>en <span class="inno-hero-title-cyan">soluciones tecnológicas</span>
+                    <span class="inno-hero-title-text">Transformamos ideas</span>
+                    <br><span class="inno-hero-title-cyan">soluciones tecnológicas</span>
                   `}
                 </h1>
 
@@ -5210,6 +5305,9 @@ window.ProjectsView = {
               <p class="inno-section-sub">Encuentra aquí todo el material de interés.</p>
             </div>
 
+            <!-- Video Oficial Destacado (si existe, llena el ancho completamente) -->
+            ${videoShowcaseHtml}
+
             <!-- Filtros de categoría -->
             <div class="inno-filter-pills">
               <button type="button" class="inno-pill-tab inno-filter-pill active" onclick="window.ProjectsView.filterResourceCategory('all', this)"><span>🌐</span> Todos</button>
@@ -5220,7 +5318,7 @@ window.ProjectsView = {
               <button type="button" class="inno-pill-tab inno-filter-pill" onclick="window.ProjectsView.filterResourceCategory('link', this)"><span>🔗</span> Enlaces</button>
             </div>
 
-            <!-- Grid de Recursos (3 Columnas) -->
+            <!-- Grid de Recursos Adaptativo (Rellena el espacio sin huecos vacíos) -->
             <div class="inno-resources-grid" id="inno-resource-cards-container">
               ${cardsHtml}
             </div>
@@ -5242,41 +5340,7 @@ window.ProjectsView = {
             </div>
 
             <div class="inno-team-grid">
-              <div class="inno-team-card">
-                <div class="inno-team-avatar-wrap">
-                  <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=160&q=80" alt="María López" class="inno-team-avatar" />
-                  <span class="inno-team-status-dot green"></span>
-                </div>
-                <div class="inno-team-info">
-                  <div class="inno-team-name">${teamLeaderName}</div>
-                  <div class="inno-team-role">Líder del proyecto</div>
-                  <span class="inno-team-badge green">🟢 En línea</span>
-                </div>
-              </div>
-
-              <div class="inno-team-card">
-                <div class="inno-team-avatar-wrap">
-                  <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=160&q=80" alt="Andrés Pérez" class="inno-team-avatar" />
-                  <span class="inno-team-status-dot blue"></span>
-                </div>
-                <div class="inno-team-info">
-                  <div class="inno-team-name">${teamArchitectName}</div>
-                  <div class="inno-team-role">Arquitecto de Soluciones</div>
-                  <span class="inno-team-badge blue">🔵 Activo</span>
-                </div>
-              </div>
-
-              <div class="inno-team-card">
-                <div class="inno-team-avatar-wrap">
-                  <img src="https://images.unsplash.com/photo-1580489944761-15a19d654956?w=160&q=80" alt="Laura Gómez" class="inno-team-avatar" />
-                  <span class="inno-team-status-dot blue"></span>
-                </div>
-                <div class="inno-team-info">
-                  <div class="inno-team-name">${teamAnalystName}</div>
-                  <div class="inno-team-role">Analista de Datos</div>
-                  <span class="inno-team-badge blue">🔵 Activo</span>
-                </div>
-              </div>
+              ${teamCardsHtml}
             </div>
           </section>
 

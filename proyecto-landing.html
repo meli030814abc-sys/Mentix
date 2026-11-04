@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="css/project-landing.css?v=v43" />
+  <link rel="stylesheet" href="css/project-landing.css?v=20261103_slides_v50" />
   <style>
     html {
       scroll-behavior: smooth;
@@ -373,6 +373,9 @@
         <p class="inno-section-sub">Encuentra aquí todo el material de interés.</p>
       </div>
 
+      <!-- Video Oficial Destacado (si existe) -->
+      <div id="inno-video-showcase-container"></div>
+
       <!-- Filtros de categoría -->
       <div class="inno-filter-pills">
         <button type="button" class="inno-pill-tab inno-filter-pill active" onclick="filterResourceCategory('all', this)"><span>🌐</span> Todos</button>
@@ -382,66 +385,8 @@
         <button type="button" class="inno-pill-tab inno-filter-pill" onclick="filterResourceCategory('link', this)"><span>🔗</span> Enlaces</button>
       </div>
 
-      <!-- Grid de Recursos (3 Columnas) -->
-      <div class="inno-resources-grid" id="inno-resource-cards-container">
-        <!-- Card 1 -->
-        <article class="inno-resource-card" data-category="doc">
-          <div class="inno-res-thumb-wrap" style="background-image:url('https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=600&q=80'); cursor:pointer;" onclick="previewLandingDoc('Guía del Proyecto')">
-          </div>
-          <div class="inno-res-body">
-            <div>
-              <span class="inno-res-badge doc">📘 Documento</span>
-              <h4 class="inno-res-title">Guía del Proyecto</h4>
-              <p class="inno-res-desc">Conoce los lineamientos y alcance del proyecto.</p>
-            </div>
-            <div class="inno-res-footer">
-              <span>📅 12 Oct. 2026</span>
-              <button type="button" class="inno-card-action-btn inno-res-btn-action" onclick="previewLandingDoc('Guía del Proyecto')">
-                <span>📄</span> Ver detalle
-              </button>
-            </div>
-          </div>
-        </article>
-
-        <!-- Card 2 -->
-        <article class="inno-resource-card" data-category="video">
-          <div class="inno-res-thumb-wrap" style="background-image:url('assets/projects_ui/card_open_data.png'); cursor:pointer;" onclick="playLandingVideo()">
-            <div class="inno-res-play-btn">▶</div>
-          </div>
-          <div class="inno-res-body">
-            <div>
-              <span class="inno-res-badge video">🎬 Video</span>
-              <h4 class="inno-res-title">Introducción al Proyecto</h4>
-              <p class="inno-res-desc">Una mirada general a nuestra iniciativa.</p>
-            </div>
-            <div class="inno-res-footer">
-              <span>📅 10 Oct. 2026</span>
-              <button type="button" class="inno-card-action-btn inno-res-btn-action" onclick="playLandingVideo()">
-                <span>▶</span> Ver video
-              </button>
-            </div>
-          </div>
-        </article>
-
-        <!-- Card 3 -->
-        <article class="inno-resource-card" data-category="pres">
-          <div class="inno-res-thumb-wrap" style="background-image:url('assets/projects_ui/card_data_gov.png'); cursor:pointer;" onclick="previewLandingDoc('Plan de Trabajo')">
-          </div>
-          <div class="inno-res-body">
-            <div>
-              <span class="inno-res-badge pres">📊 Presentación</span>
-              <h4 class="inno-res-title">Plan de Trabajo</h4>
-              <p class="inno-res-desc">Cronograma y actividades clave.</p>
-            </div>
-            <div class="inno-res-footer">
-              <span>📅 08 Oct. 2026</span>
-              <button type="button" class="inno-card-action-btn inno-res-btn-action" onclick="previewLandingDoc('Plan de Trabajo')">
-                <span>📊</span> Ver detalle
-              </button>
-            </div>
-          </div>
-        </article>
-      </div>
+      <!-- Grid de Recursos Adaptativo -->
+      <div class="inno-resources-grid" id="inno-resource-cards-container"></div>
     </section>
 
     <!-- ====================================================================
@@ -459,43 +404,7 @@
         </button>
       </div>
 
-      <div class="inno-team-grid">
-        <div class="inno-team-card">
-          <div class="inno-team-avatar-wrap">
-            <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=160&q=80" alt="María López" class="inno-team-avatar" />
-            <span class="inno-team-status-dot green"></span>
-          </div>
-          <div class="inno-team-info">
-            <div class="inno-team-name">María López</div>
-            <div class="inno-team-role">Líder del proyecto</div>
-            <span class="inno-team-badge green">🟢 En línea</span>
-          </div>
-        </div>
-
-        <div class="inno-team-card">
-          <div class="inno-team-avatar-wrap">
-            <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=160&q=80" alt="Andrés Pérez" class="inno-team-avatar" />
-            <span class="inno-team-status-dot blue"></span>
-          </div>
-          <div class="inno-team-info">
-            <div class="inno-team-name">Andrés Pérez</div>
-            <div class="inno-team-role">Arquitecto de Soluciones</div>
-            <span class="inno-team-badge blue">🔵 Activo</span>
-          </div>
-        </div>
-
-        <div class="inno-team-card">
-          <div class="inno-team-avatar-wrap">
-            <img src="https://images.unsplash.com/photo-1580489944761-15a19d654956?w=160&q=80" alt="Laura Gómez" class="inno-team-avatar" />
-            <span class="inno-team-status-dot blue"></span>
-          </div>
-          <div class="inno-team-info">
-            <div class="inno-team-name">Laura Gómez</div>
-            <div class="inno-team-role">Analista de Datos</div>
-            <span class="inno-team-badge blue">🔵 Activo</span>
-          </div>
-        </div>
-      </div>
+      <div class="inno-team-grid" id="inno-team-grid-container"></div>
     </section>
 
     <!-- ====================================================================
@@ -1316,6 +1225,105 @@
             `;
           }
         }
+
+        // Showcase de Video para llenar el espacio
+        const videoShowcaseContainer = document.getElementById('inno-video-showcase-container');
+        if (videoShowcaseContainer) {
+          if (hasVideo) {
+            let playerHtml = '';
+            const ytMatch = videoUrl.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([A-Za-z0-9_-]{6,})/);
+            if (ytMatch) {
+              playerHtml = `<iframe src="https://www.youtube.com/embed/${ytMatch[1]}?rel=0" style="position:absolute; top:0; left:0; width:100%; height:100%; border:0; border-radius:0 0 20px 20px;" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
+            } else if (videoUrl.startsWith('data:video/') || videoUrl.match(/\.(mp4|webm|ogg)($|\?)/i)) {
+              playerHtml = `<video controls style="position:absolute; top:0; left:0; width:100%; height:100%; object-fit:contain; border-radius:0 0 20px 20px; background:#000;"><source src="${videoUrl}" type="video/mp4"></video>`;
+            } else {
+              playerHtml = `<iframe src="${videoUrl}" style="position:absolute; top:0; left:0; width:100%; height:100%; border:0; border-radius:0 0 20px 20px;" allowfullscreen></iframe>`;
+            }
+
+            videoShowcaseContainer.innerHTML = `
+              <div class="inno-video-showcase-wrap" style="margin-bottom: 2.25rem;">
+                <div style="padding: 1.15rem 1.75rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; border-bottom: 1.5px solid rgba(255,255,255,0.08); flex-wrap: wrap;">
+                  <div style="display: flex; align-items: center; gap: 0.75rem;">
+                    <span style="display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 10px; background: rgba(2, 132, 199, 0.2); color: #0284c7; font-size: 1.2rem;">🎬</span>
+                    <div>
+                      <h3 style="margin: 0; font-size: 1.15rem; font-weight: 900;" class="inno-video-title">${vc.title || 'Video Oficial del Proyecto'}</h3>
+                      <p style="margin: 0.15rem 0 0; font-size: 0.82rem;" class="inno-video-desc">${vc.description || 'Conoce el contenido audiovisual de este proyecto.'}</p>
+                    </div>
+                  </div>
+                  <button type="button" class="inno-card-action-btn inno-res-btn-action" onclick="playLandingVideo()" style="padding: 0.55rem 1.2rem; font-size: 0.85rem;">
+                    <span>⛶</span> Pantalla Completa
+                  </button>
+                </div>
+                <div style="position: relative; width: 100%; padding-top: 56.25%; background: #000000; border-radius: 0 0 20px 20px; overflow: hidden;">
+                  ${playerHtml}
+                </div>
+              </div>
+            `;
+          } else {
+            videoShowcaseContainer.innerHTML = '';
+          }
+        }
+
+        // Construir Equipo 100% REAL (sin inventar personas ficticias)
+        const teamContainer = document.getElementById('inno-team-grid-container');
+        if (teamContainer) {
+          const aut = activeProject.authorsConfig || activeProject.govdata?.authorsConfig || {};
+          const pAuthor = (activeProject.author || (aut.authorsList ? aut.authorsList.split(',')[0].trim() : '') || 'Autor del Proyecto').trim();
+          const rawCollabs = Array.isArray(activeProject.collaborators) ? activeProject.collaborators : [];
+          const authorsExtra = aut.authorsList ? aut.authorsList.split(',').slice(1).map(s => s.trim()).filter(Boolean) : [];
+          const members = [];
+
+          members.push({
+            name: pAuthor,
+            role: 'Autor y Creador del Proyecto',
+            avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=160&q=80',
+            status: '🟢 Creador'
+          });
+
+          authorsExtra.forEach(name => {
+            members.push({
+              name,
+              role: 'Co-autor del Proyecto',
+              avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=160&q=80',
+              status: '🔵 Colaborador'
+            });
+          });
+
+          rawCollabs.forEach(c => {
+            const cName = typeof c === 'string' ? c : (c.name || c.email || 'Colaborador');
+            const cRole = typeof c === 'object' && c.role ? c.role : 'Colaborador del Proyecto';
+            if (!members.some(m => m.name.toLowerCase() === cName.toLowerCase())) {
+              members.push({
+                name: cName,
+                role: cRole,
+                avatar: (typeof c === 'object' && c.avatar) ? c.avatar : 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=160&q=80',
+                status: '🔵 Colaborador'
+              });
+            }
+          });
+
+          teamContainer.innerHTML = members.map(m => `
+            <div class="inno-team-card">
+              <div class="inno-team-avatar-wrap">
+                <img src="${m.avatar}" alt="${m.name}" class="inno-team-avatar" />
+                <span class="inno-team-status-dot ${m.status.includes('🟢') ? 'green' : 'blue'}"></span>
+              </div>
+              <div class="inno-team-info">
+                <div class="inno-team-name">${m.name}</div>
+                <div class="inno-team-role">${m.role}</div>
+                <span class="inno-team-badge ${m.status.includes('🟢') ? 'green' : 'blue'}">${m.status}</span>
+              </div>
+            </div>
+          `).join('');
+
+          const kpiPart = document.getElementById('inno-kpi-participants');
+          if (kpiPart) kpiPart.textContent = members.length;
+        }
+
+        const kpiDeliv = document.getElementById('inno-kpi-deliverables');
+        if (kpiDeliv) kpiDeliv.textContent = totalCards;
+        const kpiAct = document.getElementById('inno-kpi-activities');
+        if (kpiAct) kpiAct.textContent = Math.max(totalCards, 1);
 
         // Construir Galería Multimedia Dinámica
         const galleryContainer = document.getElementById('inno-gallery-container');
