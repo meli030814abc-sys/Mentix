@@ -6092,9 +6092,15 @@ body[data-theme="dark"] .plp-lightbox-content {
   border-radius: 18px !important;
   overflow: hidden !important;
   box-shadow: 0 4px 18px rgba(15, 23, 42, 0.04) !important;
-  display: flex !important;
+  display: flex;
   flex-direction: column !important;
   transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease !important;
+}
+
+.inno-resource-card.filter-hidden,
+article.inno-resource-card.filter-hidden {
+  display: none !important;
+  visibility: hidden !important;
 }
 
 .inno-resource-card:hover {
@@ -6505,7 +6511,7 @@ body[data-theme="dark"] .plp-lightbox-content {
   border-radius: 20px !important;
   overflow: hidden !important;
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12) !important;
-  display: flex !important;
+  display: flex;
   flex-direction: column !important;
   transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease !important;
 }
@@ -8510,4 +8516,25 @@ body[data-theme="light"] .inno-video-desc,
 body.light-theme .inno-video-desc {
   color: #64748b !important;
 }
+
+/* ==========================================================================
+   FILTRADO ROBUSTO DE CATEGORÍAS EN TARJETAS DE RECURSOS
+   ========================================================================== */
+.inno-resource-card.filter-hidden,
+article.inno-resource-card.filter-hidden,
+.plp-wrapper .inno-resource-card.filter-hidden,
+body .inno-resource-card.filter-hidden,
+#inno-resource-cards-container .inno-resource-card.filter-hidden,
+#view-projects #inno-resource-cards-container .inno-resource-card.filter-hidden {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
 

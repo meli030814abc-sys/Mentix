@@ -4572,6 +4572,17 @@ window.ProjectsView = {
       if (s.id === 's1' && String(s.title || '').includes('Arquitectura Gobernanza')) return false;
       return true;
     });
+
+    const isPresProject = (selected?.projectType === 'presentation' || selected?.type === 'presentation' || selected?.isPresentation || selected?.category === 'presentacion');
+    if (userSlides.length === 0 && isPresProject) {
+      userSlides.push({
+        id: 's_pres_main',
+        title: selectedTitle || 'Presentación del Proyecto',
+        content: selected?.description || selected?.shortDescription || 'Láminas interactivas del proyecto.',
+        subtitle: selected?.subtitle || 'Mentix Innovation',
+        bgImage: mainCover || ''
+      });
+    }
     const mainCover = selected?.mainImage || gp.mainImage || '';
 
     let cardsHtml = '';
@@ -5636,16 +5647,76 @@ window.ProjectsView = {
 
   filterResourceCategory(cat, btn) {
     document.querySelectorAll('#view-projects .inno-pill-tab, #view-projects .inno-filter-pill, .inno-pill-tab, .inno-filter-pill').forEach(b => b.classList.remove('active'));
-    if (btn) btn.classList.add('active');
+    if (btn) {
+      btn.classList.add('active');
+    } else {
+      const targetPill = document.querySelector(`.inno-filter-pill[onclick*="'${cat}'"], .inno-pill-tab[onclick*="'${cat}'"]`);
+      if (targetPill) targetPill.classList.add('active');
+    }
 
-    document.querySelectorAll('#view-projects #inno-resource-cards-container article, #inno-resource-cards-container article').forEach(el => {
-      const cardCat = el.getAttribute('data-category');
+    const cards = document.querySelectorAll('#view-projects #inno-resource-cards-container article, #inno-resource-cards-container article, #view-projects #inno-resource-cards-container .inno-resource-card, #inno-resource-cards-container .inno-resource-card');
+    let visibleCount = 0;
+
+    cards.forEach(el => {
+      const cardCat = (el.getAttribute('data-category') || '').toLowerCase().trim();
+      let matches = false;
+
       if (cat === 'all') {
-        el.style.display = 'flex';
+        matches = true;
       } else if (cat === 'doc') {
-        el.style.display = (cardCat === 'doc' || cardCat === 'guide') ? 'flex' : 'none';
+        matches = (cardCat === 'doc' || cardCat === 'guide' || cardCat === 'pdf' || cardCat === 'document' || cardCat === 'manual');
+      } else if (cat === 'pres') {
+        matches = (cardCat === 'pres' || cardCat === 'presentation' || cardCat === 'ppt' || cardCat === 'slides');
+      } else if (cat === 'video') {
+        matches = (cardCat === 'video' || cardCat === 'vid');
+      } else if (cat === 'img') {
+        matches = (cardCat === 'img' || cardCat === 'image' || cardCat === 'visual');
+      } else if (cat === 'link') {
+        matches = (cardCat === 'link' || cardCat === 'url' || cardCat === 'external');
       } else {
-        el.style.display = cardCat === cat ? 'flex' : 'none';
+        matches = (cardCat === cat);
+      }
+
+      if (matches) {
+        el.classList.remove('filter-hidden');
+        el.style.setProperty('display', 'flex', 'important');
+        visibleCount++;
+      } else {
+        el.classList.add('filter-hidden');
+        el.style.setProperty('display', 'none', 'important');
+      }
+    });
+
+    // Retroalimentación si 0 elementos coinciden con el filtro
+    const containers = document.querySelectorAll('#view-projects #inno-resource-cards-container, #inno-resource-cards-container');
+    containers.forEach(container => {
+      let emptyEl = container.querySelector('.inno-res-filter-empty-state');
+      if (visibleCount === 0 && cards.length > 0) {
+        if (!emptyEl) {
+          emptyEl = document.createElement('div');
+          emptyEl.className = 'inno-res-filter-empty-state';
+          container.appendChild(emptyEl);
+        }
+        const catMap = {
+          pres: { icon: '📊', name: 'Presentaciones' },
+          video: { icon: '🎬', name: 'Videos' },
+          doc: { icon: '📄', name: 'Documentos' },
+          link: { icon: '🔗', name: 'Enlaces' },
+          img: { icon: '🖼️', name: 'Imágenes' }
+        };
+        const catInfo = catMap[cat] || { icon: '📂', name: cat };
+        emptyEl.style.cssText = 'grid-column: 1 / -1; padding: 2.75rem 1.5rem; text-align: center; background: rgba(15, 23, 42, 0.45); border: 1.5px dashed rgba(0, 245, 212, 0.35); border-radius: 18px; color: #cbd5e1; margin: 1rem 0; width: 100%; box-sizing: border-box;';
+        emptyEl.innerHTML = `
+          <div style="font-size: 2.3rem; margin-bottom: 0.5rem;">${catInfo.icon}</div>
+          <div style="font-weight: 800; font-size: 1.15rem; color: #ffffff; margin-bottom: 0.35rem;">No hay ${catInfo.name.toLowerCase()} en este proyecto</div>
+          <div style="font-size: 0.88rem; opacity: 0.85; max-width: 480px; margin: 0 auto 1.25rem;">Actualmente este proyecto no tiene recursos asociados bajo esta categoría.</div>
+          <button type="button" class="inno-btn-cyan" style="display:inline-flex; align-items:center; gap:0.5rem; margin:0 auto; padding:0.6rem 1.4rem; border-radius:999px; font-weight:800; cursor:pointer;" onclick="window.ProjectsView ? window.ProjectsView.filterResourceCategory('all', document.querySelector('.inno-filter-pill')) : filterResourceCategory('all', document.querySelector('.inno-filter-pill'))">
+            <span>🌐</span> Ver todos los recursos (${cards.length})
+          </button>
+        `;
+        emptyEl.style.display = 'block';
+      } else if (emptyEl) {
+        emptyEl.style.display = 'none';
       }
     });
   },
@@ -5991,8 +6062,23 @@ Generado por Mentix - Plataforma de Proyectos y Retos
     const gp = (selected && selected.govdata) ? selected.govdata : {};
     const rawSlides = Array.isArray(selected?.slides) ? selected.slides : (Array.isArray(gp.slides) ? gp.slides : []);
     const sanitizedSlides = (typeof window.sanitizeProjectSlides === 'function') ? window.sanitizeProjectSlides(rawSlides, selected?.title) : rawSlides;
-    const slides = sanitizedSlides.filter(s => s && s.id !== 's1');
-    if (slides.length === 0) return;
+    let slides = sanitizedSlides.filter(s => {
+      if (!s) return false;
+      if (s.id === 's1' && String(s.title || '').includes('Arquitectura Gobernanza')) return false;
+      return true;
+    });
+
+    if (slides.length === 0) {
+      slides = [
+        {
+          id: 's_pres_main',
+          title: selected?.title || 'Presentación del Proyecto',
+          content: selected?.description || selected?.shortDescription || 'Información y láminas interactivas del proyecto.',
+          subtitle: selected?.subtitle || 'Mentix Innovation',
+          bgImage: selected?.mainImage || gp?.mainImage || ''
+        }
+      ];
+    }
 
     const curIdx = Math.max(0, Math.min(slides.length - 1, index));
     const s = slides[curIdx];
@@ -6037,9 +6123,11 @@ Generado por Mentix - Plataforma de Proyectos y Retos
 
   filterLandingSearch(query) {
     const q = (query || '').toLowerCase().trim();
-    document.querySelectorAll('#view-projects #inno-resource-cards-container article').forEach((el) => {
-      const text = (el.getAttribute('data-plp-search') + ' ' + el.innerText).toLowerCase();
-      el.style.display = !q || text.includes(q) ? 'flex' : 'none';
+    document.querySelectorAll('#view-projects #inno-resource-cards-container article, #inno-resource-cards-container article, #view-projects #inno-resource-cards-container .inno-resource-card, #inno-resource-cards-container .inno-resource-card').forEach((el) => {
+      const text = ((el.getAttribute('data-plp-search') || '') + ' ' + (el.getAttribute('data-search') || '') + ' ' + el.innerText).toLowerCase();
+      const matches = (!q || text.includes(q));
+      el.classList.toggle('filter-hidden', !matches);
+      el.style.setProperty('display', matches ? 'flex' : 'none', 'important');
     });
   },
 

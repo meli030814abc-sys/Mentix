@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="css/project-landing.css?v=20261103_slides_v50" />
+  <link rel="stylesheet" href="css/project-landing.css?v=20261104_filter_v51" />
   <style>
     html {
       scroll-behavior: smooth;
@@ -536,6 +536,61 @@
       }
     }
 
+    function openLandingSlidesModal(index = 0) {
+      const modal = document.getElementById('plp-standalone-lightbox');
+      const body = document.getElementById('plp-standalone-lightbox-body');
+      if (!modal || !body) return;
+
+      const p = currentActiveProject || {};
+      const gp = p.govdata || {};
+      const rawSlides = (Array.isArray(p.slides) && p.slides.length > 0) ? p.slides : (Array.isArray(gp.slides) ? gp.slides : []);
+      let slides = rawSlides.filter(s => {
+        if (!s) return false;
+        if (s.id === 's1' && String(s.title || '').includes('Arquitectura Gobernanza')) return false;
+        return true;
+      });
+
+      if (slides.length === 0) {
+        slides = [
+          {
+            id: 's_pres_main',
+            title: p.title || 'Presentación del Proyecto',
+            content: p.description || p.shortDescription || 'Información y objetivos clave del proyecto.',
+            subtitle: p.subtitle || 'Mentix Innovation'
+          }
+        ];
+      }
+
+      const curIdx = Math.max(0, Math.min(slides.length - 1, index));
+      const s = slides[curIdx];
+      const sTitle = s.title || `Lámina ${curIdx + 1}`;
+      const sContent = s.content || s.text || p.description || '';
+      const sSub = s.subtitle || (p.title ? `${p.title} · Mentix` : 'Mentix');
+      const sBg = s.bgImage || s.imageUrl || p.mainImage || '';
+
+      body.innerHTML = `
+        <div style="background:#071022; border:1px solid rgba(0,245,212,0.3); border-radius:18px; overflow:hidden; width:100%; max-width:960px; box-shadow:0 25px 60px rgba(0,0,0,0.8); margin:0 auto;">
+          <div style="display:flex; justify-content:space-between; align-items:center; padding:1rem 1.5rem; background:rgba(15,23,42,0.95); border-bottom:1px solid rgba(255,255,255,0.1);">
+            <div style="display:flex; align-items:center; gap:0.75rem;">
+              <span style="font-size:1.1rem; font-weight:800; color:#ffffff;">📊 ${p.title || 'Presentación'}</span>
+              <span style="background:rgba(0,245,212,0.15); color:#00f5d4; font-size:0.8rem; font-weight:800; padding:0.2rem 0.6rem; border-radius:999px;">Lámina ${curIdx + 1} de ${slides.length}</span>
+            </div>
+            <div style="display:flex; align-items:center; gap:0.5rem;">
+              <button type="button" onclick="openLandingSlidesModal(${Math.max(0, curIdx - 1)})" ${curIdx === 0 ? 'disabled style="opacity:0.4; cursor:not-allowed; background:#1e293b; color:#fff; border:none; padding:0.4rem 0.8rem; border-radius:8px;"' : 'style="cursor:pointer; background:#1e293b; color:#fff; border:none; padding:0.4rem 0.8rem; border-radius:8px; font-weight:800;"'}>◀ Anterior</button>
+              <button type="button" onclick="openLandingSlidesModal(${Math.min(slides.length - 1, curIdx + 1)})" ${curIdx === slides.length - 1 ? 'disabled style="opacity:0.4; cursor:not-allowed; background:#1e293b; color:#fff; border:none; padding:0.4rem 0.8rem; border-radius:8px;"' : 'style="cursor:pointer; background:#0284c7; color:#fff; border:none; padding:0.4rem 0.8rem; border-radius:8px; font-weight:800;"'}>Siguiente ▶</button>
+              <button type="button" onclick="closeLandingLightbox()" style="background:#ef4444; color:#fff; border:none; padding:0.4rem 0.8rem; border-radius:8px; cursor:pointer; font-weight:800; margin-left:0.5rem;">✕</button>
+            </div>
+          </div>
+          <div style="position:relative; min-height:420px; display:flex; flex-direction:column; justify-content:center; padding:3rem; ${sBg ? `background:linear-gradient(rgba(7,16,34,0.85), rgba(7,16,34,0.92)), url('${sBg}') center/cover;` : 'background:linear-gradient(135deg, #0d1a2d 0%, #071022 100%);'}">
+            <span style="color:#00f5d4; font-weight:800; text-transform:uppercase; letter-spacing:0.06em; font-size:0.85rem; margin-bottom:0.75rem; display:block;">${sSub}</span>
+            <h2 style="color:#ffffff; font-size:2rem; font-weight:900; margin:0 0 1.25rem; line-height:1.25;">${sTitle}</h2>
+            <div style="color:#cbd5e1; font-size:1.05rem; line-height:1.7; max-width:800px; white-space:pre-line;">${sContent}</div>
+          </div>
+        </div>
+      `;
+      modal.classList.add('active');
+    }
+
     let currentActiveProject = null;
 
     function getLandingConfig() {
@@ -711,23 +766,87 @@
 
     function filterLandingSearch(query) {
       const q = (query || '').toLowerCase().trim();
-      document.querySelectorAll('#inno-resource-cards-container article').forEach(el => {
-        const text = (el.getAttribute('data-search') + ' ' + el.innerText).toLowerCase();
-        el.style.display = !q || text.includes(q) ? 'flex' : 'none';
+      document.querySelectorAll('#inno-resource-cards-container article, #inno-resource-cards-container .inno-resource-card').forEach(el => {
+        const text = ((el.getAttribute('data-search') || '') + ' ' + (el.getAttribute('data-plp-search') || '') + ' ' + el.innerText).toLowerCase();
+        const matches = (!q || text.includes(q));
+        el.classList.toggle('filter-hidden', !matches);
+        el.style.setProperty('display', matches ? 'flex' : 'none', 'important');
       });
     }
 
     function filterResourceCategory(cat, btn) {
       document.querySelectorAll('.inno-pill-tab, .inno-filter-pill').forEach(b => b.classList.remove('active'));
-      if (btn) btn.classList.add('active');
+      if (btn) {
+        btn.classList.add('active');
+      } else {
+        const targetPill = document.querySelector(`.inno-filter-pill[onclick*="'${cat}'"], .inno-pill-tab[onclick*="'${cat}'"]`);
+        if (targetPill) targetPill.classList.add('active');
+      }
 
-      document.querySelectorAll('#inno-resource-cards-container article').forEach(el => {
+      const cards = document.querySelectorAll('#inno-resource-cards-container article, #inno-resource-cards-container .inno-resource-card');
+      let visibleCount = 0;
+
+      cards.forEach(el => {
+        const cardCat = (el.getAttribute('data-category') || '').toLowerCase().trim();
+        let matches = false;
+
         if (cat === 'all') {
-          el.style.display = 'flex';
+          matches = true;
+        } else if (cat === 'doc') {
+          matches = (cardCat === 'doc' || cardCat === 'guide' || cardCat === 'pdf' || cardCat === 'document' || cardCat === 'manual');
+        } else if (cat === 'pres') {
+          matches = (cardCat === 'pres' || cardCat === 'presentation' || cardCat === 'ppt' || cardCat === 'slides');
+        } else if (cat === 'video') {
+          matches = (cardCat === 'video' || cardCat === 'vid');
+        } else if (cat === 'img') {
+          matches = (cardCat === 'img' || cardCat === 'image' || cardCat === 'visual');
+        } else if (cat === 'link') {
+          matches = (cardCat === 'link' || cardCat === 'url' || cardCat === 'external');
         } else {
-          el.style.display = el.getAttribute('data-category') === cat ? 'flex' : 'none';
+          matches = (cardCat === cat);
+        }
+
+        if (matches) {
+          el.classList.remove('filter-hidden');
+          el.style.setProperty('display', 'flex', 'important');
+          visibleCount++;
+        } else {
+          el.classList.add('filter-hidden');
+          el.style.setProperty('display', 'none', 'important');
         }
       });
+
+      const container = document.getElementById('inno-resource-cards-container');
+      if (container) {
+        let emptyEl = container.querySelector('.inno-res-filter-empty-state');
+        if (visibleCount === 0 && cards.length > 0) {
+          if (!emptyEl) {
+            emptyEl = document.createElement('div');
+            emptyEl.className = 'inno-res-filter-empty-state';
+            container.appendChild(emptyEl);
+          }
+          const catMap = {
+            pres: { icon: '📊', name: 'Presentaciones' },
+            video: { icon: '🎬', name: 'Videos' },
+            doc: { icon: '📄', name: 'Documentos' },
+            link: { icon: '🔗', name: 'Enlaces' },
+            img: { icon: '🖼️', name: 'Imágenes' }
+          };
+          const catInfo = catMap[cat] || { icon: '📂', name: cat };
+          emptyEl.style.cssText = 'grid-column: 1 / -1; padding: 2.75rem 1.5rem; text-align: center; background: rgba(15, 23, 42, 0.45); border: 1.5px dashed rgba(0, 245, 212, 0.35); border-radius: 18px; color: #cbd5e1; margin: 1rem 0; width: 100%; box-sizing: border-box;';
+          emptyEl.innerHTML = `
+            <div style="font-size: 2.3rem; margin-bottom: 0.5rem;">${catInfo.icon}</div>
+            <div style="font-weight: 800; font-size: 1.15rem; color: #ffffff; margin-bottom: 0.35rem;">No hay ${catInfo.name.toLowerCase()} en este proyecto</div>
+            <div style="font-size: 0.88rem; opacity: 0.85; max-width: 480px; margin: 0 auto 1.25rem;">Actualmente este proyecto no tiene recursos asociados bajo esta categoría.</div>
+            <button type="button" class="inno-btn-cyan" style="display:inline-flex; align-items:center; gap:0.5rem; margin:0 auto; padding:0.6rem 1.4rem; border-radius:999px; font-weight:800; cursor:pointer;" onclick="filterResourceCategory('all', document.querySelector('.inno-filter-pill'))">
+              <span>🌐</span> Ver todos los recursos (${cards.length})
+            </button>
+          `;
+          emptyEl.style.display = 'block';
+        } else if (emptyEl) {
+          emptyEl.style.display = 'none';
+        }
+      }
     }
 
     function getHexLuminance(hex) {
@@ -1078,6 +1197,56 @@
         let cardsHtml = '';
         let totalCards = 0;
 
+        const rawSlides = (Array.isArray(activeProject.slides) && activeProject.slides.length > 0)
+          ? activeProject.slides
+          : (Array.isArray(gp.slides) ? gp.slides : []);
+        const userSlides = rawSlides.filter(s => {
+          if (!s) return false;
+          if (s.id === 's1' && String(s.title || '').includes('Arquitectura Gobernanza')) return false;
+          return true;
+        });
+
+        const isPresProject = (activeProject.projectType === 'presentation' || activeProject.type === 'presentation' || activeProject.isPresentation || activeProject.category === 'presentacion');
+        if (userSlides.length === 0 && isPresProject) {
+          userSlides.push({
+            id: 's_pres_main',
+            title: activeProject.title || 'Presentación del Proyecto',
+            content: activeProject.description || activeProject.shortDescription || 'Láminas interactivas del proyecto.',
+            subtitle: activeProject.subtitle || 'Mentix Innovation',
+            bgImage: mainCover || ''
+          });
+        }
+
+        if (userSlides.length > 0) {
+          totalCards++;
+          const sTitle = activeProject.title ? `Presentación: ${activeProject.title}` : (userSlides[0]?.title || 'Presentación Interactiva');
+          const customPresCover = activeProject.presentationCoverUrl || gp.presentationCoverUrl || '';
+          const sThumb = customPresCover || userSlides[0]?.bgImage || userSlides[0]?.media || userSlides[0]?.imageUrl || mainCover || '';
+          const slideNames = userSlides.map((s, i) => s.title || `Lámina ${i + 1}`).join(', ');
+          const sDesc = `Incluye ${userSlides.length} ${userSlides.length === 1 ? 'lámina' : 'láminas'}: ${slideNames}`.slice(0, 120);
+          const sSearch = (sTitle + ' ' + slideNames + ' presentacion diapositivas mentix').toLowerCase();
+
+          cardsHtml += `
+            <article class="inno-resource-card" data-category="pres" data-search="${sSearch}">
+              <div class="inno-card-thumb-wrap" style="${sThumb ? `background-image:url('${sThumb}'); background-size:cover; background-position:center;` : 'background:linear-gradient(135deg, #4c1d95 0%, #091e2d 100%);'} cursor:pointer;" onclick="openLandingSlidesModal(0)">
+                <span class="inno-card-tag" style="background:#7c3aed;">📊 Presentación (${userSlides.length})</span>
+              </div>
+              <div class="inno-card-body">
+                <div>
+                  <h4 class="inno-card-title">${sTitle}</h4>
+                  <p class="inno-card-desc">${sDesc}</p>
+                </div>
+                <div class="inno-card-footer">
+                  <span>📽️ ${userSlides.length} ${userSlides.length === 1 ? 'lámina' : 'láminas'}</span>
+                  <button type="button" class="inno-card-action-btn inno-res-btn-action" onclick="openLandingSlidesModal(0)" title="Abrir presentación">
+                    <span>📊</span> Ver presentación
+                  </button>
+                </div>
+              </div>
+            </article>
+          `;
+        }
+
         if (hasVideo) {
           totalCards++;
           let videoThumb = '';
@@ -1204,6 +1373,34 @@
                   <span>🌐 ${domain}</span>
                   <button type="button" class="inno-card-action-btn inno-res-btn-action" onclick="window.open('${lnk.url.replace(/'/g, "\\'")}', '_blank')" title="Visitar enlace">
                     <span>🔗</span> Visitar enlace
+                  </button>
+                </div>
+              </div>
+            </article>
+          `;
+        });
+
+        userVisuals.forEach((vis, idx) => {
+          totalCards++;
+          const vTitle = vis.title || vis.name || `Imagen ${idx + 1}`;
+          const vDesc = vis.description || 'Activo visual e imagen oficial del proyecto.';
+          const vSearch = (vTitle + ' ' + vDesc + ' imagen visual galeria').toLowerCase();
+          const vUrl = vis.url || vis.thumbnailUrl || '';
+
+          cardsHtml += `
+            <article class="inno-resource-card" data-category="img" data-search="${vSearch}">
+              <div class="inno-card-thumb-wrap" style="${vUrl ? `background-image:url('${vUrl}'); background-size:cover; background-position:center;` : 'background:linear-gradient(135deg, #0369a1 0%, #091e2d 100%);'} cursor:pointer;" onclick="window.open('${vUrl.replace(/'/g, "\\'")}', '_blank')">
+                <span class="inno-card-tag" style="background:#0284c7;">🖼️ Imagen</span>
+              </div>
+              <div class="inno-card-body">
+                <div>
+                  <h4 class="inno-card-title">${vTitle}</h4>
+                  <p class="inno-card-desc">${vDesc}</p>
+                </div>
+                <div class="inno-card-footer">
+                  <span>🖼️ Galería</span>
+                  <button type="button" class="inno-card-action-btn inno-res-btn-action" onclick="window.open('${vUrl.replace(/'/g, "\\'")}', '_blank')" title="Ver imagen">
+                    <span>👁️</span> Ver imagen
                   </button>
                 </div>
               </div>
