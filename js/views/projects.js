@@ -182,6 +182,16 @@ window.ProjectsView = {
     }
   ],
 
+  openEditProject(projectId) {
+    if (window.AdminView && typeof window.AdminView.openEditProjectModal === 'function') {
+      window.AdminView.openEditProjectModal(projectId);
+    } else if (window.ProjectWizard && typeof window.ProjectWizard.openWizard === 'function') {
+      window.ProjectWizard.openWizard(projectId, 1);
+    } else {
+      this.openProjectLanding(projectId);
+    }
+  },
+
   openAdminBannerModal(targetProjectId = null) {
     if (!this.isAdminUser()) {
       alert('⛔ Acceso denegado: Solo los administradores de Mentix pueden cambiar el banner de proyectos.');
@@ -1751,7 +1761,7 @@ window.ProjectsView = {
             ${(isAdmin || isAuthor) ? `
               <button 
                 title="Editar este proyecto" 
-                onclick="event.stopPropagation(); window.AdminView ? window.AdminView.openEditProjectModal('${c.id}') : window.ProjectsView.openProjectLanding('${c.id}')"
+                onclick="event.stopPropagation(); window.ProjectsView.openEditProject('${c.id}')"
                 style="width: 30px; height: 30px; border-radius: 8px; background: rgba(14, 165, 233, 0.92); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; cursor: pointer; border: none; font-size: 0.85rem; color: #ffffff; box-shadow: 0 2px 8px rgba(0,0,0,0.18); transition: transform 0.15s ease;"
                 onmouseenter="this.style.transform='scale(1.1)';"
                 onmouseleave="this.style.transform='scale(1)';"

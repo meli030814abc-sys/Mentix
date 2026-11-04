@@ -3005,9 +3005,21 @@ window.AdminView = {
     this.renderActiveTab();
   },
 
+  getModalRoot() {
+    let modalRoot = document.getElementById('admin-modal-root');
+    if (!modalRoot) {
+      modalRoot = document.createElement('div');
+      modalRoot.id = 'admin-modal-root';
+      document.body.appendChild(modalRoot);
+    }
+    return modalRoot;
+  },
+
   closeModal() {
     const modalRoot = document.getElementById('admin-modal-root');
-    if (modalRoot) modalRoot.innerHTML = '';
+    if (modalRoot) {
+      modalRoot.innerHTML = '';
+    }
     this.selectedProjectForModal = null;
   },
 
@@ -3118,10 +3130,31 @@ window.AdminView = {
    * Modal de Edición de Proyectos para Administradores
    */
   openEditProjectModal(projectId) {
-    const raw = this.getRealProjects();
-    const p = raw.find(item => item.id === projectId) || (window.appState?.challenges || []).find(item => item.id === projectId);
+    let p = (this.getRealProjects && this.getRealProjects().find(item => item && String(item.id) === String(projectId)))
+      || (window.appState?.challenges || []).find(item => item && String(item.id) === String(projectId))
+      || (window.ProjectsView && typeof window.ProjectsView.getMergedProjectRecord === 'function' && window.ProjectsView.getMergedProjectRecord(projectId));
+
+    if (!p) {
+      try {
+        const rawDrafts = localStorage.getItem('mentix_govdata_wizard_drafts');
+        if (rawDrafts) {
+          const drafts = JSON.parse(rawDrafts);
+          const found = Array.isArray(drafts) ? drafts.find(d => d && String(d.id) === String(projectId)) : (drafts ? drafts[projectId] : null);
+          if (found) p = { ...found, id: found.id || projectId };
+        }
+      } catch(e) {}
+    }
+
+    if (!p) {
+      if (typeof DEFAULT_PROJECTS !== 'undefined') {
+        const dp = DEFAULT_PROJECTS.find(d => d && String(d.id) === String(projectId));
+        if (dp) p = { ...dp };
+      }
+    }
+
     if (!p) {
       this.showToast('No se encontró el proyecto para editar', 'error');
+      alert('⚠️ No se encontró el proyecto para editar.');
       return;
     }
 
@@ -3133,12 +3166,11 @@ window.AdminView = {
     const currentStudents = p.participantsCount || (p.collaborators ? p.collaborators.length : null) || p.students || 24;
     const coverImage = p.image || p.cover || p.banner || 'assets/student_create_bg.jpg';
 
-    const modalRoot = document.getElementById('admin-modal-root');
-    if (!modalRoot) return;
+    const modalRoot = this.getModalRoot();
 
     modalRoot.innerHTML = `
-      <div class="admin-modal-overlay" onclick="window.AdminView.handleModalBackdropClick(event)">
-        <div class="admin-modal-window modal-lg" style="max-width: 780px;">
+      <div class="admin-modal-overlay" onclick="window.AdminView.handleModalBackdropClick(event)" style="position: fixed; inset: 0; background: rgba(4, 9, 24, 0.92); backdrop-filter: blur(10px); z-index: 9999999; display: flex; align-items: center; justify-content: center; padding: 1.5rem; overflow-y: auto;">
+        <div class="admin-modal-window modal-lg" style="max-width: 820px; width: 100%; max-height: 90vh; overflow-y: auto; background: linear-gradient(135deg, #071739 0%, #0d204d 50%, #071129 100%); border: 2px solid #00f5d4; border-radius: 22px; padding: 1.85rem; box-shadow: 0 25px 70px rgba(0,0,0,0.85), 0 0 45px rgba(0,245,212,0.25); color: #ffffff; position: relative;">
           
           <!-- Modal Header -->
           <div class="admin-modal-header" style="border-bottom: 1px solid #1e293b; padding-bottom: 1rem;">
@@ -3343,11 +3375,25 @@ window.AdminView = {
     const cover = (document.getElementById('edit-proj-cover')?.value || '').trim();
 
     if (!window.appState.challenges) window.appState.challenges = [];
-    let p = window.appState.challenges.find(item => item && item.id === projectId);
+    let p = window.appState.challenges.find(item => item && String(item.id) === String(projectId));
+
+    if (!p) {
+      try {
+        const rawDrafts = localStorage.getItem('mentix_govdata_wizard_drafts');
+        if (rawDrafts) {
+          const drafts = JSON.parse(rawDrafts);
+          const found = Array.isArray(drafts) ? drafts.find(d => d && String(d.id) === String(projectId)) : (drafts ? drafts[projectId] : null);
+          if (found) {
+            p = { ...found, id: found.id || projectId };
+            window.appState.challenges.push(p);
+          }
+        }
+      } catch(e) {}
+    }
 
     if (!p) {
       if (typeof DEFAULT_PROJECTS !== 'undefined') {
-        const dp = DEFAULT_PROJECTS.find(d => d.id === projectId);
+        const dp = DEFAULT_PROJECTS.find(d => d && String(d.id) === String(projectId));
         if (dp) {
           p = { ...dp };
           window.appState.challenges.push(p);
@@ -3395,6 +3441,42 @@ window.AdminView = {
       } catch(e) {}
     }
 
+    // Actualizar también en mentix_govdata_wizard_drafts si existe
+    try {
+      const rawDrafts = localStorage.getItem('mentix_govdata_wizard_drafts');
+      if (rawDrafts) {
+        let drafts = JSON.parse(rawDrafts);
+        if (Array.isArray(drafts)) {
+          const idx = drafts.findIndex(d => d && String(d.id) === String(projectId));
+          if (idx >= 0) {
+            drafts[idx] = { 
+              ...drafts[idx], 
+              title, 
+              subtitle, 
+              description: description || subtitle,
+              status,
+              visibility,
+              isPublic: (visibility !== 'private')
+            };
+            if (cover) { drafts[idx].banner = cover; drafts[idx].mainImage = cover; }
+            localStorage.setItem('mentix_govdata_wizard_drafts', JSON.stringify(drafts));
+          }
+        } else if (drafts && drafts[projectId]) {
+          drafts[projectId] = { 
+            ...drafts[projectId], 
+            title, 
+            subtitle, 
+            description: description || subtitle,
+            status,
+            visibility,
+            isPublic: (visibility !== 'private')
+          };
+          if (cover) { drafts[projectId].banner = cover; drafts[projectId].mainImage = cover; }
+          localStorage.setItem('mentix_govdata_wizard_drafts', JSON.stringify(drafts));
+        }
+      }
+    } catch(e) {}
+
     // Actualizar en bóvedas de usuario si existe
     try {
       for (let i = 0; i < localStorage.length; i++) {
@@ -3404,7 +3486,7 @@ window.AdminView = {
           if (raw) {
             let list = JSON.parse(raw);
             if (Array.isArray(list)) {
-              const idx = list.findIndex(item => item && item.id === projectId);
+              const idx = list.findIndex(item => item && String(item.id) === String(projectId));
               if (idx >= 0) {
                 list[idx] = { ...list[idx], ...p };
                 localStorage.setItem(k, JSON.stringify(list));
@@ -3419,13 +3501,24 @@ window.AdminView = {
     this.closeModal();
     this.showToast(`✨ ¡Proyecto "${title}" actualizado exitosamente!`, 'success');
     this.renderActiveTab();
+    if (window.ProjectsView && typeof window.ProjectsView.render === 'function') {
+      window.ProjectsView.render();
+    }
   },
 
   editProjectContent(projectId) {
     this.closeModal();
-    const p = (window.appState.challenges || []).find(item => item && item.id === projectId);
+    let p = (window.appState.challenges || []).find(item => item && String(item.id) === String(projectId))
+      || (this.getRealProjects && this.getRealProjects().find(item => item && String(item.id) === String(projectId)))
+      || (window.ProjectsView && typeof window.ProjectsView.getMergedProjectRecord === 'function' && window.ProjectsView.getMergedProjectRecord(projectId));
+
     if (!p) {
       this.showToast('No se encontró el proyecto', 'error');
+      return;
+    }
+
+    if (window.ProjectWizard && typeof window.ProjectWizard.openWizard === 'function') {
+      window.ProjectWizard.openWizard(projectId, 1);
       return;
     }
 
@@ -4271,11 +4364,17 @@ window.AdminView = {
   },
 
   showToast(message, type = 'info') {
-    const container = document.getElementById('admin-toast-container');
-    if (!container) return;
+    let container = document.getElementById('admin-toast-container');
+    if (!container) {
+      container = document.createElement('div');
+      container.id = 'admin-toast-container';
+      container.style.cssText = 'position:fixed; bottom:20px; right:20px; z-index:99999999; display:flex; flex-direction:column; gap:8px; pointer-events:none;';
+      document.body.appendChild(container);
+    }
 
     const toast = document.createElement('div');
     toast.className = `admin-toast toast-${type}`;
+    toast.style.cssText = 'background:#071739; border:1.5px solid #00f5d4; color:#ffffff; padding:0.75rem 1.25rem; border-radius:12px; font-weight:800; font-size:0.9rem; box-shadow:0 10px 30px rgba(0,0,0,0.6); display:inline-flex; align-items:center; gap:0.5rem; pointer-events:auto; transition:all 0.3s ease;';
     const icon = type === 'success' ? '✅' : (type === 'warning' ? '⚠️' : 'ℹ️');
     toast.innerHTML = `<span>${icon}</span> <span>${message}</span>`;
     container.appendChild(toast);
