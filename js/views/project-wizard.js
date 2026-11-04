@@ -3859,20 +3859,19 @@ collectCurrentStepInputs() {
 
                 <!-- Control de Portada / Miniatura del Recurso -->
                 <div style="margin-top:0.65rem; padding:0.65rem 0.8rem; background:var(--gdn-subtle); border:1px dashed var(--gdn-border); border-radius:10px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:0.55rem;">
-                  <span style="font-size:0.78rem; font-weight:800; color:var(--gdn-text);">🖼️ Portada / Miniatura en Landing Page:</span>
+                  <span style="font-size:0.78rem; font-weight:800; color:var(--gdn-text);">🖼️ Portada / Banner en Landing Page:</span>
                   <div style="display:flex; gap:0.45rem; flex:1; min-width:240px; flex-wrap:wrap; align-items:center;">
                     <select
                       class="gdn-select"
-                      style="width:auto; max-width:210px; padding:0.38rem 0.6rem; font-size:0.78rem; font-weight:700;"
+                      style="width:auto; max-width:220px; padding:0.38rem 0.6rem; font-size:0.78rem; font-weight:700;"
                       onchange="window.ProjectWizard.setResourcePresetCover(${idx}, this.value)"
                     >
                       <option value="" ${!res.thumbnailUrl ? 'selected' : ''}>🪄 Automática (Acorde al tipo)</option>
-                      <option value="preset:book" ${res.thumbnailUrl === 'preset:book' ? 'selected' : ''}>📖 Banner Libro / Lectura</option>
-                      <option value="preset:pdf_0" ${res.thumbnailUrl === 'preset:pdf_0' ? 'selected' : ''}>📕 Banner Documento PDF</option>
-                      <option value="preset:guide" ${res.thumbnailUrl === 'preset:guide' ? 'selected' : ''}>📘 Banner Guía / Manual</option>
-                      <option value="preset:survey" ${res.thumbnailUrl === 'preset:survey' ? 'selected' : ''}>📋 Banner Encuesta / Resultados</option>
-                      <option value="preset:excel" ${res.thumbnailUrl === 'preset:excel' ? 'selected' : ''}>📊 Banner Datos / Excel</option>
-                      <option value="preset:word" ${res.thumbnailUrl === 'preset:word' ? 'selected' : ''}>📝 Banner Documento Word</option>
+                      ${this.getThematicPresets().map(tp => `
+                        <option value="preset:${tp.key}" ${res.thumbnailUrl === 'preset:' + tp.key ? 'selected' : ''}>
+                          ${tp.icon} ${tp.label}
+                        </option>
+                      `).join('')}
                       <option value="assets/projects_ui/card_ai_society.png" ${res.thumbnailUrl === 'assets/projects_ui/card_ai_society.png' ? 'selected' : ''}>🤖 Ilustración IA & Sociedad</option>
                       <option value="assets/projects_ui/card_data_gov.png" ${res.thumbnailUrl === 'assets/projects_ui/card_data_gov.png' ? 'selected' : ''}>🏛️ Ilustración Gobernanza</option>
                       <option value="assets/projects_ui/card_open_data.png" ${res.thumbnailUrl === 'assets/projects_ui/card_open_data.png' ? 'selected' : ''}>🌐 Ilustración Datos Abiertos</option>
@@ -3894,6 +3893,25 @@ collectCurrentStepInputs() {
                         ↺ Auto
                       </button>
                     ` : ''}
+                  </div>
+                  <!-- 15 Banners Rápidos Clickables -->
+                  <div style="display:flex; gap:0.3rem; flex-wrap:wrap; align-items:center; margin-top:0.45rem; padding-top:0.45rem; border-top:1px dashed rgba(255,255,255,0.1); width:100%;">
+                    <span style="font-size:0.72rem; color:var(--gdn-text-secondary); font-weight:800;">🎨 15 Banners:</span>
+                    <button
+                      type="button"
+                      onclick="window.ProjectWizard.setResourcePresetCover(${idx}, '')"
+                      style="padding:0.18rem 0.5rem; font-size:0.72rem; font-weight:800; border-radius:999px; cursor:pointer; background:${!res.thumbnailUrl ? 'rgba(0,245,212,0.25)' : 'rgba(255,255,255,0.06)'}; color:${!res.thumbnailUrl ? '#00f5d4' : '#cbd5e1'}; border:1px solid ${!res.thumbnailUrl ? '#00f5d4' : 'rgba(255,255,255,0.12)'};"
+                    >🪄 Auto</button>
+                    ${this.getThematicPresets().map(tp => `
+                      <button
+                        type="button"
+                        onclick="window.ProjectWizard.setResourcePresetCover(${idx}, 'preset:${tp.key}')"
+                        title="${this.escapeHtml(tp.kicker)}"
+                        style="padding:0.18rem 0.52rem; font-size:0.72rem; font-weight:800; border-radius:999px; cursor:pointer; background:${res.thumbnailUrl === 'preset:' + tp.key ? 'rgba(0,245,212,0.3)' : 'rgba(255,255,255,0.05)'}; color:${res.thumbnailUrl === 'preset:' + tp.key ? '#00f5d4' : '#cbd5e1'}; border:1px solid ${res.thumbnailUrl === 'preset:' + tp.key ? '#00f5d4' : 'rgba(255,255,255,0.12)'}; transition: transform 0.15s ease;"
+                        onmouseenter="this.style.transform='scale(1.05)';"
+                        onmouseleave="this.style.transform='none';"
+                      >${tp.icon} ${this.escapeHtml(tp.label)}</button>
+                    `).join('')}
                   </div>
                 </div>
 
@@ -4080,6 +4098,26 @@ collectCurrentStepInputs() {
         if (window.ProjectsView) window.ProjectsView.render();
       }
     }
+  },
+
+  getThematicPresets() {
+    return [
+      { key: 'survey', label: 'Encuesta & Métricas', icon: '📊', kicker: 'ENCUESTA Y RESULTADOS' },
+      { key: 'ai_tech', label: 'IA & Robótica', icon: '🤖', kicker: 'INTELIGENCIA ARTIFICIAL & ROBÓTICA' },
+      { key: 'science', label: 'Ciencia & Lab', icon: '🧪', kicker: 'CIENCIA, LAB & INVESTIGACIÓN' },
+      { key: 'business', label: 'Negocios & Finanzas', icon: '💼', kicker: 'NEGOCIOS & ESTRATEGIA FINANCIERA' },
+      { key: 'governance', label: 'Gobernanza & Legal', icon: '⚖️', kicker: 'GOBERNANZA DE DATOS & LEGAL' },
+      { key: 'cybersecurity', label: 'Ciberseguridad', icon: '🛡️', kicker: 'CIBERSEGURIDAD & PRIVACIDAD' },
+      { key: 'environment', label: 'Medio Ambiente', icon: '🌍', kicker: 'MEDIO AMBIENTE & SOSTENIBILIDAD' },
+      { key: 'health', label: 'Salud & Medicina', icon: '🏥', kicker: 'SALUD, MEDICINA & BIOTECNOLOGÍA' },
+      { key: 'code', label: 'Código & Software', icon: '💻', kicker: 'PROGRAMACIÓN & SOFTWARE' },
+      { key: 'innovation', label: 'Innovación & Reto', icon: '🚀', kicker: 'INNOVACIÓN, RETO & STARTUP' },
+      { key: 'design', label: 'Diseño Creativo & UX', icon: '🎨', kicker: 'DISEÑO CREATIVO & UX/UI' },
+      { key: 'education', label: 'Educación & Guía', icon: '📚', kicker: 'PEDAGOGÍA & GUÍA ACADÉMICA' },
+      { key: 'open_data', label: 'Datos Abiertos & Web', icon: '🌐', kicker: 'DATOS ABIERTOS & CIUDADANÍA' },
+      { key: 'multimedia', label: 'Multimedia & Video', icon: '🎬', kicker: 'PRODUCCIÓN MULTIMEDIA & AUDIOVISUAL' },
+      { key: 'gamification', label: 'Gamificación & Retos', icon: '🏆', kicker: 'GAMIFICACIÓN & DESAFÍO' }
+    ];
   },
 
   setResourcePresetCover(idx, coverVal) {
@@ -4510,13 +4548,15 @@ collectCurrentStepInputs() {
                   <div style="display:flex; gap:0.45rem; flex:1; min-width:220px; flex-wrap:wrap; align-items:center;">
                     <select
                       class="gdn-select"
-                      style="width:auto; max-width:200px; padding:0.35rem 0.6rem; font-size:0.78rem; font-weight:700;"
+                      style="width:auto; max-width:220px; padding:0.35rem 0.6rem; font-size:0.78rem; font-weight:700;"
                       onchange="window.ProjectWizard.setExternalLinkPresetCover(${idx}, this.value)"
                     >
                       <option value="" ${!lnk.thumbnailUrl ? 'selected' : ''}>🪄 Automática (Acorde al enlace)</option>
-                      <option value="preset:link" ${lnk.thumbnailUrl === 'preset:link' ? 'selected' : ''}>🌐 Banner Portal Web</option>
-                      <option value="preset:book" ${lnk.thumbnailUrl === 'preset:book' ? 'selected' : ''}>📖 Banner Libro / Artículo</option>
-                      <option value="preset:survey" ${lnk.thumbnailUrl === 'preset:survey' ? 'selected' : ''}>📋 Banner Encuesta / Formulario</option>
+                      ${this.getThematicPresets().map(tp => `
+                        <option value="preset:${tp.key}" ${lnk.thumbnailUrl === 'preset:' + tp.key ? 'selected' : ''}>
+                          ${tp.icon} ${tp.label}
+                        </option>
+                      `).join('')}
                       <option value="assets/projects_ui/card_ai_society.png" ${lnk.thumbnailUrl === 'assets/projects_ui/card_ai_society.png' ? 'selected' : ''}>🤖 Ilustración IA & Sociedad</option>
                       <option value="assets/projects_ui/card_open_data.png" ${lnk.thumbnailUrl === 'assets/projects_ui/card_open_data.png' ? 'selected' : ''}>📊 Ilustración Datos Abiertos</option>
                     </select>
@@ -4532,6 +4572,31 @@ collectCurrentStepInputs() {
                     <button type="button" class="btn" style="background:#0f172a !important; color:#ffffff !important; border:none !important; padding:0.38rem 0.75rem !important; font-size:0.76rem !important; font-weight:800 !important; border-radius:8px !important; cursor:pointer !important;" onclick="document.getElementById('gdn-lnk-cover-file-${idx}').click()">
                       📷 Subir portada
                     </button>
+                    ${lnk.thumbnailUrl ? `
+                      <button type="button" class="btn" style="background:#f1f5f9 !important; color:#0f172a !important; border:1px solid #cbd5e1 !important; padding:0.38rem 0.6rem !important; font-size:0.74rem !important; font-weight:800 !important; border-radius:8px !important; cursor:pointer !important;" onclick="window.ProjectWizard.setExternalLinkPresetCover(${idx}, '')">
+                        ↺ Auto
+                      </button>
+                    ` : ''}
+                  </div>
+                  <!-- 15 Banners Rápidos Clickables -->
+                  <div style="display:flex; gap:0.3rem; flex-wrap:wrap; align-items:center; margin-top:0.45rem; padding-top:0.45rem; border-top:1px dashed rgba(0,0,0,0.1); width:100%;">
+                    <span style="font-size:0.72rem; color:#64748b; font-weight:800;">🎨 15 Banners:</span>
+                    <button
+                      type="button"
+                      onclick="window.ProjectWizard.setExternalLinkPresetCover(${idx}, '')"
+                      style="padding:0.18rem 0.5rem; font-size:0.72rem; font-weight:800; border-radius:999px; cursor:pointer; background:${!lnk.thumbnailUrl ? '#e2e8f0' : '#ffffff'}; color:${!lnk.thumbnailUrl ? '#0f172a' : '#64748b'}; border:1px solid #cbd5e1;"
+                    >🪄 Auto</button>
+                    ${this.getThematicPresets().map(tp => `
+                      <button
+                        type="button"
+                        onclick="window.ProjectWizard.setExternalLinkPresetCover(${idx}, 'preset:${tp.key}')"
+                        title="${this.escapeHtml(tp.kicker)}"
+                        style="padding:0.18rem 0.52rem; font-size:0.72rem; font-weight:800; border-radius:999px; cursor:pointer; background:${lnk.thumbnailUrl === 'preset:' + tp.key ? '#dbeafe' : '#ffffff'}; color:${lnk.thumbnailUrl === 'preset:' + tp.key ? '#1d4ed8' : '#475569'}; border:1px solid ${lnk.thumbnailUrl === 'preset:' + tp.key ? '#3b82f6' : '#e2e8f0'}; transition: transform 0.15s ease;"
+                        onmouseenter="this.style.transform='scale(1.05)';"
+                        onmouseleave="this.style.transform='none';"
+                      >${tp.icon} ${this.escapeHtml(tp.label)}</button>
+                    `).join('')}
+                  </div>
                   </div>
                 </div>
 

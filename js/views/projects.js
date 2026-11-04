@@ -2541,23 +2541,24 @@ window.ProjectsView = {
                     </button>
                   ` : ''}
                 </div>
-                <div style="display: flex; gap: 0.45rem; flex-wrap: wrap; align-items: center;">
-                  <span style="font-size: 0.8rem; color: #94a3b8; font-weight: 700;">Banners rápidos:</span>
-                  ${[
-                    { val: '', label: '🪄 Automático' },
-                    { val: 'preset:book', label: '📖 Libro / Lectura' },
-                    { val: 'preset:pdf_0', label: '📕 Documento PDF' },
-                    { val: 'preset:guide', label: '📘 Guía / Manual' },
-                    { val: 'preset:survey', label: '📋 Encuesta / Formulario' },
-                    { val: 'preset:excel', label: '📊 Datos / Excel' },
-                    { val: 'assets/projects_ui/card_ai_society.png', label: '🤖 IA & Tecnología' },
-                    { val: 'assets/projects_ui/card_data_gov.png', label: '🏛️ Gobernanza' }
-                  ].map(b => `
+                <div style="display: flex; gap: 0.45rem; flex-wrap: wrap; align-items: center; max-height: 140px; overflow-y: auto; padding: 0.35rem 0.2rem;">
+                  <span style="font-size: 0.8rem; color: #94a3b8; font-weight: 800; display: inline-flex; align-items: center; gap: 0.3rem;">🎨 15 Banners Temáticos:</span>
+                  <button
+                    type="button"
+                    onclick="window.ProjectsView.setStudentCreatePresetCover('')"
+                    style="background: ${!(d.coverUrl || '').trim() ? 'rgba(0,245,212,0.32)' : 'rgba(255,255,255,0.07)'}; color: ${!(d.coverUrl || '').trim() ? '#00f5d4' : '#cbd5e1'}; border: 1px solid ${!(d.coverUrl || '').trim() ? '#00f5d4' : 'rgba(255,255,255,0.18)'}; border-radius: 999px; padding: 0.28rem 0.75rem; font-size: 0.78rem; font-weight: 800; cursor: pointer;"
+                  >🪄 Automático</button>
+                  ${this.getThematicCoverPresets().map(b => `
                     <button
                       type="button"
-                      onclick="window.ProjectsView.setStudentCreatePresetCover('${b.val}')"
-                      style="background: ${(d.coverUrl || '') === b.val ? 'rgba(16,185,129,0.28)' : 'rgba(255,255,255,0.07)'}; color: ${(d.coverUrl || '') === b.val ? '#6ee7b7' : '#cbd5e1'}; border: 1px solid ${(d.coverUrl || '') === b.val ? '#34d399' : 'rgba(255,255,255,0.18)'}; border-radius: 999px; padding: 0.28rem 0.7rem; font-size: 0.78rem; font-weight: 800; cursor: pointer;"
-                    >${b.label}</button>
+                      onclick="window.ProjectsView.setStudentCreatePresetCover('preset:${b.key}')"
+                      title="${this.escapeHtml(b.kicker)}"
+                      style="background: ${(d.coverUrl || '') === 'preset:' + b.key ? 'rgba(16,185,129,0.35)' : 'rgba(255,255,255,0.07)'}; color: ${(d.coverUrl || '') === 'preset:' + b.key ? '#6ee7b7' : '#cbd5e1'}; border: 1.5px solid ${(d.coverUrl || '') === 'preset:' + b.key ? '#34d399' : 'rgba(255,255,255,0.18)'}; border-radius: 999px; padding: 0.28rem 0.7rem; font-size: 0.78rem; font-weight: 800; cursor: pointer; display: inline-flex; align-items: center; gap: 0.35rem; transition: transform 0.15s ease;"
+                      onmouseenter="this.style.transform='scale(1.04)';"
+                      onmouseleave="this.style.transform='none';"
+                    >
+                      <span>${b.icon}</span> <span>${this.escapeHtml(b.label)}</span>
+                    </button>
                   `).join('')}
                 </div>
               </div>
@@ -3924,6 +3925,26 @@ window.ProjectsView = {
     return Math.min(100, Math.max(score, (title.length >= 3 ? 10 : 0)));
   },
 
+  getThematicCoverPresets() {
+    return [
+      { key: 'survey', label: 'Encuesta & Métricas', icon: '📊', category: 'Datos', kicker: 'ENCUESTA Y RESULTADOS' },
+      { key: 'ai_tech', label: 'IA & Robótica', icon: '🤖', category: 'Tecnología', kicker: 'INTELIGENCIA ARTIFICIAL & ROBÓTICA' },
+      { key: 'science', label: 'Ciencia & Lab', icon: '🧪', category: 'Investigación', kicker: 'CIENCIA, LAB & INVESTIGACIÓN' },
+      { key: 'business', label: 'Negocios & Finanzas', icon: '💼', category: 'Economía', kicker: 'NEGOCIOS & ESTRATEGIA FINANCIERA' },
+      { key: 'governance', label: 'Gobernanza & Legal', icon: '⚖️', category: 'Marco Legal', kicker: 'GOBERNANZA DE DATOS & LEGAL' },
+      { key: 'cybersecurity', label: 'Ciberseguridad', icon: '🛡️', category: 'Seguridad', kicker: 'CIBERSEGURIDAD & PRIVACIDAD' },
+      { key: 'environment', label: 'Medio Ambiente', icon: '🌍', category: 'Sostenibilidad', kicker: 'MEDIO AMBIENTE & SOSTENIBILIDAD' },
+      { key: 'health', label: 'Salud & Medicina', icon: '🏥', category: 'Biomédica', kicker: 'SALUD, MEDICINA & BIOTECNOLOGÍA' },
+      { key: 'code', label: 'Código & Software', icon: '💻', category: 'Desarrollo', kicker: 'PROGRAMACIÓN & SOFTWARE' },
+      { key: 'innovation', label: 'Innovación & Reto', icon: '🚀', category: 'Startups', kicker: 'INNOVACIÓN, RETO & STARTUP' },
+      { key: 'design', label: 'Diseño Creativo & UX', icon: '🎨', category: 'Creatividad', kicker: 'DISEÑO CREATIVO & UX/UI' },
+      { key: 'education', label: 'Educación & Guía', icon: '📚', category: 'Pedagogía', kicker: 'PEDAGOGÍA & GUÍA ACADÉMICA' },
+      { key: 'open_data', label: 'Datos Abiertos & Web', icon: '🌐', category: 'Conectividad', kicker: 'DATOS ABIERTOS & CIUDADANÍA' },
+      { key: 'multimedia', label: 'Multimedia & Video', icon: '🎬', category: 'Audiovisual', kicker: 'PRODUCCIÓN MULTIMEDIA & AUDIOVISUAL' },
+      { key: 'gamification', label: 'Gamificación & Retos', icon: '🏆', category: 'Competición', kicker: 'GAMIFICACIÓN & DESAFÍO' }
+    ];
+  },
+
   buildThematicCoverSvg(themeKey, rawTitle = '', rawSubtitle = '') {
     const cleanSvgText = (str, maxLen) => {
       const s = String(str || '')
@@ -3940,56 +3961,10 @@ window.ProjectsView = {
     };
 
     const titleLine1 = cleanSvgText(rawTitle || 'Recurso Oficial', 26);
-    const subLabel = cleanSvgText(rawSubtitle || 'MATERIAL DEL PROYECTO', 28).toUpperCase();
+    const subLabel = cleanSvgText(rawSubtitle || 'MATERIAL DEL PROYECTO', 30).toUpperCase();
 
     const themes = {
-      book: {
-        bg1: '#1a0b2e', bg2: '#3b1561', bg3: '#7c2d12',
-        accent: '#fbbf24', accent2: '#f472b6',
-        kicker: subLabel || 'LIBRO Y LECTURA',
-        illust: `
-          <g transform="translate(490, 62)">
-            <circle cx="115" cy="115" r="105" fill="#fbbf24" fill-opacity="0.12"/>
-            <path d="M25 65 C60 52, 95 58, 115 74 L115 190 C95 174, 60 168, 25 180 Z" fill="#1e1b4b" stroke="#fbbf24" stroke-width="4" stroke-linejoin="round"/>
-            <path d="M205 65 C170 52, 135 58, 115 74 L115 190 C135 174, 170 168, 205 180 Z" fill="#311042" stroke="#fbbf24" stroke-width="4" stroke-linejoin="round"/>
-            <path d="M32 56 C64 44, 95 50, 115 66 L115 182 C95 166, 64 160, 32 172 Z" fill="#fffbeb" fill-opacity="0.95"/>
-            <path d="M198 56 C166 44, 135 50, 115 66 L115 182 C135 166, 166 160, 198 172 Z" fill="#fef3c7" fill-opacity="0.92"/>
-            <line x1="115" y1="64" x2="115" y2="188" stroke="#d97706" stroke-width="4"/>
-            <path d="M115 180 L115 215 L125 205 L135 215 L135 178 Z" fill="#ef4444"/>
-            <line x1="48" y1="84" x2="98" y2="88" stroke="#92400e" stroke-width="3.5" stroke-linecap="round"/>
-            <line x1="48" y1="102" x2="98" y2="106" stroke="#b45309" stroke-width="3" stroke-linecap="round" stroke-opacity="0.7"/>
-            <line x1="48" y1="120" x2="92" y2="124" stroke="#b45309" stroke-width="3" stroke-linecap="round" stroke-opacity="0.7"/>
-            <line x1="48" y1="138" x2="88" y2="142" stroke="#b45309" stroke-width="3" stroke-linecap="round" stroke-opacity="0.5"/>
-            <line x1="132" y1="88" x2="182" y2="84" stroke="#92400e" stroke-width="3.5" stroke-linecap="round"/>
-            <line x1="132" y1="106" x2="182" y2="102" stroke="#b45309" stroke-width="3" stroke-linecap="round" stroke-opacity="0.7"/>
-            <rect x="132" y="118" width="48" height="30" rx="5" fill="#f59e0b" fill-opacity="0.35" stroke="#d97706" stroke-width="2"/>
-            <circle cx="65" cy="30" r="5" fill="#fbbf24"/>
-            <circle cx="170" cy="26" r="4" fill="#f472b6"/>
-            <circle cx="115" cy="18" r="6" fill="#00f5d4"/>
-          </g>
-        `
-      },
-      guide: {
-        bg1: '#042f2e', bg2: '#065f46', bg3: '#0f172a',
-        accent: '#34d399', accent2: '#00f5d4',
-        kicker: subLabel || 'GUÍA Y MANUAL PRÁCTICO',
-        illust: `
-          <g transform="translate(500, 52)">
-            <circle cx="105" cy="120" r="105" fill="#10b981" fill-opacity="0.14"/>
-            <rect x="35" y="25" width="140" height="190" rx="14" fill="#064e3b" stroke="#34d399" stroke-width="4"/>
-            <rect x="47" y="37" width="116" height="166" rx="10" fill="#ecfdf5" fill-opacity="0.95"/>
-            <rect x="26" y="48" width="18" height="10" rx="4" fill="#00f5d4"/>
-            <rect x="26" y="84" width="18" height="10" rx="4" fill="#00f5d4"/>
-            <rect x="26" y="120" width="18" height="10" rx="4" fill="#00f5d4"/>
-            <rect x="26" y="156" width="18" height="10" rx="4" fill="#00f5d4"/>
-            <circle cx="105" cy="88" r="26" fill="#10b981" fill-opacity="0.2" stroke="#059669" stroke-width="3"/>
-            <polygon points="105,68 113,88 105,108 97,88" fill="#059669"/>
-            <line x1="65" y1="134" x2="145" y2="134" stroke="#047857" stroke-width="4" stroke-linecap="round"/>
-            <line x1="65" y1="152" x2="135" y2="152" stroke="#059669" stroke-width="3.5" stroke-linecap="round" stroke-opacity="0.7"/>
-            <line x1="65" y1="170" x2="120" y2="170" stroke="#059669" stroke-width="3.5" stroke-linecap="round" stroke-opacity="0.5"/>
-          </g>
-        `
-      },
+      // 1. Encuesta, Métricas & Estadísticas
       survey: {
         bg1: '#0c1938', bg2: '#1e1b4b', bg3: '#0f3460',
         accent: '#00f5d4', accent2: '#f97316',
@@ -4014,170 +3989,325 @@ window.ProjectsView = {
           </g>
         `
       },
-      pdf_0: {
-        bg1: '#2a0a18', bg2: '#4c1127', bg3: '#0f172a',
-        accent: '#fb923c', accent2: '#f43f5e',
-        kicker: subLabel || 'DOCUMENTO PDF OFICIAL',
+
+      // 2. Inteligencia Artificial & Robótica
+      ai_tech: {
+        bg1: '#060d24', bg2: '#101c4a', bg3: '#1b0a3a',
+        accent: '#00f5d4', accent2: '#a855f7',
+        kicker: subLabel || 'INTELIGENCIA ARTIFICIAL & ROBÓTICA',
         illust: `
-          <g transform="translate(500, 48)">
-            <circle cx="105" cy="125" r="102" fill="#f97316" fill-opacity="0.14"/>
-            <rect x="46" y="24" width="132" height="178" rx="12" fill="#1e293b" stroke="#64748b" stroke-width="2" transform="rotate(6 112 113)"/>
-            <path d="M34 28 H134 L168 62 V202 C168 209 162 214 155 214 H34 C27 214 22 209 22 202 V40 C22 33 27 28 34 28 Z" fill="#fff7ed" stroke="#fb923c" stroke-width="3.5"/>
-            <path d="M134 28 V62 H168 Z" fill="#fed7aa"/>
-            <rect x="8" y="54" width="76" height="32" rx="8" fill="#ea580c"/>
-            <text x="46" y="76" font-family="Arial, sans-serif" font-weight="900" font-size="18" fill="#ffffff" text-anchor="middle">PDF</text>
-            <line x1="42" y1="108" x2="146" y2="108" stroke="#9a3412" stroke-width="4.5" stroke-linecap="round"/>
-            <line x1="42" y1="126" x2="136" y2="126" stroke="#c2410c" stroke-width="3.5" stroke-linecap="round" stroke-opacity="0.75"/>
-            <line x1="42" y1="142" x2="142" y2="142" stroke="#c2410c" stroke-width="3.5" stroke-linecap="round" stroke-opacity="0.6"/>
-            <rect x="42" y="158" width="102" height="36" rx="6" fill="#ffedd5" stroke="#fb923c" stroke-width="2"/>
-            <circle cx="62" cy="176" r="10" fill="#ea580c"/>
-            <line x1="80" y1="172" x2="132" y2="172" stroke="#9a3412" stroke-width="3" stroke-linecap="round"/>
-            <line x1="80" y1="182" x2="116" y2="182" stroke="#c2410c" stroke-width="2.5" stroke-linecap="round"/>
+          <g transform="translate(485, 48)">
+            <circle cx="115" cy="120" r="105" fill="#00f5d4" fill-opacity="0.12"/>
+            <rect x="36" y="36" width="158" height="168" rx="20" fill="#071330" stroke="#00f5d4" stroke-width="3.5"/>
+            <path d="M70 20 L70 36 M160 20 L160 36 M115 16 L115 36" stroke="#00f5d4" stroke-width="3" stroke-linecap="round"/>
+            <circle cx="70" cy="18" r="5" fill="#a855f7"/>
+            <circle cx="160" cy="18" r="5" fill="#a855f7"/>
+            <circle cx="115" cy="14" r="6" fill="#00f5d4"/>
+            <rect x="52" y="60" width="126" height="52" rx="14" fill="#030712" stroke="#38bdf8" stroke-width="2.5"/>
+            <ellipse cx="85" cy="86" rx="14" ry="10" fill="#00f5d4"/>
+            <circle cx="85" cy="86" r="5" fill="#030712"/>
+            <ellipse cx="145" cy="86" rx="14" ry="10" fill="#00f5d4"/>
+            <circle cx="145" cy="86" r="5" fill="#030712"/>
+            <path d="M78 140 Q115 165 152 140" fill="none" stroke="#00f5d4" stroke-width="3.5" stroke-linecap="round"/>
+            <line x1="95" y1="145" x2="95" y2="152" stroke="#a855f7" stroke-width="2.5"/>
+            <line x1="115" y1="147" x2="115" y2="155" stroke="#a855f7" stroke-width="2.5"/>
+            <line x1="135" y1="145" x2="135" y2="152" stroke="#a855f7" stroke-width="2.5"/>
+            <circle cx="28" cy="120" r="9" fill="#a855f7" stroke="#00f5d4" stroke-width="2"/>
+            <circle cx="202" cy="120" r="9" fill="#a855f7" stroke="#00f5d4" stroke-width="2"/>
+            <polygon points="115,178 123,190 115,202 107,190" fill="#38bdf8"/>
           </g>
         `
       },
-      pdf_1: {
-        bg1: '#081c38', bg2: '#0c3559', bg3: '#1e1b4b',
-        accent: '#38bdf8', accent2: '#00f5d4',
-        kicker: subLabel || 'DOCUMENTO Y LECTURA PDF',
+
+      // 3. Ciencia, Laboratorio & Química
+      science: {
+        bg1: '#02261f', bg2: '#044336', bg3: '#0f172a',
+        accent: '#10b981', accent2: '#a3e635',
+        kicker: subLabel || 'CIENCIA, LAB & INVESTIGACIÓN',
         illust: `
-          <g transform="translate(500, 48)">
-            <circle cx="105" cy="125" r="102" fill="#38bdf8" fill-opacity="0.14"/>
-            <rect x="46" y="24" width="132" height="178" rx="12" fill="#0f172a" stroke="#38bdf8" stroke-width="2" transform="rotate(-5 112 113)"/>
-            <path d="M34 28 H134 L168 62 V202 C168 209 162 214 155 214 H34 C27 214 22 209 22 202 V40 C22 33 27 28 34 28 Z" fill="#f0f9ff" stroke="#38bdf8" stroke-width="3.5"/>
-            <path d="M134 28 V62 H168 Z" fill="#bae6fd"/>
-            <rect x="8" y="54" width="76" height="32" rx="8" fill="#0284c7"/>
-            <text x="46" y="76" font-family="Arial, sans-serif" font-weight="900" font-size="18" fill="#ffffff" text-anchor="middle">PDF</text>
-            <line x1="42" y1="108" x2="146" y2="108" stroke="#0369a1" stroke-width="4.5" stroke-linecap="round"/>
-            <line x1="42" y1="126" x2="136" y2="126" stroke="#0284c7" stroke-width="3.5" stroke-linecap="round" stroke-opacity="0.75"/>
-            <rect x="42" y="144" width="46" height="48" rx="6" fill="#e0f2fe" stroke="#0284c7" stroke-width="2"/>
-            <rect x="96" y="144" width="48" height="20" rx="5" fill="#0284c7" fill-opacity="0.25"/>
-            <rect x="96" y="172" width="48" height="20" rx="5" fill="#00f5d4" fill-opacity="0.35"/>
+          <g transform="translate(490, 48)">
+            <circle cx="115" cy="120" r="105" fill="#10b981" fill-opacity="0.14"/>
+            <ellipse cx="115" cy="120" rx="95" ry="38" fill="none" stroke="#34d399" stroke-width="2" stroke-dasharray="6,4" transform="rotate(-30 115 120)"/>
+            <ellipse cx="115" cy="120" rx="95" ry="38" fill="none" stroke="#a3e635" stroke-width="2" stroke-dasharray="6,4" transform="rotate(30 115 120)"/>
+            <path d="M100 36 H130 V75 L168 175 C175 192 162 210 144 210 H86 C68 210 55 192 62 175 L100 75 Z" fill="#042f2e" stroke="#10b981" stroke-width="3.5"/>
+            <path d="M72 170 Q115 160 158 170 L144 205 H86 Z" fill="#10b981" fill-opacity="0.75"/>
+            <circle cx="100" cy="180" r="6" fill="#a3e635"/>
+            <circle cx="125" cy="172" r="8" fill="#ecfdf5"/>
+            <circle cx="115" cy="145" r="5" fill="#34d399"/>
+            <circle cx="108" cy="125" r="4" fill="#a3e635"/>
+            <circle cx="115" cy="98" r="3" fill="#ecfdf5"/>
+            <rect x="94" y="30" width="42" height="10" rx="4" fill="#34d399"/>
           </g>
         `
       },
-      pdf_2: {
-        bg1: '#1a0933', bg2: '#31105a', bg3: '#091e2d',
+
+      // 4. Negocios, Finanzas & Economía
+      business: {
+        bg1: '#07162c', bg2: '#122c54', bg3: '#1e1b4b',
+        accent: '#fbbf24', accent2: '#38bdf8',
+        kicker: subLabel || 'NEGOCIOS & ESTRATEGIA FINANCIERA',
+        illust: `
+          <g transform="translate(485, 50)">
+            <circle cx="115" cy="120" r="105" fill="#fbbf24" fill-opacity="0.12"/>
+            <rect x="30" y="70" width="170" height="126" rx="14" fill="#0b1736" stroke="#fbbf24" stroke-width="3.5"/>
+            <path d="M85 70 V48 C85 42 90 38 96 38 H134 C140 38 145 42 145 48 V70" fill="none" stroke="#fbbf24" stroke-width="3.5"/>
+            <line x1="30" y1="110" x2="200" y2="110" stroke="#38bdf8" stroke-width="2.5"/>
+            <rect x="103" y="100" width="24" height="20" rx="4" fill="#fbbf24"/>
+            <circle cx="115" cy="110" r="3" fill="#0b1736"/>
+            <polyline points="48,175 80,145 110,155 150,125 180,132" fill="none" stroke="#38bdf8" stroke-width="3.5" stroke-linecap="round"/>
+            <polygon points="180,125 188,135 174,136" fill="#38bdf8"/>
+            <circle cx="170" cy="62" r="22" fill="#f59e0b" stroke="#fef3c7" stroke-width="2.5"/>
+            <text x="170" y="70" font-family="Arial, sans-serif" font-weight="900" font-size="20" fill="#78350f" text-anchor="middle">$</text>
+          </g>
+        `
+      },
+
+      // 5. Gobernanza de Datos, Marco Legal & DAMA
+      governance: {
+        bg1: '#180a33', bg2: '#30135c', bg3: '#0c1938',
         accent: '#c084fc', accent2: '#00f5d4',
-        kicker: subLabel || 'INFORME Y DOCUMENTO PDF',
+        kicker: subLabel || 'GOBERNANZA DE DATOS & LEGAL',
         illust: `
-          <g transform="translate(500, 48)">
-            <circle cx="105" cy="125" r="102" fill="#c084fc" fill-opacity="0.14"/>
-            <path d="M34 28 H134 L168 62 V202 C168 209 162 214 155 214 H34 C27 214 22 209 22 202 V40 C22 33 27 28 34 28 Z" fill="#faf5ff" stroke="#a855f7" stroke-width="3.5"/>
-            <path d="M134 28 V62 H168 Z" fill="#e9d5ff"/>
-            <rect x="8" y="54" width="76" height="32" rx="8" fill="#7c3aed"/>
-            <text x="46" y="76" font-family="Arial, sans-serif" font-weight="900" font-size="18" fill="#ffffff" text-anchor="middle">PDF</text>
-            <circle cx="95" cy="126" r="28" fill="#f3e8ff" stroke="#7c3aed" stroke-width="4"/>
-            <path d="M95 98 A28 28 0 0 1 123 126 L95 126 Z" fill="#7c3aed"/>
-            <line x1="42" y1="172" x2="146" y2="172" stroke="#6b21a8" stroke-width="4" stroke-linecap="round"/>
-            <line x1="42" y1="188" x2="122" y2="188" stroke="#9333ea" stroke-width="3" stroke-linecap="round" stroke-opacity="0.7"/>
+          <g transform="translate(490, 48)">
+            <circle cx="110" cy="120" r="105" fill="#c084fc" fill-opacity="0.13"/>
+            <line x1="110" y1="36" x2="110" y2="200" stroke="#c084fc" stroke-width="4.5" stroke-linecap="round"/>
+            <line x1="70" y1="200" x2="150" y2="200" stroke="#c084fc" stroke-width="5" stroke-linecap="round"/>
+            <circle cx="110" cy="36" r="9" fill="#00f5d4"/>
+            <line x1="45" y1="65" x2="175" y2="65" stroke="#00f5d4" stroke-width="4" stroke-linecap="round"/>
+            <line x1="45" y1="65" x2="30" y2="125" stroke="#94a3b8" stroke-width="2"/>
+            <line x1="45" y1="65" x2="60" y2="125" stroke="#94a3b8" stroke-width="2"/>
+            <path d="M22 125 Q45 145 68 125 Z" fill="#7c3aed" stroke="#c084fc" stroke-width="2.5"/>
+            <line x1="175" y1="65" x2="160" y2="125" stroke="#94a3b8" stroke-width="2"/>
+            <line x1="175" y1="65" x2="190" y2="125" stroke="#94a3b8" stroke-width="2"/>
+            <path d="M152 125 Q175 145 198 125 Z" fill="#7c3aed" stroke="#c084fc" stroke-width="2.5"/>
+            <rect x="36" y="108" width="18" height="15" rx="3" fill="#00f5d4"/>
+            <rect x="166" y="108" width="18" height="15" rx="3" fill="#00f5d4"/>
           </g>
         `
       },
-      word: {
-        bg1: '#0a1936', bg2: '#1e3a8a', bg3: '#0f172a',
-        accent: '#60a5fa', accent2: '#38bdf8',
-        kicker: subLabel || 'DOCUMENTO EDITORIAL WORD',
+
+      // 6. Ciberseguridad & Privacidad
+      cybersecurity: {
+        bg1: '#1c0818', bg2: '#380a2b', bg3: '#071124',
+        accent: '#f43f5e', accent2: '#00f5d4',
+        kicker: subLabel || 'CIBERSEGURIDAD & PRIVACIDAD',
         illust: `
-          <g transform="translate(500, 48)">
-            <circle cx="105" cy="125" r="102" fill="#3b82f6" fill-opacity="0.15"/>
-            <rect x="28" y="28" width="140" height="186" rx="12" fill="#eff6ff" stroke="#3b82f6" stroke-width="3.5"/>
-            <rect x="10" y="52" width="74" height="32" rx="8" fill="#2563eb"/>
-            <text x="47" y="74" font-family="Arial, sans-serif" font-weight="900" font-size="17" fill="#ffffff" text-anchor="middle">DOCX</text>
-            <line x1="48" y1="106" x2="148" y2="106" stroke="#1d4ed8" stroke-width="4.5" stroke-linecap="round"/>
-            <line x1="48" y1="124" x2="148" y2="124" stroke="#2563eb" stroke-width="3.5" stroke-linecap="round" stroke-opacity="0.75"/>
-            <line x1="48" y1="142" x2="136" y2="142" stroke="#2563eb" stroke-width="3.5" stroke-linecap="round" stroke-opacity="0.7"/>
-            <line x1="48" y1="160" x2="142" y2="160" stroke="#2563eb" stroke-width="3.5" stroke-linecap="round" stroke-opacity="0.6"/>
-            <line x1="48" y1="178" x2="112" y2="178" stroke="#2563eb" stroke-width="3.5" stroke-linecap="round" stroke-opacity="0.5"/>
+          <g transform="translate(490, 48)">
+            <circle cx="110" cy="120" r="105" fill="#f43f5e" fill-opacity="0.13"/>
+            <path d="M110 32 L180 62 V120 C180 166 148 198 110 212 C72 198 40 166 40 120 V62 Z" fill="#1e0a19" stroke="#f43f5e" stroke-width="4"/>
+            <path d="M110 48 L164 72 V118 C164 154 138 182 110 194 C82 182 56 154 56 118 V72 Z" fill="#2d0d26" stroke="#00f5d4" stroke-width="2" stroke-dasharray="6,4"/>
+            <rect x="92" y="112" width="36" height="34" rx="7" fill="#f43f5e"/>
+            <path d="M99 112 V98 C99 92 104 87 110 87 C116 87 121 92 121 98 V112" fill="none" stroke="#f43f5e" stroke-width="3.5"/>
+            <circle cx="110" cy="126" r="4" fill="#ffffff"/>
+            <line x1="110" y1="130" x2="110" y2="138" stroke="#ffffff" stroke-width="2.5"/>
           </g>
         `
       },
-      excel: {
-        bg1: '#052e16', bg2: '#065f46', bg3: '#091e2d',
-        accent: '#4ade80', accent2: '#00f5d4',
-        kicker: subLabel || 'DATOS Y HOJA DE CÁLCULO',
+
+      // 7. Medio Ambiente, Ecología & Sostenibilidad
+      environment: {
+        bg1: '#03261a', bg2: '#064426', bg3: '#082f49',
+        accent: '#34d399', accent2: '#38bdf8',
+        kicker: subLabel || 'MEDIO AMBIENTE & SOSTENIBILIDAD',
         illust: `
-          <g transform="translate(495, 48)">
-            <circle cx="110" cy="125" r="102" fill="#22c55e" fill-opacity="0.14"/>
-            <rect x="24" y="34" width="154" height="176" rx="12" fill="#f0fdf4" stroke="#16a34a" stroke-width="3.5"/>
-            <rect x="8" y="52" width="76" height="32" rx="8" fill="#16a34a"/>
-            <text x="46" y="74" font-family="Arial, sans-serif" font-weight="900" font-size="16" fill="#ffffff" text-anchor="middle">XLSX</text>
-            <rect x="42" y="100" width="54" height="22" rx="4" fill="#bbf7d0"/>
-            <rect x="104" y="100" width="54" height="22" rx="4" fill="#dcfce7"/>
-            <rect x="42" y="130" width="54" height="22" rx="4" fill="#dcfce7"/>
-            <rect x="104" y="130" width="54" height="22" rx="4" fill="#bbf7d0"/>
-            <rect x="42" y="160" width="54" height="22" rx="4" fill="#bbf7d0"/>
-            <rect x="104" y="160" width="54" height="22" rx="4" fill="#86efac"/>
+          <g transform="translate(485, 48)">
+            <circle cx="115" cy="120" r="105" fill="#34d399" fill-opacity="0.14"/>
+            <circle cx="115" cy="120" r="74" fill="#042f2e" stroke="#34d399" stroke-width="3.5"/>
+            <path d="M80 100 Q105 85 118 105 Q125 125 105 135 Q85 140 80 100 Z" fill="#10b981"/>
+            <path d="M130 90 Q150 85 158 105 Q150 120 135 115 Z" fill="#10b981"/>
+            <path d="M95 155 Q120 148 130 168 Q110 180 95 155 Z" fill="#10b981"/>
+            <path d="M115 48 C140 25 160 45 160 70 C135 70 115 60 115 48 Z" fill="#34d399" stroke="#042f2e" stroke-width="2"/>
+            <path d="M115 48 C90 25 70 45 70 70 C95 70 115 60 115 48 Z" fill="#10b981" stroke="#042f2e" stroke-width="2"/>
+            <line x1="115" y1="48" x2="115" y2="82" stroke="#042f2e" stroke-width="2.5"/>
           </g>
         `
       },
-      pres: {
-        bg1: '#170936', bg2: '#3b0764', bg3: '#0c1938',
-        accent: '#c084fc', accent2: '#00f5d4',
-        kicker: subLabel || 'PRESENTACIÓN INTERACTIVA',
+
+      // 8. Salud, Medicina & Bienestar
+      health: {
+        bg1: '#210619', bg2: '#480a2d', bg3: '#091c33',
+        accent: '#fb7185', accent2: '#38bdf8',
+        kicker: subLabel || 'SALUD, MEDICINA & BIOTECNOLOGÍA',
         illust: `
-          <g transform="translate(485, 54)">
-            <circle cx="115" cy="115" r="102" fill="#a855f7" fill-opacity="0.16"/>
-            <rect x="18" y="34" width="186" height="128" rx="12" fill="#1e1b4b" stroke="#00f5d4" stroke-width="3.5"/>
-            <rect x="32" y="50" width="84" height="14" rx="4" fill="#c084fc"/>
-            <rect x="32" y="74" width="72" height="8" rx="4" fill="#94a3b8"/>
-            <rect x="32" y="90" width="66" height="8" rx="4" fill="#94a3b8"/>
-            <rect x="32" y="106" width="78" height="8" rx="4" fill="#94a3b8"/>
-            <circle cx="156" cy="96" r="30" fill="#7c3aed" stroke="#00f5d4" stroke-width="3"/>
-            <path d="M156 66 A30 30 0 0 1 186 96 L156 96 Z" fill="#00f5d4"/>
-            <line x1="111" y1="162" x2="111" y2="192" stroke="#00f5d4" stroke-width="4"/>
-            <line x1="76" y1="192" x2="146" y2="192" stroke="#00f5d4" stroke-width="4" stroke-linecap="round"/>
+          <g transform="translate(490, 48)">
+            <circle cx="110" cy="120" r="105" fill="#fb7185" fill-opacity="0.14"/>
+            <rect x="28" y="32" width="144" height="182" rx="14" fill="#1c0715" stroke="#fb7185" stroke-width="3.5"/>
+            <rect x="68" y="20" width="64" height="24" rx="8" fill="#e11d48"/>
+            <rect x="88" y="58" width="24" height="24" rx="4" fill="#fb7185"/>
+            <rect x="94" y="52" width="12" height="36" rx="3" fill="#fb7185"/>
+            <polyline points="40,135 68,135 78,110 88,160 98,100 108,145 118,130 128,135 160,135" fill="none" stroke="#38bdf8" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <g transform="translate(62, 170) rotate(-25 36 12)">
+              <rect x="0" y="0" width="36" height="20" rx="10" fill="#fb7185"/>
+              <rect x="36" y="0" width="36" height="20" rx="10" fill="#ffffff"/>
+            </g>
           </g>
         `
       },
-      zip: {
-        bg1: '#271505', bg2: '#5c2d0c', bg3: '#0f172a',
-        accent: '#fbbf24', accent2: '#fb923c',
-        kicker: subLabel || 'PAQUETE DE RECURSOS ZIP',
+
+      // 9. Programación, Algoritmos & Software
+      code: {
+        bg1: '#021814', bg2: '#053123', bg3: '#081c30',
+        accent: '#22c55e', accent2: '#00f5d4',
+        kicker: subLabel || 'PROGRAMACIÓN & SOFTWARE',
         illust: `
-          <g transform="translate(500, 52)">
-            <circle cx="105" cy="120" r="100" fill="#f59e0b" fill-opacity="0.14"/>
-            <rect x="30" y="34" width="144" height="168" rx="14" fill="#fffbeb" stroke="#f59e0b" stroke-width="3.5"/>
-            <rect x="92" y="34" width="20" height="90" fill="#fde68a" stroke="#d97706" stroke-width="2" stroke-dasharray="6,4"/>
-            <rect x="84" y="118" width="36" height="28" rx="6" fill="#d97706"/>
-            <text x="102" y="182" font-family="Arial, sans-serif" font-weight="900" font-size="20" fill="#92400e" text-anchor="middle">ZIP</text>
+          <g transform="translate(485, 48)">
+            <circle cx="115" cy="120" r="105" fill="#22c55e" fill-opacity="0.13"/>
+            <rect x="22" y="34" width="186" height="172" rx="14" fill="#041410" stroke="#22c55e" stroke-width="3.5"/>
+            <line x1="22" y1="66" x2="208" y2="66" stroke="#22c55e" stroke-width="2"/>
+            <circle cx="42" cy="50" r="5" fill="#ef4444"/>
+            <circle cx="58" cy="50" r="5" fill="#fbbf24"/>
+            <circle cx="74" cy="50" r="5" fill="#22c55e"/>
+            <path d="M52 110 L38 122 L52 134" fill="none" stroke="#00f5d4" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M82 110 L96 122 L82 134" fill="none" stroke="#00f5d4" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <line x1="72" y1="106" x2="62" y2="138" stroke="#38bdf8" stroke-width="3" stroke-linecap="round"/>
+            <line x1="112" y1="112" x2="184" y2="112" stroke="#4ade80" stroke-width="3.5" stroke-linecap="round"/>
+            <line x1="112" y1="126" x2="168" y2="126" stroke="#38bdf8" stroke-width="3.5" stroke-linecap="round"/>
+            <line x1="42" y1="160" x2="118" y2="160" stroke="#f472b6" stroke-width="3" stroke-linecap="round"/>
+            <line x1="128" y1="160" x2="188" y2="160" stroke="#facc15" stroke-width="3" stroke-linecap="round"/>
+            <line x1="42" y1="178" x2="148" y2="178" stroke="#94a3b8" stroke-width="3" stroke-linecap="round"/>
           </g>
         `
       },
-      link: {
-        bg1: '#04262c', bg2: '#064e3b', bg3: '#0f172a',
-        accent: '#00f5d4', accent2: '#34d399',
-        kicker: subLabel || 'PORTAL Y RECURSO WEB',
+
+      // 10. Innovación, Desafíos & Startups
+      innovation: {
+        bg1: '#1b0728', bg2: '#3c0954', bg3: '#071233',
+        accent: '#f97316', accent2: '#ec4899',
+        kicker: subLabel || 'INNOVACIÓN, RETO & STARTUP',
         illust: `
-          <g transform="translate(485, 52)">
-            <circle cx="115" cy="120" r="102" fill="#00f5d4" fill-opacity="0.12"/>
-            <rect x="18" y="34" width="186" height="142" rx="12" fill="#091e2d" stroke="#10b981" stroke-width="3.5"/>
-            <line x1="18" y1="62" x2="204" y2="62" stroke="#10b981" stroke-width="2"/>
-            <circle cx="36" cy="48" r="5" fill="#ef4444"/>
-            <circle cx="52" cy="48" r="5" fill="#fbbf24"/>
-            <circle cx="68" cy="48" r="5" fill="#10b981"/>
-            <circle cx="111" cy="118" r="36" fill="none" stroke="#00f5d4" stroke-width="3"/>
-            <ellipse cx="111" cy="118" rx="18" ry="36" fill="none" stroke="#00f5d4" stroke-width="2.5"/>
-            <line x1="75" y1="118" x2="147" y2="118" stroke="#00f5d4" stroke-width="2.5"/>
+          <g transform="translate(485, 48)">
+            <circle cx="115" cy="120" r="105" fill="#f97316" fill-opacity="0.14"/>
+            <g transform="translate(50, 40) rotate(45 60 70)">
+              <path d="M60 10 C45 35 45 75 45 105 H75 C75 75 75 35 60 10 Z" fill="#f8fafc" stroke="#f97316" stroke-width="3"/>
+              <circle cx="60" cy="50" r="10" fill="#0284c7" stroke="#38bdf8" stroke-width="2.5"/>
+              <path d="M45 80 L25 105 H45 Z" fill="#ea580c"/>
+              <path d="M75 80 L95 105 H75 Z" fill="#ea580c"/>
+              <polygon points="50,105 60,135 70,105" fill="#f97316"/>
+              <polygon points="54,105 60,122 66,105" fill="#fde047"/>
+            </g>
+            <circle cx="165" cy="65" r="4" fill="#ffffff"/>
+            <circle cx="180" cy="115" r="3" fill="#f472b6"/>
+            <circle cx="55" cy="160" r="5" fill="#00f5d4"/>
           </g>
         `
       },
-      video: {
-        bg1: '#06152d', bg2: '#0c3b6e', bg3: '#1e1b4b',
-        accent: '#38bdf8', accent2: '#00f5d4',
-        kicker: subLabel || 'VIDEO MULTIMEDIA OFICIAL',
+
+      // 11. Diseño Creativo, Arte & UX/UI
+      design: {
+        bg1: '#260829', bg2: '#520a48', bg3: '#11183b',
+        accent: '#f472b6', accent2: '#a855f7',
+        kicker: subLabel || 'DISEÑO CREATIVO & UX/UI',
         illust: `
-          <g transform="translate(485, 52)">
-            <circle cx="115" cy="120" r="102" fill="#38bdf8" fill-opacity="0.15"/>
-            <rect x="18" y="36" width="186" height="136" rx="14" fill="#091e2d" stroke="#38bdf8" stroke-width="3.5"/>
-            <circle cx="111" cy="104" r="32" fill="#0284c7" stroke="#00f5d4" stroke-width="3"/>
-            <polygon points="103,88 103,120 129,104" fill="#ffffff"/>
+          <g transform="translate(485, 48)">
+            <circle cx="115" cy="120" r="105" fill="#f472b6" fill-opacity="0.14"/>
+            <path d="M115 35 C165 35 195 75 195 120 C195 155 175 185 145 185 C132 185 122 175 115 175 C108 175 98 185 85 185 C55 185 35 155 35 120 C35 75 65 35 115 35 Z" fill="#200724" stroke="#f472b6" stroke-width="3.5"/>
+            <circle cx="150" cy="155" r="12" fill="#0c1222" stroke="#f472b6" stroke-width="2"/>
+            <circle cx="75" cy="80" r="10" fill="#38bdf8"/>
+            <circle cx="115" cy="65" r="10" fill="#facc15"/>
+            <circle cx="155" cy="80" r="10" fill="#10b981"/>
+            <circle cx="170" cy="118" r="10" fill="#a855f7"/>
+            <circle cx="65" cy="120" r="10" fill="#f43f5e"/>
+            <path d="M100 135 L125 105 L135 115 L110 145 Z" fill="#00f5d4"/>
+          </g>
+        `
+      },
+
+      // 12. Educación, Pedagogía & Libro Guía
+      education: {
+        bg1: '#1a0d06', bg2: '#3d1c08', bg3: '#0b1933',
+        accent: '#fbbf24', accent2: '#38bdf8',
+        kicker: subLabel || 'PEDAGOGÍA & GUÍA ACADÉMICA',
+        illust: `
+          <g transform="translate(485, 48)">
+            <circle cx="115" cy="120" r="105" fill="#fbbf24" fill-opacity="0.14"/>
+            <polygon points="115,35 185,65 115,95 45,65" fill="#1e1b4b" stroke="#fbbf24" stroke-width="3"/>
+            <path d="M70 78 V105 C70 120 90 132 115 132 C140 132 160 120 160 105 V78" fill="#1e1b4b" stroke="#fbbf24" stroke-width="3"/>
+            <path d="M185 65 V110 L180 115" fill="none" stroke="#f59e0b" stroke-width="3"/>
+            <circle cx="180" cy="118" r="5" fill="#fbbf24"/>
+            <path d="M35 150 Q75 140 115 152 Q155 140 195 150 V195 Q155 185 115 197 Q75 185 35 195 Z" fill="#fffbeb" stroke="#d97706" stroke-width="3"/>
+            <line x1="115" y1="152" x2="115" y2="197" stroke="#b45309" stroke-width="3"/>
+          </g>
+        `
+      },
+
+      // 13. Datos Abiertos, Territorio & Redes
+      open_data: {
+        bg1: '#021e2d', bg2: '#053d52', bg3: '#081630',
+        accent: '#00f5d4', accent2: '#60a5fa',
+        kicker: subLabel || 'DATOS ABIERTOS & CIUDADANÍA',
+        illust: `
+          <g transform="translate(485, 48)">
+            <circle cx="115" cy="120" r="105" fill="#00f5d4" fill-opacity="0.13"/>
+            <rect x="25" y="34" width="180" height="172" rx="14" fill="#051c28" stroke="#00f5d4" stroke-width="3.5"/>
+            <circle cx="115" cy="120" r="50" fill="none" stroke="#38bdf8" stroke-width="2" stroke-dasharray="4,4"/>
+            <circle cx="115" cy="120" r="16" fill="#00f5d4" stroke="#ffffff" stroke-width="2"/>
+            <circle cx="65" cy="80" r="10" fill="#38bdf8"/>
+            <circle cx="165" cy="80" r="10" fill="#818cf8"/>
+            <circle cx="65" cy="160" r="10" fill="#34d399"/>
+            <circle cx="165" cy="160" r="10" fill="#facc15"/>
+            <line x1="115" y1="120" x2="65" y2="80" stroke="#00f5d4" stroke-width="2.5"/>
+            <line x1="115" y1="120" x2="165" y2="80" stroke="#00f5d4" stroke-width="2.5"/>
+            <line x1="115" y1="120" x2="65" y2="160" stroke="#00f5d4" stroke-width="2.5"/>
+            <line x1="115" y1="120" x2="165" y2="160" stroke="#00f5d4" stroke-width="2.5"/>
+          </g>
+        `
+      },
+
+      // 14. Audiovisual, Cine & Podcast
+      multimedia: {
+        bg1: '#0c0a26', bg2: '#1e144a', bg3: '#061633',
+        accent: '#818cf8', accent2: '#f43f5e',
+        kicker: subLabel || 'PRODUCCIÓN MULTIMEDIA & AUDIOVISUAL',
+        illust: `
+          <g transform="translate(485, 48)">
+            <circle cx="115" cy="120" r="105" fill="#818cf8" fill-opacity="0.14"/>
+            <g transform="translate(30, 40) rotate(-10 80 80)">
+              <rect x="0" y="32" width="160" height="110" rx="10" fill="#0f172a" stroke="#818cf8" stroke-width="3"/>
+              <rect x="0" y="0" width="160" height="32" rx="6" fill="#1e1b4b" stroke="#818cf8" stroke-width="3"/>
+              <polygon points="20,0 35,0 15,32 0,32" fill="#ffffff"/>
+              <polygon points="60,0 75,0 55,32 40,32" fill="#ffffff"/>
+              <polygon points="100,0 115,0 95,32 80,32" fill="#ffffff"/>
+              <polygon points="140,0 155,0 135,32 120,32" fill="#ffffff"/>
+              <circle cx="80" cy="85" r="26" fill="#f43f5e" stroke="#ffffff" stroke-width="2"/>
+              <polygon points="74,72 74,98 94,85" fill="#ffffff"/>
+            </g>
+          </g>
+        `
+      },
+
+      // 15. Gamificación, Desafíos & Torneos
+      gamification: {
+        bg1: '#1c1204', bg2: '#452205', bg3: '#0d1b33',
+        accent: '#facc15', accent2: '#f97316',
+        kicker: subLabel || 'GAMIFICACIÓN & DESAFÍO',
+        illust: `
+          <g transform="translate(485, 48)">
+            <circle cx="115" cy="120" r="105" fill="#facc15" fill-opacity="0.14"/>
+            <path d="M70 45 H160 V105 C160 130 140 150 115 150 C90 150 70 130 70 105 Z" fill="#ca8a04" stroke="#fef08a" stroke-width="3.5"/>
+            <path d="M70 60 H45 C45 95 70 105 70 105" fill="none" stroke="#facc15" stroke-width="4" stroke-linecap="round"/>
+            <path d="M160 60 H185 C185 95 160 105 160 105" fill="none" stroke="#facc15" stroke-width="4" stroke-linecap="round"/>
+            <rect x="108" y="150" width="14" height="30" fill="#ca8a04"/>
+            <rect x="80" y="180" width="70" height="20" rx="6" fill="#854d0e" stroke="#fef08a" stroke-width="2.5"/>
+            <polygon points="115,75 120,87 132,87 122,95 126,107 115,100 104,107 108,95 98,87 110,87" fill="#fef08a"/>
           </g>
         `
       }
     };
 
-    const t = themes[themeKey] || themes.pdf_0;
+    // Alias retrocompatibles
+    themes.book = themes.education;
+    themes.guide = themes.education;
+    themes.excel = themes.survey;
+    themes.word = themes.education;
+    themes.pres = themes.multimedia;
+    themes.zip = themes.code;
+    themes.link = themes.open_data;
+    themes.video = themes.multimedia;
+    themes.pdf_0 = themes.governance;
+    themes.pdf_1 = themes.ai_tech;
+    themes.pdf_2 = themes.science;
+
+    const t = themes[themeKey] || themes.survey;
     const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 360" width="800" height="360">
       <defs>
         <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -4243,56 +4373,70 @@ window.ProjectsView = {
       if (ytMatch) {
         return `https://img.youtube.com/vi/${ytMatch[1]}/hqdefault.jpg`;
       }
-      return this.buildThematicCoverSvg('video', title, 'VIDEO EXPLICATIVO');
+      return this.buildThematicCoverSvg('multimedia', title, 'VIDEO EXPLICATIVO');
     }
 
     if (kind === 'pres' || type === 'ppt' || fmt.includes('PPT') || cat.includes('presentac')) {
-      return this.buildThematicCoverSvg('pres', title, 'PRESENTACIÓN');
+      return this.buildThematicCoverSvg('multimedia', title, 'PRESENTACIÓN INTERACTIVA');
     }
 
-    if (kind === 'link') {
-      if (/survey|formulario|encuesta|forms\.gle|google\.com\/forms|quiz|test|result/i.test(haystack + ' ' + (item.url || ''))) {
-        return this.buildThematicCoverSvg('survey', title, 'FORMULARIO / ENCUESTA');
-      }
-      if (/libro|lectura|biblioteca|ebook|articulo|artículo|paper/i.test(haystack)) {
-        return this.buildThematicCoverSvg('book', title, 'LECTURA Y BIBLIOTECA WEB');
-      }
-      return this.buildThematicCoverSvg('link', title, item.category || 'RECURSO WEB');
-    }
-
-    // Detectar Libros, Lecturas, Cuentos, E-books
-    if (type === 'book' || /libro|lectura|cuento|novela|ebook|bibliotec|literatur|capítulo|capitulo|historia/i.test(haystack)) {
-      return this.buildThematicCoverSvg('book', title, 'LIBRO Y LECTURA');
-    }
-
-    // Detectar Encuestas, Formularios, Resultados, Cuestionarios
-    if (type === 'survey' || /survey|formulario|encuesta|results|resultado|cuestionario|evaluaci/i.test(haystack)) {
+    // Auto-detección inteligente para los 15 temas temáticos:
+    if (/survey|formulario|encuesta|results|resultado|cuestionario|evaluaci|metricas|métrica|analitica/i.test(haystack)) {
       return this.buildThematicCoverSvg('survey', title, 'ENCUESTA Y RESULTADOS');
     }
-
-    // Detectar Guías, Manuales, Cartillas, Apuntes
-    if (type === 'guide' || type === 'manual' || /guía|guia|manual|cartilla|instructivo|tutorial|apuntes/i.test(haystack)) {
-      return this.buildThematicCoverSvg('guide', title, 'GUÍA Y MANUAL');
+    if (/ia|inteligencia\s+artificial|robot|machine\s+learning|red\s+neuronal|deep\s+learning|cyber/i.test(haystack)) {
+      return this.buildThematicCoverSvg('ai_tech', title, 'IA & ROBÓTICA');
+    }
+    if (/cienc|laboratorio|quimic|fisic|experimento|biolog|investigaci|paper/i.test(haystack)) {
+      return this.buildThematicCoverSvg('science', title, 'CIENCIA & INVESTIGACIÓN');
+    }
+    if (/negocio|empresa|financ|econom|presupuesto|costo|inversion|plan\s+de\s+negoci|comercial/i.test(haystack)) {
+      return this.buildThematicCoverSvg('business', title, 'NEGOCIOS & FINANZAS');
+    }
+    if (/gobernanza|dama|norma|legal|ley|regulaci|politica|etica|compliance/i.test(haystack)) {
+      return this.buildThematicCoverSvg('governance', title, 'GOBERNANZA DE DATOS');
+    }
+    if (/seguridad|ciber|privacidad|firewall|hacker|vulnerab|protecci|cifrado|iso\s*27001/i.test(haystack)) {
+      return this.buildThematicCoverSvg('cybersecurity', title, 'CIBERSEGURIDAD & PROTECCIÓN');
+    }
+    if (/ambient|ecolog|sostenib|clima|verde|reciclaj|planeta|tierra|energ/i.test(haystack)) {
+      return this.buildThematicCoverSvg('environment', title, 'SOSTENIBILIDAD & ECOLOGÍA');
+    }
+    if (/salud|medicin|clinic|biomed|paciente|enfermed|terapia|hospital|bienestar/i.test(haystack)) {
+      return this.buildThematicCoverSvg('health', title, 'SALUD & BIOMÉDICA');
+    }
+    if (/codig|program|software|algoritm|python|javascript|desarroll|api|backend|frontend/i.test(haystack)) {
+      return this.buildThematicCoverSvg('code', title, 'SOFTWARE & CÓDIGO');
+    }
+    if (/innovaci|startup|hackathon|emprendim|lanzamient|mision|cohete|disrupti/i.test(haystack)) {
+      return this.buildThematicCoverSvg('innovation', title, 'INNOVACIÓN & STARTUP');
+    }
+    if (/diseñ|arte|ux|ui|creativid|grafic|ilustrac|interfaz|branding/i.test(haystack)) {
+      return this.buildThematicCoverSvg('design', title, 'DISEÑO & UX/UI');
+    }
+    if (/educaci|pedagog|libro|lectura|docente|profesor|guia|manual|cartilla|clase|taller|didactic/i.test(haystack)) {
+      return this.buildThematicCoverSvg('education', title, 'PEDAGOGÍA & GUÍA DOCENTE');
+    }
+    if (/datos\s+abiertos|open\s+data|gobierno\s+digital|transparencia|ciudad|red|portal/i.test(haystack)) {
+      return this.buildThematicCoverSvg('open_data', title, 'DATOS ABIERTOS & RED');
+    }
+    if (/multimedia|video|audio|podcast|cine|producci|streaming|audiovisual|youtube/i.test(haystack)) {
+      return this.buildThematicCoverSvg('multimedia', title, 'MULTIMEDIA & AUDIOVISUAL');
+    }
+    if (/juego|gamif|torneo|trofeo|desafio|reto|puntuaci|trivia|quiz|compet/i.test(haystack)) {
+      return this.buildThematicCoverSvg('gamification', title, 'GAMIFICACIÓN & RETO');
     }
 
-    // Detectar Hojas de Cálculo Excel / CSV / Datos
-    if (type === 'excel' || fmt.match(/XLS|CSV/) || /excel|dataset|estadístic|estadistic|tabla|presupuesto|métrica/i.test(haystack)) {
-      return this.buildThematicCoverSvg('excel', title, 'HOJA DE DATOS');
-    }
+    // Si es un archivo específico
+    if (fmt.match(/XLS|CSV/)) return this.buildThematicCoverSvg('survey', title, 'HOJA DE DATOS');
+    if (fmt.match(/DOC|DOCX/)) return this.buildThematicCoverSvg('education', title, 'DOCUMENTO EDITORIAL');
+    if (fmt.match(/ZIP|RAR/)) return this.buildThematicCoverSvg('code', title, 'PAQUETE DE CÓDIGO');
+    if (kind === 'link') return this.buildThematicCoverSvg('open_data', title, item.category || 'RECURSO WEB');
 
-    // Detectar Documentos Word
-    if (type === 'word' || fmt.match(/DOC|DOCX/) && !fmt.includes('PDF')) {
-      return this.buildThematicCoverSvg('word', title, 'DOCUMENTO EDITORIAL');
-    }
-
-    // Detectar Paquetes ZIP
-    if (type === 'zip' || fmt.includes('ZIP') || fmt.includes('RAR')) {
-      return this.buildThematicCoverSvg('zip', title, 'PAQUETE DESCARGABLE');
-    }
-
-    // Documentos PDF / Oficiales (rotando entre 3 diseños ejecutivos para que varios PDFs seguidos se vean variados y atractivos)
-    const pdfVariant = 'pdf_' + (Math.abs(Number(idx) || 0) % 3);
-    return this.buildThematicCoverSvg(pdfVariant, title, 'DOCUMENTO PDF OFICIAL');
+    // Asignación balanceada rotando entre los 15 temas temáticos para recursos genéricos
+    const presetsList = ['survey', 'ai_tech', 'science', 'business', 'governance', 'cybersecurity', 'environment', 'health', 'code', 'innovation', 'design', 'education', 'open_data', 'multimedia', 'gamification'];
+    const chosenTheme = presetsList[Math.abs(Number(idx) || 0) % presetsList.length];
+    return this.buildThematicCoverSvg(chosenTheme, title, 'DOCUMENTO DEL PROYECTO');
   },
 
   renderLandingPageView(container, allProjects = []) {
@@ -4539,8 +4683,19 @@ window.ProjectsView = {
 
       cardsHtml += `
         <article class="inno-resource-card" data-category="${dataCat}" data-plp-search="${this.escapeHtml(rSearch)}">
-          <div class="inno-card-thumb-wrap" style="background-image:url('${this.escapeHtml(thumbUrl)}'); background-size:cover; background-position:center; cursor:pointer;" onclick="${actionFn}">
+          <div class="inno-card-thumb-wrap" style="position:relative; background-image:url('${this.escapeHtml(thumbUrl)}'); background-size:cover; background-position:center; cursor:pointer;" onclick="${actionFn}">
             <span class="inno-card-tag" style="background:${tagColor};">${tagLabel}</span>
+            <button 
+              type="button" 
+              class="inno-card-banner-btn" 
+              onclick="event.stopPropagation(); window.ProjectsView.openResourceBannerPicker(${idx}, 'doc')" 
+              title="Cambiar a uno de los 15 Banners Temáticos"
+              style="position:absolute; top:8px; right:8px; background:rgba(7, 19, 43, 0.85); border:1.5px solid #00f5d4; color:#00f5d4; border-radius:999px; padding:0.25rem 0.65rem; font-size:0.75rem; font-weight:800; cursor:pointer; backdrop-filter:blur(6px); display:inline-flex; align-items:center; gap:0.3rem; z-index:4; box-shadow:0 4px 12px rgba(0,0,0,0.5); transition:transform 0.15s ease;"
+              onmouseenter="this.style.transform='scale(1.08)';"
+              onmouseleave="this.style.transform='none';"
+            >
+              <span>🎨</span> <span>Banner</span>
+            </button>
           </div>
           <div class="inno-card-body">
             <div>
@@ -4572,8 +4727,19 @@ window.ProjectsView = {
 
       cardsHtml += `
         <article class="inno-resource-card" data-category="link" data-plp-search="${this.escapeHtml(lSearch)}">
-          <div class="inno-card-thumb-wrap" style="background-image:url('${this.escapeHtml(linkThumb)}'); background-size:cover; background-position:center; cursor:pointer;" onclick="window.open('${this.escapeHtml(lnk.url)}', '_blank')">
+          <div class="inno-card-thumb-wrap" style="position:relative; background-image:url('${this.escapeHtml(linkThumb)}'); background-size:cover; background-position:center; cursor:pointer;" onclick="window.open('${this.escapeHtml(lnk.url)}', '_blank')">
             <span class="inno-card-tag" style="background:#10b981;">🔗 ${this.escapeHtml(lCat)}</span>
+            <button 
+              type="button" 
+              class="inno-card-banner-btn" 
+              onclick="event.stopPropagation(); window.ProjectsView.openResourceBannerPicker(${idx}, 'link')" 
+              title="Cambiar a uno de los 15 Banners Temáticos"
+              style="position:absolute; top:8px; right:8px; background:rgba(7, 19, 43, 0.85); border:1.5px solid #10b981; color:#34d399; border-radius:999px; padding:0.25rem 0.65rem; font-size:0.75rem; font-weight:800; cursor:pointer; backdrop-filter:blur(6px); display:inline-flex; align-items:center; gap:0.3rem; z-index:4; box-shadow:0 4px 12px rgba(0,0,0,0.5); transition:transform 0.15s ease;"
+              onmouseenter="this.style.transform='scale(1.08)';"
+              onmouseleave="this.style.transform='none';"
+            >
+              <span>🎨</span> <span>Banner</span>
+            </button>
           </div>
           <div class="inno-card-body">
             <div>
@@ -5569,6 +5735,176 @@ Generado por Mentix - Plataforma de Proyectos y Retos
       </div>
     `;
     modal.classList.add('active');
+  },
+
+  openResourceBannerPicker(resourceIndex, kind = 'doc') {
+    const existing = document.getElementById('mentix-res-banner-picker-modal');
+    if (existing) existing.remove();
+
+    const selected = this.getMergedProjectRecord(this.selectedProjectId);
+    if (!selected) {
+      alert('⚠️ No se encontró el proyecto activo.');
+      return;
+    }
+
+    const gp = selected.govdata || {};
+    let item = null;
+    let title = '';
+
+    if (kind === 'doc') {
+      const resources = selected.resources || gp.resources || [];
+      item = resources[resourceIndex];
+      title = item ? (item.name || item.title || `Documento ${resourceIndex + 1}`) : 'Documento';
+    } else if (kind === 'link') {
+      const links = selected.externalLinks || gp.externalLinks || [];
+      item = links[resourceIndex];
+      title = item ? (item.title || `Enlace ${resourceIndex + 1}`) : 'Enlace';
+    }
+
+    if (!item) {
+      alert('⚠️ Recurso no encontrado.');
+      return;
+    }
+
+    const currentThumb = item.thumbnailUrl || '';
+    const presets = this.getThematicCoverPresets();
+
+    const modal = document.createElement('div');
+    modal.id = 'mentix-res-banner-picker-modal';
+    modal.style.cssText = 'position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(4,9,24,0.92); backdrop-filter:blur(12px); z-index:9999999; display:flex; align-items:center; justify-content:center; padding:1.25rem; overflow-y:auto;';
+
+    modal.innerHTML = `
+      <div style="background: linear-gradient(135deg, #071739 0%, #0d204d 50%, #071129 100%); border: 2px solid #00f5d4; border-radius: 22px; max-width: 980px; width: 100%; max-height: 90vh; overflow-y: auto; padding: 2rem; box-shadow: 0 25px 70px rgba(0,0,0,0.85), 0 0 45px rgba(0,245,212,0.25); color: #ffffff; position: relative;">
+        <!-- Header -->
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.12); padding-bottom: 1.25rem;">
+          <div>
+            <div style="display: inline-flex; align-items: center; gap: 0.4rem; background: rgba(0,245,212,0.15); border: 1px solid #00f5d4; padding: 0.25rem 0.75rem; border-radius: 999px; font-size: 0.78rem; font-weight: 900; color: #00f5d4; margin-bottom: 0.45rem;">
+              🎨 PERSONALIZADOR DE BANNERS TEMÁTICOS
+            </div>
+            <h2 style="margin: 0; font-size: 1.5rem; font-weight: 900; color: #ffffff;">
+              Elige el Banner para "${this.escapeHtml(title)}"
+            </h2>
+            <p style="margin: 0.4rem 0 0; color: #cbd5e1; font-size: 0.9rem;">
+              Selecciona uno de los <strong>15 temas visuales</strong> diseñados con ilustraciones vectoriales de alta fidelidad:
+            </p>
+          </div>
+          <button 
+            type="button" 
+            onclick="document.getElementById('mentix-res-banner-picker-modal').remove()" 
+            style="background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.2); color: #ffffff; width: 38px; height: 38px; border-radius: 50%; font-size: 1.2rem; cursor: pointer; display: flex; align-items: center; justify-content: center;"
+          >✕</button>
+        </div>
+
+        <!-- Opción Automática -->
+        <div style="margin-bottom: 1.25rem; display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.35); padding: 0.75rem 1.25rem; border-radius: 14px; border: 1px dashed rgba(255,255,255,0.15);">
+          <div>
+            <strong style="color: #00f5d4; font-size: 0.92rem;">🪄 Banner Automático Inteligente:</strong>
+            <span style="color: #cbd5e1; font-size: 0.85rem; margin-left: 0.4rem;">Detecta palabras clave del recurso (encuestas, IA, ciencia, finanzas, código...).</span>
+          </div>
+          <button 
+            type="button" 
+            onclick="window.ProjectsView.applyResourceBannerPreset(${resourceIndex}, '${kind}', '')"
+            style="background: ${!currentThumb ? 'rgba(0,245,212,0.3)' : 'rgba(255,255,255,0.1)'}; color: ${!currentThumb ? '#00f5d4' : '#ffffff'}; border: 1px solid ${!currentThumb ? '#00f5d4' : 'rgba(255,255,255,0.3)'}; border-radius: 10px; padding: 0.5rem 1rem; font-size: 0.85rem; font-weight: 800; cursor: pointer;"
+          >
+            ${!currentThumb ? '✓ Activo (Automático)' : 'Restaurar Automático'}
+          </button>
+        </div>
+
+        <!-- Cuadrícula de 15 Banners Temáticos -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem;">
+          ${presets.map(p => {
+            const isSelected = currentThumb === 'preset:' + p.key;
+            const previewSvg = this.buildThematicCoverSvg(p.key, title, p.kicker);
+            return `
+              <div 
+                onclick="window.ProjectsView.applyResourceBannerPreset(${resourceIndex}, '${kind}', 'preset:${p.key}')"
+                style="border-radius: 14px; overflow: hidden; border: 2px solid ${isSelected ? '#00f5d4' : 'rgba(255,255,255,0.15)'}; background: #07122e; cursor: pointer; transition: all 0.2s ease; position: relative; box-shadow: ${isSelected ? '0 0 20px rgba(0,245,212,0.35)' : 'none'};"
+                onmouseenter="this.style.transform='translateY(-4px)'; this.style.borderColor='#00f5d4';"
+                onmouseleave="this.style.transform='none'; this.style.borderColor='${isSelected ? '#00f5d4' : 'rgba(255,255,255,0.15)'}';"
+              >
+                <div style="height: 125px; width: 100%; overflow: hidden; position: relative; background: #000;">
+                  <img src="${previewSvg}" alt="${p.label}" style="width: 100%; height: 100%; object-fit: cover; display: block;" />
+                  <span style="position: absolute; top: 8px; left: 8px; background: rgba(0,0,0,0.75); color: #00f5d4; font-size: 0.72rem; font-weight: 900; padding: 0.2rem 0.6rem; border-radius: 6px; backdrop-filter: blur(4px);">
+                    ${p.icon} ${p.category}
+                  </span>
+                  ${isSelected ? `
+                    <span style="position: absolute; top: 8px; right: 8px; background: #00f5d4; color: #071739; font-size: 0.75rem; font-weight: 900; padding: 0.2rem 0.6rem; border-radius: 6px; box-shadow: 0 0 10px rgba(0,245,212,0.8);">
+                      ✓ SELECCIONADO
+                    </span>
+                  ` : ''}
+                </div>
+                <div style="padding: 0.85rem 1rem;">
+                  <div style="font-size: 0.95rem; font-weight: 900; color: #ffffff; margin-bottom: 0.25rem;">
+                    ${p.icon} ${p.label}
+                  </div>
+                  <div style="font-size: 0.78rem; color: #94a3b8; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">
+                    ${p.kicker}
+                  </div>
+                </div>
+              </div>
+            `;
+          }).join('')}
+        </div>
+      </div>
+    `;
+
+    document.body.appendChild(modal);
+  },
+
+  applyResourceBannerPreset(resourceIndex, kind, presetValue) {
+    let selected = this.getMergedProjectRecord(this.selectedProjectId);
+    if (!selected) return;
+
+    const gp = selected.govdata || {};
+
+    if (kind === 'doc') {
+      if (selected.resources && selected.resources[resourceIndex]) {
+        selected.resources[resourceIndex].thumbnailUrl = presetValue;
+      }
+      if (gp.resources && gp.resources[resourceIndex]) {
+        gp.resources[resourceIndex].thumbnailUrl = presetValue;
+      }
+    } else if (kind === 'link') {
+      if (selected.externalLinks && selected.externalLinks[resourceIndex]) {
+        selected.externalLinks[resourceIndex].thumbnailUrl = presetValue;
+      }
+      if (gp.externalLinks && gp.externalLinks[resourceIndex]) {
+        gp.externalLinks[resourceIndex].thumbnailUrl = presetValue;
+      }
+    }
+
+    try {
+      localStorage.setItem('mentix_active_landing_project', JSON.stringify(selected));
+      const draftsRaw = localStorage.getItem('mentix_govdata_wizard_drafts');
+      if (draftsRaw) {
+        const drafts = JSON.parse(draftsRaw);
+        if (drafts[this.selectedProjectId]) {
+          drafts[this.selectedProjectId] = selected;
+          localStorage.setItem('mentix_govdata_wizard_drafts', JSON.stringify(drafts));
+        }
+      }
+      const chRaw = localStorage.getItem('te_reto_challenges');
+      if (chRaw) {
+        const list = JSON.parse(chRaw);
+        const idx = list.findIndex(c => String(c.id) === String(this.selectedProjectId));
+        if (idx >= 0) {
+          list[idx] = selected;
+          localStorage.setItem('te_reto_challenges', JSON.stringify(list));
+        }
+      }
+      if (window.appState?.challenges) {
+        const idx = window.appState.challenges.findIndex(c => String(c.id) === String(this.selectedProjectId));
+        if (idx >= 0) window.appState.challenges[idx] = selected;
+      }
+    } catch (e) {
+      console.warn('Error saving banner preset:', e);
+    }
+
+    const modal = document.getElementById('mentix-res-banner-picker-modal');
+    if (modal) modal.remove();
+
+    this.showToast('🎨 ¡Banner temático asignado al recurso con éxito!');
+    this.render();
   },
 
   openLandingSlidesModal(index = 0) {
