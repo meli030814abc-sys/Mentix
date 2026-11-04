@@ -81,7 +81,22 @@
     },
     "resources": [],
     "visualAssets": [],
-    "slides": [],
+    "slides": [
+      {
+        "id": "slide_1793754672683_848m",
+        "title": "Diapositiva #1",
+        "subtitle": "",
+        "content": "",
+        "bullets": [],
+        "layout": "split",
+        "media": "",
+        "notes": "",
+        "bgColor": "#0b091a",
+        "themeId": "cosmos",
+        "imageUrl": "",
+        "bgImage": ""
+      }
+    ],
     "externalLinks": [],
     "landingConfig": {
       "publicName": "",
@@ -213,7 +228,7 @@
         "collaborators": ""
       },
       "createdAt": "2026-11-04T01:10:44.818Z",
-      "updatedAt": "2026-11-04T01:11:08.611Z",
+      "updatedAt": "2026-11-04T01:11:12.683Z",
       "code": "pROYECT",
       "joinedCode": "pROYECT",
       "progress": 63,
@@ -225,7 +240,7 @@
     "authorAvatar": "🦄",
     "authorRole": "Líder del Proyecto",
     "createdAt": "2026-11-04T01:10:44.818Z",
-    "updatedAt": "2026-11-04T01:11:08.773Z",
+    "updatedAt": "2026-11-04T01:11:12.802Z",
     "image": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
     "rejectionReason": ""
   },
