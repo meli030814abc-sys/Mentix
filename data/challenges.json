@@ -29,10 +29,13 @@
     "isPublic": false,
     "startDate": "2026-11-04",
     "endDate": "",
-    "currentStep": 3,
+    "currentStep": 6,
     "completedSteps": [
       1,
-      2
+      2,
+      3,
+      4,
+      5
     ],
     "progress": 40,
     "calculatedProgress": 40,
@@ -171,14 +174,17 @@
       "publicationStatus": "draft",
       "completedSteps": [
         1,
-        2
+        2,
+        3,
+        4,
+        5
       ],
-      "currentStep": 3,
+      "currentStep": 6,
       "author": "Melisa",
       "authorId": "user_1792184134006",
       "authorEmail": "gatitaxd6f79@gmail.com",
       "authorAvatar": "🦄",
-      "authorRole": "admin",
+      "authorRole": "Líder del Proyecto",
       "designConfig": {
         "themeId": "cosmos",
         "fontFamily": "Montserrat",
@@ -196,7 +202,7 @@
         "collaborators": ""
       },
       "createdAt": "2026-11-04T01:11:52.407Z",
-      "updatedAt": "2026-11-04T01:11:54.171Z",
+      "updatedAt": "2026-11-04T01:11:58.883Z",
       "code": "201",
       "joinedCode": "201",
       "progress": 40,
@@ -206,9 +212,9 @@
     "authorId": "user_1792184134006",
     "authorEmail": "gatitaxd6f79@gmail.com",
     "authorAvatar": "🦄",
-    "authorRole": "admin",
+    "authorRole": "Líder del Proyecto",
     "createdAt": "2026-11-04T01:11:52.407Z",
-    "updatedAt": "2026-11-04T01:11:54.266Z",
+    "updatedAt": "2026-11-04T01:11:58.979Z",
     "image": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
     "rejectionReason": ""
   },
