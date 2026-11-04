@@ -29,7 +29,7 @@
     "isPublic": false,
     "startDate": "2026-11-04",
     "endDate": "",
-    "currentStep": 10,
+    "currentStep": 9,
     "completedSteps": [
       1,
       2,
@@ -38,11 +38,10 @@
       5,
       6,
       7,
-      8,
-      9
+      8
     ],
-    "progress": 56,
-    "calculatedProgress": 56,
+    "progress": 50,
+    "calculatedProgress": 50,
     "valueProp": {
       "problemSolved": "",
       "howItWorks": "",
@@ -184,10 +183,9 @@
         5,
         6,
         7,
-        8,
-        9
+        8
       ],
-      "currentStep": 10,
+      "currentStep": 9,
       "author": "Melisa",
       "authorId": "user_1792184134006",
       "authorEmail": "gatitaxd6f79@gmail.com",
@@ -210,11 +208,11 @@
         "collaborators": ""
       },
       "createdAt": "2026-11-04T01:10:44.818Z",
-      "updatedAt": "2026-11-04T01:10:55.251Z",
+      "updatedAt": "2026-11-04T01:10:54.323Z",
       "code": "pROYECT",
       "joinedCode": "pROYECT",
-      "progress": 56,
-      "calculatedProgress": 56
+      "progress": 50,
+      "calculatedProgress": 50
     },
     "author": "Melisa",
     "authorId": "user_1792184134006",
@@ -222,7 +220,7 @@
     "authorAvatar": "🦄",
     "authorRole": "Líder del Proyecto",
     "createdAt": "2026-11-04T01:10:44.818Z",
-    "updatedAt": "2026-11-04T01:10:55.347Z",
+    "updatedAt": "2026-11-04T01:10:54.413Z",
     "image": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
     "rejectionReason": ""
   },
