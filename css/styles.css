@@ -5635,31 +5635,255 @@ body.projects-pure-white-theme #view-projects:has(.gdn-wizard-shell) {
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
 }
 
-/* Modo Claro Adaptativo */
-body.light-theme .pedagogical-case-card {
+/* ==============================================================
+   Modo Claro Adaptativo para Casos Pedagógicos (CNSC / Situacionales)
+   ============================================================== */
+body.light-theme .pedagogical-case-card,
+body[data-theme="light"] .pedagogical-case-card,
+.light-theme .pedagogical-case-card,
+[data-theme="light"] .pedagogical-case-card {
   background: #ffffff !important;
-  color: #1e293b !important;
-  border: 1.5px solid #e2e8f0;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
-}
-body.light-theme .pedagogical-case-theme {
   color: #0f172a !important;
+  border: 1.5px solid #e2e8f0 !important;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08) !important;
 }
-body.light-theme .pedagogical-case-context-text {
+
+body.light-theme .pedagogical-case-subtitle,
+body[data-theme="light"] .pedagogical-case-subtitle,
+.light-theme .pedagogical-case-subtitle,
+[data-theme="light"] .pedagogical-case-subtitle {
+  color: #0284c7 !important;
+}
+
+body.light-theme .pedagogical-case-timer-pill,
+body[data-theme="light"] .pedagogical-case-timer-pill,
+.light-theme .pedagogical-case-timer-pill,
+[data-theme="light"] .pedagogical-case-timer-pill {
+  background: #fefce8 !important;
+  border: 1.5px solid #ca8a04 !important;
+  color: #a16207 !important;
+  text-shadow: none !important;
+}
+
+body.light-theme .pedagogical-case-score-pill,
+body[data-theme="light"] .pedagogical-case-score-pill,
+.light-theme .pedagogical-case-score-pill,
+[data-theme="light"] .pedagogical-case-score-pill {
+  background: #fffbeb !important;
+  border: 1.5px solid #d97706 !important;
+  color: #b45309 !important;
+  text-shadow: none !important;
+}
+
+body.light-theme .pedagogical-case-theme,
+body[data-theme="light"] .pedagogical-case-theme,
+.light-theme .pedagogical-case-theme,
+[data-theme="light"] .pedagogical-case-theme {
+  color: #0f172a !important;
+  text-shadow: none !important;
+}
+
+body.light-theme .pedagogical-case-context-text,
+body[data-theme="light"] .pedagogical-case-context-text,
+.light-theme .pedagogical-case-context-text,
+[data-theme="light"] .pedagogical-case-context-text {
   color: #334155 !important;
 }
-body.light-theme .pedagogical-case-question-statement {
-  color: #0f172a !important;
+
+body.light-theme .pedagogical-case-question-statement,
+body[data-theme="light"] .pedagogical-case-question-statement,
+.light-theme .pedagogical-case-question-statement,
+[data-theme="light"] .pedagogical-case-question-statement {
+  color: #0369a1 !important;
+  text-shadow: none !important;
 }
-body.light-theme .pedagogical-case-option-card {
+
+body.light-theme .pedagogical-case-norm-box,
+body[data-theme="light"] .pedagogical-case-norm-box,
+.light-theme .pedagogical-case-norm-box,
+[data-theme="light"] .pedagogical-case-norm-box {
   background: #f8fafc !important;
-  border-color: #e2e8f0 !important;
-  color: #1e293b !important;
+  border: 1px solid #e2e8f0 !important;
+  border-left: 4px solid #ef4444 !important;
+  color: #475569 !important;
 }
-body.light-theme .pedagogical-case-option-card .pedagogical-case-badge-circle {
+
+body.light-theme .pedagogical-case-norm-box strong,
+body[data-theme="light"] .pedagogical-case-norm-box strong,
+.light-theme .pedagogical-case-norm-box strong,
+[data-theme="light"] .pedagogical-case-norm-box strong {
+  color: #b45309 !important;
+}
+
+/* Opciones de respuesta en modo claro */
+body.light-theme .pedagogical-case-option-card,
+body[data-theme="light"] .pedagogical-case-option-card,
+.light-theme .pedagogical-case-option-card,
+[data-theme="light"] .pedagogical-case-option-card {
   background: #ffffff !important;
-  border-color: #cbd5e1 !important;
-  color: #334155 !important;
+  border: 1.5px solid #cbd5e1 !important;
+  color: #0f172a !important;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04) !important;
+}
+
+body.light-theme .pedagogical-case-option-card:hover:not(:disabled),
+body[data-theme="light"] .pedagogical-case-option-card:hover:not(:disabled),
+.light-theme .pedagogical-case-option-card:hover:not(:disabled),
+[data-theme="light"] .pedagogical-case-option-card:hover:not(:disabled) {
+  background: #eff6ff !important;
+  border-color: #2563eb !important;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(37, 99, 235, 0.14) !important;
+}
+
+body.light-theme .pedagogical-case-badge-circle,
+body[data-theme="light"] .pedagogical-case-badge-circle,
+.light-theme .pedagogical-case-badge-circle,
+[data-theme="light"] .pedagogical-case-badge-circle,
+body.light-theme .pedagogical-case-option-card .pedagogical-case-badge-circle,
+body[data-theme="light"] .pedagogical-case-option-card .pedagogical-case-badge-circle,
+.light-theme .pedagogical-case-option-card .pedagogical-case-badge-circle,
+[data-theme="light"] .pedagogical-case-option-card .pedagogical-case-badge-circle {
+  background: #f1f5f9 !important;
+  border: 2px solid #94a3b8 !important;
+  color: #0f172a !important;
+  font-weight: 900 !important;
+}
+
+body.light-theme .pedagogical-case-option-card:hover:not(:disabled) .pedagogical-case-badge-circle,
+body[data-theme="light"] .pedagogical-case-option-card:hover:not(:disabled) .pedagogical-case-badge-circle,
+.light-theme .pedagogical-case-option-card:hover:not(:disabled) .pedagogical-case-badge-circle,
+[data-theme="light"] .pedagogical-case-option-card:hover:not(:disabled) .pedagogical-case-badge-circle {
+  background: #dbeafe !important;
+  border-color: #2563eb !important;
+  color: #1d4ed8 !important;
+}
+
+/* TEXTO DE LAS OPCIONES EN MODO CLARO - 100% LEGIBLE Y NOTORIO */
+body.light-theme .pedagogical-case-option-text,
+body[data-theme="light"] .pedagogical-case-option-text,
+.light-theme .pedagogical-case-option-text,
+[data-theme="light"] .pedagogical-case-option-text,
+body.light-theme .pedagogical-case-option-card .pedagogical-case-option-text,
+body[data-theme="light"] .pedagogical-case-option-card .pedagogical-case-option-text,
+.light-theme .pedagogical-case-option-card .pedagogical-case-option-text,
+[data-theme="light"] .pedagogical-case-option-card .pedagogical-case-option-text {
+  color: #0f172a !important;
+  font-weight: 700 !important;
+}
+
+body.light-theme .pedagogical-case-option-card:hover:not(:disabled) .pedagogical-case-option-text,
+body[data-theme="light"] .pedagogical-case-option-card:hover:not(:disabled) .pedagogical-case-option-text,
+.light-theme .pedagogical-case-option-card:hover:not(:disabled) .pedagogical-case-option-text,
+[data-theme="light"] .pedagogical-case-option-card:hover:not(:disabled) .pedagogical-case-option-text {
+  color: #1e3a8a !important;
+}
+
+/* Opción seleccionada en modo claro */
+body.light-theme .pedagogical-case-option-card.is-selected,
+body[data-theme="light"] .pedagogical-case-option-card.is-selected,
+.light-theme .pedagogical-case-option-card.is-selected,
+[data-theme="light"] .pedagogical-case-option-card.is-selected {
+  background: #fef2f2 !important;
+  border: 2px solid #dc2626 !important;
+  box-shadow: 0 4px 18px rgba(220, 38, 38, 0.22) !important;
+}
+
+body.light-theme .pedagogical-case-option-card.is-selected .pedagogical-case-badge-circle,
+body[data-theme="light"] .pedagogical-case-option-card.is-selected .pedagogical-case-badge-circle,
+.light-theme .pedagogical-case-option-card.is-selected .pedagogical-case-badge-circle,
+[data-theme="light"] .pedagogical-case-option-card.is-selected .pedagogical-case-badge-circle {
+  background: #dc2626 !important;
+  border-color: #dc2626 !important;
+  color: #ffffff !important;
+  box-shadow: 0 0 10px rgba(220, 38, 38, 0.5) !important;
+}
+
+body.light-theme .pedagogical-case-option-card.is-selected .pedagogical-case-option-text,
+body[data-theme="light"] .pedagogical-case-option-card.is-selected .pedagogical-case-option-text,
+.light-theme .pedagogical-case-option-card.is-selected .pedagogical-case-option-text,
+[data-theme="light"] .pedagogical-case-option-card.is-selected .pedagogical-case-option-text {
+  color: #991b1b !important;
+  font-weight: 800 !important;
+}
+
+/* Opción Correcta en modo claro */
+body.light-theme .pedagogical-case-option-card.is-correct,
+body[data-theme="light"] .pedagogical-case-option-card.is-correct,
+.light-theme .pedagogical-case-option-card.is-correct,
+[data-theme="light"] .pedagogical-case-option-card.is-correct {
+  background: #ecfdf5 !important;
+  border: 2px solid #10b981 !important;
+  box-shadow: 0 4px 18px rgba(16, 185, 129, 0.22) !important;
+}
+
+body.light-theme .pedagogical-case-option-card.is-correct .pedagogical-case-badge-circle,
+body[data-theme="light"] .pedagogical-case-option-card.is-correct .pedagogical-case-badge-circle,
+.light-theme .pedagogical-case-option-card.is-correct .pedagogical-case-badge-circle,
+[data-theme="light"] .pedagogical-case-option-card.is-correct .pedagogical-case-badge-circle {
+  background: #10b981 !important;
+  border-color: #10b981 !important;
+  color: #ffffff !important;
+}
+
+body.light-theme .pedagogical-case-option-card.is-correct .pedagogical-case-option-text,
+body[data-theme="light"] .pedagogical-case-option-card.is-correct .pedagogical-case-option-text,
+.light-theme .pedagogical-case-option-card.is-correct .pedagogical-case-option-text,
+[data-theme="light"] .pedagogical-case-option-card.is-correct .pedagogical-case-option-text {
+  color: #065f46 !important;
+  font-weight: 800 !important;
+}
+
+/* Opción Incorrecta en modo claro */
+body.light-theme .pedagogical-case-option-card.is-wrong,
+body[data-theme="light"] .pedagogical-case-option-card.is-wrong,
+.light-theme .pedagogical-case-option-card.is-wrong,
+[data-theme="light"] .pedagogical-case-option-card.is-wrong {
+  background: #fff1f2 !important;
+  border: 2px solid #ef4444 !important;
+  box-shadow: 0 4px 18px rgba(239, 68, 68, 0.22) !important;
+}
+
+body.light-theme .pedagogical-case-option-card.is-wrong .pedagogical-case-badge-circle,
+body[data-theme="light"] .pedagogical-case-option-card.is-wrong .pedagogical-case-badge-circle,
+.light-theme .pedagogical-case-option-card.is-wrong .pedagogical-case-badge-circle,
+[data-theme="light"] .pedagogical-case-option-card.is-wrong .pedagogical-case-badge-circle {
+  background: #ef4444 !important;
+  border-color: #ef4444 !important;
+  color: #ffffff !important;
+}
+
+body.light-theme .pedagogical-case-option-card.is-wrong .pedagogical-case-option-text,
+body[data-theme="light"] .pedagogical-case-option-card.is-wrong .pedagogical-case-option-text,
+.light-theme .pedagogical-case-option-card.is-wrong .pedagogical-case-option-text,
+[data-theme="light"] .pedagogical-case-option-card.is-wrong .pedagogical-case-option-text {
+  color: #9f1239 !important;
+  font-weight: 800 !important;
+}
+
+/* Caja de Feedback en modo claro */
+body.light-theme .pedagogical-feedback-box,
+body[data-theme="light"] .pedagogical-feedback-box,
+.light-theme .pedagogical-feedback-box,
+[data-theme="light"] .pedagogical-feedback-box {
+  background: #f8fafc !important;
+  border: 1.5px solid #cbd5e1 !important;
+  color: #1e293b !important;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05) !important;
+}
+
+body.light-theme .pedagogical-feedback-box div,
+body[data-theme="light"] .pedagogical-feedback-box div,
+.light-theme .pedagogical-feedback-box div,
+[data-theme="light"] .pedagogical-feedback-box div {
+  color: #1e293b;
+}
+
+body.light-theme .pedagogical-feedback-box span,
+body[data-theme="light"] .pedagogical-feedback-box span,
+.light-theme .pedagogical-feedback-box span,
+[data-theme="light"] .pedagogical-feedback-box span {
+  color: #334155;
 }
 
 /* ==============================================================

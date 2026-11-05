@@ -734,6 +734,9 @@ window.GameView = {
     }
 
     const letters = ['A', 'B', 'C', 'D', 'E', 'F'];
+    const isLightMode = document.body.classList.contains('light-theme') || 
+                        document.body.getAttribute('data-theme') === 'light' || 
+                        document.documentElement.getAttribute('data-theme') === 'light';
 
     container.innerHTML = `
       <div class="pedagogical-case-wrapper">
@@ -814,7 +817,7 @@ window.GameView = {
                       ${isClickable ? `onclick="window.GameView.onSelectCaseOption(${displayIdx})"` : 'disabled'}
                     >
                       <span class="pedagogical-case-badge-circle">${letter}</span>
-                      <span class="pedagogical-case-option-text">${this.escapeHtml(optText)}</span>
+                      <span class="pedagogical-case-option-text" style="${isLightMode ? 'color: #0f172a !important;' : ''}">${this.escapeHtml(optText)}</span>
                     </button>
                   `;
                 }).join('')}
@@ -2831,26 +2834,34 @@ window.GameView = {
 
       const feedbackContainer = document.getElementById('pedagogical-feedback-container');
       if (feedbackContainer) {
+        const isLightMode = document.body.classList.contains('light-theme') || 
+                            document.body.getAttribute('data-theme') === 'light' || 
+                            document.documentElement.getAttribute('data-theme') === 'light';
         const letters = ['A', 'B', 'C', 'D', 'E', 'F'];
         const correctLetter = letters[correctIdx] || (correctIdx + 1);
         const correctText = this.getOptionText(q.options?.[correctIdx]);
+        const explTextColor = isLightMode ? '#1e293b' : '#f1f5f9';
+        const normTextColor = isLightMode ? '#0f172a' : '#ffffff';
+        const subKeyColor = isLightMode ? '#475569' : '#cbd5e1';
+        const keyAccentColor = isLightMode ? '#0369a1' : '#00f5d4';
+
         feedbackContainer.innerHTML = `
           <div class="pedagogical-feedback-box">
-            <div style="font-weight: 800; color: ${isCorrect ? '#00ff88' : '#ff4d6d'}; font-size: 1.05rem; margin-bottom: 0.65rem; display: flex; align-items: center; gap: 0.45rem;">
+            <div style="font-weight: 800; color: ${isCorrect ? (isLightMode ? '#059669' : '#00ff88') : (isLightMode ? '#dc2626' : '#ff4d6d')}; font-size: 1.05rem; margin-bottom: 0.65rem; display: flex; align-items: center; gap: 0.45rem;">
               <span>${isCorrect ? '✅ ¡Respuesta Correcta!' : (isTimeout ? '⏱️ ¡Tiempo Agotado!' : '❌ Respuesta Incorrecta')}</span>
-              ${!isCorrect ? `<span style="font-size: 0.92rem; color: #cbd5e1; font-weight: 600;">(Opción clave: <strong style="color: #00f5d4;">${correctLetter} - ${this.escapeHtml(correctText)}</strong>)</span>` : ''}
+              ${!isCorrect ? `<span style="font-size: 0.92rem; color: ${subKeyColor}; font-weight: 600;">(Opción clave: <strong style="color: ${keyAccentColor};">${correctLetter} - ${this.escapeHtml(correctText)}</strong>)</span>` : ''}
             </div>
             ${q.explanation ? `
-              <div style="font-size: 0.82rem; font-weight: 800; text-transform: uppercase; color: var(--neon-cyan, #00f5d4); margin-bottom: 0.35rem; display: flex; align-items: center; gap: 0.35rem;">
+              <div style="font-size: 0.82rem; font-weight: 800; text-transform: uppercase; color: ${keyAccentColor}; margin-bottom: 0.35rem; display: flex; align-items: center; gap: 0.35rem;">
                 <span>💡</span> Justificación Pedagógica:
               </div>
-              <div style="color: #f1f5f9; font-size: 0.95rem; line-height: 1.65; white-space: pre-wrap;">
+              <div style="color: ${explTextColor}; font-size: 0.95rem; line-height: 1.65; white-space: pre-wrap;">
                 ${this.escapeHtml(q.explanation)}
               </div>
             ` : ''}
             ${q.referenceNorm ? `
-              <div style="margin-top: 0.75rem; padding-top: 0.6rem; border-top: 1px dashed rgba(255,255,255,0.18); font-size: 0.88rem; color: #ffd166;">
-                <strong>⚖️ Marco normativo:</strong> <span style="color: #ffffff; font-weight: 600;">${this.escapeHtml(q.referenceNorm)}</span>
+              <div style="margin-top: 0.75rem; padding-top: 0.6rem; border-top: 1px dashed ${isLightMode ? 'rgba(0,0,0,0.15)' : 'rgba(255,255,255,0.18)'}; font-size: 0.88rem; color: ${isLightMode ? '#b45309' : '#ffd166'};">
+                <strong>⚖️ Marco normativo:</strong> <span style="color: ${normTextColor}; font-weight: 600;">${this.escapeHtml(q.referenceNorm)}</span>
               </div>
             ` : ''}
           </div>
