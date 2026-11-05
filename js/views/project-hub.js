@@ -218,6 +218,8 @@ window.ProjectHub = {
     document.body.style.overflow = 'hidden';
 
     const pending = hub.joinRequests.filter(r => r.status === 'pending').length;
+    const rs = this.ratingStats(hub);
+    const heroImg = [proj.banner, proj.mainImage, proj.image, proj.coverImage].find(u => typeof u === 'string' && u && u.indexOf("'") < 0 && u.length < 400000) || '';
     const nav = [
       { id: 'home', icon: '🏠', label: 'Inicio' },
       { id: 'users', icon: '👥', label: 'Usuarios', badge: manage ? pending : 0 },
@@ -245,18 +247,58 @@ window.ProjectHub = {
         </aside>
 
         <main class="phub-main">
-          <header class="phub-head">
-            <div class="phub-titles">
+          <header class="phub-hero" style="${heroImg ? `--hero:url('${this.esc(heroImg)}');` : ''}">
+            <div class="phub-hero-bg"></div>
+            <div class="phub-hero-body">
               <span class="phub-kicker">${manage ? 'Panel del Creador' : (edit ? 'Panel del Editor' : 'Vista de Estudiante')}</span>
               <h1 class="phub-title">${this.esc(proj.title || 'Proyecto')}</h1>
+              <div class="phub-chips">
+                <span class="phub-chip">👁️ ${hub.views.length} visitas</span>
+                <span class="phub-chip">⭐ ${rs.total ? rs.avg.toFixed(1) : 'Sin calificar'}</span>
+                <span class="phub-chip">👥 ${this.peopleOf(proj, hub).length} personas</span>
+              </div>
             </div>
-            <div class="phub-head-right">
-              <span class="phub-role-pill">${roleInfo.icon} ${roleInfo.label}</span>
-            </div>
+            <span class="phub-role-pill">${roleInfo.icon} ${roleInfo.label}</span>
           </header>
-          <div class="phub-scroll">${content}</div>
+          <div class="phub-scroll"><div class="phub-wrap" key="${this.esc(this.tab)}">${content}</div></div>
         </main>
       </div>`;
+    this.animateAfterRender(overlay);
+  },
+
+  animateAfterRender(root) {
+    const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    root.querySelectorAll('.phub-donut').forEach(d => {
+      const target = parseFloat(d.getAttribute('data-pct')) || 0;
+      const color = d.getAttribute('data-color') || '#2563eb';
+      const inner = d.querySelector('.phub-donut-in');
+      const paint = v => {
+        d.style.background = `conic-gradient(${color} ${v * 3.6}deg, #e2e8f0 0deg)`;
+        if (inner) inner.textContent = Math.round(v) + '%';
+      };
+      if (reduce || target === 0) { paint(target); return; }
+      paint(0);
+      const t0 = performance.now();
+      const dur = 1100;
+      const tick = now => {
+        const k = Math.min(1, (now - t0) / dur);
+        paint(target * (1 - Math.pow(1 - k, 3)));
+        if (k < 1) requestAnimationFrame(tick);
+      };
+      setTimeout(() => requestAnimationFrame(tick), 250);
+    });
+    root.querySelectorAll('.phub-kpi b[data-count]').forEach(b => {
+      const target = parseFloat(b.getAttribute('data-count')) || 0;
+      const dec = parseInt(b.getAttribute('data-dec') || '0', 10);
+      if (reduce || !target) { b.textContent = target.toFixed(dec); return; }
+      const t0 = performance.now();
+      const tick = now => {
+        const k = Math.min(1, (now - t0) / 900);
+        b.textContent = (target * (1 - Math.pow(1 - k, 3))).toFixed(dec);
+        if (k < 1) requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
+    });
   },
 
   actionBar(proj, edit) {
@@ -341,7 +383,7 @@ window.ProjectHub = {
   gauge(pct, label, color) {
     return `
       <div class="phub-gauge">
-        <div class="phub-donut" style="background:conic-gradient(${color} ${pct * 3.6}deg, #e2e8f0 0deg);">
+        <div class="phub-donut" data-pct="${pct}" data-color="${color}" style="background:conic-gradient(${color} ${pct * 3.6}deg, #e2e8f0 0deg);">
           <div class="phub-donut-in">${pct}%</div>
         </div>
         <span>${this.esc(label)}</span>
@@ -466,10 +508,10 @@ window.ProjectHub = {
 
     return `
       <div class="phub-kpis">
-        <div class="phub-kpi"><span>👁️</span><b>${views.length}</b><small>Visitas totales</small></div>
-        <div class="phub-kpi"><span>🧑‍🤝‍🧑</span><b>${uniq}</b><small>Personas que lo vieron</small></div>
-        <div class="phub-kpi"><span>⭐</span><b>${stats.total ? stats.avg.toFixed(1) : '—'}</b><small>Calificación promedio</small></div>
-        <div class="phub-kpi"><span>🗳️</span><b>${stats.total}</b><small>Calificaciones</small></div>
+        <div class="phub-kpi"><span>👁️</span><b data-count="${views.length}">0</b><small>Visitas totales</small></div>
+        <div class="phub-kpi"><span>🧑‍🤝‍🧑</span><b data-count="${uniq}">0</b><small>Personas que lo vieron</small></div>
+        <div class="phub-kpi"><span>⭐</span><b data-count="${stats.avg.toFixed(1)}" data-dec="1">0</b><small>Calificación promedio</small></div>
+        <div class="phub-kpi"><span>🗳️</span><b data-count="${stats.total}">0</b><small>Calificaciones</small></div>
       </div>
 
       <div class="phub-report-grid">
@@ -477,7 +519,7 @@ window.ProjectHub = {
           <h2 class="phub-pill-title">📈 Personas que han visto el proyecto</h2>
           <div class="phub-bars">
             ${days.map(d => `
-              <div class="phub-bar-col">
+              <div class="phub-bar-col" style="--i:${days.indexOf(d)}">
                 <span class="phub-bar-n">${d.n}</span>
                 <div class="phub-bar" style="height:${Math.max(4, Math.round((d.n / max) * 130))}px;"></div>
                 <small>${this.esc(d.label)}</small>

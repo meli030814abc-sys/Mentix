@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
@@ -10,7 +10,7 @@
   <meta name="referrer" content="strict-origin-when-cross-origin" />
   <meta name="mentix-version" content="2026.10.16.3" />
   <script>
-    // Si la app fue abierta como archivo local (file://), verificar si el servidor local está activo y redirigir automáticamente
+    // Si la app fue abierta como archivo local (file://), verificar si el servidor local estÃ¡ activo y redirigir automÃ¡ticamente
     if (window.location.protocol === 'file:') {
       fetch('http://localhost:8080/index.html', { method: 'HEAD', cache: 'no-store' })
         .then(function(r) {
@@ -21,13 +21,13 @@
         .catch(function() {});
     }
 
-    // 🛡️ Watchdog Móvil Mentix: Evita bloqueos y pantallas negras en cualquier Android o iOS
+    // ðŸ›¡ï¸ Watchdog MÃ³vil Mentix: Evita bloqueos y pantallas negras en cualquier Android o iOS
     try {
       localStorage.removeItem('mentix_challenges');
       localStorage.removeItem('mentix_projects');
     } catch (e) {}
     window.addEventListener('error', function(e) {
-      console.warn('[Mentix Mobile Watchdog] Excepción recuperada:', e && e.message);
+      console.warn('[Mentix Mobile Watchdog] ExcepciÃ³n recuperada:', e && e.message);
       var vp = document.getElementById('app-viewport');
       var active = vp ? vp.querySelector('.app-view.active') : null;
       if (active && (!active.innerHTML || active.innerHTML.trim() === '')) {
@@ -40,9 +40,9 @@
       console.warn('[Mentix Mobile Watchdog] Promesa neutralizada:', e && e.reason);
     });
   </script>
-  <title>🧠 MENTIX — Plataforma de Juegos y Cuestionarios en Vivo</title>
+  <title>ðŸ§  MENTIX â€” Plataforma de Juegos y Cuestionarios en Vivo</title>
   
-  <!-- Tipografía Gamer, Moderna y Colección Completa de Fuentes para Presentaciones -->
+  <!-- TipografÃ­a Gamer, Moderna y ColecciÃ³n Completa de Fuentes para Presentaciones -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo+Black&family=Bebas+Neue&family=Caveat:wght@600;700&family=Chewy&family=Cinzel:wght@700;900&family=Comfortaa:wght@700&family=Inter:wght@400;500;600;700&family=Lobster&family=Merriweather:wght@700;900&family=Montserrat:wght@700;900&family=Orbitron:wght@700;900&family=Outfit:wght@400;600;700;800;900&family=Pacifico&family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Poppins:wght@600;800;900&family=Press+Start+2P&family=Righteous&display=swap" rel="stylesheet">
@@ -52,9 +52,9 @@
   <link rel="stylesheet" href="css/styles.css?v=20261104_quiz_opt_v52" />
   <link rel="stylesheet" href="css/project-landing.css?v=20261104_filter_v51" />
   <link rel="stylesheet" href="css/admin-saas.css?v=20261104_filter_v51" />
-  <link rel="stylesheet" href="css/project-hub.css?v=20261105_hub_v53" />
+  <link rel="stylesheet" href="css/project-hub.css?v=20261105_hub_v54" />
 
-  <!-- Supabase JS Client v2, PeerJS & MQTT.js para conexión Multidispositivo en Tiempo Real (CDN Ultra Rápido) -->
+  <!-- Supabase JS Client v2, PeerJS & MQTT.js para conexiÃ³n Multidispositivo en Tiempo Real (CDN Ultra RÃ¡pido) -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://cdn.jsdelivr.net/npm/peerjs@1.5.4/dist/peerjs.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/mqtt@5.10.4/dist/mqtt.min.js"></script>
@@ -82,52 +82,52 @@
     };
   </script>
 
-  <!-- Canvas de Confeti Explosivo (Oculto por defecto para liberar memoria GPU móvil) -->
+  <!-- Canvas de Confeti Explosivo (Oculto por defecto para liberar memoria GPU mÃ³vil) -->
   <canvas id="confetti-canvas" style="display: none;"></canvas>
 
-  <!-- Barra de Navegación Glassmorphism -->
+  <!-- Barra de NavegaciÃ³n Glassmorphism -->
   <header class="glass-nav" id="main-navbar">
     <div style="max-width: 1250px; margin: 0 auto; padding: 0.85rem 1.25rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem;">
       
       <!-- Logotipo de Marca Propia MENTIX -->
       <a href="javascript:void(0)" onclick="window.safeNav('home')" style="text-decoration: none; display: flex; align-items: center; gap: 0.5rem;">
-        <span style="font-size: 1.8rem; filter: drop-shadow(0 0 10px rgba(0,245,212,0.7));">🧠</span>
+        <span style="font-size: 1.8rem; filter: drop-shadow(0 0 10px rgba(0,245,212,0.7));">ðŸ§ </span>
         <span class="brand-title-text" style="font-size: 1.6rem; font-weight: 900; letter-spacing: -0.03em; color: var(--text-primary);">
           MEN<span style="color: var(--neon-cyan); text-shadow: 0 0 15px rgba(0,245,212,0.6);">TIX</span>
         </span>
       </a>
 
-      <!-- Enlaces Centrales de Navegación -->
+      <!-- Enlaces Centrales de NavegaciÃ³n -->
       <nav style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
         <button class="btn btn-outline" style="padding: 0.45rem 0.85rem; font-size: 0.9rem;" onclick="window.safeNav('home')">
-          <span>🏠</span> Inicio
+          <span>ðŸ </span> Inicio
         </button>
         <button class="btn btn-primary" style="padding: 0.45rem 0.95rem; font-size: 0.9rem; font-weight: 800;" onclick="window.safeNav('lobby-join')">
-          <span>🎮</span> Unirse (PIN)
+          <span>ðŸŽ®</span> Unirse (PIN)
         </button>
         <button class="btn btn-outline" style="padding: 0.45rem 0.85rem; font-size: 0.9rem;" onclick="window.safeNav('projects')">
-          <span>📁</span> Proyectos
+          <span>ðŸ“</span> Proyectos
         </button>
 
         <!-- Enlaces Condicionales para Roles Docente y Administrador -->
         <button id="nav-teacher-link" class="btn btn-outline" style="padding: 0.45rem 0.85rem; font-size: 0.9rem; display: none;" onclick="window.safeNav('teacher')">
-          <span>👨‍🏫</span> Panel Profe
+          <span>ðŸ‘¨â€ðŸ«</span> Panel Profe
         </button>
         <button id="nav-admin-link" class="btn btn-outline" style="padding: 0.45rem 0.85rem; font-size: 0.9rem; display: none; border-color: var(--neon-magenta);" onclick="window.safeNav('admin')">
-          <span>🛡️</span> Admin
+          <span>ðŸ›¡ï¸</span> Admin
         </button>
       </nav>
 
       <!-- Controles de Audio, Tema y Usuario -->
       <div style="display: flex; align-items: center; gap: 0.6rem;">
         <button id="sound-toggle-btn" class="btn btn-outline btn-icon" title="Alternar Sonidos de Juego" onclick="window.safeSound()">
-          🔊
+          ðŸ”Š
         </button>
         <button id="theme-toggle-btn" class="btn btn-outline btn-icon" title="Modo Oscuro / Claro" onclick="window.safeTheme()">
-          🌙
+          ðŸŒ™
         </button>
 
-        <!-- Slot de Usuario Dinámico -->
+        <!-- Slot de Usuario DinÃ¡mico -->
         <div id="nav-user-slot"></div>
       </div>
 
@@ -136,7 +136,7 @@
 
   <!-- Banner informativo si se abre como archivo local file:// -->
   <div id="file-protocol-bar" style="display: none; background: linear-gradient(90deg, #7209b7, #00f5d4); color: #050510; font-weight: 800; font-size: 0.85rem; padding: 0.45rem 1rem; text-align: center; box-shadow: 0 4px 15px rgba(0,245,212,0.3);">
-    <span>🚀 Para reproducir videos de YouTube sin restricciones de archivo local: </span>
+    <span>ðŸš€ Para reproducir videos de YouTube sin restricciones de archivo local: </span>
     <a href="http://localhost:8080/" style="color: #050510; background: #fff; padding: 0.2rem 0.6rem; border-radius: 6px; text-decoration: none; font-weight: 900; margin-left: 0.4rem; box-shadow: 0 2px 5px rgba(0,0,0,0.2);">Abrir en MENTIX Web Local</a>
   </div>
   <script>
@@ -165,34 +165,34 @@
     <div id="view-url" class="app-view"></div>
   </main>
 
-  <!-- Modal de Configuración de Acceso para Estudiantes (Nombres con Correos vs Nombres Libres) -->
+  <!-- Modal de ConfiguraciÃ³n de Acceso para Estudiantes (Nombres con Correos vs Nombres Libres) -->
   <div id="roster-config-modal" class="modal-overlay">
     <div class="modal-content" style="max-width: 620px; padding: 2.25rem 2rem; border-radius: 20px;">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
         <div>
-          <span class="badge-tag tag-easy" style="margin-bottom: 0.35rem; display: inline-block;">CONFIGURACIÓN DOCENTE DE SALA</span>
+          <span class="badge-tag tag-easy" style="margin-bottom: 0.35rem; display: inline-block;">CONFIGURACIÃ“N DOCENTE DE SALA</span>
           <h2 style="font-size: 1.55rem; margin: 0; display: flex; align-items: center; gap: 0.5rem; color: var(--text-primary);">
-            <span>👨‍🏫</span> Acceso de Estudiantes
+            <span>ðŸ‘¨â€ðŸ«</span> Acceso de Estudiantes
           </h2>
         </div>
-        <button class="btn btn-outline btn-icon" onclick="window.LobbyView.closeRosterModal()">✕</button>
+        <button class="btn btn-outline btn-icon" onclick="window.LobbyView.closeRosterModal()">âœ•</button>
       </div>
 
       <p style="color: var(--text-secondary); font-size: 0.95rem; margin-bottom: 1.5rem; line-height: 1.45;">
-        Al crear la sala con PIN, ¿cómo deseas que se identifiquen los alumnos?
+        Al crear la sala con PIN, Â¿cÃ³mo deseas que se identifiquen los alumnos?
       </p>
 
-      <!-- Tarjetas de Selección de Modalidad -->
+      <!-- Tarjetas de SelecciÃ³n de Modalidad -->
       <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;" id="roster-mode-cards">
         
-        <!-- Opción 1: Entrada Libre (Los estudiantes ponen su nombre) -->
+        <!-- OpciÃ³n 1: Entrada Libre (Los estudiantes ponen su nombre) -->
         <div 
           class="roster-mode-card selected" 
           id="opt-roster-open"
           onclick="window.LobbyView.selectRosterMode('open')"
           style="padding: 1.25rem 1rem; border-radius: 14px; border: 2px solid var(--neon-cyan); background: rgba(0, 245, 212, 0.08); cursor: pointer; text-align: center; transition: var(--transition-bounce);"
         >
-          <div style="font-size: 2.2rem; margin-bottom: 0.5rem;">✍️</div>
+          <div style="font-size: 2.2rem; margin-bottom: 0.5rem;">âœï¸</div>
           <div style="font-weight: 800; font-size: 1.05rem; color: var(--text-primary); margin-bottom: 0.35rem;">
             Ponen su nombre
           </div>
@@ -200,32 +200,32 @@
             Cada estudiante escribe libremente su nombre o apodo al entrar con el PIN.
           </div>
           <span class="badge-tag" style="margin-top: 0.75rem; background: rgba(0, 245, 212, 0.15); color: var(--neon-cyan); font-size: 0.72rem; display: inline-block;">
-            🎮 Juego Libre
+            ðŸŽ® Juego Libre
           </span>
         </div>
 
-        <!-- Opción 2: Listado de Nombres con Correos -->
+        <!-- OpciÃ³n 2: Listado de Nombres con Correos -->
         <div 
           class="roster-mode-card" 
           id="opt-roster-list"
           onclick="window.LobbyView.selectRosterMode('roster')"
           style="padding: 1.25rem 1rem; border-radius: 14px; border: 2px solid var(--border-color); background: var(--bg-card); cursor: pointer; text-align: center; transition: var(--transition-bounce);"
         >
-          <div style="font-size: 2.2rem; margin-bottom: 0.5rem;">📋</div>
+          <div style="font-size: 2.2rem; margin-bottom: 0.5rem;">ðŸ“‹</div>
           <div style="font-weight: 800; font-size: 1.05rem; color: var(--text-primary); margin-bottom: 0.35rem;">
             Listado con correos
           </div>
           <div style="font-size: 0.82rem; color: var(--text-secondary); line-height: 1.35;">
-            Tú defines los nombres y correos. Los alumnos se seleccionan de la lista.
+            TÃº defines los nombres y correos. Los alumnos se seleccionan de la lista.
           </div>
           <span class="badge-tag" style="margin-top: 0.75rem; background: rgba(255, 209, 102, 0.15); color: #ffd166; font-weight: 800; font-size: 0.72rem; display: inline-block;">
-            🎓 Control Académico
+            ðŸŽ“ Control AcadÃ©mico
           </span>
         </div>
 
       </div>
 
-      <!-- Panel Desplegable para Configuración de la Lista (visible solo si elige 'roster') -->
+      <!-- Panel Desplegable para ConfiguraciÃ³n de la Lista (visible solo si elige 'roster') -->
       <div id="roster-details-panel" style="display: none; background: rgba(0,0,0,0.25); border: 1.5px solid rgba(255, 209, 102, 0.4); border-radius: 14px; padding: 1.25rem; margin-bottom: 1.5rem;">
         
         <div style="margin-bottom: 1rem;">
@@ -237,23 +237,23 @@
             style="width: 100%; padding: 0.75rem; font-weight: 700; font-size: 0.95rem; border-radius: var(--border-radius-md);"
             onchange="window.LobbyView.onRosterGroupChanged(this.value)"
           >
-            <!-- Se llena dinámicamente con los grupos de appState -->
+            <!-- Se llena dinÃ¡micamente con los grupos de appState -->
           </select>
         </div>
 
         <div style="margin-bottom: 0.75rem;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem; flex-wrap: wrap; gap: 0.5rem;">
             <label style="font-weight: 800; font-size: 0.82rem; text-transform: uppercase; color: var(--text-secondary);">
-              2. NOMBRES Y CORREOS (Nombre, correo por línea)
+              2. NOMBRES Y CORREOS (Nombre, correo por lÃ­nea)
             </label>
             <button type="button" class="btn btn-outline" style="font-size: 0.75rem; padding: 0.2rem 0.5rem;" onclick="window.LobbyView.loadExampleRoster()">
-              ⚡ Cargar ejemplo
+              âš¡ Cargar ejemplo
             </button>
           </div>
           <textarea 
             id="roster-students-textarea" 
             rows="4" 
-            placeholder="Andrea Valderrama, andrea@colegio.edu.co&#10;Juan Sebastián Mora, juan@colegio.edu.co&#10;María Camila Gómez, maria@colegio.edu.co"
+            placeholder="Andrea Valderrama, andrea@colegio.edu.co&#10;Juan SebastiÃ¡n Mora, juan@colegio.edu.co&#10;MarÃ­a Camila GÃ³mez, maria@colegio.edu.co"
             style="width: 100%; padding: 0.75rem; font-family: monospace; font-size: 0.85rem; border-radius: var(--border-radius-md); resize: vertical;"
             oninput="window.LobbyView.updateRosterPreviewCount()"
           ></textarea>
@@ -261,7 +261,7 @@
 
         <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; flex-wrap: wrap; gap: 0.5rem;">
           <span style="color: var(--neon-cyan); font-weight: 700;" id="roster-count-indicator">
-            👥 5 alumnos listos con correo
+            ðŸ‘¥ 5 alumnos listos con correo
           </span>
           <span style="color: var(--text-muted); font-size: 0.8rem;">
             Formato: <em>Nombre Completo, correo@dominio.com</em>
@@ -270,13 +270,13 @@
 
       </div>
 
-      <!-- Botones de Acción -->
+      <!-- Botones de AcciÃ³n -->
       <div style="display: flex; gap: 0.75rem; justify-content: flex-end; flex-wrap: wrap;">
         <button class="btn btn-outline" onclick="window.LobbyView.closeRosterModal()">
           Cancelar
         </button>
         <button class="btn btn-primary btn-lg" id="btn-confirm-roster-launch" onclick="window.LobbyView.confirmRosterAndLaunch()" style="font-weight: 800; padding: 0.85rem 1.75rem;">
-          <span>🚀</span> ¡Crear Sala y Abrir Lobby!
+          <span>ðŸš€</span> Â¡Crear Sala y Abrir Lobby!
         </button>
       </div>
     </div>
@@ -287,20 +287,20 @@
     <div class="modal-content" style="max-width: 780px; max-height: 85vh; display: flex; flex-direction: column; padding: 2rem; border-radius: 20px;">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
         <div>
-          <span class="badge-tag tag-easy" style="margin-bottom: 0.35rem; display: inline-block;">DINÁMICA DE SALA EN VIVO</span>
+          <span class="badge-tag tag-easy" style="margin-bottom: 0.35rem; display: inline-block;">DINÃMICA DE SALA EN VIVO</span>
           <h2 style="font-size: 1.55rem; margin: 0; display: flex; align-items: center; gap: 0.5rem; color: var(--text-primary);">
-            <span>🔄</span> Cambiar Modo de Juego
+            <span>ðŸ”„</span> Cambiar Modo de Juego
           </h2>
         </div>
-        <button class="btn btn-outline btn-icon" onclick="window.LobbyView.closeChangeModeModal()">✕</button>
+        <button class="btn btn-outline btn-icon" onclick="window.LobbyView.closeChangeModeModal()">âœ•</button>
       </div>
 
       <p style="color: var(--text-secondary); font-size: 0.95rem; margin-bottom: 1.25rem; line-height: 1.45;">
-        Selecciona la dinámica con la que deseas jugar. Se actualizará en tiempo real en la pantalla de todos los estudiantes conectados:
+        Selecciona la dinÃ¡mica con la que deseas jugar. Se actualizarÃ¡ en tiempo real en la pantalla de todos los estudiantes conectados:
       </p>
 
       <div id="change-mode-options-list" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 0.75rem; overflow-y: auto; padding-right: 0.5rem; margin-bottom: 1.5rem; max-height: 460px;">
-        <!-- Inyectado dinámicamente con los 14 modos -->
+        <!-- Inyectado dinÃ¡micamente con los 14 modos -->
       </div>
 
       <div style="display: flex; justify-content: flex-end; gap: 0.75rem;">
@@ -311,45 +311,45 @@
     </div>
   </div>
 
-  <!-- Modal de Autenticación (Login / Registro / Roles) -->
+  <!-- Modal de AutenticaciÃ³n (Login / Registro / Roles) -->
   <div id="auth-modal" class="modal-overlay">
     <div class="modal-content" style="padding: 2.5rem 2rem;">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
         <h2 style="font-size: 1.6rem; display: flex; align-items: center; gap: 0.5rem;">
-          <span class="glow-text-cyan">🧠</span> Acceso a MENTIX
+          <span class="glow-text-cyan">ðŸ§ </span> Acceso a MENTIX
         </h2>
-        <button id="auth-close-btn" class="btn btn-outline btn-icon" onclick="window.appRouter.closeModal('auth-modal')">✕</button>
+        <button id="auth-close-btn" class="btn btn-outline btn-icon" onclick="window.appRouter.closeModal('auth-modal')">âœ•</button>
       </div>
 
-      <!-- Selector de pestaña Login / Registro -->
+      <!-- Selector de pestaÃ±a Login / Registro -->
       <div style="display: flex; gap: 0.5rem; margin-bottom: 1.75rem;">
         <button id="tab-btn-login" class="btn btn-cyan" style="flex: 1;" onclick="window.appRouter.switchAuthTab('login')">
-          Iniciar Sesión
+          Iniciar SesiÃ³n
         </button>
         <button id="tab-btn-reg" class="btn btn-outline" style="flex: 1;" onclick="window.appRouter.switchAuthTab('register')">
           Crear Cuenta
         </button>
         <button type="button" id="tab-btn-guest" class="btn btn-outline" style="flex: 1;" onclick="window.appRouter.guestLogin()">
-          👤 Invitado
+          ðŸ‘¤ Invitado
         </button>
       </div>
 
-      <!-- Formulario de Inicio de Sesión -->
+      <!-- Formulario de Inicio de SesiÃ³n -->
       <form id="auth-login-form" onsubmit="window.appRouter.handleLogin(event)">
         <div style="margin-bottom: 1rem;">
           <label style="display: block; font-weight: 700; margin-bottom: 0.35rem; font-size: 0.9rem;">Correo o Usuario</label>
           <input type="text" id="login-email" placeholder="correo@gmail.com o tu usuario" required autocomplete="username" style="width: 100%; padding: 0.75rem; border-radius: var(--border-radius-md); background: rgba(0,0,0,0.4); border: 1px solid var(--border-color); color: white;" />
         </div>
         <div style="margin-bottom: 1.5rem;">
-          <label style="display: block; font-weight: 700; margin-bottom: 0.35rem; font-size: 0.9rem;">Contraseña</label>
-          <input type="password" id="login-password" placeholder="Tu contraseña" required autocomplete="current-password" style="width: 100%; padding: 0.75rem; border-radius: var(--border-radius-md); background: rgba(0,0,0,0.4); border: 1px solid var(--border-color); color: white;" />
+          <label style="display: block; font-weight: 700; margin-bottom: 0.35rem; font-size: 0.9rem;">ContraseÃ±a</label>
+          <input type="password" id="login-password" placeholder="Tu contraseÃ±a" required autocomplete="current-password" style="width: 100%; padding: 0.75rem; border-radius: var(--border-radius-md); background: rgba(0,0,0,0.4); border: 1px solid var(--border-color); color: white;" />
         </div>
         <button type="submit" class="btn btn-primary btn-lg" style="width: 100%; margin-bottom: 1.25rem;">
-          ¡Entrar a la Arena! 🚀
+          Â¡Entrar a la Arena! ðŸš€
         </button>
       </form>
 
-      <!-- Formulario de Registro con Selección de Rol -->
+      <!-- Formulario de Registro con SelecciÃ³n de Rol -->
       <form id="auth-register-form" style="display: none;" onsubmit="window.appRouter.handleRegister(event)">
         <div style="margin-bottom: 0.85rem;">
           <label style="display: block; font-weight: 700; margin-bottom: 0.35rem; font-size: 0.9rem;">Nombre Completo</label>
@@ -360,115 +360,115 @@
           <input type="text" id="reg-username" placeholder="camilo_gamer" required style="width: 100%; padding: 0.75rem; border-radius: var(--border-radius-md); background: rgba(0,0,0,0.4); border: 1px solid var(--border-color); color: white;" />
         </div>
         <div style="margin-bottom: 0.85rem;">
-          <label style="display: block; font-weight: 700; margin-bottom: 0.35rem; font-size: 0.9rem;">Correo Electrónico</label>
+          <label style="display: block; font-weight: 700; margin-bottom: 0.35rem; font-size: 0.9rem;">Correo ElectrÃ³nico</label>
           <input type="email" id="reg-email" placeholder="camilo@correo.com" required style="width: 100%; padding: 0.75rem; border-radius: var(--border-radius-md); background: rgba(0,0,0,0.4); border: 1px solid var(--border-color); color: white;" />
         </div>
         <div style="margin-bottom: 0.85rem;">
-          <label style="display: block; font-weight: 700; margin-bottom: 0.35rem; font-size: 0.9rem;">Contraseña</label>
-          <input type="password" id="reg-password" placeholder="Mínimo 6 caracteres" minlength="6" required autocomplete="new-password" style="width: 100%; padding: 0.75rem; border-radius: var(--border-radius-md); background: rgba(0,0,0,0.4); border: 1px solid var(--border-color); color: white;" />
+          <label style="display: block; font-weight: 700; margin-bottom: 0.35rem; font-size: 0.9rem;">ContraseÃ±a</label>
+          <input type="password" id="reg-password" placeholder="MÃ­nimo 6 caracteres" minlength="6" required autocomplete="new-password" style="width: 100%; padding: 0.75rem; border-radius: var(--border-radius-md); background: rgba(0,0,0,0.4); border: 1px solid var(--border-color); color: white;" />
         </div>
         <div style="margin-bottom: 0.85rem;">
-          <label style="display: block; font-weight: 700; margin-bottom: 0.35rem; font-size: 0.9rem;">Confirmar Contraseña</label>
-          <input type="password" id="reg-password2" placeholder="Repite tu contraseña" minlength="6" required autocomplete="new-password" style="width: 100%; padding: 0.75rem; border-radius: var(--border-radius-md); background: rgba(0,0,0,0.4); border: 1px solid var(--border-color); color: white;" />
+          <label style="display: block; font-weight: 700; margin-bottom: 0.35rem; font-size: 0.9rem;">Confirmar ContraseÃ±a</label>
+          <input type="password" id="reg-password2" placeholder="Repite tu contraseÃ±a" minlength="6" required autocomplete="new-password" style="width: 100%; padding: 0.75rem; border-radius: var(--border-radius-md); background: rgba(0,0,0,0.4); border: 1px solid var(--border-color); color: white;" />
         </div>
         <div style="margin-bottom: 1.25rem;">
-          <label style="display: block; font-weight: 700; margin-bottom: 0.35rem; font-size: 0.9rem;">¿Cuál es tu Rol Principal?</label>
+          <label style="display: block; font-weight: 700; margin-bottom: 0.35rem; font-size: 0.9rem;">Â¿CuÃ¡l es tu Rol Principal?</label>
           <select id="reg-role" style="width: 100%; padding: 0.75rem; border-radius: var(--border-radius-md); background: #131b2e; border: 1px solid var(--border-color); color: white; font-weight: 700;">
-            <option value="student">🎒 Estudiante (Competir y resolver retos)</option>
-            <option value="teacher">👨‍🏫 Profesor (Crear retos, grupos y analíticas)</option>
-            <option value="admin">🛡️ Administrador (Gestión global de la plataforma)</option>
+            <option value="student">ðŸŽ’ Estudiante (Competir y resolver retos)</option>
+            <option value="teacher">ðŸ‘¨â€ðŸ« Profesor (Crear retos, grupos y analÃ­ticas)</option>
+            <option value="admin">ðŸ›¡ï¸ Administrador (GestiÃ³n global de la plataforma)</option>
           </select>
         </div>
         <button type="submit" class="btn btn-cyan btn-lg" style="width: 100%; margin-bottom: 1.25rem;">
-          Completar Registro ✨
+          Completar Registro âœ¨
         </button>
       </form>
 
     </div>
   </div>
 
-  <!-- Modal de Previsualización de Reto (Pantalla Completa) -->
+  <!-- Modal de PrevisualizaciÃ³n de Reto (Pantalla Completa) -->
   <div id="preview-modal" class="modal-overlay preview-fullscreen-modal">
     <div class="modal-content preview-fullscreen-content">
       <div id="preview-modal-body"></div>
     </div>
   </div>
 
-  <!-- Modal de Nueva Categoría Personalizada -->
+  <!-- Modal de Nueva CategorÃ­a Personalizada -->
   <div id="category-modal" class="modal-overlay">
     <div class="modal-content" style="padding: 2rem;">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
-        <h2 style="font-size: 1.4rem;">➕ Nueva Categoría Personalizada</h2>
-        <button class="btn btn-outline btn-icon" onclick="window.appRouter.closeModal('category-modal')">✕</button>
+        <h2 style="font-size: 1.4rem;">âž• Nueva CategorÃ­a Personalizada</h2>
+        <button class="btn btn-outline btn-icon" onclick="window.appRouter.closeModal('category-modal')">âœ•</button>
       </div>
       <form onsubmit="window.appRouter.handleCreateCategory(event)">
         <div style="margin-bottom: 1rem;">
-          <label style="display: block; font-weight: 700; margin-bottom: 0.35rem; font-size: 0.9rem;">Nombre de la Categoría</label>
-          <input type="text" id="cat-name" placeholder="Ej: Robótica & Automatización" required style="width: 100%; padding: 0.75rem; border-radius: var(--border-radius-md); background: rgba(0,0,0,0.4); border: 1px solid var(--border-color); color: white;" />
+          <label style="display: block; font-weight: 700; margin-bottom: 0.35rem; font-size: 0.9rem;">Nombre de la CategorÃ­a</label>
+          <input type="text" id="cat-name" placeholder="Ej: RobÃ³tica & AutomatizaciÃ³n" required style="width: 100%; padding: 0.75rem; border-radius: var(--border-radius-md); background: rgba(0,0,0,0.4); border: 1px solid var(--border-color); color: white;" />
         </div>
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
           <div>
-            <label style="display: block; font-weight: 700; margin-bottom: 0.35rem; font-size: 0.9rem;">Emoji / Ícono</label>
-            <input type="text" id="cat-icon" placeholder="🤖" value="💡" style="width: 100%; padding: 0.75rem; border-radius: var(--border-radius-md); background: rgba(0,0,0,0.4); border: 1px solid var(--border-color); color: white; font-size: 1.2rem; text-align: center;" />
+            <label style="display: block; font-weight: 700; margin-bottom: 0.35rem; font-size: 0.9rem;">Emoji / Ãcono</label>
+            <input type="text" id="cat-icon" placeholder="ðŸ¤–" value="ðŸ’¡" style="width: 100%; padding: 0.75rem; border-radius: var(--border-radius-md); background: rgba(0,0,0,0.4); border: 1px solid var(--border-color); color: white; font-size: 1.2rem; text-align: center;" />
           </div>
           <div>
-            <label style="display: block; font-weight: 700; margin-bottom: 0.35rem; font-size: 0.9rem;">Color Neón</label>
+            <label style="display: block; font-weight: 700; margin-bottom: 0.35rem; font-size: 0.9rem;">Color NeÃ³n</label>
             <input type="color" id="cat-color" value="#00f5d4" style="width: 100%; height: 48px; border-radius: var(--border-radius-md); background: transparent; border: 1px solid var(--border-color); cursor: pointer;" />
           </div>
         </div>
         <button type="submit" class="btn btn-cyan btn-lg" style="width: 100%;">
-          Guardar Categoría
+          Guardar CategorÃ­a
         </button>
       </form>
       <div style="margin-top: 1.5rem; border-top: 1px solid var(--border-color); padding-top: 1rem;">
-        <label style="display: block; font-weight: 700; margin-bottom: 0.5rem; font-size: 0.9rem;">📋 Categorías Existentes</label>
+        <label style="display: block; font-weight: 700; margin-bottom: 0.5rem; font-size: 0.9rem;">ðŸ“‹ CategorÃ­as Existentes</label>
         <div id="cat-existing-list" style="max-height: 180px; overflow-y: auto; display: flex; flex-direction: column; gap: 0.4rem; padding-right: 0.25rem;"></div>
       </div>
     </div>
   </div>
 
-  <!-- Modal de Generación con IA -->
+  <!-- Modal de GeneraciÃ³n con IA -->
   <div id="creator-ai-modal" class="modal-overlay">
     <div class="modal-content ai-pulse-glow" style="max-width: 620px; padding: 2rem;">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
         <div>
           <h2 style="font-size: 1.4rem; display: flex; align-items: center; gap: 0.5rem; margin: 0;">
-            <span class="glow-text-cyan">✨</span> Generador de Cuestionarios con IA
+            <span class="glow-text-cyan">âœ¨</span> Generador de Cuestionarios con IA
           </h2>
           <p style="font-size: 0.82rem; color: var(--text-secondary); margin: 0.25rem 0 0;">
-            Crea cuestionarios de cualquier carrera universitaria o tema especializado con búsqueda rápida enciclopédica en vivo.
+            Crea cuestionarios de cualquier carrera universitaria o tema especializado con bÃºsqueda rÃ¡pida enciclopÃ©dica en vivo.
           </p>
         </div>
-        <button class="btn btn-outline btn-icon" onclick="window.CreatorView.closeAIModal()">✕</button>
+        <button class="btn btn-outline btn-icon" onclick="window.CreatorView.closeAIModal()">âœ•</button>
       </div>
 
       <form id="ai-generator-form" onsubmit="window.CreatorView.executeAIGeneration(event)">
         <div style="margin-bottom: 1rem;">
           <label style="display: block; font-weight: 700; margin-bottom: 0.35rem; font-size: 0.9rem;">
-            🎯 Tema o Asunto del Cuestionario *
+            ðŸŽ¯ Tema o Asunto del Cuestionario *
           </label>
           <input 
             type="text" 
             id="ai-topic-input" 
-            placeholder="Ej: DAMA-DMBOK, Gobierno de Datos, Termodinámica, Derecho Penal, Medicina, Finanzas..." 
+            placeholder="Ej: DAMA-DMBOK, Gobierno de Datos, TermodinÃ¡mica, Derecho Penal, Medicina, Finanzas..." 
             required 
             style="width: 100%; padding: 0.75rem; border-radius: var(--border-radius-md); background: rgba(0,0,0,0.5); border: 1px solid var(--border-color); color: white; font-weight: 600;" 
           />
           <div style="display: flex; align-items: center; gap: 0.45rem; margin-top: 0.45rem; font-size: 0.8rem; color: var(--neon-cyan);">
-            <span style="font-size: 1rem;">🌐</span>
-            <span>Búsqueda rápida en vivo activada: Conoce cualquier carrera (Medicina, Ingenierías, Derecho, Ciencias, etc.)</span>
+            <span style="font-size: 1rem;">ðŸŒ</span>
+            <span>BÃºsqueda rÃ¡pida en vivo activada: Conoce cualquier carrera (Medicina, IngenierÃ­as, Derecho, Ciencias, etc.)</span>
           </div>
         </div>
 
         <div style="margin-bottom: 1rem;">
           <label style="display: flex; justify-content: space-between; font-weight: 700; margin-bottom: 0.35rem; font-size: 0.9rem;">
-            <span>📝 Contenido o Apuntes Base (Opcional)</span>
+            <span>ðŸ“ Contenido o Apuntes Base (Opcional)</span>
             <span style="font-size: 0.78rem; font-weight: 400; color: var(--text-secondary);">Para preguntas exactas de tu material</span>
           </label>
           <textarea 
             id="ai-notes-input" 
             rows="3" 
-            placeholder="Pega aquí un resumen, apuntes de clase, texto de un libro o artículo para que el generador cree las preguntas basadas en este contenido..." 
+            placeholder="Pega aquÃ­ un resumen, apuntes de clase, texto de un libro o artÃ­culo para que el generador cree las preguntas basadas en este contenido..." 
             style="width: 100%; padding: 0.75rem; border-radius: var(--border-radius-md); background: rgba(0,0,0,0.5); border: 1px solid var(--border-color); color: white; font-size: 0.85rem; resize: vertical;"
           ></textarea>
         </div>
@@ -491,32 +491,32 @@
           <div>
             <label style="display: block; font-weight: 700; margin-bottom: 0.35rem; font-size: 0.85rem;">Dificultad</label>
             <select id="ai-diff-select" style="width: 100%; padding: 0.6rem; border-radius: 6px; background: #0b0f19; color: white; border: 1px solid var(--border-color); font-weight: 700;">
-              <option value="Fácil">Fácil</option>
+              <option value="FÃ¡cil">FÃ¡cil</option>
               <option value="Medio" selected>Medio</option>
-              <option value="Difícil">Difícil</option>
+              <option value="DifÃ­cil">DifÃ­cil</option>
             </select>
           </div>
 
           <div>
             <label style="display: block; font-weight: 700; margin-bottom: 0.35rem; font-size: 0.85rem;">Tipo de Pregunta</label>
             <select id="ai-type-select" style="width: 100%; padding: 0.6rem; border-radius: 6px; background: #0b0f19; color: white; border: 1px solid var(--border-color); font-weight: 700;">
-              <option value="single" selected>🔘 Selección Múltiple</option>
-              <option value="case">📁 Caso Práctico / Situacional</option>
-              <option value="boolean">⚖️ Verdadero / Falso</option>
-              <option value="multi">☑️ Múltiple Respuesta (varias)</option>
-              <option value="text">✍️ Respuesta Corta (Escribir)</option>
-              <option value="open">💬 Respuesta Abierta (Ideas / Mentix)</option>
-              <option value="poll">📊 Encuesta / Votación</option>
-              <option value="mixed">🎲 Mixto (Combinado variado)</option>
+              <option value="single" selected>ðŸ”˜ SelecciÃ³n MÃºltiple</option>
+              <option value="case">ðŸ“ Caso PrÃ¡ctico / Situacional</option>
+              <option value="boolean">âš–ï¸ Verdadero / Falso</option>
+              <option value="multi">â˜‘ï¸ MÃºltiple Respuesta (varias)</option>
+              <option value="text">âœï¸ Respuesta Corta (Escribir)</option>
+              <option value="open">ðŸ’¬ Respuesta Abierta (Ideas / Mentix)</option>
+              <option value="poll">ðŸ“Š Encuesta / VotaciÃ³n</option>
+              <option value="mixed">ðŸŽ² Mixto (Combinado variado)</option>
             </select>
           </div>
 
           <div>
             <label style="display: block; font-weight: 700; margin-bottom: 0.35rem; font-size: 0.85rem;">Longitud (P y R)</label>
             <select id="ai-length-select" style="width: 100%; padding: 0.6rem; border-radius: 6px; background: #0b0f19; color: white; border: 1px solid var(--border-color); font-weight: 700;">
-              <option value="short">⚡ Cortas (Directas y breves)</option>
-              <option value="balanced" selected>⚖️ Equilibradas (Normal)</option>
-              <option value="long">📜 Largas (Detalladas y profundas)</option>
+              <option value="short">âš¡ Cortas (Directas y breves)</option>
+              <option value="balanced" selected>âš–ï¸ Equilibradas (Normal)</option>
+              <option value="long">ðŸ“œ Largas (Detalladas y profundas)</option>
             </select>
           </div>
 
@@ -549,37 +549,37 @@
             Cancelar
           </button>
           <button type="submit" id="ai-submit-btn" class="btn btn-primary btn-lg" style="flex: 2; background: linear-gradient(135deg, #7209b7, #f72585); border: none;">
-            <span>⚡</span> ¡Generar Cuestionario!
+            <span>âš¡</span> Â¡Generar Cuestionario!
           </button>
         </div>
       </form>
     </div>
   </div>
 
-  <!-- Modal de Importación de Archivo y Preguntas -->
+  <!-- Modal de ImportaciÃ³n de Archivo y Preguntas -->
   <div id="creator-file-modal" class="modal-overlay">
     <div class="modal-content" style="max-width: 650px; padding: 2rem;">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
         <div>
           <h2 style="font-size: 1.4rem; display: flex; align-items: center; gap: 0.5rem; margin: 0;">
-            <span class="glow-text-cyan">📁</span> Importar Preguntas desde Archivo
+            <span class="glow-text-cyan">ðŸ“</span> Importar Preguntas desde Archivo
           </h2>
           <p style="font-size: 0.82rem; color: var(--text-secondary); margin: 0.25rem 0 0;">
-            Carga tus cuestionarios desde archivos de texto, Word, Excel o pégalos directamente.
+            Carga tus cuestionarios desde archivos de texto, Word, Excel o pÃ©galos directamente.
           </p>
         </div>
-        <button class="btn btn-outline btn-icon" onclick="window.CreatorView.closeFileImportModal()">✕</button>
+        <button class="btn btn-outline btn-icon" onclick="window.CreatorView.closeFileImportModal()">âœ•</button>
       </div>
 
       <!-- Format pills -->
       <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1.25rem;">
-        <span class="format-pill">📗 Excel (.xlsx / .xls)</span>
-        <span class="format-pill">📊 .CSV / TSV</span>
-        <span class="format-pill">📝 Word (.docx)</span>
-        <span class="format-pill">📊 PowerPoint (.pptx)</span>
-        <span class="format-pill">📕 PDF (.pdf)</span>
-        <span class="format-pill">⚡ Mentix (.mentix / .json)</span>
-        <span class="format-pill">📄 .TXT</span>
+        <span class="format-pill">ðŸ“— Excel (.xlsx / .xls)</span>
+        <span class="format-pill">ðŸ“Š .CSV / TSV</span>
+        <span class="format-pill">ðŸ“ Word (.docx)</span>
+        <span class="format-pill">ðŸ“Š PowerPoint (.pptx)</span>
+        <span class="format-pill">ðŸ“• PDF (.pdf)</span>
+        <span class="format-pill">âš¡ Mentix (.mentix / .json)</span>
+        <span class="format-pill">ðŸ“„ .TXT</span>
       </div>
 
       <!-- Zona de arrastre de archivos -->
@@ -590,9 +590,9 @@
         ondragleave="window.CreatorView.handleDragLeave(event)"
         ondrop="window.CreatorView.handleDrop(event)"
       >
-        <span style="font-size: 2.2rem; display: block; margin-bottom: 0.4rem;">📤</span>
+        <span style="font-size: 2.2rem; display: block; margin-bottom: 0.4rem;">ðŸ“¤</span>
         <div style="font-weight: 800; font-size: 1.05rem;" id="dropzone-label">
-          Arrastra tu archivo aquí o haz clic para buscarlo
+          Arrastra tu archivo aquÃ­ o haz clic para buscarlo
         </div>
         <div style="font-size: 0.82rem; color: var(--text-secondary); margin-top: 0.35rem;" id="dropzone-filename">
           Soporta Excel (.xlsx, .xls), CSV, Word (.docx), PowerPoint (.pptx), PDF (.pdf), .mentix, .json y texto plano
@@ -608,28 +608,28 @@
       <!-- Ajuste de Tipo de Preguntas al Importar -->
       <div style="background: rgba(0,0,0,0.35); padding: 0.75rem 1rem; border-radius: var(--border-radius-md); border: 1px solid var(--border-color); margin-bottom: 1.25rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem;">
         <label style="font-weight: 700; font-size: 0.88rem; color: var(--neon-cyan); display: flex; align-items: center; gap: 0.4rem;">
-          <span>⚙️</span> Tipo de preguntas al importar:
+          <span>âš™ï¸</span> Tipo de preguntas al importar:
         </label>
         <select id="file-type-select" style="padding: 0.45rem 0.85rem; border-radius: 6px; background: #0b0f19; color: white; border: 1px solid var(--border-color); font-weight: 700; font-size: 0.85rem;">
-          <option value="auto" selected>✨ Auto-detectar según contenido</option>
-          <option value="single">🔘 Forzar Selección Múltiple</option>
-          <option value="boolean">⚖️ Forzar Verdadero / Falso</option>
-          <option value="multi">☑️ Forzar Múltiple Respuesta</option>
-          <option value="text">✍️ Forzar Respuesta Corta (Escribir)</option>
-          <option value="open">💬 Forzar Respuesta Abierta</option>
-          <option value="poll">📊 Forzar Encuesta / Votación</option>
+          <option value="auto" selected>âœ¨ Auto-detectar segÃºn contenido</option>
+          <option value="single">ðŸ”˜ Forzar SelecciÃ³n MÃºltiple</option>
+          <option value="boolean">âš–ï¸ Forzar Verdadero / Falso</option>
+          <option value="multi">â˜‘ï¸ Forzar MÃºltiple Respuesta</option>
+          <option value="text">âœï¸ Forzar Respuesta Corta (Escribir)</option>
+          <option value="open">ðŸ’¬ Forzar Respuesta Abierta</option>
+          <option value="poll">ðŸ“Š Forzar Encuesta / VotaciÃ³n</option>
         </select>
       </div>
 
       <div style="text-align: center; margin: 1rem 0; font-size: 0.85rem; color: var(--text-muted); font-weight: 700;">
-        — O PEGA EL TEXTO AQUÍ DIRECTAMENTE —
+        â€” O PEGA EL TEXTO AQUÃ DIRECTAMENTE â€”
       </div>
 
       <div style="margin-bottom: 1rem;">
         <textarea 
           id="creator-import-textarea" 
           rows="6" 
-          placeholder="Ejemplo de formato admitido:&#10;1. ¿Cuál es el río más largo del mundo?&#10;a) Nilo&#10;b) Amazonas*&#10;c) Misisipi&#10;d) Danubio&#10;&#10;2. La fotosíntesis requiere luz solar&#10;Respuesta: Verdadero"
+          placeholder="Ejemplo de formato admitido:&#10;1. Â¿CuÃ¡l es el rÃ­o mÃ¡s largo del mundo?&#10;a) Nilo&#10;b) Amazonas*&#10;c) Misisipi&#10;d) Danubio&#10;&#10;2. La fotosÃ­ntesis requiere luz solar&#10;Respuesta: Verdadero"
           style="width: 100%; padding: 0.75rem; border-radius: var(--border-radius-md); background: rgba(0,0,0,0.5); border: 1px solid var(--border-color); color: white; font-size: 0.85rem; font-family: monospace; resize: vertical;"
         ></textarea>
       </div>
@@ -647,7 +647,7 @@
           style="padding: 0.25rem 0.6rem; font-size: 0.78rem;" 
           onclick="window.CreatorView.insertSampleTemplate()"
         >
-          💡 Ver plantilla de ejemplo
+          ðŸ’¡ Ver plantilla de ejemplo
         </button>
       </div>
 
@@ -662,28 +662,28 @@
           style="flex: 2;" 
           onclick="window.CreatorView.processImport()"
         >
-          <span>📥</span> Procesar e Insertar Preguntas
+          <span>ðŸ“¥</span> Procesar e Insertar Preguntas
         </button>
       </div>
     </div>
   </div>
 
-  <!-- Modal: Importar Presentación (PowerPoint, PDF, Markdown o JSON) -->
+  <!-- Modal: Importar PresentaciÃ³n (PowerPoint, PDF, Markdown o JSON) -->
   <div id="presentation-import-modal" class="modal-overlay">
     <div class="modal-content glass-panel" style="max-width: 720px; padding: 2rem; border-radius: 20px; border: 2px solid #7c3aed;">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
         <div>
           <div style="display: inline-flex; align-items: center; gap: 0.4rem; background: rgba(124, 58, 237, 0.2); border: 1px solid #7c3aed; padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.78rem; font-weight: 800; color: #c4b5fd; margin-bottom: 0.4rem;">
-            <span>📥</span> IMPORTAR DIAPOSITIVAS
+            <span>ðŸ“¥</span> IMPORTAR DIAPOSITIVAS
           </div>
           <h2 style="font-size: 1.6rem; font-weight: 900; margin: 0; color: var(--text-primary);">
-            Importar Presentación
+            Importar PresentaciÃ³n
           </h2>
           <p style="font-size: 0.88rem; color: var(--text-secondary); margin: 0.35rem 0 0;">
             Convierte tus diapositivas de PowerPoint (.pptx), PDF (.pdf), texto o JSON en diapositivas interactivas.
           </p>
         </div>
-        <button class="btn btn-outline btn-icon" onclick="window.PresentationView.closeImportModal()">✕</button>
+        <button class="btn btn-outline btn-icon" onclick="window.PresentationView.closeImportModal()">âœ•</button>
       </div>
 
       <!-- Zona de arrastre de archivos -->
@@ -696,9 +696,9 @@
         style="border-color: #7c3aed; margin-bottom: 1.25rem; text-align: center; padding: 1.75rem; cursor: pointer;"
         onclick="document.getElementById('pres-file-input').click()"
       >
-        <span style="font-size: 2.4rem; display: block; margin-bottom: 0.4rem;">📊</span>
+        <span style="font-size: 2.4rem; display: block; margin-bottom: 0.4rem;">ðŸ“Š</span>
         <div style="font-weight: 800; font-size: 1.05rem;" id="pres-dropzone-label">
-          Arrastra tu presentación aquí o haz clic para buscarla
+          Arrastra tu presentaciÃ³n aquÃ­ o haz clic para buscarla
         </div>
         <div style="font-size: 0.82rem; color: var(--text-secondary); margin-top: 0.35rem;" id="pres-dropzone-filename">
           Soporta PowerPoint (.pptx), Documentos PDF (.pdf), Markdown (.md), texto (.txt) y .json
@@ -713,15 +713,15 @@
       </div>
 
       <div style="text-align: center; margin: 1rem 0; font-size: 0.85rem; color: var(--text-muted); font-weight: 700;">
-        — O PEGA EL ESQUEMA DE TU PRESENTACIÓN DIRECTAMENTE —
+        â€” O PEGA EL ESQUEMA DE TU PRESENTACIÃ“N DIRECTAMENTE â€”
       </div>
 
-      <!-- Área de texto para pegar diapositivas -->
+      <!-- Ãrea de texto para pegar diapositivas -->
       <div style="margin-bottom: 1rem;">
         <textarea 
           id="pres-import-textarea" 
           rows="6" 
-          placeholder="Ejemplo de formato admitido:&#10;# El Sistema Solar&#10;&#10;---&#10;## Diapositiva 1: El Sol&#10;El Sol es la estrella central del sistema planetario.&#10;- Representa el 99.8% de la masa del sistema.&#10;- Fuente principal de luz y energía.&#10;&#10;---&#10;## Diapositiva 2: Los Planetas Rocosos&#10;Mercurio, Venus, Tierra y Marte son planetas terrestres.&#10;- Superficie sólida compuesta de roca y metal."
+          placeholder="Ejemplo de formato admitido:&#10;# El Sistema Solar&#10;&#10;---&#10;## Diapositiva 1: El Sol&#10;El Sol es la estrella central del sistema planetario.&#10;- Representa el 99.8% de la masa del sistema.&#10;- Fuente principal de luz y energÃ­a.&#10;&#10;---&#10;## Diapositiva 2: Los Planetas Rocosos&#10;Mercurio, Venus, Tierra y Marte son planetas terrestres.&#10;- Superficie sÃ³lida compuesta de roca y metal."
           style="width: 100%; padding: 0.75rem; border-radius: var(--border-radius-md); background: rgba(0,0,0,0.5); border: 1px solid var(--border-color); color: white; font-size: 0.85rem; font-family: monospace; resize: vertical;"
         ></textarea>
       </div>
@@ -730,7 +730,7 @@
         <div style="display: flex; align-items: center; gap: 0.5rem;">
           <input type="checkbox" id="pres-replace-check" style="width: 18px; height: 18px; accent-color: #7c3aed; cursor: pointer;" checked />
           <label for="pres-replace-check" style="font-size: 0.85rem; color: var(--text-secondary); cursor: pointer;">
-            Reemplazar las diapositivas actuales de la presentación
+            Reemplazar las diapositivas actuales de la presentaciÃ³n
           </label>
         </div>
         <button 
@@ -739,7 +739,7 @@
           style="padding: 0.25rem 0.6rem; font-size: 0.78rem;" 
           onclick="window.PresentationView.insertSampleTemplate()"
         >
-          💡 Cargar plantilla de ejemplo
+          ðŸ’¡ Cargar plantilla de ejemplo
         </button>
       </div>
 
@@ -754,28 +754,28 @@
           style="flex: 2; background: linear-gradient(135deg, #7c3aed, var(--neon-cyan)); border: none; font-weight: 900;" 
           onclick="window.PresentationView.processImport()"
         >
-          <span>📥</span> Procesar e Importar Diapositivas
+          <span>ðŸ“¥</span> Procesar e Importar Diapositivas
         </button>
       </div>
     </div>
   </div>
 
-  <!-- Modal: Importar Documento Didáctico (Word docx, PDF, Texto, Markdown) -->
+  <!-- Modal: Importar Documento DidÃ¡ctico (Word docx, PDF, Texto, Markdown) -->
   <div id="document-import-modal" class="modal-overlay">
     <div class="modal-content glass-panel" style="max-width: 650px; padding: 2rem; border-radius: 20px; border: 2px solid #3b82f6;">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
         <div>
           <div style="display: inline-flex; align-items: center; gap: 0.4rem; background: rgba(59, 130, 246, 0.2); border: 1px solid #3b82f6; padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.78rem; font-weight: 800; color: #93c5fd; margin-bottom: 0.4rem;">
-            <span>📥</span> IMPORTAR DOCUMENTO
+            <span>ðŸ“¥</span> IMPORTAR DOCUMENTO
           </div>
           <h2 style="font-size: 1.6rem; font-weight: 900; margin: 0; color: var(--text-primary);">
             Importar Archivo o Texto
           </h2>
           <p style="font-size: 0.88rem; color: var(--text-secondary); margin: 0.35rem 0 0;">
-            Carga un documento de Word (.docx), PDF (.pdf), archivo de texto (.txt) o Markdown (.md) para estructurarlo automáticamente.
+            Carga un documento de Word (.docx), PDF (.pdf), archivo de texto (.txt) o Markdown (.md) para estructurarlo automÃ¡ticamente.
           </p>
         </div>
-        <button class="btn btn-outline btn-icon" onclick="window.DocumentProjectView.closeImportModal()">✕</button>
+        <button class="btn btn-outline btn-icon" onclick="window.DocumentProjectView.closeImportModal()">âœ•</button>
       </div>
 
       <!-- Zona de arrastre de archivos de documento -->
@@ -788,9 +788,9 @@
         style="border-color: #3b82f6; margin-bottom: 1.25rem; text-align: center; padding: 1.75rem; cursor: pointer;"
         onclick="document.getElementById('doc-file-input').click()"
       >
-        <span style="font-size: 2.4rem; display: block; margin-bottom: 0.4rem;">📄</span>
+        <span style="font-size: 2.4rem; display: block; margin-bottom: 0.4rem;">ðŸ“„</span>
         <div style="font-weight: 800; font-size: 1.05rem;" id="doc-dropzone-label">
-          Arrastra tu documento aquí o haz clic para seleccionarlo
+          Arrastra tu documento aquÃ­ o haz clic para seleccionarlo
         </div>
         <div style="font-size: 0.82rem; color: var(--text-secondary); margin-top: 0.35rem;" id="doc-dropzone-filename">
           Soporta Word (.docx), PDF (.pdf), Markdown (.md) y archivos de texto (.txt)
@@ -805,13 +805,13 @@
       </div>
 
       <div style="text-align: center; margin: 0.75rem 0; font-size: 0.85rem; color: var(--text-muted); font-weight: 700;">
-        — O IMPORTA MEDIANTE ENLACE WEB / URL (DRIVE, PDF, DOCX) —
+        â€” O IMPORTA MEDIANTE ENLACE WEB / URL (DRIVE, PDF, DOCX) â€”
       </div>
 
-      <!-- Campo de importación por enlace / URL -->
+      <!-- Campo de importaciÃ³n por enlace / URL -->
       <div style="margin-bottom: 1rem; background: rgba(59, 130, 246, 0.08); border: 1.5px solid #3b82f6; border-radius: 12px; padding: 0.85rem 1rem;">
         <label style="display: block; font-size: 0.85rem; font-weight: 800; color: #93c5fd; margin-bottom: 0.4rem;">
-          🔗 Enlace / URL del Documento (Google Drive, PDF online, OneDrive, etc.)
+          ðŸ”— Enlace / URL del Documento (Google Drive, PDF online, OneDrive, etc.)
         </label>
         <div style="display: flex; gap: 0.5rem;">
           <input 
@@ -830,20 +830,20 @@
           </button>
         </div>
         <div id="doc-url-feedback" style="font-size: 0.78rem; color: var(--text-muted); margin-top: 0.35rem;">
-          Pega el link de Google Drive, PDF o Word para visualizarlo idéntico a un documento importado.
+          Pega el link de Google Drive, PDF o Word para visualizarlo idÃ©ntico a un documento importado.
         </div>
       </div>
 
       <div style="text-align: center; margin: 0.75rem 0; font-size: 0.85rem; color: var(--text-muted); font-weight: 700;">
-        — O PEGA EL CONTENIDO DEL DOCUMENTO DIRECTAMENTE —
+        â€” O PEGA EL CONTENIDO DEL DOCUMENTO DIRECTAMENTE â€”
       </div>
 
-      <!-- Área de texto para pegar documento -->
+      <!-- Ãrea de texto para pegar documento -->
       <div style="margin-bottom: 1.25rem;">
         <textarea 
           id="doc-import-textarea" 
           rows="5" 
-          placeholder="Pega aquí el contenido de tu lectura, guía o apuntes...&#10;&#10;Ejemplo:&#10;# Título de la Guía&#10;&#10;## 1. Introducción&#10;Texto de la primera sección...&#10;&#10;## 2. Desarrollo&#10;Contenido detallado..."
+          placeholder="Pega aquÃ­ el contenido de tu lectura, guÃ­a o apuntes...&#10;&#10;Ejemplo:&#10;# TÃ­tulo de la GuÃ­a&#10;&#10;## 1. IntroducciÃ³n&#10;Texto de la primera secciÃ³n...&#10;&#10;## 2. Desarrollo&#10;Contenido detallado..."
           style="width: 100%; padding: 0.75rem; border-radius: var(--border-radius-md); background: rgba(0,0,0,0.5); border: 1px solid var(--border-color); color: white; font-size: 0.85rem; font-family: monospace; resize: vertical;"
         ></textarea>
       </div>
@@ -858,7 +858,7 @@
           style="flex: 2; background: linear-gradient(135deg, #3b82f6, var(--neon-cyan)); border: none; font-weight: 900;" 
           onclick="window.DocumentProjectView.processImport()"
         >
-          <span>📥</span> Procesar e Importar Documento
+          <span>ðŸ“¥</span> Procesar e Importar Documento
         </button>
       </div>
     </div>
@@ -866,52 +866,52 @@
 
   <!-- Modal: Crear Nuevo Proyecto (Flujo Estudiantil 2 Pasos) -->
   <div id="create-project-type-modal" class="modal-overlay">
-    <!-- Capa de Viñeta Cinematográfica -->
+    <!-- Capa de ViÃ±eta CinematogrÃ¡fica -->
     <div style="position: fixed; inset: 0; background: radial-gradient(circle at 50% 25%, rgba(6, 11, 24, 0.40) 0%, rgba(3, 7, 18, 0.88) 100%); pointer-events: none; z-index: 0;"></div>
 
     <div class="modal-content glass-panel student-create-modal-card">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
         <div>
           <div style="display: inline-flex; align-items: center; gap: 0.4rem; background: rgba(0,245,212,0.15); border: 1px solid var(--neon-cyan); padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.78rem; font-weight: 800; color: var(--neon-cyan); margin-bottom: 0.4rem;">
-            <span>✨</span> NUEVO PROYECTO EDUCATIVO
+            <span>âœ¨</span> NUEVO PROYECTO EDUCATIVO
           </div>
           <h2 id="create-project-modal-title" style="font-size: 1.55rem; font-weight: 900; margin: 0; color: var(--text-primary);">
             Datos de tu Proyecto
           </h2>
           <p id="create-project-modal-subtitle" style="font-size: 0.88rem; color: var(--text-secondary); margin: 0.35rem 0 0;">
-            Paso 1 de 2: Ingresa la información general para preparar la ficha y Landing Page de tu proyecto.
+            Paso 1 de 2: Ingresa la informaciÃ³n general para preparar la ficha y Landing Page de tu proyecto.
           </p>
         </div>
-        <button type="button" class="btn btn-outline btn-icon" onclick="window.ProjectsView.closeCreateProjectModal()" aria-label="Cerrar">✕</button>
+        <button type="button" class="btn btn-outline btn-icon" onclick="window.ProjectsView.closeCreateProjectModal()" aria-label="Cerrar">âœ•</button>
       </div>
 
-      <!-- PASO 1: Datos Generales (Nombre, Quién lo hizo, Resumen, Descripción) -->
+      <!-- PASO 1: Datos Generales (Nombre, QuiÃ©n lo hizo, Resumen, DescripciÃ³n) -->
       <div id="create-project-step-1" style="display: block;">
         <div style="display: flex; flex-direction: column; gap: 1rem; margin-bottom: 1.5rem;">
           <!-- Nombre del Proyecto -->
           <div>
             <label for="proj-create-title" style="display: block; font-size: 0.86rem; font-weight: 800; color: var(--neon-cyan); margin-bottom: 0.35rem;">
-              🏷️ Nombre del Proyecto <span style="color: #ef4444;">*</span>
+              ðŸ·ï¸ Nombre del Proyecto <span style="color: #ef4444;">*</span>
             </label>
             <input 
               type="text" 
               id="proj-create-title" 
               class="form-control" 
-              placeholder="Ej. Inteligencia Artificial en el Aula, Reto Ecológico 2026..." 
+              placeholder="Ej. Inteligencia Artificial en el Aula, Reto EcolÃ³gico 2026..." 
               style="width: 100%; padding: 0.75rem 1rem; border-radius: 12px; background: rgba(15, 23, 42, 0.75); border: 1.5px solid rgba(255, 255, 255, 0.15); color: #fff; font-size: 0.95rem;"
             />
           </div>
 
-          <!-- Quién lo hizo -->
+          <!-- QuiÃ©n lo hizo -->
           <div>
             <label for="proj-create-author" style="display: block; font-size: 0.86rem; font-weight: 800; color: var(--neon-cyan); margin-bottom: 0.35rem;">
-              👤 Quién lo hizo (Autor o Integrantes) <span style="color: #ef4444;">*</span>
+              ðŸ‘¤ QuiÃ©n lo hizo (Autor o Integrantes) <span style="color: #ef4444;">*</span>
             </label>
             <input 
               type="text" 
               id="proj-create-author" 
               class="form-control" 
-              placeholder="Ej. Sofía Martínez, Carlos Ruiz, Equipo Alfa..." 
+              placeholder="Ej. SofÃ­a MartÃ­nez, Carlos Ruiz, Equipo Alfa..." 
               style="width: 100%; padding: 0.75rem 1rem; border-radius: 12px; background: rgba(15, 23, 42, 0.75); border: 1.5px solid rgba(255, 255, 255, 0.15); color: #fff; font-size: 0.95rem;"
             />
           </div>
@@ -919,27 +919,27 @@
           <!-- Resumen del Proyecto -->
           <div>
             <label for="proj-create-summary" style="display: block; font-size: 0.86rem; font-weight: 800; color: var(--neon-cyan); margin-bottom: 0.35rem;">
-              📝 Resumen del Proyecto (Breve síntesis) <span style="color: #ef4444;">*</span>
+              ðŸ“ Resumen del Proyecto (Breve sÃ­ntesis) <span style="color: #ef4444;">*</span>
             </label>
             <textarea 
               id="proj-create-summary" 
               class="form-control" 
               rows="2" 
-              placeholder="Escribe una síntesis concisa de qué trata el proyecto para la portada de la Landing Page..." 
+              placeholder="Escribe una sÃ­ntesis concisa de quÃ© trata el proyecto para la portada de la Landing Page..." 
               style="width: 100%; padding: 0.75rem 1rem; border-radius: 12px; background: rgba(15, 23, 42, 0.75); border: 1.5px solid rgba(255, 255, 255, 0.15); color: #fff; font-size: 0.92rem; resize: vertical;"
             ></textarea>
           </div>
 
-          <!-- Descripción del Proyecto -->
+          <!-- DescripciÃ³n del Proyecto -->
           <div>
             <label for="proj-create-description" style="display: block; font-size: 0.86rem; font-weight: 800; color: var(--neon-cyan); margin-bottom: 0.35rem;">
-              📖 Descripción del Proyecto (Detallada)
+              ðŸ“– DescripciÃ³n del Proyecto (Detallada)
             </label>
             <textarea 
               id="proj-create-description" 
               class="form-control" 
               rows="3" 
-              placeholder="Detalla los antecedentes, metas, metodología o alcance de este proyecto educativo..." 
+              placeholder="Detalla los antecedentes, metas, metodologÃ­a o alcance de este proyecto educativo..." 
               style="width: 100%; padding: 0.75rem 1rem; border-radius: 12px; background: rgba(15, 23, 42, 0.75); border: 1.5px solid rgba(255, 255, 255, 0.15); color: #fff; font-size: 0.92rem; resize: vertical;"
             ></textarea>
           </div>
@@ -955,20 +955,20 @@
             onclick="window.ProjectsView.goToCreateProjectStep(2)"
             style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.5rem; font-weight: 800; border-radius: 12px; background: linear-gradient(135deg, #00f5d4 0%, #7c3aed 100%); color: #050b14; border: none; cursor: pointer; box-shadow: 0 4px 15px rgba(0,245,212,0.3); font-size: 0.95rem;"
           >
-            Siguiente: Elegir Formato →
+            Siguiente: Elegir Formato â†’
           </button>
         </div>
       </div>
 
-      <!-- PASO 2: Elegir Formato (Presentación, Video Clase, Documento, URL) -->
+      <!-- PASO 2: Elegir Formato (PresentaciÃ³n, Video Clase, Documento, URL) -->
       <div id="create-project-step-2" style="display: none;">
         <!-- Banner resumen con datos del paso 1 -->
         <div style="background: rgba(0, 245, 212, 0.08); border: 1px solid rgba(0, 245, 212, 0.25); border-radius: 12px; padding: 0.75rem 1rem; margin-bottom: 1.25rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem;">
           <div style="display: flex; align-items: center; gap: 0.5rem;">
-            <span style="font-size: 1.2rem;">💡</span>
+            <span style="font-size: 1.2rem;">ðŸ’¡</span>
             <div style="font-size: 0.88rem; color: #fff;">
               <strong id="create-project-preview-title" style="color: var(--neon-cyan);">Mi Proyecto</strong>
-              <span id="create-project-preview-author" style="color: var(--text-secondary); margin-left: 0.5rem;">• Por Estudiante</span>
+              <span id="create-project-preview-author" style="color: var(--text-secondary); margin-left: 0.5rem;">â€¢ Por Estudiante</span>
             </div>
           </div>
           <button 
@@ -976,12 +976,12 @@
             onclick="window.ProjectsView.goToCreateProjectStep(1)" 
             style="background: transparent; border: 1px solid rgba(255,255,255,0.25); color: #cbd5e1; border-radius: 8px; padding: 0.25rem 0.65rem; font-size: 0.78rem; cursor: pointer;"
           >
-            ✏️ Volver a editar datos
+            âœï¸ Volver a editar datos
           </button>
         </div>
 
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 1.15rem; margin-bottom: 1.5rem;">
-          <!-- Opción 1: Presentación Interactiva -->
+          <!-- OpciÃ³n 1: PresentaciÃ³n Interactiva -->
           <div 
             class="glass-panel" 
             onclick="window.ProjectsView.createStudentProject('presentation')"
@@ -989,17 +989,17 @@
             onmouseenter="this.style.transform='translateY(-4px)'; this.style.borderColor='var(--neon-cyan)'"
             onmouseleave="this.style.transform='none'; this.style.borderColor='#7c3aed'"
           >
-            <div style="font-size: 2.4rem; margin-bottom: 0.4rem;">📊</div>
-            <h3 style="font-size: 1.15rem; font-weight: 900; margin: 0 0 0.35rem; color: var(--text-primary);">Presentación</h3>
+            <div style="font-size: 2.4rem; margin-bottom: 0.4rem;">ðŸ“Š</div>
+            <h3 style="font-size: 1.15rem; font-weight: 900; margin: 0 0 0.35rem; color: var(--text-primary);">PresentaciÃ³n</h3>
             <p style="font-size: 0.8rem; color: var(--text-secondary); margin: 0 0 0.85rem; line-height: 1.4;">
-              Diapositivas interactivas con explicaciones, imágenes y conceptos clave.
+              Diapositivas interactivas con explicaciones, imÃ¡genes y conceptos clave.
             </p>
             <span class="btn btn-outline" style="font-size: 0.78rem; padding: 0.35rem 0.75rem; border-color: #7c3aed; color: #c4b5fd; font-weight: 800;">
-              Crear Presentación →
+              Crear PresentaciÃ³n â†’
             </span>
           </div>
 
-          <!-- Opción 2: Video Interactivo -->
+          <!-- OpciÃ³n 2: Video Interactivo -->
           <div 
             class="glass-panel" 
             onclick="window.ProjectsView.createStudentProject('video')"
@@ -1007,17 +1007,17 @@
             onmouseenter="this.style.transform='translateY(-4px)'; this.style.borderColor='var(--neon-cyan)'"
             onmouseleave="this.style.transform='none'; this.style.borderColor='#ef4444'"
           >
-            <div style="font-size: 2.4rem; margin-bottom: 0.4rem;">🎬</div>
+            <div style="font-size: 2.4rem; margin-bottom: 0.4rem;">ðŸŽ¬</div>
             <h3 style="font-size: 1.15rem; font-weight: 900; margin: 0 0 0.35rem; color: var(--text-primary);">Video Clase</h3>
             <p style="font-size: 0.8rem; color: var(--text-secondary); margin: 0 0 0.85rem; line-height: 1.4;">
-              Integra videos (YouTube, Drive, MP4) con capítulos, resumen y preguntas.
+              Integra videos (YouTube, Drive, MP4) con capÃ­tulos, resumen y preguntas.
             </p>
             <span class="btn btn-outline" style="font-size: 0.78rem; padding: 0.35rem 0.75rem; border-color: #ef4444; color: #fca5a5; font-weight: 800;">
-              Crear Video Clase →
+              Crear Video Clase â†’
             </span>
           </div>
 
-          <!-- Opción 3: Documento Didáctico -->
+          <!-- OpciÃ³n 3: Documento DidÃ¡ctico -->
           <div 
             class="glass-panel" 
             onclick="window.ProjectsView.createStudentProject('document')"
@@ -1025,17 +1025,17 @@
             onmouseenter="this.style.transform='translateY(-4px)'; this.style.borderColor='var(--neon-cyan)'"
             onmouseleave="this.style.transform='none'; this.style.borderColor='#3b82f6'"
           >
-            <div style="font-size: 2.4rem; margin-bottom: 0.4rem;">📄</div>
+            <div style="font-size: 2.4rem; margin-bottom: 0.4rem;">ðŸ“„</div>
             <h3 style="font-size: 1.15rem; font-weight: 900; margin: 0 0 0.35rem; color: var(--text-primary);">Documento</h3>
             <p style="font-size: 0.8rem; color: var(--text-secondary); margin: 0 0 0.85rem; line-height: 1.4;">
-              Guías didácticas, apuntes de clase y lecturas estructuradas por secciones.
+              GuÃ­as didÃ¡cticas, apuntes de clase y lecturas estructuradas por secciones.
             </p>
             <span class="btn btn-outline" style="font-size: 0.78rem; padding: 0.35rem 0.75rem; border-color: #3b82f6; color: #93c5fd; font-weight: 800;">
-              Crear Documento →
+              Crear Documento â†’
             </span>
           </div>
 
-          <!-- Opción 4: Recurso Web por URL -->
+          <!-- OpciÃ³n 4: Recurso Web por URL -->
           <div 
             class="glass-panel" 
             onclick="window.ProjectsView.createStudentProject('url')"
@@ -1043,20 +1043,20 @@
             onmouseenter="this.style.transform='translateY(-4px)'; this.style.borderColor='var(--neon-cyan)'"
             onmouseleave="this.style.transform='none'; this.style.borderColor='#10b981'"
           >
-            <div style="font-size: 2.4rem; margin-bottom: 0.4rem;">🌐</div>
+            <div style="font-size: 2.4rem; margin-bottom: 0.4rem;">ðŸŒ</div>
             <h3 style="font-size: 1.15rem; font-weight: 900; margin: 0 0 0.35rem; color: var(--text-primary);">Enlace / URL</h3>
             <p style="font-size: 0.8rem; color: var(--text-secondary); margin: 0 0 0.85rem; line-height: 1.4;">
               Enlaza e incrusta simuladores (PhET, GeoGebra), sitios web y herramientas.
             </p>
             <span class="btn btn-outline" style="font-size: 0.78rem; padding: 0.35rem 0.75rem; border-color: #10b981; color: #6ee7b7; font-weight: 800;">
-              Crear Recurso URL →
+              Crear Recurso URL â†’
             </span>
           </div>
         </div>
 
         <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 1rem;">
           <button type="button" class="btn btn-outline" onclick="window.ProjectsView.goToCreateProjectStep(1)">
-            ← Volver a editar datos
+            â† Volver a editar datos
           </button>
           <button type="button" class="btn btn-outline" onclick="window.ProjectsView.closeCreateProjectModal()">
             Cerrar
@@ -1066,18 +1066,18 @@
     </div>
   </div>
 
-  <!-- Modal: Conexión y Configuración de Supabase -->
+  <!-- Modal: ConexiÃ³n y ConfiguraciÃ³n de Supabase -->
   <div id="supabase-modal" class="modal-overlay">
     <div class="modal-content glass-panel" style="max-width: 560px; padding: 2.25rem 2rem; border-radius: 20px; border: 2px solid var(--neon-cyan); background: rgba(10, 20, 42, 0.98); box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7), 0 0 35px rgba(0, 245, 212, 0.3);">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
         <div style="display: flex; align-items: center; gap: 0.65rem;">
-          <span style="font-size: 1.8rem;">⚡</span>
+          <span style="font-size: 1.8rem;">âš¡</span>
           <div>
             <h2 style="font-size: 1.35rem; font-weight: 900; margin: 0; color: #ffffff;">Base de Datos Supabase</h2>
-            <p style="font-size: 0.82rem; color: var(--text-secondary); margin: 0.2rem 0 0;">Guarda los proyectos y avances del asistente en la nube sin pérdida de datos</p>
+            <p style="font-size: 0.82rem; color: var(--text-secondary); margin: 0.2rem 0 0;">Guarda los proyectos y avances del asistente en la nube sin pÃ©rdida de datos</p>
           </div>
         </div>
-        <button class="btn btn-outline btn-icon" onclick="window.appRouter.closeModal('supabase-modal')">✕</button>
+        <button class="btn btn-outline btn-icon" onclick="window.appRouter.closeModal('supabase-modal')">âœ•</button>
       </div>
 
       <div style="display: flex; flex-direction: column; gap: 1.1rem; margin-bottom: 1.5rem;">
@@ -1095,7 +1095,7 @@
 
         <div>
           <label style="display: block; font-size: 0.82rem; font-weight: 800; color: #00f5d4; text-transform: uppercase; margin-bottom: 0.4rem;">
-            Clave Pública Anon Key:
+            Clave PÃºblica Anon Key:
           </label>
           <textarea 
             id="supabase-key-input" 
@@ -1106,20 +1106,20 @@
         </div>
 
         <div id="supabase-modal-status" style="font-size: 0.85rem; font-weight: 700; padding: 0.65rem 0.85rem; border-radius: 10px; background: rgba(255, 255, 255, 0.05); color: var(--text-secondary); text-align: center;">
-          Estado: Verificando conexión...
+          Estado: Verificando conexiÃ³n...
         </div>
       </div>
 
       <div style="display: flex; justify-content: flex-end; gap: 0.75rem;">
         <button type="button" class="btn btn-outline" onclick="window.appRouter.closeModal('supabase-modal')">Cancelar</button>
         <button type="button" class="btn btn-cyan" onclick="window.appRouter.saveSupabaseCredentials()">
-          ⚡ Guardar y Conectar
+          âš¡ Guardar y Conectar
         </button>
       </div>
     </div>
   </div>
 
-  <!-- PDF.js para soporte de extracción de documentos PDF (Carga diferida para agilizar móviles) -->
+  <!-- PDF.js para soporte de extracciÃ³n de documentos PDF (Carga diferida para agilizar mÃ³viles) -->
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
   <script>
     window.addEventListener('load', function() {
@@ -1129,7 +1129,7 @@
     });
   </script>
 
-  <!-- SheetJS para soporte nativo y completo de hojas de cálculo Excel (.xlsx, .xls) (Carga diferida) -->
+  <!-- SheetJS para soporte nativo y completo de hojas de cÃ¡lculo Excel (.xlsx, .xls) (Carga diferida) -->
   <script defer src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 
   <!-- Scripts en orden de dependencias -->
@@ -1154,7 +1154,7 @@
   <script src="js/views/admin.js?v=20261103_slides_v50"></script>
   <script src="js/views/ranking.js?v=20261016_utf8"></script>
   <script src="js/views/project-wizard.js?v=20261103_slides_v50"></script>
-  <script src="js/views/project-hub.js?v=20261105_hub_v53"></script>
+  <script src="js/views/project-hub.js?v=20261105_hub_v54"></script>
   <script src="js/views/projects.js?v=20261105_hub_v53"></script>
   <script src="js/views/presentation.js?v=20261104_filter_v51"></script>
   <script src="js/views/video-project.js?v=20261104_filter_v51"></script>
