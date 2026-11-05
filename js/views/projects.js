@@ -1712,6 +1712,14 @@ window.ProjectsView = {
       primaryText = 'Ver Detalles →';
     }
 
+    // "Ver Detalles" abre el Panel del Creador / Vista de Estudiante (Project Hub)
+    if (window.ProjectHub) {
+      const hubOpen = `window.ProjectHub.open('${c.id}')`;
+      if (/Ver Detalles/.test(primaryText)) primaryAction = hubOpen;
+      if (/Ver Detalles/.test(secondaryText)) secondaryAction = hubOpen;
+    }
+    const canHubEdit = !!(window.ProjectHub && window.ProjectHub.canEdit(c));
+
     const dateStr = c.date || (c.createdAt ? new Date(c.createdAt).toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' }) : '12 Abr 2025');
     const studentsCount = (c.students !== undefined && c.students !== null) ? c.students : (c.playsCount || 0);
     const ratingStr = c.rating || '5.0';
@@ -1758,10 +1766,10 @@ window.ProjectsView = {
                 <span>Banner</span>
               </button>
             ` : ''}
-            ${(isAdmin || isAuthor) ? `
+            ${(isAdmin || isAuthor || canHubEdit) ? `
               <button 
                 title="Editar este proyecto" 
-                onclick="event.stopPropagation(); window.ProjectsView.openEditProject('${c.id}')"
+                onclick="event.stopPropagation(); ${window.ProjectHub ? `window.ProjectHub.open('${c.id}')` : `window.ProjectsView.openEditProject('${c.id}')`}"
                 style="width: 30px; height: 30px; border-radius: 8px; background: rgba(14, 165, 233, 0.92); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; cursor: pointer; border: none; font-size: 0.85rem; color: #ffffff; box-shadow: 0 2px 8px rgba(0,0,0,0.18); transition: transform 0.15s ease;"
                 onmouseenter="this.style.transform='scale(1.1)';"
                 onmouseleave="this.style.transform='scale(1)';"
@@ -5296,7 +5304,7 @@ window.ProjectsView = {
                 </div>
 
                 <div class="inno-sidebar-actions">
-                  <button type="button" class="inno-btn-join" onclick="window.ProjectsView.previewLandingDoc('Unirse al Proyecto — ${selectedTitle}')">
+                  <button type="button" class="inno-btn-join" onclick="window.ProjectHub ? window.ProjectHub.openJoinForm('${selected?.id || this.selectedProjectId}') : window.ProjectsView.previewLandingDoc('Unirse al Proyecto — ${selectedTitle}')">
                     <span>👥</span> Unirse al proyecto
                   </button>
                   <button type="button" class="inno-btn-comment" onclick="window.ProjectsView.previewLandingDoc('Dejar un comentario — ${selectedTitle}')">
