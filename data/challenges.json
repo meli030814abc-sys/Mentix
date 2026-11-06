@@ -237,7 +237,25 @@
     "authorAvatar": "🦊",
     "authorRole": "teacher",
     "createdAt": "2025-04-10T09:30:00.000Z",
-    "updatedAt": "2026-11-06T19:35:06.251Z"
+    "updatedAt": "2026-11-06T19:35:07.259Z",
+    "tag": "⏳ Pendiente de Autorización",
+    "tagClass": "badge-review",
+    "date": "10 Abr 2025",
+    "students": 18,
+    "rating": "4.6",
+    "image": "assets/projects_ui/card_ai_society.png",
+    "chapters": [
+      {
+        "id": "ch1",
+        "title": "Introducción a la IA",
+        "slidesCount": 1
+      },
+      {
+        "id": "ch2",
+        "title": "Dilemas Éticos",
+        "slidesCount": 1
+      }
+    ]
   },
   {
     "id": "proj_1792971445678",
