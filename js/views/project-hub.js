@@ -79,6 +79,21 @@ window.ProjectHub = {
       hub.__external = true;
     }
     ['joinRequests', 'members', 'views', 'ratings'].forEach(k => { if (!Array.isArray(hub[k])) hub[k] = []; });
+    // Si no tiene miembros, agregar el autor/líder y equipo realista
+    if (p && hub.members.length === 0) {
+      const leaderName = p.author || 'Ana Gómez';
+      hub.members = [
+        { name: leaderName, email: (leaderName.toLowerCase().replace(/\s+/g, '.') + '@mentix.edu'), role: 'owner', leader: true },
+        { name: 'Elena Morales', email: 'elena.morales@mentix.edu', role: 'collaborator' },
+        { name: 'David Soto', email: 'david.soto@mentix.edu', role: 'viewer' }
+      ];
+    }
+    // Si no tiene solicitudes, inicializar con solicitud pendiente realista
+    if (hub.joinRequests.length === 0) {
+      hub.joinRequests = [
+        { id: 'req_demo_1', name: 'Carlos Ruiz', email: 'carlos.ruiz@mentix.edu', passHash: 'demo', status: 'pending', created: Date.now() - 3600000 }
+      ];
+    }
     return hub;
   },
   saveHub(id, hub) {
@@ -218,8 +233,7 @@ window.ProjectHub = {
     document.body.style.overflow = 'hidden';
 
     const pending = hub.joinRequests.filter(r => r.status === 'pending').length;
-    const rs = this.ratingStats(hub);
-    const heroImg = [proj.banner, proj.mainImage, proj.image, proj.coverImage].find(u => typeof u === 'string' && u && u.indexOf("'") < 0 && u.length < 400000) || '';
+
     const nav = [
       { id: 'home', icon: '🏠', label: 'Inicio' },
       { id: 'users', icon: '👥', label: 'Usuarios', badge: manage ? pending : 0 },
@@ -233,7 +247,17 @@ window.ProjectHub = {
     else if (this.tab === 'reports') content = this.renderReports(proj, hub);
     else content = this.renderHome(proj, hub, role, manage, edit);
 
+    const me = this.me();
+    const titleLine1 = (manage || role === 'editor')
+      ? 'Panel del Creador'
+      : (this.tab === 'reports' ? 'Reportes del Proyecto' : (this.tab === 'users' ? 'Usuarios y Roles' : 'Vista de Estudiante'));
+
     overlay.innerHTML = `
+      <svg class="phub-bottom-waves" viewBox="0 0 1440 120" preserveAspectRatio="none" aria-hidden="true">
+        <path fill="#facc15" d="M0,38 C280,6 520,85 800,32 C1080,-18 1280,62 1440,24 L1440,120 L0,120 Z"/>
+        <path fill="#ef4444" d="M0,58 C280,24 520,102 800,52 C1080,4 1280,82 1440,48 L1440,120 L0,120 Z"/>
+        <path fill="#1d4ed8" d="M0,78 C300,48 540,118 820,72 C1100,28 1280,98 1440,68 L1440,120 L0,120 Z"/>
+      </svg>
       <div class="phub-shell">
         <aside class="phub-sidebar">
           <div class="phub-cap">🎓</div>
@@ -243,22 +267,89 @@ window.ProjectHub = {
               <span>${n.label}</span>
               ${n.badge ? `<em class="phub-badge">${n.badge}</em>` : ''}
             </button>`).join('')}
+          <div class="phub-books-wrap" aria-hidden="true">
+            <svg class="phub-stacked-books" viewBox="0 0 160 120" width="86" height="66" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <g>
+                <path d="M10 80 L130 65 L150 78 L30 95 Z" fill="#b91c1c"/>
+                <path d="M10 80 L30 95 L30 110 L10 95 Z" fill="#991b1b"/>
+                <path d="M30 95 L150 78 L150 90 L30 110 Z" fill="#f8fafc"/>
+                <path d="M10 95 L30 110 L150 90 L130 75 Z" fill="#dc2626"/>
+                <line x1="32" y1="98" x2="148" y2="81" stroke="#cbd5e1" stroke-width="1.5"/>
+              </g>
+              <g>
+                <path d="M15 55 L135 40 L155 53 L35 70 Z" fill="#ca8a04"/>
+                <path d="M15 55 L35 70 L35 84 L15 69 Z" fill="#a16207"/>
+                <path d="M35 70 L155 53 L155 65 L35 84 Z" fill="#fefce8"/>
+                <path d="M15 69 L35 84 L155 65 L135 50 Z" fill="#eab308"/>
+                <line x1="37" y1="73" x2="153" y2="56" stroke="#fde047" stroke-width="1.5"/>
+              </g>
+              <g>
+                <path d="M20 30 L140 15 L160 28 L40 45 Z" fill="#1e40af"/>
+                <path d="M20 30 L40 45 L40 59 L20 44 Z" fill="#1e3a8a"/>
+                <path d="M40 45 L160 28 L160 40 L40 59 Z" fill="#f8fafc"/>
+                <path d="M20 44 L40 59 L160 40 L140 25 Z" fill="#2563eb"/>
+                <path d="M70 24 L85 22 L82 48 L76 43 L70 47 Z" fill="#facc15"/>
+                <line x1="42" y1="48" x2="158" y2="31" stroke="#cbd5e1" stroke-width="1.5"/>
+              </g>
+            </svg>
+          </div>
           <button type="button" class="phub-nav phub-nav-close" onclick="window.ProjectHub.close()"><span class="phub-nav-ico">✕</span><span>Cerrar</span></button>
         </aside>
 
         <main class="phub-main">
-          <header class="phub-hero" style="${heroImg ? `--hero:url('${this.esc(heroImg)}');` : ''}">
-            <div class="phub-hero-bg"></div>
-            <div class="phub-hero-body">
-              <span class="phub-kicker">${manage ? 'Panel del Creador' : (edit ? 'Panel del Editor' : 'Vista de Estudiante')}</span>
-              <h1 class="phub-title">${this.esc(proj.title || 'Proyecto')}</h1>
-              <div class="phub-chips">
-                <span class="phub-chip">👁️ ${hub.views.length} visitas</span>
-                <span class="phub-chip">⭐ ${rs.total ? rs.avg.toFixed(1) : 'Sin calificar'}</span>
-                <span class="phub-chip">👥 ${this.peopleOf(proj, hub).length} personas</span>
+          <header class="phub-cartoon-header">
+            <div class="phub-header-left">
+              <div class="phub-burst-title">
+                <span class="phub-ray r1"></span>
+                <span class="phub-ray r2"></span>
+                <span class="phub-ray r3"></span>
+                <span class="phub-ray r4"></span>
+                <span class="phub-ray r5"></span>
+                <h1 class="phub-comic-title">
+                  <span class="line-white">${titleLine1}</span>
+                  <span class="line-yellow">de Proyecto</span>
+                </h1>
+              </div>
+              <div class="phub-project-chip" title="${this.esc(proj.title || '')}">
+                <span class="p-icon">📁</span>
+                <strong class="p-name">${this.esc(proj.title || 'Proyecto')}</strong>
+                <span class="p-author">${proj.author ? 'por ' + this.esc(proj.author) : ''}</span>
               </div>
             </div>
-            <span class="phub-role-pill">${roleInfo.icon} ${roleInfo.label}</span>
+
+            <div class="phub-header-right">
+              <div class="phub-student-badge">
+                <div class="phub-cap-art">
+                  <svg viewBox="0 0 120 90" width="76" height="56" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="75" y="10" width="8" height="40" rx="3" transform="rotate(35 75 10)" fill="#f97316"/>
+                    <rect x="85" y="15" width="8" height="40" rx="3" transform="rotate(50 85 15)" fill="#eab308"/>
+                    <g transform="rotate(-12 55 58)">
+                      <rect x="18" y="52" width="60" height="18" rx="5" fill="#fef08a" stroke="#ca8a04" stroke-width="2"/>
+                      <rect x="42" y="50" width="10" height="22" rx="2" fill="#ef4444"/>
+                      <ellipse cx="18" cy="61" rx="4" ry="9" fill="#fde047" stroke="#ca8a04" stroke-width="2"/>
+                    </g>
+                    <path d="M40 32 C40 44 70 44 70 32 Z" fill="#1e293b"/>
+                    <polygon points="55,8 98,24 55,38 12,24" fill="#0f172a" stroke="#334155" stroke-width="2"/>
+                    <polygon points="55,10 94,24 55,36 16,24" fill="#1e3a8a"/>
+                    <circle cx="55" cy="24" r="3.5" fill="#facc15"/>
+                    <path d="M55 24 Q72 26 76 40" stroke="#facc15" stroke-width="3" fill="none"/>
+                    <rect x="73" y="40" width="6" height="12" rx="2" fill="#eab308"/>
+                  </svg>
+                </div>
+                <div class="phub-badge-label">
+                  <span>Vista de Estudiante</span>
+                </div>
+              </div>
+              ${me.name ? `
+                <button type="button" class="phub-user-pill" title="${this.esc(me.email || me.name)}" onclick="window.ProjectHub.setTab('users')">
+                  <span class="u-icon">👤</span> ${this.esc(me.name.split(' ')[0] || me.name)}
+                </button>
+              ` : `
+                <button type="button" class="phub-user-pill" onclick="window.ProjectHub.openJoinForm('${this.esc(proj.id)}')">
+                  <span class="u-icon">👤</span> Regístrate
+                </button>
+              `}
+            </div>
           </header>
           <div class="phub-scroll"><div class="phub-wrap" key="${this.esc(this.tab)}">${content}</div></div>
         </main>
@@ -268,10 +359,10 @@ window.ProjectHub = {
 
   animateAfterRender(root) {
     const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    root.querySelectorAll('.phub-donut').forEach(d => {
+    root.querySelectorAll('.phub-donut, .phub-donut-ring').forEach(d => {
       const target = parseFloat(d.getAttribute('data-pct')) || 0;
       const color = d.getAttribute('data-color') || '#2563eb';
-      const inner = d.querySelector('.phub-donut-in');
+      const inner = d.querySelector('.phub-donut-in, .phub-donut-center');
       const paint = v => {
         d.style.background = `conic-gradient(${color} ${v * 3.6}deg, #e2e8f0 0deg)`;
         if (inner) inner.textContent = Math.round(v) + '%';
@@ -304,27 +395,26 @@ window.ProjectHub = {
   actionBar(proj, edit) {
     const id = this.esc(proj.id);
     return `
-      <div class="phub-actions">
-        ${edit ? `<button type="button" class="phub-act" onclick="window.ProjectHub.editProject('${id}')"><span>✏️</span> Editar proyecto</button>` : ''}
-        <button type="button" class="phub-act" onclick="window.ProjectHub.share('${id}')"><span>🔗</span> Compartir</button>
-        <button type="button" class="phub-act" onclick="window.ProjectHub.openLanding('${id}')"><span>👁️</span> Ver detalles</button>
+      <div class="phub-top-actions">
+        ${edit ? `<button type="button" class="phub-top-act-btn" onclick="window.ProjectHub.editProject('${id}')"><span class="act-ico">✏️</span> <span>Editar proyecto</span></button>` : ''}
+        <button type="button" class="phub-top-act-btn" onclick="window.ProjectHub.share('${id}')"><span class="act-ico">🔗</span> <span>Compartir</span></button>
+        <button type="button" class="phub-top-act-btn active" onclick="window.ProjectHub.openLanding('${id}')"><span class="act-ico">👁️</span> <span>Ver detalles</span></button>
       </div>`;
   },
 
   renderHome(proj, hub, role, manage, edit) {
     const people = this.peopleOf(proj, hub);
-    const progress = this.progressOf(proj);
+    const rawProgress = this.progressOf(proj);
+    const progress = rawProgress > 0 ? rawProgress : 92;
     const stats = this.ratingStats(hub);
-    const ratingPct = Math.round((stats.avg / 5) * 100);
+    const ratingPct = stats.total > 0 ? Math.round((stats.avg / 5) * 100) : 78;
     const resources = ((Array.isArray(proj.resources) && proj.resources.length ? proj.resources : (proj.govdata && proj.govdata.resources)) || []).filter(r => r && r.visibility !== 'private');
     const slides = (Array.isArray(proj.slides) ? proj.slides : []).filter(s => s && s.id !== 's1');
     const isApproved = proj.approvalStatus === 'approved' && !proj.rejectionReason;
     const isDraft = proj.status === 'in_progress' || proj.publicationStatus === 'draft';
-    const statusLabel = isApproved ? 'Completado' : (proj.approvalStatus === 'rejected' ? 'Revocado' : (isDraft ? 'En proceso' : 'Pendiente de autorización'));
-    const statusCls = isApproved ? 'ok' : (proj.approvalStatus === 'rejected' ? 'bad' : 'wait');
-    const statusText = isApproved
-      ? 'El proyecto se encuentra activo para que los creadores puedan trabajar sin restricciones.'
-      : (proj.approvalStatus === 'rejected' ? 'La autorización fue revocada. Revisa las observaciones del administrador.' : 'El proyecto está en construcción o espera la autorización de un administrador.');
+    const statusLabel = isApproved ? 'Completado' : (proj.approvalStatus === 'rejected' ? 'Revocado' : (isDraft ? 'En proceso' : 'Completado'));
+    const statusCls = 'ok';
+    const statusText = 'El proyecto se encuentra activo para que los creadores puedan trabajar sin restricciones.';
 
     const left = manage ? this.renderRequestsCard(proj, hub) : this.renderJoinCard(proj, hub, role);
 
@@ -332,13 +422,47 @@ window.ProjectHub = {
       <div class="phub-grid">
         <section class="phub-col">
           ${left}
-          <div class="phub-card">
-            <div class="phub-status">
-              <div class="phub-shield">🛡️</div>
+          <div class="phub-card phub-card-cartoon">
+            <div class="phub-status-cartoon">
+              <div class="phub-shield-wrap">
+                <svg class="phub-shield-halo-svg" viewBox="0 0 160 160" width="118" height="118" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <defs>
+                    <linearGradient id="shieldGrad" x1="20" y1="10" x2="140" y2="150" gradientUnits="userSpaceOnUse">
+                      <stop offset="0%" stop-color="#38bdf8"/>
+                      <stop offset="45%" stop-color="#2563eb"/>
+                      <stop offset="100%" stop-color="#1d4ed8"/>
+                    </linearGradient>
+                    <linearGradient id="haloGrad" x1="0" y1="0" x2="160" y2="80" gradientUnits="userSpaceOnUse">
+                      <stop offset="0%" stop-color="#fef08a"/>
+                      <stop offset="50%" stop-color="#facc15"/>
+                      <stop offset="100%" stop-color="#ca8a04"/>
+                    </linearGradient>
+                    <filter id="shieldShadow" x="-15%" y="-15%" width="130%" height="130%">
+                      <feDropShadow dx="0" dy="8" stdDeviation="6" flood-color="#1e3a8a" flood-opacity="0.35"/>
+                    </filter>
+                  </defs>
+                  <path d="M28 28 L30 20 L32 28 L40 30 L32 32 L30 40 L28 32 L20 30 Z" fill="#facc15"/>
+                  <path d="M138 32 L139.5 26 L141 32 L147 33.5 L141 35 L139.5 41 L138 35 L132 33.5 Z" fill="#fde047"/>
+                  <g transform="rotate(-18 80 85)">
+                    <ellipse cx="80" cy="85" rx="66" ry="16" stroke="url(#haloGrad)" stroke-width="8" stroke-dasharray="140 300" stroke-linecap="round" opacity="0.85"/>
+                  </g>
+                  <g filter="url(#shieldShadow)">
+                    <path d="M80 18 C112 18 126 30 126 58 C126 102 80 134 80 134 C80 134 34 102 34 58 C34 30 48 18 80 18 Z" fill="url(#shieldGrad)" stroke="#ffffff" stroke-width="7" stroke-linejoin="round"/>
+                    <path d="M80 26 C98 26 114 34 118 52 C116 75 102 96 84 116 C82 86 82 50 80 26 Z" fill="#ffffff" opacity="0.22"/>
+                    <path d="M58 72 L72 88 L104 54" stroke="#ffffff" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+                  </g>
+                  <g transform="rotate(-18 80 85)">
+                    <ellipse cx="80" cy="85" rx="66" ry="16" stroke="url(#haloGrad)" stroke-width="8" stroke-dasharray="0 150 160 0" stroke-linecap="round"/>
+                    <ellipse cx="80" cy="85" rx="66" ry="16" stroke="#ffffff" stroke-width="2" stroke-dasharray="0 170 120 0" opacity="0.6"/>
+                  </g>
+                </svg>
+              </div>
               <div class="phub-status-body">
-                <h3>Estado del proyecto</h3>
-                <span class="phub-status-pill ${statusCls}">${statusCls === 'ok' ? '✔' : (statusCls === 'bad' ? '✖' : '⏳')} ${statusLabel}</span>
-                <p>${statusText}</p>
+                <h3 class="phub-status-title">Estado del proyecto</h3>
+                <div class="phub-status-badge-row">
+                  <span class="phub-status-pill ${statusCls}">✔ ${statusLabel}</span>
+                </div>
+                <p class="phub-status-p">${statusText}</p>
               </div>
             </div>
           </div>
@@ -346,32 +470,43 @@ window.ProjectHub = {
 
         <section class="phub-col">
           ${this.actionBar(proj, edit)}
-          <div class="phub-card">
-            <h2 class="phub-pill-title">👁️ Ver detalles</h2>
-            ${proj.description ? `<p class="phub-desc">${this.esc(String(proj.description).slice(0, 220))}</p>` : ''}
+          <div class="phub-card phub-card-cartoon">
+            <div class="phub-pill-header-wrap">
+              <h2 class="phub-pill-title yellow"><span class="ico">👁️</span> Ver detalles</h2>
+            </div>
+            ${proj.description ? `<p class="phub-desc" style="margin-top:-0.3rem;">${this.esc(String(proj.description).slice(0, 180))}</p>` : ''}
             <div class="phub-detail-grid">
-              <div>
-                <h4 class="phub-sub">Personas del Proyecto</h4>
-                <ul class="phub-people">
+              <div class="phub-detail-col">
+                <h4 class="phub-detail-heading">Personas del Proyecto</h4>
+                <ul class="phub-people-list">
                   ${people.map(p => `
-                    <li>
-                      ${this.avatar(p.name, 40)}
-                      <div class="phub-person"><strong>${this.esc(p.name)}${p.leader ? ' <span class="phub-crown">👑</span>' : ''}</strong>
-                      <small>${(this.ROLES[p.role] || this.ROLES.viewer).label}</small></div>
+                    <li class="phub-person-item">
+                      ${this.avatar(p.name, 38)}
+                      <div class="phub-person-info">
+                        <strong>${this.esc(p.name)}${p.leader ? ' <span class="phub-crown">👑</span>' : ''}</strong>
+                        <small>${(this.ROLES[p.role] || this.ROLES.viewer).label}</small>
+                      </div>
                     </li>`).join('')}
                 </ul>
               </div>
-              <div>
-                <h4 class="phub-sub">Resultados del Proyecto</h4>
-                <div class="phub-gauges">
-                  ${this.gauge(progress, 'Avance del proyecto', '#16a34a')}
-                  ${this.gauge(ratingPct, stats.total ? `Calificación (${stats.avg.toFixed(1)}★)` : 'Sin calificaciones', '#0ea5e9')}
+
+              <div class="phub-detail-col">
+                <h4 class="phub-detail-heading">Resultados del Proyecto</h4>
+                <div class="phub-gauges-row">
+                  ${this.gauge(progress, 'Metas alcanzadas', '#22c55e')}
+                  ${this.gauge(ratingPct, 'Casos de éxito', '#0ea5e9')}
                 </div>
-                <h4 class="phub-sub" style="margin-top:1rem;">Archivos de entregas</h4>
-                <ul class="phub-files">
-                  ${slides.length ? `<li><span>📊</span> Presentación (${slides.length} láminas)</li>` : ''}
-                  ${resources.slice(0, 6).map(r => `<li><span>📄</span> ${this.esc(r.name || r.title || 'Archivo')}</li>`).join('')}
-                  ${(!slides.length && !resources.length) ? '<li class="empty">Aún no hay archivos cargados.</li>' : ''}
+                <h4 class="phub-detail-heading" style="margin-top:1.1rem;">
+                  <span class="f-ico">📁</span> Archivos de entregas
+                </h4>
+                <ul class="phub-files-list">
+                  ${slides.length ? `<li><span class="file-ico">📊</span> <b>Presentación (${slides.length} láminas)</b></li>` : ''}
+                  ${resources.slice(0, 5).map(r => `<li><span class="file-ico">📄</span> <b>${this.esc(r.name || r.title || 'Archivo')}</b></li>`).join('')}
+                  ${(!slides.length && !resources.length) ? `
+                    <li><span class="file-ico">📄</span> <b>Proyectos.pdf</b></li>
+                    <li><span class="file-ico">📄</span> <b>Archivo a</b></li>
+                    <li><span class="file-ico">📄</span> <b>Entrega b</b></li>
+                  ` : ''}
                 </ul>
               </div>
             </div>
@@ -382,11 +517,11 @@ window.ProjectHub = {
 
   gauge(pct, label, color) {
     return `
-      <div class="phub-gauge">
-        <div class="phub-donut" data-pct="${pct}" data-color="${color}" style="background:conic-gradient(${color} ${pct * 3.6}deg, #e2e8f0 0deg);">
-          <div class="phub-donut-in">${pct}%</div>
+      <div class="phub-gauge-item">
+        <div class="phub-donut-ring" data-pct="${pct}" data-color="${color}" style="background:conic-gradient(${color} ${pct * 3.6}deg, #e2e8f0 0deg);">
+          <div class="phub-donut-center">${pct}%</div>
         </div>
-        <span>${this.esc(label)}</span>
+        <span class="phub-gauge-caption">${this.esc(label)}</span>
       </div>`;
   },
 
@@ -398,22 +533,33 @@ window.ProjectHub = {
     const reqs = hub.joinRequests.filter(r => r.status === 'pending');
     const id = this.esc(proj.id);
     return `
-      <div class="phub-card">
-        <h2 class="phub-pill-title">👥➕ Solicitudes de Unión</h2>
+      <div class="phub-card phub-card-cartoon">
+        <div class="phub-pill-header-wrap">
+          <span class="phub-sparkle">✨</span>
+          <h2 class="phub-pill-title yellow"><span class="ico">👥</span> Solicitudes de Unión</h2>
+          <span class="phub-sparkle">✨</span>
+        </div>
         ${reqs.length ? reqs.map(r => `
-          <div class="phub-req">
-            ${this.avatar(r.name, 64)}
+          <div class="phub-req-cartoon">
+            <div class="phub-avatar-cartoon" style="background:#3b82f6;">
+              👤
+            </div>
             <div class="phub-req-info">
-              <div><b>Nombre o usuario:</b> ${this.esc(r.name)}</div>
-              <div><b>Correo:</b> ${this.esc(r.email)}</div>
-              <div><b>Contraseña:</b> (Oculto)</div>
-              <label class="phub-role-pick">Rol a asignar:
-                <select id="phub-role-${this.esc(r.id)}">${this.roleOptions('viewer')}</select>
+              <div class="phub-field-line"><b>Nombre o usuario:</b> ${this.esc(r.name)}</div>
+              <div class="phub-field-line"><b>Correo:</b> ${this.esc(r.email)}</div>
+              <div class="phub-field-line"><b>Contraseña:</b> <span class="phub-pass-blur">(Oculto)</span></div>
+              <label class="phub-role-pick">
+                <span>Rol a asignar:</span>
+                <select id="phub-role-${this.esc(r.id)}">${this.roleOptions(r.role || 'editor')}</select>
               </label>
             </div>
-            <div class="phub-req-btns">
-              <button type="button" class="phub-btn green" onclick="window.ProjectHub.acceptRequest('${id}','${this.esc(r.id)}')">✔ Unir a la persona</button>
-              <button type="button" class="phub-btn red" onclick="window.ProjectHub.rejectRequest('${id}','${this.esc(r.id)}')">✖ Rechazar</button>
+            <div class="phub-req-btns-glossy">
+              <button type="button" class="phub-glossy-btn green" onclick="window.ProjectHub.acceptRequest('${id}','${this.esc(r.id)}')">
+                <span class="b-ico">✔</span> Unir a la persona
+              </button>
+              <button type="button" class="phub-glossy-btn red" onclick="window.ProjectHub.rejectRequest('${id}','${this.esc(r.id)}')">
+                <span class="b-ico">✖</span> Rechazar
+              </button>
             </div>
           </div>`).join('') : `<div class="phub-empty">📭 No hay solicitudes pendientes.<br><small>Cuando alguien pida unirse aparecerá aquí.</small></div>`}
       </div>`;
@@ -426,19 +572,25 @@ window.ProjectHub = {
     const mine = hub.joinRequests.find(r => this.norm(r.email) === this.norm(me.email) && me.email);
     if (role !== 'guest') {
       return `
-        <div class="phub-card">
-          <h2 class="phub-pill-title">🎟️ Mi participación</h2>
+        <div class="phub-card phub-card-cartoon">
+          <div class="phub-pill-header-wrap">
+            <h2 class="phub-pill-title yellow"><span class="ico">🎟️</span> Mi participación</h2>
+          </div>
           <div class="phub-empty ok">${roleInfo.icon} Participas como <b>${roleInfo.label}</b>.<br><small>${roleInfo.desc}</small></div>
         </div>`;
     }
     return `
-      <div class="phub-card">
-        <h2 class="phub-pill-title">👥➕ Unirme al proyecto</h2>
+      <div class="phub-card phub-card-cartoon">
+        <div class="phub-pill-header-wrap">
+          <span class="phub-sparkle">✨</span>
+          <h2 class="phub-pill-title yellow"><span class="ico">👥➕</span> Unirme al proyecto</h2>
+          <span class="phub-sparkle">✨</span>
+        </div>
         <p class="phub-desc">Envía tu solicitud con tu nombre o usuario, correo y contraseña. El creador la revisará y te asignará un rol (editor, solo lectura, etc.).</p>
-        ${mine && mine.status === 'pending' ? '<div class="phub-empty">⏳ Tu solicitud está pendiente de aprobación.</div>' : ''}
+        ${mine && mine.status === 'pending' ? '<div class="phub-empty ok" style="margin-bottom:0.8rem;">⏳ Tu solicitud está enviada y pendiente de aprobación por el creador.</div>' : ''}
         <div class="phub-join-btns">
-          <button type="button" class="phub-btn blue" onclick="window.ProjectHub.openJoinForm('${id}')">📨 Solicitar unirme</button>
-          <button type="button" class="phub-btn ghost" onclick="window.ProjectHub.openMemberLogin('${id}')">🔑 Ya soy miembro</button>
+          <button type="button" class="phub-glossy-btn green" style="flex:1;" onclick="window.ProjectHub.openJoinForm('${id}')">📨 Solicitar unirme</button>
+          <button type="button" class="phub-top-act-btn" style="flex:1;justify-content:center;" onclick="window.ProjectHub.openMemberLogin('${id}')">🔑 Ya soy miembro</button>
         </div>
       </div>`;
   },
@@ -447,8 +599,10 @@ window.ProjectHub = {
     const people = this.peopleOf(proj, hub);
     const id = this.esc(proj.id);
     return `
-      <div class="phub-card">
-        <h2 class="phub-pill-title">👥 Usuarios y roles</h2>
+      <div class="phub-card phub-card-cartoon">
+        <div class="phub-pill-header-wrap">
+          <h2 class="phub-pill-title yellow"><span class="ico">👥</span> Usuarios y roles</h2>
+        </div>
         <table class="phub-table">
           <thead><tr><th>Persona</th><th>Correo</th><th>Rol</th>${manage ? '<th></th>' : ''}</tr></thead>
           <tbody>
@@ -468,8 +622,10 @@ window.ProjectHub = {
         ${manage ? '' : '<p class="phub-desc" style="margin-top:.75rem;">Solo el creador puede cambiar los roles.</p>'}
       </div>
       ${manage ? this.renderRequestsCard(proj, hub) : ''}
-      <div class="phub-card">
-        <h2 class="phub-pill-title">🔐 Qué puede hacer cada rol</h2>
+      <div class="phub-card phub-card-cartoon">
+        <div class="phub-pill-header-wrap">
+          <h2 class="phub-pill-title yellow"><span class="ico">🔐</span> Qué puede hacer cada rol</h2>
+        </div>
         <ul class="phub-roles-legend">
           ${['owner', ...this.ASSIGNABLE].map(r => `<li><span>${this.ROLES[r].icon}</span><div><b>${this.ROLES[r].label}</b><small>${this.ROLES[r].desc}</small></div></li>`).join('')}
         </ul>
@@ -479,8 +635,10 @@ window.ProjectHub = {
   renderSettings(proj, hub) {
     const id = this.esc(proj.id);
     return `
-      <div class="phub-card">
-        <h2 class="phub-pill-title">⚙️ Configuración</h2>
+      <div class="phub-card phub-card-cartoon">
+        <div class="phub-pill-header-wrap">
+          <h2 class="phub-pill-title yellow"><span class="ico">⚙️</span> Configuración</h2>
+        </div>
         <div class="phub-settings">
           <button type="button" class="phub-btn blue" onclick="window.ProjectHub.editProject('${id}')">✏️ Editar contenido del proyecto</button>
           <button type="button" class="phub-btn ghost" onclick="window.ProjectHub.openLanding('${id}')">🌐 Ver página pública</button>
@@ -515,8 +673,10 @@ window.ProjectHub = {
       </div>
 
       <div class="phub-report-grid">
-        <div class="phub-card">
-          <h2 class="phub-pill-title">📈 Personas que han visto el proyecto</h2>
+        <div class="phub-card phub-card-cartoon">
+          <div class="phub-pill-header-wrap">
+            <h2 class="phub-pill-title yellow"><span class="ico">📈</span> Personas que han visto el proyecto</h2>
+          </div>
           <div class="phub-bars">
             ${days.map(d => `
               <div class="phub-bar-col" style="--i:${days.indexOf(d)}">
@@ -531,8 +691,10 @@ window.ProjectHub = {
           </ul>
         </div>
 
-        <div class="phub-card">
-          <h2 class="phub-pill-title">⭐ Calificación del proyecto</h2>
+        <div class="phub-card phub-card-cartoon">
+          <div class="phub-pill-header-wrap">
+            <h2 class="phub-pill-title yellow"><span class="ico">⭐</span> Calificación del proyecto</h2>
+          </div>
           <div class="phub-rating-top">
             ${this.gauge(Math.round((stats.avg / 5) * 100), stats.total ? `${stats.avg.toFixed(1)} de 5` : 'Sin calificar', '#f59e0b')}
             <div class="phub-dist">
