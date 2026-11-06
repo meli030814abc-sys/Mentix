@@ -534,10 +534,17 @@ window.ProjectHub = {
     const id = this.esc(proj.id);
     return `
       <div class="phub-card phub-card-cartoon">
-        <div class="phub-pill-header-wrap">
-          <span class="phub-sparkle">✨</span>
-          <h2 class="phub-pill-title yellow"><span class="ico">👥</span> Solicitudes de Unión</h2>
-          <span class="phub-sparkle">✨</span>
+        <div class="phub-pill-header-wrap" style="justify-content:space-between; flex-wrap:wrap; gap:0.6rem;">
+          <div style="display:flex; align-items:center; gap:0.5rem;">
+            <span class="phub-sparkle">✨</span>
+            <button type="button" class="phub-pill-title yellow phub-pill-interactive" onclick="window.ProjectHub.openAddPersonModal('${id}')" title="Haz clic para meter a una persona">
+              <span class="ico">👥➕</span> Solicitudes de Unión
+            </button>
+            <span class="phub-sparkle">✨</span>
+          </div>
+          <button type="button" class="phub-add-btn-accent" onclick="window.ProjectHub.openAddPersonModal('${id}')">
+            <span>➕</span> <b>Meter persona</b>
+          </button>
         </div>
         ${reqs.length ? reqs.map(r => `
           <div class="phub-req-cartoon">
@@ -561,7 +568,7 @@ window.ProjectHub = {
                 <span class="b-ico">✖</span> Rechazar
               </button>
             </div>
-          </div>`).join('') : `<div class="phub-empty">📭 No hay solicitudes pendientes.<br><small>Cuando alguien pida unirse aparecerá aquí.</small></div>`}
+          </div>`).join('') : `<div class="phub-empty">📭 No hay solicitudes pendientes.<br><small>Haz clic en <b>“👥➕ Solicitudes de Unión”</b> o <b>“➕ Meter persona”</b> para incorporar a alguien.</small></div>`}
       </div>`;
   },
 
@@ -800,7 +807,162 @@ window.ProjectHub = {
     });
     this.saveHub(projectId, hub);
     this.closeModal();
+    if (window.soundEngine && typeof window.soundEngine.playPop === 'function') {
+      window.soundEngine.playPop();
+    }
+    this.showNotificationBanner({
+      icon: '📨',
+      title: '¡Solicitud enviada!',
+      message: `Se envió una notificación al creador para aceptarte con tu rol en el proyecto.`
+    });
     this.toast('📨 ¡Solicitud enviada! El creador la revisará pronto.');
+    if (document.getElementById('phub-overlay')) this.render();
+  },
+
+  /* ------------------------------ banners y notificaciones ------------------------------ */
+  showNotificationBanner({ icon = '🔔', title, message }) {
+    const overlay = document.getElementById('phub-overlay');
+    if (!overlay) return;
+    const old = overlay.querySelector('.phub-banner-notif');
+    if (old) old.remove();
+
+    const banner = document.createElement('div');
+    banner.className = 'phub-banner-notif';
+    banner.innerHTML = `
+      <div class="phub-banner-notif-in">
+        <span class="pbn-icon">${icon}</span>
+        <div class="pbn-text">
+          <strong>${this.esc(title)}</strong>
+          <span>${this.esc(message)}</span>
+        </div>
+        <button type="button" class="pbn-close" onclick="this.closest('.phub-banner-notif').remove()">✕</button>
+      </div>`;
+    overlay.appendChild(banner);
+    setTimeout(() => { if (banner.parentNode) banner.classList.add('phub-banner-fadeout'); }, 4200);
+    setTimeout(() => { if (banner.parentNode) banner.remove(); }, 4700);
+  },
+
+  /* ------------------------------ meter persona (creador / admin) ------------------------------ */
+  openAddPersonModal(projectId) {
+    const proj = this.getProject(projectId);
+    if (!proj) return;
+    this.currentId = projectId;
+    this.modal(`
+      <div class="phub-modal-cartoon">
+        <button type="button" class="phub-x" onclick="window.ProjectHub.closeModal()">✕</button>
+        <div class="phub-pill-header-wrap" style="margin-bottom:0.6rem;">
+          <span class="phub-sparkle">✨</span>
+          <h2 class="phub-pill-title yellow"><span class="ico">👥➕</span> Meter persona al proyecto</h2>
+          <span class="phub-sparkle">✨</span>
+        </div>
+        <p class="phub-desc" style="margin-bottom:1rem;font-size:0.92rem;">
+          Pide todos los datos: usuario o nombre, correo, contraseña y selecciona el rol para habilitar a la persona en <b>“${this.esc(proj.title || 'Proyecto')}”</b>. Se enviará una notificación para aceptarla y completar el paso.
+        </p>
+        <form onsubmit="event.preventDefault(); window.ProjectHub.submitAddPerson('${this.esc(projectId)}', false);" class="phub-form phub-form-cartoon">
+          <label>
+            <span>👤 Nombre o usuario:</span>
+            <input id="phub-add-name" type="text" required maxlength="60" placeholder="Ej: Carlos Ruiz o @carlos" autocomplete="username">
+          </label>
+          <label>
+            <span>✉️ Correo electrónico:</span>
+            <input id="phub-add-email" type="email" required maxlength="90" placeholder="carlos.ruiz@mentix.edu" autocomplete="email">
+          </label>
+          <label>
+            <span>🔑 Contraseña (clave de acceso):</span>
+            <input id="phub-add-pass" type="password" required minlength="4" maxlength="60" placeholder="Mínimo 4 caracteres" autocomplete="new-password">
+          </label>
+          <label>
+            <span>🛡️ Rol a asignar / habilitar:</span>
+            <select id="phub-add-role" class="phub-select-role">
+              <option value="editor" selected>✏️ Editor (Puede editar el contenido)</option>
+              <option value="collaborator">🤝 Colaborador (Aporta recursos y archivos)</option>
+              <option value="commenter">💬 Comentarista (Puede comentar y calificar)</option>
+              <option value="viewer">👁️ Solo lectura (Solo puede ver el proyecto)</option>
+            </select>
+          </label>
+          <div class="phub-modal-actions-row" style="display:flex; gap:0.7rem; margin-top:0.8rem; flex-wrap:wrap;">
+            <button type="button" class="phub-glossy-btn green" style="flex:1; min-width:170px;" onclick="window.ProjectHub.submitAddPerson('${this.esc(projectId)}', true)">
+              <span class="b-ico">✔</span> Unir y habilitar rol ya
+            </button>
+            <button type="submit" class="phub-glossy-btn blue" style="flex:1; min-width:170px;">
+              <span class="b-ico">📨</span> Enviar y notificar
+            </button>
+          </div>
+        </form>
+      </div>`);
+    setTimeout(() => { const i = document.getElementById('phub-add-name'); if (i) i.focus(); }, 60);
+  },
+
+  async submitAddPerson(projectId, autoAccept = false) {
+    const name = (document.getElementById('phub-add-name') || {}).value || '';
+    const email = (document.getElementById('phub-add-email') || {}).value || '';
+    const pass = (document.getElementById('phub-add-pass') || {}).value || '';
+    const role = (document.getElementById('phub-add-role') || {}).value || 'editor';
+    if (!name.trim() || !email.trim() || pass.length < 4) {
+      this.toast('⚠️ Completa nombre o usuario, correo y una contraseña de al menos 4 caracteres.');
+      return;
+    }
+    const hub = this.getHub(projectId);
+    const e = this.norm(email);
+    if (hub.members.some(m => this.norm(m.email) === e)) {
+      this.toast('ℹ️ Esta persona ya es miembro del proyecto.');
+      return;
+    }
+    const passHash = await this.hash(pass);
+    const roleInfo = this.ROLES[role] || this.ROLES.editor;
+    const proj = this.getProject(projectId);
+    const projTitle = proj ? proj.title : 'Proyecto';
+
+    if (autoAccept) {
+      hub.joinRequests = hub.joinRequests.filter(r => this.norm(r.email) !== e);
+      hub.members = hub.members.filter(m => this.norm(m.email) !== e);
+      hub.members.push({
+        name: name.trim(),
+        email: email.trim(),
+        passHash,
+        role,
+        since: Date.now()
+      });
+      this.saveHub(projectId, hub);
+      this.closeModal();
+
+      if (window.soundEngine && typeof window.soundEngine.playCorrect === 'function') {
+        window.soundEngine.playCorrect();
+      }
+
+      this.showNotificationBanner({
+        icon: '🔔',
+        title: '¡Persona unida con éxito!',
+        message: `${name.trim()} ha sido habilitado/a con el rol de ${roleInfo.label} en “${projTitle}”.`
+      });
+      this.toast(`✅ ¡${name.trim()} fue unido/a exitosamente como ${roleInfo.label}!`);
+    } else {
+      const newReq = {
+        id: 'req_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
+        name: name.trim(),
+        email: email.trim(),
+        passHash,
+        role,
+        status: 'pending',
+        createdAt: Date.now()
+      };
+      hub.joinRequests = hub.joinRequests.filter(r => this.norm(r.email) !== e);
+      hub.joinRequests.unshift(newReq);
+      this.saveHub(projectId, hub);
+      this.closeModal();
+
+      if (window.soundEngine && typeof window.soundEngine.playPop === 'function') {
+        window.soundEngine.playPop();
+      }
+
+      this.showNotificationBanner({
+        icon: '🔔',
+        title: '¡Notificación enviada!',
+        message: `Se envió la notificación a ${name.trim()} para aceptar su unión como ${roleInfo.label}. Ya puedes darle clic a "✔ Unir a la persona".`
+      });
+      this.toast(`🔔 Solicitud registrada para ${name.trim()}. Haz clic en "✔ Unir a la persona" para aceptarla.`);
+    }
+
     if (document.getElementById('phub-overlay')) this.render();
   },
 
@@ -810,12 +972,31 @@ window.ProjectHub = {
     const req = hub.joinRequests.find(r => r.id === reqId);
     if (!req) return;
     const sel = document.getElementById('phub-role-' + reqId);
-    const role = (sel && sel.value) || 'viewer';
+    const role = (sel && sel.value) || req.role || 'editor';
     hub.members = hub.members.filter(m => this.norm(m.email) !== this.norm(req.email));
-    hub.members.push({ name: req.name, email: req.email, passHash: req.passHash, role, since: Date.now() });
+    hub.members.push({
+      name: req.name,
+      email: req.email,
+      passHash: req.passHash,
+      role: role,
+      since: Date.now()
+    });
     req.status = 'accepted';
     req.role = role;
     this.saveHub(projectId, hub);
+
+    if (window.soundEngine && typeof window.soundEngine.playCorrect === 'function') {
+      window.soundEngine.playCorrect();
+    }
+
+    const proj = this.getProject(projectId);
+    const projTitle = proj ? proj.title : 'Proyecto';
+    this.showNotificationBanner({
+      icon: '🎉',
+      title: '¡Persona aceptada!',
+      message: `${req.name} ha sido unido/a exitosamente a “${projTitle}” con el rol de ${this.ROLES[role].label}.`
+    });
+
     this.toast(`✅ ${req.name} se unió como ${this.ROLES[role].label}.`);
     this.render();
   },
@@ -826,6 +1007,17 @@ window.ProjectHub = {
     if (!req) return;
     req.status = 'rejected';
     this.saveHub(projectId, hub);
+
+    if (window.soundEngine && typeof window.soundEngine.playPop === 'function') {
+      window.soundEngine.playPop();
+    }
+
+    this.showNotificationBanner({
+      icon: 'ℹ️',
+      title: 'Solicitud rechazada',
+      message: `La solicitud de unión de ${req.name} fue rechazada.`
+    });
+
     this.toast('Solicitud rechazada.');
     this.render();
   },
