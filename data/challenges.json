@@ -413,7 +413,7 @@
         "verified": false
       },
       "mainImage": "assets/projects_ui/card_data_gov.png",
-      "thumbnailImage": "",
+      "thumbnailImage": "assets/projects_ui/card_data_gov.png",
       "useDefaultImage": true,
       "externalLinks": [],
       "landingConfig": {
@@ -462,7 +462,7 @@
         "collaborators": ""
       },
       "createdAt": "2026-10-25T23:37:25.678Z",
-      "updatedAt": "2026-11-05T23:46:09.830Z",
+      "updatedAt": "2026-11-06T19:35:29.747Z",
       "progress": 40,
       "calculatedProgress": 40
     },
@@ -472,7 +472,7 @@
     "authorAvatar": "🦄",
     "authorRole": "teacher",
     "createdAt": "2026-10-25T23:37:25.678Z",
-    "updatedAt": "2026-11-05T23:46:10.400Z",
+    "updatedAt": "2026-11-06T19:35:28.952Z",
     "image": "assets/projects_ui/card_data_gov.png"
   },
   {
