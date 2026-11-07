@@ -5885,7 +5885,7 @@ window.ProjectsView = {
 
     const projHeroBanner = this.getProjectHeroBanner(targetProjId, selected);
     // Fondo normal, nítido y con colores auténticos: sutil degradado lateral solo sobre el texto para máxima legibilidad
-    const heroStyle = `background-image: linear-gradient(to right, rgba(5, 14, 30, 0.75) 0%, rgba(5, 14, 30, 0.40) 42%, rgba(5, 14, 30, 0.08) 75%, transparent 100%), url('${this.escapeHtml(projHeroBanner)}') !important; background-size: cover !important; background-position: center !important; position: relative !important;`;
+    const heroStyle = `background-image: linear-gradient(to right, rgba(5, 14, 30, 0.75) 0%, rgba(5, 14, 30, 0.40) 42%, rgba(5, 14, 30, 0.08) 75%, transparent 100%), url('${this.escapeHtml(projHeroBanner)}') !important; background-size: cover !important; background-position: center !important; position: relative !important; padding-top: 4.8rem !important;`;
 
     container.innerHTML = `
       <div class="plp-page-container ${currentTheme === 'light' ? 'light-theme' : ''}" data-theme="${currentTheme}" style="max-width: 1360px; margin: 0 auto; padding: 1.25rem clamp(1.25rem, 3.5vw, 2.75rem) 4rem; box-sizing: border-box;">
@@ -5994,7 +5994,7 @@ window.ProjectsView = {
                 class="inno-btn-change-hero-bg" 
                 onclick="window.ProjectsView.openHeroBannerPicker('${this.escapeHtml(targetProjId)}')" 
                 title="Cambiar la imagen de fondo de este banner"
-                style="position:absolute; top:16px; right:18px; z-index:10; background:rgba(7, 23, 57, 0.88); border:1.5px solid #00f5d4; color:#00f5d4; border-radius:999px; padding:0.42rem 0.95rem; font-size:0.8rem; font-weight:800; cursor:pointer; backdrop-filter:blur(8px); display:inline-flex; align-items:center; gap:0.4rem; box-shadow:0 4px 16px rgba(0,0,0,0.45); transition:all 0.18s ease;"
+                style="position:absolute; top:18px; right:24px; z-index:25; background:rgba(7, 23, 57, 0.88); border:1.5px solid #00f5d4; color:#00f5d4; border-radius:999px; padding:0.42rem 0.95rem; font-size:0.8rem; font-weight:800; cursor:pointer; backdrop-filter:blur(8px); display:inline-flex; align-items:center; gap:0.4rem; box-shadow:0 4px 16px rgba(0,0,0,0.45); transition:all 0.18s ease;"
                 onmouseenter="this.style.transform='scale(1.06)'; this.style.background='rgba(0,245,212,0.18)';"
                 onmouseleave="this.style.transform='none'; this.style.background='rgba(7, 23, 57, 0.88)';"
               >
@@ -6011,7 +6011,7 @@ window.ProjectsView = {
                   class="inno-hero-rating-pill"
                   onclick="window.ProjectsView.openReviewFullPage('${this.escapeHtml(targetProjId)}')"
                   title="Haz clic para ver calificaciones y dejar tu comentario"
-                  style="display:inline-flex; align-items:center; gap:0.55rem; background:rgba(250, 204, 21, 0.15); border:1.5px solid #facc15; padding:0.35rem 0.95rem; border-radius:999px; margin-bottom:1rem; cursor:pointer; box-shadow:0 4px 18px rgba(250, 204, 21, 0.25); transition:transform 0.18s ease, box-shadow 0.18s ease;"
+                  style="display:inline-flex; align-items:center; gap:0.55rem; background:rgba(250, 204, 21, 0.15); border:1.5px solid #facc15; padding:0.35rem 0.95rem; border-radius:999px; margin-top:0.5rem; margin-bottom:1.25rem; cursor:pointer; box-shadow:0 4px 18px rgba(250, 204, 21, 0.25); transition:transform 0.18s ease, box-shadow 0.18s ease;"
                   onmouseenter="this.style.transform='scale(1.04)'; this.style.boxShadow='0 6px 22px rgba(250,204,21,0.45)';"
                   onmouseleave="this.style.transform='none'; this.style.boxShadow='0 4px 18px rgba(250,204,21,0.25)';"
                 >
