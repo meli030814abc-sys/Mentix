@@ -2668,7 +2668,7 @@ window.ProjectsView = {
                 onclick="event.stopPropagation(); ${hubAction}" 
                 title="Ver detalles y panel del proyecto"
               >
-                <span>Ver Detalles</span>
+                <span>Detalles</span>
                 <span>→</span>
               </button>
             ` : `
