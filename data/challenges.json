@@ -744,8 +744,11 @@
     "authorRole": "admin",
     "plays": 0,
     "projectType": "quiz",
-    "updatedAt": "2026-11-07T21:10:57.026Z",
-    "createdAt": "2026-11-07T21:10:57.110Z"
+    "updatedAt": "2026-11-07T21:10:56.925Z",
+    "createdAt": "2026-11-07T21:10:57.110Z",
+    "mainImage": "",
+    "thumbnailImage": "",
+    "image": ""
   },
   {
     "id": "proj_ai_society",
