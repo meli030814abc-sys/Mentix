@@ -1231,7 +1231,7 @@
     "image": "nosequeestudiar.net/site/assets/files/217/medicina-mano-medica.jpg",
     "banner": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
     "createdAt": "2026-10-31T21:52:51.691Z",
-    "updatedAt": "2026-11-05T23:21:16.898Z",
+    "updatedAt": "2026-11-07T20:21:28.257Z",
     "govdata": {
       "id": "proj_pres_1791658288964",
       "title": "Personajes de Disney",
@@ -1924,7 +1924,7 @@
     "authorizedBy": "Melisa",
     "rejectionReason": "",
     "rejectedAt": "",
-    "rating": "4.9",
+    "rating": "4.8",
     "slug": "peti-formato-v1-0",
     "valueProposition": {
       "problemSolved": "Existe una gran cantidad de personajes de Disney, pero muchas personas no conocen sus nombres, historias, películas, características y relaciones entre ellos. Se necesita una herramienta interactiva que permita descubrir, identificar y aprender sobre este enorme universo de personajes de una manera divertida, organizada y entretenida.",
@@ -1947,7 +1947,114 @@
     "displayOrder": 1,
     "progress": 95,
     "calculatedProgress": 95,
-    "visibility": "public"
+    "visibility": "public",
+    "hub": {
+      "joinRequests": [
+        {
+          "id": "req_demo_1",
+          "name": "Carlos Ruiz",
+          "email": "carlos.ruiz@mentix.edu",
+          "passHash": "demo",
+          "status": "rejected",
+          "created": 1794009310971
+        }
+      ],
+      "members": [
+        {
+          "name": "Eimy",
+          "email": "eimy@mentix.edu",
+          "role": "owner",
+          "leader": true
+        }
+      ],
+      "views": [
+        {
+          "t": 1793922377854,
+          "who": "user_1792184134006",
+          "name": "Melisa"
+        },
+        {
+          "t": 1794013463345,
+          "who": "user_1792184134006",
+          "name": "Melisa"
+        },
+        {
+          "t": 1794076498792,
+          "who": "user_1792184134006",
+          "name": "Melisa"
+        }
+      ],
+      "ratings": [
+        {
+          "who": "user_1792184134006",
+          "name": "Melisa",
+          "stars": 5,
+          "comment": "kjrrrr",
+          "tag": "🚀 Gran impacto",
+          "t": 1794082888524
+        },
+        {
+          "who": "usr_sample_1",
+          "name": "Sofía Morales",
+          "stars": 5,
+          "comment": "¡Increíble trabajo en equipo! La propuesta visual, la temática y los recursos interactivos están extraordinarios.",
+          "tag": "🎨 Gran diseño",
+          "t": 1793982063860
+        },
+        {
+          "who": "usr_sample_2",
+          "name": "Mateo Delgado",
+          "stars": 5,
+          "comment": "Un proyecto sumamente inspirador para toda la comunidad. Gran dominio temático, claridad y propuesta pedagógica.",
+          "tag": "🚀 Gran impacto",
+          "t": 1793823663860
+        },
+        {
+          "who": "usr_sample_3",
+          "name": "Camila Ríos",
+          "stars": 4,
+          "comment": "Muy bien estructurado. Me encantó la metodología ágil y la documentación de las etapas de trabajo.",
+          "tag": "💡 Idea innovadora",
+          "t": 1793650863860
+        }
+      ]
+    },
+    "heroBanner": "assets/projects_ui/disney_hero_banner.png",
+    "ratings": [
+      {
+        "who": "user_1792184134006",
+        "name": "Melisa",
+        "stars": 5,
+        "comment": "kjrrrr",
+        "tag": "🚀 Gran impacto",
+        "t": 1794082888524
+      },
+      {
+        "who": "usr_sample_1",
+        "name": "Sofía Morales",
+        "stars": 5,
+        "comment": "¡Increíble trabajo en equipo! La propuesta visual, la temática y los recursos interactivos están extraordinarios.",
+        "tag": "🎨 Gran diseño",
+        "t": 1793982063860
+      },
+      {
+        "who": "usr_sample_2",
+        "name": "Mateo Delgado",
+        "stars": 5,
+        "comment": "Un proyecto sumamente inspirador para toda la comunidad. Gran dominio temático, claridad y propuesta pedagógica.",
+        "tag": "🚀 Gran impacto",
+        "t": 1793823663860
+      },
+      {
+        "who": "usr_sample_3",
+        "name": "Camila Ríos",
+        "stars": 4,
+        "comment": "Muy bien estructurado. Me encantó la metodología ágil y la documentación de las etapas de trabajo.",
+        "tag": "💡 Idea innovadora",
+        "t": 1793650863860
+      }
+    ],
+    "ratingsCount": 4
   },
   {
     "id": "proj_1793506989177",
