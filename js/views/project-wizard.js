@@ -1289,7 +1289,10 @@ collectCurrentStepInputs() {
               </button>
             ` : ''}
           </div>
-          <div class="gdn-help">Pega el enlace o sube una imagen horizontal en alta definición (1920x600 px recomendado). Se guardará automáticamente en tu proyecto.</div>
+          <div class="gdn-help" style="margin-top:0.4rem; font-size:0.8rem; color:#cbd5e1; line-height:1.4;">
+            📐 <b>Tamaño específico del Banner:</b> Mínimo <b style="color:#00f5d4;">1200 × 400 px</b> (Recomendado <b style="color:#38bdf8;">1920 × 600 px</b> panorámico). 
+            <span style="color:#f87171; font-weight:800;">🚫 No se admiten miniaturas ni fotos pequeñas.</span>
+          </div>
         </div>
 
         <!-- Indicador de Contraste Inteligente Automático -->
@@ -1323,12 +1326,44 @@ collectCurrentStepInputs() {
   async handleDesignBannerUpload(fileList) {
     if (!fileList || !fileList[0]) return;
     const file = fileList[0];
+    const fileInp = document.getElementById('gdn-design-banner-file');
     if (!file.type || !file.type.startsWith('image/')) {
-      alert('⚠️ Selecciona un archivo de imagen válido para el banner.');
+      alert('⚠️ Selecciona un archivo de imagen válido para el banner (.jpg, .png, .webp).');
+      if (fileInp) fileInp.value = '';
       return;
     }
+
+    const check = await new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const img = new Image();
+        img.onload = () => resolve({ width: img.naturalWidth || img.width, height: img.naturalHeight || img.height, dataUrl: e.target.result });
+        img.onerror = () => resolve({ error: true });
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    });
+
+    if (check.error) {
+      alert('❌ Error al procesar el archivo de imagen.');
+      if (fileInp) fileInp.value = '';
+      return;
+    }
+
+    const MIN_W = 1200;
+    const MIN_H = 400;
+    if (check.width < MIN_W || check.height < MIN_H) {
+      if (fileInp) fileInp.value = '';
+      alert(`🚫 ARCHIVO RECHAZADO: No se permiten miniaturas en el banner.\n\n` +
+            `• Medidas detectadas: ${check.width} × ${check.height} px\n` +
+            `• Mínimo obligatorio: 1200 × 400 px\n` +
+            `• Recomendado: 1920 × 600 px (panorámico HD)\n\n` +
+            `Por favor sube una imagen panorámica de alta calidad para garantizar nitidez.`);
+      return;
+    }
+
     this.collectCurrentStepInputs();
-    const dataUrl = await this.compressImageFile(file, 1280, 0.72);
+    const dataUrl = await this.compressImageFile(file, 1920, 0.82);
     if (!this.draft.designConfig) this.draft.designConfig = {};
     this.draft.designConfig.bannerUrl = dataUrl;
     this.draft.designConfig.bannerStyle = 'custom-url';

@@ -289,28 +289,55 @@ window.ProjectsView = {
     this.showToast(`🤖 Seleccionado: ${preset.title}`);
   },
 
-  handleAdminBannerFileUpload(file) {
+  async handleAdminBannerFileUpload(file) {
     if (!file) return;
+    const fileInput = document.getElementById('admin-banner-file-input');
+    if (!file.type || !file.type.startsWith('image/')) {
+      alert('⚠️ Selecciona un archivo de imagen válido (.jpg, .png, .webp).');
+      if (fileInput) fileInput.value = '';
+      return;
+    }
     const reader = new FileReader();
-    reader.onload = (e) => {
+    reader.onload = async (e) => {
       const dataUrl = e.target.result;
+      const res = await this.validateBannerImageDimensions(dataUrl);
+      if (!res.valid) {
+        if (fileInput) fileInput.value = '';
+        alert(`🚫 ARCHIVO RECHAZADO: No se permiten miniaturas en el banner.\n\n` +
+              `• Medidas de tu imagen: ${res.width} × ${res.height} px\n` +
+              `• Mínimo requerido: 1200 × 400 px\n` +
+              `• Recomendado: 1920 × 600 px (panorámico HD)\n\n` +
+              `Por favor sube una imagen panorámica de alta resolución.`);
+        return;
+      }
       this.selectedAdminBannerUrl = dataUrl;
       const previewImg = document.getElementById('admin-banner-preview-img');
       if (previewImg) previewImg.src = dataUrl;
       const urlInput = document.getElementById('admin-banner-url-input');
-      if (urlInput) urlInput.value = dataUrl.slice(0, 50) + '... (Imagen cargada)';
-      this.showToast('📷 Imagen local cargada para previsualización.');
+      if (urlInput) urlInput.value = dataUrl.slice(0, 50) + '... (Imagen HD cargada)';
+      this.showToast(`📷 Imagen válida (${res.width}×${res.height} px) cargada.`);
     };
     reader.readAsDataURL(file);
   },
 
-  previewAdminBannerUrl(url) {
+  async previewAdminBannerUrl(url) {
     const trimmed = (url || '').trim();
-    if (trimmed) {
+    if (!trimmed) return;
+    if (trimmed.startsWith('data:') || (this.HERO_BANNER_THEMES && this.HERO_BANNER_THEMES.some(t => t.url === trimmed))) {
       this.selectedAdminBannerUrl = trimmed;
       const previewImg = document.getElementById('admin-banner-preview-img');
       if (previewImg) previewImg.src = trimmed;
+      return;
     }
+    const res = await this.validateBannerImageDimensions(trimmed);
+    if (!res.valid) {
+      alert(`🚫 ENLACE RECHAZADO: ${res.error || 'La imagen es una miniatura y no cumple con el tamaño mínimo de 1200 × 400 px.'}`);
+      return;
+    }
+    this.selectedAdminBannerUrl = trimmed;
+    const previewImg = document.getElementById('admin-banner-preview-img');
+    if (previewImg) previewImg.src = trimmed;
+    this.showToast(`🌐 URL verificada (${res.width}×${res.height} px).`);
   },
 
   applyAdminBanner() {
@@ -521,6 +548,48 @@ window.ProjectsView = {
     return true;
   },
 
+  BANNER_MIN_WIDTH: 1200,
+  BANNER_MIN_HEIGHT: 400,
+  BANNER_REC_WIDTH: 1920,
+  BANNER_REC_HEIGHT: 600,
+
+  validateBannerImageDimensions(imageSrc) {
+    return new Promise((resolve) => {
+      if (!imageSrc) return resolve({ valid: false, error: 'No se proporcionó una imagen.' });
+      const img = new Image();
+      img.onload = () => {
+        const width = img.naturalWidth || img.width;
+        const height = img.naturalHeight || img.height;
+        const minW = 1200;
+        const minH = 400;
+
+        if (width < minW || height < minH) {
+          resolve({
+            valid: false,
+            width,
+            height,
+            isThumbnail: true,
+            error: `La imagen es una miniatura (${width} × ${height} px). El tamaño mínimo obligatorio para el banner es de ${minW} × ${minH} px (Recomendado: 1920 × 600 px).`
+          });
+        } else {
+          resolve({
+            valid: true,
+            width,
+            height,
+            isThumbnail: false
+          });
+        }
+      };
+      img.onerror = () => {
+        resolve({
+          valid: false,
+          error: 'No se pudo leer la imagen o el enlace no es válido.'
+        });
+      };
+      img.src = imageSrc;
+    });
+  },
+
   openHeroBannerPicker(targetProjectId = null) {
     const projId = targetProjectId || this.selectedProjectId;
     const selected = this.getMergedProjectRecord(projId) || (window.appState?.challenges || []).find(c => c && String(c.id) === String(projId));
@@ -541,7 +610,7 @@ window.ProjectsView = {
       <div style="background: linear-gradient(135deg, #071739 0%, #0d204d 50%, #071129 100%); border: 2px solid #00f5d4; border-radius: 22px; max-width: 960px; width: 100%; max-height: 92vh; overflow-y: auto; padding: 1.85rem; box-shadow: 0 25px 70px rgba(0,0,0,0.8), 0 0 40px rgba(0,245,212,0.25); color: #ffffff; position: relative; font-family: 'Outfit','Inter',sans-serif;">
         
         <!-- Header -->
-        <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:1.25rem; border-bottom:1px solid rgba(255,255,255,0.12); padding-bottom:1rem;">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:1.15rem; border-bottom:1px solid rgba(255,255,255,0.12); padding-bottom:1rem;">
           <div>
             <div style="display:inline-flex; align-items:center; gap:0.4rem; background:rgba(0,245,212,0.15); border:1px solid #00f5d4; padding:0.25rem 0.75rem; border-radius:999px; font-size:0.75rem; font-weight:900; color:#00f5d4; margin-bottom:0.45rem;">
               🎨 PERSONALIZACIÓN VISUAL DEL HERO
@@ -554,6 +623,28 @@ window.ProjectsView = {
             </p>
           </div>
           <button type="button" onclick="window.ProjectsView.closeHeroBannerPicker()" style="background:none; border:none; color:#cbd5e1; font-size:1.6rem; cursor:pointer; line-height:1; padding:0.2rem;" title="Cerrar">✕</button>
+        </div>
+
+        <!-- Banner de Requisitos de Tamaño y Regla Anti-Miniaturas -->
+        <div style="background:linear-gradient(135deg, rgba(2,132,199,0.18) 0%, rgba(15,23,42,0.85) 100%); border:1.5px solid #38bdf8; border-radius:14px; padding:0.9rem 1.15rem; margin-bottom:1.3rem; display:flex; align-items:center; gap:0.9rem; box-shadow:0 4px 18px rgba(0,0,0,0.35);">
+          <div style="font-size:2.2rem; line-height:1; flex-shrink:0;">📐</div>
+          <div style="flex:1;">
+            <div style="display:flex; align-items:center; gap:0.6rem; flex-wrap:wrap;">
+              <span style="font-size:0.88rem; font-weight:900; color:#38bdf8; text-transform:uppercase; letter-spacing:0.04em;">
+                Tamaño Específico Requerido para el Banner
+              </span>
+              <span style="background:#ef4444; color:#ffffff; font-size:0.68rem; font-weight:900; padding:0.18rem 0.55rem; border-radius:999px; text-transform:uppercase; letter-spacing:0.04em; display:inline-flex; align-items:center; gap:0.25rem;">
+                🚫 Miniaturas no permitidas
+              </span>
+            </div>
+            <p style="margin:0.35rem 0 0.15rem; font-size:0.83rem; color:#f1f5f9; line-height:1.45;">
+              • <b>Tamaño Mínimo Obligatorio:</b> <span style="color:#00f5d4; font-weight:800;">1200 × 400 píxeles</span> &nbsp;|&nbsp; 
+              • <b>Tamaño Recomendado:</b> <span style="color:#38bdf8; font-weight:800;">1920 × 600 píxeles</span> (formato panorámico horizontal HD).
+            </p>
+            <div style="font-size:0.75rem; color:#fca5a5; font-weight:700; margin-top:0.2rem;">
+              ⚠️ El sistema rechazará automáticamente cualquier archivo o enlace que mida menos de 1200 × 400 px para evitar que el banner se vea pixelado o borroso.
+            </div>
+          </div>
         </div>
 
         <!-- Vista Previa en Vivo -->
@@ -578,39 +669,49 @@ window.ProjectsView = {
         </div>
 
         <!-- Controles para Subir o Ingresar URL -->
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1.5rem;">
-          <div style="background:rgba(0,0,0,0.35); border:1.5px solid rgba(255,255,255,0.12); border-radius:14px; padding:1rem;">
-            <label style="display:block; font-size:0.8rem; font-weight:800; color:#38bdf8; margin-bottom:0.4rem;">
-              📤 Subir Imagen desde tu Equipo:
-            </label>
-            <input 
-              type="file" 
-              id="hero-banner-file-input" 
-              accept="image/png, image/jpeg, image/webp, image/svg+xml" 
-              onchange="window.ProjectsView.handleHeroBannerFileUpload(this.files[0])"
-              style="display:block; width:100%; font-size:0.82rem; color:#cbd5e1; cursor:pointer;"
-            />
-            <small style="display:block; color:#94a3b8; font-size:0.74rem; margin-top:0.35rem;">Soporta JPG, PNG, WEBP o SVG.</small>
-          </div>
-
-          <div style="background:rgba(0,0,0,0.35); border:1.5px solid rgba(255,255,255,0.12); border-radius:14px; padding:1rem;">
-            <label style="display:block; font-size:0.8rem; font-weight:800; color:#38bdf8; margin-bottom:0.4rem;">
-              🔗 O Pega una URL de Imagen:
-            </label>
-            <div style="display:flex; gap:0.5rem;">
+        <div style="background:rgba(0,0,0,0.35); border:1.5px solid rgba(255,255,255,0.12); border-radius:14px; padding:1.1rem; margin-bottom:1.5rem;">
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.2rem;">
+            <div>
+              <label style="display:block; font-size:0.82rem; font-weight:800; color:#38bdf8; margin-bottom:0.4rem;">
+                📤 Subir Imagen Panorámica desde tu Equipo:
+              </label>
               <input 
-                type="text" 
-                id="hero-banner-url-input" 
-                placeholder="https://.../imagen.jpg" 
-                value="${currentBanner.startsWith('data:') ? '(Imagen cargada localmente)' : this.escapeHtml(currentBanner)}"
-                oninput="window.ProjectsView.previewHeroBannerUrl(this.value)"
-                style="flex:1; background:rgba(0,0,0,0.45); border:1px solid rgba(255,255,255,0.2); border-radius:8px; padding:0.45rem 0.75rem; color:#ffffff; font-size:0.82rem; outline:none;"
+                type="file" 
+                id="hero-banner-file-input" 
+                accept="image/png, image/jpeg, image/webp, image/svg+xml" 
+                onchange="window.ProjectsView.handleHeroBannerFileUpload(this.files[0])"
+                style="display:block; width:100%; font-size:0.82rem; color:#cbd5e1; cursor:pointer;"
               />
-              <button type="button" onclick="window.ProjectsView.previewHeroBannerUrl(document.getElementById('hero-banner-url-input').value)" style="background:#0284c7; color:#ffffff; border:none; border-radius:8px; padding:0.45rem 0.85rem; font-size:0.78rem; font-weight:800; cursor:pointer;">
-                Probar
-              </button>
+              <small style="display:block; color:#94a3b8; font-size:0.74rem; margin-top:0.35rem;">
+                Mínimo 1200×400 px. Formatos: JPG, PNG, WEBP.
+              </small>
+            </div>
+
+            <div>
+              <label style="display:block; font-size:0.82rem; font-weight:800; color:#38bdf8; margin-bottom:0.4rem;">
+                🔗 O Pega una URL de Imagen Directa:
+              </label>
+              <div style="display:flex; gap:0.5rem;">
+                <input 
+                  type="text" 
+                  id="hero-banner-url-input" 
+                  placeholder="https://.../banner-1920x600.jpg" 
+                  value="${currentBanner.startsWith('data:') ? '(Imagen cargada localmente)' : this.escapeHtml(currentBanner)}"
+                  onkeydown="if(event.key==='Enter'){event.preventDefault(); window.ProjectsView.previewHeroBannerUrl(this.value);}"
+                  style="flex:1; background:rgba(0,0,0,0.45); border:1px solid rgba(255,255,255,0.2); border-radius:8px; padding:0.45rem 0.75rem; color:#ffffff; font-size:0.82rem; outline:none;"
+                />
+                <button type="button" onclick="window.ProjectsView.previewHeroBannerUrl(document.getElementById('hero-banner-url-input').value)" style="background:#0284c7; color:#ffffff; border:none; border-radius:8px; padding:0.45rem 0.95rem; font-size:0.78rem; font-weight:800; cursor:pointer; white-space:nowrap;">
+                  Verificar URL
+                </button>
+              </div>
+              <small style="display:block; color:#94a3b8; font-size:0.74rem; margin-top:0.35rem;">
+                Presiona "Verificar URL" para validar sus dimensiones.
+              </small>
             </div>
           </div>
+
+          <!-- Dynamic Status Feedback Box -->
+          <div id="hero-banner-dimension-feedback" style="display:none; margin-top:0.9rem; border-radius:10px; padding:0.65rem 0.95rem; font-size:0.82rem; font-weight:700;"></div>
         </div>
 
         <!-- Galería de Fondos Temáticos (16 Presets) -->
@@ -705,6 +806,23 @@ window.ProjectsView = {
     const input = document.getElementById('hero-banner-url-input');
     if (input) input.value = theme.url;
 
+    const feedback = document.getElementById('hero-banner-dimension-feedback');
+    if (feedback) {
+      feedback.style.display = 'block';
+      feedback.style.background = 'rgba(0, 245, 212, 0.12)';
+      feedback.style.border = '1.5px solid #00f5d4';
+      feedback.style.color = '#99f6e4';
+      feedback.innerHTML = `
+        <div style="display:flex; align-items:center; gap:0.6rem;">
+          <span style="font-size:1.3rem;">⭐</span>
+          <div>
+            <b style="color:#ffffff;">Tema Oficial Mentix Seleccionado:</b>
+            “${this.escapeHtml(theme.name)}” (1920 × 600 px Ultra HD Panorámico Optimizado).
+          </div>
+        </div>
+      `;
+    }
+
     document.querySelectorAll('.hero-theme-card').forEach(c => {
       c.style.border = '1.5px solid rgba(255,255,255,0.1)';
       c.style.boxShadow = 'none';
@@ -717,40 +835,155 @@ window.ProjectsView = {
     this.showToast(`🎨 Seleccionado: ${theme.name}`);
   },
 
-  handleHeroBannerFileUpload(file) {
+  async handleHeroBannerFileUpload(file) {
     if (!file) return;
+    const fileInput = document.getElementById('hero-banner-file-input');
+    const feedback = document.getElementById('hero-banner-dimension-feedback');
+
+    if (!file.type || !file.type.startsWith('image/')) {
+      alert('⚠️ Por favor selecciona un archivo de imagen válido (JPG, PNG, WEBP o SVG).');
+      if (fileInput) fileInput.value = '';
+      return;
+    }
+
     const reader = new FileReader();
-    reader.onload = (e) => {
+    reader.onload = async (e) => {
       const dataUrl = e.target.result;
+      const res = await this.validateBannerImageDimensions(dataUrl);
+
+      if (!res.valid) {
+        if (fileInput) fileInput.value = '';
+        if (feedback) {
+          feedback.style.display = 'block';
+          feedback.style.background = 'rgba(239, 68, 68, 0.18)';
+          feedback.style.border = '1.5px solid #ef4444';
+          feedback.style.color = '#fecaca';
+          feedback.innerHTML = `
+            <div style="display:flex; align-items:center; gap:0.6rem;">
+              <span style="font-size:1.3rem;">🚫</span>
+              <div>
+                <b style="color:#ffffff;">IMAGEN RECHAZADA (Miniatura no permitida):</b>
+                Tu archivo mide solo <b>${res.width} × ${res.height} px</b>.<br>
+                El banner no admite miniaturas ni imágenes pequeñas. Debe medir mínimo <b>1200 × 400 px</b> (Recomendado: <b>1920 × 600 px</b>).
+              </div>
+            </div>
+          `;
+        }
+        alert(`🚫 ARCHIVO RECHAZADO: No se permiten miniaturas en el banner.\n\n` +
+              `• Dimensiones detectadas: ${res.width} × ${res.height} px\n` +
+              `• Tamaño mínimo obligatorio: 1200 × 400 px\n` +
+              `• Tamaño recomendado: 1920 × 600 px (panorámico HD)\n\n` +
+              `Las miniaturas e imágenes pequeñas se distorsionan y se verán pixeladas. Por favor sube una imagen panorámica de alta calidad.`);
+        return;
+      }
+
       this._tempSelectedHeroBanner = dataUrl;
       const box = document.getElementById('hero-banner-preview-box');
       if (box) {
         box.style.backgroundImage = `linear-gradient(135deg, rgba(5,19,41,0.88) 0%, rgba(8,35,71,0.84) 100%), url('${dataUrl}')`;
       }
       const input = document.getElementById('hero-banner-url-input');
-      if (input) input.value = dataUrl.slice(0, 50) + '... (Imagen cargada)';
-      this.showToast('📷 Imagen cargada exitosamente.');
+      if (input) input.value = dataUrl.slice(0, 45) + '... (Imagen local HD)';
+
+      if (feedback) {
+        feedback.style.display = 'block';
+        feedback.style.background = 'rgba(16, 185, 129, 0.18)';
+        feedback.style.border = '1.5px solid #10b981';
+        feedback.style.color = '#a7f3d0';
+        feedback.innerHTML = `
+          <div style="display:flex; align-items:center; gap:0.6rem;">
+            <span style="font-size:1.3rem;">✅</span>
+            <div>
+              <b style="color:#ffffff;">Imagen válida aprobada para Banner:</b>
+              Mide <b>${res.width} × ${res.height} px</b>. Cumple con los requisitos de nitidez panorámica HD.
+            </div>
+          </div>
+        `;
+      }
+      this.showToast(`📷 Imagen válida (${res.width}×${res.height} px) cargada.`);
     };
     reader.readAsDataURL(file);
   },
 
-  previewHeroBannerUrl(url) {
+  async previewHeroBannerUrl(url) {
     const trimmed = (url || '').trim();
-    if (trimmed) {
+    const feedback = document.getElementById('hero-banner-dimension-feedback');
+    if (!trimmed) {
+      if (feedback) feedback.style.display = 'none';
+      return;
+    }
+
+    if (trimmed.startsWith('data:') || this.HERO_BANNER_THEMES.some(t => t.url === trimmed)) {
       this._tempSelectedHeroBanner = trimmed;
       const box = document.getElementById('hero-banner-preview-box');
       if (box) {
         box.style.backgroundImage = `linear-gradient(135deg, rgba(5,19,41,0.88) 0%, rgba(8,35,71,0.84) 100%), url('${trimmed}')`;
       }
-    }
-  },
-
-  applyHeroBanner(projId) {
-    const finalUrl = this._tempSelectedHeroBanner;
-    if (!finalUrl) {
-      alert('⚠️ Por favor selecciona una imagen antes de guardar.');
       return;
     }
+
+    const res = await this.validateBannerImageDimensions(trimmed);
+
+    if (!res.valid) {
+      if (feedback) {
+        feedback.style.display = 'block';
+        feedback.style.background = 'rgba(239, 68, 68, 0.18)';
+        feedback.style.border = '1.5px solid #ef4444';
+        feedback.style.color = '#fecaca';
+        feedback.innerHTML = `
+          <div style="display:flex; align-items:center; gap:0.6rem;">
+            <span style="font-size:1.3rem;">🚫</span>
+            <div>
+              <b style="color:#ffffff;">URL RECHAZADA (Miniatura detectada):</b>
+              La imagen del enlace mide <b>${res.width || 'desconocido'} × ${res.height || 'desconocido'} px</b>.<br>
+              ${res.error || 'El tamaño mínimo obligatorio para el banner es de 1200 × 400 px.'}
+            </div>
+          </div>
+        `;
+      }
+      alert(`🚫 ENLACE RECHAZADO: ${res.error || 'La imagen es una miniatura y no cumple el tamaño mínimo de 1200 × 400 px.'}`);
+      return;
+    }
+
+    this._tempSelectedHeroBanner = trimmed;
+    const box = document.getElementById('hero-banner-preview-box');
+    if (box) {
+      box.style.backgroundImage = `linear-gradient(135deg, rgba(5,19,41,0.88) 0%, rgba(8,35,71,0.84) 100%), url('${trimmed}')`;
+    }
+    if (feedback) {
+      feedback.style.display = 'block';
+      feedback.style.background = 'rgba(16, 185, 129, 0.18)';
+      feedback.style.border = '1.5px solid #10b981';
+      feedback.style.color = '#a7f3d0';
+      feedback.innerHTML = `
+        <div style="display:flex; align-items:center; gap:0.6rem;">
+          <span style="font-size:1.3rem;">✅</span>
+          <div>
+            <b style="color:#ffffff;">Enlace verificado y aprobado:</b>
+            Dimensiones <b>${res.width} × ${res.height} px</b>. Apta para banner panorámico HD.
+          </div>
+        </div>
+      `;
+    }
+    this.showToast(`🌐 URL verificada (${res.width}×${res.height} px).`);
+  },
+
+  async applyHeroBanner(projId) {
+    const finalUrl = this._tempSelectedHeroBanner;
+    if (!finalUrl) {
+      alert('⚠️ Por favor selecciona una imagen antes de guardar. Recuerda que no se permiten miniaturas (mínimo 1200 × 400 px).');
+      return;
+    }
+
+    // Doble verificación: no permitir guardar miniaturas
+    if (!this.HERO_BANNER_THEMES.some(t => t.url === finalUrl) && finalUrl !== 'assets/projects_ui/hero_banner.png') {
+      const res = await this.validateBannerImageDimensions(finalUrl);
+      if (!res.valid) {
+        alert(`🚫 No se puede guardar: ${res.error || 'La imagen seleccionada es una miniatura y no cumple los requisitos.'}`);
+        return;
+      }
+    }
+
     this.setProjectHeroBanner(projId, finalUrl);
 
     // Actualizar directamente la sección del Hero activa en pantalla
@@ -911,6 +1144,20 @@ window.ProjectsView = {
                 </div>
               </div>
             `).join('')}
+          </div>
+        </div>
+
+        <!-- Especificaciones de Tamaño Requerido y Regla Anti-Miniaturas -->
+        <div style="background: linear-gradient(135deg, rgba(2,132,199,0.18) 0%, rgba(15,23,42,0.85) 100%); border: 1.5px solid #38bdf8; border-radius: 12px; padding: 0.8rem 1rem; margin-bottom: 1.25rem; display: flex; align-items: center; gap: 0.85rem;">
+          <span style="font-size: 1.8rem;">📐</span>
+          <div style="flex: 1;">
+            <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
+              <b style="color: #38bdf8; font-size: 0.85rem; text-transform: uppercase;">Tamaño Requerido para el Banner:</b>
+              <span style="background: #ef4444; color: #ffffff; font-size: 0.65rem; font-weight: 900; padding: 0.15rem 0.5rem; border-radius: 999px;">🚫 No se admiten miniaturas</span>
+            </div>
+            <div style="font-size: 0.8rem; color: #cbd5e1; margin-top: 0.2rem;">
+              • Mínimo: <b style="color: #00f5d4;">1200 × 400 px</b> &nbsp;|&nbsp; • Recomendado: <b style="color: #38bdf8;">1920 × 600 px</b> panorámico. Las imágenes menores a 1200×400 px serán rechazadas automáticamente.
+            </div>
           </div>
         </div>
 
