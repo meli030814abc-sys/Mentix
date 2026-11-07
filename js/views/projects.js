@@ -2661,21 +2661,20 @@ window.ProjectsView = {
           </div>
 
           <!-- Action Buttons Row: Ver Detalles (Creador/Miembro) o Unirme (Visitantes), Ver Landing Page, Compartir, y Autorizar (Admin) -->
-          <div class="saas-card-actions" style="display: flex; align-items: center; gap: 0.35rem; margin-top: auto; flex-wrap: wrap;">
+          <div class="saas-card-actions">
             ${canHubView ? `
               <button 
                 class="saas-card-btn-secondary"
                 onclick="event.stopPropagation(); ${hubAction}" 
-                style="background: #ffffff; color: #0f172a; border: 1.5px solid #cbd5e1; border-radius: 10px; padding: 0.48rem 0.55rem; font-size: 0.74rem; font-weight: 700; cursor: pointer; flex: 1 1 auto; min-width: 82px; display: inline-flex; align-items: center; justify-content: center; gap: 0.2rem; transition: all 0.2s ease; white-space: nowrap;"
                 title="Ver detalles y panel del proyecto"
               >
-                Ver Detalles →
+                <span>Ver Detalles</span>
+                <span>→</span>
               </button>
             ` : `
               <button 
                 class="saas-card-btn-join"
                 onclick="event.stopPropagation(); ${joinAction}" 
-                style="background: #eff6ff; color: #1d4ed8; border: 1.5px solid #93c5fd; border-radius: 10px; padding: 0.48rem 0.55rem; font-size: 0.74rem; font-weight: 800; cursor: pointer; flex: 1 1 auto; min-width: 82px; display: inline-flex; align-items: center; justify-content: center; gap: 0.25rem; transition: all 0.2s ease; white-space: nowrap;"
                 title="Solicitar unirme a este proyecto"
               >
                 <span>👥</span>
@@ -2686,7 +2685,6 @@ window.ProjectsView = {
             <button 
               class="saas-card-btn-landing"
               onclick="event.stopPropagation(); ${landingAction}" 
-              style="${canHubView ? 'background: #f0fdf4; color: #047857; border: 1.5px solid #86efac;' : 'background: #0047cc; color: #ffffff; border: none; box-shadow: 0 2px 8px rgba(0, 71, 204, 0.25);'} border-radius: 10px; padding: 0.48rem 0.55rem; font-size: 0.74rem; font-weight: 800; cursor: pointer; flex: 1 1 auto; min-width: 95px; display: inline-flex; align-items: center; justify-content: center; gap: 0.25rem; transition: all 0.2s ease; white-space: nowrap; ${canHubView ? 'box-shadow: 0 1px 3px rgba(16, 185, 129, 0.12);' : ''}"
               title="Abrir Landing Page pública de este proyecto"
             >
               <span>🌐</span>
@@ -2696,7 +2694,6 @@ window.ProjectsView = {
             ${isAdmin ? `<button 
               class="saas-card-btn-authorize ${isApproved ? 'approved' : ''}"
               onclick="event.stopPropagation(); window.ProjectsView.toggleAuthorizeProject('${c.id}')"
-              style="${isApproved ? 'background:#eff6ff; color:#1d4ed8; border:1.5px solid #93c5fd;' : 'background:linear-gradient(135deg, #10b981 0%, #059669 100%); color:#ffffff; border:none; box-shadow: 0 2px 8px rgba(16, 185, 129, 0.32);'} border-radius: 10px; padding: 0.48rem 0.5rem; font-size: 0.74rem; font-weight: 800; cursor: pointer; flex: 1 1 auto; min-width: 78px; display: inline-flex; align-items: center; justify-content: center; gap: 0.2rem; transition: all 0.2s ease; white-space: nowrap;"
               title="${isApproved ? 'Proyecto ya autorizado (clic para revocar)' : 'Autorizar y publicar este proyecto'}"
             >
               <span>${isApproved ? '✔' : '✅'}</span>
@@ -2706,7 +2703,6 @@ window.ProjectsView = {
             <button 
               class="saas-card-btn-primary"
               onclick="event.stopPropagation(); ${shareAction}" 
-              style="${canHubView ? 'background: #0047cc; color: #ffffff; border: none; box-shadow: 0 2px 8px rgba(0, 71, 204, 0.25);' : 'background: #ffffff; color: #0f172a; border: 1.5px solid #cbd5e1;'} border-radius: 10px; padding: 0.48rem 0.55rem; font-size: 0.74rem; font-weight: 700; cursor: pointer; flex: 1 1 auto; min-width: 75px; display: inline-flex; align-items: center; justify-content: center; gap: 0.25rem; transition: all 0.2s ease; white-space: nowrap;"
               title="Compartir este proyecto"
             >
               <span>Compartir</span>

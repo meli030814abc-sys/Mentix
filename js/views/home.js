@@ -344,9 +344,17 @@ window.HomeView = {
             </div>
             ${isOwner ? `
               <button 
+                class="btn btn-gold" 
+                title="Editar este cuestionario"
+                style="width: 32px; height: 32px; min-height: 32px; padding: 0; font-size: 0.9rem; display: flex; align-items: center; justify-content: center; cursor: pointer;"
+                onclick="event.stopPropagation(); window.appRouter.navigate('creator', { editId: '${challenge.id}' })"
+              >
+                ✏️
+              </button>
+              <button 
                 class="btn btn-danger" 
                 title="Eliminar este reto"
-                style="width: 36px; height: 36px; padding: 0; border-radius: 10px; font-size: 0.95rem; display: flex; align-items: center; justify-content: center; background: rgba(239, 68, 68, 0.9); border: none; box-shadow: 0 4px 12px rgba(239,68,68,0.35); cursor: pointer;"
+                style="width: 32px; height: 32px; min-height: 32px; padding: 0; font-size: 0.9rem; display: flex; align-items: center; justify-content: center; cursor: pointer;"
                 onclick="event.stopPropagation(); window.appRouter.deleteChallenge('${challenge.id}')"
               >
                 🗑️
@@ -431,11 +439,11 @@ window.HomeView = {
               ` : `
                 ${isOwner ? `
                   <button 
-                    class="btn btn-outline" 
-                    title="Editar Reto"
-                    style="padding: 0.45rem 0.75rem; font-size: 0.85rem;" 
+                    class="btn btn-gold" 
+                    title="Editar Cuestionario"
+                    style="padding: 0.45rem 0.95rem; font-size: 0.88rem; font-weight: 800;" 
                     onclick="event.stopPropagation(); window.appRouter.navigate('creator', { editId: '${challenge.id}' })">
-                    ✏️
+                    <span>✏️</span> <span>Editar</span>
                   </button>
                 ` : ''}
                 <button 

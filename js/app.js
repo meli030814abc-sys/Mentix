@@ -1361,11 +1361,33 @@ class AppRouter {
   isChallengeOwner(challenge) {
     if (!challenge) return false;
     const u = window.appState?.currentUser;
+
+    // 1. Los administradores tienen permisos globales de edición y moderación
+    const roleLower = String(u?.role || '').toLowerCase().trim();
+    if (roleLower === 'admin' || roleLower === 'administrador' || u?.isAdmin === true || localStorage.getItem('mentix_admin_override') === 'true') {
+      return true;
+    }
+
+    // 2. Docentes / Profesores y Creadores tienen permisos pedagógicos plenos para editar cuestionarios y retos
+    if (roleLower === 'teacher' || roleLower === 'profesor' || roleLower === 'docente' || roleLower === 'creator' || u?.isTeacher === true) {
+      return true;
+    }
+
+    // 3. Verificar si este navegador creó este reto localmente (IDs guardados en localStorage)
+    try {
+      const myIds = JSON.parse(localStorage.getItem('mentix_my_created_challenge_ids') || '[]');
+      if (Array.isArray(myIds) && myIds.includes(challenge.id)) {
+        return true;
+      }
+      if (localStorage.getItem('mentix_creator_' + challenge.id) === 'true') {
+        return true;
+      }
+    } catch(e) {}
+
     if (!u) return false;
 
-    // Los administradores tienen permisos globales para editar y moderar cualquier proyecto o reto
-    const roleLower = String(u.role || '').toLowerCase().trim();
-    if (roleLower === 'admin' || roleLower === 'administrador' || u.isAdmin === true || localStorage.getItem('mentix_admin_override') === 'true') {
+    // 4. Si el reto no tiene autor asignado o es genérico ('Profesor', 'Creador') y el usuario no es invitado
+    if (!u.isGuest && (!challenge.author || challenge.author === 'Profesor' || challenge.author === 'Creador' || challenge.author === 'Comunidad')) {
       return true;
     }
 

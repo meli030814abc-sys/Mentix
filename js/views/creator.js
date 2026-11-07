@@ -1631,6 +1631,15 @@ Sin embargo, los funcionarios consideran que existen elementos suficientes para 
       window.appRouter.checkMedals('creator');
     }
 
+    try {
+      let myIds = JSON.parse(localStorage.getItem('mentix_my_created_challenge_ids') || '[]');
+      if (!myIds.includes(c.id)) {
+        myIds.push(c.id);
+        localStorage.setItem('mentix_my_created_challenge_ids', JSON.stringify(myIds));
+      }
+      localStorage.setItem('mentix_creator_' + c.id, 'true');
+    } catch (e) {}
+
     if (typeof window.saveUserProject === 'function') {
       window.saveUserProject(c);
     } else {
