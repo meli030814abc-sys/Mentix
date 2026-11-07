@@ -536,12 +536,12 @@ window.ProjectHub = {
                   <span class="f-ico">📁</span> Archivos de entregas
                 </h4>
                 <ul class="phub-files-list">
-                  ${slides.length ? `<li><span class="file-ico">📊</span> <b>Presentación (${slides.length} láminas)</b></li>` : ''}
-                  ${resources.slice(0, 5).map(r => `<li><span class="file-ico">📄</span> <b>${this.esc(r.name || r.title || 'Archivo')}</b></li>`).join('')}
+                  ${slides.length ? `<li onclick="window.ProjectsView ? window.ProjectsView.openSelectedProject() : null" style="cursor:pointer;" title="Clic para ver presentación en pantalla"><span class="file-ico">📊</span> <b>Presentación (${slides.length} láminas)</b> <span style="font-size:0.75rem; color:#0ea5e9; font-weight:800; margin-left:auto;">Ver ↗</span></li>` : ''}
+                  ${resources.slice(0, 5).map(r => `<li onclick="window.ProjectsView ? window.ProjectsView.openResourceViewerByName('${this.esc(r.name || r.title)}', '${proj.id}') : null" style="cursor:pointer;" title="Clic para ver documento en la página"><span class="file-ico">📄</span> <b>${this.esc(r.name || r.title || 'Archivo')}</b> <span style="font-size:0.75rem; color:#0ea5e9; font-weight:800; margin-left:auto;">Ver ↗</span></li>`).join('')}
                   ${(!slides.length && !resources.length) ? `
-                    <li><span class="file-ico">📄</span> <b>Proyectos.pdf</b></li>
-                    <li><span class="file-ico">📄</span> <b>Archivo a</b></li>
-                    <li><span class="file-ico">📄</span> <b>Entrega b</b></li>
+                    <li onclick="window.ProjectsView ? window.ProjectsView.openResourceViewerByName('Proyectos.pdf', '${proj.id}') : null" style="cursor:pointer;" title="Clic para ver documento en la página"><span class="file-ico">📄</span> <b>Proyectos.pdf</b> <span style="font-size:0.75rem; color:#0ea5e9; font-weight:800; margin-left:auto;">Ver ↗</span></li>
+                    <li onclick="window.ProjectsView ? window.ProjectsView.openResourceViewerByName('Archivo a', '${proj.id}') : null" style="cursor:pointer;" title="Clic para ver documento en la página"><span class="file-ico">📄</span> <b>Archivo a</b> <span style="font-size:0.75rem; color:#0ea5e9; font-weight:800; margin-left:auto;">Ver ↗</span></li>
+                    <li onclick="window.ProjectsView ? window.ProjectsView.openResourceViewerByName('Entrega b', '${proj.id}') : null" style="cursor:pointer;" title="Clic para ver documento en la página"><span class="file-ico">📄</span> <b>Entrega b</b> <span style="font-size:0.75rem; color:#0ea5e9; font-weight:800; margin-left:auto;">Ver ↗</span></li>
                   ` : ''}
                 </ul>
               </div>

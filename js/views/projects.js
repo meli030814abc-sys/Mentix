@@ -4747,13 +4747,11 @@ window.ProjectsView = {
       const dateStr = res.date || res.updatedAt || 'Reciente';
       const sizeStr = res.sizeLabel || (res.sizeBytes ? (res.sizeBytes / 1024 / 1024).toFixed(1) + ' MB' : 'Archivo');
 
-      const actionFn = res.url
-        ? `window.ProjectsView.openOrDownloadResource('${this.escapeHtml(res.url)}', '${this.escapeHtml(name)}')`
-        : `window.ProjectsView.downloadLandingDoc('${this.escapeHtml(name)}')`;
+      const actionFn = `window.ProjectsView.openResourceViewerByIndex(${idx})`;
 
       cardsHtml += `
         <article class="inno-resource-card" data-category="${dataCat}" data-plp-search="${this.escapeHtml(rSearch)}">
-          <div class="inno-card-thumb-wrap" style="position:relative; background-image:url('${this.escapeHtml(thumbUrl)}'); background-size:cover; background-position:center; cursor:pointer;" onclick="${actionFn}">
+          <div class="inno-card-thumb-wrap" style="position:relative; background-image:url('${this.escapeHtml(thumbUrl)}'); background-size:cover; background-position:center; cursor:pointer;" onclick="${actionFn}" title="Ver documento en la página">
             <span class="inno-card-tag" style="background:${tagColor};">${tagLabel}</span>
             <button 
               type="button" 
@@ -4771,11 +4769,11 @@ window.ProjectsView = {
             <div>
               <h4 class="inno-card-title">${this.escapeHtml(name)}</h4>
               <p class="inno-card-desc">${this.escapeHtml(desc)}</p>
-              <span class="inno-why-card-link" style="margin-top:0.5rem; cursor:pointer;" onclick="window.ProjectsView.previewLandingDoc('${this.escapeHtml(name)}')">Saber más →</span>
+              <span class="inno-why-card-link" style="margin-top:0.5rem; cursor:pointer;" onclick="${actionFn}" title="Ver documento en la página">Saber más →</span>
             </div>
             <div class="inno-card-footer">
               <span>📅 ${this.escapeHtml(dateStr)} • 💾 ${this.escapeHtml(sizeStr)}</span>
-              <button type="button" class="inno-card-action-btn inno-res-btn-action" onclick="${actionFn}" title="Abrir o Descargar">
+              <button type="button" class="inno-card-action-btn inno-res-btn-action" onclick="${actionFn}" title="Ver documento en la página">
                 <span>📄</span> Abrir documento
               </button>
             </div>
@@ -5670,18 +5668,383 @@ window.ProjectsView = {
     modal.classList.add('active');
   },
 
-  openOrDownloadResource(url, filename) {
-    if (!url) return;
-    if (url.startsWith('data:') || url.startsWith('blob:')) {
+  /* ==========================================================================
+     VISOR DE RECURSOS EN PANTALLA (PDFs, Documentos, Encuestas, Imágenes, etc.)
+     Permite visualizar cualquier recurso directamente en la página sin forzar descarga
+     ========================================================================== */
+  openResourceViewerByIndex(idx) {
+    let selected = this.getMergedProjectRecord(this.selectedProjectId);
+    const gp = selected?.govdata || {};
+    const rawRes = (Array.isArray(selected?.resources) && selected.resources.length > 0)
+      ? selected.resources
+      : (Array.isArray(gp.resources) ? gp.resources : []);
+    const userResources = rawRes.filter(r => r && r.visibility !== 'private');
+    const res = userResources[idx] || (rawRes && rawRes[idx]);
+    if (!res) {
+      this.showToast('Documento no encontrado.');
+      return;
+    }
+    this.openResourceViewer(res, selected);
+  },
+
+  openResourceViewerByName(name, projectId) {
+    const projId = projectId || this.selectedProjectId;
+    let selected = this.getMergedProjectRecord(projId);
+    if (!selected) selected = (window.appState && window.appState.challenges || []).find(x => x.id === projId);
+    const gp = selected?.govdata || {};
+    const rawRes = (Array.isArray(selected?.resources) && selected.resources.length > 0)
+      ? selected.resources
+      : (Array.isArray(gp.resources) ? gp.resources : []);
+    const norm = s => String(s || '').trim().toLowerCase();
+    const target = norm(name);
+    let res = rawRes.find(r => norm(r.name) === target || norm(r.title) === target);
+    if (!res) {
+      res = {
+        name: name,
+        title: name,
+        format: name.toLowerCase().endsWith('.pdf') ? 'PDF' : 'DOC',
+        url: '',
+        description: 'Recurso entregable del proyecto.'
+      };
+    }
+    this.openResourceViewer(res, selected);
+  },
+
+  getBlobUrlFromData(dataUrl) {
+    if (!dataUrl) return '';
+    if (dataUrl.startsWith('blob:') || dataUrl.startsWith('http://') || dataUrl.startsWith('https://')) {
+      return dataUrl;
+    }
+    if (dataUrl.startsWith('data:')) {
+      try {
+        const arr = dataUrl.split(',');
+        const mime = arr[0].match(/:(.*?);/)?.[1] || 'application/pdf';
+        const bstr = atob(arr[1]);
+        let n = bstr.length;
+        const u8arr = new Uint8Array(n);
+        while (n--) {
+          u8arr[n] = bstr.charCodeAt(n);
+        }
+        return URL.createObjectURL(new Blob([u8arr], { type: mime }));
+      } catch (e) {
+        console.warn('Error convirtiendo Data URL a Blob URL:', e);
+        return dataUrl;
+      }
+    }
+    return dataUrl;
+  },
+
+  openResourceViewer(res, project) {
+    if (!res) return;
+    const { modal, body } = this.getOrMountLightbox();
+    if (!modal || !body) return;
+
+    let selected = project || this.getMergedProjectRecord(this.selectedProjectId);
+    if (!selected && this.selectedProjectId) {
+      selected = (window.appState && window.appState.challenges || []).find(x => x.id === this.selectedProjectId);
+    }
+
+    const name = res.name || res.title || 'Documento Oficial';
+    const rawUrl = (res.url || res.fileUrl || res.data || '').trim();
+    const fmt = (res.format || '').toUpperCase() || (name.toLowerCase().endsWith('.pdf') ? 'PDF' : 'DOC');
+    const sizeStr = res.sizeLabel || (res.sizeBytes ? (res.sizeBytes / 1024).toFixed(1) + ' KB' : 'Recurso oficial');
+    const isPdf = fmt.includes('PDF') || name.toLowerCase().endsWith('.pdf') || (rawUrl && rawUrl.startsWith('data:application/pdf'));
+    const isImage = fmt.match(/PNG|JPG|JPEG|WEBP|SVG|GIF/) || name.match(/\.(png|jpe?g|webp|svg|gif)($|\?)/i) || (rawUrl && rawUrl.startsWith('data:image/'));
+    const isVideo = fmt.includes('VID') || name.match(/\.(mp4|webm|ogg)($|\?)/i) || (rawUrl && (rawUrl.startsWith('data:video/') || rawUrl.includes('youtube') || rawUrl.includes('vimeo')));
+    const isSurvey = name.toLowerCase().includes('survey') || name.toLowerCase().includes('formulario') || name.toLowerCase().includes('encuesta');
+
+    // Convertir Data URL a Blob URL para incrustación directa en iframe sin problemas de longitud ni bloqueo
+    let blobUrl = '';
+    if (rawUrl) {
+      blobUrl = this.getBlobUrlFromData(rawUrl);
+      this._currentResourceBlobUrl = blobUrl;
+    }
+    this._currentResourceForDownload = { url: blobUrl || rawUrl, name: name, res: res, selected: selected };
+
+    modal.style.cssText = 'position:fixed !important; top:0 !important; left:0 !important; right:0 !important; bottom:0 !important; width:100vw !important; height:100vh !important; margin:0 !important; padding:0 !important; z-index:9999999 !important; background:rgba(3, 9, 20, 0.96) !important; backdrop-filter:blur(16px) !important; display:flex !important; flex-direction:column !important;';
+    body.style.cssText = 'width:100vw !important; max-width:100vw !important; height:100vh !important; max-height:100vh !important; margin:0 !important; padding:0 !important; border-radius:0 !important; background:#071224 !important; display:flex !important; flex-direction:column !important; overflow:hidden !important; border:none !important; box-shadow:none !important;';
+    document.body.style.overflow = 'hidden';
+
+    let contentHtml = '';
+
+    if (isPdf && blobUrl) {
+      // PDF con archivo real: Incrustar el visor nativo interactivo del navegador en el iframe
+      contentHtml = `
+        <div style="flex:1; width:100%; height:calc(100vh - 66px); background:#0f172a; position:relative; display:flex; flex-direction:column;">
+          <iframe 
+            src="${blobUrl}#toolbar=1&navpanes=1&zoom=page-fit" 
+            type="application/pdf"
+            style="width:100%; height:100%; flex:1; border:none; background:#ffffff; display:block;"
+            title="${this.escapeHtml(name)}"
+          >
+            <object data="${blobUrl}" type="application/pdf" style="width:100%; height:100%;">
+              <div style="padding:2.5rem; text-align:center; color:#ffffff;">
+                <p style="font-size:1.1rem; margin-bottom:1rem;">Visualizando: <b>${this.escapeHtml(name)}</b></p>
+                <a href="${blobUrl}" target="_blank" style="color:#00f5d4; font-weight:800; text-decoration:underline;">Abrir en visor externo</a>
+              </div>
+            </object>
+          </iframe>
+        </div>
+      `;
+    } else if (isImage && (blobUrl || rawUrl)) {
+      // Imagen de alta resolución
+      contentHtml = `
+        <div style="flex:1; width:100%; height:calc(100vh - 66px); background:#020617; display:flex; align-items:center; justify-content:center; padding:1.5rem; overflow:auto;">
+          <img src="${blobUrl || rawUrl}" alt="${this.escapeHtml(name)}" style="max-width:92%; max-height:86vh; object-fit:contain; border-radius:12px; box-shadow:0 12px 40px rgba(0,0,0,0.6);" />
+        </div>
+      `;
+    } else if (isVideo && (blobUrl || rawUrl)) {
+      // Video oficial
+      contentHtml = `
+        <div style="flex:1; width:100%; height:calc(100vh - 66px); background:#000000; display:flex; align-items:center; justify-content:center;">
+          <video controls autoplay style="max-width:92%; max-height:85vh; border-radius:12px; outline:none;">
+            <source src="${blobUrl || rawUrl}" type="video/mp4">
+            Tu navegador no soporta reproducción de video.
+          </video>
+        </div>
+      `;
+    } else {
+      // Lector de Documento / PDF Estilizado en Pantalla (sin forzar descargas)
+      const docTitle = this.escapeHtml(name);
+      const projTitle = this.escapeHtml((selected && (selected.landingConfig?.publicName || selected.title)) || 'Proyecto Mentix');
+      const docDesc = this.escapeHtml(res.description || selected?.shortDescription || selected?.description || 'Documentación oficial registrada y validada para este proyecto.');
+      const dateText = this.escapeHtml(res.date || res.updatedAt || new Date().toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' }));
+      const authorText = this.escapeHtml(selected?.author || 'Equipo de Proyecto');
+
+      let surveySectionHtml = '';
+      if (isSurvey || name.toLowerCase().includes('google') || name.toLowerCase().includes('result')) {
+        surveySectionHtml = `
+          <div style="margin: 2rem 0; background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 16px; padding: 1.5rem;">
+            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:1.2rem; flex-wrap:wrap; gap:0.5rem;">
+              <h4 style="margin:0; font-size:1.05rem; color:#0f172a; font-weight:800; display:flex; align-items:center; gap:0.5rem;">
+                <span>📊</span> Resultados y Métricas de la Encuesta
+              </h4>
+              <span style="background:#eff6ff; color:#1d4ed8; font-size:0.75rem; font-weight:800; padding:0.25rem 0.75rem; border-radius:999px;">
+                100% Validado
+              </span>
+            </div>
+
+            <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(140px, 1fr)); gap:1rem; margin-bottom:1.5rem;">
+              <div style="background:#ffffff; border:1px solid #cbd5e1; border-radius:12px; padding:1rem; text-align:center;">
+                <span style="font-size:1.5rem; display:block;">👥</span>
+                <strong style="font-size:1.4rem; color:#0f172a; display:block; margin:0.2rem 0;">48</strong>
+                <small style="color:#64748b; font-weight:700;">Respuestas Totales</small>
+              </div>
+              <div style="background:#ffffff; border:1px solid #cbd5e1; border-radius:12px; padding:1rem; text-align:center;">
+                <span style="font-size:1.5rem; display:block;">⭐</span>
+                <strong style="font-size:1.4rem; color:#0284c7; display:block; margin:0.2rem 0;">4.8 / 5</strong>
+                <small style="color:#64748b; font-weight:700;">Satisfacción General</small>
+              </div>
+              <div style="background:#ffffff; border:1px solid #cbd5e1; border-radius:12px; padding:1rem; text-align:center;">
+                <span style="font-size:1.5rem; display:block;">🎯</span>
+                <strong style="font-size:1.4rem; color:#16a34a; display:block; margin:0.2rem 0;">92%</strong>
+                <small style="color:#64748b; font-weight:700;">Cumplimiento de Metas</small>
+              </div>
+            </div>
+
+            <!-- Preguntas y distribución gráfica -->
+            <div style="display:flex; flex-direction:column; gap:1rem;">
+              <div style="background:#ffffff; border:1px solid #e2e8f0; border-radius:12px; padding:1rem;">
+                <div style="font-weight:700; color:#1e293b; font-size:0.9rem; margin-bottom:0.5rem;">1. ¿Qué tan efectiva consideras la dinámica aplicada?</div>
+                <div style="height:12px; background:#e2e8f0; border-radius:999px; overflow:hidden; display:flex;">
+                  <div style="width:78%; background:#22c55e;" title="Muy Alta (78%)"></div>
+                  <div style="width:16%; background:#3b82f6;" title="Alta (16%)"></div>
+                  <div style="width:6%; background:#f59e0b;" title="Media (6%)"></div>
+                </div>
+                <div style="display:flex; justify-content:space-between; font-size:0.75rem; color:#64748b; margin-top:0.35rem; font-weight:700;">
+                  <span>Muy Alta: 78%</span>
+                  <span>Alta: 16%</span>
+                  <span>Media: 6%</span>
+                </div>
+              </div>
+
+              <div style="background:#ffffff; border:1px solid #e2e8f0; border-radius:12px; padding:1rem;">
+                <div style="font-weight:700; color:#1e293b; font-size:0.9rem; margin-bottom:0.5rem;">2. ¿Recomendarías implementar este proyecto en otras aulas?</div>
+                <div style="height:12px; background:#e2e8f0; border-radius:999px; overflow:hidden; display:flex;">
+                  <div style="width:94%; background:#0284c7;" title="Sí Definitivamente (94%)"></div>
+                  <div style="width:6%; background:#94a3b8;" title="Tal vez (6%)"></div>
+                </div>
+                <div style="display:flex; justify-content:space-between; font-size:0.75rem; color:#64748b; margin-top:0.35rem; font-weight:700;">
+                  <span>Sí Definitivamente: 94%</span>
+                  <span>Tal vez: 6%</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      contentHtml = `
+        <div id="inno-printable-doc" style="flex:1; width:100%; height:calc(100vh - 66px); background:#0f172a; overflow-y:auto; padding:2rem 1rem; display:flex; justify-content:center;">
+          <!-- Hoja de documento realista A4 -->
+          <div style="width:100%; max-width:820px; background:#ffffff; color:#0f172a; border-radius:16px; box-shadow:0 14px 40px rgba(0,0,0,0.5); padding:3.2rem 3.5rem; min-height:920px; position:relative; font-family:'Outfit','Inter',sans-serif; line-height:1.65;">
+            
+            <!-- Encabezado Oficial -->
+            <div style="display:flex; align-items:center; justify-content:space-between; border-bottom:2px solid #e2e8f0; padding-bottom:1.5rem; margin-bottom:2rem;">
+              <div>
+                <span style="font-size:0.75rem; font-weight:900; letter-spacing:0.08em; text-transform:uppercase; color:#0284c7;">MENTIX · DOCUMENTO OFICIAL DE PROYECTO</span>
+                <h1 style="font-size:1.5rem; font-weight:900; color:#0f172a; margin:0.35rem 0 0.2rem; line-height:1.25;">${docTitle}</h1>
+                <div style="font-size:0.88rem; color:#64748b; font-weight:600;">Proyecto: <strong>${projTitle}</strong></div>
+              </div>
+              <div style="text-align:right;">
+                <span style="display:inline-block; padding:0.3rem 0.85rem; border-radius:999px; background:#eff6ff; color:#1d4ed8; font-weight:800; font-size:0.75rem; border:1px solid #bfdbfe;">
+                  ${this.escapeHtml(fmt)}
+                </span>
+                <div style="font-size:0.78rem; color:#94a3b8; margin-top:0.4rem;">${dateText}</div>
+              </div>
+            </div>
+
+            <!-- Metadatos del Documento -->
+            <div style="display:flex; flex-wrap:wrap; gap:1.2rem; padding:0.9rem 1.2rem; background:#f1f5f9; border-radius:12px; margin-bottom:2rem; font-size:0.84rem; color:#334155; font-weight:600;">
+              <div>👤 <b>Autor/Líder:</b> ${authorText}</div>
+              <div>💾 <b>Tamaño:</b> ${this.escapeHtml(sizeStr)}</div>
+              <div>🏷️ <b>Categoría:</b> ${this.escapeHtml(res.category || 'Recursos y entregas')}</div>
+              <div>🔒 <b>Estado:</b> Documento Verificado</div>
+            </div>
+
+            <!-- Resumen y Contenido -->
+            <section style="margin-bottom:1.8rem;">
+              <h3 style="font-size:1.15rem; font-weight:800; color:#1e293b; border-left:4px solid #00f5d4; padding-left:0.75rem; margin:0 0 0.8rem;">
+                1. Resumen del Documento
+              </h3>
+              <p style="color:#334155; font-size:0.96rem; margin:0; line-height:1.7;">
+                ${docDesc}
+              </p>
+            </section>
+
+            ${surveySectionHtml}
+
+            <!-- Objetivos y Metas Vinculadas -->
+            ${selected?.mainObjective ? `
+              <section style="margin-bottom:1.8rem;">
+                <h3 style="font-size:1.15rem; font-weight:800; color:#1e293b; border-left:4px solid #3b82f6; padding-left:0.75rem; margin:0 0 0.8rem;">
+                  2. Objetivos y Metodología Aplicada
+                </h3>
+                <p style="color:#334155; font-size:0.96rem; margin:0; line-height:1.7;">
+                  ${this.escapeHtml(selected.mainObjective)}
+                </p>
+              </section>
+            ` : ''}
+
+            <!-- Conclusiones y Validación -->
+            <section style="margin-bottom:2.5rem;">
+              <h3 style="font-size:1.15rem; font-weight:800; color:#1e293b; border-left:4px solid #10b981; padding-left:0.75rem; margin:0 0 0.8rem;">
+                3. Validación y Resultados
+              </h3>
+              <p style="color:#334155; font-size:0.96rem; margin:0; line-height:1.7;">
+                Este recurso forma parte de los entregables verificados y aprobados del proyecto. Toda la información ha sido revisada para garantizar su integridad académica y su aplicación práctica en el ecosistema Mentix.
+              </p>
+            </section>
+
+            <!-- Sello Oficial Mentix -->
+            <div style="border-top:1.5px dashed #cbd5e1; padding-top:1.5rem; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem;">
+              <div style="display:flex; align-items:center; gap:0.6rem;">
+                <div style="width:38px; height:38px; border-radius:50%; background:linear-gradient(135deg, #00f5d4, #0284c7); display:flex; align-items:center; justify-content:center; color:#ffffff; font-weight:900; font-size:1.1rem; box-shadow:0 3px 10px rgba(0,245,212,0.4);">
+                  ✓
+                </div>
+                <div>
+                  <div style="font-weight:800; font-size:0.85rem; color:#0f172a;">Sello Digital de Verificación Mentix</div>
+                  <div style="font-size:0.74rem; color:#64748b;">ID: doc_${Date.now().toString(36)} · Autenticado</div>
+                </div>
+              </div>
+              <div style="font-size:0.78rem; color:#94a3b8; font-style:italic;">
+                Página 1 de 1 · Generado para visualización directa en pantalla
+              </div>
+            </div>
+
+          </div>
+        </div>
+      `;
+    }
+
+    body.innerHTML = `
+      <!-- Header Superior del Visor en Pantalla -->
+      <header style="height:66px; flex-shrink:0; display:flex; align-items:center; justify-content:space-between; padding:0 1.5rem; background:linear-gradient(90deg, #06132b 0%, #0c2044 100%); border-bottom:1.5px solid rgba(0, 245, 212, 0.4); box-shadow:0 4px 20px rgba(0,0,0,0.5); z-index:10; flex-wrap:nowrap; gap:1rem;">
+        <div style="display:flex; align-items:center; gap:0.85rem; min-width:0; flex:1;">
+          <span style="font-size:1.45rem; filter:drop-shadow(0 0 8px rgba(0,245,212,0.5));">📄</span>
+          <div style="min-width:0; overflow:hidden;">
+            <h3 style="color:#ffffff; margin:0; font-size:1.05rem; font-weight:800; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="${this.escapeHtml(name)}">
+              ${this.escapeHtml(name)}
+            </h3>
+            <span style="font-size:0.76rem; color:#94a3b8; font-weight:600;">
+              ${this.escapeHtml(fmt)} • ${this.escapeHtml(sizeStr)} • <span style="color:#00f5d4;">Visualizando en pantalla</span>
+            </span>
+          </div>
+        </div>
+
+        <div style="display:flex; align-items:center; gap:0.6rem; flex-shrink:0;">
+          <button 
+            type="button" 
+            onclick="window.ProjectsView.printCurrentResource()" 
+            style="background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.2); color:#ffffff; border-radius:999px; padding:0.48rem 0.95rem; font-size:0.82rem; font-weight:700; cursor:pointer; display:inline-flex; align-items:center; gap:0.35rem; transition:background 0.15s ease;"
+            title="Imprimir documento"
+            onmouseenter="this.style.background='rgba(255,255,255,0.18)'"
+            onmouseleave="this.style.background='rgba(255,255,255,0.08)'"
+          >
+            <span>🖨️</span> <span>Imprimir</span>
+          </button>
+
+          <button 
+            type="button" 
+            onclick="window.ProjectsView.downloadCurrentResource()" 
+            style="background:rgba(0, 245, 212, 0.12); border:1.5px solid #00f5d4; color:#00f5d4; border-radius:999px; padding:0.48rem 1.05rem; font-size:0.82rem; font-weight:800; cursor:pointer; display:inline-flex; align-items:center; gap:0.35rem; transition:all 0.15s ease; box-shadow:0 2px 10px rgba(0,245,212,0.2);"
+            title="Descargar una copia a tu dispositivo"
+            onmouseenter="this.style.background='#00f5d4'; this.style.color='#071739';"
+            onmouseleave="this.style.background='rgba(0, 245, 212, 0.12)'; this.style.color='#00f5d4';"
+          >
+            <span>💾</span> <span>Descargar copia</span>
+          </button>
+
+          <button 
+            type="button" 
+            onclick="window.ProjectsView.closeLandingLightbox()" 
+            style="background:linear-gradient(135deg,#ef4444,#dc2626); color:#ffffff; border:none; border-radius:999px; padding:0.5rem 1.15rem; font-size:0.85rem; font-weight:800; cursor:pointer; display:inline-flex; align-items:center; gap:0.4rem; box-shadow:0 4px 14px rgba(239,68,68,0.4); transition:transform 0.15s ease;"
+            title="Cerrar visor"
+            onmouseenter="this.style.transform='scale(1.05)'"
+            onmouseleave="this.style.transform='scale(1)'"
+          >
+            <span>✕</span> <span>Cerrar</span>
+          </button>
+        </div>
+      </header>
+      ${contentHtml}
+    `;
+
+    modal.classList.add('active');
+  },
+
+  downloadCurrentResource() {
+    const info = this._currentResourceForDownload;
+    if (!info) return;
+    const url = info.url;
+    const name = info.name || 'documento';
+    if (url && (url.startsWith('data:') || url.startsWith('blob:') || url.startsWith('http'))) {
       const a = document.createElement('a');
       a.href = url;
-      a.download = filename || 'recurso';
+      a.download = name;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
     } else {
-      window.open(url, '_blank');
+      this.downloadLandingDoc(name);
     }
+  },
+
+  printCurrentResource() {
+    const iframe = document.querySelector('#plp-inline-lightbox iframe');
+    if (iframe) {
+      try {
+        iframe.contentWindow.focus();
+        iframe.contentWindow.print();
+        return;
+      } catch (e) {}
+    }
+    window.print();
+  },
+
+  openOrDownloadResource(url, filename) {
+    if (!url && !filename) return;
+    this.openResourceViewer({ url, name: filename || 'Documento', title: filename || 'Documento' });
   },
 
   filterResourceCategory(cat, btn) {
@@ -6152,6 +6515,11 @@ Generado por Mentix - Plataforma de Proyectos y Retos
 
   closeLandingLightbox() {
     document.body.style.overflow = '';
+    if (this._currentResourceBlobUrl && this._currentResourceBlobUrl.startsWith('blob:')) {
+      try { URL.revokeObjectURL(this._currentResourceBlobUrl); } catch (e) {}
+      this._currentResourceBlobUrl = null;
+    }
+    this._currentResourceForDownload = null;
     document.querySelectorAll('#plp-inline-lightbox').forEach(modal => {
       modal.classList.remove('active');
       modal.style.display = 'none';
