@@ -54,16 +54,40 @@ window.ProjectHub = {
 
   /* ------------------------------ datos ------------------------------ */
   getProject(id) {
+    if (!id && window.ProjectsView && window.ProjectsView.selectedProjectId) {
+      id = window.ProjectsView.selectedProjectId;
+    }
     const list = (window.appState && window.appState.challenges) || [];
     let p = list.find(x => x && String(x.id) === String(id));
+    if (!p && window.ProjectsView && typeof window.ProjectsView.getMergedProjectRecord === 'function') {
+      p = window.ProjectsView.getMergedProjectRecord(id);
+    }
+    if (!p) {
+      try {
+        const raw = localStorage.getItem('mentix_active_landing_project');
+        if (raw) {
+          const lp = JSON.parse(raw);
+          if (lp && (!id || String(lp.id) === String(id))) p = lp;
+        }
+      } catch (e) {}
+    }
+    if (!p) {
+      try {
+        const drafts = JSON.parse(localStorage.getItem('mentix_govdata_wizard_drafts') || '[]');
+        p = drafts.find(x => x && (!id || String(x.id) === String(id)));
+      } catch (e) {}
+    }
     if (!p && window.ProjectsView && Array.isArray(window.ProjectsView.demoShowcaseProjects)) {
       p = window.ProjectsView.demoShowcaseProjects.find(x => x && String(x.id) === String(id));
+    }
+    if (!p && !id && list.length > 0) {
+      p = list[0];
     }
     return p || null;
   },
   isStored(id) {
     const list = (window.appState && window.appState.challenges) || [];
-    return list.some(x => x && String(x.id) === String(id));
+    return list.some(x => x && String(x.id) === String(id)) || !!(window.ProjectsView && window.ProjectsView.getMergedProjectRecord && window.ProjectsView.getMergedProjectRecord(id));
   },
   getHub(id) {
     let hub;
@@ -537,7 +561,7 @@ window.ProjectHub = {
                 </h4>
                 <ul class="phub-files-list">
                   ${slides.length ? `<li onclick="window.ProjectsView ? window.ProjectsView.openSelectedProject() : null" style="cursor:pointer;" title="Clic para ver presentación en pantalla"><span class="file-ico">📊</span> <b>Presentación (${slides.length} láminas)</b> <span style="font-size:0.75rem; color:#0ea5e9; font-weight:800; margin-left:auto;">Ver ↗</span></li>` : ''}
-                  ${resources.slice(0, 5).map(r => `<li onclick="window.ProjectsView ? window.ProjectsView.openResourceViewerByName('${this.esc(r.name || r.title)}', '${proj.id}') : null" style="cursor:pointer;" title="Clic para ver documento en la página"><span class="file-ico">📄</span> <b>${this.esc(r.name || r.title || 'Archivo')}</b> <span style="font-size:0.75rem; color:#0ea5e9; font-weight:800; margin-left:auto;">Ver ↗</span></li>`).join('')}
+                  ${resources.slice(0, 5).map(r => `<li onclick="window.ProjectsView ? window.ProjectsView.openResourceViewerByName('${this.esc(r.id || r.fileName || r.name || r.title)}', '${proj.id}') : null" style="cursor:pointer;" title="Clic para ver documento en la página"><span class="file-ico">📄</span> <b>${this.esc(r.fileName || r.name || r.title || 'Archivo')}</b> <span style="font-size:0.75rem; color:#0ea5e9; font-weight:800; margin-left:auto;">Ver ↗</span></li>`).join('')}
                   ${(!slides.length && !resources.length) ? `
                     <li onclick="window.ProjectsView ? window.ProjectsView.openResourceViewerByName('Proyectos.pdf', '${proj.id}') : null" style="cursor:pointer;" title="Clic para ver documento en la página"><span class="file-ico">📄</span> <b>Proyectos.pdf</b> <span style="font-size:0.75rem; color:#0ea5e9; font-weight:800; margin-left:auto;">Ver ↗</span></li>
                     <li onclick="window.ProjectsView ? window.ProjectsView.openResourceViewerByName('Archivo a', '${proj.id}') : null" style="cursor:pointer;" title="Clic para ver documento en la página"><span class="file-ico">📄</span> <b>Archivo a</b> <span style="font-size:0.75rem; color:#0ea5e9; font-weight:800; margin-left:auto;">Ver ↗</span></li>
@@ -684,7 +708,7 @@ window.ProjectHub = {
         </div>
         <div class="phub-settings">
           <button type="button" class="phub-btn blue" onclick="window.ProjectHub.editProject('${id}')">✏️ Editar contenido del proyecto</button>
-          <button type="button" class="phub-btn green" onclick="window.ProjectsView && window.ProjectsView.openHeroBannerPicker ? window.ProjectsView.openHeroBannerPicker('${id}') : null">🎨 Cambiar fondo del banner (Hero)</button>
+          ${this.canEdit(proj) ? `<button type="button" class="phub-btn green" onclick="window.ProjectsView && window.ProjectsView.openHeroBannerPicker ? window.ProjectsView.openHeroBannerPicker('${id}') : null">🎨 Cambiar fondo del banner (Hero)</button>` : ''}
           <button type="button" class="phub-btn ghost" onclick="window.ProjectHub.openLanding('${id}')">🌐 Ver página pública</button>
           <button type="button" class="phub-btn ghost" onclick="window.ProjectHub.share('${id}')">🔗 Copiar enlace para compartir</button>
         </div>
@@ -774,6 +798,439 @@ window.ProjectHub = {
     this.render();
   },
 
+  /* ------------------------------ vista de calificación y comentarios a pantalla completa ------------------------------ */
+  currentReviewStars: 5,
+  currentReviewTag: '💡 Idea innovadora',
+
+  formatTimeAgo(ts) {
+    if (!ts) return 'Reciente';
+    const diff = Math.max(0, Date.now() - ts);
+    const m = Math.floor(diff / 60000);
+    if (m < 2) return 'Hace un momento';
+    if (m < 60) return `Hace ${m} min`;
+    const h = Math.floor(m / 60);
+    if (h < 24) return `Hace ${h} ${h === 1 ? 'hora' : 'horas'}`;
+    const d = Math.floor(h / 24);
+    if (d < 30) return `Hace ${d} ${d === 1 ? 'día' : 'días'}`;
+    return new Date(ts).toLocaleDateString('es-ES', { day: 'numeric', month: 'short' });
+  },
+
+  ensureInitialReviews(hub, proj) {
+    if (!Array.isArray(hub.ratings)) hub.ratings = [];
+    if (hub.ratings.length === 0) {
+      hub.ratings = [
+        {
+          who: 'usr_sample_1',
+          name: 'Sofía Morales',
+          stars: 5,
+          comment: '¡Increíble trabajo en equipo! La propuesta visual, la temática y los recursos interactivos están extraordinarios.',
+          tag: '🎨 Gran diseño',
+          t: Date.now() - 3600000 * 28
+        },
+        {
+          who: 'usr_sample_2',
+          name: 'Mateo Delgado',
+          stars: 5,
+          comment: 'Un proyecto sumamente inspirador para toda la comunidad. Gran dominio temático, claridad y propuesta pedagógica.',
+          tag: '🚀 Gran impacto',
+          t: Date.now() - 3600000 * 72
+        },
+        {
+          who: 'usr_sample_3',
+          name: 'Camila Ríos',
+          stars: 4,
+          comment: 'Muy bien estructurado. Me encantó la metodología ágil y la documentación de las etapas de trabajo.',
+          tag: '💡 Idea innovadora',
+          t: Date.now() - 3600000 * 120
+        }
+      ];
+    }
+  },
+
+  closeReviewPage() {
+    const el = document.getElementById('phub-fullpage-review');
+    if (el) el.remove();
+    if (!document.getElementById('phub-overlay') && !document.getElementById('phub-fullpage-join')) {
+      document.body.style.overflow = '';
+    }
+    if (window.ProjectsView && typeof window.ProjectsView.render === 'function' && window.appRouter && window.appRouter.currentView === 'projects') {
+      try { window.ProjectsView.render(); } catch (e) {}
+    }
+  },
+
+  setReviewStars(stars) {
+    this.currentReviewStars = stars;
+    const btns = document.querySelectorAll('.phub-rev-star-btn');
+    btns.forEach((btn, idx) => {
+      if (idx < stars) {
+        btn.classList.add('active');
+        btn.textContent = '★';
+      } else {
+        btn.classList.remove('active');
+        btn.textContent = '☆';
+      }
+    });
+    const cap = document.getElementById('phub-rev-caption');
+    const captions = {
+      1: '⭐ Necesita bastante trabajo y ajustes',
+      2: '⭐⭐ Regular, tiene aspectos importantes por mejorar',
+      3: '⭐⭐⭐ Bueno, cumple con los requisitos básicos',
+      4: '⭐⭐⭐⭐ Muy bueno, gran aporte y calidad en el contenido',
+      5: '⭐⭐⭐⭐⭐ ¡Excelente proyecto! Extraordinario, creativo e inspirador'
+    };
+    if (cap) cap.textContent = captions[stars] || `${stars} estrellas`;
+  },
+
+  selectReviewTag(btn, tag) {
+    this.currentReviewTag = tag;
+    document.querySelectorAll('.phub-rev-tag-pill').forEach(b => b.classList.remove('active'));
+    if (btn) btn.classList.add('active');
+  },
+
+  renderReviewListHtml(ratings) {
+    const list = (ratings || []).slice().reverse();
+    const withComments = list.filter(r => r && (r.comment && r.comment.trim() || r.stars));
+    if (withComments.length === 0) {
+      return `
+        <div class="phub-rev-empty">
+          <div class="phub-rev-empty-ico">🌟</div>
+          <p style="margin:0; font-weight:700; color:#cbd5e1;">Aún no hay comentarios escritos.</p>
+          <span style="font-size:0.84rem; color:#94a3b8;">¡Sé el primero en calificar y dejar tu comentario arriba!</span>
+        </div>
+      `;
+    }
+
+    return withComments.map(r => {
+      const name = this.esc(r.name || 'Estudiante');
+      const stars = Math.max(1, Math.min(5, parseInt(r.stars, 10) || 5));
+      const starIcons = '★'.repeat(stars) + '☆'.repeat(5 - stars);
+      const tag = r.tag ? `<span class="phub-rev-tag-badge">${this.esc(r.tag)}</span>` : '';
+      const timeAgo = this.formatTimeAgo(r.t);
+      const initial = (name.replace('@', '').trim()[0] || 'U').toUpperCase();
+      const commentText = r.comment ? this.esc(r.comment) : '<em>(Calificó con estrellas)</em>';
+
+      return `
+        <div class="phub-rev-item">
+          <div class="phub-rev-item-head">
+            <div class="phub-rev-user-info">
+              <div class="phub-rev-avatar">${initial}</div>
+              <div>
+                <div class="phub-rev-author">${name}</div>
+                <div class="phub-rev-date">${timeAgo}</div>
+              </div>
+            </div>
+            <div class="phub-rev-meta-badges">
+              <span class="phub-rev-stars-badge">${starIcons} ${stars}/5</span>
+              ${tag}
+            </div>
+          </div>
+          <p class="phub-rev-text">${commentText}</p>
+        </div>
+      `;
+    }).join('');
+  },
+
+  openReviewPage(projectId) {
+    const proj = this.getProject(projectId);
+    if (!proj) {
+      this.toast('No se encontró el proyecto');
+      return;
+    }
+    this.currentId = projectId;
+    const hub = this.getHub(projectId);
+    this.ensureInitialReviews(hub, proj);
+    this.saveHub(projectId, hub);
+
+    let fullpage = document.getElementById('phub-fullpage-review');
+    if (!fullpage) {
+      fullpage = document.createElement('div');
+      fullpage.id = 'phub-fullpage-review';
+      document.body.appendChild(fullpage);
+    }
+    document.body.style.overflow = 'hidden';
+
+    const bannerUrl = this.getHeroBannerUrl(proj);
+    const author = this.esc(proj.author || 'Creador Mentix');
+    const title = this.esc(proj.title || 'Proyecto');
+    const id = this.esc(proj.id);
+    const icon = proj.icon || '🏰';
+    const me = this.me();
+
+    const stats = this.ratingStats(hub);
+    const avgScore = stats.total > 0 ? stats.avg.toFixed(1) : (proj.rating || '5.0');
+    const totalCount = stats.total;
+
+    this.currentReviewStars = 5;
+    this.currentReviewTag = '💡 Idea innovadora';
+
+    fullpage.innerHTML = `
+      <div class="phub-fp-bg" style="background-image: url('${bannerUrl}');"></div>
+      <div class="phub-fp-overlay"></div>
+      <div class="phub-fp-glow"></div>
+
+      <div class="phub-fp-shell">
+        <header class="phub-fp-header">
+          <button type="button" class="phub-fp-back-btn" onclick="window.ProjectHub.closeReviewPage()">
+            <span>←</span>
+            <span>Volver al Proyecto</span>
+          </button>
+
+          <div class="phub-fp-center-badge">
+            <span class="phub-fp-dot" style="background:#facc15; box-shadow:0 0 10px #facc15;"></span>
+            <span>⭐ CALIFICACIÓN &amp; COMENTARIOS</span>
+          </div>
+
+          <div class="phub-fp-header-actions">
+            <button type="button" class="phub-fp-ghost-btn" onclick="window.ProjectHub.openLanding('${id}')">
+              <span>🌐</span>
+              <span>Ver Landing Page</span>
+            </button>
+            <button type="button" class="phub-fp-close-x" onclick="window.ProjectHub.closeReviewPage()" title="Cerrar">✕</button>
+          </div>
+        </header>
+
+        <main class="phub-rev-body">
+          <!-- Tarjeta de Resumen de Calificación del Proyecto -->
+          <div class="phub-rev-summary-card">
+            <div class="phub-fp-hero-box" style="margin-bottom: 0.8rem;">
+              <div class="phub-fp-avatar">${icon}</div>
+              <h1 class="phub-fp-title" style="margin-bottom: 0.35rem;">Calificaciones de “${title}”</h1>
+              <p class="phub-fp-subtitle">Proyecto creado por <strong>${author}</strong> • Opiniones y valoraciones de la comunidad</p>
+            </div>
+
+            <div class="phub-rev-kpi-wrap">
+              <div class="phub-rev-score-big">
+                <div class="phub-rev-num" id="phub-rev-avg-score">${avgScore}</div>
+                <div class="phub-rev-stars-cluster">★★★★★</div>
+                <div class="phub-rev-total-lbl" id="phub-rev-total-count">${totalCount} calificaciones</div>
+              </div>
+
+              <div class="phub-rev-bars" id="phub-rev-bars-container">
+                ${[5, 4, 3, 2, 1].map(star => {
+                  const count = stats.dist[star - 1] || 0;
+                  const pct = totalCount > 0 ? Math.round((count / totalCount) * 100) : (star === 5 ? 85 : 5);
+                  return `
+                    <div class="phub-rev-bar-row">
+                      <span class="phub-rev-bar-lbl">${star} ★</span>
+                      <div class="phub-rev-bar-track">
+                        <div class="phub-rev-bar-fill" style="width: ${pct}%;"></div>
+                      </div>
+                      <span class="phub-rev-bar-count">${count}</span>
+                    </div>
+                  `;
+                }).join('')}
+              </div>
+            </div>
+          </div>
+
+          <!-- Tarjeta de Formulario: Dejar Calificación y Comentario -->
+          <div class="phub-rev-form-card">
+            <div class="phub-rev-form-head">
+              <span style="font-size: 1.8rem; line-height: 1;">✍️</span>
+              <div>
+                <h3>Deja tu Calificación y Comentario</h3>
+                <p style="margin: 0.2rem 0 0; color: #94a3b8; font-size: 0.88rem;">Selecciona las estrellas y escribe qué te pareció el proyecto.</p>
+              </div>
+            </div>
+
+            <!-- Selector de Estrellas Interactivo -->
+            <div class="phub-rev-stars-box">
+              <div style="font-size: 0.85rem; font-weight: 700; color: #cbd5e1; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.05em;">
+                Tu Calificación:
+              </div>
+              <div class="phub-rev-stars-row" id="phub-stars-row">
+                ${[1, 2, 3, 4, 5].map(s => `
+                  <button type="button" class="phub-rev-star-btn active" data-star="${s}" onclick="window.ProjectHub.setReviewStars(${s})" title="${s} estrellas">★</button>
+                `).join('')}
+              </div>
+              <div class="phub-rev-star-caption" id="phub-rev-caption">
+                ⭐⭐⭐⭐⭐ ¡Excelente proyecto! Extraordinario, creativo e inspirador
+              </div>
+            </div>
+
+            <form onsubmit="event.preventDefault(); window.ProjectHub.submitReviewForm('${id}');" class="phub-fp-form">
+              <div class="phub-fp-field">
+                <span class="phub-fp-label-txt">👤 Tu Nombre o Usuario:</span>
+                <input id="phub-rev-name" class="phub-fp-input" type="text" required maxlength="60" placeholder="Ej: Juan Pérez o @juan" value="${this.esc(me.name)}" />
+              </div>
+
+              <!-- Etiquetas Rápidas -->
+              <div class="phub-rev-tags-box">
+                <span class="phub-rev-tags-lbl">🏷️ Destacar aspecto principal (opcional):</span>
+                <div class="phub-rev-tags-row">
+                  ${['💡 Idea innovadora', '🎨 Gran diseño', '🚀 Gran impacto', '👏 Felicitaciones', '🛠️ Sugerencia constructiva'].map((tag, idx) => `
+                    <button type="button" class="phub-rev-tag-pill ${idx === 0 ? 'active' : ''}" onclick="window.ProjectHub.selectReviewTag(this, '${tag}')">${tag}</button>
+                  `).join('')}
+                </div>
+              </div>
+
+              <!-- Comentario -->
+              <div class="phub-fp-field">
+                <span class="phub-fp-label-txt">💬 Tu Comentario o Retroalimentación:</span>
+                <textarea id="phub-rev-comment" class="phub-rev-textarea" required minlength="4" maxlength="600" placeholder="Escribe aquí tu opinión, qué fue lo que más te gustó, ideas para seguir mejorando o felicitaciones para el equipo..."></textarea>
+              </div>
+
+              <button type="submit" class="phub-rev-submit-btn">
+                <span>⭐</span>
+                <span>Publicar mi Calificación y Comentario</span>
+              </button>
+            </form>
+          </div>
+
+          <!-- Tarjeta de Comentarios de la Comunidad -->
+          <div class="phub-rev-list-card">
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem; margin-bottom:0.4rem;">
+              <h3 style="margin:0; font-size:1.35rem; font-weight:900; color:#ffffff;">
+                💬 Comentarios de la Comunidad (<span id="phub-rev-comm-count">${hub.ratings.filter(r => r.comment).length}</span>)
+              </h3>
+              <span style="font-size:0.82rem; color:#facc15; font-weight:700;">★ Opiniones verificadas</span>
+            </div>
+            <div class="phub-rev-list" id="phub-rev-items-container">
+              ${this.renderReviewListHtml(hub.ratings)}
+            </div>
+          </div>
+        </main>
+      </div>
+    `;
+
+    setTimeout(() => {
+      const ta = document.getElementById('phub-rev-comment');
+      if (ta) ta.focus();
+    }, 100);
+  },
+
+  submitReviewForm(projectId) {
+    const proj = this.getProject(projectId);
+    if (!proj) {
+      this.toast('⚠️ No se pudo identificar el proyecto.');
+      return;
+    }
+    const hub = this.getHub(projectId);
+    const me = this.me();
+
+    const nameInput = document.getElementById('phub-rev-name');
+    const commentInput = document.getElementById('phub-rev-comment');
+
+    const name = (nameInput ? nameInput.value : '').trim() || me.name || 'Visitante';
+    let comment = (commentInput ? commentInput.value : '').trim();
+    const stars = this.currentReviewStars || 5;
+    const tag = this.currentReviewTag || '';
+
+    if (!comment) {
+      comment = `Calificó con ${stars} estrellas el proyecto.`;
+    }
+
+    if (!Array.isArray(hub.ratings)) hub.ratings = [];
+
+    const existingIdx = hub.ratings.findIndex(r => r.who === me.key);
+    const newReview = {
+      who: me.key,
+      name,
+      stars,
+      comment,
+      tag,
+      t: Date.now()
+    };
+
+    if (existingIdx >= 0) {
+      hub.ratings[existingIdx] = newReview;
+    } else {
+      hub.ratings.unshift(newReview);
+    }
+
+    const st = this.ratingStats(hub);
+    const newRating = st.avg.toFixed(1);
+    proj.rating = newRating;
+    proj.ratings = hub.ratings;
+    proj.ratingsCount = st.total;
+    if (proj.hub) proj.hub.ratings = hub.ratings;
+
+    // Actualizar en window.appState.challenges
+    if (window.appState && Array.isArray(window.appState.challenges)) {
+      const match = window.appState.challenges.find(c => c && String(c.id) === String(projectId));
+      if (match) {
+        match.rating = newRating;
+        match.ratings = hub.ratings;
+        match.ratingsCount = st.total;
+        if (!match.hub) match.hub = {};
+        match.hub.ratings = hub.ratings;
+      }
+      if (typeof saveGlobalState === 'function') saveGlobalState(window.appState);
+    }
+
+    // Actualizar en mentix_active_landing_project
+    try {
+      const activeRaw = localStorage.getItem('mentix_active_landing_project');
+      if (activeRaw) {
+        const active = JSON.parse(activeRaw);
+        if (active && (!projectId || String(active.id) === String(projectId))) {
+          active.rating = newRating;
+          active.ratings = hub.ratings;
+          active.ratingsCount = st.total;
+          localStorage.setItem('mentix_active_landing_project', JSON.stringify(active));
+        }
+      }
+    } catch (e) {}
+
+    // Sincronizar en la nube con Supabase para que viaje a todos los usuarios
+    if (window.appRouter && typeof window.appRouter.pushChallengeToCloud === 'function') {
+      try { window.appRouter.pushChallengeToCloud(proj); } catch (e) {}
+    }
+
+    this.saveHub(projectId, hub);
+
+    // Actualizar badge en la página si está presente
+    const heroScoreEl = document.getElementById('inno-hero-rating-score');
+    if (heroScoreEl) heroScoreEl.textContent = newRating;
+    const heroCountEl = document.getElementById('inno-hero-rating-count');
+    if (heroCountEl) heroCountEl.textContent = `(${st.total} calificaciones)`;
+
+    if (window.soundEngine && typeof window.soundEngine.playCorrect === 'function') {
+      window.soundEngine.playCorrect();
+    } else if (window.soundEngine && typeof window.soundEngine.playPop === 'function') {
+      window.soundEngine.playPop();
+    }
+
+    this.toast('⭐ ¡Tu calificación y comentario fueron publicados con éxito!');
+
+    const listContainer = document.getElementById('phub-rev-items-container');
+    if (listContainer) listContainer.innerHTML = this.renderReviewListHtml(hub.ratings);
+
+    const commCount = document.getElementById('phub-rev-comm-count');
+    if (commCount) commCount.textContent = hub.ratings.filter(r => r.comment).length;
+
+    const avgScoreEl = document.getElementById('phub-rev-avg-score');
+    if (avgScoreEl) avgScoreEl.textContent = newRating;
+
+    const totalCountEl = document.getElementById('phub-rev-total-count');
+    if (totalCountEl) totalCountEl.textContent = `${st.total} calificaciones`;
+
+    const barsContainer = document.getElementById('phub-rev-bars-container');
+    if (barsContainer) {
+      barsContainer.innerHTML = [5, 4, 3, 2, 1].map(star => {
+        const count = st.dist[star - 1] || 0;
+        const pct = st.total > 0 ? Math.round((count / st.total) * 100) : 0;
+        return `
+          <div class="phub-rev-bar-row">
+            <span class="phub-rev-bar-lbl">${star} ★</span>
+            <div class="phub-rev-bar-track">
+              <div class="phub-rev-bar-fill" style="width: ${pct}%;"></div>
+            </div>
+            <span class="phub-rev-bar-count">${count}</span>
+          </div>
+        `;
+      }).join('');
+    }
+
+    if (commentInput) commentInput.value = '';
+    const firstItem = listContainer ? listContainer.firstElementChild : null;
+    if (firstItem) {
+      firstItem.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      firstItem.style.boxShadow = '0 0 25px rgba(250, 204, 21, 0.5)';
+      firstItem.style.borderColor = '#facc15';
+    }
+  },
+
   /* ------------------------------ acciones ------------------------------ */
   editProject(projectId) {
     const proj = this.getProject(projectId);
@@ -803,62 +1260,267 @@ window.ProjectHub = {
   },
   closeModal() { const m = document.getElementById('phub-modal'); if (m) m.remove(); },
 
-  openRestrictedModal(proj) {
-    if (!proj) return;
-    const id = this.esc(proj.id);
-    const title = this.esc(proj.title || 'Proyecto');
-    const author = this.esc(proj.author || 'el creador');
-    this.currentId = proj.id;
-    this.modal(`
-      <div class="phub-modal-cartoon phub-restricted-card" style="text-align:center; padding:1.7rem 1.3rem;">
-        <button type="button" class="phub-x" onclick="window.ProjectHub.closeModal()">✕</button>
-        <div style="font-size:3.4rem; line-height:1; margin-bottom:0.7rem; filter: drop-shadow(0 4px 10px rgba(0,0,0,0.15));">🔒</div>
-        <div class="phub-pill-header-wrap" style="justify-content:center; margin-bottom:0.6rem;">
-          <h2 class="phub-pill-title yellow"><span class="ico">🛡️</span> Espacio Exclusivo</h2>
-        </div>
-        <h3 style="font-size:1.15rem; font-weight:800; color:#0f172a; margin:0 0 0.25rem;">“${title}”</h3>
-        <p style="font-size:0.82rem; color:#64748b; margin:0 0 0.85rem;">Creado por <b>${author}</b></p>
-        <p class="phub-desc" style="font-size:0.92rem; color:#334155; max-width:440px; margin:0 auto 1.35rem; line-height:1.5;">
-          Este panel de edición, entregas, archivos y reportes internos solo es visible para los <b>creadores del proyecto</b> y los <b>miembros que se hayan unido</b>.
-        </p>
-        <div style="display:flex; flex-direction:column; gap:0.65rem; max-width:360px; margin:0 auto;">
-          <button type="button" class="phub-glossy-btn green" style="width:100%; justify-content:center; padding:0.75rem 1rem;" onclick="window.ProjectHub.openJoinForm('${id}')">
-            <span class="b-ico">📨</span> Solicitar unirme al proyecto
-          </button>
-          <button type="button" class="phub-glossy-btn blue" style="width:100%; justify-content:center; padding:0.75rem 1rem;" onclick="window.ProjectHub.openLanding('${id}')">
-            <span class="b-ico">🌐</span> Ver Landing Page pública
-          </button>
-          <button type="button" class="phub-top-act-btn" style="width:100%; justify-content:center; background:#f8fafc; border:1.5px solid #cbd5e1; font-weight:700; padding:0.7rem 1rem;" onclick="window.ProjectHub.openMemberLogin('${id}')">
-            <span>🔑</span> <span>Ya soy miembro (Ingresar con clave)</span>
-          </button>
-        </div>
-      </div>
-    `);
+  getHeroBannerUrl(proj) {
+    if (!proj) return 'assets/projects_ui/disney_hero_banner.png';
+    if (window.ProjectsView && typeof window.ProjectsView.getProjectHeroBanner === 'function') {
+      return window.ProjectsView.getProjectHeroBanner(proj.id, proj);
+    }
+    return proj.heroBanner || proj.bannerUrl || proj.coverImage || 'assets/projects_ui/disney_hero_banner.png';
   },
 
-  openJoinForm(projectId) {
+  openRestrictedModal(proj) {
+    if (!proj) return;
+    this.openJoinForm(proj.id, 'join');
+  },
+
+  closeJoinPage() {
+    const el = document.getElementById('phub-fullpage-join');
+    if (el) el.remove();
+    this.closeModal();
+    const proj = this.getProject(this.currentId);
+    if (proj && !this.canView(proj)) {
+      this.close();
+    } else if (!document.getElementById('phub-overlay')) {
+      document.body.style.overflow = '';
+    }
+    if (window.ProjectsView && typeof window.ProjectsView.render === 'function' && window.appRouter && window.appRouter.currentView === 'projects') {
+      try { window.ProjectsView.render(); } catch (e) {}
+    }
+  },
+
+  switchFpMode(mode) {
+    const joinSec = document.getElementById('phub-fp-section-join');
+    const loginSec = document.getElementById('phub-fp-section-login');
+    const tabJoin = document.getElementById('phub-fp-tab-join');
+    const tabLogin = document.getElementById('phub-fp-tab-login');
+    if (mode === 'login') {
+      if (joinSec) joinSec.style.display = 'none';
+      if (loginSec) loginSec.style.display = 'flex';
+      if (tabJoin) tabJoin.classList.remove('active');
+      if (tabLogin) tabLogin.classList.add('active');
+      setTimeout(() => { const el = document.getElementById('phub-l-email'); if (el) el.focus(); }, 50);
+    } else {
+      if (joinSec) joinSec.style.display = 'flex';
+      if (loginSec) loginSec.style.display = 'none';
+      if (tabJoin) tabJoin.classList.add('active');
+      if (tabLogin) tabLogin.classList.remove('active');
+      setTimeout(() => { const el = document.getElementById('phub-j-name'); if (el) el.focus(); }, 50);
+    }
+  },
+
+  togglePassVisibility(inputId, btn) {
+    const inp = document.getElementById(inputId);
+    if (!inp) return;
+    if (inp.type === 'password') {
+      inp.type = 'text';
+      if (btn) btn.textContent = '🙈';
+    } else {
+      inp.type = 'password';
+      if (btn) btn.textContent = '👁️';
+    }
+  },
+
+  openJoinForm(projectId, initialMode = 'join') {
     const proj = this.getProject(projectId);
     if (!proj) return;
     const me = this.me();
     this.currentId = projectId;
-    this.modal(`
-      <button type="button" class="phub-x" onclick="window.ProjectHub.closeModal()">✕</button>
-      <h2 class="phub-pill-title">👥➕ Unirme a “${this.esc(proj.title || 'Proyecto')}”</h2>
-      <p class="phub-desc">Completa tus datos. El creador revisará tu solicitud y te asignará un rol.</p>
-      <form onsubmit="event.preventDefault(); window.ProjectHub.submitJoin('${this.esc(projectId)}');" class="phub-form">
-        <label>Nombre o usuario
-          <input id="phub-j-name" type="text" required maxlength="60" placeholder="Ej: JuanP" value="${this.esc(me.name)}" autocomplete="username">
-        </label>
-        <label>Correo
-          <input id="phub-j-email" type="email" required maxlength="90" placeholder="juan.p@email.com" value="${this.esc(me.email)}" autocomplete="email">
-        </label>
-        <label>Contraseña
-          <input id="phub-j-pass" type="password" required minlength="4" maxlength="60" placeholder="Mínimo 4 caracteres" autocomplete="new-password">
-        </label>
-        <small class="phub-hint">🔒 Tu contraseña se guarda cifrada y el creador nunca la ve.</small>
-        <button type="submit" class="phub-btn blue wide">📨 Enviar solicitud</button>
-      </form>`);
-    setTimeout(() => { const i = document.getElementById(me.name ? 'phub-j-pass' : 'phub-j-name'); if (i) i.focus(); }, 50);
+    this.closeModal();
+
+    let fullpage = document.getElementById('phub-fullpage-join');
+    if (!fullpage) {
+      fullpage = document.createElement('div');
+      fullpage.id = 'phub-fullpage-join';
+      document.body.appendChild(fullpage);
+    }
+    document.body.style.overflow = 'hidden';
+
+    const bannerUrl = this.getHeroBannerUrl(proj);
+    const author = this.esc(proj.author || 'Creador Mentix');
+    const title = this.esc(proj.title || 'Proyecto');
+    const id = this.esc(proj.id);
+    const icon = proj.icon || '🏰';
+
+    fullpage.innerHTML = `
+      <div class="phub-fp-bg" style="background-image: url('${bannerUrl}');"></div>
+      <div class="phub-fp-overlay"></div>
+      <div class="phub-fp-glow"></div>
+
+      <div class="phub-fp-shell">
+        <header class="phub-fp-header">
+          <button type="button" class="phub-fp-back-btn" onclick="window.ProjectHub.closeJoinPage()">
+            <span>←</span>
+            <span>Volver a Mis Proyectos</span>
+          </button>
+
+          <div class="phub-fp-center-badge">
+            <span class="phub-fp-dot"></span>
+            <span>Espacio Privado • Solo Miembros</span>
+          </div>
+
+          <div class="phub-fp-header-actions">
+            <button type="button" class="phub-fp-ghost-btn" onclick="window.ProjectHub.openLanding('${id}')">
+              <span>🌐</span>
+              <span>Ver Landing Page</span>
+            </button>
+            <button type="button" class="phub-fp-close-x" onclick="window.ProjectHub.closeJoinPage()" title="Cerrar">✕</button>
+          </div>
+        </header>
+
+        <main class="phub-fp-body">
+          <div class="phub-fp-card" id="phub-fp-main-card">
+            <div class="phub-fp-hero-box">
+              <div class="phub-fp-avatar">${icon}</div>
+              <h1 class="phub-fp-title">Unirme a “${title}”</h1>
+              <p class="phub-fp-subtitle">Proyecto creado por <strong>${author}</strong></p>
+            </div>
+
+            <div class="phub-fp-callout">
+              <span class="ico">🛡️</span>
+              <div class="txt">
+                <strong>Espacio Exclusivo de Proyecto</strong>
+                <p>Este panel es privado para el creador y los miembros unidos. Envía tu solicitud para que el creador te autorice y asigne tu rol con acceso a entregas y recursos.</p>
+              </div>
+            </div>
+
+            <div class="phub-fp-tabs">
+              <button type="button" id="phub-fp-tab-join" class="phub-fp-tab ${initialMode !== 'login' ? 'active' : ''}" onclick="window.ProjectHub.switchFpMode('join')">
+                <span>👥➕</span> Solicitar unirme
+              </button>
+              <button type="button" id="phub-fp-tab-login" class="phub-fp-tab ${initialMode === 'login' ? 'active' : ''}" onclick="window.ProjectHub.switchFpMode('login')">
+                <span>🔑</span> Ya soy miembro (Entrar)
+              </button>
+            </div>
+
+            <!-- Sección de Solicitud de Unión -->
+            <form id="phub-fp-section-join" onsubmit="event.preventDefault(); window.ProjectHub.submitJoin('${id}');" class="phub-fp-form" style="display: ${initialMode !== 'login' ? 'flex' : 'none'};">
+              <div class="phub-fp-field">
+                <span class="phub-fp-label-txt">👤 Nombre o usuario:</span>
+                <div class="phub-fp-input-wrap">
+                  <input id="phub-j-name" class="phub-fp-input" type="text" required maxlength="60" placeholder="Ej: Juan o @juan" value="${this.esc(me.name)}" autocomplete="username">
+                </div>
+              </div>
+
+              <div class="phub-fp-field">
+                <span class="phub-fp-label-txt">✉️ Correo electrónico:</span>
+                <div class="phub-fp-input-wrap">
+                  <input id="phub-j-email" class="phub-fp-input" type="email" required maxlength="90" placeholder="juan.p@email.com" value="${this.esc(me.email)}" autocomplete="email">
+                </div>
+              </div>
+
+              <div class="phub-fp-field">
+                <span class="phub-fp-label-txt">🔑 Contraseña para ingresar al proyecto:</span>
+                <div class="phub-fp-input-wrap">
+                  <input id="phub-j-pass" class="phub-fp-input has-eye" type="password" required minlength="4" maxlength="60" placeholder="Mínimo 4 caracteres" autocomplete="new-password">
+                  <button type="button" class="phub-fp-eye" onclick="window.ProjectHub.togglePassVisibility('phub-j-pass', this)" title="Ver / Ocultar contraseña">👁️</button>
+                </div>
+              </div>
+
+              <div class="phub-fp-security-note">
+                <span>🔒</span>
+                <span>Tu contraseña se cifra automáticamente (SHA-256) antes de guardarse. El creador nunca tendrá acceso a ella.</span>
+              </div>
+
+              <button type="submit" class="phub-fp-submit">
+                <span>📨</span>
+                <span>Enviar solicitud de unión</span>
+              </button>
+            </form>
+
+            <!-- Sección de Ya soy miembro -->
+            <form id="phub-fp-section-login" onsubmit="event.preventDefault(); window.ProjectHub.memberLogin('${id}');" class="phub-fp-form" style="display: ${initialMode === 'login' ? 'flex' : 'none'};">
+              <div class="phub-fp-field">
+                <span class="phub-fp-label-txt">✉️ Correo electrónico de miembro:</span>
+                <div class="phub-fp-input-wrap">
+                  <input id="phub-l-email" class="phub-fp-input" type="email" required maxlength="90" placeholder="tu@correo.com" autocomplete="email">
+                </div>
+              </div>
+
+              <div class="phub-fp-field">
+                <span class="phub-fp-label-txt">🔑 Contraseña de acceso:</span>
+                <div class="phub-fp-input-wrap">
+                  <input id="phub-l-pass" class="phub-fp-input has-eye" type="password" required maxlength="60" placeholder="Tu contraseña" autocomplete="current-password">
+                  <button type="button" class="phub-fp-eye" onclick="window.ProjectHub.togglePassVisibility('phub-l-pass', this)" title="Ver / Ocultar contraseña">👁️</button>
+                </div>
+              </div>
+
+              <button type="submit" class="phub-fp-submit blue">
+                <span>🚀</span>
+                <span>Ingresar al Proyecto</span>
+              </button>
+            </form>
+
+            <div class="phub-fp-footer-note">
+              Mentix • Plataforma de Aprendizaje e Innovación
+            </div>
+          </div>
+        </main>
+      </div>
+    `;
+
+    setTimeout(() => {
+      if (initialMode === 'login') {
+        const i = document.getElementById('phub-l-email');
+        if (i) i.focus();
+      } else {
+        const i = document.getElementById(me.name ? 'phub-j-pass' : 'phub-j-name');
+        if (i) i.focus();
+      }
+    }, 80);
+  },
+
+  renderJoinSuccessPage(projectId, name, email) {
+    const card = document.getElementById('phub-fp-main-card');
+    if (!card) return;
+    const proj = this.getProject(projectId);
+    const title = this.esc(proj ? proj.title : 'Proyecto');
+    const author = this.esc(proj ? proj.author : 'el creador');
+    const id = this.esc(projectId);
+
+    card.innerHTML = `
+      <div class="phub-fp-success">
+        <div class="phub-fp-success-ico">🎉</div>
+        <h2 class="phub-fp-success-title">¡Solicitud enviada con éxito!</h2>
+        <p class="phub-fp-success-msg">
+          Hola <strong>${this.esc(name)}</strong>, tu solicitud para unirte a <strong>“${title}”</strong> ha sido enviada directamente a <strong>${author}</strong>.
+        </p>
+
+        <div class="phub-fp-steps-box">
+          <div class="phub-fp-step-item">
+            <span class="phub-fp-step-num">1️⃣</span>
+            <div class="phub-fp-step-txt">
+              <strong>Notificación al creador</strong>
+              <span>${author} recibió tu petición y la revisará en la sección de Usuarios.</span>
+            </div>
+          </div>
+          <div class="phub-fp-step-item">
+            <span class="phub-fp-step-num">2️⃣</span>
+            <div class="phub-fp-step-txt">
+              <strong>Asignación de rol</strong>
+              <span>Te habilitará con un rol (Editor, Colaborador o Comentarista).</span>
+            </div>
+          </div>
+          <div class="phub-fp-step-item">
+            <span class="phub-fp-step-num">3️⃣</span>
+            <div class="phub-fp-step-txt">
+              <strong>Acceso inmediato</strong>
+              <span>Podrás entrar con tu correo (<code>${this.esc(email)}</code>) y tu contraseña.</span>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:flex; flex-direction:column; gap:0.75rem; max-width:380px; margin:0 auto;">
+          <button type="button" class="phub-fp-submit blue" onclick="window.ProjectHub.closeJoinPage()">
+            <span>←</span>
+            <span>Volver a Mis Proyectos</span>
+          </button>
+          <button type="button" class="phub-top-act-btn" style="justify-content:center; padding:0.75rem; background:rgba(255,255,255,0.08); color:#ffffff; border:1px solid rgba(255,255,255,0.2);" onclick="window.ProjectHub.openLanding('${id}')">
+            <span>🌐</span>
+            <span>Explorar Landing Page</span>
+          </button>
+        </div>
+      </div>
+    `;
   },
 
   async submitJoin(projectId) {
@@ -876,7 +1538,6 @@ window.ProjectHub = {
       status: 'pending', createdAt: Date.now()
     });
     this.saveHub(projectId, hub);
-    this.closeModal();
     if (window.soundEngine && typeof window.soundEngine.playPop === 'function') {
       window.soundEngine.playPop();
     }
@@ -886,6 +1547,7 @@ window.ProjectHub = {
       message: `Se envió una notificación al creador para aceptarte con tu rol en el proyecto.`
     });
     this.toast('📨 ¡Solicitud enviada! El creador la revisará pronto.');
+    this.renderJoinSuccessPage(projectId, name.trim(), email.trim());
     if (document.getElementById('phub-overlay')) this.render();
   },
 
@@ -1112,16 +1774,7 @@ window.ProjectHub = {
 
   /* ------------------------------ ingreso de miembros ------------------------------ */
   openMemberLogin(projectId) {
-    this.currentId = projectId;
-    this.modal(`
-      <button type="button" class="phub-x" onclick="window.ProjectHub.closeModal()">✕</button>
-      <h2 class="phub-pill-title">🔑 Ingresar como miembro</h2>
-      <p class="phub-desc">Usa el correo y la contraseña con los que te aceptaron en el proyecto.</p>
-      <form onsubmit="event.preventDefault(); window.ProjectHub.memberLogin('${this.esc(projectId)}');" class="phub-form">
-        <label>Correo<input id="phub-l-email" type="email" required placeholder="tu@correo.com" autocomplete="email"></label>
-        <label>Contraseña<input id="phub-l-pass" type="password" required autocomplete="current-password"></label>
-        <button type="submit" class="phub-btn blue wide">Entrar</button>
-      </form>`);
+    this.openJoinForm(projectId, 'login');
   },
   async memberLogin(projectId) {
     const email = (document.getElementById('phub-l-email') || {}).value || '';
@@ -1133,8 +1786,9 @@ window.ProjectHub = {
     try { s = JSON.parse(localStorage.getItem('mentix_hub_sessions') || '{}'); } catch (e) {}
     s[projectId] = { email: m.email, name: m.name };
     localStorage.setItem('mentix_hub_sessions', JSON.stringify(s));
+    this.closeJoinPage();
     this.closeModal();
     this.toast(`✅ Bienvenido/a, ${m.name}. Tu rol: ${this.ROLES[m.role].label}.`);
-    this.render();
+    this.open(projectId, 'home');
   }
 };

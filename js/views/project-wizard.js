@@ -4049,10 +4049,10 @@ collectCurrentStepInputs() {
         if (up && up.url) fileUrl = up.url;
       }
 
-      // Comprimir imágenes o leer archivos ligeros para no exceder la cuota de almacenamiento local y conservar todos los recursos
+      // Leer el archivo como Data URL (hasta 3.5 MB) para que persista fielmente y se visualice tal como se sube
       if (!fileUrl && file.type && file.type.startsWith('image/')) {
-        fileUrl = await this.compressImageFile(file, 1280, 0.74);
-      } else if (!fileUrl && file.size <= 450 * 1024) {
+        fileUrl = await this.compressImageFile(file, 1440, 0.78);
+      } else if (!fileUrl && file.size <= 3.5 * 1024 * 1024) {
         fileUrl = await new Promise((resolve) => {
           const reader = new FileReader();
           reader.onload = () => resolve(reader.result || '');

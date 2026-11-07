@@ -1350,12 +1350,15 @@ function loadInitialState() {
   let parsedCurrentUser = DEFAULT_USERS[0];
   try { if (storedCurrentUser) parsedCurrentUser = JSON.parse(storedCurrentUser); } catch(e) {}
 
+  const storedHeroBanner = localStorage.getItem('te_reto_projects_hero_banner') || localStorage.getItem('mentix_projects_hero_banner') || '';
+
   return {
     challenges: challenges,
     users: parsedUsers,
     currentUser: parsedCurrentUser,
     groups: groups,
-    categories: categories
+    categories: categories,
+    projectsHeroBanner: storedHeroBanner
   };
 }
 
@@ -1364,6 +1367,13 @@ function saveGlobalState(state) {
   try {
     localStorage.removeItem('mentix_challenges');
     localStorage.removeItem('mentix_projects');
+  } catch (e) {}
+
+  try {
+    if (state.projectsHeroBanner) {
+      localStorage.setItem('te_reto_projects_hero_banner', state.projectsHeroBanner);
+      localStorage.setItem('mentix_projects_hero_banner', state.projectsHeroBanner);
+    }
   } catch (e) {}
 
   try {

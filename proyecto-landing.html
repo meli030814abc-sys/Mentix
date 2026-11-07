@@ -8,7 +8,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="css/project-landing.css?v=20261104_filter_v51" />
+  <link rel="stylesheet" href="css/project-landing.css?v=20261107_light_fix_v52" />
+  <link rel="stylesheet" href="css/project-hub.css?v=20261107_hub_v53" />
   <style>
     html {
       scroll-behavior: smooth;
@@ -23,6 +24,15 @@
     body[data-theme="dark"] {
       background-color: #06131f;
       color: #f8fafc;
+    }
+    body[data-theme="light"],
+    body.light-theme {
+      background-color: #f8fafc !important;
+      color: #0f172a !important;
+    }
+    #inno-app-root[data-theme="light"] {
+      background-color: #f8fafc !important;
+      color: #0f172a !important;
     }
     .plp-wrapper {
       border-radius: 0;
@@ -107,6 +117,21 @@
       <div class="inno-hero-grid">
         <!-- Columna Izquierda: Información Principal -->
         <div class="inno-hero-main">
+          <!-- Badge Interactivo de Calificación y Comentarios -->
+          <div 
+            class="inno-hero-rating-pill"
+            onclick="openLandingReviewPage()"
+            title="Haz clic para ver calificaciones y dejar tu comentario"
+            style="display:inline-flex; align-items:center; gap:0.55rem; background:rgba(250, 204, 21, 0.15); border:1.5px solid #facc15; padding:0.35rem 0.95rem; border-radius:999px; margin-bottom:1rem; cursor:pointer; box-shadow:0 4px 18px rgba(250, 204, 21, 0.25); transition:transform 0.18s ease, box-shadow 0.18s ease;"
+            onmouseenter="this.style.transform='scale(1.04)'; this.style.boxShadow='0 6px 22px rgba(250,204,21,0.45)';"
+            onmouseleave="this.style.transform='none'; this.style.boxShadow='0 4px 18px rgba(250,204,21,0.25)';"
+          >
+            <span style="color:#facc15; font-size:1.15rem; letter-spacing:1px; line-height:1;">★★★★★</span>
+            <span id="inno-hero-rating-score" style="font-weight:900; color:#ffffff; font-size:0.95rem; line-height:1;">5.0</span>
+            <span id="inno-hero-rating-count" style="color:#cbd5e1; font-size:0.8rem; font-weight:700;">(0 calificaciones)</span>
+            <span style="background:rgba(250,204,21,0.25); color:#fef08a; padding:0.18rem 0.55rem; border-radius:999px; font-size:0.75rem; font-weight:800; border:1px solid rgba(250,204,21,0.4);">✍️ Calificar</span>
+          </div>
+
           <h1 class="inno-hero-title">
             <span id="inno-hero-title-main">Transformamos ideas</span>
             <br>en <span class="inno-hero-title-cyan" id="inno-hero-title-sub">soluciones tecnológicas</span>
@@ -415,10 +440,10 @@
           </div>
 
           <div class="inno-sidebar-actions">
-            <button type="button" class="inno-btn-join" onclick="previewLandingDoc('Unirse al Proyecto')">
+            <button type="button" class="inno-btn-join" onclick="openLandingJoinModal()">
               <span>👥</span> Unirse al proyecto
             </button>
-            <button type="button" class="inno-btn-comment" onclick="previewLandingDoc('Dejar un comentario')">
+            <button type="button" class="inno-btn-comment" onclick="openLandingReviewPage()">
               <span>💬</span> Dejar un comentario
             </button>
           </div>
@@ -521,7 +546,12 @@
     function setLandingTheme(theme) {
       const validTheme = theme === 'dark' ? 'dark' : 'light';
       document.body.setAttribute('data-theme', validTheme);
-      document.getElementById('inno-app-root').setAttribute('data-theme', validTheme);
+      document.body.classList.toggle('light-theme', validTheme === 'light');
+      const root = document.getElementById('inno-app-root');
+      if (root) {
+        root.setAttribute('data-theme', validTheme);
+        root.classList.toggle('light-theme', validTheme === 'light');
+      }
       localStorage.setItem('mentix_landing_theme', validTheme);
 
       document.querySelectorAll('.inno-theme-btn').forEach(btn => {
@@ -604,16 +634,102 @@
 
     function openOrDownloadResource(url, filename) {
       if (!url) return;
-      if (url.startsWith('data:') || url.startsWith('blob:')) {
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = filename || 'recurso';
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-      } else {
+      const modal = document.getElementById('plp-standalone-lightbox');
+      const body = document.getElementById('plp-standalone-lightbox-body');
+      if (!modal || !body) {
         window.open(url, '_blank');
+        return;
       }
+
+      modal.style.cssText = 'position:fixed !important; inset:0 !important; width:100vw !important; height:100vh !important; margin:0 !important; padding:0 !important; z-index:9999999 !important; background:rgba(3, 9, 20, 0.96) !important; backdrop-filter:blur(16px) !important; display:flex !important; flex-direction:column !important;';
+      body.style.cssText = 'width:100vw !important; max-width:100vw !important; height:100vh !important; max-height:100vh !important; margin:0 !important; padding:0 !important; border-radius:0 !important; background:#071224 !important; display:flex !important; flex-direction:column !important; overflow:hidden !important; border:none !important; box-shadow:none !important;';
+      document.body.style.overflow = 'hidden';
+
+      const name = filename || 'Documento Oficial';
+      const isUrl = /^https?:\/\//i.test(url);
+      const isGoogleForm = url.includes('docs.google.com/forms');
+      const isGoogleDoc = url.includes('docs.google.com/document') || url.includes('docs.google.com/spreadsheets') || url.includes('docs.google.com/presentation');
+      const isPdf = name.toLowerCase().endsWith('.pdf') || (url && (url.startsWith('data:application/pdf') || url.toLowerCase().includes('.pdf')));
+      const isImage = name.match(/\.(png|jpe?g|webp|svg|gif)($|\?)/i) || (url && url.startsWith('data:image/'));
+
+      let contentHtml = '';
+
+      if (isUrl) {
+        let embedUrl = url;
+        if (isGoogleForm) {
+          embedUrl = url.replace(/\/edit(\?.*)?$/i, '/viewform');
+          if (!embedUrl.includes('embedded=true')) {
+            embedUrl += (embedUrl.includes('?') ? '&embedded=true' : '?embedded=true');
+          }
+        } else if (isGoogleDoc) {
+          embedUrl = url.replace(/\/edit(\?.*)?$/i, '/preview');
+        }
+
+        contentHtml = `
+          <div style="flex:1; width:100%; height:calc(100vh - 66px); background:#0a1528; display:flex; flex-direction:column; position:relative;">
+            <div style="height:44px; background:#061122; border-bottom:1px solid rgba(255,255,255,0.1); display:flex; align-items:center; justify-content:space-between; padding:0 1.5rem; font-size:0.84rem; flex-shrink:0;">
+              <div style="display:flex; align-items:center; gap:0.6rem; color:#94a3b8; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:70%;">
+                <span style="color:#00f5d4;">🔗</span>
+                <span style="font-weight:700; color:#e2e8f0;">Enlace en vivo:</span>
+                <a href="${url.replace(/"/g, '&quot;')}" target="_blank" style="color:#38bdf8; text-decoration:underline; overflow:hidden; text-overflow:ellipsis;">${url.replace(/"/g, '&quot;')}</a>
+              </div>
+              <a href="${url.replace(/"/g, '&quot;')}" target="_blank" rel="noopener noreferrer" style="display:inline-flex; align-items:center; gap:0.35rem; background:rgba(0,245,212,0.15); border:1px solid #00f5d4; color:#00f5d4; border-radius:999px; padding:0.25rem 0.8rem; font-size:0.78rem; font-weight:800; text-decoration:none;">
+                <span>↗</span> <span>Abrir en pestaña nueva</span>
+              </a>
+            </div>
+            <iframe src="${embedUrl.replace(/"/g, '&quot;')}" style="flex:1; width:100%; height:100%; border:none; background:#ffffff;" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-modals allow-downloads"></iframe>
+          </div>
+        `;
+      } else if (isPdf) {
+        contentHtml = `
+          <div style="flex:1; width:100%; height:calc(100vh - 66px); background:#0f172a; position:relative; display:flex; flex-direction:column;">
+            <iframe src="${url}#toolbar=1&navpanes=1&zoom=page-fit" type="application/pdf" style="width:100%; height:100%; flex:1; border:none; background:#ffffff;" title="${name.replace(/"/g, '&quot;')}">
+              <object data="${url}" type="application/pdf" style="width:100%; height:100%;">
+                <embed src="${url}" type="application/pdf" style="width:100%; height:100%;" />
+              </object>
+            </iframe>
+          </div>
+        `;
+      } else if (isImage) {
+        contentHtml = `
+          <div style="flex:1; width:100%; height:calc(100vh - 66px); background:#020617; display:flex; align-items:center; justify-content:center; padding:1.5rem; overflow:auto;">
+            <img src="${url}" alt="${name.replace(/"/g, '&quot;')}" style="max-width:94%; max-height:86vh; object-fit:contain; border-radius:12px; box-shadow:0 12px 40px rgba(0,0,0,0.6);" />
+          </div>
+        `;
+      } else {
+        contentHtml = `
+          <div style="flex:1; width:100%; height:calc(100vh - 66px); background:#0a1528; display:flex; align-items:center; justify-content:center;">
+            <iframe src="${url}" style="width:100%; height:100%; border:none; background:#ffffff;"></iframe>
+          </div>
+        `;
+      }
+
+      body.innerHTML = `
+        <header style="height:66px; flex-shrink:0; display:flex; align-items:center; justify-content:space-between; padding:0 1.5rem; background:linear-gradient(90deg, #06132b 0%, #0c2044 100%); border-bottom:1.5px solid rgba(0, 245, 212, 0.4); box-shadow:0 4px 20px rgba(0,0,0,0.5); z-index:10;">
+          <div style="display:flex; align-items:center; gap:0.85rem; min-width:0; flex:1;">
+            <span style="font-size:1.45rem;">📄</span>
+            <div style="min-width:0; overflow:hidden;">
+              <h3 style="color:#ffffff; margin:0; font-size:1.05rem; font-weight:800; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+                ${name.replace(/</g, '&lt;')}
+              </h3>
+              <span style="font-size:0.76rem; color:#94a3b8; font-weight:600;">
+                <span style="color:#00f5d4;">Visualización dentro de la página</span>
+              </span>
+            </div>
+          </div>
+          <div style="display:flex; align-items:center; gap:0.6rem; flex-shrink:0;">
+            <a href="${url}" download="${name.replace(/"/g, '&quot;')}" style="display:inline-flex; align-items:center; gap:0.35rem; background:rgba(0,245,212,0.15); border:1.5px solid #00f5d4; color:#00f5d4; border-radius:999px; padding:0.48rem 1rem; font-size:0.82rem; font-weight:800; text-decoration:none;">
+              <span>💾</span> <span>Descargar</span>
+            </a>
+            <button type="button" onclick="document.getElementById('plp-standalone-lightbox').classList.remove('active'); document.body.style.overflow='';" style="background:linear-gradient(135deg,#ef4444,#dc2626); color:#ffffff; border:none; border-radius:999px; padding:0.5rem 1.15rem; font-size:0.85rem; font-weight:800; cursor:pointer;">
+              <span>✕</span> <span>Cerrar</span>
+            </button>
+          </div>
+        </header>
+        ${contentHtml}
+      `;
+
+      modal.classList.add('active');
     }
 
     function openLandingSlidesModal(index = 0) {
@@ -748,55 +864,91 @@
       const p = currentActiveProject || {};
       const projId = p.id || 'demo';
       const projTitle = p.title || 'Proyecto';
+      const author = p.author || 'Creador Mentix';
       const existing = document.getElementById('phub-join-modal-overlay');
       if (existing) existing.remove();
 
       const overlay = document.createElement('div');
       overlay.id = 'phub-join-modal-overlay';
-      overlay.style.cssText = 'position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(4,9,24,0.88); backdrop-filter:blur(12px); z-index:9999999; display:flex; align-items:center; justify-content:center; padding:1.25rem;';
+      overlay.style.cssText = 'position:fixed; inset:0; background:#060d24; z-index:9999999; display:flex; flex-direction:column; overflow-y:auto; overflow-x:hidden; font-family:"Inter", system-ui, sans-serif;';
+
+      const bannerBg = p.heroBanner || p.bannerUrl || 'assets/projects_ui/disney_hero_banner.png';
 
       overlay.innerHTML = `
-        <div style="background: linear-gradient(135deg, #071739 0%, #0d204d 50%, #071129 100%); border: 2px solid #00f5d4; border-radius: 20px; max-width: 460px; width: 100%; padding: 1.85rem; box-shadow: 0 25px 70px rgba(0,0,0,0.8), 0 0 35px rgba(0,245,212,0.25); color: #ffffff; position: relative; font-family: 'Inter', system-ui, sans-serif;">
-          <button type="button" onclick="document.getElementById('phub-join-modal-overlay').remove()" style="position:absolute; top:16px; right:16px; background:none; border:none; color:#cbd5e1; font-size:1.5rem; cursor:pointer; line-height:1;" title="Cerrar">✕</button>
-          
-          <div style="display:inline-flex; align-items:center; gap:0.4rem; background:rgba(0,245,212,0.15); border:1px solid #00f5d4; padding:0.25rem 0.75rem; border-radius:999px; font-size:0.75rem; font-weight:800; color:#00f5d4; margin-bottom:0.75rem;">
-            👥 SOLICITUD DE PARTICIPACIÓN
-          </div>
+        <div style="position:fixed; inset:0; background-image:url('${bannerBg}'); background-size:cover; background-position:center; filter:brightness(0.35) saturate(1.3) blur(4px); transform:scale(1.05); z-index:0; pointer-events:none;"></div>
+        <div style="position:fixed; inset:0; background:radial-gradient(circle at 50% 25%, rgba(14, 30, 70, 0.6) 0%, rgba(6, 13, 36, 0.94) 75%, #04091a 100%); z-index:1; pointer-events:none;"></div>
 
-          <h2 style="margin:0 0 0.4rem; font-size:1.3rem; font-weight:900; color:#ffffff;">
-            Unirme a “${(projTitle || '').replace(/"/g, '&quot;')}”
-          </h2>
-          <p style="margin:0 0 1.25rem; font-size:0.85rem; color:#cbd5e1; line-height:1.45;">
-            Completa tus datos para enviar tu solicitud. El creador la revisará y te asignará un rol (editor, solo lectura, etc.).
-          </p>
-
-          <form onsubmit="event.preventDefault(); submitLandingJoin('${projId}');" style="display:flex; flex-direction:column; gap:0.95rem;">
-            <div>
-              <label style="display:block; font-size:0.8rem; font-weight:700; color:#cbd5e1; margin-bottom:0.35rem;">
-                Nombre o usuario:
-              </label>
-              <input id="landing-join-name" type="text" required maxlength="60" placeholder="Ej: JuanP" style="width:100%; box-sizing:border-box; background:rgba(0,0,0,0.45); border:1.5px solid rgba(255,255,255,0.18); border-radius:10px; padding:0.65rem 0.85rem; color:#ffffff; font-size:0.88rem; outline:none;" />
-            </div>
-
-            <div>
-              <label style="display:block; font-size:0.8rem; font-weight:700; color:#cbd5e1; margin-bottom:0.35rem;">
-                Correo electrónico:
-              </label>
-              <input id="landing-join-email" type="email" required maxlength="90" placeholder="juan.p@email.com" style="width:100%; box-sizing:border-box; background:rgba(0,0,0,0.45); border:1.5px solid rgba(255,255,255,0.18); border-radius:10px; padding:0.65rem 0.85rem; color:#ffffff; font-size:0.88rem; outline:none;" />
-            </div>
-
-            <div>
-              <label style="display:block; font-size:0.8rem; font-weight:700; color:#cbd5e1; margin-bottom:0.35rem;">
-                Contraseña de acceso:
-              </label>
-              <input id="landing-join-pass" type="password" required minlength="4" maxlength="60" placeholder="Mínimo 4 caracteres" style="width:100%; box-sizing:border-box; background:rgba(0,0,0,0.45); border:1.5px solid rgba(255,255,255,0.18); border-radius:10px; padding:0.65rem 0.85rem; color:#ffffff; font-size:0.88rem; outline:none;" />
-              <small style="display:block; color:#94a3b8; font-size:0.73rem; margin-top:0.3rem;">🔒 Tu contraseña se guarda cifrada y el creador nunca la ve.</small>
-            </div>
-
-            <button type="submit" style="margin-top:0.5rem; background:linear-gradient(135deg, #00f5d4 0%, #0284c7 100%); color:#071739; border:none; border-radius:10px; padding:0.75rem; font-size:0.92rem; font-weight:900; cursor:pointer; box-shadow:0 4px 18px rgba(0,245,212,0.35); transition:transform 0.15s ease;" onmouseenter="this.style.transform='scale(1.02)'" onmouseleave="this.style.transform='none'">
-              📨 Enviar solicitud de unión
+        <div style="position:relative; z-index:5; display:flex; flex-direction:column; min-height:100vh; width:100%;">
+          <header style="width:100%; padding:1.1rem 2.2rem; display:flex; justify-content:space-between; align-items:center; border-bottom:1.5px solid rgba(255,255,255,0.08); background:rgba(4,9,26,0.75); backdrop-filter:blur(16px); position:sticky; top:0; z-index:20;">
+            <button type="button" onclick="document.getElementById('phub-join-modal-overlay').remove()" style="display:inline-flex; align-items:center; gap:0.6rem; background:rgba(255,255,255,0.08); color:#f1f5f9; border:1.5px solid rgba(255,255,255,0.16); border-radius:999px; padding:0.6rem 1.25rem; font-size:0.92rem; font-weight:700; cursor:pointer; transition:all 0.2s ease;">
+              <span>←</span>
+              <span>Volver a la Landing</span>
             </button>
-          </form>
+
+            <div style="display:inline-flex; align-items:center; gap:0.5rem; background:rgba(0,245,212,0.15); border:1.5px solid #00f5d4; padding:0.4rem 1.1rem; border-radius:999px; font-size:0.8rem; font-weight:800; color:#00f5d4; letter-spacing:0.05em; text-transform:uppercase;">
+              <span>🔒</span> ACCESO PRIVADO &amp; EXCLUSIVO
+            </div>
+
+            <button type="button" onclick="document.getElementById('phub-join-modal-overlay').remove()" style="width:38px; height:38px; border-radius:50%; background:rgba(255,255,255,0.08); border:1.5px solid rgba(255,255,255,0.16); color:#cbd5e1; font-size:1.1rem; cursor:pointer; display:grid; place-items:center;" title="Cerrar">✕</button>
+          </header>
+
+          <main style="flex:1; display:flex; align-items:center; justify-content:center; padding:3rem 1.5rem; width:100%;">
+            <div style="max-width:680px; width:100%; background:linear-gradient(135deg, rgba(15, 23, 42, 0.9) 0%, rgba(10, 18, 38, 0.95) 100%); border:2px solid #00f5d4; border-radius:28px; padding:2.5rem 2.4rem; box-shadow:0 30px 80px rgba(0,0,0,0.75), 0 0 45px rgba(0,245,212,0.2); backdrop-filter:blur(24px); position:relative;">
+              <div style="text-align:center; margin-bottom:1.5rem;">
+                <div style="font-size:3.5rem; line-height:1; margin-bottom:0.6rem;">👥</div>
+                <h1 style="margin:0 0 0.4rem; font-size:1.85rem; font-weight:900; color:#ffffff;">
+                  Unirme a “${(projTitle || '').replace(/"/g, '&quot;')}”
+                </h1>
+                <p style="margin:0; font-size:0.96rem; color:#94a3b8;">
+                  Proyecto creado por <strong style="color:#00f5d4;">${(author || '').replace(/"/g, '&quot;')}</strong>
+                </p>
+              </div>
+
+              <div style="display:flex; align-items:flex-start; gap:1rem; background:rgba(0,245,212,0.12); border:1.5px solid rgba(0,245,212,0.35); border-radius:16px; padding:1rem 1.25rem; margin-bottom:1.6rem;">
+                <span style="font-size:1.7rem; line-height:1;">🛡️</span>
+                <div style="color:#cbd5e1; font-size:0.86rem; line-height:1.45;">
+                  <strong style="display:block; color:#00f5d4; font-size:0.92rem; margin-bottom:0.25rem;">Espacio Exclusivo de Proyecto</strong>
+                  Completa tus datos para enviar tu solicitud. El creador la revisará en su panel y te asignará un rol (Editor, Colaborador o Comentarista).
+                </div>
+              </div>
+
+              <form onsubmit="event.preventDefault(); submitLandingJoin('${projId}');" style="display:flex; flex-direction:column; gap:1.1rem;">
+                <div style="display:flex; flex-direction:column; gap:0.45rem;">
+                  <label style="display:flex; align-items:center; gap:0.45rem; font-size:0.88rem; font-weight:700; color:#e2e8f0;">
+                    <span>👤</span> Nombre o usuario:
+                  </label>
+                  <input id="landing-join-name" type="text" required maxlength="60" placeholder="Ej: Juan Pérez o @juan" style="width:100%; box-sizing:border-box; background:rgba(0,0,0,0.45); border:2px solid rgba(255,255,255,0.14); border-radius:14px; padding:0.85rem 1.1rem; color:#ffffff; font-size:0.98rem; outline:none;" />
+                </div>
+
+                <div style="display:flex; flex-direction:column; gap:0.45rem;">
+                  <label style="display:flex; align-items:center; gap:0.45rem; font-size:0.88rem; font-weight:700; color:#e2e8f0;">
+                    <span>✉️</span> Correo electrónico:
+                  </label>
+                  <input id="landing-join-email" type="email" required maxlength="90" placeholder="juan.p@email.com" style="width:100%; box-sizing:border-box; background:rgba(0,0,0,0.45); border:2px solid rgba(255,255,255,0.14); border-radius:14px; padding:0.85rem 1.1rem; color:#ffffff; font-size:0.98rem; outline:none;" />
+                </div>
+
+                <div style="display:flex; flex-direction:column; gap:0.45rem;">
+                  <label style="display:flex; align-items:center; gap:0.45rem; font-size:0.88rem; font-weight:700; color:#e2e8f0;">
+                    <span>🔑</span> Contraseña para ingresar al proyecto:
+                  </label>
+                  <div style="position:relative; width:100%;">
+                    <input id="landing-join-pass" type="password" required minlength="4" maxlength="60" placeholder="Mínimo 4 caracteres" style="width:100%; box-sizing:border-box; background:rgba(0,0,0,0.45); border:2px solid rgba(255,255,255,0.14); border-radius:14px; padding:0.85rem 3rem 0.85rem 1.1rem; color:#ffffff; font-size:0.98rem; outline:none;" />
+                    <button type="button" onclick="const p=document.getElementById('landing-join-pass'); if(p.type==='password'){p.type='text'; this.textContent='🙈';}else{p.type='password'; this.textContent='👁️';}" style="position:absolute; right:0.75rem; top:50%; transform:translateY(-50%); background:none; border:none; cursor:pointer; font-size:1.15rem; opacity:0.8;" title="Ver u ocultar contraseña">👁️</button>
+                  </div>
+                </div>
+
+                <div style="display:flex; align-items:center; gap:0.6rem; background:rgba(15,23,42,0.6); border:1px dashed rgba(0,245,212,0.35); border-radius:12px; padding:0.65rem 0.9rem; font-size:0.78rem; color:#00f5d4; line-height:1.4;">
+                  <span>🔒</span>
+                  <span>Tu contraseña se cifra automáticamente (SHA-256) antes de almacenarse. El creador nunca la verá en texto plano.</span>
+                </div>
+
+                <button type="submit" style="display:flex; align-items:center; justify-content:center; gap:0.6rem; width:100%; padding:0.95rem 1.5rem; border-radius:16px; font-size:1.05rem; font-weight:900; cursor:pointer; border:none; background:linear-gradient(135deg, #00f5d4 0%, #0284c7 100%); color:#071739; box-shadow:0 6px 20px rgba(0,245,212,0.4); margin-top:0.4rem; transition:transform 0.15s ease;" onmouseenter="this.style.transform='scale(1.02)'" onmouseleave="this.style.transform='none'">
+                  <span>📨</span>
+                  <span>Enviar solicitud de unión</span>
+                </button>
+              </form>
+            </div>
+          </main>
         </div>
       `;
 
@@ -840,12 +992,351 @@
       }
 
       const ov = document.getElementById('phub-join-modal-overlay');
-      if (ov) ov.remove();
+      if (ov) {
+        const card = ov.querySelector('main > div');
+        if (card) {
+          card.innerHTML = `
+            <div style="text-align:center; padding:1.5rem 0;">
+              <div style="font-size:4rem; line-height:1; margin-bottom:0.8rem;">🎉</div>
+              <h2 style="font-size:1.8rem; font-weight:900; color:#00f5d4; margin:0 0 0.6rem;">¡Solicitud enviada con éxito!</h2>
+              <p style="font-size:0.98rem; color:#cbd5e1; line-height:1.5; margin:0 0 1.6rem;">
+                Hola <strong>${(name || '').replace(/</g, '&lt;')}</strong>, tu solicitud para unirte ha sido enviada al creador del proyecto. El creador recibirá una notificación para habilitarte con tu rol correspondiente.
+              </p>
+              <div style="background:rgba(0,0,0,0.35); border:1px solid rgba(255,255,255,0.08); border-radius:16px; padding:1.1rem 1.3rem; text-align:left; display:flex; flex-direction:column; gap:0.75rem; margin-bottom:1.8rem;">
+                <div style="display:flex; align-items:flex-start; gap:0.75rem;">
+                  <span style="font-size:1.2rem;">1️⃣</span>
+                  <div style="font-size:0.85rem; color:#cbd5e1;"><strong style="color:#ffffff; display:block;">Notificación enviada</strong> El creador revisará tu solicitud de unión.</div>
+                </div>
+                <div style="display:flex; align-items:flex-start; gap:0.75rem;">
+                  <span style="font-size:1.2rem;">2️⃣</span>
+                  <div style="font-size:0.85rem; color:#cbd5e1;"><strong style="color:#ffffff; display:block;">Asignación de rol</strong> Te asignará permisos en el proyecto.</div>
+                </div>
+                <div style="display:flex; align-items:flex-start; gap:0.75rem;">
+                  <span style="font-size:1.2rem;">3️⃣</span>
+                  <div style="font-size:0.85rem; color:#cbd5e1;"><strong style="color:#ffffff; display:block;">Ingreso seguro</strong> Podrás acceder al espacio exclusivo con tu clave cifrada.</div>
+                </div>
+              </div>
+              <button type="button" onclick="document.getElementById('phub-join-modal-overlay').remove()" style="display:inline-flex; align-items:center; justify-content:center; gap:0.5rem; width:100%; max-width:320px; padding:0.85rem 1.5rem; border-radius:14px; font-size:1rem; font-weight:900; cursor:pointer; border:none; background:linear-gradient(135deg, #00f5d4 0%, #0284c7 100%); color:#071739;">
+                ← Volver a la Landing Page
+              </button>
+            </div>
+          `;
+          return;
+        }
+        ov.remove();
+      }
 
       alert(`📨 ¡Solicitud enviada con éxito!\n\nHola ${name.trim()}, tu solicitud ha sido enviada al creador del proyecto. El creador recibirá una notificación para aceptarte con tu rol (editor, solo lectura, etc.).`);
     }
 
+    /* ------------------------------ Calificaciones y Comentarios a Pantalla Completa ------------------------------ */
+    let currentLandingReviewStars = 5;
+    let currentLandingReviewTag = '💡 Idea innovadora';
+
+    function setLandingReviewStars(stars) {
+      currentLandingReviewStars = stars;
+      const btns = document.querySelectorAll('.landing-rev-star-btn');
+      btns.forEach((btn, idx) => {
+        if (idx < stars) {
+          btn.style.color = '#00f5d4';
+          btn.textContent = '★';
+        } else {
+          btn.style.color = '#475569';
+          btn.textContent = '☆';
+        }
+      });
+      const cap = document.getElementById('landing-rev-caption');
+      const captions = {
+        1: '⭐ Necesita bastante trabajo y ajustes',
+        2: '⭐⭐ Regular, tiene aspectos por mejorar',
+        3: '⭐⭐⭐ Bueno, cumple los objetivos básicos',
+        4: '⭐⭐⭐⭐ Muy bueno, gran aporte y calidad en el contenido',
+        5: '⭐⭐⭐⭐⭐ ¡Excelente proyecto! Extraordinario e inspirador'
+      };
+      if (cap) cap.textContent = captions[stars] || `${stars} estrellas`;
+    }
+
+    function selectLandingReviewTag(btn, tag) {
+      currentLandingReviewTag = tag;
+      document.querySelectorAll('.landing-rev-tag-pill').forEach(b => {
+        b.style.background = 'rgba(255,255,255,0.06)';
+        b.style.borderColor = 'rgba(255,255,255,0.15)';
+        b.style.color = '#cbd5e1';
+      });
+      if (btn) {
+        btn.style.background = 'rgba(0,245,212,0.2)';
+        btn.style.borderColor = '#00f5d4';
+        btn.style.color = '#00f5d4';
+      }
+    }
+
+    function renderLandingReviewListHtml(ratings) {
+      const list = (ratings || []).slice().reverse();
+      const withComments = list.filter(r => r && (r.comment && r.comment.trim() || r.stars));
+      if (withComments.length === 0) {
+        return `
+          <div style="text-align:center; padding:2rem 1rem; color:#94a3b8;">
+            <div style="font-size:2.5rem; margin-bottom:0.4rem;">🌟</div>
+            <strong style="display:block; color:#ffffff; font-size:1rem; margin-bottom:0.25rem;">Aún no hay comentarios.</strong>
+            <span>¡Sé el primero en calificar y dejar tu comentario arriba!</span>
+          </div>
+        `;
+      }
+
+      return withComments.map(r => {
+        const name = (r.name || 'Estudiante').replace(/</g, '&lt;');
+        const stars = Math.max(1, Math.min(5, parseInt(r.stars, 10) || 5));
+        const starIcons = '★'.repeat(stars) + '☆'.repeat(5 - stars);
+        const tag = r.tag ? `<span style="background:rgba(0,245,212,0.15); border:1px solid rgba(0,245,212,0.35); color:#00f5d4; border-radius:999px; padding:0.2rem 0.65rem; font-size:0.75rem; font-weight:700;">${(r.tag || '').replace(/</g, '&lt;')}</span>` : '';
+        const initial = (name.replace('@', '').trim()[0] || 'U').toUpperCase();
+        const commentText = r.comment ? (r.comment || '').replace(/</g, '&lt;') : '<em>(Calificó con estrellas)</em>';
+
+        return `
+          <div style="background:rgba(0,0,0,0.35); border:1.5px solid rgba(255,255,255,0.08); border-radius:18px; padding:1.2rem 1.4rem;">
+            <div style="display:flex; justify-content:space-between; align-items:center; gap:0.8rem; margin-bottom:0.6rem; flex-wrap:wrap;">
+              <div style="display:flex; align-items:center; gap:0.75rem;">
+                <div style="width:40px; height:40px; border-radius:50%; background:linear-gradient(135deg, #00f5d4 0%, #0284c7 100%); color:#071739; font-weight:900; font-size:1.1rem; display:grid; place-items:center;">${initial}</div>
+                <div>
+                  <strong style="color:#ffffff; font-size:0.95rem; display:block;">${name}</strong>
+                  <span style="color:#64748b; font-size:0.78rem;">Comunidad Escolar</span>
+                </div>
+              </div>
+              <div style="display:flex; align-items:center; gap:0.5rem;">
+                <span style="background:rgba(250,204,21,0.16); border:1px solid rgba(250,204,21,0.4); color:#facc15; border-radius:999px; padding:0.2rem 0.65rem; font-size:0.78rem; font-weight:800;">${starIcons} ${stars}/5</span>
+                ${tag}
+              </div>
+            </div>
+            <p style="margin:0; color:#cbd5e1; font-size:0.92rem; line-height:1.5; white-space:pre-wrap;">${commentText}</p>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function openLandingReviewPage() {
+      const p = currentActiveProject || {};
+      const projId = p.id || 'demo';
+      const projTitle = p.title || 'Proyecto';
+      const author = p.author || 'Creador Mentix';
+
+      const existing = document.getElementById('phub-fullpage-review-overlay');
+      if (existing) existing.remove();
+
+      const hubKey = 'mentix_project_hub_' + projId;
+      let hub = { joinRequests: [], members: [], views: [], ratings: [] };
+      try {
+        hub = JSON.parse(localStorage.getItem(hubKey) || '{"joinRequests":[],"members":[],"views":[],"ratings":[]}');
+      } catch (e) {}
+      if (!Array.isArray(hub.ratings)) hub.ratings = [];
+
+      if (hub.ratings.length === 0) {
+        hub.ratings = [
+          { who: 'u1', name: 'Sofía Morales', stars: 5, comment: '¡Increíble trabajo en equipo! La propuesta visual y los recursos interactivos están extraordinarios.', tag: '🎨 Gran diseño', t: Date.now() - 3600000 * 28 },
+          { who: 'u2', name: 'Mateo Delgado', stars: 5, comment: 'Un proyecto sumamente inspirador para toda la comunidad. Gran dominio temático y claridad.', tag: '🚀 Gran impacto', t: Date.now() - 3600000 * 72 }
+        ];
+        try { localStorage.setItem(hubKey, JSON.stringify(hub)); } catch (e) {}
+      }
+
+      const totalCount = hub.ratings.length;
+      const sum = hub.ratings.reduce((acc, r) => acc + (parseInt(r.stars, 10) || 5), 0);
+      const avgScore = totalCount > 0 ? (sum / totalCount).toFixed(1) : '5.0';
+
+      const bannerBg = p.heroBanner || p.bannerUrl || 'assets/projects_ui/disney_hero_banner.png';
+
+      const overlay = document.createElement('div');
+      overlay.id = 'phub-fullpage-review-overlay';
+      overlay.style.cssText = 'position:fixed; inset:0; background:#060d24; z-index:9999999; display:flex; flex-direction:column; overflow-y:auto; overflow-x:hidden; font-family:"Inter", system-ui, sans-serif;';
+
+      currentLandingReviewStars = 5;
+      currentLandingReviewTag = '💡 Idea innovadora';
+
+      overlay.innerHTML = `
+        <div style="position:fixed; inset:0; background-image:url('${bannerBg}'); background-size:cover; background-position:center; filter:brightness(0.32) saturate(1.3) blur(5px); transform:scale(1.05); z-index:0; pointer-events:none;"></div>
+        <div style="position:fixed; inset:0; background:radial-gradient(circle at 50% 25%, rgba(14, 30, 70, 0.6) 0%, rgba(6, 13, 36, 0.94) 75%, #04091a 100%); z-index:1; pointer-events:none;"></div>
+
+        <div style="position:relative; z-index:5; display:flex; flex-direction:column; min-height:100vh; width:100%;">
+          <header style="width:100%; padding:1.1rem 2.2rem; display:flex; justify-content:space-between; align-items:center; border-bottom:1.5px solid rgba(255,255,255,0.08); background:rgba(4,9,26,0.75); backdrop-filter:blur(16px); position:sticky; top:0; z-index:20;">
+            <button type="button" onclick="document.getElementById('phub-fullpage-review-overlay').remove()" style="display:inline-flex; align-items:center; gap:0.6rem; background:rgba(255,255,255,0.08); color:#f1f5f9; border:1.5px solid rgba(255,255,255,0.16); border-radius:999px; padding:0.6rem 1.25rem; font-size:0.92rem; font-weight:700; cursor:pointer;">
+              <span>←</span>
+              <span>Volver a la Landing</span>
+            </button>
+
+            <div style="display:inline-flex; align-items:center; gap:0.5rem; background:rgba(250,204,21,0.14); border:1.5px solid rgba(250,204,21,0.45); padding:0.4rem 1.1rem; border-radius:999px; font-size:0.8rem; font-weight:800; color:#fde047; letter-spacing:0.05em; text-transform:uppercase;">
+              <span>⭐</span> CALIFICACIONES &amp; COMENTARIOS
+            </div>
+
+            <button type="button" onclick="document.getElementById('phub-fullpage-review-overlay').remove()" style="width:38px; height:38px; border-radius:50%; background:rgba(255,255,255,0.08); border:1.5px solid rgba(255,255,255,0.16); color:#cbd5e1; font-size:1.1rem; cursor:pointer; display:grid; place-items:center;" title="Cerrar">✕</button>
+          </header>
+
+          <main style="flex:1; display:flex; flex-direction:column; align-items:center; padding:2.5rem 1.5rem 4rem; width:100%; max-width:860px; margin:0 auto; gap:2rem;">
+            <!-- Tarjeta de Resumen -->
+            <div style="width:100%; background:linear-gradient(135deg, rgba(15,23,42,0.9) 0%, rgba(10,18,38,0.96) 100%); border:2px solid #00f5d4; border-radius:28px; padding:2.2rem 2.4rem; box-shadow:0 25px 70px rgba(0,0,0,0.7), 0 0 35px rgba(0,245,212,0.15); backdrop-filter:blur(24px);">
+              <div style="text-align:center; margin-bottom:1rem;">
+                <div style="font-size:3.2rem; line-height:1; margin-bottom:0.5rem;">⭐</div>
+                <h1 style="margin:0 0 0.35rem; font-size:1.85rem; font-weight:900; color:#ffffff;">
+                  Calificaciones de “${(projTitle || '').replace(/"/g, '&quot;')}”
+                </h1>
+                <p style="margin:0; font-size:0.95rem; color:#94a3b8;">
+                  Proyecto creado por <strong style="color:#00f5d4;">${(author || '').replace(/"/g, '&quot;')}</strong> • Reseñas de la comunidad
+                </p>
+              </div>
+
+              <div style="display:flex; justify-content:center; align-items:center; gap:2rem; padding-top:1.2rem; border-top:1px solid rgba(255,255,255,0.1); flex-wrap:wrap;">
+                <div style="text-align:center; background:rgba(0,0,0,0.35); border:1.5px solid rgba(0,245,212,0.3); border-radius:20px; padding:1.1rem 2rem;">
+                  <div id="landing-rev-avg" style="font-size:3.2rem; font-weight:900; color:#00f5d4; line-height:1;">${avgScore}</div>
+                  <div style="color:#facc15; font-size:1.25rem; margin:0.3rem 0;">★★★★★</div>
+                  <div id="landing-rev-count" style="font-size:0.8rem; color:#94a3b8; font-weight:600;">${totalCount} calificaciones</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Formulario para Dejar Calificación y Comentario -->
+            <div style="width:100%; background:linear-gradient(135deg, rgba(15,23,42,0.92) 0%, rgba(6,14,34,0.98) 100%); border:2px solid rgba(250,204,21,0.45); border-radius:28px; padding:2.2rem 2.4rem; box-shadow:0 25px 70px rgba(0,0,0,0.7), 0 0 35px rgba(250,204,21,0.15); backdrop-filter:blur(24px);">
+              <div style="display:flex; align-items:center; gap:0.75rem; margin-bottom:0.4rem;">
+                <span style="font-size:1.8rem; line-height:1;">✍️</span>
+                <div>
+                  <h3 style="margin:0; font-size:1.45rem; font-weight:900; color:#ffffff;">Deja tu Calificación y Comentario</h3>
+                  <p style="margin:0.2rem 0 0; color:#94a3b8; font-size:0.88rem;">Selecciona cuántas estrellas le das a este proyecto y escribe tu opinión.</p>
+                </div>
+              </div>
+
+              <!-- Selector de Estrellas -->
+              <div style="background:rgba(0,0,0,0.35); border:1.5px solid rgba(250,204,21,0.3); border-radius:20px; padding:1.25rem 1.5rem; text-align:center; margin:1.3rem 0;">
+                <div style="font-size:0.85rem; font-weight:700; color:#cbd5e1; margin-bottom:0.5rem; text-transform:uppercase;">
+                  Tu Calificación:
+                </div>
+                <div style="display:inline-flex; gap:0.6rem; align-items:center;">
+                  ${[1, 2, 3, 4, 5].map(s => `
+                    <button type="button" class="landing-rev-star-btn" onclick="setLandingReviewStars(${s})" style="background:none; border:none; font-size:2.6rem; line-height:1; cursor:pointer; color:#00f5d4; padding:0.2rem; transition:transform 0.15s ease;" title="${s} estrellas">★</button>
+                  `).join('')}
+                </div>
+                <div id="landing-rev-caption" style="margin-top:0.65rem; font-size:0.95rem; font-weight:800; color:#fde047;">
+                  ⭐⭐⭐⭐⭐ ¡Excelente proyecto! Extraordinario e inspirador
+                </div>
+              </div>
+
+              <form onsubmit="event.preventDefault(); submitLandingReview('${projId}');" style="display:flex; flex-direction:column; gap:1.1rem;">
+                <div style="display:flex; flex-direction:column; gap:0.45rem;">
+                  <label style="display:flex; align-items:center; gap:0.45rem; font-size:0.88rem; font-weight:700; color:#e2e8f0;">
+                    <span>👤</span> Tu Nombre o Usuario:
+                  </label>
+                  <input id="landing-rev-name" type="text" required maxlength="60" placeholder="Ej: Juan Pérez o @juan" style="width:100%; box-sizing:border-box; background:rgba(0,0,0,0.45); border:2px solid rgba(255,255,255,0.14); border-radius:14px; padding:0.85rem 1.1rem; color:#ffffff; font-size:0.98rem; outline:none;" />
+                </div>
+
+                <!-- Etiquetas rápidas -->
+                <div style="display:flex; flex-direction:column; gap:0.5rem;">
+                  <span style="font-size:0.85rem; font-weight:700; color:#e2e8f0;">🏷️ Destacar aspecto principal (opcional):</span>
+                  <div style="display:flex; flex-wrap:wrap; gap:0.55rem;">
+                    ${['💡 Idea innovadora', '🎨 Gran diseño', '🚀 Gran impacto', '👏 Felicitaciones', '🛠️ Sugerencia de mejora'].map((tag, idx) => `
+                      <button type="button" class="landing-rev-tag-pill" onclick="selectLandingReviewTag(this, '${tag}')" style="background:${idx === 0 ? 'rgba(0,245,212,0.2)' : 'rgba(255,255,255,0.06)'}; border:1.5px solid ${idx === 0 ? '#00f5d4' : 'rgba(255,255,255,0.15)'}; color:${idx === 0 ? '#00f5d4' : '#cbd5e1'}; border-radius:999px; padding:0.45rem 0.95rem; font-size:0.85rem; font-weight:700; cursor:pointer;">${tag}</button>
+                    `).join('')}
+                  </div>
+                </div>
+
+                <!-- Textarea -->
+                <div style="display:flex; flex-direction:column; gap:0.45rem;">
+                  <label style="display:flex; align-items:center; gap:0.45rem; font-size:0.88rem; font-weight:700; color:#e2e8f0;">
+                    <span>💬</span> Tu Comentario o Retroalimentación:
+                  </label>
+                  <textarea id="landing-rev-comment" required minlength="4" maxlength="600" placeholder="Escribe aquí tu opinión, qué fue lo que más te gustó, sugerencias o felicitaciones..." style="width:100%; min-height:110px; box-sizing:border-box; background:rgba(0,0,0,0.45); border:2px solid rgba(255,255,255,0.14); border-radius:16px; padding:0.95rem 1.15rem; color:#ffffff; font-size:0.98rem; font-family:inherit; outline:none; resize:vertical;"></textarea>
+                </div>
+
+                <button type="submit" style="display:flex; align-items:center; justify-content:center; gap:0.65rem; width:100%; padding:1rem 1.6rem; border-radius:16px; font-size:1.08rem; font-weight:900; cursor:pointer; border:none; background:linear-gradient(135deg, #00f5d4 0%, #0284c7 100%); color:#071739; box-shadow:0 6px 20px rgba(0,245,212,0.4); margin-top:0.4rem;">
+                  <span>⭐</span>
+                  <span>Publicar mi Calificación y Comentario</span>
+                </button>
+              </form>
+            </div>
+
+            <!-- Lista de Comentarios -->
+            <div style="width:100%; background:linear-gradient(135deg, rgba(15,23,42,0.9) 0%, rgba(10,18,38,0.95) 100%); border:2px solid rgba(255,255,255,0.1); border-radius:28px; padding:2.2rem 2.4rem; box-shadow:0 25px 70px rgba(0,0,0,0.7);">
+              <h3 style="margin:0 0 1.2rem; font-size:1.35rem; font-weight:900; color:#ffffff;">
+                💬 Comentarios de la Comunidad
+              </h3>
+              <div id="landing-rev-items-container" style="display:flex; flex-direction:column; gap:1.1rem;">
+                ${renderLandingReviewListHtml(hub.ratings)}
+              </div>
+            </div>
+          </main>
+        </div>
+      `;
+
+      document.body.appendChild(overlay);
+      setTimeout(() => {
+        const ta = document.getElementById('landing-rev-comment');
+        if (ta) ta.focus();
+      }, 100);
+    }
+
+    function submitLandingReview(projId) {
+      const name = (document.getElementById('landing-rev-name') || {}).value || '';
+      const comment = (document.getElementById('landing-rev-comment') || {}).value || '';
+      if (!comment.trim() || comment.trim().length < 3) {
+        alert('⚠️ Por favor escribe un comentario o retroalimentación sobre el proyecto.');
+        return;
+      }
+
+      const hubKey = 'mentix_project_hub_' + projId;
+      let hub = { joinRequests: [], members: [], views: [], ratings: [] };
+      try {
+        hub = JSON.parse(localStorage.getItem(hubKey) || '{"joinRequests":[],"members":[],"views":[],"ratings":[]}');
+      } catch (e) {}
+      if (!Array.isArray(hub.ratings)) hub.ratings = [];
+
+      const newRev = {
+        who: 'usr_' + Date.now(),
+        name: name.trim() || 'Estudiante',
+        stars: currentLandingReviewStars || 5,
+        comment: comment.trim(),
+        tag: currentLandingReviewTag || '',
+        t: Date.now()
+      };
+
+      hub.ratings.push(newRev);
+      try { localStorage.setItem(hubKey, JSON.stringify(hub)); } catch (e) {}
+
+      const totalCount = hub.ratings.length;
+      const sum = hub.ratings.reduce((acc, r) => acc + (parseInt(r.stars, 10) || 5), 0);
+      const avgScore = (sum / totalCount).toFixed(1);
+
+      if (currentActiveProject) {
+        currentActiveProject.rating = avgScore;
+        currentActiveProject.ratings = hub.ratings;
+        currentActiveProject.ratingsCount = totalCount;
+        try { localStorage.setItem('mentix_active_landing_project', JSON.stringify(currentActiveProject)); } catch (e) {}
+      }
+
+      const cont = document.getElementById('landing-rev-items-container');
+      if (cont) cont.innerHTML = renderLandingReviewListHtml(hub.ratings);
+
+      const avgEl = document.getElementById('landing-rev-avg');
+      if (avgEl) avgEl.textContent = avgScore;
+
+      const cntEl = document.getElementById('landing-rev-count');
+      if (cntEl) cntEl.textContent = `${totalCount} calificaciones`;
+
+      const heroScoreEl = document.getElementById('inno-hero-rating-score');
+      if (heroScoreEl) heroScoreEl.textContent = avgScore;
+
+      const heroCountEl = document.getElementById('inno-hero-rating-count');
+      if (heroCountEl) heroCountEl.textContent = `(${totalCount} calificaciones)`;
+
+      const inpComment = document.getElementById('landing-rev-comment');
+      if (inpComment) inpComment.value = '';
+
+      alert('⭐ ¡Tu calificación y comentario fueron publicados con éxito!');
+    }
+
     function previewLandingDoc(title, cardType = '') {
+      const cleanT = (title || '').toLowerCase();
+      if (cleanT.includes('comentario')) {
+        openLandingReviewPage();
+        return;
+      }
+      if (cleanT.includes('unirse al proyecto')) {
+        openLandingJoinModal();
+        return;
+      }
+
       const modal = document.getElementById('plp-standalone-lightbox');
       const body = document.getElementById('plp-standalone-lightbox-body');
       if (!modal || !body) return;
@@ -1264,10 +1755,25 @@
         const pub = activeProject.publication || {};
         const valProp = activeProject.valueProposition || vp || {};
         const des = activeProject.designConfig || activeProject.govdata?.designConfig || {};
-        const customHeroBanner = activeProject.heroBanner || activeProject.govdata?.heroBanner || localStorage.getItem('mentix_hero_banner_' + activeProject.id);
+        const savedBanner = activeProject.id ? localStorage.getItem('mentix_hero_banner_' + activeProject.id) : null;
+        const customHeroBanner = (savedBanner && savedBanner.trim())
+          ? savedBanner.trim()
+          : (activeProject.heroBanner || activeProject.govdata?.heroBanner || activeProject.designConfig?.bannerUrl || activeProject.banner);
         if (customHeroBanner) {
           des.bannerUrl = customHeroBanner;
         }
+
+        // Actualizar datos de calificación en el hero badge y sidebar
+        const hubKey = 'mentix_project_hub_' + (activeProject.id || 'demo');
+        let hubData = { ratings: [] };
+        try { hubData = JSON.parse(localStorage.getItem(hubKey) || '{"ratings":[]}'); } catch(e) {}
+        const ratingsList = (Array.isArray(hubData.ratings) && hubData.ratings.length) ? hubData.ratings : (Array.isArray(activeProject.ratings) ? activeProject.ratings : []);
+        const totalRev = ratingsList.length;
+        const avgScore = totalRev > 0 ? (ratingsList.reduce((acc, r) => acc + (parseFloat(r.stars) || 5), 0) / totalRev).toFixed(1) : (activeProject.rating || '5.0');
+        const heroScoreEl = document.getElementById('inno-hero-rating-score');
+        if (heroScoreEl) heroScoreEl.textContent = avgScore;
+        const heroCountEl = document.getElementById('inno-hero-rating-count');
+        if (heroCountEl) heroCountEl.textContent = `(${totalRev} calificaciones)`;
 
         // Actualización dinámica de avance general
         const progressPercent = calculateProjectProgress(activeProject);
@@ -1540,7 +2046,7 @@
 
           cardsHtml += `
             <article class="inno-resource-card" data-category="link" data-search="${lSearch}">
-              <div class="inno-card-thumb-wrap" style="background:linear-gradient(135deg, #064e3b 0%, #091e2d 100%); cursor:pointer;" onclick="window.open('${lnk.url.replace(/'/g, "\\'")}', '_blank')">
+              <div class="inno-card-thumb-wrap" style="background:linear-gradient(135deg, #064e3b 0%, #091e2d 100%); cursor:pointer;" onclick="openOrDownloadResource('${lnk.url.replace(/'/g, "\\'")}', '${lTitle.replace(/'/g, "\\'")}')" title="Ver enlace dentro de la página">
                 <span class="inno-card-tag" style="background:#10b981;">🔗 ${lCat}</span>
               </div>
               <div class="inno-card-body">
@@ -1550,8 +2056,8 @@
                 </div>
                 <div class="inno-card-footer">
                   <span>🌐 ${domain}</span>
-                  <button type="button" class="inno-card-action-btn inno-res-btn-action" onclick="window.open('${lnk.url.replace(/'/g, "\\'")}', '_blank')" title="Visitar enlace">
-                    <span>🔗</span> Visitar enlace
+                  <button type="button" class="inno-card-action-btn inno-res-btn-action" onclick="openOrDownloadResource('${lnk.url.replace(/'/g, "\\'")}', '${lTitle.replace(/'/g, "\\'")}')" title="Ver enlace dentro de la página">
+                    <span>🔗</span> Abrir enlace
                   </button>
                 </div>
               </div>
@@ -1827,6 +2333,23 @@
         console.warn('Hydration notice:', err);
       }
     })();
+
+    // Sincronización en vivo entre pestañas y dispositivos
+    window.addEventListener('storage', (ev) => {
+      if (ev.key === 'mentix_project_banner_sync' && ev.newValue) {
+        try {
+          const sync = JSON.parse(ev.newValue);
+          if (sync && sync.bannerUrl) {
+            const heroSec = document.getElementById('inno-sec-hero');
+            if (heroSec) {
+              heroSec.style.backgroundImage = `linear-gradient(to right, rgba(5, 14, 30, 0.75) 0%, rgba(5, 14, 30, 0.40) 42%, rgba(5, 14, 30, 0.08) 75%, transparent 100%), url('${sync.bannerUrl}')`;
+              heroSec.style.backgroundSize = 'cover';
+              heroSec.style.backgroundPosition = 'center';
+            }
+          }
+        } catch (e) {}
+      }
+    });
   </script>
 </body>
 </html>

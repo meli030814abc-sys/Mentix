@@ -179,24 +179,44 @@ window.HomeView = {
           ¿Tienes lo necesario para llegar al primer lugar?
         </p>
 
-        <!-- Botones de Acción Principales -->
-        <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 1rem; margin-bottom: 2.5rem;">
-          <button class="btn btn-primary btn-lg" onclick="window.appRouter.navigate('lobby-join')" style="font-weight: 900; padding: 0.9rem 1.8rem; box-shadow: 0 6px 20px rgba(114, 9, 183, 0.4);">
-            <span style="font-size: 1.4rem;">🎮</span> Unirse a un reto
+        <!-- Botones de Acción Principales Estilo Cápsula 3D Gaming -->
+        <div class="hero-capsule-group">
+          <button class="hero-capsule-btn hero-capsule-join" onclick="window.appRouter.navigate('lobby-join')">
+            <span class="hero-capsule-gloss"></span>
+            <span class="hero-capsule-streaks"></span>
+            <span class="hero-capsule-icon">🎮</span>
+            <span class="hero-capsule-divider"></span>
+            <span class="hero-capsule-label">Unirse a un reto</span>
           </button>
-          ${currentUser && currentUser.isGuest ? '' : `<button class="btn btn-cyan btn-lg" onclick="window.appRouter.navigate('creator')" style="font-weight: 900; padding: 0.9rem 1.8rem; box-shadow: 0 6px 20px rgba(0, 245, 212, 0.4);">
-            <span style="font-size: 1.4rem;">🚀</span> Crear un reto
+          ${currentUser && currentUser.isGuest ? '' : `<button class="hero-capsule-btn hero-capsule-create" onclick="window.appRouter.navigate('creator')">
+            <span class="hero-capsule-gloss"></span>
+            <span class="hero-capsule-streaks"></span>
+            <span class="hero-capsule-icon">🚀</span>
+            <span class="hero-capsule-divider"></span>
+            <span class="hero-capsule-label">Crear un reto</span>
           </button>`}
           ${!currentUser ? `
-            <button class="btn btn-outline" onclick="window.appRouter.openAuthModal('login')">
-              <span>👤</span> Iniciar sesión
+            <button class="hero-capsule-btn hero-capsule-profile" onclick="window.appRouter.openAuthModal('login')">
+              <span class="hero-capsule-gloss"></span>
+              <span class="hero-capsule-streaks"></span>
+              <span class="hero-capsule-icon">👤</span>
+              <span class="hero-capsule-divider"></span>
+              <span class="hero-capsule-label">Iniciar sesión</span>
             </button>
-            <button class="btn btn-outline" style="border-color: var(--neon-magenta); color: var(--neon-magenta);" onclick="window.appRouter.openAuthModal('register')">
-              <span>✨</span> Registrarse
+            <button class="hero-capsule-btn hero-capsule-create" onclick="window.appRouter.openAuthModal('register')">
+              <span class="hero-capsule-gloss"></span>
+              <span class="hero-capsule-streaks"></span>
+              <span class="hero-capsule-icon">✨</span>
+              <span class="hero-capsule-divider"></span>
+              <span class="hero-capsule-label">Registrarse</span>
             </button>
           ` : `
-            <button class="btn btn-outline" onclick="window.appRouter.navigate('profile')">
-              <span>${window.AvatarEngine ? window.AvatarEngine.renderPlayerIcon(currentUser, 22) : currentUser.avatar}</span> Mi Perfil (${currentUser.levelName})
+            <button class="hero-capsule-btn hero-capsule-profile" onclick="window.appRouter.navigate('profile')">
+              <span class="hero-capsule-gloss"></span>
+              <span class="hero-capsule-streaks"></span>
+              <span class="hero-capsule-icon">${window.AvatarEngine ? window.AvatarEngine.renderPlayerIcon(currentUser, 28) : (currentUser.avatar || '🦊')}</span>
+              <span class="hero-capsule-divider"></span>
+              <span class="hero-capsule-label">Mi Perfil (${currentUser.levelName || 'Principiante'})</span>
             </button>
           `}
         </div>

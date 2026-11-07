@@ -80,45 +80,79 @@ window.ProjectsView = {
   },
 
   getHeroBannerUrl() {
-    const saved = localStorage.getItem('mentix_projects_hero_banner');
-    if (saved) return saved;
-    if (window.appState && window.appState.projectsHeroBanner) return window.appState.projectsHeroBanner;
+    if (window.appState && window.appState.projectsHeroBanner) {
+      return window.appState.projectsHeroBanner;
+    }
+    if (window.appState && Array.isArray(window.appState.challenges)) {
+      const withBanner = window.appState.challenges.find(c => c && (c._globalHeroBanner || c.globalHeroBanner));
+      if (withBanner && (withBanner._globalHeroBanner || withBanner.globalHeroBanner)) {
+        return withBanner._globalHeroBanner || withBanner.globalHeroBanner;
+      }
+    }
+    const saved = localStorage.getItem('te_reto_projects_hero_banner') || localStorage.getItem('mentix_projects_hero_banner') || localStorage.getItem('te_reto_hero_banner');
+    if (saved && saved.trim()) return saved.trim();
     return 'assets/projects_ui/hero_banner.png?v=20261101_bright_sharp';
   },
 
   setHeroBannerUrl(url) {
-    if (!this.isAdminUser()) {
-      alert('⛔ Acceso denegado: Solo los administradores de Mentix pueden cambiar el banner de proyectos.');
-      return false;
-    }
-    localStorage.setItem('mentix_projects_hero_banner', url);
+    if (!url) return false;
+    const cleanUrl = url.trim();
+    localStorage.setItem('mentix_projects_hero_banner', cleanUrl);
+    localStorage.setItem('te_reto_projects_hero_banner', cleanUrl);
+    localStorage.setItem('te_reto_hero_banner', cleanUrl);
+
     if (!window.appState) window.appState = {};
-    window.appState.projectsHeroBanner = url;
-    if (typeof saveGlobalState === 'function') saveGlobalState(window.appState);
+    window.appState.projectsHeroBanner = cleanUrl;
+
+    // Vincular al array de retos compartidos para que viaje a todos los usuarios y dispositivos
+    if (Array.isArray(window.appState.challenges)) {
+      window.appState.challenges.forEach(c => {
+        if (c) {
+          c._globalHeroBanner = cleanUrl;
+          c.globalHeroBanner = cleanUrl;
+        }
+      });
+      if (window.appState.challenges.length > 0 && window.appRouter && typeof window.appRouter.pushChallengeToCloud === 'function') {
+        try { window.appRouter.pushChallengeToCloud(window.appState.challenges[0]); } catch (e) {}
+      }
+    }
+
+    if (typeof saveGlobalState === 'function') {
+      saveGlobalState(window.appState);
+    }
+
+    try {
+      window.dispatchEvent(new CustomEvent('mentix:hero-banner-changed', { detail: { bannerUrl: cleanUrl } }));
+    } catch (e) {}
+
     return true;
   },
 
   setProjectCardBanner(projectId, bannerUrl) {
-    if (!this.isAdminUser()) {
-      alert('⛔ Acceso denegado: Solo los administradores de Mentix pueden cambiar el banner de proyectos.');
-      return false;
-    }
+    if (!bannerUrl) return false;
+    const cleanUrl = bannerUrl.trim();
     if (!window.appState || !Array.isArray(window.appState.challenges)) return false;
     const proj = window.appState.challenges.find(c => c && String(c.id) === String(projectId));
     if (!proj) {
       alert('⚠️ No se encontró el proyecto seleccionado.');
       return false;
     }
-    proj.banner = bannerUrl;
-    proj.mainImage = bannerUrl;
-    proj.thumbnailImage = bannerUrl;
-    proj.image = bannerUrl;
+    proj.banner = cleanUrl;
+    proj.heroBanner = cleanUrl;
+    proj.mainImage = cleanUrl;
+    proj.thumbnailImage = cleanUrl;
+    proj.image = cleanUrl;
     if (proj.govdata) {
-      proj.govdata.banner = bannerUrl;
-      proj.govdata.mainImage = bannerUrl;
-      proj.govdata.thumbnailImage = bannerUrl;
+      proj.govdata.banner = cleanUrl;
+      proj.govdata.heroBanner = cleanUrl;
+      proj.govdata.mainImage = cleanUrl;
+      proj.govdata.thumbnailImage = cleanUrl;
     }
+    try { localStorage.setItem('mentix_hero_banner_' + projectId, cleanUrl); } catch (e) {}
     if (typeof saveGlobalState === 'function') saveGlobalState(window.appState);
+    if (window.appRouter && typeof window.appRouter.pushChallengeToCloud === 'function') {
+      try { window.appRouter.pushChallengeToCloud(proj); } catch (e) {}
+    }
     return true;
   },
 
@@ -193,29 +227,15 @@ window.ProjectsView = {
   },
 
   openAdminBannerModal(targetProjectId = null) {
-    if (!this.isAdminUser()) {
-      alert('⛔ Acceso denegado: Solo los administradores de Mentix pueden cambiar el banner de proyectos.');
-      return;
+    if (targetProjectId) {
+      this.openHeroBannerPicker(targetProjectId);
+    } else {
+      this.openHeroBannerPicker('main_hero');
     }
+  },
 
-    const existing = document.getElementById('mentix-admin-banner-modal-overlay');
-    if (existing) existing.remove();
-
-    const currentHero = this.getHeroBannerUrl();
-    const projects = (window.appState?.challenges || []).filter(c => c && c.id && c.projectType !== 'quiz');
-    const initialTargetType = targetProjectId ? 'project' : 'hero';
-    let currentSelectedProj = targetProjectId ? projects.find(p => String(p.id) === String(targetProjectId)) : (projects[0] || null);
-
-    this.selectedAdminBannerUrl = targetProjectId && currentSelectedProj ? (currentSelectedProj.banner || currentSelectedProj.mainImage || 'assets/projects_ui/robot_hero_banner.png') : (currentHero || 'assets/projects_ui/robot_hero_banner.png');
-    this.selectedAdminBannerTarget = initialTargetType;
-    this.selectedAdminBannerProjId = currentSelectedProj ? currentSelectedProj.id : (projects[0]?.id || '');
-
-    const overlay = document.createElement('div');
-    overlay.id = 'mentix-admin-banner-modal-overlay';
-    overlay.style.cssText = 'position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(4,9,24,0.88); backdrop-filter:blur(10px); z-index:999999; display:flex; align-items:center; justify-content:center; padding:1.25rem; overflow-y:auto;';
-
-    overlay.innerHTML = this.renderAdminBannerModalHtml(projects);
-    document.body.appendChild(overlay);
+  openMainHeroBannerPicker() {
+    this.openHeroBannerPicker('main_hero');
   },
 
   closeAdminBannerModal() {
@@ -341,10 +361,6 @@ window.ProjectsView = {
   },
 
   applyAdminBanner() {
-    if (!this.isAdminUser()) {
-      alert('⛔ Acceso denegado: Solo los administradores de Mentix pueden cambiar el banner de proyectos.');
-      return;
-    }
     const finalUrl = this.selectedAdminBannerUrl;
     if (!finalUrl) {
       alert('⚠️ Por favor selecciona o ingresa una URL de banner antes de guardar.');
@@ -492,6 +508,60 @@ window.ProjectsView = {
     }
   ],
 
+  canUserEditProjectBanner(projectOrId) {
+    const currentUser = (window.appState && window.appState.currentUser) || null;
+    if (!currentUser) return false;
+
+    // 1. Administrador (rol admin o modo auditoría o docente/admin)
+    if (currentUser.isAdmin || currentUser.role === 'admin' || (window.AdminView && window.AdminView.isAdminAuditing) || (this.isTeacherOrAdmin && this.isTeacherOrAdmin())) {
+      return true;
+    }
+
+    const proj = typeof projectOrId === 'object' && projectOrId !== null
+      ? projectOrId
+      : (this.getMergedProjectRecord(projectOrId) || (window.appState?.challenges || []).find(c => c && String(c.id) === String(projectOrId)));
+
+    if (!proj) return false;
+
+    // 2. Creador / Autor de la landing page y proyecto
+    if (window.appRouter && typeof window.appRouter.isChallengeOwner === 'function' && window.appRouter.isChallengeOwner(proj)) {
+      return true;
+    }
+    const myKeys = [currentUser.id, currentUser.username, currentUser.name, currentUser.email].filter(Boolean).map(s => String(s).toLowerCase().trim());
+    const authorKeys = [proj.creatorId, proj.authorId, proj.author, proj.creatorName, proj.createdBy, proj.teamLead, proj.authorEmail].filter(Boolean).map(s => String(s).toLowerCase().trim());
+    if (myKeys.some(k => authorKeys.includes(k))) {
+      return true;
+    }
+
+    // 3. Editores autorizados (en proj.editors, proj.editorIds, o proj.hub.members)
+    if (window.ProjectHub && typeof window.ProjectHub.canEdit === 'function' && window.ProjectHub.canEdit(proj)) {
+      return true;
+    }
+    if (Array.isArray(proj.editors)) {
+      const isEditor = proj.editors.some(e => {
+        if (!e) return false;
+        if (typeof e === 'string') return myKeys.includes(e.toLowerCase().trim());
+        const eKeys = [e.id, e.userId, e.username, e.email].filter(Boolean).map(s => String(s).toLowerCase().trim());
+        return myKeys.some(k => eKeys.includes(k));
+      });
+      if (isEditor) return true;
+    }
+    if (Array.isArray(proj.editorIds)) {
+      if (proj.editorIds.some(id => myKeys.includes(String(id).toLowerCase().trim()))) return true;
+    }
+    if (proj.hub && Array.isArray(proj.hub.members)) {
+      const m = proj.hub.members.find(mem => {
+        const memKeys = [mem.userId, mem.id, mem.who, mem.username, mem.email].filter(Boolean).map(s => String(s).toLowerCase().trim());
+        return myKeys.some(k => memKeys.includes(k));
+      });
+      if (m && (m.role === 'editor' || m.role === 'owner' || m.role === 'admin' || m.canEdit)) {
+        return true;
+      }
+    }
+
+    return false;
+  },
+
   getProjectHeroBanner(projId, selected) {
     if (!projId && selected && selected.id) projId = selected.id;
     let proj = selected;
@@ -507,7 +577,7 @@ window.ProjectsView = {
       return saved.trim();
     }
     if (proj) {
-      const b = proj.heroBanner || proj.landingConfig?.heroBanner || proj.govdata?.heroBanner || proj.banner || proj.coverImage || proj.mainImage;
+      const b = proj.heroBanner || proj.landingConfig?.heroBanner || proj.govdata?.heroBanner || proj.designConfig?.bannerUrl || proj.banner || proj.coverImage || proj.mainImage;
       if (b && typeof b === 'string' && b.trim()) {
         if (b.includes('photo-1518709268805-4e9042af9f23')) return 'assets/projects_ui/disney_hero_banner.png';
         return b.trim();
@@ -518,37 +588,83 @@ window.ProjectsView = {
 
   setProjectHeroBanner(projId, bannerUrl) {
     if (!bannerUrl) return false;
+    const cleanUrl = bannerUrl.trim();
     if (projId) {
-      try { localStorage.setItem('mentix_hero_banner_' + projId, bannerUrl); } catch (e) {}
+      try { localStorage.setItem('mentix_hero_banner_' + projId, cleanUrl); } catch (e) {}
     }
     let proj = null;
     if (window.appState && Array.isArray(window.appState.challenges)) {
       proj = window.appState.challenges.find(c => c && String(c.id) === String(projId));
     }
+    if (!proj) {
+      proj = this.getMergedProjectRecord(projId);
+    }
     if (proj) {
-      proj.heroBanner = bannerUrl;
-      proj.banner = bannerUrl;
+      proj.heroBanner = cleanUrl;
+      proj.banner = cleanUrl;
+      proj.coverImage = cleanUrl;
+      proj.mainImage = cleanUrl;
+      proj.image = cleanUrl;
       if (!proj.govdata) proj.govdata = {};
-      proj.govdata.heroBanner = bannerUrl;
-      proj.govdata.banner = bannerUrl;
+      proj.govdata.heroBanner = cleanUrl;
+      proj.govdata.banner = cleanUrl;
+      if (!proj.designConfig) proj.designConfig = {};
+      proj.designConfig.bannerUrl = cleanUrl;
       if (!proj.landingConfig) proj.landingConfig = {};
-      proj.landingConfig.heroBanner = bannerUrl;
+      proj.landingConfig.heroBanner = cleanUrl;
+      proj.updatedAt = new Date().toISOString();
     }
     try {
       const drafts = JSON.parse(localStorage.getItem('mentix_govdata_wizard_drafts') || '[]');
       const d = drafts.find(x => x && String(x.id) === String(projId));
       if (d) {
-        d.heroBanner = bannerUrl;
-        d.banner = bannerUrl;
+        d.heroBanner = cleanUrl;
+        d.banner = cleanUrl;
+        d.coverImage = cleanUrl;
         if (!d.govdata) d.govdata = {};
-        d.govdata.heroBanner = bannerUrl;
+        d.govdata.heroBanner = cleanUrl;
+        if (!d.designConfig) d.designConfig = {};
+        d.designConfig.bannerUrl = cleanUrl;
         localStorage.setItem('mentix_govdata_wizard_drafts', JSON.stringify(drafts));
+      }
+    } catch (e) {}
+
+    try {
+      const activeRaw = localStorage.getItem('mentix_active_landing_project');
+      if (activeRaw) {
+        const active = JSON.parse(activeRaw);
+        if (active && (!projId || String(active.id) === String(projId))) {
+          active.heroBanner = cleanUrl;
+          active.banner = cleanUrl;
+          active.coverImage = cleanUrl;
+          if (!active.govdata) active.govdata = {};
+          active.govdata.heroBanner = cleanUrl;
+          if (!active.designConfig) active.designConfig = {};
+          active.designConfig.bannerUrl = cleanUrl;
+          localStorage.setItem('mentix_active_landing_project', JSON.stringify(active));
+        }
       }
     } catch (e) {}
 
     if (typeof saveGlobalState === 'function' && window.appState) {
       saveGlobalState(window.appState);
     }
+
+    // Sincronización mundial/global con Supabase Cloud para que todos los usuarios y dispositivos lo vean
+    if (proj && window.appRouter && typeof window.appRouter.pushChallengeToCloud === 'function') {
+      try {
+        window.appRouter.pushChallengeToCloud(proj);
+      } catch (err) {
+        console.warn('Error sincronizando banner de proyecto con la nube:', err);
+      }
+    }
+
+    // Transmisión inmediata entre pestañas y ventanas
+    try {
+      localStorage.setItem('mentix_project_banner_sync', JSON.stringify({ projId, bannerUrl: cleanUrl, t: Date.now() }));
+      window.dispatchEvent(new CustomEvent('mentix:project-banner-changed', { detail: { projId, bannerUrl: cleanUrl } }));
+    } catch (e) {}
+
     return true;
   },
 
@@ -595,10 +711,17 @@ window.ProjectsView = {
   },
 
   openHeroBannerPicker(targetProjectId = null) {
-    const projId = targetProjectId || this.selectedProjectId;
-    const selected = this.getMergedProjectRecord(projId) || (window.appState?.challenges || []).find(c => c && String(c.id) === String(projId));
-    const projTitle = selected ? selected.title : 'Proyecto';
-    const currentBanner = this.getProjectHeroBanner(projId, selected);
+    const isMainHero = (targetProjectId === 'main_hero' || targetProjectId === 'hero');
+    const projId = isMainHero ? 'main_hero' : (targetProjectId || this.selectedProjectId);
+
+    if (!isMainHero && !this.canUserEditProjectBanner(projId)) {
+      alert('⛔ Permiso exclusivo: Solo el Administrador, el Creador de esta landing page o los Editores autorizados del proyecto pueden cambiar el fondo del banner.');
+      return;
+    }
+
+    const selected = isMainHero ? null : (this.getMergedProjectRecord(projId) || (window.appState?.challenges || []).find(c => c && String(c.id) === String(projId)));
+    const projTitle = isMainHero ? 'Ecosistema de Proyectos MENTIX' : (selected ? selected.title : 'Proyecto');
+    const currentBanner = isMainHero ? this.getHeroBannerUrl() : this.getProjectHeroBanner(projId, selected);
 
     this._tempSelectedHeroBanner = currentBanner;
     this._tempHeroBannerProjId = projId;
@@ -617,13 +740,15 @@ window.ProjectsView = {
         <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:1.15rem; border-bottom:1px solid rgba(255,255,255,0.12); padding-bottom:1rem;">
           <div>
             <div style="display:inline-flex; align-items:center; gap:0.4rem; background:rgba(0,245,212,0.15); border:1px solid #00f5d4; padding:0.25rem 0.75rem; border-radius:999px; font-size:0.75rem; font-weight:900; color:#00f5d4; margin-bottom:0.45rem;">
-              🎨 PERSONALIZACIÓN VISUAL DEL HERO
+              ${isMainHero ? '🌐 BANNER PRINCIPAL DE LA PLATAFORMA' : '🎨 PERSONALIZACIÓN VISUAL DEL HERO'}
             </div>
             <h2 style="margin:0; font-size:1.45rem; font-weight:900; color:#ffffff; display:flex; align-items:center; gap:0.5rem;">
-              <span>🖼️</span> <span>Cambiar Fondo del Banner de Atrás</span>
+              <span>🖼️</span> <span>${isMainHero ? 'Cambiar Banner Principal (Visible para Todos)' : 'Cambiar Fondo del Banner de Atrás'}</span>
             </h2>
             <p style="margin:0.25rem 0 0; font-size:0.86rem; color:#cbd5e1;">
-              Elige una imagen temática, sube una foto desde tu equipo o pega una URL para el banner de <b>“${this.escapeHtml(projTitle)}”</b>.
+              ${isMainHero 
+                ? 'Elige una imagen temática panorámica, sube una foto desde tu equipo o pega una URL para el banner superior principal. Los cambios se guardan globalmente para todos los usuarios.' 
+                : `Elige una imagen temática, sube una foto desde tu equipo o pega una URL para el banner de <b>“${this.escapeHtml(projTitle)}”</b>.`}
             </p>
           </div>
           <button type="button" onclick="window.ProjectsView.closeHeroBannerPicker()" style="background:none; border:none; color:#cbd5e1; font-size:1.6rem; cursor:pointer; line-height:1; padding:0.2rem;" title="Cerrar">✕</button>
@@ -656,19 +781,36 @@ window.ProjectsView = {
           <label style="display:block; font-size:0.82rem; font-weight:800; color:#00f5d4; margin-bottom:0.5rem; text-transform:uppercase; letter-spacing:0.04em;">
             👁️ Vista Previa en Vivo del Banner
           </label>
-          <div id="hero-banner-preview-box" style="position:relative; width:100%; height:155px; border-radius:18px; overflow:hidden; background-image:linear-gradient(to right, rgba(5, 14, 30, 0.75) 0%, rgba(5, 14, 30, 0.40) 42%, rgba(5, 14, 30, 0.08) 75%, transparent 100%), url('${this.escapeHtml(currentBanner)}'); background-size:cover; background-position:center; border:2px solid #00f5d4; display:flex; align-items:center; justify-content:space-between; padding:1.5rem 2rem; box-shadow:0 8px 30px rgba(0,0,0,0.5);">
-            <div>
-              <div style="font-size:1.25rem; font-weight:900; color:#ffffff; line-height:1.2;">${this.escapeHtml(projTitle)}</div>
-              <div style="font-size:0.9rem; font-weight:800; color:#00f5d4; margin-top:0.25rem;">${this.escapeHtml(selected?.subtitle || 'Soluciones Tecnológicas')}</div>
-              <div style="margin-top:0.75rem; display:flex; gap:0.5rem;">
-                <span style="background:#0047cc; color:#ffffff; font-size:0.75rem; font-weight:800; padding:0.3rem 0.8rem; border-radius:999px;">▶ Explorar proyecto</span>
-                <span style="background:rgba(255,255,255,0.15); color:#ffffff; font-size:0.75rem; font-weight:700; padding:0.3rem 0.8rem; border-radius:999px;">📑 Ver recursos</span>
+          <div id="hero-banner-preview-box" style="position:relative; width:100%; height:160px; border-radius:18px; overflow:hidden; background-image:linear-gradient(to right, rgba(5, 14, 30, 0.75) 0%, rgba(5, 14, 30, 0.40) 42%, rgba(5, 14, 30, 0.08) 75%, transparent 100%), url('${this.escapeHtml(currentBanner)}'); background-size:cover; background-position:center; border:2px solid #00f5d4; display:flex; align-items:center; justify-content:space-between; padding:1.5rem 2rem; box-shadow:0 8px 30px rgba(0,0,0,0.5);">
+            ${isMainHero ? `
+              <div>
+                <div style="font-size:1.35rem; font-weight:900; color:#ffffff; line-height:1.2;">Tu ecosistema de aprendizaje estructurado</div>
+                <div style="font-size:0.86rem; font-weight:600; color:#cbd5e1; margin-top:0.35rem; max-width:480px;">Gestiona tus proyectos, evalúa competencias y potencia el aprendizaje con IA.</div>
+                <div style="margin-top:0.85rem; display:flex; gap:0.5rem; flex-wrap:wrap;">
+                  <span style="background:linear-gradient(135deg, #f72585, #b5179e); color:#ffffff; font-size:0.75rem; font-weight:800; padding:0.3rem 0.8rem; border-radius:999px;">🎮 Unirse a un código</span>
+                  <span style="background:linear-gradient(135deg, #00d2ff, #0077ff); color:#ffffff; font-size:0.75rem; font-weight:800; padding:0.3rem 0.8rem; border-radius:999px;">➕ Crear Proyecto</span>
+                  <span style="background:linear-gradient(135deg, #00f5d4, #059669); color:#071739; font-size:0.75rem; font-weight:900; padding:0.3rem 0.8rem; border-radius:999px;">🔑 Crear Código</span>
+                </div>
               </div>
-            </div>
-            <div style="background:rgba(15,23,42,0.85); border:1.5px solid rgba(0,245,212,0.4); border-radius:14px; padding:0.75rem 1.25rem; text-align:center; min-width:130px; backdrop-filter:blur(6px);">
-              <span style="font-size:1.2rem; color:#00f5d4; font-weight:900;">100%</span>
-              <small style="display:block; font-size:0.7rem; color:#cbd5e1; font-weight:700; margin-top:0.15rem;">Avance del proyecto</small>
-            </div>
+              <div style="display:flex; flex-direction:column; gap:0.35rem; background:rgba(7,23,57,0.75); border:1px solid rgba(0,245,212,0.35); border-radius:12px; padding:0.6rem 0.9rem; backdrop-filter:blur(6px);">
+                <span style="font-size:0.75rem; color:#00f5d4; font-weight:800;">🤖 IA para aprender</span>
+                <span style="font-size:0.75rem; color:#ffffff; font-weight:700;">📦 Proyectos interactivos</span>
+                <span style="font-size:0.75rem; color:#38bdf8; font-weight:700;">💡 Experiencia única</span>
+              </div>
+            ` : `
+              <div>
+                <div style="font-size:1.25rem; font-weight:900; color:#ffffff; line-height:1.2;">${this.escapeHtml(projTitle)}</div>
+                <div style="font-size:0.9rem; font-weight:800; color:#00f5d4; margin-top:0.25rem;">${this.escapeHtml(selected?.subtitle || 'Soluciones Tecnológicas')}</div>
+                <div style="margin-top:0.75rem; display:flex; gap:0.5rem;">
+                  <span style="background:#0047cc; color:#ffffff; font-size:0.75rem; font-weight:800; padding:0.3rem 0.8rem; border-radius:999px;">▶ Explorar proyecto</span>
+                  <span style="background:rgba(255,255,255,0.15); color:#ffffff; font-size:0.75rem; font-weight:700; padding:0.3rem 0.8rem; border-radius:999px;">📑 Ver recursos</span>
+                </div>
+              </div>
+              <div style="background:rgba(15,23,42,0.85); border:1.5px solid rgba(0,245,212,0.4); border-radius:14px; padding:0.75rem 1.25rem; text-align:center; min-width:130px; backdrop-filter:blur(6px);">
+                <span style="font-size:1.2rem; color:#00f5d4; font-weight:900;">100%</span>
+                <small style="display:block; font-size:0.7rem; color:#cbd5e1; font-weight:700; margin-top:0.15rem;">Avance del proyecto</small>
+              </div>
+            `}
           </div>
         </div>
 
@@ -988,6 +1130,15 @@ window.ProjectsView = {
       }
     }
 
+    if (projId === 'main_hero') {
+      this.setHeroBannerUrl(finalUrl);
+      const heroImg = document.getElementById('mentix-projects-hero-banner-img');
+      if (heroImg) heroImg.src = finalUrl;
+      this.closeHeroBannerPicker();
+      this.showToast('🎨 ¡Banner principal actualizado para todos los usuarios con éxito!');
+      return;
+    }
+
     this.setProjectHeroBanner(projId, finalUrl);
 
     // Actualizar directamente la sección del Hero activa en pantalla con fondo normal
@@ -1001,6 +1152,17 @@ window.ProjectsView = {
   },
 
   resetHeroBanner(projId) {
+    if (projId === 'main_hero') {
+      const defaultUrl = 'assets/projects_ui/hero_banner.png?v=20261101_bright_sharp';
+      this._tempSelectedHeroBanner = defaultUrl;
+      this.setHeroBannerUrl(defaultUrl);
+      const heroImg = document.getElementById('mentix-projects-hero-banner-img');
+      if (heroImg) heroImg.src = defaultUrl;
+      this.closeHeroBannerPicker();
+      this.showToast('🔄 Banner principal restablecido al diseño original.');
+      return;
+    }
+
     const defaultUrl = 'assets/projects_ui/hero_banner.png';
     this._tempSelectedHeroBanner = defaultUrl;
     this.setProjectHeroBanner(projId, defaultUrl);
@@ -1895,14 +2057,14 @@ window.ProjectsView = {
               ${isAdmin ? `
                 <!-- Admin Mode Indicator & Direct Banner Access -->
                 <div 
-                  onclick="window.ProjectsView.openAdminBannerModal()" 
-                  title="Consola de Banners (Modo Administrador Activo - Clic para cambiar banner)"
+                  onclick="window.ProjectsView.openMainHeroBannerPicker()" 
+                  title="Cambiar Banner Principal (Clic para abrir galería y personalizador)"
                   style="display: inline-flex; align-items: center; gap: 0.45rem; background: #071739; border: 1.5px solid #00f5d4; color: #00f5d4; padding: 0.38rem 0.95rem; border-radius: 9999px; font-size: 0.78rem; font-weight: 800; cursor: pointer; box-shadow: 0 0 15px rgba(0, 245, 212, 0.35); transition: transform 0.2s ease;"
                   onmouseenter="this.style.transform='scale(1.04)';"
                   onmouseleave="this.style.transform='scale(1)';"
                 >
-                  <span style="font-size: 1rem;">🤖</span>
-                  <span>Modo Admin · Banners</span>
+                  <span style="font-size: 1rem;">🎨</span>
+                  <span>Cambiar Banner</span>
                 </div>
               ` : `
                 <div 
@@ -1953,23 +2115,22 @@ window.ProjectsView = {
               style="width: 100%; height: auto; display: block; object-fit: cover; filter: brightness(1.12) contrast(1.08) saturate(1.15); image-rendering: -webkit-optimize-contrast; image-rendering: high-quality; transform: translateZ(0); backface-visibility: hidden;" 
             />
 
-            ${isAdmin ? `
-              <!-- BOTÓN FLOTANTE EXCLUSIVO DE ADMINISTRADOR PARA CAMBIAR BANNER -->
-              <div style="position: absolute; top: 1rem; right: 1.25rem; z-index: 10;">
-                <button 
-                  type="button" 
-                  onclick="window.ProjectsView.openAdminBannerModal()" 
-                  title="Cambiar Banner de Proyectos y Banner de Robot (Exclusivo Administrador)"
-                  style="display: inline-flex; align-items: center; gap: 0.5rem; background: rgba(7, 23, 57, 0.92); backdrop-filter: blur(10px); color: #00f5d4; border: 2px solid #00f5d4; border-radius: 9999px; padding: 0.45rem 1.15rem; font-size: 0.84rem; font-weight: 900; cursor: pointer; box-shadow: 0 0 20px rgba(0, 245, 212, 0.45); transition: all 0.25s ease;"
-                  onmouseenter="this.style.transform='scale(1.05)'; this.style.background='rgba(0, 245, 212, 0.25)';"
-                  onmouseleave="this.style.transform='scale(1)'; this.style.background='rgba(7, 23, 57, 0.92)';"
-                >
-                  <span style="font-size: 1.1rem;">🤖</span>
-                  <span>Cambiar Banner (Modo Administrador)</span>
-                  <span style="background: #00f5d4; color: #071739; padding: 0.1rem 0.4rem; border-radius: 999px; font-size: 0.7rem; font-weight: 900;">ADMIN</span>
-                </button>
-              </div>
-            ` : ''}
+            <!-- BOTÓN FLOTANTE PARA CAMBIAR BANNER (DISPONIBLE PARA TODOS, IGUAL QUE EN UN PROYECTO) -->
+            <div style="position: absolute; top: 1rem; right: 1.25rem; z-index: 10;">
+              <button 
+                type="button" 
+                onclick="window.ProjectsView.openMainHeroBannerPicker()" 
+                title="Cambiar imagen o fondo de este Banner Principal (Visible para todos los usuarios)"
+                class="mentix-change-main-banner-btn"
+                style="display: inline-flex; align-items: center; gap: 0.55rem; background: rgba(7, 23, 57, 0.92); backdrop-filter: blur(12px); color: #00f5d4; border: 2px solid #00f5d4; border-radius: 9999px; padding: 0.48rem 1.2rem; font-size: 0.86rem; font-weight: 900; cursor: pointer; box-shadow: 0 4px 20px rgba(0, 245, 212, 0.45); transition: all 0.25s ease;"
+                onmouseenter="this.style.transform='scale(1.05)'; this.style.background='rgba(0, 245, 212, 0.22)';"
+                onmouseleave="this.style.transform='scale(1)'; this.style.background='rgba(7, 23, 57, 0.92)';"
+              >
+                <span style="font-size: 1.15rem;">🎨</span>
+                <span>Cambiar Banner</span>
+                <span style="background: linear-gradient(135deg, #00f5d4 0%, #00b4d8 100%); color: #071739; padding: 0.12rem 0.5rem; border-radius: 999px; font-size: 0.72rem; font-weight: 900; letter-spacing: 0.02em;">OFICIAL</span>
+              </button>
+            </div>
 
             <!-- BOTONES PRINCIPALES DE ACCIÓN INTEGRADOS EN EL BANNER ('estos aca') -->
             <div class="mentix-banner-action-row" style="position: absolute; left: 3.8%; bottom: 8.5%; z-index: 5; display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; max-width: 58%;">
@@ -2440,15 +2601,15 @@ window.ProjectsView = {
 
           <!-- Three Dots / Menu Button Floating Top-Right -->
           <div style="position: absolute; top: 10px; right: 10px; z-index: 2; display: flex; gap: 6px; align-items: center;">
-            ${isAdmin ? `
+            ${(isAdmin || isAuthor) ? `
               <button 
-                title="Cambiar Banner de este Proyecto (Exclusivo Administrador)" 
-                onclick="event.stopPropagation(); window.ProjectsView.openAdminBannerModal('${c.id}')"
+                title="Cambiar Banner de este Proyecto" 
+                onclick="event.stopPropagation(); window.ProjectsView.openHeroBannerPicker('${c.id}')"
                 style="height: 30px; padding: 0 0.65rem; border-radius: 8px; background: rgba(7, 23, 57, 0.92); backdrop-filter: blur(6px); display: inline-flex; align-items: center; gap: 0.35rem; cursor: pointer; border: 1.5px solid #00f5d4; font-size: 0.74rem; font-weight: 900; color: #00f5d4; box-shadow: 0 2px 10px rgba(0, 245, 212, 0.35); transition: transform 0.2s ease;"
                 onmouseenter="this.style.transform='scale(1.05)';"
                 onmouseleave="this.style.transform='scale(1)';"
               >
-                <span>🤖</span>
+                <span>🎨</span>
                 <span>Banner</span>
               </button>
             ` : ''}
@@ -2496,7 +2657,7 @@ window.ProjectsView = {
           <div class="saas-card-meta-row" style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem; font-size: 0.78rem; font-weight: 700; color: #1e293b; border-bottom: none; padding-bottom: 0;">
             <span style="display: inline-flex; align-items: center; gap: 0.35rem;">📅 ${dateStr}</span>
             <span style="display: inline-flex; align-items: center; gap: 0.35rem; color: #0284c7; cursor: pointer; transition: transform 0.15s ease;" onmouseenter="this.style.transform='scale(1.1)';" onmouseleave="this.style.transform='scale(1)';" onclick="event.stopPropagation(); window.ProjectsView.openParticipantsModal('${c.id}');" title="Ver personas y roles participantes">👥 ${studentsCount}</span>
-            <span style="display: inline-flex; align-items: center; gap: 0.25rem; color: #eab308;">⭐ ${ratingStr}</span>
+            <span style="display: inline-flex; align-items: center; gap: 0.25rem; color: #eab308; cursor: pointer; transition: transform 0.15s ease;" onmouseenter="this.style.transform='scale(1.1)';" onmouseleave="this.style.transform='scale(1)';" onclick="event.stopPropagation(); window.ProjectsView.openReviewFullPage('${c.id}');" title="Ver comentarios y calificar este proyecto">⭐ ${ratingStr}</span>
           </div>
 
           <!-- Action Buttons Row: Ver Detalles (Creador/Miembro) o Unirme (Visitantes), Ver Landing Page, Compartir, y Autorizar (Admin) -->
@@ -4246,11 +4407,27 @@ window.ProjectsView = {
     document.body.setAttribute('data-theme', validTheme);
     document.querySelectorAll('.plp-wrapper').forEach(w => {
       w.setAttribute('data-theme', validTheme);
+      w.classList.toggle('light-theme', validTheme === 'light');
     });
+    const root = document.getElementById('inno-app-root');
+    if (root) {
+      root.setAttribute('data-theme', validTheme);
+      root.classList.toggle('light-theme', validTheme === 'light');
+    }
     const pvc = document.getElementById('projects-view-container');
     if (pvc) {
       pvc.setAttribute('data-theme', validTheme);
+      pvc.classList.toggle('light-theme', validTheme === 'light');
     }
+    const vp = document.getElementById('view-projects');
+    if (vp) {
+      vp.setAttribute('data-theme', validTheme);
+      vp.classList.toggle('light-theme', validTheme === 'light');
+    }
+    document.querySelectorAll('.plp-page-container').forEach(pc => {
+      pc.setAttribute('data-theme', validTheme);
+      pc.classList.toggle('light-theme', validTheme === 'light');
+    });
     document.querySelectorAll('.inno-theme-btn').forEach(btn => {
       if (btn.classList.contains(validTheme)) btn.classList.add('active');
       else btn.classList.remove('active');
@@ -5184,6 +5361,12 @@ window.ProjectsView = {
   renderLandingPageView(container, allProjects = []) {
     this.currentSlideIndex = 0;
     const currentTheme = this.getLandingTheme();
+    document.body.setAttribute('data-theme', currentTheme);
+    document.body.classList.toggle('light-theme', currentTheme === 'light');
+    if (container) {
+      container.setAttribute('data-theme', currentTheme);
+      container.classList.toggle('light-theme', currentTheme === 'light');
+    }
     const rawFound = allProjects.find(x => x && x.id === this.selectedProjectId) || (window.appState?.challenges || []).find(x => x && x.id === this.selectedProjectId);
     let selected = this.getMergedProjectRecord(this.selectedProjectId, rawFound);
     if (selected) {
@@ -5476,9 +5659,11 @@ window.ProjectsView = {
       const domain = lnk.url ? lnk.url.replace(/^https?:\/\//i, '').split('/')[0] : 'Web';
       const linkThumb = this.getSmartResourceCover(lnk, 'link', idx);
 
+      const linkAction = `window.ProjectsView.openResourceViewer({ url: '${this.escapeHtml(lnk.url)}', name: '${this.escapeHtml(lTitle)}', title: '${this.escapeHtml(lTitle)}', category: '${this.escapeHtml(lCat)}', format: 'LINK', description: '${this.escapeHtml(rawLDesc)}' }, selected)`;
+
       cardsHtml += `
         <article class="inno-resource-card" data-category="link" data-plp-search="${this.escapeHtml(lSearch)}">
-          <div class="inno-card-thumb-wrap" style="position:relative; background-image:url('${this.escapeHtml(linkThumb)}'); background-size:cover; background-position:center; cursor:pointer;" onclick="window.open('${this.escapeHtml(lnk.url)}', '_blank')">
+          <div class="inno-card-thumb-wrap" style="position:relative; background-image:url('${this.escapeHtml(linkThumb)}'); background-size:cover; background-position:center; cursor:pointer;" onclick="${linkAction}" title="Ver enlace en la página">
             <span class="inno-card-tag" style="background:#10b981;">🔗 ${this.escapeHtml(lCat)}</span>
             <button 
               type="button" 
@@ -5496,12 +5681,12 @@ window.ProjectsView = {
             <div>
               <h4 class="inno-card-title">${this.escapeHtml(lTitle)}</h4>
               <p class="inno-card-desc">${this.escapeHtml(lDesc)}</p>
-              <span class="inno-why-card-link" style="margin-top:0.5rem; cursor:pointer;" onclick="window.open('${this.escapeHtml(lnk.url)}', '_blank')">Saber más →</span>
+              <span class="inno-why-card-link" style="margin-top:0.5rem; cursor:pointer;" onclick="${linkAction}" title="Ver enlace en la página">Abrir en la página →</span>
             </div>
             <div class="inno-card-footer">
               <span>🌐 ${this.escapeHtml(domain)}</span>
-              <button type="button" class="inno-card-action-btn inno-res-btn-action" onclick="window.open('${this.escapeHtml(lnk.url)}', '_blank')" title="Visitar enlace">
-                <span>🔗</span> Visitar enlace
+              <button type="button" class="inno-card-action-btn inno-res-btn-action" onclick="${linkAction}" title="Ver enlace dentro de la página">
+                <span>🔗</span> Abrir enlace
               </button>
             </div>
           </div>
@@ -5694,12 +5879,20 @@ window.ProjectsView = {
       : 'proyecto-landing.html';
 
     const targetProjId = selected?.id || this.selectedProjectId;
+    const canEditBanner = this.canUserEditProjectBanner(selected || targetProjId);
+    const hubData = (window.ProjectHub && typeof window.ProjectHub.getHub === 'function') ? window.ProjectHub.getHub(targetProjId) : null;
+    const hubRatings = (hubData && Array.isArray(hubData.ratings)) ? hubData.ratings : (selected && Array.isArray(selected.ratings) ? selected.ratings : []);
+    const totalReviewsCount = hubRatings.length;
+    const currentRatingStr = totalReviewsCount > 0 
+      ? (hubRatings.reduce((acc, r) => acc + (parseFloat(r.stars) || 5), 0) / totalReviewsCount).toFixed(1)
+      : (selected?.rating || '5.0');
+
     const projHeroBanner = this.getProjectHeroBanner(targetProjId, selected);
     // Fondo normal, nítido y con colores auténticos: sutil degradado lateral solo sobre el texto para máxima legibilidad
     const heroStyle = `background-image: linear-gradient(to right, rgba(5, 14, 30, 0.75) 0%, rgba(5, 14, 30, 0.40) 42%, rgba(5, 14, 30, 0.08) 75%, transparent 100%), url('${this.escapeHtml(projHeroBanner)}') !important; background-size: cover !important; background-position: center !important; position: relative !important;`;
 
     container.innerHTML = `
-      <div class="plp-page-container" style="max-width: 1360px; margin: 0 auto; padding: 1.25rem clamp(1.25rem, 3.5vw, 2.75rem) 4rem; box-sizing: border-box;">
+      <div class="plp-page-container ${currentTheme === 'light' ? 'light-theme' : ''}" data-theme="${currentTheme}" style="max-width: 1360px; margin: 0 auto; padding: 1.25rem clamp(1.25rem, 3.5vw, 2.75rem) 4rem; box-sizing: border-box;">
         <div class="plp-wrapper animate-fade-in" data-theme="${currentTheme}" style="font-family: '${customFont}', sans-serif;">
 
           <!-- Barra de Control Mentix -->
@@ -5712,9 +5905,11 @@ window.ProjectsView = {
               <button type="button" class="plp-mentix-btn inno-theme-toggle-btn" onclick="window.ProjectsView.toggleLandingTheme()" title="Alternar entre Modo Claro y Modo Oscuro">
                 <span id="plp-theme-btn-label">${currentTheme === 'light' ? '🌙 Modo Oscuro' : '☀️ Modo Claro'}</span>
               </button>
-              <button type="button" class="plp-mentix-btn" onclick="window.ProjectsView.openHeroBannerPicker('${this.escapeHtml(targetProjId)}')" title="Cambiar la imagen o fondo del banner de este proyecto">
-                <span>🎨</span> Fondo del Banner
-              </button>
+              ${canEditBanner ? `
+                <button type="button" class="plp-mentix-btn" onclick="window.ProjectsView.openHeroBannerPicker('${this.escapeHtml(targetProjId)}')" title="Cambiar la imagen o fondo del banner de este proyecto">
+                  <span>🎨</span> Fondo del Banner
+                </button>
+              ` : ''}
               ${this.isWizardPreview ? `
                 <button type="button" class="plp-mentix-btn" onclick="window.ProjectsView.isWizardPreview = false; window.ProjectsView.switchViewMode('wizard')">
                   <span>←</span> Volver al Asistente (Paso 8)
@@ -5796,23 +5991,40 @@ window.ProjectsView = {
                2. HERO SECTION (MOCKUP EXACTO)
                ================================================================ -->
           <section class="inno-hero" id="inno-sec-hero" style="${heroStyle}">
-            <!-- Botón interactivo para cambiar el fondo del banner de atrás -->
-            <button 
-              type="button" 
-              class="inno-btn-change-hero-bg" 
-              onclick="window.ProjectsView.openHeroBannerPicker('${this.escapeHtml(targetProjId)}')" 
-              title="Cambiar la imagen de fondo de este banner"
-              style="position:absolute; top:16px; right:18px; z-index:10; background:rgba(7, 23, 57, 0.88); border:1.5px solid #00f5d4; color:#00f5d4; border-radius:999px; padding:0.42rem 0.95rem; font-size:0.8rem; font-weight:800; cursor:pointer; backdrop-filter:blur(8px); display:inline-flex; align-items:center; gap:0.4rem; box-shadow:0 4px 16px rgba(0,0,0,0.45); transition:all 0.18s ease;"
-              onmouseenter="this.style.transform='scale(1.06)'; this.style.background='rgba(0,245,212,0.18)';"
-              onmouseleave="this.style.transform='none'; this.style.background='rgba(7, 23, 57, 0.88)';"
-            >
-              <span style="font-size:1rem;">🎨</span>
-              <span>Cambiar fondo del banner</span>
-            </button>
+            <!-- Botón interactivo para cambiar el fondo del banner de atrás (Solo Admin, Creador o Editores) -->
+            ${canEditBanner ? `
+              <button 
+                type="button" 
+                class="inno-btn-change-hero-bg" 
+                onclick="window.ProjectsView.openHeroBannerPicker('${this.escapeHtml(targetProjId)}')" 
+                title="Cambiar la imagen de fondo de este banner"
+                style="position:absolute; top:16px; right:18px; z-index:10; background:rgba(7, 23, 57, 0.88); border:1.5px solid #00f5d4; color:#00f5d4; border-radius:999px; padding:0.42rem 0.95rem; font-size:0.8rem; font-weight:800; cursor:pointer; backdrop-filter:blur(8px); display:inline-flex; align-items:center; gap:0.4rem; box-shadow:0 4px 16px rgba(0,0,0,0.45); transition:all 0.18s ease;"
+                onmouseenter="this.style.transform='scale(1.06)'; this.style.background='rgba(0,245,212,0.18)';"
+                onmouseleave="this.style.transform='none'; this.style.background='rgba(7, 23, 57, 0.88)';"
+              >
+                <span style="font-size:1rem;">🎨</span>
+                <span>Cambiar fondo del banner</span>
+              </button>
+            ` : ''}
 
             <div class="inno-hero-grid">
               <!-- Columna Izquierda: Información Principal -->
               <div class="inno-hero-main">
+                <!-- Badge interactivo de Calificación y Comentarios -->
+                <div 
+                  class="inno-hero-rating-pill"
+                  onclick="window.ProjectsView.openReviewFullPage('${this.escapeHtml(targetProjId)}')"
+                  title="Haz clic para ver calificaciones y dejar tu comentario"
+                  style="display:inline-flex; align-items:center; gap:0.55rem; background:rgba(250, 204, 21, 0.15); border:1.5px solid #facc15; padding:0.35rem 0.95rem; border-radius:999px; margin-bottom:1rem; cursor:pointer; box-shadow:0 4px 18px rgba(250, 204, 21, 0.25); transition:transform 0.18s ease, box-shadow 0.18s ease;"
+                  onmouseenter="this.style.transform='scale(1.04)'; this.style.boxShadow='0 6px 22px rgba(250,204,21,0.45)';"
+                  onmouseleave="this.style.transform='none'; this.style.boxShadow='0 4px 18px rgba(250,204,21,0.25)';"
+                >
+                  <span style="color:#facc15; font-size:1.15rem; letter-spacing:1px; line-height:1;">★★★★★</span>
+                  <span id="inno-hero-rating-score" style="font-weight:900; color:#ffffff; font-size:0.95rem; line-height:1;">${currentRatingStr}</span>
+                  <span id="inno-hero-rating-count" style="color:#cbd5e1; font-size:0.8rem; font-weight:700;">(${totalReviewsCount} calificaciones)</span>
+                  <span style="background:rgba(250,204,21,0.25); color:#fef08a; padding:0.18rem 0.55rem; border-radius:999px; font-size:0.75rem; font-weight:800; border:1px solid rgba(250,204,21,0.4);">✍️ Calificar</span>
+                </div>
+
                 <h1 class="inno-hero-title">
                   ${selected && selected.title ? `
                     <span class="inno-hero-title-text">${this.escapeHtml(selected.title)}</span>
@@ -6097,10 +6309,10 @@ window.ProjectsView = {
                 </div>
 
                 <div class="inno-sidebar-actions">
-                  <button type="button" class="inno-btn-join" onclick="window.ProjectHub ? window.ProjectHub.openJoinForm('${selected?.id || this.selectedProjectId}') : window.ProjectsView.previewLandingDoc('Unirse al Proyecto — ${selectedTitle}')">
+                  <button type="button" class="inno-btn-join" onclick="window.ProjectHub ? window.ProjectHub.openJoinForm('${selected?.id || this.selectedProjectId}') : window.ProjectsView.openProjectJoinRequestModal('${selected?.id || this.selectedProjectId}')">
                     <span>👥</span> Unirse al proyecto
                   </button>
-                  <button type="button" class="inno-btn-comment" onclick="window.ProjectsView.previewLandingDoc('Dejar un comentario — ${selectedTitle}')">
+                  <button type="button" class="inno-btn-comment" onclick="window.ProjectHub && typeof window.ProjectHub.openReviewPage === 'function' ? window.ProjectHub.openReviewPage('${selected?.id || this.selectedProjectId}') : window.ProjectsView.openReviewFullPage('${selected?.id || this.selectedProjectId}')">
                     <span>💬</span> Dejar un comentario
                   </button>
                 </div>
@@ -6469,21 +6681,68 @@ window.ProjectsView = {
     this.openResourceViewer(res, selected);
   },
 
+  /* ==========================================================================
+     VISOR DE RECURSOS, DOCUMENTOS, PDFS Y ENLACES (DENTRO DE LA PÁGINA)
+     Permite visualizar cualquier recurso, enlace o archivo original directamente
+     ========================================================================== */
+  openResourceViewerByIndex(idx) {
+    let selected = this.getMergedProjectRecord(this.selectedProjectId);
+    const gp = selected?.govdata || {};
+    const rawRes = [
+      ...((Array.isArray(selected?.resources) && selected.resources.length > 0) ? selected.resources : (Array.isArray(gp.resources) ? gp.resources : [])),
+      ...((Array.isArray(selected?.externalLinks) && selected.externalLinks.length > 0) ? selected.externalLinks : (Array.isArray(gp.externalLinks) ? gp.externalLinks : []))
+    ];
+    const userResources = rawRes.filter(r => r && r.visibility !== 'private');
+    const res = userResources[idx] || (rawRes && rawRes[idx]);
+    if (!res) {
+      this.showToast('Documento no encontrado.');
+      return;
+    }
+    this.openResourceViewer(res, selected);
+  },
+
   openResourceViewerByName(name, projectId) {
     const projId = projectId || this.selectedProjectId;
     let selected = this.getMergedProjectRecord(projId);
     if (!selected) selected = (window.appState && window.appState.challenges || []).find(x => x.id === projId);
     const gp = selected?.govdata || {};
-    const rawRes = (Array.isArray(selected?.resources) && selected.resources.length > 0)
-      ? selected.resources
-      : (Array.isArray(gp.resources) ? gp.resources : []);
-    const norm = s => String(s || '').trim().toLowerCase();
-    const target = norm(name);
-    let res = rawRes.find(r => norm(r.name) === target || norm(r.title) === target);
+    const rawRes = [
+      ...(Array.isArray(selected?.resources) ? selected.resources : []),
+      ...(Array.isArray(gp.resources) ? gp.resources : []),
+      ...(Array.isArray(selected?.externalLinks) ? selected.externalLinks : []),
+      ...(Array.isArray(gp.externalLinks) ? gp.externalLinks : []),
+      ...(Array.isArray(selected?.visuals) ? selected.visuals : []),
+      ...(Array.isArray(gp.visuals) ? gp.visuals : [])
+    ];
+
+    const clean = s => String(s || '').trim().toLowerCase();
+    const cleanNoExt = s => clean(s).replace(/\.[^/.]+$/, '').replace(/[\s_\-]+/g, '');
+    const targetClean = clean(name);
+    const targetNoExt = cleanNoExt(name);
+
+    let res = rawRes.find(r => 
+      (r.id && (r.id === name || clean(r.id) === targetClean)) ||
+      clean(r.fileName) === targetClean ||
+      clean(r.name) === targetClean ||
+      clean(r.title) === targetClean ||
+      cleanNoExt(r.fileName) === targetNoExt ||
+      cleanNoExt(r.name) === targetNoExt ||
+      cleanNoExt(r.title) === targetNoExt
+    );
+
+    if (!res) {
+      // Búsqueda difusa por inclusión
+      res = rawRes.find(r => {
+        const rName = cleanNoExt(r.fileName || r.name || r.title);
+        return rName && (rName.includes(targetNoExt) || targetNoExt.includes(rName));
+      });
+    }
+
     if (!res) {
       res = {
         name: name,
         title: name,
+        fileName: name,
         format: name.toLowerCase().endsWith('.pdf') ? 'PDF' : 'DOC',
         url: '',
         description: 'Recurso entregable del proyecto.'
@@ -6516,6 +6775,77 @@ window.ProjectsView = {
     return dataUrl;
   },
 
+  attachFileToResource(event, resIdOrName, projectId) {
+    const file = event?.target?.files?.[0];
+    if (!file) return;
+    const blobUrl = URL.createObjectURL(file);
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const dataUrl = e.target?.result || '';
+      const projId = projectId || this.selectedProjectId;
+      let selected = this.getMergedProjectRecord(projId);
+      if (selected && Array.isArray(selected.resources)) {
+        const targetClean = String(resIdOrName || '').toLowerCase().replace(/\.[^/.]+$/, '');
+        const res = selected.resources.find(r => 
+          (r.id && r.id === resIdOrName) || 
+          String(r.name || '').toLowerCase().replace(/\.[^/.]+$/, '') === targetClean ||
+          String(r.fileName || '').toLowerCase().replace(/\.[^/.]+$/, '') === targetClean
+        );
+        if (res) {
+          res.url = dataUrl || blobUrl;
+          res.fileName = file.name;
+          res.name = file.name.replace(/\.[^/.]+$/, '');
+          res.format = file.name.split('.').pop()?.toUpperCase() || 'PDF';
+          res.sizeBytes = file.size;
+          res.sizeLabel = (file.size / 1024).toFixed(1) + ' KB';
+          this.saveMergedProjectRecord(selected);
+        }
+      }
+      this.showToast('✅ ¡Archivo cargado con éxito!');
+      this.openResourceViewer({
+        name: file.name,
+        fileName: file.name,
+        title: file.name,
+        url: blobUrl,
+        format: file.name.split('.').pop()?.toUpperCase() || 'PDF',
+        sizeBytes: file.size,
+        sizeLabel: (file.size / 1024).toFixed(1) + ' KB'
+      }, selected);
+    };
+    reader.readAsDataURL(file);
+  },
+
+  promptResourceLink(resIdOrName, projectId) {
+    const url = prompt('Ingresa la dirección web o enlace (Google Forms, Google Drive, OneDrive, web):', 'https://');
+    if (!url || !/^https?:\/\//i.test(url.trim())) return;
+    const cleanUrl = url.trim();
+
+    const projId = projectId || this.selectedProjectId;
+    let selected = this.getMergedProjectRecord(projId);
+    if (selected && Array.isArray(selected.resources)) {
+      const targetClean = String(resIdOrName || '').toLowerCase().replace(/\.[^/.]+$/, '');
+      const res = selected.resources.find(r => 
+        (r.id && r.id === resIdOrName) || 
+        String(r.name || '').toLowerCase().replace(/\.[^/.]+$/, '') === targetClean ||
+        String(r.fileName || '').toLowerCase().replace(/\.[^/.]+$/, '') === targetClean
+      );
+      if (res) {
+        res.url = cleanUrl;
+        res.format = 'URL';
+        this.saveMergedProjectRecord(selected);
+      }
+    }
+
+    this.showToast('🔗 ¡Enlace vinculado!');
+    this.openResourceViewer({
+      name: resIdOrName,
+      title: resIdOrName,
+      url: cleanUrl,
+      format: 'URL',
+      sizeLabel: 'Enlace en la nube'
+    }, selected);
+  },
+
   openResourceViewer(res, project) {
     if (!res) return;
     const { modal, body } = this.getOrMountLightbox();
@@ -6526,16 +6856,20 @@ window.ProjectsView = {
       selected = (window.appState && window.appState.challenges || []).find(x => x.id === this.selectedProjectId);
     }
 
-    const name = res.name || res.title || 'Documento Oficial';
-    const rawUrl = (res.url || res.fileUrl || res.data || '').trim();
+    const name = res.fileName || res.name || res.title || 'Documento Oficial';
+    let rawUrl = (res.url || res.fileUrl || res.data || '').trim();
     const fmt = (res.format || '').toUpperCase() || (name.toLowerCase().endsWith('.pdf') ? 'PDF' : 'DOC');
-    const sizeStr = res.sizeLabel || (res.sizeBytes ? (res.sizeBytes / 1024).toFixed(1) + ' KB' : 'Recurso oficial');
-    const isPdf = fmt.includes('PDF') || name.toLowerCase().endsWith('.pdf') || (rawUrl && rawUrl.startsWith('data:application/pdf'));
-    const isImage = fmt.match(/PNG|JPG|JPEG|WEBP|SVG|GIF/) || name.match(/\.(png|jpe?g|webp|svg|gif)($|\?)/i) || (rawUrl && rawUrl.startsWith('data:image/'));
-    const isVideo = fmt.includes('VID') || name.match(/\.(mp4|webm|ogg)($|\?)/i) || (rawUrl && (rawUrl.startsWith('data:video/') || rawUrl.includes('youtube') || rawUrl.includes('vimeo')));
-    const isSurvey = name.toLowerCase().includes('survey') || name.toLowerCase().includes('formulario') || name.toLowerCase().includes('encuesta');
+    const sizeStr = res.sizeLabel || (res.sizeBytes ? (res.sizeBytes / 1024).toFixed(1) + ' KB' : (rawUrl.startsWith('http') ? 'Enlace en la nube' : 'Recurso oficial'));
 
-    // Convertir Data URL a Blob URL para incrustación directa en iframe sin problemas de longitud ni bloqueo
+    const isUrl = /^https?:\/\//i.test(rawUrl);
+    const isGoogleForm = rawUrl.includes('docs.google.com/forms');
+    const isGoogleDoc = rawUrl.includes('docs.google.com/document') || rawUrl.includes('docs.google.com/spreadsheets') || rawUrl.includes('docs.google.com/presentation');
+    const isYouTube = rawUrl.includes('youtube.com') || rawUrl.includes('youtu.be');
+    const isVimeo = rawUrl.includes('vimeo.com');
+    const isPdf = fmt.includes('PDF') || name.toLowerCase().endsWith('.pdf') || (rawUrl && (rawUrl.startsWith('data:application/pdf') || rawUrl.toLowerCase().includes('.pdf')));
+    const isImage = fmt.match(/PNG|JPG|JPEG|WEBP|SVG|GIF/) || name.match(/\.(png|jpe?g|webp|svg|gif)($|\?)/i) || (rawUrl && rawUrl.startsWith('data:image/'));
+    const isVideo = fmt.includes('VID') || name.match(/\.(mp4|webm|ogg)($|\?)/i) || (rawUrl && (rawUrl.startsWith('data:video/') || isYouTube || isVimeo));
+
     let blobUrl = '';
     if (rawUrl) {
       blobUrl = this.getBlobUrlFromData(rawUrl);
@@ -6549,34 +6883,78 @@ window.ProjectsView = {
 
     let contentHtml = '';
 
-    if (isPdf && blobUrl) {
-      // PDF con archivo real: Incrustar el visor nativo interactivo del navegador en el iframe
+    if (isUrl) {
+      // 1. Enlaces Web, Formularios de Google, Google Docs, Sitios Web (Visualización interactiva en la página)
+      let embedUrl = rawUrl;
+      if (isGoogleForm) {
+        embedUrl = rawUrl.replace(/\/edit(\?.*)?$/i, '/viewform');
+        if (!embedUrl.includes('embedded=true')) {
+          embedUrl += (embedUrl.includes('?') ? '&embedded=true' : '?embedded=true');
+        }
+      } else if (isGoogleDoc) {
+        embedUrl = rawUrl.replace(/\/edit(\?.*)?$/i, '/preview');
+      } else if (isYouTube) {
+        const vidId = rawUrl.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([\w-]{11})/)?.[1];
+        if (vidId) embedUrl = `https://www.youtube.com/embed/${vidId}?autoplay=1`;
+      } else if (isVimeo) {
+        const vimId = rawUrl.match(/vimeo\.com\/(?:channels\/(?:\w+\/)?|groups\/(?:[^\/]*)\/videos\/|album\/(?:\d+)\/video\/|video\/|)(\d+)/)?.[1];
+        if (vimId) embedUrl = `https://player.vimeo.com/video/${vimId}?autoplay=1`;
+      }
+
+      contentHtml = `
+        <div style="flex:1; width:100%; height:calc(100vh - 66px); background:#0a1528; display:flex; flex-direction:column; position:relative;">
+          <!-- Barra de navegación del enlace web integrado -->
+          <div style="height:44px; background:#061122; border-bottom:1px solid rgba(255,255,255,0.1); display:flex; align-items:center; justify-content:space-between; padding:0 1.5rem; font-size:0.84rem; flex-shrink:0;">
+            <div style="display:flex; align-items:center; gap:0.6rem; color:#94a3b8; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:70%;">
+              <span style="color:#00f5d4; font-size:1rem;">🔗</span>
+              <span style="font-weight:700; color:#e2e8f0;">Enlace en vivo:</span>
+              <a href="${this.escapeHtml(rawUrl)}" target="_blank" style="color:#38bdf8; text-decoration:underline; overflow:hidden; text-overflow:ellipsis;" title="${this.escapeHtml(rawUrl)}">
+                ${this.escapeHtml(rawUrl)}
+              </a>
+            </div>
+            <div style="display:flex; align-items:center; gap:0.6rem; flex-shrink:0;">
+              <a href="${this.escapeHtml(rawUrl)}" target="_blank" rel="noopener noreferrer" style="display:inline-flex; align-items:center; gap:0.35rem; background:rgba(0,245,212,0.15); border:1px solid #00f5d4; color:#00f5d4; border-radius:999px; padding:0.25rem 0.8rem; font-size:0.78rem; font-weight:800; text-decoration:none;">
+                <span>↗</span> <span>Abrir en pestaña nueva</span>
+              </a>
+            </div>
+          </div>
+
+          <!-- Iframe embebido con el contenido real de la página o formulario -->
+          <iframe 
+            src="${this.escapeHtml(embedUrl)}" 
+            style="flex:1; width:100%; height:100%; border:none; background:#ffffff;"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowfullscreen
+            sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-modals allow-downloads"
+            title="${this.escapeHtml(name)}"
+          ></iframe>
+        </div>
+      `;
+    } else if (isPdf && (blobUrl || rawUrl)) {
+      // 2. Archivo PDF real: Visor nativo con herramientas del navegador
       contentHtml = `
         <div style="flex:1; width:100%; height:calc(100vh - 66px); background:#0f172a; position:relative; display:flex; flex-direction:column;">
           <iframe 
-            src="${blobUrl}#toolbar=1&navpanes=1&zoom=page-fit" 
+            src="${blobUrl || rawUrl}#toolbar=1&navpanes=1&zoom=page-fit" 
             type="application/pdf"
             style="width:100%; height:100%; flex:1; border:none; background:#ffffff; display:block;"
             title="${this.escapeHtml(name)}"
           >
-            <object data="${blobUrl}" type="application/pdf" style="width:100%; height:100%;">
-              <div style="padding:2.5rem; text-align:center; color:#ffffff;">
-                <p style="font-size:1.1rem; margin-bottom:1rem;">Visualizando: <b>${this.escapeHtml(name)}</b></p>
-                <a href="${blobUrl}" target="_blank" style="color:#00f5d4; font-weight:800; text-decoration:underline;">Abrir en visor externo</a>
-              </div>
+            <object data="${blobUrl || rawUrl}" type="application/pdf" style="width:100%; height:100%;">
+              <embed src="${blobUrl || rawUrl}" type="application/pdf" style="width:100%; height:100%;" />
             </object>
           </iframe>
         </div>
       `;
     } else if (isImage && (blobUrl || rawUrl)) {
-      // Imagen de alta resolución
+      // 3. Imagen real
       contentHtml = `
         <div style="flex:1; width:100%; height:calc(100vh - 66px); background:#020617; display:flex; align-items:center; justify-content:center; padding:1.5rem; overflow:auto;">
-          <img src="${blobUrl || rawUrl}" alt="${this.escapeHtml(name)}" style="max-width:92%; max-height:86vh; object-fit:contain; border-radius:12px; box-shadow:0 12px 40px rgba(0,0,0,0.6);" />
+          <img src="${blobUrl || rawUrl}" alt="${this.escapeHtml(name)}" style="max-width:94%; max-height:86vh; object-fit:contain; border-radius:12px; box-shadow:0 12px 40px rgba(0,0,0,0.6);" />
         </div>
       `;
     } else if (isVideo && (blobUrl || rawUrl)) {
-      // Video oficial
+      // 4. Video real
       contentHtml = `
         <div style="flex:1; width:100%; height:calc(100vh - 66px); background:#000000; display:flex; align-items:center; justify-content:center;">
           <video controls autoplay style="max-width:92%; max-height:85vh; border-radius:12px; outline:none;">
@@ -6586,137 +6964,63 @@ window.ProjectsView = {
         </div>
       `;
     } else {
-      // Lector de Documento / PDF Estilizado en Pantalla (sin forzar descargas)
+      // 5. Documento sin archivo binario directo en caché local: Permitir cargar el archivo real o vincular enlace
       const docTitle = this.escapeHtml(name);
-      const projTitle = this.escapeHtml((selected && (selected.landingConfig?.publicName || selected.title)) || 'Proyecto Mentix');
-      const docDesc = this.escapeHtml(res.description || selected?.shortDescription || selected?.description || 'Documentación oficial registrada y validada para este proyecto.');
-      const dateText = this.escapeHtml(res.date || res.updatedAt || new Date().toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' }));
+      const projTitle = this.escapeHtml((selected && (selected.landingConfig?.publicName || selected.title)) || 'Proyecto');
       const authorText = this.escapeHtml(selected?.author || 'Equipo de Proyecto');
+      const docDesc = this.escapeHtml(res.description || 'Documento oficial registrado para este proyecto.');
 
-      let surveySectionHtml = '';
-      if (isSurvey || name.toLowerCase().includes('google') || name.toLowerCase().includes('result')) {
-        surveySectionHtml = `
-          <div style="margin: 2rem 0; background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 16px; padding: 1.5rem;">
-            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:1.2rem; flex-wrap:wrap; gap:0.5rem;">
-              <h4 style="margin:0; font-size:1.05rem; color:#0f172a; font-weight:800; display:flex; align-items:center; gap:0.5rem;">
-                <span>📊</span> Resultados y Métricas de la Encuesta
-              </h4>
-              <span style="background:#eff6ff; color:#1d4ed8; font-size:0.75rem; font-weight:800; padding:0.25rem 0.75rem; border-radius:999px;">
-                100% Validado
+      contentHtml = `
+        <div style="flex:1; width:100%; height:calc(100vh - 66px); background:#081326; overflow-y:auto; padding:2.5rem 1.5rem; display:flex; flex-direction:column; align-items:center;">
+          <div style="width:100%; max-width:760px; background:linear-gradient(135deg, rgba(15,23,42,0.95) 0%, rgba(10,18,38,0.98) 100%); border:2px solid #38bdf8; border-radius:24px; padding:2.5rem 2.8rem; box-shadow:0 25px 70px rgba(0,0,0,0.7), 0 0 40px rgba(56,189,248,0.2); color:#ffffff; font-family:'Outfit','Inter',sans-serif;">
+            
+            <div style="display:flex; align-items:center; justify-content:space-between; border-bottom:1.5px solid rgba(255,255,255,0.1); padding-bottom:1.5rem; margin-bottom:1.8rem; flex-wrap:wrap; gap:0.8rem;">
+              <div>
+                <span style="font-size:0.75rem; font-weight:900; letter-spacing:0.08em; text-transform:uppercase; color:#00f5d4;">DOCUMENTO OFICIAL DEL PROYECTO</span>
+                <h1 style="font-size:1.6rem; font-weight:900; color:#ffffff; margin:0.35rem 0 0.2rem; line-height:1.25;">${docTitle}</h1>
+                <div style="font-size:0.88rem; color:#94a3b8;">Proyecto: <strong style="color:#ffffff;">${projTitle}</strong></div>
+              </div>
+              <span style="padding:0.35rem 0.95rem; border-radius:999px; background:rgba(56,189,248,0.15); border:1.5px solid #38bdf8; color:#38bdf8; font-weight:800; font-size:0.8rem;">
+                ${this.escapeHtml(fmt)}
               </span>
             </div>
 
-            <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(140px, 1fr)); gap:1rem; margin-bottom:1.5rem;">
-              <div style="background:#ffffff; border:1px solid #cbd5e1; border-radius:12px; padding:1rem; text-align:center;">
-                <span style="font-size:1.5rem; display:block;">👥</span>
-                <strong style="font-size:1.4rem; color:#0f172a; display:block; margin:0.2rem 0;">48</strong>
-                <small style="color:#64748b; font-weight:700;">Respuestas Totales</small>
-              </div>
-              <div style="background:#ffffff; border:1px solid #cbd5e1; border-radius:12px; padding:1rem; text-align:center;">
-                <span style="font-size:1.5rem; display:block;">⭐</span>
-                <strong style="font-size:1.4rem; color:#0284c7; display:block; margin:0.2rem 0;">4.8 / 5</strong>
-                <small style="color:#64748b; font-weight:700;">Satisfacción General</small>
-              </div>
-              <div style="background:#ffffff; border:1px solid #cbd5e1; border-radius:12px; padding:1rem; text-align:center;">
-                <span style="font-size:1.5rem; display:block;">🎯</span>
-                <strong style="font-size:1.4rem; color:#16a34a; display:block; margin:0.2rem 0;">92%</strong>
-                <small style="color:#64748b; font-weight:700;">Cumplimiento de Metas</small>
-              </div>
-            </div>
-
-            <!-- Preguntas y distribución gráfica -->
-            <div style="display:flex; flex-direction:column; gap:1rem;">
-              <div style="background:#ffffff; border:1px solid #e2e8f0; border-radius:12px; padding:1rem;">
-                <div style="font-weight:700; color:#1e293b; font-size:0.9rem; margin-bottom:0.5rem;">1. ¿Qué tan efectiva consideras la dinámica aplicada?</div>
-                <div style="height:12px; background:#e2e8f0; border-radius:999px; overflow:hidden; display:flex;">
-                  <div style="width:78%; background:#22c55e;" title="Muy Alta (78%)"></div>
-                  <div style="width:16%; background:#3b82f6;" title="Alta (16%)"></div>
-                  <div style="width:6%; background:#f59e0b;" title="Media (6%)"></div>
-                </div>
-                <div style="display:flex; justify-content:space-between; font-size:0.75rem; color:#64748b; margin-top:0.35rem; font-weight:700;">
-                  <span>Muy Alta: 78%</span>
-                  <span>Alta: 16%</span>
-                  <span>Media: 6%</span>
-                </div>
-              </div>
-
-              <div style="background:#ffffff; border:1px solid #e2e8f0; border-radius:12px; padding:1rem;">
-                <div style="font-weight:700; color:#1e293b; font-size:0.9rem; margin-bottom:0.5rem;">2. ¿Recomendarías implementar este proyecto en otras aulas?</div>
-                <div style="height:12px; background:#e2e8f0; border-radius:999px; overflow:hidden; display:flex;">
-                  <div style="width:94%; background:#0284c7;" title="Sí Definitivamente (94%)"></div>
-                  <div style="width:6%; background:#94a3b8;" title="Tal vez (6%)"></div>
-                </div>
-                <div style="display:flex; justify-content:space-between; font-size:0.75rem; color:#64748b; margin-top:0.35rem; font-weight:700;">
-                  <span>Sí Definitivamente: 94%</span>
-                  <span>Tal vez: 6%</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        `;
-      }
-
-      contentHtml = `
-        <div id="inno-printable-doc" style="flex:1; width:100%; height:calc(100vh - 66px); background:#0f172a; overflow-y:auto; padding:2rem 1rem; display:flex; justify-content:center;">
-          <!-- Hoja de documento realista A4 -->
-          <div style="width:100%; max-width:820px; background:#ffffff; color:#0f172a; border-radius:16px; box-shadow:0 14px 40px rgba(0,0,0,0.5); padding:3.2rem 3.5rem; min-height:920px; position:relative; font-family:'Outfit','Inter',sans-serif; line-height:1.65;">
-            
-            <!-- Encabezado Oficial -->
-            <div style="display:flex; align-items:center; justify-content:space-between; border-bottom:2px solid #e2e8f0; padding-bottom:1.5rem; margin-bottom:2rem;">
-              <div>
-                <span style="font-size:0.75rem; font-weight:900; letter-spacing:0.08em; text-transform:uppercase; color:#0284c7;">MENTIX · DOCUMENTO OFICIAL DE PROYECTO</span>
-                <h1 style="font-size:1.5rem; font-weight:900; color:#0f172a; margin:0.35rem 0 0.2rem; line-height:1.25;">${docTitle}</h1>
-                <div style="font-size:0.88rem; color:#64748b; font-weight:600;">Proyecto: <strong>${projTitle}</strong></div>
-              </div>
-              <div style="text-align:right;">
-                <span style="display:inline-block; padding:0.3rem 0.85rem; border-radius:999px; background:#eff6ff; color:#1d4ed8; font-weight:800; font-size:0.75rem; border:1px solid #bfdbfe;">
-                  ${this.escapeHtml(fmt)}
-                </span>
-                <div style="font-size:0.78rem; color:#94a3b8; margin-top:0.4rem;">${dateText}</div>
-              </div>
-            </div>
-
-            <!-- Metadatos del Documento -->
-            <div style="display:flex; flex-wrap:wrap; gap:1.2rem; padding:0.9rem 1.2rem; background:#f1f5f9; border-radius:12px; margin-bottom:2rem; font-size:0.84rem; color:#334155; font-weight:600;">
+            <div style="display:flex; flex-wrap:wrap; gap:1.2rem; padding:0.9rem 1.2rem; background:rgba(0,0,0,0.35); border:1px solid rgba(255,255,255,0.08); border-radius:14px; margin-bottom:2rem; font-size:0.84rem; color:#cbd5e1;">
               <div>👤 <b>Autor/Líder:</b> ${authorText}</div>
-              <div>💾 <b>Tamaño:</b> ${this.escapeHtml(sizeStr)}</div>
-              <div>🏷️ <b>Categoría:</b> ${this.escapeHtml(res.category || 'Recursos y entregas')}</div>
-              <div>🔒 <b>Estado:</b> Documento Verificado</div>
+              <div>💾 <b>Tamaño registrado:</b> ${this.escapeHtml(sizeStr)}</div>
+              <div>🏷️ <b>Categoría:</b> ${this.escapeHtml(res.category || 'Documentación')}</div>
             </div>
 
-            <!-- Resumen y Contenido -->
-            <section style="margin-bottom:1.8rem;">
-              <h3 style="font-size:1.15rem; font-weight:800; color:#1e293b; border-left:4px solid #00f5d4; padding-left:0.75rem; margin:0 0 0.8rem;">
-                1. Resumen del Documento
-              </h3>
-              <p style="color:#334155; font-size:0.96rem; margin:0; line-height:1.7;">
-                ${docDesc}
-              </p>
-            </section>
-
-            ${surveySectionHtml}
-
-            <!-- Objetivos y Metas Vinculadas -->
-            ${selected?.mainObjective ? `
-              <section style="margin-bottom:1.8rem;">
-                <h3 style="font-size:1.15rem; font-weight:800; color:#1e293b; border-left:4px solid #3b82f6; padding-left:0.75rem; margin:0 0 0.8rem;">
-                  2. Objetivos y Metodología Aplicada
-                </h3>
-                <p style="color:#334155; font-size:0.96rem; margin:0; line-height:1.7;">
-                  ${this.escapeHtml(selected.mainObjective)}
-                </p>
-              </section>
+            ${res.extractedText ? `
+              <div style="background:rgba(0,0,0,0.4); border:1px solid rgba(255,255,255,0.1); border-radius:14px; padding:1.25rem; margin-bottom:2rem; max-height:260px; overflow-y:auto; font-size:0.88rem; color:#e2e8f0; line-height:1.6; white-space:pre-wrap;">
+                ${this.escapeHtml(res.extractedText)}
+              </div>
             ` : ''}
 
-            <!-- Conclusiones y Validación -->
-            <section style="margin-bottom:2.5rem;">
-              <h3 style="font-size:1.15rem; font-weight:800; color:#1e293b; border-left:4px solid #10b981; padding-left:0.75rem; margin:0 0 0.8rem;">
-                3. Validación y Resultados
-              </h3>
-              <p style="color:#334155; font-size:0.96rem; margin:0; line-height:1.7;">
-                Este recurso forma parte de los entregables verificados y aprobados del proyecto. Toda la información ha sido revisada para garantizar su integridad académica y su aplicación práctica en el ecosistema Mentix.
+            <!-- Área de carga del archivo original o enlace -->
+            <div style="background:rgba(0,0,0,0.4); border:2px dashed #00f5d4; border-radius:20px; padding:2rem 1.5rem; text-align:center; margin-top:1rem;">
+              <div style="font-size:3.5rem; line-height:1; margin-bottom:0.8rem;">📂</div>
+              <h3 style="margin:0 0 0.4rem; color:#ffffff; font-size:1.25rem; font-weight:900;">Visualizar este archivo en vivo</h3>
+              <p style="margin:0 0 1.5rem; color:#94a3b8; font-size:0.9rem; max-width:540px; margin-left:auto; margin-right:auto; line-height:1.5;">
+                Para que el documento se despliegue exactamente con sus páginas y formato original, carga el archivo PDF o ingresa su enlace de Google Forms/Drive.
               </p>
-            </section>
+
+              <div style="display:flex; justify-content:center; gap:0.9rem; flex-wrap:wrap;">
+                <label style="display:inline-flex; align-items:center; gap:0.5rem; background:linear-gradient(135deg, #00f5d4 0%, #0284c7 100%); color:#071739; font-weight:900; font-size:0.95rem; padding:0.8rem 1.5rem; border-radius:14px; cursor:pointer; box-shadow:0 6px 20px rgba(0,245,212,0.35); transition:transform 0.15s ease;">
+                  <span>📁</span> <span>Cargar archivo PDF original</span>
+                  <input type="file" accept=".pdf,image/*,video/*" style="display:none;" onchange="window.ProjectsView.attachFileToResource(event, '${this.escapeHtml(res.id || name)}', '${this.escapeHtml(selected?.id || '')}')" />
+                </label>
+
+                <button type="button" onclick="window.ProjectsView.promptResourceLink('${this.escapeHtml(res.id || name)}', '${this.escapeHtml(selected?.id || '')}')" style="display:inline-flex; align-items:center; gap:0.5rem; background:rgba(255,255,255,0.08); border:1.5px solid rgba(255,255,255,0.2); color:#ffffff; font-weight:800; font-size:0.92rem; padding:0.8rem 1.4rem; border-radius:14px; cursor:pointer;">
+                  <span>🔗</span> <span>Vincular enlace de Google Form / Drive</span>
+                </button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      `;
+    }
 
             <!-- Sello Oficial Mentix -->
             <div style="border-top:1.5px dashed #cbd5e1; padding-top:1.5rem; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem;">
@@ -6958,7 +7262,29 @@ Generado por Mentix - Plataforma de Proyectos y Retos
     modal.classList.add('active');
   },
 
+  openReviewFullPage(projectId) {
+    const id = projectId || this.selectedProjectId;
+    if (window.ProjectHub && typeof window.ProjectHub.openReviewPage === 'function') {
+      window.ProjectHub.openReviewPage(id);
+      return;
+    }
+  },
+
   previewLandingDoc(title, cardType = '') {
+    const cleanT = (title || '').toLowerCase();
+    if (cleanT.includes('comentario')) {
+      const targetId = this.selectedProjectId || (this.currentProject ? this.currentProject.id : null);
+      this.openReviewFullPage(targetId);
+      return;
+    }
+    if (cleanT.includes('unirse al proyecto')) {
+      const targetId = this.selectedProjectId || (this.currentProject ? this.currentProject.id : null);
+      if (window.ProjectHub && typeof window.ProjectHub.openJoinForm === 'function') {
+        window.ProjectHub.openJoinForm(targetId);
+        return;
+      }
+    }
+
     const { modal, body } = this.getOrMountLightbox();
     if (!modal || !body) return;
     modal.style.cssText = 'position:fixed !important; inset:0 !important; width:100vw !important; height:100vh !important; z-index:9999999 !important; background:rgba(10, 25, 47, 0.92) !important; backdrop-filter:blur(12px) !important; display:flex !important; align-items:center !important; justify-content:center !important; padding:2rem !important;';
@@ -7922,3 +8248,20 @@ Generado por Mentix - Plataforma de Proyectos y Retos
       .replace(/'/g, '&#039;');
   }
 };
+
+// Sincronización en tiempo real del Banner Principal entre pestañas y vistas
+if (typeof window !== 'undefined') {
+  window.addEventListener('mentix:hero-banner-changed', (e) => {
+    const url = e.detail?.bannerUrl;
+    if (!url) return;
+    const heroImg = document.getElementById('mentix-projects-hero-banner-img');
+    if (heroImg) heroImg.src = url;
+  });
+
+  window.addEventListener('storage', (e) => {
+    if (e.key === 'mentix_projects_hero_banner' || e.key === 'te_reto_projects_hero_banner' || e.key === 'te_reto_hero_banner') {
+      const heroImg = document.getElementById('mentix-projects-hero-banner-img');
+      if (heroImg && e.newValue) heroImg.src = e.newValue;
+    }
+  });
+}
