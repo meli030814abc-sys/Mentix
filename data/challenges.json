@@ -3206,7 +3206,7 @@
     "authorAvatar": "­ƒæ¿ÔÇì­ƒÅ½",
     "authorRole": "Gerente del Proyecto",
     "createdAt": "2026-11-01T04:23:09.177Z",
-    "updatedAt": "2026-11-05T23:21:16.896Z",
+    "updatedAt": "2026-11-07T21:29:00.541Z",
     "approvalStatus": "approved",
     "tag": "ÔÅ│ Pendiente de Autorización",
     "tagClass": "badge-review",
@@ -3235,7 +3235,39 @@
     ],
     "currentStep": 1,
     "progress": 70,
-    "calculatedProgress": 70
+    "calculatedProgress": 70,
+    "hub": {
+      "joinRequests": [
+        {
+          "id": "req_demo_1",
+          "name": "Carlos Ruiz",
+          "email": "carlos.ruiz@mentix.edu",
+          "passHash": "demo",
+          "status": "pending",
+          "created": 1794009310973
+        }
+      ],
+      "members": [
+        {
+          "name": "Carlos Alberto Canon",
+          "email": "carlos.alberto.canon@mentix.edu",
+          "role": "owner",
+          "leader": true
+        },
+        {
+          "name": "Elena Morales",
+          "email": "elena.morales@mentix.edu",
+          "role": "collaborator"
+        },
+        {
+          "name": "David Soto",
+          "email": "david.soto@mentix.edu",
+          "role": "viewer"
+        }
+      ],
+      "views": [],
+      "ratings": []
+    }
   },
   {
     "id": "proj_1793573006343",
