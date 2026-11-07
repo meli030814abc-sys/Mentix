@@ -346,6 +346,441 @@ window.ProjectsView = {
     this.closeAdminBannerModal();
   },
 
+  /* ==========================================================================
+     GESTOR DE FONDOS DE BANNER HERO (LANDING PAGE)
+     Permite a creadores y usuarios cambiar el fondo de atrás del Hero Banner
+     ========================================================================== */
+  HERO_BANNER_THEMES: [
+    {
+      id: 'robot_ai',
+      name: 'Robot AI Educator',
+      category: 'Tecnología e IA',
+      icon: '🤖',
+      url: 'assets/projects_ui/hero_banner.png'
+    },
+    {
+      id: 'disney_magic',
+      name: 'Disney & Fantasía Mágica',
+      category: 'Creatividad & Personajes',
+      icon: '🏰',
+      url: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=1600&q=80'
+    },
+    {
+      id: 'cyber_space',
+      name: 'Cyber Espacio & Datos',
+      category: 'Ciencia & Espacio',
+      icon: '🚀',
+      url: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1600&q=80'
+    },
+    {
+      id: 'future_academy',
+      name: 'Academia Futurista Neón',
+      category: 'Educación & Futuro',
+      icon: '🔮',
+      url: 'assets/student_create_bg.jpg'
+    },
+    {
+      id: 'ai_brain',
+      name: 'Cerebro Digital & IA',
+      category: 'Inteligencia Artificial',
+      icon: '🧠',
+      url: 'https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=1600&q=80'
+    },
+    {
+      id: 'code_matrix',
+      name: 'Código & Software Cyberpunk',
+      category: 'Programación',
+      icon: '💻',
+      url: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=1600&q=80'
+    },
+    {
+      id: 'neon_nebula',
+      name: 'Nebulosa Neón Cyan & Violeta',
+      category: 'Fantasía Abstracta',
+      icon: '🌌',
+      url: 'https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?w=1600&q=80'
+    },
+    {
+      id: 'data_gov',
+      name: 'Transparencia & Data Analytics',
+      category: 'Gobierno de Datos',
+      icon: '📊',
+      url: 'assets/projects_ui/card_data_gov.png'
+    },
+    {
+      id: 'robot_hero',
+      name: 'Robot Cybernetic Ultra-Wide',
+      category: 'Robótica',
+      icon: '🦾',
+      url: 'assets/projects_ui/robot_hero_banner.png'
+    },
+    {
+      id: 'campus_life',
+      name: 'Campus Universitario Global',
+      category: 'Comunidad & Aula',
+      icon: '🎓',
+      url: 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1600&q=80'
+    },
+    {
+      id: 'digital_art',
+      name: 'Arte Digital & Hologramas',
+      category: 'Diseño Multimedia',
+      icon: '🎨',
+      url: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=1600&q=80'
+    },
+    {
+      id: 'nature_sustain',
+      name: 'Sostenibilidad & Planeta Verde',
+      category: 'Medio Ambiente',
+      icon: '🌿',
+      url: 'https://images.unsplash.com/photo-1511497584788-87676104235f?w=1600&q=80'
+    },
+    {
+      id: 'ideas_lab',
+      name: 'Laboratorio de Innovación',
+      category: 'Investigación',
+      icon: '💡',
+      url: 'https://images.unsplash.com/photo-1532094349884-543bc11b234d?w=1600&q=80'
+    },
+    {
+      id: 'cyber_city',
+      name: 'Ciudad Tecnológica Nocturna',
+      category: 'Smart Cities',
+      icon: '🌆',
+      url: 'https://images.unsplash.com/photo-1519501025264-65ba15a82390?w=1600&q=80'
+    },
+    {
+      id: 'deep_ocean',
+      name: 'Océano Digital Azul Profundo',
+      category: 'Ciencias Naturales',
+      icon: '🌊',
+      url: 'https://images.unsplash.com/photo-1518837695005-2083093ee35b?w=1600&q=80'
+    },
+    {
+      id: 'quantum_energy',
+      name: 'Energía Cuántica Brillante',
+      category: 'Física & Energía',
+      icon: '⚡',
+      url: 'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=1600&q=80'
+    }
+  ],
+
+  getProjectHeroBanner(projId, selected) {
+    if (!projId && selected && selected.id) projId = selected.id;
+    let proj = selected;
+    if (!proj && projId) {
+      proj = this.getMergedProjectRecord(projId);
+      if (!proj) proj = (window.appState?.challenges || []).find(c => c && String(c.id) === String(projId));
+    }
+    const saved = projId ? localStorage.getItem('mentix_hero_banner_' + projId) : null;
+    if (saved && saved.trim()) return saved.trim();
+    if (proj) {
+      if (proj.heroBanner && proj.heroBanner.trim()) return proj.heroBanner.trim();
+      if (proj.landingConfig?.heroBanner && proj.landingConfig.heroBanner.trim()) return proj.landingConfig.heroBanner.trim();
+      if (proj.govdata?.heroBanner && proj.govdata.heroBanner.trim()) return proj.govdata.heroBanner.trim();
+      if (proj.banner && proj.banner.trim()) return proj.banner.trim();
+      if (proj.coverImage && proj.coverImage.trim()) return proj.coverImage.trim();
+      if (proj.mainImage && proj.mainImage.trim()) return proj.mainImage.trim();
+    }
+    return 'assets/projects_ui/hero_banner.png';
+  },
+
+  setProjectHeroBanner(projId, bannerUrl) {
+    if (!bannerUrl) return false;
+    if (projId) {
+      try { localStorage.setItem('mentix_hero_banner_' + projId, bannerUrl); } catch (e) {}
+    }
+    let proj = null;
+    if (window.appState && Array.isArray(window.appState.challenges)) {
+      proj = window.appState.challenges.find(c => c && String(c.id) === String(projId));
+    }
+    if (proj) {
+      proj.heroBanner = bannerUrl;
+      proj.banner = bannerUrl;
+      if (!proj.govdata) proj.govdata = {};
+      proj.govdata.heroBanner = bannerUrl;
+      proj.govdata.banner = bannerUrl;
+      if (!proj.landingConfig) proj.landingConfig = {};
+      proj.landingConfig.heroBanner = bannerUrl;
+    }
+    try {
+      const drafts = JSON.parse(localStorage.getItem('mentix_govdata_wizard_drafts') || '[]');
+      const d = drafts.find(x => x && String(x.id) === String(projId));
+      if (d) {
+        d.heroBanner = bannerUrl;
+        d.banner = bannerUrl;
+        if (!d.govdata) d.govdata = {};
+        d.govdata.heroBanner = bannerUrl;
+        localStorage.setItem('mentix_govdata_wizard_drafts', JSON.stringify(drafts));
+      }
+    } catch (e) {}
+
+    if (typeof saveGlobalState === 'function' && window.appState) {
+      saveGlobalState(window.appState);
+    }
+    return true;
+  },
+
+  openHeroBannerPicker(targetProjectId = null) {
+    const projId = targetProjectId || this.selectedProjectId;
+    const selected = this.getMergedProjectRecord(projId) || (window.appState?.challenges || []).find(c => c && String(c.id) === String(projId));
+    const projTitle = selected ? selected.title : 'Proyecto';
+    const currentBanner = this.getProjectHeroBanner(projId, selected);
+
+    this._tempSelectedHeroBanner = currentBanner;
+    this._tempHeroBannerProjId = projId;
+
+    const existing = document.getElementById('mentix-hero-banner-modal-overlay');
+    if (existing) existing.remove();
+
+    const overlay = document.createElement('div');
+    overlay.id = 'mentix-hero-banner-modal-overlay';
+    overlay.style.cssText = 'position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(4,9,24,0.92); backdrop-filter:blur(14px); z-index:9999999; display:flex; align-items:center; justify-content:center; padding:1.25rem; overflow-y:auto;';
+
+    overlay.innerHTML = `
+      <div style="background: linear-gradient(135deg, #071739 0%, #0d204d 50%, #071129 100%); border: 2px solid #00f5d4; border-radius: 22px; max-width: 960px; width: 100%; max-height: 92vh; overflow-y: auto; padding: 1.85rem; box-shadow: 0 25px 70px rgba(0,0,0,0.8), 0 0 40px rgba(0,245,212,0.25); color: #ffffff; position: relative; font-family: 'Outfit','Inter',sans-serif;">
+        
+        <!-- Header -->
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:1.25rem; border-bottom:1px solid rgba(255,255,255,0.12); padding-bottom:1rem;">
+          <div>
+            <div style="display:inline-flex; align-items:center; gap:0.4rem; background:rgba(0,245,212,0.15); border:1px solid #00f5d4; padding:0.25rem 0.75rem; border-radius:999px; font-size:0.75rem; font-weight:900; color:#00f5d4; margin-bottom:0.45rem;">
+              🎨 PERSONALIZACIÓN VISUAL DEL HERO
+            </div>
+            <h2 style="margin:0; font-size:1.45rem; font-weight:900; color:#ffffff; display:flex; align-items:center; gap:0.5rem;">
+              <span>🖼️</span> <span>Cambiar Fondo del Banner de Atrás</span>
+            </h2>
+            <p style="margin:0.25rem 0 0; font-size:0.86rem; color:#cbd5e1;">
+              Elige una imagen temática, sube una foto desde tu equipo o pega una URL para el banner de <b>“${this.escapeHtml(projTitle)}”</b>.
+            </p>
+          </div>
+          <button type="button" onclick="window.ProjectsView.closeHeroBannerPicker()" style="background:none; border:none; color:#cbd5e1; font-size:1.6rem; cursor:pointer; line-height:1; padding:0.2rem;" title="Cerrar">✕</button>
+        </div>
+
+        <!-- Vista Previa en Vivo -->
+        <div style="margin-bottom:1.4rem;">
+          <label style="display:block; font-size:0.82rem; font-weight:800; color:#00f5d4; margin-bottom:0.5rem; text-transform:uppercase; letter-spacing:0.04em;">
+            👁️ Vista Previa en Vivo del Banner
+          </label>
+          <div id="hero-banner-preview-box" style="position:relative; width:100%; height:155px; border-radius:18px; overflow:hidden; background-image:linear-gradient(135deg, rgba(5,19,41,0.88) 0%, rgba(8,35,71,0.84) 100%), url('${this.escapeHtml(currentBanner)}'); background-size:cover; background-position:center; border:2px solid #00f5d4; display:flex; align-items:center; justify-content:space-between; padding:1.5rem 2rem; box-shadow:0 8px 30px rgba(0,0,0,0.5);">
+            <div>
+              <div style="font-size:1.25rem; font-weight:900; color:#ffffff; line-height:1.2;">${this.escapeHtml(projTitle)}</div>
+              <div style="font-size:0.9rem; font-weight:800; color:#00f5d4; margin-top:0.25rem;">${this.escapeHtml(selected?.subtitle || 'Soluciones Tecnológicas')}</div>
+              <div style="margin-top:0.75rem; display:flex; gap:0.5rem;">
+                <span style="background:#0047cc; color:#ffffff; font-size:0.75rem; font-weight:800; padding:0.3rem 0.8rem; border-radius:999px;">▶ Explorar proyecto</span>
+                <span style="background:rgba(255,255,255,0.15); color:#ffffff; font-size:0.75rem; font-weight:700; padding:0.3rem 0.8rem; border-radius:999px;">📑 Ver recursos</span>
+              </div>
+            </div>
+            <div style="background:rgba(15,23,42,0.85); border:1.5px solid rgba(0,245,212,0.4); border-radius:14px; padding:0.75rem 1.25rem; text-align:center; min-width:130px; backdrop-filter:blur(6px);">
+              <span style="font-size:1.2rem; color:#00f5d4; font-weight:900;">100%</span>
+              <small style="display:block; font-size:0.7rem; color:#cbd5e1; font-weight:700; margin-top:0.15rem;">Avance del proyecto</small>
+            </div>
+          </div>
+        </div>
+
+        <!-- Controles para Subir o Ingresar URL -->
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1.5rem;">
+          <div style="background:rgba(0,0,0,0.35); border:1.5px solid rgba(255,255,255,0.12); border-radius:14px; padding:1rem;">
+            <label style="display:block; font-size:0.8rem; font-weight:800; color:#38bdf8; margin-bottom:0.4rem;">
+              📤 Subir Imagen desde tu Equipo:
+            </label>
+            <input 
+              type="file" 
+              id="hero-banner-file-input" 
+              accept="image/png, image/jpeg, image/webp, image/svg+xml" 
+              onchange="window.ProjectsView.handleHeroBannerFileUpload(this.files[0])"
+              style="display:block; width:100%; font-size:0.82rem; color:#cbd5e1; cursor:pointer;"
+            />
+            <small style="display:block; color:#94a3b8; font-size:0.74rem; margin-top:0.35rem;">Soporta JPG, PNG, WEBP o SVG.</small>
+          </div>
+
+          <div style="background:rgba(0,0,0,0.35); border:1.5px solid rgba(255,255,255,0.12); border-radius:14px; padding:1rem;">
+            <label style="display:block; font-size:0.8rem; font-weight:800; color:#38bdf8; margin-bottom:0.4rem;">
+              🔗 O Pega una URL de Imagen:
+            </label>
+            <div style="display:flex; gap:0.5rem;">
+              <input 
+                type="text" 
+                id="hero-banner-url-input" 
+                placeholder="https://.../imagen.jpg" 
+                value="${currentBanner.startsWith('data:') ? '(Imagen cargada localmente)' : this.escapeHtml(currentBanner)}"
+                oninput="window.ProjectsView.previewHeroBannerUrl(this.value)"
+                style="flex:1; background:rgba(0,0,0,0.45); border:1px solid rgba(255,255,255,0.2); border-radius:8px; padding:0.45rem 0.75rem; color:#ffffff; font-size:0.82rem; outline:none;"
+              />
+              <button type="button" onclick="window.ProjectsView.previewHeroBannerUrl(document.getElementById('hero-banner-url-input').value)" style="background:#0284c7; color:#ffffff; border:none; border-radius:8px; padding:0.45rem 0.85rem; font-size:0.78rem; font-weight:800; cursor:pointer;">
+                Probar
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Galería de Fondos Temáticos (16 Presets) -->
+        <div style="margin-bottom:1.5rem;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.75rem;">
+            <label style="font-size:0.85rem; font-weight:800; color:#00f5d4; text-transform:uppercase; letter-spacing:0.04em;">
+              Colección de 16 Fondos Temáticos Oficiales
+            </label>
+            <span style="font-size:0.75rem; color:#cbd5e1;">Haz clic en cualquiera para seleccionarlo</span>
+          </div>
+
+          <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(210px, 1fr)); gap:0.85rem; max-height:290px; overflow-y:auto; padding-right:0.3rem;">
+            ${this.HERO_BANNER_THEMES.map(theme => {
+              const isSelected = this._tempSelectedHeroBanner === theme.url;
+              return `
+                <div 
+                  class="hero-theme-card ${isSelected ? 'active' : ''}" 
+                  onclick="window.ProjectsView.selectHeroBannerPreset('${theme.id}')"
+                  style="border-radius:12px; overflow:hidden; background:rgba(0,0,0,0.4); border:${isSelected ? '2px solid #00f5d4' : '1.5px solid rgba(255,255,255,0.1)'}; cursor:pointer; transition:transform 0.15s ease, border-color 0.15s ease; position:relative; box-shadow:${isSelected ? '0 0 16px rgba(0,245,212,0.4)' : 'none'};"
+                  onmouseenter="this.style.transform='translateY(-3px)';"
+                  onmouseleave="this.style.transform='none';"
+                >
+                  <div style="height:76px; background-image:url('${theme.url}'); background-size:cover; background-position:center; position:relative;">
+                    <span style="position:absolute; top:6px; left:6px; background:rgba(7,23,57,0.85); color:#00f5d4; font-size:0.68rem; font-weight:800; padding:0.18rem 0.5rem; border-radius:999px; backdrop-filter:blur(4px);">
+                      ${theme.icon} ${this.escapeHtml(theme.category)}
+                    </span>
+                    ${isSelected ? `<span style="position:absolute; top:6px; right:6px; background:#00f5d4; color:#071739; font-size:0.72rem; font-weight:900; padding:0.15rem 0.45rem; border-radius:999px;">✓ ACTIVO</span>` : ''}
+                  </div>
+                  <div style="padding:0.6rem 0.75rem;">
+                    <div style="font-weight:800; font-size:0.82rem; color:#ffffff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+                      ${this.escapeHtml(theme.name)}
+                    </div>
+                  </div>
+                </div>
+              `;
+            }).join('')}
+          </div>
+        </div>
+
+        <!-- Botones de Acción Finales -->
+        <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid rgba(255,255,255,0.12); padding-top:1.15rem; flex-wrap:wrap; gap:0.75rem;">
+          <button 
+            type="button" 
+            onclick="window.ProjectsView.resetHeroBanner('${this.escapeHtml(projId)}')"
+            style="background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.2); color:#cbd5e1; border-radius:10px; padding:0.6rem 1.15rem; font-size:0.84rem; font-weight:700; cursor:pointer; display:inline-flex; align-items:center; gap:0.4rem; transition:background 0.15s ease;"
+            title="Restablecer al fondo Robot oficial"
+            onmouseenter="this.style.background='rgba(255,255,255,0.14)';"
+            onmouseleave="this.style.background='rgba(255,255,255,0.06)';"
+          >
+            <span>🔄</span> <span>Restablecer fondo por defecto</span>
+          </button>
+
+          <div style="display:flex; gap:0.75rem;">
+            <button 
+              type="button" 
+              onclick="window.ProjectsView.closeHeroBannerPicker()" 
+              style="background:transparent; border:1px solid rgba(255,255,255,0.25); color:#ffffff; border-radius:10px; padding:0.65rem 1.25rem; font-size:0.86rem; font-weight:700; cursor:pointer;"
+            >
+              Cancelar
+            </button>
+            <button 
+              type="button" 
+              onclick="window.ProjectsView.applyHeroBanner('${this.escapeHtml(projId)}')" 
+              style="background:linear-gradient(135deg, #00f5d4 0%, #0284c7 100%); color:#071739; border:none; border-radius:10px; padding:0.65rem 1.5rem; font-size:0.9rem; font-weight:900; cursor:pointer; display:inline-flex; align-items:center; gap:0.45rem; box-shadow:0 4px 18px rgba(0,245,212,0.35); transition:transform 0.15s ease;"
+              onmouseenter="this.style.transform='scale(1.04)';"
+              onmouseleave="this.style.transform='none';"
+            >
+              <span>💾</span> <span>Guardar y Aplicar Fondo</span>
+            </button>
+          </div>
+        </div>
+
+      </div>
+    `;
+
+    document.body.appendChild(overlay);
+  },
+
+  closeHeroBannerPicker() {
+    const el = document.getElementById('mentix-hero-banner-modal-overlay');
+    if (el) el.remove();
+  },
+
+  selectHeroBannerPreset(presetId) {
+    const theme = this.HERO_BANNER_THEMES.find(t => t.id === presetId);
+    if (!theme) return;
+    this._tempSelectedHeroBanner = theme.url;
+    const box = document.getElementById('hero-banner-preview-box');
+    if (box) {
+      box.style.backgroundImage = `linear-gradient(135deg, rgba(5,19,41,0.88) 0%, rgba(8,35,71,0.84) 100%), url('${theme.url}')`;
+    }
+    const input = document.getElementById('hero-banner-url-input');
+    if (input) input.value = theme.url;
+
+    document.querySelectorAll('.hero-theme-card').forEach(c => {
+      c.style.border = '1.5px solid rgba(255,255,255,0.1)';
+      c.style.boxShadow = 'none';
+    });
+    const clicked = document.querySelector(`.hero-theme-card[onclick*="'${presetId}'"]`);
+    if (clicked) {
+      clicked.style.border = '2px solid #00f5d4';
+      clicked.style.boxShadow = '0 0 16px rgba(0,245,212,0.4)';
+    }
+    this.showToast(`🎨 Seleccionado: ${theme.name}`);
+  },
+
+  handleHeroBannerFileUpload(file) {
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const dataUrl = e.target.result;
+      this._tempSelectedHeroBanner = dataUrl;
+      const box = document.getElementById('hero-banner-preview-box');
+      if (box) {
+        box.style.backgroundImage = `linear-gradient(135deg, rgba(5,19,41,0.88) 0%, rgba(8,35,71,0.84) 100%), url('${dataUrl}')`;
+      }
+      const input = document.getElementById('hero-banner-url-input');
+      if (input) input.value = dataUrl.slice(0, 50) + '... (Imagen cargada)';
+      this.showToast('📷 Imagen cargada exitosamente.');
+    };
+    reader.readAsDataURL(file);
+  },
+
+  previewHeroBannerUrl(url) {
+    const trimmed = (url || '').trim();
+    if (trimmed) {
+      this._tempSelectedHeroBanner = trimmed;
+      const box = document.getElementById('hero-banner-preview-box');
+      if (box) {
+        box.style.backgroundImage = `linear-gradient(135deg, rgba(5,19,41,0.88) 0%, rgba(8,35,71,0.84) 100%), url('${trimmed}')`;
+      }
+    }
+  },
+
+  applyHeroBanner(projId) {
+    const finalUrl = this._tempSelectedHeroBanner;
+    if (!finalUrl) {
+      alert('⚠️ Por favor selecciona una imagen antes de guardar.');
+      return;
+    }
+    this.setProjectHeroBanner(projId, finalUrl);
+
+    // Actualizar directamente la sección del Hero activa en pantalla
+    const heroSec = document.getElementById('inno-sec-hero');
+    if (heroSec) {
+      const isLight = document.querySelector('.plp-wrapper')?.getAttribute('data-theme') === 'light';
+      const overlay = isLight ? 'rgba(255,255,255,0.85) 0%, rgba(240,249,255,0.82) 100%' : 'rgba(5,19,41,0.88) 0%, rgba(8,35,71,0.84) 100%';
+      heroSec.style.setProperty('background-image', `linear-gradient(135deg, ${overlay}), url('${finalUrl}')`, 'important');
+    }
+
+    this.closeHeroBannerPicker();
+    this.showToast('🎨 ¡Fondo del banner actualizado con éxito!');
+  },
+
+  resetHeroBanner(projId) {
+    const defaultUrl = 'assets/projects_ui/hero_banner.png';
+    this._tempSelectedHeroBanner = defaultUrl;
+    this.setProjectHeroBanner(projId, defaultUrl);
+
+    const heroSec = document.getElementById('inno-sec-hero');
+    if (heroSec) {
+      const isLight = document.querySelector('.plp-wrapper')?.getAttribute('data-theme') === 'light';
+      const overlay = isLight ? 'rgba(255,255,255,0.85) 0%, rgba(240,249,255,0.82) 100%' : 'rgba(5,19,41,0.88) 0%, rgba(8,35,71,0.84) 100%';
+      heroSec.style.setProperty('background-image', `linear-gradient(135deg, ${overlay}), url('${defaultUrl}')`, 'important');
+    }
+
+    this.closeHeroBannerPicker();
+    this.showToast('🔄 Fondo del banner restablecido al diseño original.');
+  },
+
   renderAdminBannerModalHtml(projects) {
     return `
       <div style="background: linear-gradient(135deg, #071739 0%, #0d204d 50%, #071129 100%); border: 2px solid #00f5d4; border-radius: 20px; max-width: 920px; width: 100%; max-height: 90vh; overflow-y: auto; padding: 1.85rem; box-shadow: 0 25px 70px rgba(0,0,0,0.8), 0 0 40px rgba(0,245,212,0.25); color: #ffffff; position: relative;">
@@ -5010,6 +5445,13 @@ window.ProjectsView = {
       ? `proyecto-landing.html?id=${encodeURIComponent(selected.id)}${selected.slug ? '&slug=' + encodeURIComponent(selected.slug) : ''}`
       : 'proyecto-landing.html';
 
+    const targetProjId = selected?.id || this.selectedProjectId;
+    const projHeroBanner = this.getProjectHeroBanner(targetProjId, selected);
+    const heroBgOverlay = currentTheme === 'light'
+      ? 'rgba(255,255,255,0.85) 0%, rgba(240,249,255,0.82) 100%'
+      : 'rgba(5,19,41,0.88) 0%, rgba(8,35,71,0.84) 100%';
+    const heroStyle = `background-image: linear-gradient(135deg, ${heroBgOverlay}), url('${this.escapeHtml(projHeroBanner)}') !important; background-size: cover !important; background-position: center !important; position: relative !important;`;
+
     container.innerHTML = `
       <div class="plp-page-container" style="max-width: 1360px; margin: 0 auto; padding: 1.25rem clamp(1.25rem, 3.5vw, 2.75rem) 4rem; box-sizing: border-box;">
         <div class="plp-wrapper animate-fade-in" data-theme="${currentTheme}" style="font-family: '${customFont}', sans-serif;">
@@ -5023,6 +5465,9 @@ window.ProjectsView = {
             <div class="plp-mentix-actions">
               <button type="button" class="plp-mentix-btn inno-theme-toggle-btn" onclick="window.ProjectsView.toggleLandingTheme()" title="Alternar entre Modo Claro y Modo Oscuro">
                 <span id="plp-theme-btn-label">${currentTheme === 'light' ? '🌙 Modo Oscuro' : '☀️ Modo Claro'}</span>
+              </button>
+              <button type="button" class="plp-mentix-btn" onclick="window.ProjectsView.openHeroBannerPicker('${this.escapeHtml(targetProjId)}')" title="Cambiar la imagen o fondo del banner de este proyecto">
+                <span>🎨</span> Fondo del Banner
               </button>
               ${this.isWizardPreview ? `
                 <button type="button" class="plp-mentix-btn" onclick="window.ProjectsView.isWizardPreview = false; window.ProjectsView.switchViewMode('wizard')">
@@ -5104,7 +5549,23 @@ window.ProjectsView = {
           <!-- ================================================================
                2. HERO SECTION (MOCKUP EXACTO)
                ================================================================ -->
-          <section class="inno-hero" id="inno-sec-hero">
+          <section class="inno-hero" id="inno-sec-hero" style="${heroStyle}">
+            <div class="inno-hero-bg-overlay"></div>
+            <div class="inno-hero-bg-glow"></div>
+
+            <!-- Botón interactivo para cambiar el fondo del banner de atrás -->
+            <button 
+              type="button" 
+              class="inno-btn-change-hero-bg" 
+              onclick="window.ProjectsView.openHeroBannerPicker('${this.escapeHtml(targetProjId)}')" 
+              title="Cambiar la imagen de fondo de este banner"
+              style="position:absolute; top:16px; right:18px; z-index:10; background:rgba(7, 23, 57, 0.88); border:1.5px solid #00f5d4; color:#00f5d4; border-radius:999px; padding:0.42rem 0.95rem; font-size:0.8rem; font-weight:800; cursor:pointer; backdrop-filter:blur(8px); display:inline-flex; align-items:center; gap:0.4rem; box-shadow:0 4px 16px rgba(0,0,0,0.45); transition:all 0.18s ease;"
+              onmouseenter="this.style.transform='scale(1.06)'; this.style.background='rgba(0,245,212,0.18)';"
+              onmouseleave="this.style.transform='none'; this.style.background='rgba(7, 23, 57, 0.88)';"
+            >
+              <span style="font-size:1rem;">🎨</span>
+              <span>Cambiar fondo del banner</span>
+            </button>
             <div class="inno-hero-bg-overlay"></div>
             <div class="inno-hero-bg-glow"></div>
 

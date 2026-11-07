@@ -1089,6 +1089,10 @@
         const pub = activeProject.publication || {};
         const valProp = activeProject.valueProposition || vp || {};
         const des = activeProject.designConfig || activeProject.govdata?.designConfig || {};
+        const customHeroBanner = activeProject.heroBanner || activeProject.govdata?.heroBanner || localStorage.getItem('mentix_hero_banner_' + activeProject.id);
+        if (customHeroBanner) {
+          des.bannerUrl = customHeroBanner;
+        }
 
         // Actualización dinámica de avance general
         const progressPercent = calculateProjectProgress(activeProject);

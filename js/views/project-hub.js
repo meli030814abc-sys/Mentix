@@ -684,6 +684,7 @@ window.ProjectHub = {
         </div>
         <div class="phub-settings">
           <button type="button" class="phub-btn blue" onclick="window.ProjectHub.editProject('${id}')">✏️ Editar contenido del proyecto</button>
+          <button type="button" class="phub-btn green" onclick="window.ProjectsView && window.ProjectsView.openHeroBannerPicker ? window.ProjectsView.openHeroBannerPicker('${id}') : null">🎨 Cambiar fondo del banner (Hero)</button>
           <button type="button" class="phub-btn ghost" onclick="window.ProjectHub.openLanding('${id}')">🌐 Ver página pública</button>
           <button type="button" class="phub-btn ghost" onclick="window.ProjectHub.share('${id}')">🔗 Copiar enlace para compartir</button>
         </div>
