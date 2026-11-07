@@ -3620,6 +3620,13 @@ window.ProjectsView = {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   },
 
+  openProjectJoinRequestModal(projectId) {
+    if (window.ProjectHub && typeof window.ProjectHub.openJoinForm === 'function') {
+      window.ProjectHub.openJoinForm(projectId);
+      return;
+    }
+  },
+
   submitJoinProjectCode() {
     const input = document.getElementById('project-join-code-input');
     const errEl = document.getElementById('project-join-error');
@@ -6154,18 +6161,36 @@ window.ProjectsView = {
                ================================================================ -->
           <section class="inno-bottom-banner" id="inno-sec-cta">
             <div class="inno-cta-left">
-              <div class="inno-cta-rocket-badge">
-                <span style="font-size: 1.6rem;">🚀</span>
+              <div class="inno-cta-rocket-badge" style="width: 52px; height: 52px; border-radius: 14px; background: linear-gradient(135deg, rgba(0, 245, 212, 0.22) 0%, rgba(2, 132, 199, 0.15) 100%); border: 1.5px solid rgba(0, 245, 212, 0.5); display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 18px rgba(0, 245, 212, 0.35);">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
+                  <defs>
+                    <linearGradient id="ctaRocketGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stop-color="#00f5d4" />
+                      <stop offset="100%" stop-color="#0284c7" />
+                    </linearGradient>
+                    <linearGradient id="ctaRocketFlame" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stop-color="#fde047" />
+                      <stop offset="100%" stop-color="#f97316" />
+                    </linearGradient>
+                  </defs>
+                  <path d="M14.5 3C14.5 3 19.5 4.5 20.5 9.5C21.5 14.5 17 19.5 17 19.5L14 16.5L11 13.5L14.5 3Z" fill="url(#ctaRocketGrad)" stroke="#a7f3d0" stroke-width="1.4" stroke-linejoin="round"/>
+                  <path d="M11 13.5L7.5 15.5L8.5 12.5L11 13.5Z" fill="#0284c7" stroke="#a7f3d0" stroke-width="1.2"/>
+                  <path d="M14 16.5L16 20L13 19L14 16.5Z" fill="#0284c7" stroke="#a7f3d0" stroke-width="1.2"/>
+                  <circle cx="15.5" cy="8.5" r="2" fill="#071739" stroke="#00f5d4" stroke-width="1.2"/>
+                  <circle cx="15.5" cy="8.5" r="0.9" fill="#00f5d4"/>
+                  <path d="M12.5 15L7 20.5C6.5 21 5.5 20.5 6 19.5L8 16L12.5 15Z" fill="url(#ctaRocketFlame)"/>
+                  <path d="M4 8L4.8 6.2L6.5 5.5L4.8 4.8L4 3L3.2 4.8L1.5 5.5L3.2 6.2L4 8Z" fill="#fde047"/>
+                </svg>
               </div>
               <div class="inno-cta-divider"></div>
               <div class="inno-cta-text">
                 <h3 class="inno-cta-title">Construyamos el siguiente avance del proyecto</h3>
-                <p class="inno-cta-sub">Tu aporte hace la diferencia</p>
+                <p class="inno-cta-sub">Tu aporte hace la diferencia. Envía tu solicitud para unirte al equipo.</p>
               </div>
             </div>
 
             <div class="inno-cta-right">
-              <button type="button" class="inno-cta-btn" onclick="window.ProjectsView.previewLandingDoc('Participar en el Proyecto — ${selectedTitle}')">
+              <button type="button" class="inno-cta-btn" onclick="window.ProjectHub && window.ProjectHub.openJoinForm ? window.ProjectHub.openJoinForm('${this.escapeHtml(targetProjId)}') : (window.ProjectsView && window.ProjectsView.openProjectJoinRequestModal ? window.ProjectsView.openProjectJoinRequestModal('${this.escapeHtml(targetProjId)}') : null)" title="Solicitar unirme a este proyecto">
                 Participar ahora <span>→</span>
               </button>
             </div>

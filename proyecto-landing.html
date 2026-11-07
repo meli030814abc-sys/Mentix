@@ -474,18 +474,36 @@
          ==================================================================== -->
     <section class="inno-bottom-banner" id="inno-sec-cta">
       <div class="inno-cta-left">
-        <div class="inno-cta-rocket-badge">
-          <span style="font-size: 1.6rem;">🚀</span>
+        <div class="inno-cta-rocket-badge" style="width: 52px; height: 52px; border-radius: 14px; background: linear-gradient(135deg, rgba(0, 245, 212, 0.22) 0%, rgba(2, 132, 199, 0.15) 100%); border: 1.5px solid rgba(0, 245, 212, 0.5); display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 18px rgba(0, 245, 212, 0.35);">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
+            <defs>
+              <linearGradient id="ctaRocketGradHtml" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#00f5d4" />
+                <stop offset="100%" stop-color="#0284c7" />
+              </linearGradient>
+              <linearGradient id="ctaRocketFlameHtml" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#fde047" />
+                <stop offset="100%" stop-color="#f97316" />
+              </linearGradient>
+            </defs>
+            <path d="M14.5 3C14.5 3 19.5 4.5 20.5 9.5C21.5 14.5 17 19.5 17 19.5L14 16.5L11 13.5L14.5 3Z" fill="url(#ctaRocketGradHtml)" stroke="#a7f3d0" stroke-width="1.4" stroke-linejoin="round"/>
+            <path d="M11 13.5L7.5 15.5L8.5 12.5L11 13.5Z" fill="#0284c7" stroke="#a7f3d0" stroke-width="1.2"/>
+            <path d="M14 16.5L16 20L13 19L14 16.5Z" fill="#0284c7" stroke="#a7f3d0" stroke-width="1.2"/>
+            <circle cx="15.5" cy="8.5" r="2" fill="#071739" stroke="#00f5d4" stroke-width="1.2"/>
+            <circle cx="15.5" cy="8.5" r="0.9" fill="#00f5d4"/>
+            <path d="M12.5 15L7 20.5C6.5 21 5.5 20.5 6 19.5L8 16L12.5 15Z" fill="url(#ctaRocketFlameHtml)"/>
+            <path d="M4 8L4.8 6.2L6.5 5.5L4.8 4.8L4 3L3.2 4.8L1.5 5.5L3.2 6.2L4 8Z" fill="#fde047"/>
+          </svg>
         </div>
         <div class="inno-cta-divider"></div>
         <div class="inno-cta-text">
           <h3 class="inno-cta-title">Construyamos el siguiente avance del proyecto</h3>
-          <p class="inno-cta-sub">Tu aporte hace la diferencia</p>
+          <p class="inno-cta-sub">Tu aporte hace la diferencia. Envía tu solicitud para unirte al equipo.</p>
         </div>
       </div>
 
       <div class="inno-cta-right">
-        <button type="button" class="inno-cta-btn" onclick="previewLandingDoc('Participar en el Proyecto')">
+        <button type="button" class="inno-cta-btn" onclick="openLandingJoinModal()" title="Solicitar unirme a este proyecto">
           Participar ahora <span>→</span>
         </button>
       </div>
@@ -724,6 +742,107 @@
       if (sideFill) {
         sideFill.style.width = userPart + '%';
       }
+    }
+
+    function openLandingJoinModal() {
+      const p = currentActiveProject || {};
+      const projId = p.id || 'demo';
+      const projTitle = p.title || 'Proyecto';
+      const existing = document.getElementById('phub-join-modal-overlay');
+      if (existing) existing.remove();
+
+      const overlay = document.createElement('div');
+      overlay.id = 'phub-join-modal-overlay';
+      overlay.style.cssText = 'position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(4,9,24,0.88); backdrop-filter:blur(12px); z-index:9999999; display:flex; align-items:center; justify-content:center; padding:1.25rem;';
+
+      overlay.innerHTML = `
+        <div style="background: linear-gradient(135deg, #071739 0%, #0d204d 50%, #071129 100%); border: 2px solid #00f5d4; border-radius: 20px; max-width: 460px; width: 100%; padding: 1.85rem; box-shadow: 0 25px 70px rgba(0,0,0,0.8), 0 0 35px rgba(0,245,212,0.25); color: #ffffff; position: relative; font-family: 'Inter', system-ui, sans-serif;">
+          <button type="button" onclick="document.getElementById('phub-join-modal-overlay').remove()" style="position:absolute; top:16px; right:16px; background:none; border:none; color:#cbd5e1; font-size:1.5rem; cursor:pointer; line-height:1;" title="Cerrar">✕</button>
+          
+          <div style="display:inline-flex; align-items:center; gap:0.4rem; background:rgba(0,245,212,0.15); border:1px solid #00f5d4; padding:0.25rem 0.75rem; border-radius:999px; font-size:0.75rem; font-weight:800; color:#00f5d4; margin-bottom:0.75rem;">
+            👥 SOLICITUD DE PARTICIPACIÓN
+          </div>
+
+          <h2 style="margin:0 0 0.4rem; font-size:1.3rem; font-weight:900; color:#ffffff;">
+            Unirme a “${(projTitle || '').replace(/"/g, '&quot;')}”
+          </h2>
+          <p style="margin:0 0 1.25rem; font-size:0.85rem; color:#cbd5e1; line-height:1.45;">
+            Completa tus datos para enviar tu solicitud. El creador la revisará y te asignará un rol (editor, solo lectura, etc.).
+          </p>
+
+          <form onsubmit="event.preventDefault(); submitLandingJoin('${projId}');" style="display:flex; flex-direction:column; gap:0.95rem;">
+            <div>
+              <label style="display:block; font-size:0.8rem; font-weight:700; color:#cbd5e1; margin-bottom:0.35rem;">
+                Nombre o usuario:
+              </label>
+              <input id="landing-join-name" type="text" required maxlength="60" placeholder="Ej: JuanP" style="width:100%; box-sizing:border-box; background:rgba(0,0,0,0.45); border:1.5px solid rgba(255,255,255,0.18); border-radius:10px; padding:0.65rem 0.85rem; color:#ffffff; font-size:0.88rem; outline:none;" />
+            </div>
+
+            <div>
+              <label style="display:block; font-size:0.8rem; font-weight:700; color:#cbd5e1; margin-bottom:0.35rem;">
+                Correo electrónico:
+              </label>
+              <input id="landing-join-email" type="email" required maxlength="90" placeholder="juan.p@email.com" style="width:100%; box-sizing:border-box; background:rgba(0,0,0,0.45); border:1.5px solid rgba(255,255,255,0.18); border-radius:10px; padding:0.65rem 0.85rem; color:#ffffff; font-size:0.88rem; outline:none;" />
+            </div>
+
+            <div>
+              <label style="display:block; font-size:0.8rem; font-weight:700; color:#cbd5e1; margin-bottom:0.35rem;">
+                Contraseña de acceso:
+              </label>
+              <input id="landing-join-pass" type="password" required minlength="4" maxlength="60" placeholder="Mínimo 4 caracteres" style="width:100%; box-sizing:border-box; background:rgba(0,0,0,0.45); border:1.5px solid rgba(255,255,255,0.18); border-radius:10px; padding:0.65rem 0.85rem; color:#ffffff; font-size:0.88rem; outline:none;" />
+              <small style="display:block; color:#94a3b8; font-size:0.73rem; margin-top:0.3rem;">🔒 Tu contraseña se guarda cifrada y el creador nunca la ve.</small>
+            </div>
+
+            <button type="submit" style="margin-top:0.5rem; background:linear-gradient(135deg, #00f5d4 0%, #0284c7 100%); color:#071739; border:none; border-radius:10px; padding:0.75rem; font-size:0.92rem; font-weight:900; cursor:pointer; box-shadow:0 4px 18px rgba(0,245,212,0.35); transition:transform 0.15s ease;" onmouseenter="this.style.transform='scale(1.02)'" onmouseleave="this.style.transform='none'">
+              📨 Enviar solicitud de unión
+            </button>
+          </form>
+        </div>
+      `;
+
+      document.body.appendChild(overlay);
+      setTimeout(() => {
+        const inp = document.getElementById('landing-join-name');
+        if (inp) inp.focus();
+      }, 60);
+    }
+
+    function submitLandingJoin(projId) {
+      const name = (document.getElementById('landing-join-name') || {}).value || '';
+      const email = (document.getElementById('landing-join-email') || {}).value || '';
+      const pass = (document.getElementById('landing-join-pass') || {}).value || '';
+      if (!name.trim() || !email.trim() || pass.length < 4) {
+        alert('⚠️ Por favor completa tu nombre, correo y una contraseña de al menos 4 caracteres.');
+        return;
+      }
+
+      try {
+        const hubKey = 'mentix_project_hub_' + projId;
+        const hub = JSON.parse(localStorage.getItem(hubKey) || '{"joinRequests":[],"members":[],"views":[],"ratings":[]}');
+        if (!Array.isArray(hub.joinRequests)) hub.joinRequests = [];
+        const normE = email.trim().toLowerCase();
+        if (hub.joinRequests.some(r => r.status === 'pending' && (r.email || '').toLowerCase() === normE)) {
+          alert('⏳ Ya enviaste una solicitud pendiente con este correo.');
+          return;
+        }
+
+        hub.joinRequests.push({
+          id: 'req_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
+          name: name.trim(),
+          email: email.trim(),
+          passHash: btoa(pass),
+          status: 'pending',
+          createdAt: Date.now()
+        });
+        localStorage.setItem(hubKey, JSON.stringify(hub));
+      } catch (e) {
+        console.warn('Error saving join request:', e);
+      }
+
+      const ov = document.getElementById('phub-join-modal-overlay');
+      if (ov) ov.remove();
+
+      alert(`📨 ¡Solicitud enviada con éxito!\n\nHola ${name.trim()}, tu solicitud ha sido enviada al creador del proyecto. El creador recibirá una notificación para aceptarte con tu rol (editor, solo lectura, etc.).`);
     }
 
     function previewLandingDoc(title, cardType = '') {
