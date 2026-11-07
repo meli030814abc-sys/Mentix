@@ -944,12 +944,12 @@ window.AdminView = {
       </div>
 
       <!-- HERO BANNER INSTITUCIONAL DEL ROBOT (SOLO PARA ADMINS CON BOTONES DE ACCIÓN) -->
-      <div class="saas-hero-banner-wrapper" style="position: relative; width: 100%; border-radius: 20px; overflow: hidden; margin-bottom: 1.75rem; box-shadow: 0 12px 35px rgba(2, 40, 100, 0.16); background: #071739;">
+      <div class="saas-hero-banner-wrapper" style="position: relative; width: 100%; aspect-ratio: 2090 / 422; min-height: 200px; max-height: 265px; border-radius: 20px; overflow: hidden; margin-bottom: 1.75rem; box-shadow: 0 12px 35px rgba(2, 40, 100, 0.16); background: #071739;">
         <img 
           id="mentix-admin-projects-hero-banner-img"
           src="${this.getHeroBannerUrl()}" 
           alt="Banner de Robot de Proyectos Mentix" 
-          style="width: 100%; height: auto; max-height: 270px; display: block; object-fit: cover; filter: brightness(1.08) contrast(1.05); image-rendering: high-quality;" 
+          style="position: absolute; inset: 0; width: 100%; height: 100%; display: block; object-fit: cover; object-position: center; filter: brightness(1.08) contrast(1.05); image-rendering: high-quality;" 
         />
 
         <!-- BOTÓN FLOTANTE EXCLUSIVO DE ADMINISTRADOR PARA CAMBIAR BANNER -->

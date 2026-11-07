@@ -6908,3 +6908,46 @@ body[data-theme="light"] .hero-capsule-profile {
   background: linear-gradient(180deg, #ffffff 0%, #f4f8fe 55%, #e2ebf8 100%) !important;
   border: 2.5px solid #38bdf8 !important;
 }
+
+
+/* ==========================================================================
+   BANNER HERO DE PROYECTOS: ALTURA FIJA Y PROPORCIÓN PANORÁMICA EXACTA
+   Garantiza que sin importar la imagen que se suba o elija, NUNCA cambie de tamaño.
+   ========================================================================== */
+.saas-hero-banner-wrapper {
+  position: relative !important;
+  width: 100% !important;
+  aspect-ratio: 2090 / 422 !important;
+  min-height: 200px !important;
+  max-height: 265px !important;
+  border-radius: 20px !important;
+  overflow: hidden !important;
+  margin-bottom: 1.6rem !important;
+  box-shadow: 0 12px 35px rgba(2, 40, 100, 0.16) !important;
+  background: #071739 !important;
+}
+
+#mentix-projects-hero-banner-img,
+#mentix-admin-projects-hero-banner-img,
+.saas-hero-banner-wrapper > img {
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  display: block !important;
+  object-fit: cover !important;
+  object-position: center center !important;
+  filter: brightness(1.12) contrast(1.08) saturate(1.15) !important;
+  image-rendering: -webkit-optimize-contrast !important;
+  image-rendering: high-quality !important;
+  transform: translateZ(0) !important;
+  backface-visibility: hidden !important;
+}
+
+@media (max-width: 768px) {
+  .saas-hero-banner-wrapper {
+    min-height: 210px !important;
+    max-height: 230px !important;
+  }
+}

@@ -2106,13 +2106,13 @@ window.ProjectsView = {
             </div>
           </header>
 
-          <!-- HERO BANNER (Abarca toda la parte de arriba, luminoso y nitido) -->
-          <div class="saas-hero-banner-wrapper" style="position: relative; width: 100%; border-radius: 20px; overflow: hidden; margin-bottom: 1.6rem; box-shadow: 0 12px 35px rgba(2, 40, 100, 0.16); background: #071739;">
+          <!-- HERO BANNER (Abarca toda la parte de arriba, luminoso, panoramico con altura fija y proporcion exacta) -->
+          <div class="saas-hero-banner-wrapper" style="position: relative; width: 100%; aspect-ratio: 2090 / 422; min-height: 200px; max-height: 265px; border-radius: 20px; overflow: hidden; margin-bottom: 1.6rem; box-shadow: 0 12px 35px rgba(2, 40, 100, 0.16); background: #071739;">
             <img 
               id="mentix-projects-hero-banner-img"
               src="${this.getHeroBannerUrl()}" 
               alt="Tu ecosistema de aprendizaje estructurado - MENTIX" 
-              style="width: 100%; height: auto; display: block; object-fit: cover; filter: brightness(1.12) contrast(1.08) saturate(1.15); image-rendering: -webkit-optimize-contrast; image-rendering: high-quality; transform: translateZ(0); backface-visibility: hidden;" 
+              style="position: absolute; inset: 0; width: 100%; height: 100%; display: block; object-fit: cover; object-position: center; filter: brightness(1.12) contrast(1.08) saturate(1.15); image-rendering: -webkit-optimize-contrast; image-rendering: high-quality; transform: translateZ(0); backface-visibility: hidden;" 
             />
 
             <!-- BOTÓN FLOTANTE PARA CAMBIAR BANNER (DISPONIBLE PARA TODOS, IGUAL QUE EN UN PROYECTO) -->
