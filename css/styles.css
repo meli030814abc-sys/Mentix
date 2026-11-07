@@ -6951,3 +6951,324 @@ body[data-theme="light"] .hero-capsule-profile {
     max-height: 230px !important;
   }
 }
+
+
+/* ==========================================================================
+   SISTEMA UNIVERSAL DE BOTONES CÁPSULA GAMING 3D MENTIX
+   Aplica el diseño de cápsula tridimensional, reflejo de cristal (sheen),
+   rayas de velocidad (streaks) y bordes neón a todos los botones de Mentix.
+   ========================================================================== */
+
+/* 1. Forma universal de cápsula y posicionamiento */
+.btn,
+.mentix-hero-action-btn,
+.inno-btn,
+.inno-btn-cyan,
+.inno-btn-explore,
+.inno-btn-resources,
+.inno-btn-join,
+.inno-btn-review,
+.inno-btn-change-hero-bg,
+.mentix-change-main-banner-btn,
+.hero-cta-btn,
+.saas-cta-btn,
+.btn-card-details,
+.btn-card-review,
+.btn-card-edit,
+.btn-card-robot-banner,
+.creator-action-btn,
+.modal-footer button:not(.modal-close),
+.modal-actions button:not(.modal-close),
+.mentix-review-submit-btn,
+.join-modal-submit-btn {
+  position: relative !important;
+  overflow: hidden !important;
+  border-radius: 9999px !important;
+  font-family: 'Outfit', 'Poppins', system-ui, -apple-system, sans-serif !important;
+  font-weight: 800 !important;
+  letter-spacing: -0.01em !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.55rem !important;
+  box-sizing: border-box !important;
+  user-select: none !important;
+  cursor: pointer !important;
+  white-space: nowrap !important;
+  text-decoration: none !important;
+  transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.22s ease, filter 0.22s ease !important;
+}
+
+/* Efecto de pulsación física 3D en todos los botones */
+.btn:active,
+.mentix-hero-action-btn:active,
+.inno-btn:active,
+.inno-btn-cyan:active,
+.inno-btn-explore:active,
+.inno-btn-resources:active,
+.mentix-change-main-banner-btn:active,
+.hero-cta-btn:active,
+.creator-action-btn:active,
+.modal-footer button:active,
+.modal-actions button:active,
+.mentix-review-submit-btn:active {
+  transform: translateY(2px) scale(0.96) !important;
+}
+
+/* 2. Reflejo brillante de cristal superior (3D Glass Sheen) mediante ::before */
+.btn:not(.hero-capsule-btn):not(.game-answer-btn):not(.modal-close)::before,
+.mentix-hero-action-btn::before,
+.inno-btn::before,
+.inno-btn-cyan::before,
+.inno-btn-explore::before,
+.inno-btn-resources::before,
+.inno-btn-join::before,
+.inno-btn-review::before,
+.inno-btn-change-hero-bg::before,
+.mentix-change-main-banner-btn::before,
+.hero-cta-btn::before,
+.saas-cta-btn::before,
+.btn-card-details::before,
+.btn-card-review::before,
+.btn-card-edit::before,
+.btn-card-robot-banner::before,
+.creator-action-btn::before,
+.modal-footer button:not(.modal-close)::before,
+.modal-actions button:not(.modal-close)::before,
+.mentix-review-submit-btn::before,
+.join-modal-submit-btn::before {
+  content: "" !important;
+  position: absolute !important;
+  top: 2px !important;
+  left: 8px !important;
+  right: 8px !important;
+  height: 48% !important;
+  border-radius: 9999px 9999px 65% 65% / 9999px 9999px 100% 100% !important;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.75) 0%, rgba(255, 255, 255, 0.22) 60%, rgba(255, 255, 255, 0) 100%) !important;
+  pointer-events: none !important;
+  z-index: 1 !important;
+}
+
+/* 3. Rayas diagonales de velocidad a la derecha mediante ::after */
+.btn:not(.hero-capsule-btn):not(.game-answer-btn):not(.modal-close)::after,
+.mentix-hero-action-btn::after,
+.inno-btn::after,
+.inno-btn-cyan::after,
+.inno-btn-explore::after,
+.inno-btn-resources::after,
+.inno-btn-join::after,
+.inno-btn-review::after,
+.inno-btn-change-hero-bg::after,
+.mentix-change-main-banner-btn::after,
+.hero-cta-btn::after,
+.saas-cta-btn::after,
+.btn-card-details::after,
+.btn-card-review::after,
+.btn-card-edit::after,
+.btn-card-robot-banner::after,
+.creator-action-btn::after,
+.modal-footer button:not(.modal-close)::after,
+.modal-actions button:not(.modal-close)::after,
+.mentix-review-submit-btn::after,
+.join-modal-submit-btn::after {
+  content: "" !important;
+  position: absolute !important;
+  top: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  width: 44% !important;
+  background: repeating-linear-gradient(-55deg, transparent, transparent 8px, rgba(255, 255, 255, 0.11) 8px, rgba(255, 255, 255, 0.11) 15px) !important;
+  pointer-events: none !important;
+  z-index: 1 !important;
+}
+
+/* 4. Asegurar que textos, iconos y etiquetas siempre estén al frente */
+.btn > *,
+.mentix-hero-action-btn > *,
+.inno-btn > *,
+.inno-btn-cyan > *,
+.inno-btn-explore > *,
+.inno-btn-resources > *,
+.inno-btn-join > *,
+.inno-btn-review > *,
+.inno-btn-change-hero-bg > *,
+.mentix-change-main-banner-btn > *,
+.hero-cta-btn > *,
+.saas-cta-btn > *,
+.btn-card-details > *,
+.btn-card-review > *,
+.btn-card-edit > *,
+.creator-action-btn > *,
+.modal-footer button > *,
+.modal-actions button > *,
+.mentix-review-submit-btn > *,
+.join-modal-submit-btn > * {
+  position: relative !important;
+  z-index: 2 !important;
+}
+
+/* Evitar dobles brillos en botones que ya tienen estructura interna de cápsula */
+.hero-capsule-btn::before,
+.hero-capsule-btn::after {
+  display: none !important;
+}
+
+/* ==========================================================================
+   PALETAS DE COLOR ESPECÍFICAS PARA CADA TIPO DE BOTÓN (3D NEON GLOW)
+   ========================================================================== */
+
+/* A. BOTONES AZUL COBALTO (Acciones de unirse, salas, juegos, primarios azules) */
+.btn-blue,
+.btn-sala-normal,
+.btn-join,
+.inno-btn-join {
+  background: linear-gradient(180deg, #0d71ff 0%, #004cf0 55%, #002ec2 100%) !important;
+  border: 2px solid #00d4ff !important;
+  color: #ffffff !important;
+  box-shadow: 0 0 16px rgba(0, 212, 255, 0.65), 0 6px 20px rgba(0, 50, 220, 0.45), inset 0 2px 4px rgba(255, 255, 255, 0.8), inset 0 -3px 8px #0038ff !important;
+  text-shadow: 0 2px 4px rgba(0, 20, 80, 0.8) !important;
+}
+.btn-blue:hover,
+.btn-sala-normal:hover,
+.btn-join:hover,
+.inno-btn-join:hover {
+  transform: translateY(-2px) scale(1.03) !important;
+  box-shadow: 0 0 24px rgba(0, 212, 255, 0.85), 0 10px 28px rgba(0, 70, 255, 0.6), inset 0 2px 5px #ffffff, inset 0 -4px 10px #0044ff !important;
+}
+
+/* B. BOTONES CIAN TURQUESA NEÓN (Crear, explorar, tecnología, primarios cian) */
+.btn-cyan,
+.btn-outline-cyan,
+.inno-btn-cyan,
+.inno-btn-explore,
+.mentix-change-main-banner-btn,
+.inno-btn-change-hero-bg {
+  background: linear-gradient(180deg, #00d9e8 0%, #00abbc 55%, #007c8d 100%) !important;
+  border: 2px solid #00fff2 !important;
+  color: #ffffff !important;
+  box-shadow: 0 0 16px rgba(0, 255, 242, 0.65), 0 6px 20px rgba(0, 160, 180, 0.4), inset 0 2px 4px rgba(255, 255, 255, 0.8), inset 0 -3px 8px #008899 !important;
+  text-shadow: 0 2px 4px rgba(0, 50, 60, 0.8) !important;
+}
+.btn-cyan:hover,
+.btn-outline-cyan:hover,
+.inno-btn-cyan:hover,
+.inno-btn-explore:hover,
+.mentix-change-main-banner-btn:hover,
+.inno-btn-change-hero-bg:hover {
+  transform: translateY(-2px) scale(1.03) !important;
+  box-shadow: 0 0 24px rgba(0, 255, 242, 0.85), 0 10px 28px rgba(0, 190, 210, 0.6), inset 0 2px 5px #ffffff, inset 0 -4px 10px #0099aa !important;
+}
+
+/* C. BOTONES MAGENTA / FUCSIA (Acciones destacadas, retos, unirse con código) */
+.btn-primary:not(.btn-blue):not(.btn-cyan),
+.mentix-review-submit-btn,
+.join-modal-submit-btn {
+  background: linear-gradient(180deg, #f72585 0%, #d90466 55%, #9d0208 100%) !important;
+  border: 2px solid #ff4d94 !important;
+  color: #ffffff !important;
+  box-shadow: 0 0 16px rgba(255, 77, 148, 0.65), 0 6px 20px rgba(247, 37, 133, 0.4), inset 0 2px 4px rgba(255, 255, 255, 0.8), inset 0 -3px 8px #7209b7 !important;
+  text-shadow: 0 2px 4px rgba(80, 0, 40, 0.8) !important;
+}
+.btn-primary:not(.btn-blue):not(.btn-cyan):hover,
+.mentix-review-submit-btn:hover,
+.join-modal-submit-btn:hover {
+  transform: translateY(-2px) scale(1.03) !important;
+  box-shadow: 0 0 24px rgba(255, 77, 148, 0.85), 0 10px 28px rgba(247, 37, 133, 0.6), inset 0 2px 5px #ffffff, inset 0 -4px 10px #7209b7 !important;
+}
+
+/* D. BOTONES VERDE ESMERALDA NEÓN (Éxito, guardar, crear código docente) */
+.btn-success,
+.btn-green {
+  background: linear-gradient(180deg, #10b981 0%, #059669 55%, #047857 100%) !important;
+  border: 2px solid #34d399 !important;
+  color: #ffffff !important;
+  box-shadow: 0 0 16px rgba(52, 211, 153, 0.65), 0 6px 20px rgba(16, 185, 129, 0.4), inset 0 2px 4px rgba(255, 255, 255, 0.8), inset 0 -3px 8px #065f46 !important;
+  text-shadow: 0 2px 4px rgba(0, 50, 30, 0.8) !important;
+}
+.btn-success:hover,
+.btn-green:hover {
+  transform: translateY(-2px) scale(1.03) !important;
+  box-shadow: 0 0 24px rgba(52, 211, 153, 0.85), 0 10px 28px rgba(16, 185, 129, 0.6), inset 0 2px 5px #ffffff, inset 0 -4px 10px #065f46 !important;
+}
+
+/* E. BOTONES VIOLETA / PÚRPURA (Modos de juego, categorías, configuraciones) */
+.btn-purple,
+.btn-violet,
+.btn-host-mode {
+  background: linear-gradient(180deg, #a855f7 0%, #8b5cf6 55%, #6b21a8 100%) !important;
+  border: 2px solid #d8b4fe !important;
+  color: #ffffff !important;
+  box-shadow: 0 0 16px rgba(216, 180, 254, 0.65), 0 6px 20px rgba(139, 92, 246, 0.4), inset 0 2px 4px rgba(255, 255, 255, 0.8), inset 0 -3px 8px #581c87 !important;
+  text-shadow: 0 2px 4px rgba(40, 0, 70, 0.8) !important;
+}
+.btn-purple:hover,
+.btn-violet:hover,
+.btn-host-mode:hover {
+  transform: translateY(-2px) scale(1.03) !important;
+  box-shadow: 0 0 24px rgba(216, 180, 254, 0.85), 0 10px 28px rgba(139, 92, 246, 0.6), inset 0 2px 5px #ffffff, inset 0 -4px 10px #581c87 !important;
+}
+
+/* F. BOTONES DORADO / ÁMBAR (Premios, ranking, estrellas, modo VIP) */
+.btn-gold,
+.btn-warning,
+.btn-outline-gold,
+.btn-host-roster {
+  background: linear-gradient(180deg, #fbbf24 0%, #f59e0b 55%, #b45309 100%) !important;
+  border: 2px solid #fde047 !important;
+  color: #ffffff !important;
+  box-shadow: 0 0 16px rgba(253, 224, 71, 0.65), 0 6px 20px rgba(245, 158, 11, 0.4), inset 0 2px 4px rgba(255, 255, 255, 0.8), inset 0 -3px 8px #92400e !important;
+  text-shadow: 0 2px 4px rgba(90, 50, 0, 0.8) !important;
+}
+.btn-gold:hover,
+.btn-warning:hover,
+.btn-outline-gold:hover,
+.btn-host-roster:hover {
+  transform: translateY(-2px) scale(1.03) !important;
+  box-shadow: 0 0 24px rgba(253, 224, 71, 0.85), 0 10px 28px rgba(245, 158, 11, 0.6), inset 0 2px 5px #ffffff, inset 0 -4px 10px #92400e !important;
+}
+
+/* G. BOTONES ROJO / PELIGRO / CANCELAR */
+.btn-danger,
+.btn-danger-ghost {
+  background: linear-gradient(180deg, #ef4444 0%, #dc2626 55%, #991b1b 100%) !important;
+  border: 2px solid #f87171 !important;
+  color: #ffffff !important;
+  box-shadow: 0 0 16px rgba(248, 113, 113, 0.65), 0 6px 20px rgba(220, 38, 38, 0.4), inset 0 2px 4px rgba(255, 255, 255, 0.8), inset 0 -3px 8px #7f1d1d !important;
+  text-shadow: 0 2px 4px rgba(60, 0, 0, 0.8) !important;
+}
+.btn-danger:hover,
+.btn-danger-ghost:hover {
+  transform: translateY(-2px) scale(1.03) !important;
+  box-shadow: 0 0 24px rgba(248, 113, 113, 0.85), 0 10px 28px rgba(220, 38, 38, 0.6), inset 0 2px 5px #ffffff, inset 0 -4px 10px #7f1d1d !important;
+}
+
+/* H. BOTONES VIDRIO NEÓN / OUTLINE (Transparente oscuro con halo) */
+.btn-outline,
+.inno-btn-resources {
+  background: linear-gradient(180deg, rgba(15, 30, 60, 0.85) 0%, rgba(8, 18, 38, 0.95) 100%) !important;
+  border: 2px solid #38bdf8 !important;
+  color: #ffffff !important;
+  box-shadow: 0 0 16px rgba(56, 189, 248, 0.45), 0 6px 18px rgba(0, 0, 0, 0.4), inset 0 2px 4px rgba(255, 255, 255, 0.35) !important;
+}
+.btn-outline:hover,
+.inno-btn-resources:hover {
+  transform: translateY(-2px) scale(1.03) !important;
+  border-color: #00f5d4 !important;
+  box-shadow: 0 0 24px rgba(0, 245, 212, 0.65), 0 8px 25px rgba(0, 0, 0, 0.5) !important;
+  color: #00f5d4 !important;
+}
+
+/* I. MODO CLARO: CÁPSULA PERLADA DE ALTO CONTRASTE (Igual a 'Mi Perfil') */
+body.light-theme .btn-outline,
+body[data-theme="light"] .btn-outline {
+  background: linear-gradient(180deg, #ffffff 0%, #f4f8fe 55%, #e2ebf8 100%) !important;
+  border: 2px solid #38bdf8 !important;
+  color: #071739 !important;
+  box-shadow: 0 0 14px rgba(56, 189, 248, 0.45), 0 6px 18px rgba(100, 116, 139, 0.18), inset 0 2px 4px #ffffff, inset 0 -3px 8px rgba(217, 70, 239, 0.25) !important;
+  text-shadow: none !important;
+}
+body.light-theme .btn-outline:hover,
+body[data-theme="light"] .btn-outline:hover {
+  transform: translateY(-2px) scale(1.03) !important;
+  box-shadow: 0 0 20px rgba(56, 189, 248, 0.65), 0 8px 22px rgba(15, 23, 42, 0.22) !important;
+}
