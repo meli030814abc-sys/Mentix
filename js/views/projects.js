@@ -1720,6 +1720,10 @@ window.ProjectsView = {
     }
     const canHubEdit = !!(window.ProjectHub && window.ProjectHub.canEdit(c));
 
+    const hubAction = window.ProjectHub ? `window.ProjectHub.open('${c.id}')` : `window.ProjectsView.openProjectLanding('${c.id}')`;
+    const landingAction = `window.ProjectsView.openProjectLanding('${c.id}')`;
+    const shareAction = `window.ProjectsView.shareProject('${c.id}', '${this.escapeHtml(c.title || '')}')`;
+
     const dateStr = c.date || (c.createdAt ? new Date(c.createdAt).toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' }) : '12 Abr 2025');
     const studentsCount = (c.students !== undefined && c.students !== null) ? c.students : (c.playsCount || 0);
     const ratingStr = c.rating || '5.0';
@@ -1813,30 +1817,45 @@ window.ProjectsView = {
             <span style="display: inline-flex; align-items: center; gap: 0.25rem; color: #eab308;">⭐ ${ratingStr}</span>
           </div>
 
-          <!-- Action Buttons Row -->
-          <div class="saas-card-actions" style="display: flex; align-items: center; gap: 0.45rem; margin-top: auto;">
+          <!-- Action Buttons Row: Ver Detalles, Ver Landing Page, Compartir, y Autorizar (Admin) -->
+          <div class="saas-card-actions" style="display: flex; align-items: center; gap: 0.35rem; margin-top: auto; flex-wrap: wrap;">
             <button 
               class="saas-card-btn-secondary"
-              onclick="event.stopPropagation(); ${primaryAction}" 
-              style="${btnLeftStyle} border-radius: 10px; padding: 0.52rem 0.5rem; font-size: 0.76rem; font-weight: 700; cursor: pointer; flex: 1 1 0; min-width: 0; display: inline-flex; align-items: center; justify-content: center; gap: 0.2rem; transition: all 0.2s ease; white-space: nowrap;"
+              onclick="event.stopPropagation(); ${hubAction}" 
+              style="background: #ffffff; color: #0f172a; border: 1.5px solid #cbd5e1; border-radius: 10px; padding: 0.48rem 0.55rem; font-size: 0.74rem; font-weight: 700; cursor: pointer; flex: 1 1 auto; min-width: 82px; display: inline-flex; align-items: center; justify-content: center; gap: 0.2rem; transition: all 0.2s ease; white-space: nowrap;"
+              title="Ver detalles y panel del proyecto"
             >
-              ${primaryText}
+              Ver Detalles →
             </button>
+
+            <button 
+              class="saas-card-btn-landing"
+              onclick="event.stopPropagation(); ${landingAction}" 
+              style="background: #f0fdf4; color: #047857; border: 1.5px solid #86efac; border-radius: 10px; padding: 0.48rem 0.55rem; font-size: 0.74rem; font-weight: 800; cursor: pointer; flex: 1 1 auto; min-width: 95px; display: inline-flex; align-items: center; justify-content: center; gap: 0.25rem; transition: all 0.2s ease; white-space: nowrap; box-shadow: 0 1px 3px rgba(16, 185, 129, 0.12);"
+              title="Abrir Landing Page pública de este proyecto"
+            >
+              <span>🌐</span>
+              <span>Ver Landing</span>
+            </button>
+
             ${isAdmin ? `<button 
               class="saas-card-btn-authorize ${isApproved ? 'approved' : ''}"
               onclick="event.stopPropagation(); window.ProjectsView.toggleAuthorizeProject('${c.id}')"
-              style="${isApproved ? 'background:#f0fdf4; color:#15803d; border:1.5px solid #86efac;' : 'background:linear-gradient(135deg, #10b981 0%, #059669 100%); color:#ffffff; border:none; box-shadow: 0 2px 8px rgba(16, 185, 129, 0.32);'} border-radius: 10px; padding: 0.52rem 0.5rem; font-size: 0.76rem; font-weight: 800; cursor: pointer; flex: 1 1 0; min-width: 0; display: inline-flex; align-items: center; justify-content: center; gap: 0.2rem; transition: all 0.2s ease; white-space: nowrap;"
+              style="${isApproved ? 'background:#eff6ff; color:#1d4ed8; border:1.5px solid #93c5fd;' : 'background:linear-gradient(135deg, #10b981 0%, #059669 100%); color:#ffffff; border:none; box-shadow: 0 2px 8px rgba(16, 185, 129, 0.32);'} border-radius: 10px; padding: 0.48rem 0.5rem; font-size: 0.74rem; font-weight: 800; cursor: pointer; flex: 1 1 auto; min-width: 78px; display: inline-flex; align-items: center; justify-content: center; gap: 0.2rem; transition: all 0.2s ease; white-space: nowrap;"
               title="${isApproved ? 'Proyecto ya autorizado (clic para revocar)' : 'Autorizar y publicar este proyecto'}"
             >
               <span>${isApproved ? '✔' : '✅'}</span>
               <span>${isApproved ? 'Autorizado' : 'Autorizar'}</span>
             </button>` : ''}
+
             <button 
               class="saas-card-btn-primary"
-              onclick="event.stopPropagation(); ${secondaryAction}" 
-              style="${btnRightStyle} border-radius: 10px; padding: 0.52rem 0.5rem; font-size: 0.76rem; font-weight: 700; cursor: pointer; flex: 1 1 0; min-width: 0; display: inline-flex; align-items: center; justify-content: center; gap: 0.2rem; transition: all 0.2s ease; white-space: nowrap;"
+              onclick="event.stopPropagation(); ${shareAction}" 
+              style="background: #0047cc; color: #ffffff; border: none; box-shadow: 0 2px 8px rgba(0, 71, 204, 0.25); border-radius: 10px; padding: 0.48rem 0.55rem; font-size: 0.74rem; font-weight: 700; cursor: pointer; flex: 1 1 auto; min-width: 75px; display: inline-flex; align-items: center; justify-content: center; gap: 0.25rem; transition: all 0.2s ease; white-space: nowrap;"
+              title="Compartir este proyecto"
             >
-              ${secondaryText}
+              <span>Compartir</span>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-left:2px;"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
             </button>
           </div>
         </div>

@@ -397,8 +397,9 @@ window.ProjectHub = {
     return `
       <div class="phub-top-actions">
         ${edit ? `<button type="button" class="phub-top-act-btn" onclick="window.ProjectHub.editProject('${id}')"><span class="act-ico">✏️</span> <span>Editar proyecto</span></button>` : ''}
+        <button type="button" class="phub-top-act-btn" onclick="window.ProjectHub.openLanding('${id}')"><span class="act-ico">🌐</span> <span>Ver landing page</span></button>
         <button type="button" class="phub-top-act-btn" onclick="window.ProjectHub.share('${id}')"><span class="act-ico">🔗</span> <span>Compartir</span></button>
-        <button type="button" class="phub-top-act-btn active" onclick="window.ProjectHub.openLanding('${id}')"><span class="act-ico">👁️</span> <span>Ver detalles</span></button>
+        <button type="button" class="phub-top-act-btn active" onclick="document.querySelector('.phub-detail-grid')?.scrollIntoView({behavior:'smooth'})"><span class="act-ico">👁️</span> <span>Ver detalles</span></button>
       </div>`;
   },
 
