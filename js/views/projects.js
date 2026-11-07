@@ -100,6 +100,7 @@ window.ProjectsView = {
     localStorage.setItem('mentix_projects_hero_banner', cleanUrl);
     localStorage.setItem('te_reto_projects_hero_banner', cleanUrl);
     localStorage.setItem('te_reto_hero_banner', cleanUrl);
+    localStorage.setItem('mentix_admin_hero_banner', cleanUrl);
 
     if (!window.appState) window.appState = {};
     window.appState.projectsHeroBanner = cleanUrl;
@@ -121,7 +122,26 @@ window.ProjectsView = {
       saveGlobalState(window.appState);
     }
 
+    // 1. Notificar por la API serverless (/api/challenges) para persistir en GitHub y Vercel
     try {
+      const apiBase = (window.appRouter && typeof window.appRouter.getApiBase === 'function') ? window.appRouter.getApiBase() : '';
+      fetch(`${apiBase}/api/challenges`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type: 'GLOBAL_HERO_BANNER', target: 'hero', bannerUrl: cleanUrl })
+      }).catch(() => {});
+    } catch(e) {}
+
+    // 2. Transmisión mundial en tiempo real vía MQTT con retain: true
+    if (window.realtimeEngine && typeof window.realtimeEngine.publishGlobalBanner === 'function') {
+      try {
+        window.realtimeEngine.publishGlobalBanner({ target: 'hero', bannerUrl: cleanUrl });
+      } catch (e) {}
+    }
+
+    // 3. Transmisión local entre pestañas y ventanas
+    try {
+      localStorage.setItem('mentix_project_banner_sync', JSON.stringify({ target: 'hero', bannerUrl: cleanUrl, t: Date.now() }));
       window.dispatchEvent(new CustomEvent('mentix:hero-banner-changed', { detail: { bannerUrl: cleanUrl } }));
     } catch (e) {}
 
@@ -139,21 +159,166 @@ window.ProjectsView = {
     }
     proj.banner = cleanUrl;
     proj.heroBanner = cleanUrl;
+    proj.coverImage = cleanUrl;
     proj.mainImage = cleanUrl;
     proj.thumbnailImage = cleanUrl;
     proj.image = cleanUrl;
+    proj.updatedAt = new Date().toISOString();
     if (proj.govdata) {
       proj.govdata.banner = cleanUrl;
       proj.govdata.heroBanner = cleanUrl;
       proj.govdata.mainImage = cleanUrl;
       proj.govdata.thumbnailImage = cleanUrl;
     }
+    if (!proj.designConfig) proj.designConfig = {};
+    proj.designConfig.bannerUrl = cleanUrl;
+    if (!proj.landingConfig) proj.landingConfig = {};
+    proj.landingConfig.heroBanner = cleanUrl;
+
     try { localStorage.setItem('mentix_hero_banner_' + projectId, cleanUrl); } catch (e) {}
     if (typeof saveGlobalState === 'function') saveGlobalState(window.appState);
+
+    // Sincronización en la nube con Supabase y servidor
     if (window.appRouter && typeof window.appRouter.pushChallengeToCloud === 'function') {
       try { window.appRouter.pushChallengeToCloud(proj); } catch (e) {}
     }
+    if (window.supabaseService && typeof window.supabaseService.saveChallengeToSupabase === 'function') {
+      try { window.supabaseService.saveChallengeToSupabase(proj); } catch (e) {}
+    }
+
+    // Publicación mundial en tiempo real por MQTT Backbone
+    if (window.realtimeEngine && typeof window.realtimeEngine.publishGlobalBanner === 'function') {
+      try {
+        window.realtimeEngine.publishGlobalBanner({ target: 'project', projId: projectId, bannerUrl: cleanUrl });
+      } catch (e) {}
+    }
+
+    // Actualizar mentix_active_landing_project si corresponde
+    try {
+      const activeRaw = localStorage.getItem('mentix_active_landing_project');
+      if (activeRaw) {
+        const act = JSON.parse(activeRaw);
+        if (act && String(act.id) === String(projectId)) {
+          act.banner = cleanUrl;
+          act.heroBanner = cleanUrl;
+          act.coverImage = cleanUrl;
+          if (!act.govdata) act.govdata = {};
+          act.govdata.banner = cleanUrl;
+          act.govdata.heroBanner = cleanUrl;
+          if (!act.designConfig) act.designConfig = {};
+          act.designConfig.bannerUrl = cleanUrl;
+          localStorage.setItem('mentix_active_landing_project', JSON.stringify(act));
+        }
+      }
+    } catch (e) {}
+
+    try {
+      localStorage.setItem('mentix_project_banner_sync', JSON.stringify({ target: 'project', projId: projectId, bannerUrl: cleanUrl, t: Date.now() }));
+      window.dispatchEvent(new CustomEvent('mentix:project-banner-changed', { detail: { projId: projectId, bannerUrl: cleanUrl } }));
+    } catch (e) {}
+
     return true;
+  },
+
+  applyGlobalBannerUpdate(data) {
+    if (!data) return;
+    const target = data.target || (data.projId ? 'project' : 'hero');
+    const bannerUrl = (data.bannerUrl || '').trim();
+    if (!bannerUrl) return;
+
+    if (target === 'hero') {
+      // 1. Guardar en storage local del usuario
+      localStorage.setItem('mentix_projects_hero_banner', bannerUrl);
+      localStorage.setItem('te_reto_projects_hero_banner', bannerUrl);
+      localStorage.setItem('te_reto_hero_banner', bannerUrl);
+      localStorage.setItem('mentix_admin_hero_banner', bannerUrl);
+      if (!window.appState) window.appState = {};
+      window.appState.projectsHeroBanner = bannerUrl;
+      if (Array.isArray(window.appState.challenges)) {
+        window.appState.challenges.forEach(c => {
+          if (c) {
+            c._globalHeroBanner = bannerUrl;
+            c.globalHeroBanner = bannerUrl;
+          }
+        });
+      }
+
+      // 2. Si el hero banner de proyectos está en pantalla, actualizarlo inmediatamente con animación suave
+      const heroImg = document.getElementById('mentix-projects-hero-banner-img');
+      if (heroImg && heroImg.src !== bannerUrl) {
+        heroImg.style.transition = 'opacity 0.3s ease';
+        heroImg.style.opacity = '0.5';
+        heroImg.src = bannerUrl;
+        heroImg.onload = () => { heroImg.style.opacity = '1'; };
+      }
+      try {
+        window.dispatchEvent(new CustomEvent('mentix:hero-banner-changed', { detail: { bannerUrl } }));
+      } catch (e) {}
+    } else if (target === 'project') {
+      const projId = data.projId;
+      if (!projId) return;
+
+      // 1. Guardar en storage local
+      try { localStorage.setItem('mentix_hero_banner_' + projId, bannerUrl); } catch (e) {}
+
+      // 2. Actualizar en window.appState.challenges
+      if (window.appState && Array.isArray(window.appState.challenges)) {
+        const p = window.appState.challenges.find(c => c && String(c.id) === String(projId));
+        if (p) {
+          p.banner = bannerUrl;
+          p.heroBanner = bannerUrl;
+          p.mainImage = bannerUrl;
+          p.thumbnailImage = bannerUrl;
+          p.image = bannerUrl;
+          p.coverImage = bannerUrl;
+          if (!p.govdata) p.govdata = {};
+          p.govdata.banner = bannerUrl;
+          p.govdata.heroBanner = bannerUrl;
+          if (!p.designConfig) p.designConfig = {};
+          p.designConfig.bannerUrl = bannerUrl;
+        }
+      }
+
+      // 3. Actualizar tarjeta en la cuadrícula si está visible en pantalla
+      const cardImgs = document.querySelectorAll(`.saas-project-card[data-id="${projId}"] img.saas-card-banner-img`);
+      cardImgs.forEach(img => {
+        img.style.transition = 'opacity 0.3s ease';
+        img.style.opacity = '0.6';
+        img.src = bannerUrl;
+        img.onload = () => { img.style.opacity = '1'; };
+      });
+
+      // 4. Si el usuario está viendo la landing page de este proyecto en vivo, actualizar el fondo del hero
+      if (this.selectedProjectId === projId) {
+        const heroSec = document.getElementById('inno-sec-hero');
+        if (heroSec) {
+          heroSec.style.setProperty('background-image', `linear-gradient(to right, rgba(5, 14, 30, 0.75) 0%, rgba(5, 14, 30, 0.40) 42%, rgba(5, 14, 30, 0.08) 75%, transparent 100%), url('${bannerUrl}')`, 'important');
+        }
+      }
+
+      // 5. Actualizar mentix_active_landing_project si corresponde
+      try {
+        const raw = localStorage.getItem('mentix_active_landing_project');
+        if (raw) {
+          const act = JSON.parse(raw);
+          if (act && String(act.id) === String(projId)) {
+            act.banner = bannerUrl;
+            act.heroBanner = bannerUrl;
+            act.coverImage = bannerUrl;
+            if (!act.govdata) act.govdata = {};
+            act.govdata.banner = bannerUrl;
+            act.govdata.heroBanner = bannerUrl;
+            if (!act.designConfig) act.designConfig = {};
+            act.designConfig.bannerUrl = bannerUrl;
+            localStorage.setItem('mentix_active_landing_project', JSON.stringify(act));
+          }
+        }
+      } catch (e) {}
+
+      try {
+        window.dispatchEvent(new CustomEvent('mentix:project-banner-changed', { detail: { projId, bannerUrl } }));
+      } catch (e) {}
+    }
   },
 
   promptAdminAccess() {
@@ -658,12 +823,27 @@ window.ProjectsView = {
         console.warn('Error sincronizando banner de proyecto con la nube:', err);
       }
     }
+    if (proj && window.supabaseService && typeof window.supabaseService.saveChallengeToSupabase === 'function') {
+      try { window.supabaseService.saveChallengeToSupabase(proj); } catch (e) {}
+    }
+
+    // Publicación mundial en tiempo real por MQTT Backbone
+    if (window.realtimeEngine && typeof window.realtimeEngine.publishGlobalBanner === 'function') {
+      try {
+        window.realtimeEngine.publishGlobalBanner({ target: 'project', projId, bannerUrl: cleanUrl });
+      } catch (e) {}
+    }
 
     // Transmisión inmediata entre pestañas y ventanas
     try {
       localStorage.setItem('mentix_project_banner_sync', JSON.stringify({ projId, bannerUrl: cleanUrl, t: Date.now() }));
       window.dispatchEvent(new CustomEvent('mentix:project-banner-changed', { detail: { projId, bannerUrl: cleanUrl } }));
     } catch (e) {}
+
+    // Actualizar visualmente la tarjeta de inmediato si existe en el DOM
+    if (typeof this.applyGlobalBannerUpdate === 'function') {
+      this.applyGlobalBannerUpdate({ target: 'project', projId, bannerUrl: cleanUrl });
+    }
 
     return true;
   },
@@ -2580,8 +2760,13 @@ window.ProjectsView = {
       ? 'background: #ffffff; color: #0f172a; border: 1.5px solid #cbd5e1;'
       : 'background: #0047cc; color: #ffffff; border: none; box-shadow: 0 2px 8px rgba(0, 71, 204, 0.25);';
 
+    const projectOverrideBanner = (typeof this.getProjectHeroBanner === 'function') ? this.getProjectHeroBanner(c.id, c) : null;
+    if (projectOverrideBanner) {
+      defaultBanner = projectOverrideBanner;
+    }
+
     return `
-      <div class="saas-project-card animate-fade-in" onclick="${cardClickAction}" style="border-radius: 16px; background: #ffffff; border: 1.5px solid #e2e8f0; overflow: hidden; box-shadow: 0 4px 18px rgba(0,0,0,0.04); display: flex; flex-direction: column; cursor: pointer; transition: transform 0.2s ease, box-shadow 0.2s ease; position: relative;">
+      <div class="saas-project-card animate-fade-in" data-id="${c.id}" onclick="${cardClickAction}" style="border-radius: 16px; background: #ffffff; border: 1.5px solid #e2e8f0; overflow: hidden; box-shadow: 0 4px 18px rgba(0,0,0,0.04); display: flex; flex-direction: column; cursor: pointer; transition: transform 0.2s ease, box-shadow 0.2s ease; position: relative;">
         
         <!-- Banner Image Wrapper (Fixed 135px height with object-fit cover) -->
         <div class="saas-card-banner-wrap" style="position: relative; width: 100%; height: 135px; min-height: 135px; max-height: 135px; overflow: hidden; background: #0f172a;">

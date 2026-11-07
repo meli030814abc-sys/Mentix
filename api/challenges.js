@@ -157,6 +157,58 @@ export default async function handler(req, res) {
   if (req.method === 'POST') {
     try {
       const body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
+
+      // A. Soporte para actualización y persistencia mundial del banner principal (Hero de Proyectos)
+      if (body && (body.type === 'GLOBAL_HERO_BANNER' || body.target === 'hero') && body.bannerUrl) {
+        const cleanBanner = String(body.bannerUrl).trim();
+        let currentChallenges = [];
+        let currentSha = null;
+        const headers = { 'Accept': 'application/vnd.github.v3+json', 'User-Agent': 'Mentix-App' };
+        if (GITHUB_TOKEN) headers['Authorization'] = `Bearer ${GITHUB_TOKEN}`;
+        let savedInGitHub = false;
+
+        for (let attempt = 0; attempt < 3 && !savedInGitHub; attempt++) {
+          try {
+            const ghGet = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/contents/${FILE_PATH}?ref=main`, { headers, cache: 'no-store' });
+            if (ghGet.ok) {
+              const ghData = await ghGet.json();
+              currentSha = ghData.sha;
+              let contentStr = '';
+              if (ghData.content) contentStr = Buffer.from(ghData.content, 'base64').toString('utf8');
+              else if (ghData.download_url) {
+                const rawRes = await fetch(ghData.download_url, { cache: 'no-store' });
+                if (rawRes.ok) contentStr = await rawRes.text();
+              }
+              if (contentStr) currentChallenges = JSON.parse(contentStr);
+            }
+          } catch (err) {}
+          if (!Array.isArray(currentChallenges)) currentChallenges = [];
+          currentChallenges.forEach(c => {
+            if (c) c._globalHeroBanner = cleanBanner;
+          });
+          if (GITHUB_TOKEN) {
+            const updatedBuffer = Buffer.from(JSON.stringify(currentChallenges, null, 2), 'utf8').toString('base64');
+            const putPayload = {
+              message: `chore(data): actualizar banner principal global [skip ci]`,
+              content: updatedBuffer,
+              branch: 'main'
+            };
+            if (currentSha) putPayload.sha = currentSha;
+            const ghPut = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/contents/${FILE_PATH}`, {
+              method: 'PUT',
+              headers: { ...headers, 'Content-Type': 'application/json' },
+              body: JSON.stringify(putPayload)
+            });
+            if (ghPut.ok) { savedInGitHub = true; break; }
+            await new Promise(r => setTimeout(r, 600));
+          } else {
+            break;
+          }
+        }
+        inMemoryChallenges = currentChallenges;
+        return res.status(200).json({ success: true, target: 'hero', bannerUrl: cleanBanner, persisted: savedInGitHub });
+      }
+
       const challenge = body.challenge || body;
 
       if (!challenge || !challenge.id || !challenge.title) {
@@ -241,6 +293,9 @@ export default async function handler(req, res) {
           currentChallenges[existingIdx] = { ...currentChallenges[existingIdx], ...challenge };
         } else {
           currentChallenges.unshift(challenge);
+        }
+        if (challenge._globalHeroBanner) {
+          currentChallenges.forEach(c => { if (c) c._globalHeroBanner = challenge._globalHeroBanner; });
         }
 
         if (GITHUB_TOKEN) {

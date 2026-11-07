@@ -4394,16 +4394,20 @@ window.AdminView = {
   // ==========================================
 
   setRobotBannerPreset(bannerPath) {
-    localStorage.setItem('mentix_admin_hero_banner', bannerPath);
-    localStorage.setItem('mentix_projects_hero_banner', bannerPath);
-    if (window.appState) {
-      window.appState.projectsHeroBanner = bannerPath;
+    if (window.ProjectsView && typeof window.ProjectsView.setHeroBannerUrl === 'function') {
+      window.ProjectsView.setHeroBannerUrl(bannerPath);
+    } else {
+      localStorage.setItem('mentix_admin_hero_banner', bannerPath);
+      localStorage.setItem('mentix_projects_hero_banner', bannerPath);
+      if (window.appState) window.appState.projectsHeroBanner = bannerPath;
     }
     const img = document.getElementById('admin-banner-preview-img');
     if (img) img.src = bannerPath;
+    const heroImg = document.getElementById('mentix-admin-projects-hero-banner-img');
+    if (heroImg) heroImg.src = bannerPath;
 
     this.logAuditEvent(`Banner de proyectos actualizado a preset: ${bannerPath}`, 'Diseño');
-    this.showToast('Banner del robot actualizado para toda la plataforma', 'success');
+    this.showToast('Banner del robot actualizado y sincronizado globalmente para todos', 'success');
   },
 
   handleCustomBannerUpload(e) {
@@ -4413,18 +4417,38 @@ window.AdminView = {
     const reader = new FileReader();
     reader.onload = (evt) => {
       const dataUrl = evt.target.result;
-      localStorage.setItem('mentix_admin_hero_banner', dataUrl);
-      localStorage.setItem('mentix_projects_hero_banner', dataUrl);
-      if (window.appState) {
-        window.appState.projectsHeroBanner = dataUrl;
+      if (window.ProjectsView && typeof window.ProjectsView.setHeroBannerUrl === 'function') {
+        window.ProjectsView.setHeroBannerUrl(dataUrl);
+      } else {
+        localStorage.setItem('mentix_admin_hero_banner', dataUrl);
+        localStorage.setItem('mentix_projects_hero_banner', dataUrl);
+        if (window.appState) window.appState.projectsHeroBanner = dataUrl;
       }
       const img = document.getElementById('admin-banner-preview-img');
       if (img) img.src = dataUrl;
+      const heroImg = document.getElementById('mentix-admin-projects-hero-banner-img');
+      if (heroImg) heroImg.src = dataUrl;
 
       this.logAuditEvent('Banner personalizado de robot subido por el administrador', 'Diseño');
-      this.showToast('Banner personalizado guardado y activado globalmente', 'success');
+      this.showToast('Banner personalizado guardado y activado globalmente para todos', 'success');
     };
     reader.readAsDataURL(file);
+  },
+
+  applyGlobalBannerUpdate(data) {
+    if (!data) return;
+    const target = data.target || (data.projId ? 'project' : 'hero');
+    const bannerUrl = (data.bannerUrl || '').trim();
+    if (!bannerUrl) return;
+
+    if (target === 'hero') {
+      localStorage.setItem('mentix_admin_hero_banner', bannerUrl);
+      localStorage.setItem('mentix_projects_hero_banner', bannerUrl);
+      const img = document.getElementById('admin-banner-preview-img');
+      if (img) img.src = bannerUrl;
+      const heroImg = document.getElementById('mentix-admin-projects-hero-banner-img');
+      if (heroImg) heroImg.src = bannerUrl;
+    }
   },
 
   getSavedDesign() {

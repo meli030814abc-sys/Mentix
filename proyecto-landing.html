@@ -8,9 +8,11 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="css/styles.css?v=20261107_open_project_fix_v65" />
-  <link rel="stylesheet" href="css/project-landing.css?v=20261107_open_project_fix_v65" />
-  <link rel="stylesheet" href="css/project-hub.css?v=20261107_open_project_fix_v65" />
+  <link rel="stylesheet" href="css/styles.css?v=20261107_global_banners_v66" />
+  <link rel="stylesheet" href="css/project-landing.css?v=20261107_global_banners_v66" />
+  <link rel="stylesheet" href="css/project-hub.css?v=20261107_global_banners_v66" />
+  <!-- MQTT Realtime Backbone Client -->
+  <script src="https://cdn.jsdelivr.net/npm/mqtt@5.10.4/dist/mqtt.min.js"></script>
   <style>
     html {
       scroll-behavior: smooth;
@@ -2394,22 +2396,72 @@
 
     hydrateFromActiveProject();
 
-    // Sincronización en vivo entre pestañas y dispositivos
+    function updateLandingHeroBackground(newBannerUrl) {
+      if (!newBannerUrl) return;
+      const cleanUrl = String(newBannerUrl).trim();
+      const heroSec = document.getElementById('inno-sec-hero');
+      if (heroSec) {
+        heroSec.style.backgroundImage = `linear-gradient(to right, rgba(5, 14, 30, 0.75) 0%, rgba(5, 14, 30, 0.40) 42%, rgba(5, 14, 30, 0.08) 75%, transparent 100%), url('${cleanUrl}')`;
+        heroSec.style.backgroundSize = 'cover';
+        heroSec.style.backgroundPosition = 'center';
+      }
+    }
+
+    // Sincronización en vivo entre pestañas y ventanas locales
     window.addEventListener('storage', (ev) => {
       if (ev.key === 'mentix_project_banner_sync' && ev.newValue) {
         try {
           const sync = JSON.parse(ev.newValue);
           if (sync && sync.bannerUrl) {
-            const heroSec = document.getElementById('inno-sec-hero');
-            if (heroSec) {
-              heroSec.style.backgroundImage = `linear-gradient(to right, rgba(5, 14, 30, 0.75) 0%, rgba(5, 14, 30, 0.40) 42%, rgba(5, 14, 30, 0.08) 75%, transparent 100%), url('${sync.bannerUrl}')`;
-              heroSec.style.backgroundSize = 'cover';
-              heroSec.style.backgroundPosition = 'center';
+            if (!sync.projId || !currentActiveProject || String(currentActiveProject.id) === String(sync.projId)) {
+              updateLandingHeroBackground(sync.bannerUrl);
             }
           }
         } catch (e) {}
       }
     });
+
+    try {
+      const liveBus = new BroadcastChannel('te_reto_realtime_bus');
+      liveBus.onmessage = (event) => {
+        const msg = event?.data;
+        if (!msg) return;
+        if ((msg.type === 'GLOBAL_BANNER_UPDATED' || msg.type === 'MENTIX_BANNER_SYNC') && msg.bannerUrl) {
+          if (!msg.projId || !currentActiveProject || String(currentActiveProject.id) === String(msg.projId)) {
+            updateLandingHeroBackground(msg.bannerUrl);
+          }
+        }
+      };
+    } catch (e) {}
+
+    // Conexión MQTT en vivo a nivel mundial: Broker EMQX
+    if (typeof mqtt !== 'undefined') {
+      try {
+        const mqttClient = mqtt.connect('wss://broker.emqx.io:8084/mqtt', {
+          clientId: 'mentix_land_' + Math.random().toString(16).substring(2, 10),
+          clean: true,
+          connectTimeout: 5000,
+          reconnectPeriod: 6000
+        });
+        mqttClient.on('connect', () => {
+          mqttClient.subscribe('mentix/global/banners', { qos: 0 });
+        });
+        mqttClient.on('message', (topic, payload) => {
+          if (topic === 'mentix/global/banners') {
+            try {
+              const data = JSON.parse(payload.toString());
+              if (data && data.bannerUrl) {
+                if (!data.projId || !currentActiveProject || String(currentActiveProject.id) === String(data.projId)) {
+                  updateLandingHeroBackground(data.bannerUrl);
+                }
+              }
+            } catch (err) {}
+          }
+        });
+      } catch (err) {
+        console.warn('MQTT landing sync notice:', err);
+      }
+    }
   </script>
 </body>
 </html>

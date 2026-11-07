@@ -223,6 +223,7 @@ class RealtimeEngine {
 
       client.on('connect', () => {
         client.subscribe('mentix/global/design', { qos: 0 });
+        client.subscribe('mentix/global/banners', { qos: 0 });
       });
 
       client.on('message', (topic, messageBuffer) => {
@@ -239,11 +240,46 @@ class RealtimeEngine {
               }
             }
           } catch(e) {}
+        } else if (topic === 'mentix/global/banners') {
+          try {
+            const data = JSON.parse(messageBuffer.toString());
+            if (data) {
+              if (window.ProjectsView && typeof window.ProjectsView.applyGlobalBannerUpdate === 'function') {
+                window.ProjectsView.applyGlobalBannerUpdate(data);
+              }
+              if (window.AdminView && typeof window.AdminView.applyGlobalBannerUpdate === 'function') {
+                window.AdminView.applyGlobalBannerUpdate(data);
+              }
+            }
+          } catch(e) {}
         }
       });
     } catch(e) {
       console.warn('Aviso global MQTT:', e);
     }
+  }
+
+  publishGlobalBanner(bannerData) {
+    if (!bannerData) return;
+    const payload = JSON.stringify({
+      type: 'GLOBAL_BANNER_UPDATED',
+      ...bannerData,
+      timestamp: Date.now()
+    });
+    if (this.globalMqttClient && this.globalMqttClient.connected) {
+      try {
+        this.globalMqttClient.publish('mentix/global/banners', payload, { qos: 0, retain: true });
+      } catch(e) {}
+    }
+    if (this.mqttClient && this.mqttClient.connected) {
+      try {
+        this.mqttClient.publish('mentix/global/banners', payload, { qos: 0, retain: true });
+      } catch(e) {}
+    }
+    this.broadcast({ type: 'GLOBAL_BANNER_UPDATED', ...bannerData });
+    try {
+      localStorage.setItem('mentix_project_banner_sync', JSON.stringify({ ...bannerData, t: Date.now() }));
+    } catch(e) {}
   }
 
   publishGlobalDesign(design) {
@@ -624,6 +660,16 @@ class RealtimeEngine {
     if (msg.room && msg.room.design && window.AdminView) {
       window.AdminView.applyDesign(msg.room.design);
       try { localStorage.setItem('mentix_admin_design', JSON.stringify(msg.room.design)); } catch(e) {}
+    }
+
+    // Sincronizar automáticamente banners de proyectos o banner principal global en tiempo real
+    if (msg.type === 'GLOBAL_BANNER_UPDATED' || msg.type === 'MENTIX_BANNER_SYNC') {
+      if (window.ProjectsView && typeof window.ProjectsView.applyGlobalBannerUpdate === 'function') {
+        window.ProjectsView.applyGlobalBannerUpdate(msg);
+      }
+      if (window.AdminView && typeof window.AdminView.applyGlobalBannerUpdate === 'function') {
+        window.AdminView.applyGlobalBannerUpdate(msg);
+      }
     }
 
     if (msg.type === 'ROOM_CLOSED') {
