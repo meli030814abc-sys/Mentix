@@ -8204,19 +8204,45 @@ body.light-theme .inno-hero-desc {
 .plp-wrapper[data-theme="light"] .inno-btn-explore,
 body[data-theme="light"] .inno-btn-explore,
 body.light-theme .inno-btn-explore {
-  background: linear-gradient(135deg, #0284c7 0%, #00f5d4 100%) !important;
-  color: #071739 !important;
-  font-weight: 900 !important;
-  box-shadow: 0 6px 20px rgba(14, 165, 233, 0.3) !important;
+  background: linear-gradient(180deg, #0ea5e9 0%, #0284c7 52%, #0369a1 100%) !important;
+  border: 2px solid #38bdf8 !important;
+  color: #ffffff !important;
+  font-weight: 800 !important;
+  box-shadow: 0 4px 18px rgba(2, 132, 199, 0.4), 0 2px 6px rgba(15, 23, 42, 0.12), inset 0 2px 4px rgba(255, 255, 255, 0.85), inset 0 -3px 8px #075985 !important;
+  text-shadow: 0 1px 3px rgba(2, 44, 84, 0.75) !important;
+}
+
+.plp-wrapper[data-theme="light"] .inno-btn-explore > *,
+body[data-theme="light"] .inno-btn-explore > *,
+body.light-theme .inno-btn-explore > * {
+  color: #ffffff !important;
+  fill: #ffffff !important;
+}
+
+.plp-wrapper[data-theme="light"] .inno-btn-explore:hover,
+body[data-theme="light"] .inno-btn-explore:hover,
+body.light-theme .inno-btn-explore:hover {
+  transform: translateY(-2px) scale(1.03) !important;
+  background: linear-gradient(180deg, #38bdf8 0%, #0ea5e9 52%, #0284c7 100%) !important;
+  box-shadow: 0 8px 25px rgba(2, 132, 199, 0.55), inset 0 2px 5px #ffffff, inset 0 -4px 10px #075985 !important;
+  color: #ffffff !important;
 }
 
 .plp-wrapper[data-theme="light"] .inno-btn-resources,
 body[data-theme="light"] .inno-btn-resources,
 body.light-theme .inno-btn-resources {
-  background: #ffffff !important;
-  border: 1.5px solid #cbd5e1 !important;
-  color: #0f172a !important;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05) !important;
+  background: linear-gradient(180deg, #ffffff 0%, #f8fafc 52%, #e2e8f0 100%) !important;
+  border: 2px solid #38bdf8 !important;
+  color: #071739 !important;
+  font-weight: 800 !important;
+  box-shadow: 0 4px 14px rgba(56, 189, 248, 0.25), 0 2px 6px rgba(15, 23, 42, 0.06), inset 0 2px 4px #ffffff, inset 0 -2px 6px rgba(148, 163, 184, 0.3) !important;
+  text-shadow: none !important;
+}
+
+.plp-wrapper[data-theme="light"] .inno-btn-resources > *,
+body[data-theme="light"] .inno-btn-resources > *,
+body.light-theme .inno-btn-resources > * {
+  color: #071739 !important;
 }
 
 .plp-wrapper[data-theme="light"] .inno-btn-resources:hover,
@@ -8224,6 +8250,14 @@ body[data-theme="light"] .inno-btn-resources:hover,
 body.light-theme .inno-btn-resources:hover {
   background: #f1f5f9 !important;
   border-color: #0284c7 !important;
+  color: #0284c7 !important;
+  transform: translateY(-2px) scale(1.03) !important;
+  box-shadow: 0 6px 20px rgba(2, 132, 199, 0.3), inset 0 2px 4px #ffffff !important;
+}
+
+.plp-wrapper[data-theme="light"] .inno-btn-resources:hover > *,
+body[data-theme="light"] .inno-btn-resources:hover > *,
+body.light-theme .inno-btn-resources:hover > * {
   color: #0284c7 !important;
 }
 
@@ -8569,9 +8603,28 @@ body.light-theme .inno-user-part-bar {
 .plp-wrapper[data-theme="light"] .inno-btn-join,
 body[data-theme="light"] .inno-btn-join,
 body.light-theme .inno-btn-join {
-  background: linear-gradient(135deg, #0284c7 0%, #00f5d4 100%) !important;
-  color: #071739 !important;
-  font-weight: 900 !important;
+  background: linear-gradient(180deg, #2563eb 0%, #1d4ed8 52%, #1e40af 100%) !important;
+  border: 2px solid #60a5fa !important;
+  color: #ffffff !important;
+  font-weight: 800 !important;
+  box-shadow: 0 4px 18px rgba(37, 99, 235, 0.4), 0 2px 6px rgba(15, 23, 42, 0.12), inset 0 2px 4px rgba(255, 255, 255, 0.85), inset 0 -3px 8px #172554 !important;
+  text-shadow: 0 1px 3px rgba(15, 23, 60, 0.75) !important;
+}
+
+.plp-wrapper[data-theme="light"] .inno-btn-join > *,
+body[data-theme="light"] .inno-btn-join > *,
+body.light-theme .inno-btn-join > * {
+  color: #ffffff !important;
+  fill: #ffffff !important;
+}
+
+.plp-wrapper[data-theme="light"] .inno-btn-join:hover,
+body[data-theme="light"] .inno-btn-join:hover,
+body.light-theme .inno-btn-join:hover {
+  transform: translateY(-2px) scale(1.03) !important;
+  background: linear-gradient(180deg, #3b82f6 0%, #2563eb 52%, #1d4ed8 100%) !important;
+  box-shadow: 0 8px 25px rgba(37, 99, 235, 0.55), inset 0 2px 5px #ffffff, inset 0 -4px 10px #172554 !important;
+  color: #ffffff !important;
 }
 
 .plp-wrapper[data-theme="light"] .inno-btn-comment,
@@ -8672,9 +8725,34 @@ body[data-theme="light"] .inno-card-action-btn,
 body[data-theme="light"] .inno-res-btn-action,
 body.light-theme .inno-card-action-btn,
 body.light-theme .inno-res-btn-action {
-  background: linear-gradient(135deg, #0284c7 0%, #00f5d4 100%) !important;
-  color: #071739 !important;
-  font-weight: 900 !important;
+  background: linear-gradient(180deg, #0ea5e9 0%, #0284c7 52%, #0369a1 100%) !important;
+  border: 1.5px solid #38bdf8 !important;
+  color: #ffffff !important;
+  font-weight: 800 !important;
+  box-shadow: 0 4px 14px rgba(2, 132, 199, 0.35), inset 0 2px 4px rgba(255, 255, 255, 0.8), inset 0 -2px 6px #075985 !important;
+  text-shadow: 0 1px 2px rgba(2, 44, 84, 0.75) !important;
+}
+
+.plp-wrapper[data-theme="light"] .inno-card-action-btn > *,
+.plp-wrapper[data-theme="light"] .inno-res-btn-action > *,
+body[data-theme="light"] .inno-card-action-btn > *,
+body[data-theme="light"] .inno-res-btn-action > *,
+body.light-theme .inno-card-action-btn > *,
+body.light-theme .inno-res-btn-action > * {
+  color: #ffffff !important;
+  fill: #ffffff !important;
+}
+
+.plp-wrapper[data-theme="light"] .inno-card-action-btn:hover,
+.plp-wrapper[data-theme="light"] .inno-res-btn-action:hover,
+body[data-theme="light"] .inno-card-action-btn:hover,
+body[data-theme="light"] .inno-res-btn-action:hover,
+body.light-theme .inno-card-action-btn:hover,
+body.light-theme .inno-res-btn-action:hover {
+  transform: translateY(-2px) scale(1.03) !important;
+  background: linear-gradient(180deg, #38bdf8 0%, #0ea5e9 52%, #0284c7 100%) !important;
+  box-shadow: 0 6px 18px rgba(2, 132, 199, 0.5), inset 0 2px 4px #ffffff !important;
+  color: #ffffff !important;
 }
 
 /* Tarjetas de Equipo en modo claro */
