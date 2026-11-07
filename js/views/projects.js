@@ -4722,7 +4722,10 @@ window.ProjectsView = {
     if (typeof window.sanitizeProjectSlides === 'function') {
       merged.slides = window.sanitizeProjectSlides(merged.slides, merged.title);
     }
-    merged.resources = pickLongerArr(fromActiveWiz?.resources, fallbackObj?.resources, fromChallenges?.resources, fromDrafts?.resources, gp1.resources, gp2.resources, gp3.resources);
+    merged.resources = this.sanitizeProjectResources(
+      pickLongerArr(fromActiveWiz?.resources, fallbackObj?.resources, fromChallenges?.resources, fromDrafts?.resources, gp1.resources, gp2.resources, gp3.resources),
+      fromChallenges?.resources
+    );
     merged.externalLinks = pickLongerArr(fromActiveWiz?.externalLinks, fallbackObj?.externalLinks, fromChallenges?.externalLinks, fromDrafts?.externalLinks, gp1.externalLinks, gp2.externalLinks, gp3.externalLinks);
     merged.visualAssets = pickLongerArr(fromActiveWiz?.visualAssets, fallbackObj?.visualAssets, fromChallenges?.visualAssets, fromDrafts?.visualAssets, gp1.visualAssets, gp2.visualAssets, gp3.visualAssets);
     merged.completedSteps = pickLongerArr(fromActiveWiz?.completedSteps, fallbackObj?.completedSteps, fromChallenges?.completedSteps, fromDrafts?.completedSteps, gp1.completedSteps, gp2.completedSteps, gp3.completedSteps);
@@ -4734,6 +4737,41 @@ window.ProjectsView = {
     merged.benefits = pickLongerStr(fromActiveWiz?.benefits, fallbackObj?.benefits, fromChallenges?.benefits, fromDrafts?.benefits, gp1.benefits, gp2.benefits, gp3.benefits);
 
     return merged;
+  },
+
+  sanitizeProjectResources(resources, officialResources = []) {
+    if (!Array.isArray(resources)) return [];
+    const KNOWN_DOC_MAP = {
+      'res_1793674485679_ya66': 'assets/docs/survey_for_results_game_google_forms_copy1.pdf',
+      'res_1793674485680_h0fz': 'assets/docs/survey_for_results_game_google_forms_copy2.pdf',
+      'res_1793674485692_2p3n': 'assets/docs/survey_for_results_game_google_forms_156k.pdf',
+      'res_1793674485695_1wod': 'assets/docs/survey_for_results_game_google_forms_78k.pdf'
+    };
+    return resources.map(r => {
+      if (!r) return r;
+      const copy = { ...r };
+      const isDeadBlob = typeof copy.url === 'string' && copy.url.startsWith('blob:');
+      if (Array.isArray(officialResources)) {
+        const off = officialResources.find(o => o && o.id === copy.id);
+        if (off && off.url && !off.url.startsWith('blob:') && (!copy.url || isDeadBlob)) {
+          copy.url = off.url;
+        }
+      }
+      if ((!copy.url || isDeadBlob) && copy.id && KNOWN_DOC_MAP[copy.id]) {
+        copy.url = KNOWN_DOC_MAP[copy.id];
+      } else if ((!copy.url || isDeadBlob) && typeof copy.name === 'string' && copy.name.toLowerCase().includes('survey')) {
+        if (copy.sizeBytes > 3000000) {
+          copy.url = copy.name.includes('(1)') 
+            ? 'assets/docs/survey_for_results_game_google_forms_copy1.pdf' 
+            : 'assets/docs/survey_for_results_game_google_forms_copy2.pdf';
+        } else if (copy.sizeBytes > 100000) {
+          copy.url = 'assets/docs/survey_for_results_game_google_forms_156k.pdf';
+        } else {
+          copy.url = 'assets/docs/survey_for_results_game_google_forms_78k.pdf';
+        }
+      }
+      return copy;
+    });
   },
 
   calculateProjectProgress(rawProj) {
@@ -5609,7 +5647,7 @@ window.ProjectsView = {
       const dateStr = res.date || res.updatedAt || 'Reciente';
       const sizeStr = res.sizeLabel || (res.sizeBytes ? (res.sizeBytes / 1024 / 1024).toFixed(1) + ' MB' : 'Archivo');
 
-      const actionFn = `window.ProjectsView.openResourceViewerByIndex(${idx})`;
+      const actionFn = `window.ProjectsView.openResourceViewerByIndex(${idx}, '${this.escapeHtml(res.id || '')}')`;
 
       cardsHtml += `
         <article class="inno-resource-card" data-category="${dataCat}" data-plp-search="${this.escapeHtml(rSearch)}">
@@ -5655,7 +5693,7 @@ window.ProjectsView = {
       const domain = lnk.url ? lnk.url.replace(/^https?:\/\//i, '').split('/')[0] : 'Web';
       const linkThumb = this.getSmartResourceCover(lnk, 'link', idx);
 
-      const linkAction = `window.ProjectsView.openResourceViewer({ url: '${this.escapeHtml(lnk.url)}', name: '${this.escapeHtml(lTitle)}', title: '${this.escapeHtml(lTitle)}', category: '${this.escapeHtml(lCat)}', format: 'LINK', description: '${this.escapeHtml(rawLDesc)}' }, selected)`;
+      const linkAction = `window.ProjectsView.openResourceViewer({ url: '${this.escapeHtml(lnk.url)}', name: '${this.escapeHtml(lTitle)}', title: '${this.escapeHtml(lTitle)}', category: '${this.escapeHtml(lCat)}', format: 'LINK', description: '${this.escapeHtml(rawLDesc)}' })`;
 
       cardsHtml += `
         <article class="inno-resource-card" data-category="link" data-plp-search="${this.escapeHtml(lSearch)}">
@@ -5681,7 +5719,7 @@ window.ProjectsView = {
             </div>
             <div class="inno-card-footer">
               <span>🌐 ${this.escapeHtml(domain)}</span>
-              <button type="button" class="inno-card-action-btn inno-res-btn-action" onclick="${linkAction}" title="Ver enlace dentro de la página">
+              <button type="button" class="inno-card-action-btn inno-res-btn-action" onclick="window.open('${this.escapeHtml(lnk.url)}', '_blank', 'noopener,noreferrer')" title="Abrir enlace en pestaña nueva">
                 <span>🔗</span> Abrir enlace
               </button>
             </div>
@@ -6662,34 +6700,29 @@ window.ProjectsView = {
      VISOR DE RECURSOS EN PANTALLA (PDFs, Documentos, Encuestas, Imágenes, etc.)
      Permite visualizar cualquier recurso directamente en la página sin forzar descarga
      ========================================================================== */
-  openResourceViewerByIndex(idx) {
+  openResourceViewerByIndex(idx, resId = null) {
     let selected = this.getMergedProjectRecord(this.selectedProjectId);
+    if (!selected && this.selectedProjectId) {
+      selected = (window.appState && window.appState.challenges || []).find(x => x && x.id === this.selectedProjectId);
+    }
+    if (!selected) {
+      try {
+        const stored = JSON.parse(localStorage.getItem('mentix_active_landing_project') || 'null');
+        if (stored) selected = stored;
+      } catch (e) {}
+    }
     const gp = selected?.govdata || {};
     const rawRes = (Array.isArray(selected?.resources) && selected.resources.length > 0)
       ? selected.resources
       : (Array.isArray(gp.resources) ? gp.resources : []);
     const userResources = rawRes.filter(r => r && r.visibility !== 'private');
-    const res = userResources[idx] || (rawRes && rawRes[idx]);
-    if (!res) {
-      this.showToast('Documento no encontrado.');
-      return;
+    let res = null;
+    if (resId) {
+      res = userResources.find(r => r && r.id === resId) || rawRes.find(r => r && r.id === resId);
     }
-    this.openResourceViewer(res, selected);
-  },
-
-  /* ==========================================================================
-     VISOR DE RECURSOS, DOCUMENTOS, PDFS Y ENLACES (DENTRO DE LA PÁGINA)
-     Permite visualizar cualquier recurso, enlace o archivo original directamente
-     ========================================================================== */
-  openResourceViewerByIndex(idx) {
-    let selected = this.getMergedProjectRecord(this.selectedProjectId);
-    const gp = selected?.govdata || {};
-    const rawRes = [
-      ...((Array.isArray(selected?.resources) && selected.resources.length > 0) ? selected.resources : (Array.isArray(gp.resources) ? gp.resources : [])),
-      ...((Array.isArray(selected?.externalLinks) && selected.externalLinks.length > 0) ? selected.externalLinks : (Array.isArray(gp.externalLinks) ? gp.externalLinks : []))
-    ];
-    const userResources = rawRes.filter(r => r && r.visibility !== 'private');
-    const res = userResources[idx] || (rawRes && rawRes[idx]);
+    if (!res) {
+      res = userResources[idx] || rawRes[idx];
+    }
     if (!res) {
       this.showToast('Documento no encontrado.');
       return;
@@ -6854,6 +6887,30 @@ window.ProjectsView = {
 
     const name = res.fileName || res.name || res.title || 'Documento Oficial';
     let rawUrl = (res.url || res.fileUrl || res.data || '').trim();
+
+    // Auto-recuperación de recursos conocidos o PDFs de la carpeta assets
+    if (!rawUrl || rawUrl.startsWith('blob:')) {
+      const KNOWN_DOC_MAP = {
+        'res_1793674485679_ya66': 'assets/docs/survey_for_results_game_google_forms_copy1.pdf',
+        'res_1793674485680_h0fz': 'assets/docs/survey_for_results_game_google_forms_copy2.pdf',
+        'res_1793674485692_2p3n': 'assets/docs/survey_for_results_game_google_forms_156k.pdf',
+        'res_1793674485695_1wod': 'assets/docs/survey_for_results_game_google_forms_78k.pdf'
+      };
+      if (res.id && KNOWN_DOC_MAP[res.id]) {
+        rawUrl = KNOWN_DOC_MAP[res.id];
+      } else if (name.toLowerCase().includes('survey')) {
+        if (res.sizeBytes > 3000000 || (res.sizeLabel && res.sizeLabel.includes('3.7'))) {
+          rawUrl = name.includes('(1)') 
+            ? 'assets/docs/survey_for_results_game_google_forms_copy1.pdf' 
+            : 'assets/docs/survey_for_results_game_google_forms_copy2.pdf';
+        } else if (res.sizeBytes > 100000 || (res.sizeLabel && res.sizeLabel.includes('156'))) {
+          rawUrl = 'assets/docs/survey_for_results_game_google_forms_156k.pdf';
+        } else {
+          rawUrl = 'assets/docs/survey_for_results_game_google_forms_78k.pdf';
+        }
+      }
+    }
+
     const fmt = (res.format || '').toUpperCase() || (name.toLowerCase().endsWith('.pdf') ? 'PDF' : 'DOC');
     const sizeStr = res.sizeLabel || (res.sizeBytes ? (res.sizeBytes / 1024).toFixed(1) + ' KB' : (rawUrl.startsWith('http') ? 'Enlace en la nube' : 'Recurso oficial'));
 
@@ -7034,6 +7091,20 @@ window.ProjectsView = {
         </div>
 
         <div style="display:flex; align-items:center; gap:0.6rem; flex-shrink:0;">
+          ${(rawUrl || blobUrl) ? `
+            <a 
+              href="${this.escapeHtml(blobUrl || rawUrl)}" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              style="background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.2); color:#ffffff; border-radius:999px; padding:0.48rem 0.95rem; font-size:0.82rem; font-weight:700; text-decoration:none; display:inline-flex; align-items:center; gap:0.35rem; transition:background 0.15s ease;"
+              title="Abrir en pestaña nueva del navegador"
+              onmouseenter="this.style.background='rgba(255,255,255,0.18)'"
+              onmouseleave="this.style.background='rgba(255,255,255,0.08)'"
+            >
+              <span>↗</span> <span>Abrir en pestaña</span>
+            </a>
+          ` : ''}
+
           <button 
             type="button" 
             onclick="window.ProjectsView.printCurrentResource()" 
@@ -7079,10 +7150,10 @@ window.ProjectsView = {
     if (!info) return;
     const url = info.url;
     const name = info.name || 'documento';
-    if (url && (url.startsWith('data:') || url.startsWith('blob:') || url.startsWith('http'))) {
+    if (url && (url.startsWith('data:') || url.startsWith('blob:') || url.startsWith('http') || url.startsWith('assets/'))) {
       const a = document.createElement('a');
       a.href = url;
-      a.download = name;
+      a.download = name.toLowerCase().endsWith('.pdf') ? name : name + '.pdf';
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
