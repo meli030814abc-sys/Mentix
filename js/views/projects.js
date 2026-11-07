@@ -7022,27 +7022,6 @@ window.ProjectsView = {
       `;
     }
 
-            <!-- Sello Oficial Mentix -->
-            <div style="border-top:1.5px dashed #cbd5e1; padding-top:1.5rem; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem;">
-              <div style="display:flex; align-items:center; gap:0.6rem;">
-                <div style="width:38px; height:38px; border-radius:50%; background:linear-gradient(135deg, #00f5d4, #0284c7); display:flex; align-items:center; justify-content:center; color:#ffffff; font-weight:900; font-size:1.1rem; box-shadow:0 3px 10px rgba(0,245,212,0.4);">
-                  ✓
-                </div>
-                <div>
-                  <div style="font-weight:800; font-size:0.85rem; color:#0f172a;">Sello Digital de Verificación Mentix</div>
-                  <div style="font-size:0.74rem; color:#64748b;">ID: doc_${Date.now().toString(36)} · Autenticado</div>
-                </div>
-              </div>
-              <div style="font-size:0.78rem; color:#94a3b8; font-style:italic;">
-                Página 1 de 1 · Generado para visualización directa en pantalla
-              </div>
-            </div>
-
-          </div>
-        </div>
-      `;
-    }
-
     body.innerHTML = `
       <!-- Header Superior del Visor en Pantalla -->
       <header style="height:66px; flex-shrink:0; display:flex; align-items:center; justify-content:space-between; padding:0 1.5rem; background:linear-gradient(90deg, #06132b 0%, #0c2044 100%); border-bottom:1.5px solid rgba(0, 245, 212, 0.4); box-shadow:0 4px 20px rgba(0,0,0,0.5); z-index:10; flex-wrap:nowrap; gap:1rem;">

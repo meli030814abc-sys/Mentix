@@ -202,7 +202,7 @@ class SupabaseService {
       console.warn('Aviso guardando en Supabase:', e);
       return false;
     }
-  },
+  }
 
   // Sincronizar retos con la base de datos
   async syncChallenges(localChallenges) {
