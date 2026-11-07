@@ -390,7 +390,7 @@ window.ProjectsView = {
       name: 'Disney & Fantasía Mágica',
       category: 'Creatividad & Personajes',
       icon: '🏰',
-      url: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=1600&q=80'
+      url: 'assets/projects_ui/disney_hero_banner.png'
     },
     {
       id: 'cyber_space',
@@ -500,14 +500,18 @@ window.ProjectsView = {
       if (!proj) proj = (window.appState?.challenges || []).find(c => c && String(c.id) === String(projId));
     }
     const saved = projId ? localStorage.getItem('mentix_hero_banner_' + projId) : null;
-    if (saved && saved.trim()) return saved.trim();
+    if (saved && saved.trim()) {
+      if (saved.includes('photo-1518709268805-4e9042af9f23')) {
+        return 'assets/projects_ui/disney_hero_banner.png';
+      }
+      return saved.trim();
+    }
     if (proj) {
-      if (proj.heroBanner && proj.heroBanner.trim()) return proj.heroBanner.trim();
-      if (proj.landingConfig?.heroBanner && proj.landingConfig.heroBanner.trim()) return proj.landingConfig.heroBanner.trim();
-      if (proj.govdata?.heroBanner && proj.govdata.heroBanner.trim()) return proj.govdata.heroBanner.trim();
-      if (proj.banner && proj.banner.trim()) return proj.banner.trim();
-      if (proj.coverImage && proj.coverImage.trim()) return proj.coverImage.trim();
-      if (proj.mainImage && proj.mainImage.trim()) return proj.mainImage.trim();
+      const b = proj.heroBanner || proj.landingConfig?.heroBanner || proj.govdata?.heroBanner || proj.banner || proj.coverImage || proj.mainImage;
+      if (b && typeof b === 'string' && b.trim()) {
+        if (b.includes('photo-1518709268805-4e9042af9f23')) return 'assets/projects_ui/disney_hero_banner.png';
+        return b.trim();
+      }
     }
     return 'assets/projects_ui/hero_banner.png';
   },
@@ -652,7 +656,7 @@ window.ProjectsView = {
           <label style="display:block; font-size:0.82rem; font-weight:800; color:#00f5d4; margin-bottom:0.5rem; text-transform:uppercase; letter-spacing:0.04em;">
             👁️ Vista Previa en Vivo del Banner
           </label>
-          <div id="hero-banner-preview-box" style="position:relative; width:100%; height:155px; border-radius:18px; overflow:hidden; background-image:linear-gradient(135deg, rgba(5,19,41,0.88) 0%, rgba(8,35,71,0.84) 100%), url('${this.escapeHtml(currentBanner)}'); background-size:cover; background-position:center; border:2px solid #00f5d4; display:flex; align-items:center; justify-content:space-between; padding:1.5rem 2rem; box-shadow:0 8px 30px rgba(0,0,0,0.5);">
+          <div id="hero-banner-preview-box" style="position:relative; width:100%; height:155px; border-radius:18px; overflow:hidden; background-image:linear-gradient(to right, rgba(5, 14, 30, 0.75) 0%, rgba(5, 14, 30, 0.40) 42%, rgba(5, 14, 30, 0.08) 75%, transparent 100%), url('${this.escapeHtml(currentBanner)}'); background-size:cover; background-position:center; border:2px solid #00f5d4; display:flex; align-items:center; justify-content:space-between; padding:1.5rem 2rem; box-shadow:0 8px 30px rgba(0,0,0,0.5);">
             <div>
               <div style="font-size:1.25rem; font-weight:900; color:#ffffff; line-height:1.2;">${this.escapeHtml(projTitle)}</div>
               <div style="font-size:0.9rem; font-weight:800; color:#00f5d4; margin-top:0.25rem;">${this.escapeHtml(selected?.subtitle || 'Soluciones Tecnológicas')}</div>
@@ -801,7 +805,7 @@ window.ProjectsView = {
     this._tempSelectedHeroBanner = theme.url;
     const box = document.getElementById('hero-banner-preview-box');
     if (box) {
-      box.style.backgroundImage = `linear-gradient(135deg, rgba(5,19,41,0.88) 0%, rgba(8,35,71,0.84) 100%), url('${theme.url}')`;
+      box.style.backgroundImage = `linear-gradient(to right, rgba(5, 14, 30, 0.75) 0%, rgba(5, 14, 30, 0.40) 42%, rgba(5, 14, 30, 0.08) 75%, transparent 100%), url('${theme.url}')`;
     }
     const input = document.getElementById('hero-banner-url-input');
     if (input) input.value = theme.url;
@@ -880,7 +884,7 @@ window.ProjectsView = {
       this._tempSelectedHeroBanner = dataUrl;
       const box = document.getElementById('hero-banner-preview-box');
       if (box) {
-        box.style.backgroundImage = `linear-gradient(135deg, rgba(5,19,41,0.88) 0%, rgba(8,35,71,0.84) 100%), url('${dataUrl}')`;
+        box.style.backgroundImage = `linear-gradient(to right, rgba(5, 14, 30, 0.75) 0%, rgba(5, 14, 30, 0.40) 42%, rgba(5, 14, 30, 0.08) 75%, transparent 100%), url('${dataUrl}')`;
       }
       const input = document.getElementById('hero-banner-url-input');
       if (input) input.value = dataUrl.slice(0, 45) + '... (Imagen local HD)';
@@ -917,7 +921,7 @@ window.ProjectsView = {
       this._tempSelectedHeroBanner = trimmed;
       const box = document.getElementById('hero-banner-preview-box');
       if (box) {
-        box.style.backgroundImage = `linear-gradient(135deg, rgba(5,19,41,0.88) 0%, rgba(8,35,71,0.84) 100%), url('${trimmed}')`;
+        box.style.backgroundImage = `linear-gradient(to right, rgba(5, 14, 30, 0.75) 0%, rgba(5, 14, 30, 0.40) 42%, rgba(5, 14, 30, 0.08) 75%, transparent 100%), url('${trimmed}')`;
       }
       return;
     }
@@ -948,7 +952,7 @@ window.ProjectsView = {
     this._tempSelectedHeroBanner = trimmed;
     const box = document.getElementById('hero-banner-preview-box');
     if (box) {
-      box.style.backgroundImage = `linear-gradient(135deg, rgba(5,19,41,0.88) 0%, rgba(8,35,71,0.84) 100%), url('${trimmed}')`;
+      box.style.backgroundImage = `linear-gradient(to right, rgba(5, 14, 30, 0.75) 0%, rgba(5, 14, 30, 0.40) 42%, rgba(5, 14, 30, 0.08) 75%, transparent 100%), url('${trimmed}')`;
     }
     if (feedback) {
       feedback.style.display = 'block';
@@ -986,12 +990,10 @@ window.ProjectsView = {
 
     this.setProjectHeroBanner(projId, finalUrl);
 
-    // Actualizar directamente la sección del Hero activa en pantalla
+    // Actualizar directamente la sección del Hero activa en pantalla con fondo normal
     const heroSec = document.getElementById('inno-sec-hero');
     if (heroSec) {
-      const isLight = document.querySelector('.plp-wrapper')?.getAttribute('data-theme') === 'light';
-      const overlay = isLight ? 'rgba(255,255,255,0.85) 0%, rgba(240,249,255,0.82) 100%' : 'rgba(5,19,41,0.88) 0%, rgba(8,35,71,0.84) 100%';
-      heroSec.style.setProperty('background-image', `linear-gradient(135deg, ${overlay}), url('${finalUrl}')`, 'important');
+      heroSec.style.setProperty('background-image', `linear-gradient(to right, rgba(5, 14, 30, 0.75) 0%, rgba(5, 14, 30, 0.40) 42%, rgba(5, 14, 30, 0.08) 75%, transparent 100%), url('${finalUrl}')`, 'important');
     }
 
     this.closeHeroBannerPicker();
@@ -1005,9 +1007,7 @@ window.ProjectsView = {
 
     const heroSec = document.getElementById('inno-sec-hero');
     if (heroSec) {
-      const isLight = document.querySelector('.plp-wrapper')?.getAttribute('data-theme') === 'light';
-      const overlay = isLight ? 'rgba(255,255,255,0.85) 0%, rgba(240,249,255,0.82) 100%' : 'rgba(5,19,41,0.88) 0%, rgba(8,35,71,0.84) 100%';
-      heroSec.style.setProperty('background-image', `linear-gradient(135deg, ${overlay}), url('${defaultUrl}')`, 'important');
+      heroSec.style.setProperty('background-image', `linear-gradient(to right, rgba(5, 14, 30, 0.75) 0%, rgba(5, 14, 30, 0.40) 42%, rgba(5, 14, 30, 0.08) 75%, transparent 100%), url('${defaultUrl}')`, 'important');
     }
 
     this.closeHeroBannerPicker();
@@ -4465,15 +4465,9 @@ window.ProjectsView = {
       titleColor: finalTitle,
       textColor: finalText,
       accentColor: finalAccent,
-      bannerUrlGradient: isDarkBg
-        ? 'linear-gradient(rgba(5, 10, 24, 0.85), rgba(8, 14, 30, 0.94))'
-        : 'linear-gradient(rgba(255, 255, 255, 0.88), rgba(241, 245, 249, 0.95))',
-      titleShadow: isDarkBg
-        ? 'text-shadow: 0 3px 20px rgba(0,0,0,0.95), 0 0 35px rgba(0, 245, 212, 0.35);'
-        : 'text-shadow: 0 1px 3px rgba(255,255,255,0.8);',
-      descShadow: isDarkBg
-        ? 'text-shadow: 0 2px 10px rgba(0,0,0,0.9);'
-        : '',
+      bannerUrlGradient: 'linear-gradient(to right, rgba(5, 14, 30, 0.75) 0%, rgba(5, 14, 30, 0.40) 42%, rgba(5, 14, 30, 0.08) 75%, transparent 100%)',
+      titleShadow: 'text-shadow: 0 2px 12px rgba(0,0,0,0.9);',
+      descShadow: 'text-shadow: 0 1px 8px rgba(0,0,0,0.85);',
       gradientSpanStyle: isDarkBg
         ? 'background: linear-gradient(135deg, #00f5d4 0%, #00e5be 60%, #38bdf8 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: none;'
         : 'background: linear-gradient(135deg, #0284c7 0%, #2563eb 60%, #4338ca 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: none;',
@@ -5694,10 +5688,8 @@ window.ProjectsView = {
 
     const targetProjId = selected?.id || this.selectedProjectId;
     const projHeroBanner = this.getProjectHeroBanner(targetProjId, selected);
-    const heroBgOverlay = currentTheme === 'light'
-      ? 'rgba(255,255,255,0.85) 0%, rgba(240,249,255,0.82) 100%'
-      : 'rgba(5,19,41,0.88) 0%, rgba(8,35,71,0.84) 100%';
-    const heroStyle = `background-image: linear-gradient(135deg, ${heroBgOverlay}), url('${this.escapeHtml(projHeroBanner)}') !important; background-size: cover !important; background-position: center !important; position: relative !important;`;
+    // Fondo normal, nítido y con colores auténticos: sutil degradado lateral solo sobre el texto para máxima legibilidad
+    const heroStyle = `background-image: linear-gradient(to right, rgba(5, 14, 30, 0.75) 0%, rgba(5, 14, 30, 0.40) 42%, rgba(5, 14, 30, 0.08) 75%, transparent 100%), url('${this.escapeHtml(projHeroBanner)}') !important; background-size: cover !important; background-position: center !important; position: relative !important;`;
 
     container.innerHTML = `
       <div class="plp-page-container" style="max-width: 1360px; margin: 0 auto; padding: 1.25rem clamp(1.25rem, 3.5vw, 2.75rem) 4rem; box-sizing: border-box;">
@@ -5797,9 +5789,6 @@ window.ProjectsView = {
                2. HERO SECTION (MOCKUP EXACTO)
                ================================================================ -->
           <section class="inno-hero" id="inno-sec-hero" style="${heroStyle}">
-            <div class="inno-hero-bg-overlay"></div>
-            <div class="inno-hero-bg-glow"></div>
-
             <!-- Botón interactivo para cambiar el fondo del banner de atrás -->
             <button 
               type="button" 
@@ -5813,8 +5802,6 @@ window.ProjectsView = {
               <span style="font-size:1rem;">🎨</span>
               <span>Cambiar fondo del banner</span>
             </button>
-            <div class="inno-hero-bg-overlay"></div>
-            <div class="inno-hero-bg-glow"></div>
 
             <div class="inno-hero-grid">
               <!-- Columna Izquierda: Información Principal -->

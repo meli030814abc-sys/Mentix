@@ -5329,8 +5329,8 @@ body[data-theme="dark"] .plp-lightbox-content {
 /* 2. Hero Section */
 .inno-hero {
   position: relative !important;
-  background: linear-gradient(135deg, #051329 0%, #082347 50%, #0a3360 100%) !important;
-  background-image: linear-gradient(135deg, rgba(5,19,41,0.92) 0%, rgba(8,35,71,0.88) 100%), url('../assets/projects_ui/hero_banner.png');
+  background-color: #051329 !important;
+  background-image: linear-gradient(to right, rgba(5, 14, 30, 0.75) 0%, rgba(5, 14, 30, 0.40) 42%, rgba(5, 14, 30, 0.08) 75%, transparent 100%), url('../assets/projects_ui/hero_banner.png');
   background-size: cover !important;
   background-position: center !important;
   border-radius: 22px !important;
@@ -5341,11 +5341,9 @@ body[data-theme="dark"] .plp-lightbox-content {
   color: #ffffff !important;
 }
 
-.inno-hero-bg-overlay {
-  position: absolute !important;
-  inset: 0 !important;
-  background: radial-gradient(circle at 60% 40%, rgba(0, 245, 212, 0.15) 0%, transparent 60%) !important;
-  pointer-events: none !important;
+.inno-hero-bg-overlay,
+.inno-hero-bg-glow {
+  display: none !important;
 }
 
 .inno-hero-grid {
@@ -8061,26 +8059,33 @@ body.light-theme .inno-hero:not([style*="background-image"]) {
   box-shadow: 0 12px 35px rgba(15, 23, 42, 0.06), 0 0 20px rgba(0, 245, 212, 0.08) !important;
 }
 
+.inno-hero-title,
+.inno-hero-title-text,
 .plp-wrapper[data-theme="light"] .inno-hero-title,
 .plp-wrapper[data-theme="light"] .inno-hero-title span,
 body[data-theme="light"] .inno-hero-title,
 body.light-theme .inno-hero-title {
-  color: #0f172a !important;
+  color: #ffffff !important;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.9) !important;
 }
 
+.inno-hero-title-cyan,
 .plp-wrapper[data-theme="light"] .inno-hero-title-cyan,
 body[data-theme="light"] .inno-hero-title-cyan,
 body.light-theme .inno-hero-title-cyan {
-  color: #0891b2 !important;
-  background: linear-gradient(135deg, #0284c7 0%, #0d9488 100%) !important;
-  -webkit-background-clip: text !important;
-  -webkit-text-fill-color: transparent !important;
+  color: #00f5d4 !important;
+  background: none !important;
+  -webkit-text-fill-color: #00f5d4 !important;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8), 0 0 24px rgba(0, 245, 212, 0.5) !important;
 }
 
+.inno-hero-desc,
 .plp-wrapper[data-theme="light"] .inno-hero-desc,
 body[data-theme="light"] .inno-hero-desc,
 body.light-theme .inno-hero-desc {
-  color: #334155 !important;
+  color: #f1f5f9 !important;
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.9) !important;
+  opacity: 0.95 !important;
 }
 
 .plp-wrapper[data-theme="light"] .inno-btn-explore,
