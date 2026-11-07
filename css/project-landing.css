@@ -5006,7 +5006,6 @@ body[data-theme="dark"] .plp-lightbox-content {
    ENHANCED CONTRAST & READABILITY FOR PROJECT LANDING PAGE
    ========================================================================== */
 .inno-hero {
-  background: linear-gradient(135deg, #091e2d 0%, #06131f 65%, #051d28 100%) !important;
   color: #ffffff !important;
 }
 
@@ -5340,8 +5339,7 @@ body[data-theme="dark"] .plp-lightbox-content {
 /* 2. Hero Section */
 .inno-hero {
   position: relative !important;
-  background-color: #051329 !important;
-  background-image: linear-gradient(to right, rgba(5, 14, 30, 0.75) 0%, rgba(5, 14, 30, 0.40) 42%, rgba(5, 14, 30, 0.08) 75%, transparent 100%), url('../assets/projects_ui/hero_banner.png');
+  background-color: #06131f;
   background-size: cover !important;
   background-position: center !important;
   border-radius: 22px !important;

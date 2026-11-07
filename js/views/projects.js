@@ -4101,6 +4101,13 @@ window.ProjectsView = {
     this.viewMode = 'landing';
     const proj = this.getMergedProjectRecord(projectId) || (window.appState?.challenges || []).find(x => x && (x.id === projectId || x.slug === projectId));
     if (proj) {
+      const resolvedBanner = (typeof this.getProjectHeroBanner === 'function') ? this.getProjectHeroBanner(projectId, proj) : null;
+      if (resolvedBanner) {
+        proj.heroBanner = resolvedBanner;
+        proj.banner = resolvedBanner;
+        if (!proj.designConfig) proj.designConfig = {};
+        proj.designConfig.bannerUrl = resolvedBanner;
+      }
       try {
         localStorage.setItem('mentix_active_landing_project', JSON.stringify(proj));
       } catch (e) {}
@@ -6155,7 +6162,7 @@ window.ProjectsView = {
                   <span>📂</span> Abrir Proyecto
                 </button>` : ''}
               `}
-              <a href="${fullScreenHref}" target="_blank" class="plp-mentix-btn" style="text-decoration:none;" onclick="try{const p=window.ProjectsView.getMergedProjectRecord('${selected ? selected.id : ''}'); if(p) localStorage.setItem('mentix_active_landing_project', JSON.stringify(p));}catch(e){}">
+              <a href="${fullScreenHref}" target="_blank" class="plp-mentix-btn" style="text-decoration:none;" onclick="try{const p=window.ProjectsView.getMergedProjectRecord('${selected ? selected.id : ''}'); if(p) { const b=window.ProjectsView.getProjectHeroBanner(p.id, p); if(b){p.heroBanner=b; p.banner=b; if(!p.designConfig) p.designConfig={}; p.designConfig.bannerUrl=b;} localStorage.setItem('mentix_active_landing_project', JSON.stringify(p)); }}catch(e){}">
                 <span>↗</span> Abrir en Pantalla Completa
               </a>
             </div>
