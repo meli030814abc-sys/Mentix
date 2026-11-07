@@ -127,19 +127,43 @@ window.ProjectHub = {
   },
   getMember(proj, hub) {
     const me = this.me();
-    const keys = [me.email, me.username, me.name].map(k => this.norm(k)).filter(Boolean);
+    const keys = [me.email, me.username, me.name, me.id, me.key].map(k => this.norm(k)).filter(Boolean);
     if (me.session && me.session.email) keys.push(this.norm(me.session.email));
-    return (hub.members || []).find(m => keys.includes(this.norm(m.email)) || keys.includes(this.norm(m.name))) || null;
+    if (me.session && me.session.name) keys.push(this.norm(me.session.name));
+    if (proj && proj.id) {
+      try {
+        const s = JSON.parse(localStorage.getItem('mentix_hub_sessions') || '{}');
+        const projSession = s[proj.id];
+        if (projSession && projSession.email) keys.push(this.norm(projSession.email));
+        if (projSession && projSession.name) keys.push(this.norm(projSession.name));
+      } catch (e) {}
+    }
+    return (hub.members || []).find(m => {
+      const mEmail = this.norm(m.email);
+      const mName = this.norm(m.name);
+      return keys.some(k => k && (k === mEmail || k === mName));
+    }) || null;
   },
   getRole(proj) {
     if (!proj) return 'guest';
-    const hub = this.getHub(proj.id);
-    const isOwner = (window.appRouter && typeof window.appRouter.isChallengeOwner === 'function' && window.appRouter.isChallengeOwner(proj))
-      || (window.ProjectsView && window.ProjectsView.isTeacherOrAdmin && window.ProjectsView.isTeacherOrAdmin());
+    const me = this.me();
+    const clean = s => this.norm(s);
+    const myKeys = [me.email, me.username, me.name, me.id, me.key].map(clean).filter(Boolean);
+    const projAuthorKeys = [proj.author, proj.creatorName, proj.teamLead, proj.authorEmail, proj.authorId].map(clean).filter(Boolean);
+    const isDirectAuthor = myKeys.some(k => projAuthorKeys.includes(k));
+    const isOwner = isDirectAuthor
+      || (window.appRouter && typeof window.appRouter.isChallengeOwner === 'function' && window.appRouter.isChallengeOwner(proj))
+      || (window.ProjectsView && typeof window.ProjectsView.isTeacherOrAdmin === 'function' && window.ProjectsView.isTeacherOrAdmin());
     if (isOwner) return 'owner';
+    const hub = this.getHub(proj.id);
     const m = this.getMember(proj, hub);
     if (m) return m.role || 'viewer';
     return 'guest';
+  },
+  canView(proj) {
+    if (!proj) return false;
+    const r = this.getRole(proj);
+    return r === 'owner' || r === 'editor' || r === 'collaborator' || r === 'commenter' || r === 'viewer';
   },
   canEdit(proj) {
     if (!proj) return false;
@@ -198,8 +222,13 @@ window.ProjectHub = {
   open(projectId, tab = 'home') {
     const proj = this.getProject(projectId);
     if (!proj) { this.toast('No se encontró el proyecto'); return; }
-    if (window.soundEngine && window.soundEngine.playClick) window.soundEngine.playClick();
     this.currentId = projectId;
+    // Exclusividad: Solo visible para creadores del proyecto y los que se unan también, nadie más
+    if (!this.canView(proj)) {
+      this.openRestrictedModal(proj);
+      return;
+    }
+    if (window.soundEngine && window.soundEngine.playClick) window.soundEngine.playClick();
     this.tab = tab;
     this.registerView(proj);
     this.render();
@@ -218,6 +247,12 @@ window.ProjectHub = {
   render() {
     const proj = this.getProject(this.currentId);
     if (!proj) return;
+    // Protección estricta: Si el usuario no es creador ni miembro unido, mostrar acceso restringido
+    if (!this.canView(proj)) {
+      this.close();
+      this.openRestrictedModal(proj);
+      return;
+    }
     const hub = this.getHub(proj.id);
     const role = this.getRole(proj);
     const roleInfo = this.ROLES[role] || this.ROLES.guest;
@@ -766,6 +801,39 @@ window.ProjectHub = {
     return m;
   },
   closeModal() { const m = document.getElementById('phub-modal'); if (m) m.remove(); },
+
+  openRestrictedModal(proj) {
+    if (!proj) return;
+    const id = this.esc(proj.id);
+    const title = this.esc(proj.title || 'Proyecto');
+    const author = this.esc(proj.author || 'el creador');
+    this.currentId = proj.id;
+    this.modal(`
+      <div class="phub-modal-cartoon phub-restricted-card" style="text-align:center; padding:1.7rem 1.3rem;">
+        <button type="button" class="phub-x" onclick="window.ProjectHub.closeModal()">✕</button>
+        <div style="font-size:3.4rem; line-height:1; margin-bottom:0.7rem; filter: drop-shadow(0 4px 10px rgba(0,0,0,0.15));">🔒</div>
+        <div class="phub-pill-header-wrap" style="justify-content:center; margin-bottom:0.6rem;">
+          <h2 class="phub-pill-title yellow"><span class="ico">🛡️</span> Espacio Exclusivo</h2>
+        </div>
+        <h3 style="font-size:1.15rem; font-weight:800; color:#0f172a; margin:0 0 0.25rem;">“${title}”</h3>
+        <p style="font-size:0.82rem; color:#64748b; margin:0 0 0.85rem;">Creado por <b>${author}</b></p>
+        <p class="phub-desc" style="font-size:0.92rem; color:#334155; max-width:440px; margin:0 auto 1.35rem; line-height:1.5;">
+          Este panel de edición, entregas, archivos y reportes internos solo es visible para los <b>creadores del proyecto</b> y los <b>miembros que se hayan unido</b>.
+        </p>
+        <div style="display:flex; flex-direction:column; gap:0.65rem; max-width:360px; margin:0 auto;">
+          <button type="button" class="phub-glossy-btn green" style="width:100%; justify-content:center; padding:0.75rem 1rem;" onclick="window.ProjectHub.openJoinForm('${id}')">
+            <span class="b-ico">📨</span> Solicitar unirme al proyecto
+          </button>
+          <button type="button" class="phub-glossy-btn blue" style="width:100%; justify-content:center; padding:0.75rem 1rem;" onclick="window.ProjectHub.openLanding('${id}')">
+            <span class="b-ico">🌐</span> Ver Landing Page pública
+          </button>
+          <button type="button" class="phub-top-act-btn" style="width:100%; justify-content:center; background:#f8fafc; border:1.5px solid #cbd5e1; font-weight:700; padding:0.7rem 1rem;" onclick="window.ProjectHub.openMemberLogin('${id}')">
+            <span>🔑</span> <span>Ya soy miembro (Ingresar con clave)</span>
+          </button>
+        </div>
+      </div>
+    `);
+  },
 
   openJoinForm(projectId) {
     const proj = this.getProject(projectId);

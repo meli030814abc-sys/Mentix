@@ -1712,17 +1712,17 @@ window.ProjectsView = {
       primaryText = 'Ver Detalles →';
     }
 
-    // "Ver Detalles" abre el Panel del Creador / Vista de Estudiante (Project Hub)
-    if (window.ProjectHub) {
-      const hubOpen = `window.ProjectHub.open('${c.id}')`;
-      if (/Ver Detalles/.test(primaryText)) primaryAction = hubOpen;
-      if (/Ver Detalles/.test(secondaryText)) secondaryAction = hubOpen;
-    }
-    const canHubEdit = !!(window.ProjectHub && window.ProjectHub.canEdit(c));
+    // Exclusividad: Solo creadores del proyecto y personas que se unan pueden ver el Project Hub ("Ver Detalles")
+    const canHubView = !!(isAuthor || (window.ProjectHub && typeof window.ProjectHub.canView === 'function' && window.ProjectHub.canView(c)));
+    const canHubEdit = !!(isAuthor || (window.ProjectHub && typeof window.ProjectHub.canEdit === 'function' && window.ProjectHub.canEdit(c)));
 
     const hubAction = window.ProjectHub ? `window.ProjectHub.open('${c.id}')` : `window.ProjectsView.openProjectLanding('${c.id}')`;
     const landingAction = `window.ProjectsView.openProjectLanding('${c.id}')`;
     const shareAction = `window.ProjectsView.shareProject('${c.id}', '${this.escapeHtml(c.title || '')}')`;
+    const joinAction = `window.ProjectHub ? window.ProjectHub.openJoinForm('${c.id}') : window.ProjectsView.openProjectLanding('${c.id}')`;
+
+    // Clic en la tarjeta: Creadores y miembros van al Hub; visitantes y demás van a la Landing Page pública
+    const cardClickAction = canHubView ? hubAction : landingAction;
 
     const dateStr = c.date || (c.createdAt ? new Date(c.createdAt).toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' }) : '12 Abr 2025');
     const studentsCount = (c.students !== undefined && c.students !== null) ? c.students : (c.playsCount || 0);
@@ -1738,7 +1738,7 @@ window.ProjectsView = {
       : 'background: #0047cc; color: #ffffff; border: none; box-shadow: 0 2px 8px rgba(0, 71, 204, 0.25);';
 
     return `
-      <div class="saas-project-card animate-fade-in" onclick="${primaryAction}" style="border-radius: 16px; background: #ffffff; border: 1.5px solid #e2e8f0; overflow: hidden; box-shadow: 0 4px 18px rgba(0,0,0,0.04); display: flex; flex-direction: column; cursor: pointer; transition: transform 0.2s ease, box-shadow 0.2s ease; position: relative;">
+      <div class="saas-project-card animate-fade-in" onclick="${cardClickAction}" style="border-radius: 16px; background: #ffffff; border: 1.5px solid #e2e8f0; overflow: hidden; box-shadow: 0 4px 18px rgba(0,0,0,0.04); display: flex; flex-direction: column; cursor: pointer; transition: transform 0.2s ease, box-shadow 0.2s ease; position: relative;">
         
         <!-- Banner Image Wrapper (Fixed 135px height with object-fit cover) -->
         <div class="saas-card-banner-wrap" style="position: relative; width: 100%; height: 135px; min-height: 135px; max-height: 135px; overflow: hidden; background: #0f172a;">
@@ -1817,21 +1817,33 @@ window.ProjectsView = {
             <span style="display: inline-flex; align-items: center; gap: 0.25rem; color: #eab308;">⭐ ${ratingStr}</span>
           </div>
 
-          <!-- Action Buttons Row: Ver Detalles, Ver Landing Page, Compartir, y Autorizar (Admin) -->
+          <!-- Action Buttons Row: Ver Detalles (Creador/Miembro) o Unirme (Visitantes), Ver Landing Page, Compartir, y Autorizar (Admin) -->
           <div class="saas-card-actions" style="display: flex; align-items: center; gap: 0.35rem; margin-top: auto; flex-wrap: wrap;">
-            <button 
-              class="saas-card-btn-secondary"
-              onclick="event.stopPropagation(); ${hubAction}" 
-              style="background: #ffffff; color: #0f172a; border: 1.5px solid #cbd5e1; border-radius: 10px; padding: 0.48rem 0.55rem; font-size: 0.74rem; font-weight: 700; cursor: pointer; flex: 1 1 auto; min-width: 82px; display: inline-flex; align-items: center; justify-content: center; gap: 0.2rem; transition: all 0.2s ease; white-space: nowrap;"
-              title="Ver detalles y panel del proyecto"
-            >
-              Ver Detalles →
-            </button>
+            ${canHubView ? `
+              <button 
+                class="saas-card-btn-secondary"
+                onclick="event.stopPropagation(); ${hubAction}" 
+                style="background: #ffffff; color: #0f172a; border: 1.5px solid #cbd5e1; border-radius: 10px; padding: 0.48rem 0.55rem; font-size: 0.74rem; font-weight: 700; cursor: pointer; flex: 1 1 auto; min-width: 82px; display: inline-flex; align-items: center; justify-content: center; gap: 0.2rem; transition: all 0.2s ease; white-space: nowrap;"
+                title="Ver detalles y panel del proyecto"
+              >
+                Ver Detalles →
+              </button>
+            ` : `
+              <button 
+                class="saas-card-btn-join"
+                onclick="event.stopPropagation(); ${joinAction}" 
+                style="background: #eff6ff; color: #1d4ed8; border: 1.5px solid #93c5fd; border-radius: 10px; padding: 0.48rem 0.55rem; font-size: 0.74rem; font-weight: 800; cursor: pointer; flex: 1 1 auto; min-width: 82px; display: inline-flex; align-items: center; justify-content: center; gap: 0.25rem; transition: all 0.2s ease; white-space: nowrap;"
+                title="Solicitar unirme a este proyecto"
+              >
+                <span>👥</span>
+                <span>Unirme</span>
+              </button>
+            `}
 
             <button 
               class="saas-card-btn-landing"
               onclick="event.stopPropagation(); ${landingAction}" 
-              style="background: #f0fdf4; color: #047857; border: 1.5px solid #86efac; border-radius: 10px; padding: 0.48rem 0.55rem; font-size: 0.74rem; font-weight: 800; cursor: pointer; flex: 1 1 auto; min-width: 95px; display: inline-flex; align-items: center; justify-content: center; gap: 0.25rem; transition: all 0.2s ease; white-space: nowrap; box-shadow: 0 1px 3px rgba(16, 185, 129, 0.12);"
+              style="${canHubView ? 'background: #f0fdf4; color: #047857; border: 1.5px solid #86efac;' : 'background: #0047cc; color: #ffffff; border: none; box-shadow: 0 2px 8px rgba(0, 71, 204, 0.25);'} border-radius: 10px; padding: 0.48rem 0.55rem; font-size: 0.74rem; font-weight: 800; cursor: pointer; flex: 1 1 auto; min-width: 95px; display: inline-flex; align-items: center; justify-content: center; gap: 0.25rem; transition: all 0.2s ease; white-space: nowrap; ${canHubView ? 'box-shadow: 0 1px 3px rgba(16, 185, 129, 0.12);' : ''}"
               title="Abrir Landing Page pública de este proyecto"
             >
               <span>🌐</span>
@@ -1851,7 +1863,7 @@ window.ProjectsView = {
             <button 
               class="saas-card-btn-primary"
               onclick="event.stopPropagation(); ${shareAction}" 
-              style="background: #0047cc; color: #ffffff; border: none; box-shadow: 0 2px 8px rgba(0, 71, 204, 0.25); border-radius: 10px; padding: 0.48rem 0.55rem; font-size: 0.74rem; font-weight: 700; cursor: pointer; flex: 1 1 auto; min-width: 75px; display: inline-flex; align-items: center; justify-content: center; gap: 0.25rem; transition: all 0.2s ease; white-space: nowrap;"
+              style="${canHubView ? 'background: #0047cc; color: #ffffff; border: none; box-shadow: 0 2px 8px rgba(0, 71, 204, 0.25);' : 'background: #ffffff; color: #0f172a; border: 1.5px solid #cbd5e1;'} border-radius: 10px; padding: 0.48rem 0.55rem; font-size: 0.74rem; font-weight: 700; cursor: pointer; flex: 1 1 auto; min-width: 75px; display: inline-flex; align-items: center; justify-content: center; gap: 0.25rem; transition: all 0.2s ease; white-space: nowrap;"
               title="Compartir este proyecto"
             >
               <span>Compartir</span>
