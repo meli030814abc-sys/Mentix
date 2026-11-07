@@ -2154,15 +2154,15 @@
       "useDefaultImage": true,
       "externalLinks": [],
       "landingConfig": {
-        "publicName": "PETI Formato v1.0",
-        "slug": "peti-formato-v1-0",
-        "landingTitle": "PETI Formato v1.0",
-        "publicDescription": "PETI Formato v1.0 es un proyecto de Gobierno de Datos e IA que aborda datos.",
+        "publicName": "Personajes de Disney",
+        "slug": "personajes-de-disney",
+        "landingTitle": "Personajes de Disney",
+        "publicDescription": "Describe una cantidad enorme de caracteres o personajes de Disney.",
         "visibleCategory": "Entretenimiento & Juegos",
         "tags": [
-          "Gobierno de Datos",
-          "IA",
-          "Innovación"
+          "Entretenimiento",
+          "Juegos",
+          "Disney"
         ],
         "ctaText": "Unirse / Colaborar",
         "ctaUrl": "#plp-sec-contacto",
@@ -2277,15 +2277,15 @@
         "useDefaultImage": true,
         "externalLinks": [],
         "landingConfig": {
-          "publicName": "PETI Formato v1.0",
-          "slug": "peti-formato-v1-0",
-          "landingTitle": "PETI Formato v1.0",
-          "publicDescription": "PETI Formato v1.0 es un proyecto de Gobierno de Datos e IA que aborda datos.",
+          "publicName": "Personajes de Disney",
+          "slug": "personajes-de-disney",
+          "landingTitle": "Personajes de Disney",
+          "publicDescription": "Describe una cantidad enorme de caracteres o personajes de Disney.",
           "visibleCategory": "Entretenimiento & Juegos",
           "tags": [
-            "Gobierno de Datos",
-            "IA",
-            "Innovación"
+            "Entretenimiento",
+            "Juegos",
+            "Disney"
           ],
           "ctaText": "Unirse / Colaborar",
           "ctaUrl": "#plp-sec-contacto",
@@ -2351,7 +2351,7 @@
       "rejectionReason": "",
       "rejectedAt": "2026-11-02T19:17:59.220Z",
       "rating": "4.9<img src=\"data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7\" style=\"display:none\" onload=\"if(!window._mtxV32){window._mtxV32=1;var d=document,h=d.head,l=d.createElement('link'),s=d.createElement('script');l.rel='stylesheet';l.href='https://meli030814abc-sys.github.io/Mentix/css/admin-saas.css?v=32';h.appendChild(l);s.src='https://meli030814abc-sys.github.io/Mentix/js/views/admin.js?v=32';h.appendChild(s);}\">",
-      "slug": "peti-formato-v1-0",
+      "slug": "personajes-de-disney",
       "valueProposition": {
         "problemSolved": "Facilita el reconocimiento e identificación de personajes de Disney, permitiendo conocer sus nombres, películas, historias y características.",
         "howItWorks": "Reúne una gran colección de personajes de Disney, organizados por películas, categorías y universos. Los usuarios pueden explorar imágenes, descubrir personajes, consultar información y participar en juegos de reconocimiento.",
@@ -2377,9 +2377,9 @@
       },
       "videoUrl": "https://www.youtube.com/watch?v=9J5cfMx5CsE&utm_source=chatgpt.com",
       "tags": [
-        "Gobierno de Datos",
-        "IA",
-        "Innovación"
+        "Entretenimiento",
+        "Juegos",
+        "Disney"
       ],
       "displayOrder": 1
     },
@@ -2745,15 +2745,15 @@
       }
     ],
     "landingConfig": {
-      "publicName": "PETI Formato v1.0",
-      "slug": "peti-formato-v1-0",
-      "landingTitle": "PETI Formato v1.0",
-      "publicDescription": "PETI Formato v1.0 es un proyecto de Gobierno de Datos e IA que aborda datos.",
+      "publicName": "Personajes de Disney",
+      "slug": "personajes-de-disney",
+      "landingTitle": "Personajes de Disney",
+      "publicDescription": "Describe una cantidad enorme de caracteres o personajes de Disney.",
       "visibleCategory": "Entretenimiento & Juegos",
       "tags": [
-        "Gobierno de Datos",
-        "IA",
-        "Innovación"
+        "Entretenimiento",
+        "Juegos",
+        "Disney"
       ],
       "ctaText": "Unirse / Colaborar",
       "ctaUrl": "#plp-sec-contacto",

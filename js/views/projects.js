@@ -3914,7 +3914,7 @@ window.ProjectsView = {
     this.selectedProjectId = projectId;
     this.isWizardPreview = false;
     this.viewMode = 'landing';
-    const proj = (window.appState.challenges || []).find(x => x.id === projectId);
+    const proj = this.getMergedProjectRecord(projectId) || (window.appState?.challenges || []).find(x => x && (x.id === projectId || x.slug === projectId));
     if (proj) {
       try {
         localStorage.setItem('mentix_active_landing_project', JSON.stringify(proj));
@@ -5401,8 +5401,9 @@ window.ProjectsView = {
       container.setAttribute('data-theme', currentTheme);
       container.classList.toggle('light-theme', currentTheme === 'light');
     }
-    const rawFound = allProjects.find(x => x && x.id === this.selectedProjectId) || (window.appState?.challenges || []).find(x => x && x.id === this.selectedProjectId);
+    const rawFound = allProjects.find(x => x && (x.id === this.selectedProjectId || x.slug === this.selectedProjectId)) || (window.appState?.challenges || []).find(x => x && (x.id === this.selectedProjectId || x.slug === this.selectedProjectId));
     let selected = this.getMergedProjectRecord(this.selectedProjectId, rawFound);
+    if (!selected && rawFound) selected = rawFound;
     if (selected) {
       try {
         localStorage.setItem('mentix_active_landing_project', JSON.stringify(selected));
@@ -5415,14 +5416,20 @@ window.ProjectsView = {
     const pub = (selected && (selected.landingConfig || selected.publication)) ? (selected.landingConfig || selected.publication) : {};
     const vid = (selected && (selected.videoConfig || selected.video)) ? (selected.videoConfig || selected.video) : {};
 
+    const isDummyPeti = (str) => typeof str === 'string' && (str.toLowerCase().includes('peti formato') || str.toLowerCase().includes('formato v1.0'));
+    const cleanPublicName = (pub.publicName && !isDummyPeti(pub.publicName)) ? pub.publicName : (selected ? selected.title : '');
+    const cleanLandingTitle = (pub.landingTitle && !isDummyPeti(pub.landingTitle)) ? pub.landingTitle : (selected ? selected.title : cfg.heroTitle);
+    const cleanPublicDesc = (pub.publicDescription && !isDummyPeti(pub.publicDescription)) ? pub.publicDescription : (selected ? (selected.shortDescription || selected.description || gp.shortDescription) : '');
+
     const brandTitle = this.escapeHtml((selected && (selected.categoryName || pub.visibleCategory)) || cfg.brandTitle || 'Proyecto');
-    const brandSubtitle = this.escapeHtml((selected && (pub.publicName || selected.title)) || '');
-    const selectedTitle = selected ? this.escapeHtml(pub.publicName || selected.title || 'Proyecto') : 'Proyecto';
+    const brandSubtitle = this.escapeHtml(cleanPublicName || (selected && selected.title) || '');
+    const selectedTitle = selected ? this.escapeHtml(cleanPublicName || selected.title || 'Proyecto') : 'Proyecto';
     const heroEyebrow = this.escapeHtml((selected && (selected.subtitle || selected.categoryName)) || '🚀 Proyecto Educativo & Didáctico');
-    const heroMainTitle1 = selected ? this.escapeHtml(pub.landingTitle || selected.title || cfg.heroTitle) : cfg.heroTitle;
+    const heroMainTitle1 = selected ? this.escapeHtml(cleanLandingTitle || selected.title || cfg.heroTitle) : cfg.heroTitle;
     const heroMainTitle2 = (selected && selected.subtitle) ? this.escapeHtml(selected.subtitle) : '';
     const heroSubtitle = this.escapeHtml(this.truncateCardText(
-      (selected && (pub.publicDescription || selected.shortDescription || selected.description || gp.shortDescription)) ||
+      cleanPublicDesc ||
+      (selected && (selected.shortDescription || selected.description || gp.shortDescription)) ||
       cfg.heroSub,
       180
     ));
@@ -5963,7 +5970,7 @@ window.ProjectsView = {
                   <span>📂</span> Abrir Proyecto
                 </button>` : ''}
               `}
-              <a href="${fullScreenHref}" target="_blank" class="plp-mentix-btn" style="text-decoration:none;">
+              <a href="${fullScreenHref}" target="_blank" class="plp-mentix-btn" style="text-decoration:none;" onclick="try{const p=window.ProjectsView.getMergedProjectRecord('${selected ? selected.id : ''}'); if(p) localStorage.setItem('mentix_active_landing_project', JSON.stringify(p));}catch(e){}">
                 <span>↗</span> Abrir en Pantalla Completa
               </a>
             </div>

@@ -8,9 +8,9 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="css/styles.css?v=20261107_capsule_all_buttons_v59" />
-  <link rel="stylesheet" href="css/project-landing.css?v=20261107_capsule_all_buttons_v59" />
-  <link rel="stylesheet" href="css/project-hub.css?v=20261107_capsule_all_buttons_v59" />
+  <link rel="stylesheet" href="css/styles.css?v=20261107_open_project_fix_v65" />
+  <link rel="stylesheet" href="css/project-landing.css?v=20261107_open_project_fix_v65" />
+  <link rel="stylesheet" href="css/project-hub.css?v=20261107_open_project_fix_v65" />
   <style>
     html {
       scroll-behavior: smooth;
@@ -575,13 +575,13 @@
       const modal = document.getElementById('plp-standalone-lightbox');
       const body = document.getElementById('plp-standalone-lightbox-body');
       if (!modal || !body) return;
-      body.innerHTML = 
-        <button class="plp-lightbox-close" onclick="closeLandingLightbox()" aria-label="Cerrar">âœ•</button>
+      body.innerHTML = `
+        <button class="plp-lightbox-close" onclick="closeLandingLightbox()" aria-label="Cerrar">✕</button>
         <img src="${imgUrl}" alt="${caption}" style="width:100%; max-height:75vh; object-fit:contain; background:#091e2d; display:block;" />
         <div style="padding:1.25rem 1.75rem; background:#ffffff;">
           <h3 style="margin:0; font-size:1.15rem; color:#091e2d;">${caption}</h3>
         </div>
-      ;
+      `;
       modal.classList.add('active');
     }
 
@@ -1697,45 +1697,26 @@
     })();
 
     // Hidratación reactiva si viene cargado un proyecto en localStorage o por URL
-    (function hydrateFromActiveProject() {
+    function applyProjectToLanding(activeProject) {
+      if (!activeProject) return;
+      currentActiveProject = activeProject;
       try {
-        const params = new URLSearchParams(window.location.search);
-        const reqId = params.get('id');
-        let activeProject = null;
-
-        const raw = localStorage.getItem('mentix_active_landing_project');
-        if (raw) {
-          try {
-            const p = JSON.parse(raw);
-            if (p && (!reqId || p.id === reqId)) activeProject = p;
-          } catch (e) {}
-        }
-
-        if (!activeProject && reqId) {
-          const stateRaw = localStorage.getItem('mentix_state_backup') || localStorage.getItem('mentix_cloud_challenges');
-          if (stateRaw) {
-            try {
-              const list = JSON.parse(stateRaw);
-              const challenges = Array.isArray(list) ? list : (list.challenges || []);
-              activeProject = challenges.find(c => c.id === reqId);
-            } catch (e) {}
-          }
-        }
-
-        if (!activeProject) return;
-        currentActiveProject = activeProject;
-
+        const isDummyPeti = (str) => typeof str === 'string' && (str.toLowerCase().includes('peti formato') || str.toLowerCase().includes('formato v1.0'));
+        const pub = activeProject.publication || activeProject.landingConfig || {};
         const gp = activeProject.govdata || {};
         const vp = activeProject.valueProp || activeProject.valueProposition || gp.valueProp || {};
 
+        const cleanTitle = (pub.landingTitle && !isDummyPeti(pub.landingTitle)) ? pub.landingTitle : (activeProject.title || 'Proyecto');
+        const cleanDesc = (pub.publicDescription && !isDummyPeti(pub.publicDescription)) ? pub.publicDescription : (activeProject.shortDescription || activeProject.description || gp.shortDescription || '');
+
         const whyLeadP = document.getElementById('inno-why-lead-desc');
         if (whyLeadP) {
-          whyLeadP.textContent = activeProject.shortDescription || gp.shortDescription || activeProject.description || activeProject.mainObjective || 'Conoce los objetivos y justificación del proyecto.';
+          whyLeadP.textContent = cleanDesc || activeProject.mainObjective || 'Conoce los objetivos y justificación del proyecto.';
         }
 
         const whyCardProblem = document.getElementById('inno-why-card-problem');
         if (whyCardProblem) {
-          whyCardProblem.textContent = activeProject.problemStatement || gp.problemStatement || vp.problemSolved || activeProject.shortDescription || 'Problema o reto abordado por el proyecto.';
+          whyCardProblem.textContent = activeProject.problemStatement || gp.problemStatement || vp.problemSolved || cleanDesc || 'Problema o reto abordado por el proyecto.';
         }
 
         const whyCardValueProp = document.getElementById('inno-why-card-valueprop');
@@ -1753,7 +1734,6 @@
           whyCardImpact.textContent = activeProject.benefits || gp.benefits || vp.resultsAndBenefits || 'Beneficios e impacto esperados.';
         }
 
-        const pub = activeProject.publication || {};
         const valProp = activeProject.valueProposition || vp || {};
         const des = activeProject.designConfig || activeProject.govdata?.designConfig || {};
         const savedBanner = activeProject.id ? localStorage.getItem('mentix_hero_banner_' + activeProject.id) : null;
@@ -1813,11 +1793,11 @@
         const heroEyebrow = document.getElementById('inno-hero-eyebrow');
         if (heroEyebrow) heroEyebrow.style.cssText = contrast.eyebrowStyle;
 
-        if (activeProject.title || pub.landingTitle) {
-          document.title = `${pub.landingTitle || activeProject.title} | Gobierno de Datos e IA`;
+        if (cleanTitle) {
+          document.title = `${cleanTitle} | Gobierno de Datos e IA`;
           const titleMain = document.getElementById('inno-hero-title-main');
           if (titleMain) {
-            titleMain.textContent = pub.landingTitle || activeProject.title;
+            titleMain.textContent = cleanTitle;
             titleMain.style.color = contrast.titleColor;
             titleMain.style.cssText += ';' + contrast.titleShadow;
           }
@@ -1838,10 +1818,10 @@
           }
         }
 
-        if (pub.publicDescription || activeProject.description || activeProject.shortDescription) {
+        if (cleanDesc) {
           const heroDesc = document.getElementById('inno-hero-desc');
           if (heroDesc) {
-            heroDesc.textContent = pub.publicDescription || activeProject.description || activeProject.shortDescription;
+            heroDesc.textContent = cleanDesc;
             heroDesc.style.color = contrast.textColor;
             if (contrast.descShadow) heroDesc.style.cssText += ';' + contrast.descShadow;
           }
@@ -2333,7 +2313,86 @@
       } catch (err) {
         console.warn('Hydration notice:', err);
       }
-    })();
+    }
+    window.applyProjectToLanding = applyProjectToLanding;
+
+    function hydrateFromActiveProject() {
+      try {
+        const params = new URLSearchParams(window.location.search);
+        const reqId = params.get('id');
+        const reqSlug = params.get('slug');
+        let activeProject = null;
+
+        const isMatching = (p) => {
+          if (!p) return false;
+          if (reqId && (p.id === reqId || p.slug === reqId || (p.govdata && p.govdata.id === reqId))) return true;
+          if (reqSlug && (p.slug === reqSlug || (p.govdata && p.govdata.slug === reqSlug))) return true;
+          return !reqId && !reqSlug;
+        };
+
+        const raw = localStorage.getItem('mentix_active_landing_project');
+        if (raw) {
+          try {
+            const p = JSON.parse(raw);
+            if (isMatching(p)) activeProject = p;
+          } catch (e) {}
+        }
+
+        if (!activeProject && (reqId || reqSlug)) {
+          try {
+            const draftsRaw = localStorage.getItem('mentix_govdata_wizard_drafts');
+            if (draftsRaw) {
+              const drafts = JSON.parse(draftsRaw);
+              const found = (Array.isArray(drafts) ? drafts : []).find(d => isMatching(d));
+              if (found) activeProject = found;
+            }
+          } catch (e) {}
+        }
+
+        if (!activeProject && (reqId || reqSlug)) {
+          const sources = ['mentix_challenges', 'mentix_state_backup', 'mentix_cloud_challenges'];
+          for (const sKey of sources) {
+            const sRaw = localStorage.getItem(sKey);
+            if (sRaw) {
+              try {
+                const list = JSON.parse(sRaw);
+                const challenges = Array.isArray(list) ? list : (list.challenges || []);
+                const found = challenges.find(c => isMatching(c));
+                if (found) {
+                  activeProject = found;
+                  break;
+                }
+              } catch (e) {}
+            }
+          }
+        }
+
+        if (activeProject) {
+          applyProjectToLanding(activeProject);
+          return;
+        }
+
+        // Si no se encontró en localStorage, buscar asíncronamente en data/challenges.json
+        fetch('data/challenges.json')
+          .then(r => r.json())
+          .then(list => {
+            if (!Array.isArray(list)) return;
+            const found = list.find(c => isMatching(c)) || (list.length > 0 && !reqId && !reqSlug ? list[0] : null);
+            if (found) {
+              try {
+                localStorage.setItem('mentix_active_landing_project', JSON.stringify(found));
+              } catch (e) {}
+              applyProjectToLanding(found);
+            }
+          })
+          .catch(err => console.warn('No se pudo cargar challenges.json en landing:', err));
+
+      } catch (err) {
+        console.warn('Hydration initialization notice:', err);
+      }
+    }
+
+    hydrateFromActiveProject();
 
     // Sincronización en vivo entre pestañas y dispositivos
     window.addEventListener('storage', (ev) => {
