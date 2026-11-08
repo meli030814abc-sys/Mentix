@@ -4837,6 +4837,32 @@ window.ProjectsView = {
     return (lastSpace > 60 ? cut.slice(0, lastSpace) : cut).replace(/[.,;:!\-\s]+$/, '') + '...';
   },
 
+  getUserAnimalSprite(userOrAvatar) {
+    if (window.AvatarEngine && typeof window.AvatarEngine.getAvatarImgUrl === 'function') {
+      return window.AvatarEngine.getAvatarImgUrl(userOrAvatar);
+    }
+    let animal = 'fox';
+    if (userOrAvatar && typeof userOrAvatar === 'object') {
+      const cfg = userOrAvatar.avatarConfig || userOrAvatar.avatar_config || userOrAvatar;
+      if (cfg && cfg.animal) animal = cfg.animal;
+      else if (userOrAvatar.avatar) userOrAvatar = userOrAvatar.avatar;
+    }
+    if (typeof userOrAvatar === 'string') {
+      const cleanVal = userOrAvatar.trim();
+      if (cleanVal.includes('assets/sprites/')) return cleanVal;
+      const emojiMap = {
+        '🦊': 'fox', '🐼': 'panda', '🐱': 'cat', '🐶': 'dog', '🦁': 'lion', '🐰': 'rabbit',
+        '🐨': 'koala', '🦉': 'owl', '🐵': 'monkey', '🐻': 'bear', '🐺': 'wolf', '🐯': 'tiger',
+        '🐧': 'penguin', '🦄': 'unicorn', '🐲': 'dragon', '🤖': 'robot'
+      };
+      if (emojiMap[cleanVal]) animal = emojiMap[cleanVal];
+      else if (['fox','panda','cat','dog','lion','rabbit','koala','owl','monkey','bear','wolf','tiger','penguin','unicorn','dragon','robot'].includes(cleanVal.toLowerCase())) {
+        animal = cleanVal.toLowerCase();
+      }
+    }
+    return `assets/sprites/${animal}.png?v=2`;
+  },
+
   /**
    * Fusiona universalmente los datos de cualquier proyecto desde challenges, borradores del asistente y govdata,
    * garantizando que todos los proyectos creados o editados conserven siempre sus presentaciones, recursos, enlaces, textos y avances.
@@ -5948,44 +5974,52 @@ window.ProjectsView = {
     }
 
     const cu = window.appState?.currentUser || {};
-    const currentUserName = this.escapeHtml(cu.name || selected?.author || 'Usuario Mentix');
+    const currentUserName = this.escapeHtml(cu.name || (window.AvatarEngine && window.AvatarEngine.getSavedAvatar ? window.AvatarEngine.getSavedAvatar().alias : null) || selected?.author || 'Usuario Mentix');
     const currentUserRole = this.escapeHtml(cu.role === 'admin' ? 'Administrador' : (cu.role === 'teacher' ? 'Docente' : (selected?.author && selected.author.toLowerCase() === (cu.name || '').toLowerCase() ? 'Autor Principal' : 'Colaborador')));
-    const currentUserAvatar = cu.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&q=80';
-    const participantAvatar = (selected?.author && selected.author === cu.name && cu.avatar) ? cu.avatar : 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=160&q=80';
+    
+    // Avatar animal oficial de Mentix del usuario conectado (Zorro, Panda, Gato, etc.)
+    const currentUserAvatar = this.getUserAnimalSprite(cu);
+    const participantAvatar = currentUserAvatar;
     const lastUpdateDate = selected?.updatedAt
       ? new Date(selected.updatedAt).toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' })
       : (selected?.createdAt ? new Date(selected.createdAt).toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' }) : 'Reciente');
 
-    // Equipo 100% REAL del proyecto (sin inventar miembros ficticios)
+    // Equipo 100% REAL del proyecto con sus avatares animales de Mentix
     const projectAuthor = (selected?.author || (aut.authorsList ? aut.authorsList.split(',')[0].trim() : '') || cu.name || 'Autor del Proyecto').trim();
     const rawCollaborators = Array.isArray(selected?.collaborators) ? selected.collaborators : [];
     const authorsListExtra = aut.authorsList ? aut.authorsList.split(',').slice(1).map(s => s.trim()).filter(Boolean) : [];
     const allTeamMembers = [];
 
+    const isAuthorCu = selected?.author && (selected.author.toLowerCase() === (cu.name || '').toLowerCase());
+    const authorSprite = isAuthorCu ? currentUserAvatar : this.getUserAnimalSprite(selected?.authorAvatar || selected?.author || 'fox');
+
     allTeamMembers.push({
       name: projectAuthor,
       role: 'Autor y Creador del Proyecto',
-      avatar: (selected?.author && selected.author === cu.name && cu.avatar) ? cu.avatar : 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=160&q=80',
+      avatar: authorSprite,
       status: '🟢 Creador'
     });
 
-    authorsListExtra.forEach((name) => {
+    const animalPool = ['panda', 'cat', 'lion', 'dog', 'wolf', 'tiger', 'rabbit', 'koala', 'owl', 'bear', 'penguin'];
+    authorsListExtra.forEach((name, idx) => {
+      const fallbackAnimal = animalPool[idx % animalPool.length];
       allTeamMembers.push({
         name,
         role: 'Co-autor del Proyecto',
-        avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=160&q=80',
+        avatar: `assets/sprites/${fallbackAnimal}.png?v=2`,
         status: '🔵 Colaborador'
       });
     });
 
-    rawCollaborators.forEach((c) => {
+    rawCollaborators.forEach((c, idx) => {
       const colName = typeof c === 'string' ? c : (c.name || c.email || 'Colaborador');
       const colRole = typeof c === 'object' && c.role ? c.role : 'Colaborador del Proyecto';
+      const colAvatar = (typeof c === 'object' && c.avatar) ? this.getUserAnimalSprite(c.avatar) : `assets/sprites/${animalPool[(idx + 2) % animalPool.length]}.png?v=2`;
       if (!allTeamMembers.some(m => m.name.toLowerCase() === colName.toLowerCase())) {
         allTeamMembers.push({
           name: colName,
           role: colRole,
-          avatar: (typeof c === 'object' && c.avatar) ? c.avatar : 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=160&q=80',
+          avatar: colAvatar,
           status: '🔵 Colaborador'
         });
       }

@@ -5332,8 +5332,11 @@ body[data-theme="dark"] .plp-lightbox-content {
 .inno-user-avatar-img {
   width: 100% !important;
   height: 100% !important;
-  object-fit: cover !important;
+  object-fit: contain !important;
   display: block !important;
+  background: linear-gradient(135deg, rgba(0, 245, 212, 0.2), rgba(37, 99, 235, 0.2)) !important;
+  padding: 3px !important;
+  box-sizing: border-box !important;
 }
 
 /* 2. Hero Section */
@@ -5983,8 +5986,12 @@ body[data-theme="dark"] .plp-lightbox-content {
   width: 100% !important;
   height: 100% !important;
   border-radius: 50% !important;
-  object-fit: cover !important;
-  border: 3px solid #e2e8f0 !important;
+  object-fit: contain !important;
+  background: linear-gradient(135deg, rgba(0, 245, 212, 0.18), rgba(56, 189, 248, 0.22)) !important;
+  border: 3px solid #38bdf8 !important;
+  box-shadow: 0 4px 14px rgba(56, 189, 248, 0.25) !important;
+  padding: 5px !important;
+  box-sizing: border-box !important;
 }
 
 .inno-online-dot {
@@ -6331,7 +6338,11 @@ article.inno-resource-card.filter-hidden {
   width: 100% !important;
   height: 100% !important;
   border-radius: 50% !important;
-  object-fit: cover !important;
+  object-fit: contain !important;
+  background: linear-gradient(135deg, rgba(0, 245, 212, 0.12), rgba(124, 58, 237, 0.15)) !important;
+  border: 2px solid rgba(56, 189, 248, 0.4) !important;
+  padding: 4px !important;
+  box-sizing: border-box !important;
 }
 
 .inno-team-status-dot {

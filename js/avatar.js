@@ -435,6 +435,35 @@ window.AvatarEngine = {
     return this.animals[animalKey]?.icon || '🦊';
   },
 
+  getAvatarImgUrl(userOrAvatar) {
+    let animal = 'fox';
+    if (userOrAvatar && typeof userOrAvatar === 'object') {
+      const cfg = userOrAvatar.avatarConfig || userOrAvatar.avatar_config || userOrAvatar;
+      if (cfg && cfg.animal && Array.isArray(this.spriteAnimals) && this.spriteAnimals.includes(cfg.animal)) {
+        animal = cfg.animal;
+      } else if (userOrAvatar.avatar) {
+        userOrAvatar = userOrAvatar.avatar;
+      }
+    }
+    if (typeof userOrAvatar === 'string') {
+      const cleanVal = userOrAvatar.trim();
+      if (cleanVal.includes('assets/sprites/')) return cleanVal;
+      if (this.emojiToAnimalMap && this.emojiToAnimalMap[cleanVal]) {
+        animal = this.emojiToAnimalMap[cleanVal];
+      } else if (Array.isArray(this.spriteAnimals) && this.spriteAnimals.includes(cleanVal.toLowerCase())) {
+        animal = cleanVal.toLowerCase();
+      }
+    } else if (!userOrAvatar) {
+      try {
+        const saved = this.getSavedAvatar();
+        if (saved && saved.animal && Array.isArray(this.spriteAnimals) && this.spriteAnimals.includes(saved.animal)) {
+          animal = saved.animal;
+        }
+      } catch (e) {}
+    }
+    return `assets/sprites/${animal}.png?v=2`;
+  },
+
   awardXP(amount, reason = '') {
     const cur = this.getSavedAvatar();
     const prevXP = cur.xp || 0;
