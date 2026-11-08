@@ -1362,18 +1362,39 @@ class AppRouter {
     if (!challenge) return false;
     const u = window.appState?.currentUser;
 
-    // 1. Los administradores tienen permisos globales de edición y moderación
-    const roleLower = String(u?.role || '').toLowerCase().trim();
-    if (roleLower === 'admin' || roleLower === 'administrador' || u?.isAdmin === true || localStorage.getItem('mentix_admin_override') === 'true') {
-      return true;
-    }
+    const clean = s => String(s || '').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    const cleanName = clean(u.name);
+    const cleanUsername = clean(u.username);
+    const cleanEmail = clean(u.email);
+    const isMelisa = cleanName === 'melisa' || cleanUsername === 'melisa' || cleanEmail === 'meli030814abc@gmail.com' || cleanEmail.startsWith('melisa');
 
-    // 2. Docentes / Profesores y Creadores tienen permisos pedagógicos plenos para editar cuestionarios y retos
-    if (roleLower === 'teacher' || roleLower === 'profesor' || roleLower === 'docente' || roleLower === 'creator' || u?.isTeacher === true) {
-      return true;
-    }
+    // 1. Melisa tiene permisos globales absolutos para editar todos los exámenes, retos y proyectos
+    if (isMelisa) return true;
 
-    // 3. Verificar si este navegador creó este reto localmente (IDs guardados en localStorage)
+    // 2. Administradores oficiales de la plataforma
+    const roleLower = String(u.role || '').toLowerCase().trim();
+    const isAdmin = roleLower === 'admin' || roleLower === 'administrador' || u.isAdmin === true || localStorage.getItem('mentix_admin_override') === 'true' || (window.AdminView && window.AdminView.isAdminAuditing);
+    if (isAdmin) return true;
+
+    // Si el reto de AGILE Y SCRUM es exclusivo de Melisa
+    const cleanTitle = clean(challenge.title);
+    const isAgileScrum = (cleanTitle.includes('agile') && cleanTitle.includes('scrum')) || challenge.id === 'reto_1792180343870';
+    if (isAgileScrum) return false;
+
+    // 3. Creador original del examen o proyecto (por id, correo, nombre o username)
+    const currentId = String(u.id || '').trim();
+    const authorId = String(challenge.authorId || challenge.creatorId || '').trim();
+    const authorEmail = clean(challenge.authorEmail);
+    const authorName = clean(challenge.author || challenge.creatorName || challenge.teamLead);
+    const authorsConfigList = clean(challenge.authorsConfig?.authorsList);
+    const authorsConfigEmails = clean(challenge.authorsConfig?.authorsEmails);
+
+    if (currentId && authorId && (authorId === currentId || authorId === 'usr_' + currentId)) return true;
+    if (cleanEmail && (authorEmail === cleanEmail || (authorsConfigEmails && authorsConfigEmails.includes(cleanEmail)))) return true;
+    if (cleanName && authorName && (authorName === cleanName || (authorsConfigList && authorsConfigList.includes(cleanName)))) return true;
+    if (cleanUsername && authorName && (authorName === cleanUsername || (authorsConfigList && authorsConfigList.includes(cleanUsername)))) return true;
+
+    // 4. Verificar si este navegador creó este reto/proyecto localmente (IDs guardados en localStorage)
     try {
       const myIds = JSON.parse(localStorage.getItem('mentix_my_created_challenge_ids') || '[]');
       if (Array.isArray(myIds) && myIds.includes(challenge.id)) {
@@ -1384,51 +1405,12 @@ class AppRouter {
       }
     } catch(e) {}
 
-    if (!u) return false;
-
-    // 4. Si el reto no tiene autor asignado o es genérico ('Profesor', 'Creador') y el usuario no es invitado
-    if (!u.isGuest && (!challenge.author || challenge.author === 'Profesor' || challenge.author === 'Creador' || challenge.author === 'Comunidad')) {
-      return true;
-    }
-
-    const clean = s => String(s || '').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-    const cleanName = clean(u.name);
-    const cleanUsername = clean(u.username);
-    const cleanEmail = clean(u.email);
-    const isMelisa = cleanName === 'melisa' || cleanEmail === 'meli030814abc@gmail.com';
-
-    // Si el reto de AGILE Y SCRUM no tiene autor definido, asignarlo a Melisa
-    const cleanTitle = clean(challenge.title);
-    const isAgileScrum = (cleanTitle.includes('agile') && cleanTitle.includes('scrum')) || challenge.id === 'reto_1792180343870';
-    if (isMelisa && isAgileScrum && (!challenge.author || challenge.author === 'Profesor' || challenge.author === 'Comunidad')) {
-      challenge.author = u.name || 'Melisa';
-      challenge.authorAvatar = u.avatar || '🦊';
-      challenge.authorId = u.id || 'usr_melisa';
-    }
-    if (isMelisa) return true;
-
-    // AGILE Y SCRUM sigue siendo exclusivo de Melisa
-    if (isAgileScrum) return false;
-
-    // Autor del proyecto/cuestionario: por id, correo, nombre o username
-    const currentId = String(u.id || '').trim();
-    const authorId = String(challenge.authorId || challenge.creatorId || '').trim();
-    const authorEmail = clean(challenge.authorEmail);
-    const authorName = clean(challenge.author || challenge.creatorName || challenge.teamLead);
-    const authorsConfigList = clean(challenge.authorsConfig?.authorsList);
-    const authorsConfigEmails = clean(challenge.authorsConfig?.authorsEmails);
-
-    if (currentId && authorId && (authorId === currentId || authorId === 'usr_' + currentId)) return true;
-    if (cleanEmail && (authorEmail === cleanEmail || authorsConfigEmails.includes(cleanEmail))) return true;
-    if (cleanName && (authorName === cleanName || authorsConfigList.includes(cleanName))) return true;
-    if (cleanUsername && (authorName === cleanUsername || authorsConfigList.includes(cleanUsername))) return true;
-
-    // Verificar si el proyecto reside en la bóveda personal del usuario
+    // 5. Verificar si el proyecto reside en la bóveda personal del usuario
     try {
       const userKey = u.id || u.username || u.email;
       if (userKey) {
         const vault = JSON.parse(localStorage.getItem('mentix_user_projects_' + userKey) || '[]');
-        if (Array.isArray(vault) && vault.some(p => p && p.id === challenge.id)) {
+        if (Array.isArray(vault) && vault.some(p => p && String(p.id) === String(challenge.id))) {
           return true;
         }
       }
@@ -1450,7 +1432,7 @@ class AppRouter {
         challenge.isPublic = true;
       }
       if (window.supabaseService && typeof window.supabaseService.saveChallengeToSupabase === 'function') {
-        window.supabaseService.saveChallengeToSupabase(challenge);
+        try { window.supabaseService.saveChallengeToSupabase(challenge); } catch(e) {}
       }
       challenge.updatedAt = new Date().toISOString();
       const cleanChallenge = typeof window.compactProjectForStorage === 'function'
@@ -1458,14 +1440,23 @@ class AppRouter {
         : challenge;
 
       const apiBase = this.getApiBase();
+      const controller = (typeof AbortController !== 'undefined') ? new AbortController() : null;
+      const timeoutId = controller ? setTimeout(() => controller.abort(), 3500) : null;
+
       const res = await fetch(`${apiBase}/api/challenges`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ challenge: cleanChallenge })
+        body: JSON.stringify({ challenge: cleanChallenge }),
+        signal: controller ? controller.signal : undefined
+      }).catch(err => {
+        console.warn('Aviso de red al sincronizar reto (/api/challenges):', err.message);
+        return null;
       });
-      if (res.ok) {
+      if (timeoutId) clearTimeout(timeoutId);
+
+      if (res && res.ok) {
         let persisted = false; try { const j = await res.json(); persisted = !!(j && j.persisted); } catch (e) {} this.lastCloudPersisted = persisted; console.log('☁️ Reto enviado a MENTIX Cloud (persistido: ' + persisted + '):', challenge.title);
-      } else {
+      } else if (res) {
         console.warn('Respuesta no-ok al guardar en /api/challenges:', res.status);
       }
     } catch(e) {

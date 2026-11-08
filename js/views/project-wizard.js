@@ -534,6 +534,15 @@ window.ProjectWizard = {
   },
 
   async openWizard(projectId = null, startStep = null) {
+    if (projectId) {
+      const projToCheck = (window.appState?.challenges || []).find(c => c && String(c.id) === String(projectId)) || this.getAllSavedDrafts().find(d => d && String(d.id) === String(projectId));
+      if (projToCheck && window.ProjectsView && typeof window.ProjectsView.canUserEditProject === 'function') {
+        if (!window.ProjectsView.canUserEditProject(projToCheck)) {
+          alert('🔒 Permiso exclusivo: Solo los administradores, Melisa o el creador de este proyecto tienen autorización para editarlo.');
+          return;
+        }
+      }
+    }
     this.pendingAiProposal = null;
     let existing = null;
 
@@ -5658,7 +5667,7 @@ collectCurrentStepInputs() {
     this.saveDraftToStorage(true);
 
     if (window.appRouter && typeof window.appRouter.pushChallengeToCloud === 'function') {
-      await window.appRouter.pushChallengeToCloud(rec);
+      window.appRouter.pushChallengeToCloud(rec).catch(() => {});
     }
 
     if (canPub) {

@@ -177,7 +177,7 @@ window.ProjectHub = {
     const isDirectAuthor = myKeys.some(k => projAuthorKeys.includes(k));
     const isOwner = isDirectAuthor
       || (window.appRouter && typeof window.appRouter.isChallengeOwner === 'function' && window.appRouter.isChallengeOwner(proj))
-      || (window.ProjectsView && typeof window.ProjectsView.isTeacherOrAdmin === 'function' && window.ProjectsView.isTeacherOrAdmin());
+      || (window.ProjectsView && typeof window.ProjectsView.canUserEditProject === 'function' && window.ProjectsView.canUserEditProject(proj));
     if (isOwner) return 'owner';
     const hub = this.getHub(proj.id);
     const m = this.getMember(proj, hub);
@@ -191,8 +191,13 @@ window.ProjectHub = {
   },
   canEdit(proj) {
     if (!proj) return false;
-    const r = this.getRole(proj);
-    return r === 'owner' || r === 'editor';
+    if (window.appRouter && typeof window.appRouter.isChallengeOwner === 'function') {
+      return window.appRouter.isChallengeOwner(proj);
+    }
+    if (window.ProjectsView && typeof window.ProjectsView.canUserEditProject === 'function') {
+      return window.ProjectsView.canUserEditProject(proj);
+    }
+    return this.getRole(proj) === 'owner';
   },
   canManage(proj) { return this.getRole(proj) === 'owner'; },
 

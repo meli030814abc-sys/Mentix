@@ -204,6 +204,16 @@ window.PresentationView = {
     this.fromStudentCreate = Boolean(params.fromStudentCreate || params.project?.fromStudentCreate || this.currentProject?.fromStudentCreate || this.currentProject?._isStudentDraft);
 
     if (params.edit) {
+      const projToCheck = params.project || (params.id ? (window.appState.challenges || []).find(c => c.id === params.id) : null);
+      if (projToCheck && projToCheck.id && window.appRouter && typeof window.appRouter.isChallengeOwner === 'function') {
+        if (!window.appRouter.isChallengeOwner(projToCheck)) {
+          alert('🔒 Permiso exclusivo: Solo los administradores, Melisa o el creador de este proyecto pueden editarlo.');
+          params.edit = false;
+        }
+      }
+    }
+
+    if (params.edit) {
       this.isEditing = true;
       const proj = params.project || (params.id ? (window.appState.challenges || []).find(c => c.id === params.id) : null) || this.currentProject || this.createBlankPresentation();
       this.currentProject = proj;

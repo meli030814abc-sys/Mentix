@@ -1318,9 +1318,13 @@ Sin embargo, los funcionarios consideran que existen elementos suficientes para 
     this.render();
   },
 
-  updateQuestionParam(qIdx, param, val) {
+  updateQuestionParam(qIdx, param, val, forceRender = false) {
+    if (!this.currentChallenge || !this.currentChallenge.questions || !this.currentChallenge.questions[qIdx]) return;
     this.currentChallenge.questions[qIdx][param] = val;
-    this.render();
+    // Parámetros ligeros (tiempo, puntos, media url) se actualizan en memoria al instante sin re-renderizar todo el DOM
+    if (forceRender || param === 'mediaType') {
+      this.render();
+    }
   },
 
   validateChallenge() {
@@ -1450,37 +1454,50 @@ Sin embargo, los funcionarios consideran que existen elementos suficientes para 
 
   removeWhiteBackgroundFromImage(dataUrl, threshold = 215) {
     return new Promise((resolve) => {
-      const img = new Image();
-      img.crossOrigin = 'anonymous';
-      img.onload = () => {
-        try {
-          const canvas = document.createElement('canvas');
-          canvas.width = img.width;
-          canvas.height = img.height;
-          const ctx = canvas.getContext('2d');
-          ctx.drawImage(img, 0, 0);
+      if (!dataUrl || typeof dataUrl !== 'string' || !dataUrl.startsWith('data:image/')) {
+        return resolve(dataUrl || '');
+      }
+      const safetyTimer = setTimeout(() => resolve(dataUrl), 500);
+      try {
+        const img = new Image();
+        img.crossOrigin = 'anonymous';
+        img.onload = () => {
+          clearTimeout(safetyTimer);
+          try {
+            const canvas = document.createElement('canvas');
+            canvas.width = img.width;
+            canvas.height = img.height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0);
 
-          const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-          const data = imgData.data;
+            const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            const data = imgData.data;
 
-          for (let i = 0; i < data.length; i += 4) {
-            const r = data[i];
-            const g = data[i + 1];
-            const b = data[i + 2];
-            // Si el pixel es blanco o casi blanco (fondo típico de logos JPG)
-            if (r >= threshold && g >= threshold && b >= threshold) {
-              data[i + 3] = 0; // Transparente 100%
+            for (let i = 0; i < data.length; i += 4) {
+              const r = data[i];
+              const g = data[i + 1];
+              const b = data[i + 2];
+              // Si el pixel es blanco o casi blanco (fondo típico de logos JPG)
+              if (r >= threshold && g >= threshold && b >= threshold) {
+                data[i + 3] = 0; // Transparente 100%
+              }
             }
-          }
 
-          ctx.putImageData(imgData, 0, 0);
-          resolve(canvas.toDataURL('image/png'));
-        } catch (e) {
+            ctx.putImageData(imgData, 0, 0);
+            resolve(canvas.toDataURL('image/png'));
+          } catch (e) {
+            resolve(dataUrl);
+          }
+        };
+        img.onerror = () => {
+          clearTimeout(safetyTimer);
           resolve(dataUrl);
-        }
-      };
-      img.onerror = () => resolve(dataUrl);
-      img.src = dataUrl;
+        };
+        img.src = dataUrl;
+      } catch (e) {
+        clearTimeout(safetyTimer);
+        resolve(dataUrl);
+      }
     });
   },
 
@@ -1658,9 +1675,9 @@ Sin embargo, los funcionarios consideran que existen elementos suficientes para 
       saveGlobalState(window.appState);
     }
 
-    // Publicar inmediatamente en la nube global de MENTIX
+    // Publicar inmediatamente en la nube global de MENTIX (segundo plano no bloqueante)
     if (window.appRouter && window.appRouter.pushChallengeToCloud) {
-      window.appRouter.pushChallengeToCloud(c);
+      window.appRouter.pushChallengeToCloud(c).catch(() => {});
     }
     window.soundEngine.playCorrect();
 
@@ -3054,11 +3071,17 @@ d) Insulina`;
   async fetchKnowledgeFromWeb(topic) {
     if (!topic || topic.trim().length < 2) return null;
     const cleanTopic = topic.trim();
+    const getSig = (ms) => {
+      try {
+        if (typeof AbortSignal !== 'undefined' && typeof AbortSignal.timeout === 'function') return AbortSignal.timeout(ms);
+      } catch(e) {}
+      return undefined;
+    };
 
     // 1. Búsqueda rápida en Wikipedia en Español (Action API pública CORS)
     try {
       const searchUrl = `https://es.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(cleanTopic)}&utf8=&format=json&origin=*`;
-      const searchRes = await fetch(searchUrl, { signal: AbortSignal.timeout(3000) });
+      const searchRes = await fetch(searchUrl, { signal: getSig(2000) });
       if (searchRes.ok) {
         const searchData = await searchRes.json();
         const hits = searchData?.query?.search || [];
@@ -3066,7 +3089,7 @@ d) Insulina`;
           const topHits = hits.slice(0, 2);
           const titles = topHits.map(h => h.title);
           const extractUrl = `https://es.wikipedia.org/w/api.php?action=query&prop=extracts&explaintext=1&titles=${encodeURIComponent(titles.join('|'))}&format=json&origin=*`;
-          const extractRes = await fetch(extractUrl, { signal: AbortSignal.timeout(3500) });
+          const extractRes = await fetch(extractUrl, { signal: getSig(2200) });
           if (extractRes.ok) {
             const extractData = await extractRes.json();
             const pages = extractData?.query?.pages || {};
@@ -3096,7 +3119,7 @@ d) Insulina`;
     // 2. Respaldo DuckDuckGo Instant Answer
     try {
       const ddgUrl = `https://api.duckduckgo.com/?q=${encodeURIComponent(cleanTopic)}&format=json&no_html=1&skip_disambig=1`;
-      const ddgRes = await fetch(ddgUrl, { signal: AbortSignal.timeout(2500) });
+      const ddgRes = await fetch(ddgUrl, { signal: getSig(1800) });
       if (ddgRes.ok) {
         const ddgData = await ddgRes.json();
         const text = ddgData?.AbstractText || ddgData?.Answer;

@@ -381,8 +381,24 @@ window.ProjectsView = {
     }
   ],
 
+  canUserEditProject(projectOrId) {
+    if (!projectOrId) return false;
+    const proj = typeof projectOrId === 'object' && projectOrId !== null
+      ? projectOrId
+      : (this.getMergedProjectRecord(projectOrId) || (window.appState?.challenges || []).find(c => c && String(c.id) === String(projectOrId)));
+    if (!proj) return false;
+    if (window.appRouter && typeof window.appRouter.isChallengeOwner === 'function') {
+      return window.appRouter.isChallengeOwner(proj);
+    }
+    return false;
+  },
+
   openEditProject(projectId) {
-    if (window.AdminView && typeof window.AdminView.openEditProjectModal === 'function') {
+    if (!this.canUserEditProject(projectId)) {
+      alert('🔒 Permiso exclusivo: Solo los administradores, Melisa o el creador de este proyecto tienen autorización para editarlo.');
+      return;
+    }
+    if (window.AdminView && typeof window.AdminView.openEditProjectModal === 'function' && this.isAdminUser()) {
       window.AdminView.openEditProjectModal(projectId);
     } else if (window.ProjectWizard && typeof window.ProjectWizard.openWizard === 'function') {
       window.ProjectWizard.openWizard(projectId, 1);
@@ -677,54 +693,12 @@ window.ProjectsView = {
     const currentUser = (window.appState && window.appState.currentUser) || null;
     if (!currentUser) return false;
 
-    // 1. Administrador (rol admin o modo auditoría o docente/admin)
-    if (currentUser.isAdmin || currentUser.role === 'admin' || (window.AdminView && window.AdminView.isAdminAuditing) || (this.isTeacherOrAdmin && this.isTeacherOrAdmin())) {
+    // Administrador oficial
+    if (currentUser.isAdmin || currentUser.role === 'admin' || (window.AdminView && window.AdminView.isAdminAuditing) || (this.isAdminUser && this.isAdminUser())) {
       return true;
     }
 
-    const proj = typeof projectOrId === 'object' && projectOrId !== null
-      ? projectOrId
-      : (this.getMergedProjectRecord(projectOrId) || (window.appState?.challenges || []).find(c => c && String(c.id) === String(projectOrId)));
-
-    if (!proj) return false;
-
-    // 2. Creador / Autor de la landing page y proyecto
-    if (window.appRouter && typeof window.appRouter.isChallengeOwner === 'function' && window.appRouter.isChallengeOwner(proj)) {
-      return true;
-    }
-    const myKeys = [currentUser.id, currentUser.username, currentUser.name, currentUser.email].filter(Boolean).map(s => String(s).toLowerCase().trim());
-    const authorKeys = [proj.creatorId, proj.authorId, proj.author, proj.creatorName, proj.createdBy, proj.teamLead, proj.authorEmail].filter(Boolean).map(s => String(s).toLowerCase().trim());
-    if (myKeys.some(k => authorKeys.includes(k))) {
-      return true;
-    }
-
-    // 3. Editores autorizados (en proj.editors, proj.editorIds, o proj.hub.members)
-    if (window.ProjectHub && typeof window.ProjectHub.canEdit === 'function' && window.ProjectHub.canEdit(proj)) {
-      return true;
-    }
-    if (Array.isArray(proj.editors)) {
-      const isEditor = proj.editors.some(e => {
-        if (!e) return false;
-        if (typeof e === 'string') return myKeys.includes(e.toLowerCase().trim());
-        const eKeys = [e.id, e.userId, e.username, e.email].filter(Boolean).map(s => String(s).toLowerCase().trim());
-        return myKeys.some(k => eKeys.includes(k));
-      });
-      if (isEditor) return true;
-    }
-    if (Array.isArray(proj.editorIds)) {
-      if (proj.editorIds.some(id => myKeys.includes(String(id).toLowerCase().trim()))) return true;
-    }
-    if (proj.hub && Array.isArray(proj.hub.members)) {
-      const m = proj.hub.members.find(mem => {
-        const memKeys = [mem.userId, mem.id, mem.who, mem.username, mem.email].filter(Boolean).map(s => String(s).toLowerCase().trim());
-        return myKeys.some(k => memKeys.includes(k));
-      });
-      if (m && (m.role === 'editor' || m.role === 'owner' || m.role === 'admin' || m.canEdit)) {
-        return true;
-      }
-    }
-
-    return false;
+    return this.canUserEditProject(projectOrId);
   },
 
   getProjectHeroBanner(projId, selected) {
@@ -2603,7 +2577,8 @@ window.ProjectsView = {
   renderProjectCard(c, currentUser) {
     const isTeacherOrAdmin = this.isTeacherOrAdmin();
     const isAdmin = this.isAdminUser();
-    const isAuthor = (window.appRouter ? window.appRouter.isChallengeOwner(c) : false) || isTeacherOrAdmin;
+    const canEditProj = this.canUserEditProject(c);
+    const isAuthor = (window.appRouter ? window.appRouter.isChallengeOwner(c) : false);
     const isApproved = c.approvalStatus === 'approved' && !c.rejectionReason;
     const isRejected = c.approvalStatus === 'rejected';
     const isDraft = c.status === 'in_progress' || c.publicationStatus === 'draft';
@@ -2798,7 +2773,7 @@ window.ProjectsView = {
                 <span>Banner</span>
               </button>
             ` : ''}
-            ${(isAdmin || isAuthor || canHubEdit) ? `
+            ${canEditProj ? `
               <button 
                 title="Editar este proyecto" 
                 onclick="event.stopPropagation(); ${window.ProjectHub ? `window.ProjectHub.open('${c.id}')` : `window.ProjectsView.openEditProject('${c.id}')`}"
@@ -4121,6 +4096,10 @@ window.ProjectsView = {
     const projId = id || this.selectedProjectId;
     const c = (window.appState?.challenges || []).find(x => x && x.id === projId);
     if (!c) return;
+    if (!this.canUserEditProject(c)) {
+      alert('🔒 Permiso exclusivo: Solo los administradores, Melisa o el creador de este proyecto tienen autorización para editarlo.');
+      return;
+    }
     const t = c.projectType;
     if (t === 'video') window.appRouter.editVideo(c.id);
     else if (t === 'document') window.appRouter.editDocument(c.id);
@@ -6154,10 +6133,11 @@ window.ProjectsView = {
                 <button type="button" class="plp-mentix-btn" onclick="if (window.AdminView && window.AdminView.isAdminAuditing) { window.AdminView.exitAuditAndReturnToAdmin(); } else { window.ProjectsView.switchViewMode('list'); }">
                   <span>←</span> ${window.AdminView && window.AdminView.isAdminAuditing ? 'Volver al Admin' : 'Volver a Mis Proyectos'}
                 </button>
-                ${selected ? `
+                ${(selected && this.canUserEditProject(selected)) ? `
                 <button type="button" class="plp-mentix-btn" onclick="window.ProjectsView.editSelectedProject('${selected.id}')">
                   <span>✏️</span> Editar Proyecto
-                </button>
+                </button>` : ''}
+                ${selected ? `
                 <button type="button" class="plp-mentix-btn primary" onclick="window.ProjectsView.openSelectedProject()">
                   <span>📂</span> Abrir Proyecto
                 </button>` : ''}
