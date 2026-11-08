@@ -340,7 +340,7 @@ window.HomeView = {
           <!-- Superior Derecha: Tiempo + Botón Eliminar -->
           <div style="position: absolute; top: 0.75rem; right: 0.75rem; display: flex; align-items: center; gap: 0.5rem; z-index: 4;">
             <div style="background: rgba(10, 15, 30, 0.92); border: 1.5px solid rgba(0, 245, 212, 0.4); border-radius: 9999px; padding: 0.35rem 0.75rem; display: flex; align-items: center; gap: 0.35rem; font-weight: 900; font-size: 0.85rem; color: #ffffff; box-shadow: 0 4px 12px rgba(0,0,0,0.4);">
-              <span style="font-size: 0.9rem;">⏱️</span> <span>${challenge.timePerQuestion || 20}</span>
+              <span style="font-size: 0.9rem;">⏱️</span> <span>${challenge.timePerQuestion === 0 ? 'Sin límite' : ((challenge.timePerQuestion || 20) + 's')}</span>
             </div>
             ${isOwner ? `
               <button 

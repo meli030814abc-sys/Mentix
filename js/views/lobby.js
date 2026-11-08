@@ -775,7 +775,8 @@ window.LobbyView = {
     const questionsCount = Array.isArray(r.challenge?.questions) 
       ? r.challenge.questions.length 
       : (r.challenge?.slides?.length || r.challenge?.sections?.length || 0);
-    const timeLimit = r.challenge?.timePerQuestion || 20;
+    const rawTimeLimit = (r.challenge?.timePerQuestion !== undefined && r.challenge?.timePerQuestion !== null) ? r.challenge.timePerQuestion : 20;
+    const timeLimitStr = rawTimeLimit === 0 ? 'Sin límite de tiempo' : `${rawTimeLimit}s`;
 
     container.innerHTML = `
       <div style="max-width: 1050px; margin: 0 auto; padding: 2rem 1.25rem 5rem;">
@@ -817,7 +818,7 @@ window.LobbyView = {
               ${challengeTitle}
             </h1>
             <p style="color: var(--text-secondary); margin-top: 0.25rem;">
-              ${questionsCount} preguntas • Tiempo estándar: ${timeLimit}s • Modo de sala: <strong style="color: ${r.roomType === 'normal' ? '#00ff88' : '#d8b4fe'};">${r.roomType === 'normal' ? '📝 Examen individual a su propio ritmo (Profesor solo ve resultados en vivo)' : '📽️ Preguntas proyectadas en pantalla principal'}</strong>
+              ${questionsCount} preguntas • Tiempo estándar: ${timeLimitStr} • Modo de sala: <strong style="color: ${r.roomType === 'normal' ? '#00ff88' : '#d8b4fe'};">${r.roomType === 'normal' ? '📝 Examen individual a su propio ritmo (Profesor solo ve resultados en vivo)' : '📽️ Preguntas proyectadas en pantalla principal'}</strong>
             </p>
           </div>
 

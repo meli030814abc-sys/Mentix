@@ -122,13 +122,17 @@ window.CreatorView = {
   },
 
   createBlankQuestion(index = 1, type = 'single') {
+    const defaultTime = (this.currentChallenge?.timePerQuestion !== undefined && this.currentChallenge?.timePerQuestion !== null)
+      ? this.currentChallenge.timePerQuestion
+      : 20;
+
     const base = {
       id: 'q_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
       text: '',
       type: type,
       media: '',
       mediaType: 'none',
-      timeLimit: 20,
+      timeLimit: defaultTime,
       points: 1000
     };
 
@@ -136,7 +140,7 @@ window.CreatorView = {
       return {
         ...base,
         type: 'case',
-        timeLimit: 60,
+        timeLimit: defaultTime === 0 ? 0 : 60,
         points: 1000,
         caseTitle: '',
         caseContext: '',
@@ -338,11 +342,14 @@ window.CreatorView = {
                 style="width: 100%; padding: 0.65rem; border-radius: var(--border-radius-md); background: var(--bg-card); border: 1px solid var(--border-color); color: var(--text-primary);"
                 onchange="window.CreatorView.currentChallenge.timePerQuestion = parseInt(this.value)"
               >
+                <option value="0" ${c.timePerQuestion === 0 ? 'selected' : ''}>⏳ Sin tiempo (Sin límite)</option>
                 <option value="10" ${c.timePerQuestion === 10 ? 'selected' : ''}>10 segundos</option>
                 <option value="15" ${c.timePerQuestion === 15 ? 'selected' : ''}>15 segundos</option>
-                <option value="20" ${c.timePerQuestion === 20 ? 'selected' : ''}>20 segundos</option>
+                <option value="20" ${c.timePerQuestion === 20 || c.timePerQuestion === undefined ? 'selected' : ''}>20 segundos</option>
                 <option value="30" ${c.timePerQuestion === 30 ? 'selected' : ''}>30 segundos</option>
                 <option value="60" ${c.timePerQuestion === 60 ? 'selected' : ''}>60 segundos</option>
+                <option value="90" ${c.timePerQuestion === 90 ? 'selected' : ''}>90 segundos</option>
+                <option value="120" ${c.timePerQuestion === 120 ? 'selected' : ''}>120 segundos</option>
               </select>
             </div>
 
@@ -776,9 +783,11 @@ window.CreatorView = {
             <div style="display: flex; align-items: center; gap: 0.35rem; font-size: 0.85rem;">
               <span>⏱️</span>
               <select 
-                style="padding: 0.25rem 0.5rem; border-radius: 6px; background: var(--bg-card); color: var(--text-primary); border: 1px solid var(--border-color);"
+                title="Límite de tiempo para esta pregunta"
+                style="padding: 0.25rem 0.5rem; border-radius: 6px; background: var(--bg-card); color: var(--text-primary); border: 1px solid var(--border-color); font-weight: 700;"
                 onchange="window.CreatorView.updateQuestionParam(${idx}, 'timeLimit', parseInt(this.value))"
               >
+                <option value="0" ${q.timeLimit === 0 ? 'selected' : ''}>⏳ Sin tiempo</option>
                 <option value="10" ${q.timeLimit === 10 ? 'selected' : ''}>10s</option>
                 <option value="15" ${q.timeLimit === 15 ? 'selected' : ''}>15s</option>
                 <option value="20" ${q.timeLimit === 20 ? 'selected' : ''}>20s</option>
@@ -1174,14 +1183,14 @@ Sin embargo, los funcionarios consideran que existen elementos suficientes para 
       if (typeof q.correctAnswer !== 'number') q.correctAnswer = 0;
       if (q.explanation === undefined) q.explanation = '';
       if (q.referenceNorm === undefined) q.referenceNorm = '';
-      if (!q.timeLimit || q.timeLimit < 30) q.timeLimit = 60;
+      if (q.timeLimit !== 0 && (!q.timeLimit || q.timeLimit < 30)) q.timeLimit = 60;
     } else if (newType === 'boolean') {
       q.options = [
         { text: 'Verdadero', shape: '✦', color: 'opt-1' },
         { text: 'Falso', shape: '⬢', color: 'opt-2' }
       ];
       q.correctAnswer = 0;
-      if (q.timeLimit > 20) q.timeLimit = 15;
+      if (q.timeLimit !== 0 && q.timeLimit > 20) q.timeLimit = 15;
     } else if (newType === 'multi') {
       if (!q.options || q.options.length < 4) {
         q.options = [
@@ -1211,7 +1220,7 @@ Sin embargo, los funcionarios consideran que existen elementos suficientes para 
       q.options = [];
       q.acceptedAnswers = [];
       q.correctAnswer = null;
-      if (q.timeLimit < 20) q.timeLimit = 30;
+      if (q.timeLimit !== 0 && q.timeLimit < 20) q.timeLimit = 30;
     } else if (newType === 'poll') {
       if (!q.options || q.options.length < 2) {
         q.options = [
@@ -1558,7 +1567,10 @@ Sin embargo, los funcionarios consideran que existen elementos suficientes para 
     if (descEl) this.currentChallenge.description = descEl.value.trim();
     if (catEl) this.currentChallenge.category = catEl.value;
     if (diffEl) this.currentChallenge.difficulty = diffEl.value;
-    if (timeEl) this.currentChallenge.timePerQuestion = parseInt(timeEl.value) || 20;
+    if (timeEl) {
+      const parsedTime = parseInt(timeEl.value, 10);
+      this.currentChallenge.timePerQuestion = isNaN(parsedTime) ? 20 : parsedTime;
+    }
     if (bannerEl) this.currentChallenge.banner = bannerEl.value.trim();
     if (entityNameEl) this.currentChallenge.entityName = entityNameEl.value.trim();
     if (accessCodeEl && accessCodeEl.value.trim()) {
@@ -1665,7 +1677,7 @@ Sin embargo, los funcionarios consideran que existen elementos suficientes para 
         plays: c.plays || 0,
         difficulty: c.difficulty || 'Medio',
         banner: c.banner || '',
-        time_per_question: c.timePerQuestion || 20,
+        time_per_question: (c.timePerQuestion !== undefined && c.timePerQuestion !== null) ? c.timePerQuestion : 20,
         points_standard: c.pointsStandard || 1000,
         is_public: true,
         questions: c.questions
@@ -2754,7 +2766,7 @@ d) Insulina`;
       type: isBool ? 'boolean' : isPoll ? 'poll' : isMulti ? 'multi' : 'single',
       media: '',
       mediaType: 'none',
-      timeLimit: timeLimit || (isBool ? 15 : 20),
+      timeLimit: (timeLimit !== undefined && timeLimit !== null) ? timeLimit : (isBool ? 15 : 20),
       points: isPoll ? 0 : (points || 1000),
       options: opts,
       correctAnswer: finalCorrect
@@ -2854,9 +2866,10 @@ d) Insulina`;
     const difficulty = diffSelect ? diffSelect.value : 'Medio';
     const type = typeSelect ? typeSelect.value : 'single';
     const lengthMode = lengthSelect ? lengthSelect.value : 'balanced';
-    let timeLimit = timeSelect ? parseInt(timeSelect.value) || 20 : 20;
-    if (type === 'case' && timeLimit < 45) {
-      timeLimit = 60; // Dar suficiente tiempo para lectura de casos situacionales
+    let timeLimit = timeSelect ? parseInt(timeSelect.value, 10) : 20;
+    if (isNaN(timeLimit)) timeLimit = 20;
+    if (type === 'case' && timeLimit !== 0 && timeLimit < 45) {
+      timeLimit = 60; // Dar suficiente tiempo para lectura de casos situacionales si no es sin límite
     }
     const replace = replaceCheck ? replaceCheck.checked : true;
 

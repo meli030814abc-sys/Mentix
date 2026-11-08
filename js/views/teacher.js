@@ -104,7 +104,7 @@ window.TeacherView = {
                       ${c.categoryName || 'General'}
                     </span>
                     <span class="badge-tag" style="background: rgba(255,255,255,0.08); font-size: 0.75rem;">
-                      ⏱️ ${c.timePerQuestion || 20}s • 📝 ${c.questions?.length || 0} preg.
+                      ⏱️ ${c.timePerQuestion === 0 ? 'Sin límite' : ((c.timePerQuestion || 20) + 's')} • 📝 ${c.questions?.length || 0} preg.
                     </span>
                   </div>
 

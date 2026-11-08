@@ -591,7 +591,9 @@ window.GameView = {
     const prevModeBanner = document.getElementById('host-mode-activity-banner');
     if (prevModeBanner) prevModeBanner.remove();
 
-    this.totalTime = q.timeLimit || 20;
+    const isUntimed = (q.timeLimit === 0 || q.timeLimit === null || (q.timeLimit === undefined && this.challenge?.timePerQuestion === 0));
+    this.isUntimed = isUntimed;
+    this.totalTime = isUntimed ? 0 : (q.timeLimit || this.challenge?.timePerQuestion || 20);
     this.timeLeft = this.totalTime;
     this.questionStartTime = Date.now();
 
@@ -747,7 +749,7 @@ window.GameView = {
             <div class="pedagogical-case-red-line"></div>
             <div class="pedagogical-case-top-stats">
               <div class="pedagogical-case-timer-pill">
-                ⏱️ <span id="timer-text">${this.timeLeft}</span>s
+                ⏱️ <span id="timer-text">${this.isUntimed ? '∞' : this.timeLeft}</span>${this.isUntimed ? '' : 's'}
               </div>
               ${!isHost ? `
                 <div class="pedagogical-case-score-pill">
@@ -998,7 +1000,7 @@ window.GameView = {
         <div class="kahoot-host-stage">
           <!-- Temporizador Circular Morado a la Izquierda -->
           <div class="kahoot-host-circle-badge timer-badge" id="host-timer-circle">
-            <span id="host-timer-num">${this.timeLeft}</span>
+            <span id="host-timer-num">${this.isUntimed ? '∞' : this.timeLeft}</span>
           </div>
 
           <!-- Imagen / Media en el Centro -->
@@ -1132,7 +1134,7 @@ window.GameView = {
 
           <div style="display: flex; align-items: center; gap: 0.5rem;">
             <div class="badge-tag student-timer-badge" style="background: rgba(10, 20, 45, 0.85); border: 2px solid var(--timer-color, #00f5d4); color: var(--timer-color, #00f5d4) !important; font-weight: 900; font-size: 0.95rem; padding: 0.35rem 0.85rem; border-radius: 9999px; text-shadow: 0 0 10px var(--timer-glow, rgba(0, 245, 212, 0.8)); box-shadow: 0 4px 15px rgba(0,0,0,0.5);">
-              ⏱️ <span id="player-timer-num">${this.timeLeft}</span>s
+              ⏱️ <span id="player-timer-num">${this.isUntimed ? '∞' : this.timeLeft}</span>${this.isUntimed ? '' : 's'}
             </div>
             <div class="badge-tag" style="background: rgba(10, 20, 45, 0.85); border: 1.5px solid #ffd166; color: #ffd166 !important; font-weight: 900; font-size: 0.95rem; padding: 0.35rem 0.9rem; border-radius: 9999px; text-shadow: 0 0 10px rgba(255, 209, 102, 0.6); box-shadow: 0 4px 15px rgba(0,0,0,0.5);">
               🏆 <span id="player-score-val">${window.realtimeEngine.localPlayer?.score || 0}</span> PTS
@@ -1327,7 +1329,7 @@ window.GameView = {
           </div>
 
           <div class="solo-timer-badge" style="font-size: 1.4rem; font-weight: 900; color: var(--timer-color, var(--neon-gold)) !important; background: rgba(0,0,0,0.55); padding: 0.4rem 1.1rem; border-radius: 9999px; border: 2px solid var(--timer-color, var(--border-color)); box-shadow: 0 0 15px var(--timer-glow, rgba(255, 183, 3, 0.35)); text-shadow: 0 0 10px var(--timer-glow, rgba(255, 183, 3, 0.8));">
-            ⏱️ <span id="timer-text">${this.timeLeft}</span>s
+            ⏱️ <span id="timer-text">${this.isUntimed ? '∞' : this.timeLeft}</span>${this.isUntimed ? '' : 's'}
           </div>
         </div>
 
@@ -1623,6 +1625,14 @@ window.GameView = {
     const hostTimerNum = document.getElementById('host-timer-num');
     const hostTimerCircle = document.getElementById('host-timer-circle');
 
+    if (this.isUntimed) {
+      if (textEl) textEl.textContent = '∞';
+      if (playerTimerNum) playerTimerNum.textContent = '∞';
+      if (hostTimerNum) hostTimerNum.textContent = '∞';
+      if (hostTimerCircle) hostTimerCircle.classList.remove('urgent');
+      return;
+    }
+
     this.timerInterval = setInterval(() => {
       this.timeLeft--;
 
@@ -1650,7 +1660,7 @@ window.GameView = {
 
   bindKeyboardShortcuts() {
     const handler = (e) => {
-      if (this.hasAnswered || this.timeLeft <= 0 || this.questionFinished) return;
+      if (this.hasAnswered || (!this.isUntimed && this.timeLeft <= 0) || this.questionFinished) return;
       const key = e.key;
       if (['1', '2', '3', '4', '5', '6'].includes(key)) {
         const index = parseInt(key) - 1;
@@ -1666,7 +1676,7 @@ window.GameView = {
   },
 
   handleTextAnswer() {
-    if (this.hasAnswered || this.timeLeft <= 0 || this.questionFinished) return;
+    if (this.hasAnswered || (!this.isUntimed && this.timeLeft <= 0) || this.questionFinished) return;
     const input = document.getElementById('player-text-input');
     if (!input) return;
     const text = input.value.trim();
@@ -1735,7 +1745,7 @@ window.GameView = {
 
   // ☑️ PREGUNTAS DE VARIAS RESPUESTAS: marcar / desmarcar una opción con chulito (no envía todavía)
   toggleMultiOption(displayIdx) {
-    if (this.hasAnswered || this.timeLeft <= 0 || this.questionFinished) return;
+    if (this.hasAnswered || (!this.isUntimed && this.timeLeft <= 0) || this.questionFinished) return;
     if (!Array.isArray(this.multiSelected)) this.multiSelected = [];
     const pos = this.multiSelected.indexOf(displayIdx);
     if (pos >= 0) this.multiSelected.splice(pos, 1);
@@ -1785,7 +1795,7 @@ window.GameView = {
   },
 
   handleSelectAnswer(index) {
-    if (this.hasAnswered || this.timeLeft <= 0 || this.questionFinished) return;
+    if (this.hasAnswered || (!this.isUntimed && this.timeLeft <= 0) || this.questionFinished) return;
     this.hasAnswered = true;
 
     const isMultiAnswer = Array.isArray(index);
@@ -2653,6 +2663,7 @@ window.GameView = {
   },
 
   timeExpired() {
+    if (this.isUntimed) return;
     if (this.questionFinished) return;
     if (this.isHost && !this.isSolo) {
       if (this.isSelfPaced()) return;

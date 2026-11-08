@@ -1134,10 +1134,11 @@ class RealtimeEngine {
     if (!this.isHost || !this.currentRoom) return;
 
     const bots = this.currentRoom.players.filter(p => p.isBot);
+    const isUntimed = question.timeLimit === 0 || question.timeLimit === null || (question.timeLimit === undefined && this.currentRoom?.challenge?.timePerQuestion === 0);
     bots.forEach(bot => {
-      // Simular delay humano entre 1.5s y el 70% del tiempo de la pregunta
-      const maxDelay = Math.min((question.timeLimit || 20) * 800, 10000);
-      const delay = 1200 + Math.random() * (maxDelay - 1200);
+      // Simular delay humano entre 1.5s y el 70% del tiempo de la pregunta (o 6s si es sin límite)
+      const maxDelay = isUntimed ? 6000 : Math.min((question.timeLimit || 20) * 800, 10000);
+      const delay = 1200 + Math.random() * (Math.max(1500, maxDelay) - 1200);
 
       const timeout = setTimeout(() => {
         if (!this.currentRoom || this.currentRoom.status !== 'question') return;
@@ -1243,8 +1244,9 @@ class RealtimeEngine {
     } else {
       isCorrect = answerIndex === question.correctAnswer;
     }
-    const maxTime = question.timeLimit || 20;
-    const basePoints = question.points || 1000;
+    const isUntimed = question.timeLimit === 0 || question.timeLimit === null || (question.timeLimit === undefined && room.challenge?.timePerQuestion === 0);
+    const maxTime = isUntimed ? 0 : (question.timeLimit || room.challenge?.timePerQuestion || 20);
+    const basePoints = (question.points !== undefined && question.points !== null) ? question.points : 1000;
 
     let pointsEarned = 0;
     let comboMultiplier = 1;
@@ -1263,11 +1265,14 @@ class RealtimeEngine {
       else if (player.streak >= 4) comboMultiplier = 3;
       else if (player.streak >= 2) comboMultiplier = 2;
 
-      // Puntos proporcionales a la velocidad
-      // Formula: base * (0.5 + 0.5 * (tiempo_restante / tiempo_total)) * combo
-      const timeRemaining = Math.max(0, maxTime - timeTaken);
-      const speedBonus = 0.5 + 0.5 * (timeRemaining / maxTime);
-      pointsEarned = Math.round(basePoints * speedBonus * comboMultiplier);
+      // Puntos proporcionales a la velocidad (o completos si es sin tiempo)
+      if (isUntimed) {
+        pointsEarned = Math.round(basePoints * comboMultiplier);
+      } else {
+        const timeRemaining = Math.max(0, maxTime - timeTaken);
+        const speedBonus = 0.5 + 0.5 * (timeRemaining / maxTime);
+        pointsEarned = Math.round(basePoints * speedBonus * comboMultiplier);
+      }
       player.score = (player.score || 0) + pointsEarned;
     } else {
       player.streak = 0; // Se resetea el combo

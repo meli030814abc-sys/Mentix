@@ -186,7 +186,7 @@ window.ProfileView = {
                           <span>•</span>
                           <span>${c.questions ? c.questions.length : 0} preguntas</span>
                           <span>•</span>
-                          <span>⏱️ ${c.timePerQuestion || 20}s</span>
+                          <span>⏱️ ${c.timePerQuestion === 0 ? 'Sin límite' : ((c.timePerQuestion || 20) + 's')}</span>
                           <span>•</span>
                           <span>${c.plays || 0} partidas</span>
                         </div>
