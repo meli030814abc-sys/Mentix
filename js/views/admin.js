@@ -216,7 +216,14 @@ window.AdminView = {
   isAdminUser() {
     const u = window.appState && window.appState.currentUser;
     if (!u) return false;
-    const r = (u.role || '').toLowerCase().trim();
+    const clean = s => String(s || '').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    const isMelisa = clean(u.name) === 'melisa' || clean(u.username) === 'melisa' || clean(u.email) === 'meli030814abc@gmail.com' || clean(u.email).startsWith('melisa');
+    if (isMelisa) return true;
+    const r = clean(u.role);
+    // Estudiantes y profesores NUNCA tienen privilegios de administrador
+    if (r === 'student' || r === 'estudiante' || r === 'teacher' || r === 'profesor' || r === 'docente') {
+      return false;
+    }
     if (r === 'admin' || r === 'administrador' || u.isAdmin === true) return true;
     if (localStorage.getItem('mentix_admin_override') === 'true') return true;
     return false;
@@ -226,6 +233,13 @@ window.AdminView = {
    * Permitir el acceso en modo administrador para pruebas o usuarios autorizados
    */
   simulateAdminLogin() {
+    const u = window.appState && window.appState.currentUser;
+    const clean = s => String(s || '').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    const r = clean(u?.role);
+    if (r === 'student' || r === 'estudiante' || r === 'teacher' || r === 'profesor' || r === 'docente') {
+      alert('⛔ Acceso denegado: Los estudiantes y profesores no tienen acceso a funciones de administración.');
+      return;
+    }
     if (window.appState) {
       if (!window.appState.currentUser) {
         window.appState.currentUser = {
@@ -289,9 +303,6 @@ window.AdminView = {
             <div class="unauth-actions">
               <button class="btn btn-cyan" onclick="window.appRouter.navigate('projects')">
                 <span>🚀</span> Volver al Portal de Proyectos
-              </button>
-              <button class="btn btn-outline" onclick="window.AdminView.simulateAdminLogin()">
-                <span>🔑</span> Entrar en Modo Administrador
               </button>
             </div>
           </div>

@@ -1373,7 +1373,8 @@ class AppRouter {
 
     // 2. Administradores oficiales de la plataforma
     const roleLower = String(u.role || '').toLowerCase().trim();
-    const isAdmin = roleLower === 'admin' || roleLower === 'administrador' || u.isAdmin === true || localStorage.getItem('mentix_admin_override') === 'true' || (window.AdminView && window.AdminView.isAdminAuditing);
+    const isStudentOrTeacher = roleLower === 'student' || roleLower === 'estudiante' || roleLower === 'teacher' || roleLower === 'profesor' || roleLower === 'docente';
+    const isAdmin = !isStudentOrTeacher && (roleLower === 'admin' || roleLower === 'administrador' || u.isAdmin === true || (window.AdminView && window.AdminView.isAdminAuditing));
     if (isAdmin) return true;
 
     // Si el reto de AGILE Y SCRUM es exclusivo de Melisa

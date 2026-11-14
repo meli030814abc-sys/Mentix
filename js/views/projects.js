@@ -73,7 +73,14 @@ window.ProjectsView = {
   isAdminUser() {
     const u = window.appState && window.appState.currentUser;
     if (!u) return false;
-    const r = (u.role || '').toLowerCase().trim();
+    const clean = s => String(s || '').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    const isMelisa = clean(u.name) === 'melisa' || clean(u.username) === 'melisa' || clean(u.email) === 'meli030814abc@gmail.com' || clean(u.email).startsWith('melisa');
+    if (isMelisa) return true;
+    const r = clean(u.role);
+    // Estudiantes y profesores NUNCA tienen privilegios de administrador
+    if (r === 'student' || r === 'estudiante' || r === 'teacher' || r === 'profesor' || r === 'docente') {
+      return false;
+    }
     if (r === 'admin' || r === 'administrador' || u.isAdmin === true) return true;
     if (localStorage.getItem('mentix_admin_override') === 'true') return true;
     return false;
@@ -322,7 +329,14 @@ window.ProjectsView = {
   },
 
   promptAdminAccess() {
-    const key = prompt('🛡️ Modo Administrador de Mentix\nIngresa tu clave de administrador o escribe "admin" para activar los controles exclusivos de banner:');
+    const u = window.appState && window.appState.currentUser;
+    const clean = s => String(s || '').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    const r = clean(u?.role);
+    if (r === 'student' || r === 'estudiante' || r === 'teacher' || r === 'profesor' || r === 'docente') {
+      alert('⛔ Acceso denegado: Los estudiantes y profesores no tienen acceso a funciones de administración.');
+      return;
+    }
+    const key = prompt('🛡️ Modo Administrador de Mentix\nIngresa tu clave de administrador para activar los controles exclusivos:');
     if (!key) return;
     if (key.trim().toLowerCase() === 'admin' || key.trim() === 'mentix2026' || key.trim() === '1234') {
       if (!window.appState) window.appState = {};
@@ -408,6 +422,10 @@ window.ProjectsView = {
   },
 
   openAdminBannerModal(targetProjectId = null) {
+    if (!this.isAdminUser()) {
+      alert('🔒 Permiso exclusivo: Solo los administradores tienen acceso a este panel de banners.');
+      return;
+    }
     if (targetProjectId) {
       this.openHeroBannerPicker(targetProjectId);
     } else {
@@ -416,6 +434,10 @@ window.ProjectsView = {
   },
 
   openMainHeroBannerPicker() {
+    if (!this.isAdminUser()) {
+      alert('🔒 Permiso exclusivo: Solo los administradores pueden cambiar el Banner Principal global.');
+      return;
+    }
     this.openHeroBannerPicker('main_hero');
   },
 
@@ -693,8 +715,8 @@ window.ProjectsView = {
     const currentUser = (window.appState && window.appState.currentUser) || null;
     if (!currentUser) return false;
 
-    // Administrador oficial
-    if (currentUser.isAdmin || currentUser.role === 'admin' || (window.AdminView && window.AdminView.isAdminAuditing) || (this.isAdminUser && this.isAdminUser())) {
+    // Administrador oficial (o Melisa)
+    if (this.isAdminUser()) {
       return true;
     }
 
@@ -868,8 +890,13 @@ window.ProjectsView = {
     const isMainHero = (targetProjectId === 'main_hero' || targetProjectId === 'hero');
     const projId = isMainHero ? 'main_hero' : (targetProjectId || this.selectedProjectId);
 
+    if (isMainHero && !this.isAdminUser()) {
+      alert('🔒 Permiso exclusivo: Solo los administradores pueden cambiar el Banner Principal global.');
+      return;
+    }
+
     if (!isMainHero && !this.canUserEditProjectBanner(projId)) {
-      alert('⛔ Permiso exclusivo: Solo el Administrador, el Creador de esta landing page o los Editores autorizados del proyecto pueden cambiar el fondo del banner.');
+      alert('⛔ Permiso exclusivo: Solo el Administrador o el Creador de este proyecto pueden cambiar el fondo del banner.');
       return;
     }
 
@@ -2206,13 +2233,13 @@ window.ProjectsView = {
               </div>
             </div>
 
-            <!-- Topbar Right: Admin Badge + Bell + User Pill -->
+            <!-- Topbar Right: Admin Badge (solo admin) + Bell + User Pill -->
             <div style="display: flex; align-items: center; gap: 0.75rem; flex-shrink: 0;">
               ${isAdmin ? `
-                <!-- Admin Mode Indicator & Direct Banner Access -->
+                <!-- Admin Mode Indicator & Direct Banner Access (Solo Administradores) -->
                 <div 
                   onclick="window.ProjectsView.openMainHeroBannerPicker()" 
-                  title="Cambiar Banner Principal (Clic para abrir galería y personalizador)"
+                  title="Cambiar Banner Principal (Exclusivo Administradores)"
                   style="display: inline-flex; align-items: center; gap: 0.45rem; background: #071739; border: 1.5px solid #00f5d4; color: #00f5d4; padding: 0.38rem 0.95rem; border-radius: 9999px; font-size: 0.78rem; font-weight: 800; cursor: pointer; box-shadow: 0 0 15px rgba(0, 245, 212, 0.35); transition: transform 0.2s ease;"
                   onmouseenter="this.style.transform='scale(1.04)';"
                   onmouseleave="this.style.transform='scale(1)';"
@@ -2220,18 +2247,7 @@ window.ProjectsView = {
                   <span style="font-size: 1rem;">🎨</span>
                   <span>Cambiar Banner</span>
                 </div>
-              ` : `
-                <div 
-                  onclick="window.ProjectsView.promptAdminAccess()" 
-                  title="Activar Modo Administrador para gestión de banners"
-                  style="display: inline-flex; align-items: center; gap: 0.35rem; background: #f8fafc; border: 1px solid #cbd5e1; color: #64748b; padding: 0.35rem 0.75rem; border-radius: 9999px; font-size: 0.74rem; font-weight: 700; cursor: pointer; transition: all 0.2s ease;"
-                  onmouseenter="this.style.background='#e2e8f0';"
-                  onmouseleave="this.style.background='#f8fafc';"
-                >
-                  <span>🛡️</span>
-                  <span>Acceso Admin</span>
-                </div>
-              `}
+              ` : ''}
 
               <!-- Bell with Badge -->
               <div 
@@ -2269,12 +2285,13 @@ window.ProjectsView = {
               style="position: absolute; inset: 0; width: 100%; height: 100%; display: block; object-fit: cover; object-position: center; filter: brightness(1.12) contrast(1.08) saturate(1.15); image-rendering: -webkit-optimize-contrast; image-rendering: high-quality; transform: translateZ(0); backface-visibility: hidden;" 
             />
 
-            <!-- BOTÓN FLOTANTE PARA CAMBIAR BANNER (DISPONIBLE PARA TODOS, IGUAL QUE EN UN PROYECTO) -->
+            <!-- BOTÓN FLOTANTE PARA CAMBIAR BANNER (EXCLUSIVO ADMINISTRADORES) -->
+            ${isAdmin ? `
             <div style="position: absolute; top: 1rem; right: 1.25rem; z-index: 10;">
               <button 
                 type="button" 
                 onclick="window.ProjectsView.openMainHeroBannerPicker()" 
-                title="Cambiar imagen o fondo de este Banner Principal (Visible para todos los usuarios)"
+                title="Cambiar imagen o fondo de este Banner Principal (Exclusivo Administradores)"
                 class="mentix-change-main-banner-btn"
                 style="display: inline-flex; align-items: center; gap: 0.55rem; background: rgba(7, 23, 57, 0.92); backdrop-filter: blur(12px); color: #00f5d4; border: 2px solid #00f5d4; border-radius: 9999px; padding: 0.48rem 1.2rem; font-size: 0.86rem; font-weight: 900; cursor: pointer; box-shadow: 0 4px 20px rgba(0, 245, 212, 0.45); transition: all 0.25s ease;"
                 onmouseenter="this.style.transform='scale(1.05)'; this.style.background='rgba(0, 245, 212, 0.22)';"
@@ -2285,6 +2302,7 @@ window.ProjectsView = {
                 <span style="background: linear-gradient(135deg, #00f5d4 0%, #00b4d8 100%); color: #071739; padding: 0.12rem 0.5rem; border-radius: 999px; font-size: 0.72rem; font-weight: 900; letter-spacing: 0.02em;">OFICIAL</span>
               </button>
             </div>
+            ` : ''}
 
             <!-- BOTONES PRINCIPALES DE ACCIÓN INTEGRADOS EN EL BANNER ('estos aca') -->
             <div class="mentix-banner-action-row" style="position: absolute; left: 3.8%; bottom: 8.5%; z-index: 5; display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; max-width: 58%;">
