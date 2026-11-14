@@ -106,8 +106,6 @@ window.HomeView = {
     const currentUser = window.appState.currentUser;
     const currentUserId = currentUser?.id || '';
     const currentUserEmail = currentUser?.email || '';
-    const cleanRole = s => String(s || '').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-    const isStudent = cleanRole(currentUser?.role) === 'student' || cleanRole(currentUser?.role) === 'estudiante';
 
     // Filtrar cuestionarios según el modo de acceso configurado
     quizChallenges = quizChallenges.filter(c => {
@@ -188,17 +186,15 @@ window.HomeView = {
             <span class="hero-capsule-streaks"></span>
             <span class="hero-capsule-icon">🎮</span>
             <span class="hero-capsule-divider"></span>
-            <span class="hero-capsule-label">Unirse a partidas</span>
+            <span class="hero-capsule-label">Unirse a un código</span>
           </button>
-          ${(!isStudent && currentUser && !currentUser.isGuest) ? `
-            <button class="hero-capsule-btn hero-capsule-create" onclick="window.appRouter.navigate('creator')">
-              <span class="hero-capsule-gloss"></span>
-              <span class="hero-capsule-streaks"></span>
-              <span class="hero-capsule-icon">🚀</span>
-              <span class="hero-capsule-divider"></span>
-              <span class="hero-capsule-label">Crear un reto</span>
-            </button>
-          ` : ''}
+          ${currentUser && currentUser.isGuest ? '' : `<button class="hero-capsule-btn hero-capsule-create" onclick="window.appRouter.navigate('creator')">
+            <span class="hero-capsule-gloss"></span>
+            <span class="hero-capsule-streaks"></span>
+            <span class="hero-capsule-icon">🚀</span>
+            <span class="hero-capsule-divider"></span>
+            <span class="hero-capsule-label">Crear un reto</span>
+          </button>`}
           ${!currentUser ? `
             <button class="hero-capsule-btn hero-capsule-profile" onclick="window.appRouter.openAuthModal('login')">
               <span class="hero-capsule-gloss"></span>
@@ -456,22 +452,20 @@ window.HomeView = {
                   onclick="event.stopPropagation(); window.appRouter.startSinglePlayer('${challenge.id}')">
                   ▶️ Jugar
                 </button>
-                ${(!isStudent) ? `
-                  <button 
-                    class="btn btn-primary" 
-                    title="Crear Sala con Preguntas Presentadas (Proyector / Estilo Kahoot)"
-                    style="padding: 0.45rem 0.95rem; font-size: 0.88rem; font-weight: 800;"
-                    onclick="event.stopPropagation(); window.appRouter.hostRoom('${challenge.id}', 'presented')">
-                    🚀 Sala
-                  </button>
-                  <button 
-                    class="btn btn-sala-normal" 
-                    title="Crear Sala Normal: Preguntas y respuestas en la pantalla de cada jugador"
-                    style="padding: 0.45rem 0.95rem; font-size: 0.88rem; font-weight: 800; display: inline-flex; align-items: center; gap: 0.35rem;"
-                    onclick="event.stopPropagation(); window.appRouter.hostRoom('${challenge.id}', 'normal')">
-                    <span>🎮</span> <span>Sala Normal</span>
-                  </button>
-                ` : ''}
+                <button 
+                  class="btn btn-primary" 
+                  title="Crear Sala con Preguntas Presentadas (Proyector / Estilo Kahoot)"
+                  style="padding: 0.45rem 0.95rem; font-size: 0.88rem; font-weight: 800;"
+                  onclick="event.stopPropagation(); window.appRouter.hostRoom('${challenge.id}', 'presented')">
+                  🚀 Sala
+                </button>
+                <button 
+                  class="btn btn-sala-normal" 
+                  title="Crear Sala Normal: Preguntas y respuestas en la pantalla de cada jugador"
+                  style="padding: 0.45rem 0.95rem; font-size: 0.88rem; font-weight: 800; display: inline-flex; align-items: center; gap: 0.35rem;"
+                  onclick="event.stopPropagation(); window.appRouter.hostRoom('${challenge.id}', 'normal')">
+                  <span>🎮</span> <span>Sala Normal</span>
+                </button>
               `)}
             </div>
           </div>

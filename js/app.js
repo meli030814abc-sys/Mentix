@@ -474,14 +474,10 @@ class AppRouter {
       try { localStorage.removeItem('mentix_admin_override'); } catch (e) {}
     }
 
-    // Para estudiantes solo queda "Inicio" y "Unirse a partidas". Proyectos solo visible para docentes y admin.
+    // En la barra de navegación: "Inicio", "Unirse a un código" y "Proyectos" visibles para estudiantes y todos los usuarios
     if (projectsLink) {
-      if (!isStudent && (isTeacher || isAdmin)) {
-        projectsLink.style.removeProperty('display');
-        projectsLink.style.display = 'inline-flex';
-      } else {
-        projectsLink.style.setProperty('display', 'none', 'important');
-      }
+      projectsLink.style.removeProperty('display');
+      projectsLink.style.display = 'inline-flex';
     }
 
     if (teacherLink) {
