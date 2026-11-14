@@ -99,13 +99,13 @@
 
       <!-- Enlaces Centrales de Navegación -->
       <nav style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
-        <button class="btn btn-outline" style="padding: 0.45rem 0.85rem; font-size: 0.9rem;" onclick="window.safeNav('home')">
+        <button id="nav-home-link" class="btn btn-outline" style="padding: 0.45rem 0.85rem; font-size: 0.9rem;" onclick="window.safeNav('home')">
           <span>🏠</span> Inicio
         </button>
-        <button class="btn btn-primary" style="padding: 0.45rem 0.95rem; font-size: 0.9rem; font-weight: 800;" onclick="window.safeNav('lobby-join')">
-          <span>🎮</span> Unirse (PIN)
+        <button id="nav-join-link" class="btn btn-primary" style="padding: 0.45rem 0.95rem; font-size: 0.9rem; font-weight: 800;" onclick="window.safeNav('lobby-join')">
+          <span>🎮</span> Unirse a partidas
         </button>
-        <button class="btn btn-outline" style="padding: 0.45rem 0.85rem; font-size: 0.9rem;" onclick="window.safeNav('projects')">
+        <button id="nav-projects-link" class="btn btn-outline" style="padding: 0.45rem 0.85rem; font-size: 0.9rem; display: none;" onclick="window.safeNav('projects')">
           <span>📁</span> Proyectos
         </button>
 
@@ -1147,7 +1147,7 @@
   <script src="js/avatar.js?v=20261108_animal_avatars_v70"></script>
   <script src="js/minigames.js?v=20261016_utf8"></script>
   
-  <script src="js/views/home.js?v=20261108_permissions_speed_v69"></script>
+  <script src="js/views/home.js?v=20261114_student_restricted_v72"></script>
   <script src="js/views/creator.js?v=20261108_permissions_speed_v69"></script>
   <script src="js/views/experience.js?v=20261016_utf8"></script>
   <script src="js/views/lobby.js?v=20261108_permissions_speed_v69"></script>
@@ -1156,16 +1156,16 @@
   <script src="js/views/podium.js?v=20261016_utf8"></script>
   <script src="js/views/profile.js?v=20261108_permissions_speed_v69"></script>
   <script src="js/views/teacher.js?v=20261108_permissions_speed_v69"></script>
-  <script src="js/views/admin.js?v=20261114_admin_restricted_v71"></script>
+  <script src="js/views/admin.js?v=20261114_student_restricted_v72"></script>
   <script src="js/views/ranking.js?v=20261016_utf8"></script>
   <script src="js/views/project-wizard.js?v=20261108_permissions_speed_v69"></script>
-  <script src="js/views/project-hub.js?v=20261108_permissions_speed_v69"></script>
-  <script src="js/views/projects.js?v=20261114_admin_restricted_v71"></script>
+  <script src="js/views/project-hub.js?v=20261114_student_restricted_v72"></script>
+  <script src="js/views/projects.js?v=20261114_student_restricted_v72"></script>
   <script src="js/views/presentation.js?v=20261108_permissions_speed_v69"></script>
   <script src="js/views/video-project.js?v=20261108_permissions_speed_v69"></script>
   <script src="js/views/document-project.js?v=20261108_permissions_speed_v69"></script>
   <script src="js/views/url-project.js?v=20261108_permissions_speed_v69"></script>
   
-  <script src="js/app.js?v=20261114_admin_restricted_v71"></script>
+  <script src="js/app.js?v=20261114_student_restricted_v72"></script>
 </body>
 </html>

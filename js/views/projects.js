@@ -712,15 +712,8 @@ window.ProjectsView = {
   ],
 
   canUserEditProjectBanner(projectOrId) {
-    const currentUser = (window.appState && window.appState.currentUser) || null;
-    if (!currentUser) return false;
-
-    // Administrador oficial (o Melisa)
-    if (this.isAdminUser()) {
-      return true;
-    }
-
-    return this.canUserEditProject(projectOrId);
+    // Exclusivo para administradores de Mentix (y Melisa)
+    return this.isAdminUser();
   },
 
   getProjectHeroBanner(projId, selected) {
@@ -887,18 +880,13 @@ window.ProjectsView = {
   },
 
   openHeroBannerPicker(targetProjectId = null) {
+    if (!this.isAdminUser()) {
+      alert('🔒 Permiso exclusivo: Solo los administradores pueden cambiar banners.');
+      return;
+    }
+
     const isMainHero = (targetProjectId === 'main_hero' || targetProjectId === 'hero');
     const projId = isMainHero ? 'main_hero' : (targetProjectId || this.selectedProjectId);
-
-    if (isMainHero && !this.isAdminUser()) {
-      alert('🔒 Permiso exclusivo: Solo los administradores pueden cambiar el Banner Principal global.');
-      return;
-    }
-
-    if (!isMainHero && !this.canUserEditProjectBanner(projId)) {
-      alert('⛔ Permiso exclusivo: Solo el Administrador o el Creador de este proyecto pueden cambiar el fondo del banner.');
-      return;
-    }
 
     const selected = isMainHero ? null : (this.getMergedProjectRecord(projId) || (window.appState?.challenges || []).find(c => c && String(c.id) === String(projId)));
     const projTitle = isMainHero ? 'Ecosistema de Proyectos MENTIX' : (selected ? selected.title : 'Proyecto');
@@ -2779,9 +2767,9 @@ window.ProjectsView = {
 
           <!-- Three Dots / Menu Button Floating Top-Right -->
           <div style="position: absolute; top: 10px; right: 10px; z-index: 2; display: flex; gap: 6px; align-items: center;">
-            ${(isAdmin || isAuthor) ? `
+            ${isAdmin ? `
               <button 
-                title="Cambiar Banner de este Proyecto" 
+                title="Cambiar Banner de este Proyecto (Exclusivo Administradores)" 
                 onclick="event.stopPropagation(); window.ProjectsView.openHeroBannerPicker('${c.id}')"
                 style="height: 30px; padding: 0 0.65rem; border-radius: 8px; background: rgba(7, 23, 57, 0.92); backdrop-filter: blur(6px); display: inline-flex; align-items: center; gap: 0.35rem; cursor: pointer; border: 1.5px solid #00f5d4; font-size: 0.74rem; font-weight: 900; color: #00f5d4; box-shadow: 0 2px 10px rgba(0, 245, 212, 0.35); transition: transform 0.2s ease;"
                 onmouseenter="this.style.transform='scale(1.05)';"

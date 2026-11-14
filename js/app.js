@@ -316,6 +316,12 @@ class AppRouter {
         break;
 
       case 'teacher':
+        const rTeacher = (window.appState?.currentUser?.role || '').toLowerCase().trim();
+        if (rTeacher === 'student' || rTeacher === 'estudiante') {
+          alert('🚫 Acceso exclusivo para docentes y administradores.');
+          this.navigate('home');
+          return;
+        }
         document.getElementById('view-teacher')?.classList.add('active');
         window.TeacherView.render();
         break;
@@ -447,12 +453,25 @@ class AppRouter {
     const userSlot = document.getElementById('nav-user-slot');
     const teacherLink = document.getElementById('nav-teacher-link');
     const adminLink = document.getElementById('nav-admin-link');
+    const projectsLink = document.getElementById('nav-projects-link');
+
+    const clean = s => String(s || '').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    const isMelisa = user && (clean(user.name) === 'melisa' || clean(user.username) === 'melisa' || clean(user.email) === 'meli030814abc@gmail.com' || clean(user.email).startsWith('melisa'));
+    const roleLower = clean(user?.role);
+    const isStudent = roleLower === 'student' || roleLower === 'estudiante';
+    const isTeacher = roleLower === 'teacher' || roleLower === 'profesor' || roleLower === 'docente';
+    const isAdmin = isMelisa || (!isStudent && !isTeacher && (roleLower === 'admin' || roleLower === 'administrador' || user?.isAdmin === true));
+
+    // Para estudiantes solo queda "Inicio" y "Unirse a partidas". Proyectos solo visible para docentes y admin.
+    if (projectsLink) {
+      projectsLink.style.display = (!isStudent && (isTeacher || isAdmin)) ? 'inline-flex' : 'none';
+    }
 
     if (teacherLink) {
-      teacherLink.style.display = (user && (user.role === 'teacher' || user.role === 'admin')) ? 'inline-flex' : 'none';
+      teacherLink.style.display = (!isStudent && (isTeacher || isAdmin)) ? 'inline-flex' : 'none';
     }
     if (adminLink) {
-      adminLink.style.display = (user && user.role === 'admin') ? 'inline-flex' : 'none';
+      adminLink.style.display = (!isStudent && isAdmin) ? 'inline-flex' : 'none';
     }
 
     if (userSlot) {
