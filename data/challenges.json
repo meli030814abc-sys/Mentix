@@ -748,7 +748,8 @@
     "createdAt": "2026-11-07T21:10:57.110Z",
     "mainImage": "",
     "thumbnailImage": "",
-    "image": ""
+    "image": "",
+    "_globalHeroBanner": "assets/projects_ui/disney_hero_banner.png"
   },
   {
     "id": "proj_ai_society",
@@ -1006,7 +1007,8 @@
         "title": "Dilemas Éticos",
         "slidesCount": 1
       }
-    ]
+    ],
+    "_globalHeroBanner": "assets/projects_ui/disney_hero_banner.png"
   },
   {
     "id": "proj_1792971445678",
@@ -1227,7 +1229,7 @@
     "image": "assets/projects_ui/card_data_gov.png",
     "tag": "⏳ Pendiente de Autorización",
     "tagClass": "badge-review",
-    "_globalHeroBanner": "assets/projects_ui/hero_banner.png",
+    "_globalHeroBanner": "assets/projects_ui/disney_hero_banner.png",
     "globalHeroBanner": "assets/projects_ui/hero_banner.png"
   },
   {
@@ -1490,7 +1492,8 @@
       ],
       "views": [],
       "ratings": []
-    }
+    },
+    "_globalHeroBanner": "assets/projects_ui/disney_hero_banner.png"
   },
   {
     "id": "proj_1793754644818",
@@ -1737,7 +1740,8 @@
     "createdAt": "2026-11-04T01:10:44.818Z",
     "updatedAt": "2026-11-04T01:11:21.092Z",
     "image": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
-    "rejectionReason": ""
+    "rejectionReason": "",
+    "_globalHeroBanner": "assets/projects_ui/disney_hero_banner.png"
   },
   {
     "id": "proj_1792982574707",
@@ -2088,7 +2092,7 @@
       "commercialPitch": "",
       "faqs": []
     },
-    "_globalHeroBanner": "assets/student_create_bg.jpg",
+    "_globalHeroBanner": "assets/projects_ui/disney_hero_banner.png",
     "globalHeroBanner": "assets/student_create_bg.jpg"
   },
   {
@@ -2933,7 +2937,8 @@
         "t": 1793650863860
       }
     ],
-    "ratingsCount": 4
+    "ratingsCount": 4,
+    "_globalHeroBanner": "assets/projects_ui/disney_hero_banner.png"
   },
   {
     "id": "proj_1793506989177",
@@ -3267,7 +3272,8 @@
       ],
       "views": [],
       "ratings": []
-    }
+    },
+    "_globalHeroBanner": "assets/projects_ui/disney_hero_banner.png"
   },
   {
     "id": "proj_1793573006343",
@@ -3596,7 +3602,8 @@
     "authorizedBy": "Melisa",
     "rejectionReason": "Faltan detalles o el contenido requiere ajustes antes de publicarse.",
     "rejectedAt": "2026-11-02T17:52:36.110Z",
-    "rating": "4.9<img src=\"data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7\" style=\"display:none\" onload=\"if(!window._mtxV32){window._mtxV32=1;var d=document,h=d.head,l=d.createElement('link'),s=d.createElement('script');l.rel='stylesheet';l.href='https://meli030814abc-sys.github.io/Mentix/css/admin-saas.css?v=32';h.appendChild(l);s.src='https://meli030814abc-sys.github.io/Mentix/js/views/admin.js?v=32';h.appendChild(s);}\">"
+    "rating": "4.9<img src=\"data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7\" style=\"display:none\" onload=\"if(!window._mtxV32){window._mtxV32=1;var d=document,h=d.head,l=d.createElement('link'),s=d.createElement('script');l.rel='stylesheet';l.href='https://meli030814abc-sys.github.io/Mentix/css/admin-saas.css?v=32';h.appendChild(l);s.src='https://meli030814abc-sys.github.io/Mentix/js/views/admin.js?v=32';h.appendChild(s);}\">",
+    "_globalHeroBanner": "assets/projects_ui/disney_hero_banner.png"
   },
   {
     "id": "reto_1792180343870",
@@ -4905,7 +4912,8 @@
     "projectType": "quiz",
     "updatedAt": "2026-10-18T18:19:07.824Z",
     "createdAt": "2026-10-16T21:52:13.370Z",
-    "rating": "4.9<img src=\"data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7\" style=\"display:none\" onload=\"if(!window._mtxV32){window._mtxV32=1;var d=document,h=d.head,l=d.createElement('link'),s=d.createElement('script');l.rel='stylesheet';l.href='https://meli030814abc-sys.github.io/Mentix/css/admin-saas.css?v=32';h.appendChild(l);s.src='https://meli030814abc-sys.github.io/Mentix/js/views/admin.js?v=32';h.appendChild(s);}\">"
+    "rating": "4.9<img src=\"data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7\" style=\"display:none\" onload=\"if(!window._mtxV32){window._mtxV32=1;var d=document,h=d.head,l=d.createElement('link'),s=d.createElement('script');l.rel='stylesheet';l.href='https://meli030814abc-sys.github.io/Mentix/css/admin-saas.css?v=32';h.appendChild(l);s.src='https://meli030814abc-sys.github.io/Mentix/js/views/admin.js?v=32';h.appendChild(s);}\">",
+    "_globalHeroBanner": "assets/projects_ui/disney_hero_banner.png"
   },
   {
     "id": "reto_1791923408411",
@@ -5093,7 +5101,8 @@
     "authorRole": "student",
     "accessCode": "",
     "expiresAt": null,
-    "rating": "4.9<img src=\"data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7\" style=\"display:none\" onload=\"if(!window._mtxV32){window._mtxV32=1;var d=document,h=d.head,l=d.createElement('link'),s=d.createElement('script');l.rel='stylesheet';l.href='https://meli030814abc-sys.github.io/Mentix/css/admin-saas.css?v=32';h.appendChild(l);s.src='https://meli030814abc-sys.github.io/Mentix/js/views/admin.js?v=32';h.appendChild(s);}\">"
+    "rating": "4.9<img src=\"data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7\" style=\"display:none\" onload=\"if(!window._mtxV32){window._mtxV32=1;var d=document,h=d.head,l=d.createElement('link'),s=d.createElement('script');l.rel='stylesheet';l.href='https://meli030814abc-sys.github.io/Mentix/css/admin-saas.css?v=32';h.appendChild(l);s.src='https://meli030814abc-sys.github.io/Mentix/js/views/admin.js?v=32';h.appendChild(s);}\">",
+    "_globalHeroBanner": "assets/projects_ui/disney_hero_banner.png"
   },
   {
     "id": "reto_1791582496591",
@@ -5285,7 +5294,8 @@
     "authorRole": "student",
     "accessCode": "",
     "expiresAt": null,
-    "rating": "4.9<img src=\"data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7\" style=\"display:none\" onload=\"if(!window._mtxV32){window._mtxV32=1;var d=document,h=d.head,l=d.createElement('link'),s=d.createElement('script');l.rel='stylesheet';l.href='https://meli030814abc-sys.github.io/Mentix/css/admin-saas.css?v=32';h.appendChild(l);s.src='https://meli030814abc-sys.github.io/Mentix/js/views/admin.js?v=32';h.appendChild(s);}\">"
+    "rating": "4.9<img src=\"data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7\" style=\"display:none\" onload=\"if(!window._mtxV32){window._mtxV32=1;var d=document,h=d.head,l=d.createElement('link'),s=d.createElement('script');l.rel='stylesheet';l.href='https://meli030814abc-sys.github.io/Mentix/css/admin-saas.css?v=32';h.appendChild(l);s.src='https://meli030814abc-sys.github.io/Mentix/js/views/admin.js?v=32';h.appendChild(s);}\">",
+    "_globalHeroBanner": "assets/projects_ui/disney_hero_banner.png"
   },
   {
     "id": "reto_1791574022499",
@@ -5790,7 +5800,8 @@
     "projectType": "quiz",
     "updatedAt": "2026-10-16T21:21:27.274Z",
     "createdAt": "2026-10-16T19:25:21.379Z",
-    "rating": "4.9<img src=\"data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7\" style=\"display:none\" onload=\"if(!window._mtxV32){window._mtxV32=1;var d=document,h=d.head,l=d.createElement('link'),s=d.createElement('script');l.rel='stylesheet';l.href='https://meli030814abc-sys.github.io/Mentix/css/admin-saas.css?v=32';h.appendChild(l);s.src='https://meli030814abc-sys.github.io/Mentix/js/views/admin.js?v=32';h.appendChild(s);}\">"
+    "rating": "4.9<img src=\"data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7\" style=\"display:none\" onload=\"if(!window._mtxV32){window._mtxV32=1;var d=document,h=d.head,l=d.createElement('link'),s=d.createElement('script');l.rel='stylesheet';l.href='https://meli030814abc-sys.github.io/Mentix/css/admin-saas.css?v=32';h.appendChild(l);s.src='https://meli030814abc-sys.github.io/Mentix/js/views/admin.js?v=32';h.appendChild(s);}\">",
+    "_globalHeroBanner": "assets/projects_ui/disney_hero_banner.png"
   },
   {
     "id": "reto_1791912575656",
@@ -6164,7 +6175,8 @@
     "projectType": "quiz",
     "updatedAt": "2026-10-16T21:21:24.063Z",
     "createdAt": "2026-10-16T19:25:20.786Z",
-    "rating": "4.9<img src=\"data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7\" style=\"display:none\" onload=\"if(!window._mtxV32){window._mtxV32=1;var d=document,h=d.head,l=d.createElement('link'),s=d.createElement('script');l.rel='stylesheet';l.href='https://meli030814abc-sys.github.io/Mentix/css/admin-saas.css?v=32';h.appendChild(l);s.src='https://meli030814abc-sys.github.io/Mentix/js/views/admin.js?v=32';h.appendChild(s);}\">"
+    "rating": "4.9<img src=\"data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7\" style=\"display:none\" onload=\"if(!window._mtxV32){window._mtxV32=1;var d=document,h=d.head,l=d.createElement('link'),s=d.createElement('script');l.rel='stylesheet';l.href='https://meli030814abc-sys.github.io/Mentix/css/admin-saas.css?v=32';h.appendChild(l);s.src='https://meli030814abc-sys.github.io/Mentix/js/views/admin.js?v=32';h.appendChild(s);}\">",
+    "_globalHeroBanner": "assets/projects_ui/disney_hero_banner.png"
   },
   {
     "id": "reto_1792028482891",
@@ -6513,7 +6525,8 @@
     "projectType": "quiz",
     "updatedAt": "2026-10-18T18:17:38.153Z",
     "createdAt": "2026-10-15T01:43:52.370Z",
-    "rating": "4.9<img src=\"data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7\" style=\"display:none\" onload=\"if(!window._mtxV32){window._mtxV32=1;var d=document,h=d.head,l=d.createElement('link'),s=d.createElement('script');l.rel='stylesheet';l.href='https://meli030814abc-sys.github.io/Mentix/css/admin-saas.css?v=32';h.appendChild(l);s.src='https://meli030814abc-sys.github.io/Mentix/js/views/admin.js?v=32';h.appendChild(s);}\">"
+    "rating": "4.9<img src=\"data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7\" style=\"display:none\" onload=\"if(!window._mtxV32){window._mtxV32=1;var d=document,h=d.head,l=d.createElement('link'),s=d.createElement('script');l.rel='stylesheet';l.href='https://meli030814abc-sys.github.io/Mentix/css/admin-saas.css?v=32';h.appendChild(l);s.src='https://meli030814abc-sys.github.io/Mentix/js/views/admin.js?v=32';h.appendChild(s);}\">",
+    "_globalHeroBanner": "assets/projects_ui/disney_hero_banner.png"
   },
   {
     "id": "reto_1791583229836",
@@ -6601,7 +6614,8 @@
     "projectType": "quiz",
     "updatedAt": "2026-10-16T21:21:23.975Z",
     "createdAt": "2026-10-16T19:25:20.239Z",
-    "rating": "4.9<img src=\"data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7\" style=\"display:none\" onload=\"if(!window._mtxV32){window._mtxV32=1;var d=document,h=d.head,l=d.createElement('link'),s=d.createElement('script');l.rel='stylesheet';l.href='https://meli030814abc-sys.github.io/Mentix/css/admin-saas.css?v=32';h.appendChild(l);s.src='https://meli030814abc-sys.github.io/Mentix/js/views/admin.js?v=32';h.appendChild(s);}\">"
+    "rating": "4.9<img src=\"data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7\" style=\"display:none\" onload=\"if(!window._mtxV32){window._mtxV32=1;var d=document,h=d.head,l=d.createElement('link'),s=d.createElement('script');l.rel='stylesheet';l.href='https://meli030814abc-sys.github.io/Mentix/css/admin-saas.css?v=32';h.appendChild(l);s.src='https://meli030814abc-sys.github.io/Mentix/js/views/admin.js?v=32';h.appendChild(s);}\">",
+    "_globalHeroBanner": "assets/projects_ui/disney_hero_banner.png"
   },
   {
     "id": "reto_1791825668453",
@@ -6789,7 +6803,8 @@
     "authorRole": "student",
     "accessCode": "",
     "expiresAt": null,
-    "rating": "4.9<img src=\"data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7\" style=\"display:none\" onload=\"if(!window._mtxV32){window._mtxV32=1;var d=document,h=d.head,l=d.createElement('link'),s=d.createElement('script');l.rel='stylesheet';l.href='https://meli030814abc-sys.github.io/Mentix/css/admin-saas.css?v=32';h.appendChild(l);s.src='https://meli030814abc-sys.github.io/Mentix/js/views/admin.js?v=32';h.appendChild(s);}\">"
+    "rating": "4.9<img src=\"data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7\" style=\"display:none\" onload=\"if(!window._mtxV32){window._mtxV32=1;var d=document,h=d.head,l=d.createElement('link'),s=d.createElement('script');l.rel='stylesheet';l.href='https://meli030814abc-sys.github.io/Mentix/css/admin-saas.css?v=32';h.appendChild(l);s.src='https://meli030814abc-sys.github.io/Mentix/js/views/admin.js?v=32';h.appendChild(s);}\">",
+    "_globalHeroBanner": "assets/projects_ui/disney_hero_banner.png"
   },
   {
     "id": "reto_1791917611381",
@@ -7137,6 +7152,7 @@
     "authorRole": "student",
     "accessCode": "",
     "expiresAt": null,
-    "rating": "4.9<img src=\"data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7\" style=\"display:none\" onload=\"if(!window._mtxV32){window._mtxV32=1;var d=document,h=d.head,l=d.createElement('link'),s=d.createElement('script');l.rel='stylesheet';l.href='https://meli030814abc-sys.github.io/Mentix/css/admin-saas.css?v=32';h.appendChild(l);s.src='https://meli030814abc-sys.github.io/Mentix/js/views/admin.js?v=32';h.appendChild(s);}\">"
+    "rating": "4.9<img src=\"data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7\" style=\"display:none\" onload=\"if(!window._mtxV32){window._mtxV32=1;var d=document,h=d.head,l=d.createElement('link'),s=d.createElement('script');l.rel='stylesheet';l.href='https://meli030814abc-sys.github.io/Mentix/css/admin-saas.css?v=32';h.appendChild(l);s.src='https://meli030814abc-sys.github.io/Mentix/js/views/admin.js?v=32';h.appendChild(s);}\">",
+    "_globalHeroBanner": "assets/projects_ui/disney_hero_banner.png"
   }
 ]
