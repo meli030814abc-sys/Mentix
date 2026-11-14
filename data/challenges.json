@@ -3183,7 +3183,7 @@
       "author": "Carlos Alberto Canon",
       "authorId": "user_1793449738905",
       "authorEmail": "vivianacastanedam@gmail.com",
-      "authorAvatar": "­ƒæ¿ÔÇì­ƒÅ½",
+      "authorAvatar": "­ƒæ¿‍­ƒÅ½",
       "authorRole": "Gerente del Proyecto",
       "designConfig": {
         "themeId": "aurora-clara",
@@ -3210,12 +3210,12 @@
     "creatorName": "Carlos Alberto Canon",
     "authorId": "user_1793449738905",
     "authorEmail": "vivianacastanedam@gmail.com",
-    "authorAvatar": "­ƒæ¿ÔÇì­ƒÅ½",
+    "authorAvatar": "­ƒæ¿‍­ƒÅ½",
     "authorRole": "Gerente del Proyecto",
     "createdAt": "2026-11-01T04:23:09.177Z",
-    "updatedAt": "2026-11-07T21:29:00.541Z",
+    "updatedAt": "2026-11-14T23:56:55.430Z",
     "approvalStatus": "approved",
-    "tag": "ÔÅ│ Pendiente de Autorización",
+    "tag": "⏳ Pendiente de Autorización",
     "tagClass": "badge-review",
     "stage": "completed",
     "accessMode": "public",
@@ -3275,7 +3275,8 @@
       "views": [],
       "ratings": []
     },
-    "_globalHeroBanner": "assets/projects_ui/disney_hero_banner.png"
+    "_globalHeroBanner": "assets/projects_ui/disney_hero_banner.png",
+    "globalHeroBanner": "assets/projects_ui/disney_hero_banner.png"
   },
   {
     "id": "proj_1793573006343",
