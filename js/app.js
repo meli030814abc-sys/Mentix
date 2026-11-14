@@ -238,6 +238,7 @@ class AppRouter {
         navEl.style.display = 'none';
       } else {
         navEl.style.display = '';
+        this.updateNavbar();
       }
     }
 
@@ -458,20 +459,47 @@ class AppRouter {
     const clean = s => String(s || '').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
     const isMelisa = user && (clean(user.name) === 'melisa' || clean(user.username) === 'melisa' || clean(user.email) === 'meli030814abc@gmail.com' || clean(user.email).startsWith('melisa'));
     const roleLower = clean(user?.role);
-    const isStudent = roleLower === 'student' || roleLower === 'estudiante';
-    const isTeacher = roleLower === 'teacher' || roleLower === 'profesor' || roleLower === 'docente';
-    const isAdmin = isMelisa || (!isStudent && !isTeacher && (roleLower === 'admin' || roleLower === 'administrador' || user?.isAdmin === true));
+
+    // 1. ¿Es Administrador genuino?
+    const isAdmin = isMelisa || (roleLower === 'admin' || roleLower === 'administrador');
+
+    // 2. ¿Es Docente / Profesor genuino?
+    const isTeacher = !isAdmin && (roleLower === 'teacher' || roleLower === 'profesor' || roleLower === 'docente');
+
+    // 3. Todo usuario que no sea Admin ni Docente es ESTUDIANTE
+    const isStudent = !isAdmin && !isTeacher;
+
+    if (isStudent) {
+      if (user) user.isAdmin = false;
+      try { localStorage.removeItem('mentix_admin_override'); } catch (e) {}
+    }
 
     // Para estudiantes solo queda "Inicio" y "Unirse a partidas". Proyectos solo visible para docentes y admin.
     if (projectsLink) {
-      projectsLink.style.display = (!isStudent && (isTeacher || isAdmin)) ? 'inline-flex' : 'none';
+      if (!isStudent && (isTeacher || isAdmin)) {
+        projectsLink.style.removeProperty('display');
+        projectsLink.style.display = 'inline-flex';
+      } else {
+        projectsLink.style.setProperty('display', 'none', 'important');
+      }
     }
 
     if (teacherLink) {
-      teacherLink.style.display = (!isStudent && (isTeacher || isAdmin)) ? 'inline-flex' : 'none';
+      if (!isStudent && (isTeacher || isAdmin)) {
+        teacherLink.style.removeProperty('display');
+        teacherLink.style.display = 'inline-flex';
+      } else {
+        teacherLink.style.setProperty('display', 'none', 'important');
+      }
     }
+
     if (adminLink) {
-      adminLink.style.display = (!isStudent && isAdmin) ? 'inline-flex' : 'none';
+      if (!isStudent && isAdmin) {
+        adminLink.style.removeProperty('display');
+        adminLink.style.display = 'inline-flex';
+      } else {
+        adminLink.style.setProperty('display', 'none', 'important');
+      }
     }
 
     if (userSlot) {
