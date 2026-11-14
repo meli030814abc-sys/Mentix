@@ -863,6 +863,44 @@ window.ProjectHub = {
     }
   },
 
+  getReviewTheme() {
+    try {
+      const saved = localStorage.getItem('mentix_review_theme');
+      if (saved === 'light' || saved === 'dark') return saved;
+    } catch (e) {}
+    if (document.body.classList.contains('light-theme') || document.body.classList.contains('projects-pure-white-theme')) {
+      return 'light';
+    }
+    return 'dark';
+  },
+
+  applyReviewTheme(theme) {
+    const fullpage = document.getElementById('phub-fullpage-review');
+    if (!fullpage) return;
+    const isLight = theme === 'light';
+    if (isLight) {
+      fullpage.classList.add('theme-light');
+      fullpage.classList.remove('theme-dark');
+    } else {
+      fullpage.classList.remove('theme-light');
+      fullpage.classList.add('theme-dark');
+    }
+    const iconEl = document.getElementById('phub-rev-theme-icon');
+    const textEl = document.getElementById('phub-rev-theme-text');
+    if (iconEl) iconEl.textContent = isLight ? '🌙' : '☀️';
+    if (textEl) textEl.textContent = isLight ? 'Modo Oscuro' : 'Modo Claro';
+    try {
+      localStorage.setItem('mentix_review_theme', theme);
+    } catch (e) {}
+  },
+
+  toggleReviewTheme() {
+    const fullpage = document.getElementById('phub-fullpage-review');
+    const current = (fullpage && fullpage.classList.contains('theme-light')) ? 'light' : 'dark';
+    const next = current === 'light' ? 'dark' : 'light';
+    this.applyReviewTheme(next);
+  },
+
   setReviewStars(stars) {
     this.currentReviewStars = stars;
     const btns = document.querySelectorAll('.phub-rev-star-btn');
@@ -954,6 +992,15 @@ window.ProjectHub = {
     }
     document.body.style.overflow = 'hidden';
 
+    const currentTheme = this.getReviewTheme();
+    if (currentTheme === 'light') {
+      fullpage.classList.add('theme-light');
+      fullpage.classList.remove('theme-dark');
+    } else {
+      fullpage.classList.remove('theme-light');
+      fullpage.classList.add('theme-dark');
+    }
+
     const bannerUrl = this.getHeroBannerUrl(proj);
     const author = this.esc(proj.author || 'Creador Mentix');
     const title = this.esc(proj.title || 'Proyecto');
@@ -986,6 +1033,10 @@ window.ProjectHub = {
           </div>
 
           <div class="phub-fp-header-actions">
+            <button type="button" class="phub-fp-ghost-btn phub-rev-theme-btn" id="phub-rev-theme-toggle" onclick="window.ProjectHub.toggleReviewTheme()" title="Cambiar tema Claro / Oscuro">
+              <span id="phub-rev-theme-icon">${currentTheme === 'light' ? '🌙' : '☀️'}</span>
+              <span id="phub-rev-theme-text">${currentTheme === 'light' ? 'Modo Oscuro' : 'Modo Claro'}</span>
+            </button>
             <button type="button" class="phub-fp-ghost-btn" onclick="window.ProjectHub.openLanding('${id}')">
               <span>🌐</span>
               <span>Ver Landing Page</span>
@@ -1033,14 +1084,14 @@ window.ProjectHub = {
             <div class="phub-rev-form-head">
               <span style="font-size: 1.8rem; line-height: 1;">✍️</span>
               <div>
-                <h3>Deja tu Calificación y Comentario</h3>
-                <p style="margin: 0.2rem 0 0; color: #94a3b8; font-size: 0.88rem;">Selecciona las estrellas y escribe qué te pareció el proyecto.</p>
+                <h3 class="phub-rev-form-title">Deja tu Calificación y Comentario</h3>
+                <p class="phub-rev-form-desc" style="margin: 0.2rem 0 0; font-size: 0.88rem;">Selecciona las estrellas y escribe qué te pareció el proyecto.</p>
               </div>
             </div>
 
             <!-- Selector de Estrellas Interactivo -->
             <div class="phub-rev-stars-box">
-              <div style="font-size: 0.85rem; font-weight: 700; color: #cbd5e1; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.05em;">
+              <div class="phub-rev-stars-lbl" style="font-size: 0.85rem; font-weight: 700; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.05em;">
                 Tu Calificación:
               </div>
               <div class="phub-rev-stars-row" id="phub-stars-row">
@@ -1085,10 +1136,10 @@ window.ProjectHub = {
           <!-- Tarjeta de Comentarios de la Comunidad -->
           <div class="phub-rev-list-card">
             <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem; margin-bottom:0.4rem;">
-              <h3 style="margin:0; font-size:1.35rem; font-weight:900; color:#ffffff;">
+              <h3 class="phub-rev-list-title" style="margin:0; font-size:1.35rem; font-weight:900;">
                 💬 Comentarios de la Comunidad (<span id="phub-rev-comm-count">${hub.ratings.filter(r => r.comment).length}</span>)
               </h3>
-              <span style="font-size:0.82rem; color:#facc15; font-weight:700;">★ Opiniones verificadas</span>
+              <span class="phub-rev-verified-badge" style="font-size:0.82rem; font-weight:700;">★ Opiniones verificadas</span>
             </div>
             <div class="phub-rev-list" id="phub-rev-items-container">
               ${this.renderReviewListHtml(hub.ratings)}
