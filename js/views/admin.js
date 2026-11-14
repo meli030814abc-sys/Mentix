@@ -315,10 +315,11 @@ window.AdminView = {
     this.ensureAuditLogs();
     this.ensureResources();
     this.sidebarCollapsed = localStorage.getItem('mentix_admin_sidebar_collapsed') === 'true';
+    const currentTheme = this.getTheme();
 
     // Inyectar layout SaaS completo
     container.innerHTML = `
-      <div class="mentix-admin-layout ${this.sidebarCollapsed ? 'sidebar-collapsed' : ''}" id="mentix-admin-root">
+      <div class="mentix-admin-layout ${this.sidebarCollapsed ? 'sidebar-collapsed' : ''} ${currentTheme === 'light' ? 'theme-light' : 'theme-dark'}" id="mentix-admin-root">
         
         <!-- SIDEBAR LATERAL AZUL OSCURO -->
         <aside class="mentix-admin-sidebar" id="admin-sidebar">
@@ -429,6 +430,12 @@ window.AdminView = {
               <!-- Botón rápido hacia la plataforma de estudiantes -->
               <button class="admin-btn-portal" onclick="window.appRouter.navigate('projects')" title="Ver portal de estudiantes">
                 <span>🌐</span> Ver Plataforma
+              </button>
+
+              <!-- Selector de Tema Claro / Oscuro con textos brillantes -->
+              <button class="admin-theme-toggle-btn" id="admin-theme-btn" onclick="window.AdminView.toggleTheme()" title="Cambiar a Modo Claro / Oscuro">
+                <span id="admin-theme-icon">${currentTheme === 'light' ? '🌙' : '☀️'}</span>
+                <span id="admin-theme-text">${currentTheme === 'light' ? 'Modo Oscuro' : 'Modo Claro'}</span>
               </button>
 
               <!-- Notificaciones -->
@@ -4343,6 +4350,40 @@ window.AdminView = {
     } else if (this.activeTab === 'users') {
       this.setUserSearch(query);
     }
+  },
+
+  // ==========================================
+  // TEMA CLARO / OSCURO (TEXTOS BRILLANTES & LEGIBILIDAD)
+  // ==========================================
+
+  getTheme() {
+    try {
+      const saved = localStorage.getItem('mentix_admin_theme') || localStorage.getItem('te_reto_theme');
+      if (saved === 'light' || saved === 'dark') return saved;
+    } catch (e) {}
+    return document.body.classList.contains('light-theme') ? 'light' : 'dark';
+  },
+
+  applyTheme(theme) {
+    const root = document.getElementById('mentix-admin-root');
+    const isLight = theme === 'light';
+    if (root) {
+      root.classList.toggle('theme-light', isLight);
+      root.classList.toggle('theme-dark', !isLight);
+    }
+    const iconEl = document.getElementById('admin-theme-icon');
+    const textEl = document.getElementById('admin-theme-text');
+    if (iconEl) iconEl.textContent = isLight ? '🌙' : '☀️';
+    if (textEl) textEl.textContent = isLight ? 'Modo Oscuro' : 'Modo Claro';
+    try {
+      localStorage.setItem('mentix_admin_theme', theme);
+    } catch (e) {}
+  },
+
+  toggleTheme() {
+    const current = this.getTheme();
+    const next = current === 'light' ? 'dark' : 'light';
+    this.applyTheme(next);
   },
 
   // ==========================================

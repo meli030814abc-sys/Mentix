@@ -7608,3 +7608,344 @@ body.light-theme .inno-btn-resources:hover *,
 body[data-theme="light"] .inno-btn-resources:hover * {
   color: #0284c7 !important;
 }
+
+
+/* ==========================================================================
+   TEMA CLARO Y OSCURO - PANEL DEL PROFESOR (TEXTOS BRILLANTES & LEGIBILIDAD)
+   ========================================================================== */
+
+/* Botón de alternar tema en el Panel de Profesor */
+.teacher-theme-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.55rem 1.15rem;
+  border-radius: 9999px;
+  font-size: 0.85rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.22s ease;
+  white-space: nowrap;
+}
+
+/* --- MODO OSCURO EN PANEL DOCENTE (.teacher-theme-dark o por defecto) --- */
+#view-teacher:not(.teacher-theme-light),
+.teacher-panel-wrapper.teacher-theme-dark {
+  color: #f1f5f9;
+}
+
+/* Títulos principales brillantes */
+#view-teacher:not(.teacher-theme-light) .teacher-main-title,
+.teacher-panel-wrapper.teacher-theme-dark .teacher-main-title,
+#view-teacher:not(.teacher-theme-light) h1,
+.teacher-panel-wrapper.teacher-theme-dark h1 {
+  color: #ffffff !important;
+  text-shadow: 0 0 16px rgba(0, 245, 212, 0.45) !important;
+  font-weight: 900 !important;
+}
+
+#view-teacher:not(.teacher-theme-light) .teacher-main-subtitle,
+.teacher-panel-wrapper.teacher-theme-dark .teacher-main-subtitle,
+#view-teacher:not(.teacher-theme-light) p,
+.teacher-panel-wrapper.teacher-theme-dark p {
+  color: #cbd5e1 !important;
+  font-weight: 500 !important;
+}
+
+#view-teacher:not(.teacher-theme-light) .teacher-section-title,
+.teacher-panel-wrapper.teacher-theme-dark .teacher-section-title,
+#view-teacher:not(.teacher-theme-light) h2,
+.teacher-panel-wrapper.teacher-theme-dark h2 {
+  color: #ffffff !important;
+  text-shadow: 0 0 14px rgba(0, 245, 212, 0.35) !important;
+  font-weight: 900 !important;
+}
+
+#view-teacher:not(.teacher-theme-light) .teacher-section-subtitle,
+.teacher-panel-wrapper.teacher-theme-dark .teacher-section-subtitle {
+  color: #94a3b8 !important;
+  font-weight: 600 !important;
+}
+
+/* Botón de tema en Modo Oscuro */
+#view-teacher:not(.teacher-theme-light) .teacher-theme-toggle-btn,
+.teacher-panel-wrapper.teacher-theme-dark .teacher-theme-toggle-btn {
+  background: rgba(255, 255, 255, 0.08) !important;
+  border: 1.5px solid rgba(250, 204, 21, 0.5) !important;
+  color: #facc15 !important;
+  text-shadow: 0 0 10px rgba(250, 204, 21, 0.55) !important;
+}
+#view-teacher:not(.teacher-theme-light) .teacher-theme-toggle-btn:hover,
+.teacher-panel-wrapper.teacher-theme-dark .teacher-theme-toggle-btn:hover {
+  background: rgba(250, 204, 21, 0.2) !important;
+  border-color: #facc15 !important;
+  transform: translateY(-1px);
+}
+
+/* Tarjetas y Métricas en Modo Oscuro */
+#view-teacher:not(.teacher-theme-light) .glass-panel,
+.teacher-panel-wrapper.teacher-theme-dark .glass-panel {
+  background: linear-gradient(145deg, rgba(12, 28, 56, 0.94) 0%, rgba(6, 17, 36, 0.98) 100%) !important;
+  border: 1.5px solid rgba(0, 245, 212, 0.32) !important;
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.6), 0 0 20px rgba(0, 245, 212, 0.12) !important;
+  backdrop-filter: blur(20px) !important;
+}
+
+#view-teacher:not(.teacher-theme-light) .teacher-stat-label,
+.teacher-panel-wrapper.teacher-theme-dark .teacher-stat-label {
+  color: #94a3b8 !important;
+  font-weight: 800 !important;
+}
+
+#view-teacher:not(.teacher-theme-light) .teacher-val-cyan,
+.teacher-panel-wrapper.teacher-theme-dark .teacher-val-cyan {
+  color: #00f5d4 !important;
+  text-shadow: 0 0 16px rgba(0, 245, 212, 0.65) !important;
+  font-weight: 900 !important;
+}
+
+#view-teacher:not(.teacher-theme-light) .teacher-val-emerald,
+.teacher-panel-wrapper.teacher-theme-dark .teacher-val-emerald {
+  color: #34d399 !important;
+  text-shadow: 0 0 16px rgba(52, 211, 153, 0.65) !important;
+  font-weight: 900 !important;
+}
+
+#view-teacher:not(.teacher-theme-light) .teacher-val-gold,
+.teacher-panel-wrapper.teacher-theme-dark .teacher-val-gold {
+  color: #facc15 !important;
+  text-shadow: 0 0 16px rgba(250, 204, 21, 0.65) !important;
+  font-weight: 900 !important;
+}
+
+#view-teacher:not(.teacher-theme-light) .teacher-stat-sub,
+.teacher-panel-wrapper.teacher-theme-dark .teacher-stat-sub {
+  color: #cbd5e1 !important;
+  font-weight: 700 !important;
+}
+
+/* Tarjetas de Cuestionarios en Modo Oscuro */
+#view-teacher:not(.teacher-theme-light) .teacher-quiz-title,
+.teacher-panel-wrapper.teacher-theme-dark .teacher-quiz-title {
+  color: #ffffff !important;
+  font-weight: 800 !important;
+  text-shadow: 0 0 12px rgba(0, 245, 212, 0.35) !important;
+}
+
+#view-teacher:not(.teacher-theme-light) .teacher-quiz-desc,
+.teacher-panel-wrapper.teacher-theme-dark .teacher-quiz-desc {
+  color: #cbd5e1 !important;
+  font-weight: 500 !important;
+}
+
+#view-teacher:not(.teacher-theme-light) .teacher-quiz-author,
+.teacher-panel-wrapper.teacher-theme-dark .teacher-quiz-author {
+  color: #94a3b8 !important;
+}
+
+#view-teacher:not(.teacher-theme-light) .teacher-tag-cyan,
+.teacher-panel-wrapper.teacher-theme-dark .teacher-tag-cyan {
+  background: rgba(0, 245, 212, 0.16) !important;
+  border: 1px solid rgba(0, 245, 212, 0.4) !important;
+  color: #00f5d4 !important;
+}
+
+#view-teacher:not(.teacher-theme-light) .teacher-tag-meta,
+.teacher-panel-wrapper.teacher-theme-dark .teacher-tag-meta {
+  background: rgba(255, 255, 255, 0.08) !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  color: #cbd5e1 !important;
+}
+
+#view-teacher:not(.teacher-theme-light) .teacher-group-name,
+.teacher-panel-wrapper.teacher-theme-dark .teacher-group-name {
+  color: #ffffff !important;
+  font-weight: 900 !important;
+  text-shadow: 0 0 12px rgba(0, 245, 212, 0.3) !important;
+}
+
+#view-teacher:not(.teacher-theme-light) .teacher-group-meta,
+.teacher-panel-wrapper.teacher-theme-dark .teacher-group-meta {
+  color: #cbd5e1 !important;
+}
+
+#view-teacher:not(.teacher-theme-light) .teacher-honor-label,
+.teacher-panel-wrapper.teacher-theme-dark .teacher-honor-label {
+  color: #facc15 !important;
+  text-shadow: 0 0 10px rgba(250, 204, 21, 0.4) !important;
+}
+
+#view-teacher:not(.teacher-theme-light) .teacher-student-chip,
+.teacher-panel-wrapper.teacher-theme-dark .teacher-student-chip {
+  background: rgba(0, 0, 0, 0.45) !important;
+  border: 1.5px solid rgba(0, 245, 212, 0.25) !important;
+}
+
+#view-teacher:not(.teacher-theme-light) .teacher-student-name,
+.teacher-panel-wrapper.teacher-theme-dark .teacher-student-name {
+  color: #ffffff !important;
+  font-weight: 800 !important;
+}
+
+
+/* --- MODO CLARO EN PANEL DOCENTE (.teacher-theme-light) --- */
+#view-teacher.teacher-theme-light,
+.teacher-panel-wrapper.teacher-theme-light {
+  color: #0f172a;
+}
+
+#view-teacher.teacher-theme-light .teacher-main-title,
+.teacher-panel-wrapper.teacher-theme-light .teacher-main-title,
+#view-teacher.teacher-theme-light h1,
+.teacher-panel-wrapper.teacher-theme-light h1 {
+  color: #0f172a !important;
+  font-weight: 900 !important;
+  text-shadow: none !important;
+}
+
+#view-teacher.teacher-theme-light .teacher-main-subtitle,
+.teacher-panel-wrapper.teacher-theme-light .teacher-main-subtitle,
+#view-teacher.teacher-theme-light p,
+.teacher-panel-wrapper.teacher-theme-light p {
+  color: #334155 !important;
+  font-weight: 500 !important;
+}
+
+#view-teacher.teacher-theme-light .teacher-section-title,
+.teacher-panel-wrapper.teacher-theme-light .teacher-section-title,
+#view-teacher.teacher-theme-light h2,
+.teacher-panel-wrapper.teacher-theme-light h2 {
+  color: #0f172a !important;
+  font-weight: 900 !important;
+  text-shadow: none !important;
+}
+
+#view-teacher.teacher-theme-light .teacher-section-subtitle,
+.teacher-panel-wrapper.teacher-theme-light .teacher-section-subtitle {
+  color: #64748b !important;
+}
+
+/* Botón de tema en Modo Claro */
+#view-teacher.teacher-theme-light .teacher-theme-toggle-btn,
+.teacher-panel-wrapper.teacher-theme-light .teacher-theme-toggle-btn {
+  background: #fefce8 !important;
+  border: 1.5px solid #facc15 !important;
+  color: #854d0e !important;
+  font-weight: 800 !important;
+}
+#view-teacher.teacher-theme-light .teacher-theme-toggle-btn:hover,
+.teacher-panel-wrapper.teacher-theme-light .teacher-theme-toggle-btn:hover {
+  background: #fef08a !important;
+  border-color: #eab308 !important;
+  transform: translateY(-1px);
+}
+
+/* Tarjetas y Métricas en Modo Claro */
+#view-teacher.teacher-theme-light .glass-panel,
+.teacher-panel-wrapper.teacher-theme-light .glass-panel {
+  background: #ffffff !important;
+  border: 1.5px solid #cbd5e1 !important;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06) !important;
+}
+
+#view-teacher.teacher-theme-light .teacher-stat-label,
+.teacher-panel-wrapper.teacher-theme-light .teacher-stat-label {
+  color: #475569 !important;
+  font-weight: 800 !important;
+}
+
+#view-teacher.teacher-theme-light .teacher-val-cyan,
+.teacher-panel-wrapper.teacher-theme-light .teacher-val-cyan {
+  color: #0284c7 !important;
+  font-weight: 900 !important;
+  text-shadow: none !important;
+}
+
+#view-teacher.teacher-theme-light .teacher-val-emerald,
+.teacher-panel-wrapper.teacher-theme-light .teacher-val-emerald {
+  color: #059669 !important;
+  font-weight: 900 !important;
+  text-shadow: none !important;
+}
+
+#view-teacher.teacher-theme-light .teacher-val-gold,
+.teacher-panel-wrapper.teacher-theme-light .teacher-val-gold {
+  color: #d97706 !important;
+  font-weight: 900 !important;
+  text-shadow: none !important;
+}
+
+#view-teacher.teacher-theme-light .teacher-stat-sub,
+.teacher-panel-wrapper.teacher-theme-light .teacher-stat-sub {
+  color: #64748b !important;
+  font-weight: 700 !important;
+}
+
+/* Cuestionarios en Modo Claro */
+#view-teacher.teacher-theme-light .teacher-quiz-title,
+.teacher-panel-wrapper.teacher-theme-light .teacher-quiz-title {
+  color: #0f172a !important;
+  font-weight: 800 !important;
+  text-shadow: none !important;
+}
+
+#view-teacher.teacher-theme-light .teacher-quiz-desc,
+.teacher-panel-wrapper.teacher-theme-light .teacher-quiz-desc {
+  color: #334155 !important;
+  font-weight: 500 !important;
+}
+
+#view-teacher.teacher-theme-light .teacher-quiz-author,
+.teacher-panel-wrapper.teacher-theme-light .teacher-quiz-author {
+  color: #64748b !important;
+}
+
+#view-teacher.teacher-theme-light .teacher-tag-cyan,
+.teacher-panel-wrapper.teacher-theme-light .teacher-tag-cyan {
+  background: #e0f2fe !important;
+  border: 1px solid #bae6fd !important;
+  color: #0284c7 !important;
+}
+
+#view-teacher.teacher-theme-light .teacher-tag-meta,
+.teacher-panel-wrapper.teacher-theme-light .teacher-tag-meta {
+  background: #f1f5f9 !important;
+  border: 1px solid #e2e8f0 !important;
+  color: #475569 !important;
+}
+
+#view-teacher.teacher-theme-light .teacher-group-name,
+.teacher-panel-wrapper.teacher-theme-light .teacher-group-name {
+  color: #0f172a !important;
+  font-weight: 900 !important;
+  text-shadow: none !important;
+}
+
+#view-teacher.teacher-theme-light .teacher-group-meta,
+.teacher-panel-wrapper.teacher-theme-light .teacher-group-meta {
+  color: #334155 !important;
+}
+
+#view-teacher.teacher-theme-light .teacher-honor-label,
+.teacher-panel-wrapper.teacher-theme-light .teacher-honor-label {
+  color: #854d0e !important;
+  text-shadow: none !important;
+}
+
+#view-teacher.teacher-theme-light .teacher-student-chip,
+.teacher-panel-wrapper.teacher-theme-light .teacher-student-chip {
+  background: #f8fafc !important;
+  border: 1.5px solid #e2e8f0 !important;
+}
+
+#view-teacher.teacher-theme-light .teacher-student-name,
+.teacher-panel-wrapper.teacher-theme-light .teacher-student-name {
+  color: #0f172a !important;
+  font-weight: 800 !important;
+}
+
+#view-teacher.teacher-theme-light .teacher-student-pts,
+.teacher-panel-wrapper.teacher-theme-light .teacher-student-pts {
+  color: #0284c7 !important;
+  font-weight: 800 !important;
+}

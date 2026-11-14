@@ -3328,3 +3328,394 @@
 }
 
 
+
+
+/* ==========================================================================
+   TEMA CLARO Y TEMA OSCURO (ADMIN SAAS - TEXTOS VISIBLES & BRILLANTES)
+   ========================================================================== */
+
+/* Botón de alternar tema en Topbar */
+.admin-theme-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.55rem 1.15rem;
+  border-radius: 9999px;
+  font-size: 0.84rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.22s ease;
+  font-family: inherit;
+  border: 1.5px solid transparent;
+  white-space: nowrap;
+}
+
+/* --- MODO OSCURO (POR DEFECTO EN ADMIN / .theme-dark) --- */
+.mentix-admin-layout.theme-dark,
+#view-admin:not(.theme-light) .mentix-admin-layout {
+  background: #04091a !important;
+  color: #f1f5f9 !important;
+}
+
+.mentix-admin-layout.theme-dark .mentix-admin-main,
+#view-admin:not(.theme-light) .mentix-admin-main {
+  background: #04091a !important;
+  color: #f1f5f9 !important;
+}
+
+.mentix-admin-layout.theme-dark .mentix-admin-topbar,
+#view-admin:not(.theme-light) .mentix-admin-topbar {
+  background: rgba(7, 21, 43, 0.95) !important;
+  border-bottom: 1.5px solid rgba(56, 189, 248, 0.28) !important;
+  box-shadow: 0 4px 25px rgba(0, 0, 0, 0.55) !important;
+  backdrop-filter: blur(16px) !important;
+}
+
+/* Botón de tema en Modo Oscuro */
+.mentix-admin-layout.theme-dark .admin-theme-toggle-btn,
+#view-admin:not(.theme-light) .admin-theme-toggle-btn {
+  background: rgba(255, 255, 255, 0.08) !important;
+  border: 1.5px solid rgba(250, 204, 21, 0.5) !important;
+  color: #facc15 !important;
+  text-shadow: 0 0 12px rgba(250, 204, 21, 0.55) !important;
+}
+.mentix-admin-layout.theme-dark .admin-theme-toggle-btn:hover,
+#view-admin:not(.theme-light) .admin-theme-toggle-btn:hover {
+  background: rgba(250, 204, 21, 0.2) !important;
+  border-color: #facc15 !important;
+  transform: translateY(-1px);
+}
+
+.mentix-admin-layout.theme-dark .admin-btn-portal,
+#view-admin:not(.theme-light) .admin-btn-portal {
+  background: rgba(255, 255, 255, 0.08) !important;
+  border: 1.5px solid rgba(56, 189, 248, 0.35) !important;
+  color: #38bdf8 !important;
+  text-shadow: 0 0 8px rgba(56, 189, 248, 0.4) !important;
+}
+
+.mentix-admin-layout.theme-dark .admin-global-search input,
+#view-admin:not(.theme-light) .admin-global-search input {
+  background: #0c1e3d !important;
+  color: #ffffff !important;
+  border: 1.5px solid rgba(56, 189, 248, 0.35) !important;
+}
+.mentix-admin-layout.theme-dark .admin-global-search input:focus,
+#view-admin:not(.theme-light) .admin-global-search input:focus {
+  border-color: #00f5d4 !important;
+  box-shadow: 0 0 0 3px rgba(0, 245, 212, 0.25) !important;
+  background: #0e2448 !important;
+}
+.mentix-admin-layout.theme-dark .admin-global-search input::placeholder,
+#view-admin:not(.theme-light) .admin-global-search input::placeholder {
+  color: #94a3b8 !important;
+}
+
+.mentix-admin-layout.theme-dark .admin-icon-btn,
+#view-admin:not(.theme-light) .admin-icon-btn {
+  background: #0c1e3d !important;
+  border: 1.5px solid rgba(56, 189, 248, 0.3) !important;
+  color: #38bdf8 !important;
+}
+
+.mentix-admin-layout.theme-dark .admin-user-profile-chip,
+#view-admin:not(.theme-light) .admin-user-profile-chip {
+  background: #0c1e3d !important;
+  border: 1.5px solid rgba(56, 189, 248, 0.3) !important;
+}
+.mentix-admin-layout.theme-dark .admin-user-name,
+#view-admin:not(.theme-light) .admin-user-name {
+  color: #ffffff !important;
+  font-weight: 800 !important;
+}
+.mentix-admin-layout.theme-dark .admin-user-role,
+#view-admin:not(.theme-light) .admin-user-role {
+  color: #00f5d4 !important;
+  font-weight: 800 !important;
+}
+
+/* Títulos y Encabezados Brillantes y Nítidos en Modo Oscuro */
+.mentix-admin-layout.theme-dark h1,
+.mentix-admin-layout.theme-dark h2,
+.mentix-admin-layout.theme-dark h3,
+.mentix-admin-layout.theme-dark .admin-view-title,
+.mentix-admin-layout.theme-dark .admin-section-header h2,
+#view-admin:not(.theme-light) h1,
+#view-admin:not(.theme-light) h2,
+#view-admin:not(.theme-light) h3,
+#view-admin:not(.theme-light) .admin-view-title,
+#view-admin:not(.theme-light) .admin-section-header h2 {
+  color: #ffffff !important;
+  text-shadow: 0 0 16px rgba(0, 245, 212, 0.45) !important;
+  font-weight: 900 !important;
+}
+
+.mentix-admin-layout.theme-dark p,
+.mentix-admin-layout.theme-dark .admin-view-subtitle,
+.mentix-admin-layout.theme-dark .admin-section-header p,
+#view-admin:not(.theme-light) p,
+#view-admin:not(.theme-light) .admin-view-subtitle,
+#view-admin:not(.theme-light) .admin-section-header p {
+  color: #cbd5e1 !important;
+  font-weight: 500 !important;
+}
+
+/* Tarjetas KPI en Modo Oscuro */
+.mentix-admin-layout.theme-dark .admin-kpi-card,
+#view-admin:not(.theme-light) .admin-kpi-card {
+  background: linear-gradient(145deg, rgba(12, 32, 64, 0.95) 0%, rgba(7, 21, 43, 0.98) 100%) !important;
+  border: 1.5px solid rgba(56, 189, 248, 0.35) !important;
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.55), 0 0 20px rgba(56, 189, 248, 0.12) !important;
+}
+.mentix-admin-layout.theme-dark .admin-kpi-label,
+#view-admin:not(.theme-light) .admin-kpi-label {
+  color: #94a3b8 !important;
+  font-weight: 800 !important;
+}
+.mentix-admin-layout.theme-dark .admin-kpi-value,
+#view-admin:not(.theme-light) .admin-kpi-value {
+  color: #ffffff !important;
+  text-shadow: 0 0 18px rgba(0, 245, 212, 0.6) !important;
+  font-weight: 900 !important;
+}
+.mentix-admin-layout.theme-dark .admin-kpi-footer,
+#view-admin:not(.theme-light) .admin-kpi-footer {
+  border-top-color: rgba(255, 255, 255, 0.08) !important;
+  color: #cbd5e1 !important;
+}
+
+/* Tarjetas de Proyectos, Contenido y Tablas en Modo Oscuro */
+.mentix-admin-layout.theme-dark .admin-project-card,
+.mentix-admin-layout.theme-dark .admin-card,
+.mentix-admin-layout.theme-dark .admin-table-card,
+.mentix-admin-layout.theme-dark .admin-panel-box,
+#view-admin:not(.theme-light) .admin-project-card,
+#view-admin:not(.theme-light) .admin-card,
+#view-admin:not(.theme-light) .admin-table-card,
+#view-admin:not(.theme-light) .admin-panel-box {
+  background: linear-gradient(145deg, rgba(12, 32, 64, 0.95) 0%, rgba(7, 21, 43, 0.98) 100%) !important;
+  border: 1.5px solid rgba(56, 189, 248, 0.3) !important;
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.5) !important;
+}
+.mentix-admin-layout.theme-dark .admin-card-title,
+#view-admin:not(.theme-light) .admin-card-title {
+  color: #ffffff !important;
+  font-weight: 800 !important;
+  text-shadow: 0 0 12px rgba(0, 245, 212, 0.35) !important;
+}
+.mentix-admin-layout.theme-dark .admin-card-desc,
+#view-admin:not(.theme-light) .admin-card-desc {
+  color: #cbd5e1 !important;
+  font-weight: 500 !important;
+}
+.mentix-admin-layout.theme-dark .admin-card-meta-row,
+#view-admin:not(.theme-light) .admin-card-meta-row {
+  color: #94a3b8 !important;
+}
+.mentix-admin-layout.theme-dark .admin-card-body,
+#view-admin:not(.theme-light) .admin-card-body {
+  color: #cbd5e1 !important;
+}
+
+/* Tablas en Modo Oscuro */
+.mentix-admin-layout.theme-dark .admin-table th,
+#view-admin:not(.theme-light) .admin-table th {
+  background: rgba(3, 10, 23, 0.92) !important;
+  color: #38bdf8 !important;
+  font-weight: 800 !important;
+  border-bottom: 1.5px solid rgba(56, 189, 248, 0.3) !important;
+}
+.mentix-admin-layout.theme-dark .admin-table td,
+#view-admin:not(.theme-light) .admin-table td {
+  color: #f1f5f9 !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+  font-weight: 600 !important;
+}
+.mentix-admin-layout.theme-dark .admin-table tr:hover td,
+#view-admin:not(.theme-light) .admin-table tr:hover td {
+  background: rgba(56, 189, 248, 0.12) !important;
+}
+
+/* Tabs, Pills y Controles de Filtro en Modo Oscuro */
+.mentix-admin-layout.theme-dark .admin-tab,
+.mentix-admin-layout.theme-dark .admin-filter-pill,
+#view-admin:not(.theme-light) .admin-tab,
+#view-admin:not(.theme-light) .admin-filter-pill {
+  background: rgba(255, 255, 255, 0.06) !important;
+  color: #cbd5e1 !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.14) !important;
+  font-weight: 700 !important;
+}
+.mentix-admin-layout.theme-dark .admin-tab.active,
+.mentix-admin-layout.theme-dark .admin-filter-pill.active,
+#view-admin:not(.theme-light) .admin-tab.active,
+#view-admin:not(.theme-light) .admin-filter-pill.active {
+  background: linear-gradient(135deg, #0284c7 0%, #2563eb 100%) !important;
+  color: #ffffff !important;
+  border-color: #38bdf8 !important;
+  box-shadow: 0 0 15px rgba(2, 132, 199, 0.4) !important;
+}
+
+.mentix-admin-layout.theme-dark input,
+.mentix-admin-layout.theme-dark select,
+.mentix-admin-layout.theme-dark textarea,
+#view-admin:not(.theme-light) input,
+#view-admin:not(.theme-light) select,
+#view-admin:not(.theme-light) textarea {
+  background: #0c1e3d !important;
+  color: #ffffff !important;
+  border: 1.5px solid rgba(56, 189, 248, 0.35) !important;
+}
+.mentix-admin-layout.theme-dark input:focus,
+.mentix-admin-layout.theme-dark select:focus,
+.mentix-admin-layout.theme-dark textarea:focus,
+#view-admin:not(.theme-light) input:focus,
+#view-admin:not(.theme-light) select:focus,
+#view-admin:not(.theme-light) textarea:focus {
+  border-color: #00f5d4 !important;
+  box-shadow: 0 0 0 3px rgba(0, 245, 212, 0.25) !important;
+}
+
+.mentix-admin-layout.theme-dark .admin-notif-popover,
+#view-admin:not(.theme-light) .admin-notif-popover {
+  background: #07152b !important;
+  border: 1.5px solid rgba(56, 189, 248, 0.35) !important;
+  color: #ffffff !important;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6) !important;
+}
+
+
+/* --- MODO CLARO (.theme-light) --- */
+.mentix-admin-layout.theme-light {
+  background: #f8fafc !important;
+  color: #0f172a !important;
+}
+.mentix-admin-layout.theme-light .mentix-admin-main {
+  background: #f8fafc !important;
+  color: #0f172a !important;
+}
+.mentix-admin-layout.theme-light .mentix-admin-topbar {
+  background: #ffffff !important;
+  border-bottom: 1.5px solid #e2e8f0 !important;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04) !important;
+}
+
+/* Botón de tema en Modo Claro */
+.mentix-admin-layout.theme-light .admin-theme-toggle-btn {
+  background: #fefce8 !important;
+  border: 1.5px solid #facc15 !important;
+  color: #854d0e !important;
+  font-weight: 800 !important;
+}
+.mentix-admin-layout.theme-light .admin-theme-toggle-btn:hover {
+  background: #fef08a !important;
+  border-color: #eab308 !important;
+  transform: translateY(-1px);
+}
+
+.mentix-admin-layout.theme-light .admin-btn-portal {
+  background: #f1f5f9 !important;
+  border: 1.5px solid #cbd5e1 !important;
+  color: #0f172a !important;
+}
+
+.mentix-admin-layout.theme-light .admin-global-search input {
+  background: #f1f5f9 !important;
+  color: #0f172a !important;
+  border: 1.5px solid #cbd5e1 !important;
+}
+.mentix-admin-layout.theme-light .admin-global-search input:focus {
+  border-color: #0284c7 !important;
+  background: #ffffff !important;
+  box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15) !important;
+}
+
+.mentix-admin-layout.theme-light .admin-icon-btn {
+  background: #f8fafc !important;
+  border: 1.5px solid #e2e8f0 !important;
+  color: #475569 !important;
+}
+
+.mentix-admin-layout.theme-light .admin-user-profile-chip {
+  background: #ffffff !important;
+  border: 1.5px solid #e2e8f0 !important;
+}
+.mentix-admin-layout.theme-light .admin-user-name {
+  color: #0f172a !important;
+  font-weight: 800 !important;
+}
+.mentix-admin-layout.theme-light .admin-user-role {
+  color: #0284c7 !important;
+  font-weight: 800 !important;
+}
+
+/* Títulos y Encabezados en Modo Claro */
+.mentix-admin-layout.theme-light h1,
+.mentix-admin-layout.theme-light h2,
+.mentix-admin-layout.theme-light h3,
+.mentix-admin-layout.theme-light .admin-view-title,
+.mentix-admin-layout.theme-light .admin-section-header h2 {
+  color: #0f172a !important;
+  font-weight: 900 !important;
+  text-shadow: none !important;
+}
+.mentix-admin-layout.theme-light p,
+.mentix-admin-layout.theme-light .admin-view-subtitle,
+.mentix-admin-layout.theme-light .admin-section-header p {
+  color: #334155 !important;
+  font-weight: 500 !important;
+}
+
+/* Tarjetas KPI en Modo Claro */
+.mentix-admin-layout.theme-light .admin-kpi-card {
+  background: #ffffff !important;
+  border: 1.5px solid #e2e8f0 !important;
+  box-shadow: 0 4px 18px rgba(15, 23, 42, 0.06) !important;
+}
+.mentix-admin-layout.theme-light .admin-kpi-label {
+  color: #475569 !important;
+  font-weight: 800 !important;
+}
+.mentix-admin-layout.theme-light .admin-kpi-value {
+  color: #0f172a !important;
+  font-weight: 900 !important;
+  text-shadow: none !important;
+}
+
+/* Tarjetas de Proyectos en Modo Claro */
+.mentix-admin-layout.theme-light .admin-project-card,
+.mentix-admin-layout.theme-light .admin-card,
+.mentix-admin-layout.theme-light .admin-table-card,
+.mentix-admin-layout.theme-light .admin-panel-box {
+  background: #ffffff !important;
+  border: 1.5px solid #e2e8f0 !important;
+  box-shadow: 0 4px 18px rgba(15, 23, 42, 0.06) !important;
+}
+.mentix-admin-layout.theme-light .admin-card-title {
+  color: #0f172a !important;
+  font-weight: 800 !important;
+  text-shadow: none !important;
+}
+.mentix-admin-layout.theme-light .admin-card-desc {
+  color: #334155 !important;
+  font-weight: 500 !important;
+}
+.mentix-admin-layout.theme-light .admin-card-meta-row {
+  color: #64748b !important;
+}
+
+/* Tablas en Modo Claro */
+.mentix-admin-layout.theme-light .admin-table th {
+  background: #f1f5f9 !important;
+  color: #0f172a !important;
+  font-weight: 800 !important;
+  border-bottom: 1.5px solid #cbd5e1 !important;
+}
+.mentix-admin-layout.theme-light .admin-table td {
+  color: #1e293b !important;
+  border-bottom: 1px solid #e2e8f0 !important;
+  font-weight: 600 !important;
+}
+.mentix-admin-layout.theme-light .admin-table tr:hover td {
+  background: #f8fafc !important;
+}
