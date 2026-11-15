@@ -316,6 +316,7 @@ window.AdminView = {
     this.ensureResources();
     this.sidebarCollapsed = localStorage.getItem('mentix_admin_sidebar_collapsed') === 'true';
     const currentTheme = this.getTheme();
+    this.initRealTimeUpdates();
 
     // Inyectar layout SaaS completo
     container.innerHTML = `
@@ -974,7 +975,7 @@ window.AdminView = {
         <div style="position: absolute; top: 1rem; right: 1.25rem; z-index: 10;">
           <button 
             type="button" 
-            onclick="window.AdminView.switchTab('settings')" 
+            onclick="window.AdminView.openBannerCustomizerModal()" 
             title="Cambiar Banner de Proyectos y Banner de Robot (Exclusivo Administrador)"
             style="display: inline-flex; align-items: center; gap: 0.5rem; background: rgba(7, 23, 57, 0.92); backdrop-filter: blur(10px); color: #00f5d4; border: 2px solid #00f5d4; border-radius: 9999px; padding: 0.45rem 1.15rem; font-size: 0.84rem; font-weight: 900; cursor: pointer; box-shadow: 0 0 20px rgba(0, 245, 212, 0.45); transition: all 0.25s ease;"
           >
@@ -989,7 +990,7 @@ window.AdminView = {
           
           <button 
             type="button" 
-            onclick="window.ProjectsView ? window.ProjectsView.openJoinProjectModal() : window.appRouter.navigate('projects', { viewMode: 'join' })" 
+            onclick="window.AdminView.bannerAction('join')" 
             title="Unirse a un código"
             class="mentix-hero-action-btn"
             style="display: inline-flex; align-items: center; gap: 0.45rem; background: linear-gradient(135deg, #f72585 0%, #b5179e 100%); color: #ffffff; border: none; border-radius: 9999px; padding: 0.52rem 1.25rem; font-size: 0.9rem; font-weight: 800; cursor: pointer; box-shadow: 0 4px 16px rgba(247, 37, 133, 0.45); transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); white-space: nowrap;"
@@ -1000,7 +1001,7 @@ window.AdminView = {
 
           <button 
             type="button" 
-            onclick="window.appRouter.navigate('projects', { viewMode: 'create' })" 
+            onclick="window.AdminView.bannerAction('create')" 
             title="Crear Proyecto"
             class="mentix-hero-action-btn"
             style="display: inline-flex; align-items: center; gap: 0.45rem; background: linear-gradient(135deg, #00d2ff 0%, #0077ff 100%); color: #ffffff; border: none; border-radius: 9999px; padding: 0.52rem 1.25rem; font-size: 0.9rem; font-weight: 800; cursor: pointer; box-shadow: 0 4px 16px rgba(0, 180, 255, 0.48); transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); white-space: nowrap;"
@@ -1011,7 +1012,7 @@ window.AdminView = {
 
           <button 
             type="button" 
-            onclick="window.ProjectsView ? window.ProjectsView.openCreateCodeModal() : window.AdminView.showToast('Generador de código disponible')" 
+            onclick="window.AdminView.bannerAction('code')" 
             title="Crear Código de Proyecto"
             class="mentix-hero-action-btn"
             style="display: inline-flex; align-items: center; gap: 0.45rem; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: #ffffff; border: none; border-radius: 9999px; padding: 0.52rem 1.25rem; font-size: 0.9rem; font-weight: 800; cursor: pointer; box-shadow: 0 4px 16px rgba(16, 185, 129, 0.45); transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); white-space: nowrap;"
@@ -1022,7 +1023,7 @@ window.AdminView = {
 
           <button 
             type="button" 
-            onclick="window.appRouter.openCategoryModal ? window.appRouter.openCategoryModal() : window.AdminView.switchTab('categories')" 
+            onclick="window.AdminView.bannerAction('categories')" 
             title="Categorías"
             class="mentix-hero-action-btn"
             style="display: inline-flex; align-items: center; gap: 0.45rem; background: linear-gradient(135deg, #4f46e5 0%, #3730a3 100%); color: #ffffff; border: none; border-radius: 9999px; padding: 0.52rem 1.25rem; font-size: 0.9rem; font-weight: 800; cursor: pointer; box-shadow: 0 4px 16px rgba(79, 70, 229, 0.45); transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); white-space: nowrap;"
@@ -2074,8 +2075,14 @@ window.AdminView = {
       <!-- Header Principal con Filtro y Acciones -->
       <div class="admin-section-header weekly-reports-header">
         <div>
-          <h2>📊 Reportes Circulares & Rendimiento en Porcentajes (%)</h2>
-          <p>Métricas radiales interactivas, tasas porcentuales de cumplimiento y evolución circular de cada semana académica.</p>
+          <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.35rem; flex-wrap: wrap;">
+            <h2 style="margin: 0;">📊 Reportes Circulares & Rendimiento en Porcentajes (%)</h2>
+            <span class="badge-tag live-reports-pulse-badge" style="background: rgba(0, 245, 212, 0.15); border: 1.5px solid #00f5d4; color: #00f5d4; font-weight: 800; font-size: 0.78rem; display: inline-flex; align-items: center; gap: 0.45rem; border-radius: 999px; padding: 0.22rem 0.65rem;">
+              <span style="width: 8px; height: 8px; border-radius: 50%; background: #00f5d4; box-shadow: 0 0 10px #00f5d4; display: inline-block;"></span>
+              ACTUALIZACIÓN EN VIVO
+            </span>
+          </div>
+          <p>Métricas radiales interactivas, tasas porcentuales de cumplimiento y evolución circular sincronizadas en tiempo real con cada proyecto.</p>
         </div>
         <div class="admin-header-actions weekly-header-actions">
           <div class="weekly-range-control">
@@ -2087,10 +2094,13 @@ window.AdminView = {
               <option value="12" ${numWeeks === 12 ? 'selected' : ''}>Últimas 12 Semanas (Trimestral)</option>
             </select>
           </div>
+          <button class="btn btn-cyan" onclick="window.AdminView.refreshData(false)" title="Forzar sincronización de reportes en tiempo real">
+            <span>🔄</span> Actualizar Reportes
+          </button>
           <button class="btn btn-outline" onclick="window.print()">
             <span>🖨️</span> Imprimir Reporte
           </button>
-          <button class="btn btn-cyan" onclick="window.AdminView.exportWeeklyReportsCSV()">
+          <button class="btn btn-outline" onclick="window.AdminView.exportWeeklyReportsCSV()">
             <span>📥</span> Exportar CSV Semanal
           </button>
         </div>
@@ -4442,24 +4452,284 @@ window.AdminView = {
   },
 
   // ==========================================
+  // SINCRONIZACIÓN EN TIEMPO REAL DE REPORTES Y PROYECTOS
+  // ==========================================
+
+  initRealTimeUpdates() {
+    if (this._realtimeInitialized) return;
+    this._realtimeInitialized = true;
+
+    // 1. Escuchar evento de actualización de proyectos
+    window.addEventListener('mentix:projects-updated', (e) => {
+      this.refreshData(true);
+    });
+
+    // 2. Escuchar evento de cambio de banner de proyectos
+    window.addEventListener('mentix:hero-banner-changed', (e) => {
+      const bannerUrl = e.detail && e.detail.bannerUrl;
+      if (bannerUrl) {
+        const heroImg = document.getElementById('mentix-admin-projects-hero-banner-img');
+        if (heroImg) heroImg.src = bannerUrl;
+        const previewImg = document.getElementById('admin-banner-preview-img');
+        if (previewImg) previewImg.src = bannerUrl;
+      }
+    });
+
+    // 3. Escuchar cambios de storage entre pestañas
+    window.addEventListener('storage', (e) => {
+      if (!e.key || e.key.includes('project') || e.key.includes('challenge') || e.key.includes('draft') || e.key.includes('hero_banner') || e.key.includes('rating')) {
+        this.refreshData(true);
+      }
+    });
+
+    // 4. Polling ultra-ligero cada 2.5 segundos para detectar cambios locales o en segundo plano
+    setInterval(() => {
+      if (window.appRouter && window.appRouter.currentView === 'admin') {
+        const fp = this.computeProjectsFingerprint();
+        if (this._lastReportFingerprint && fp !== this._lastReportFingerprint) {
+          this._lastReportFingerprint = fp;
+          this.refreshData(true);
+        } else if (!this._lastReportFingerprint) {
+          this._lastReportFingerprint = fp;
+        }
+      }
+    }, 2500);
+  },
+
+  computeProjectsFingerprint() {
+    try {
+      const projs = this.getRealProjects() || [];
+      return projs.map(p => `${p.id}:${p.status || ''}:${p.approvalStatus || ''}:${p.rating || ''}:${p.updatedAt || ''}`).join('|');
+    } catch (e) {
+      return '';
+    }
+  },
+
+  refreshData(isAuto = false) {
+    if (!window.appRouter || window.appRouter.currentView !== 'admin') return;
+
+    if (this.activeTab === 'reports' || this.activeTab === 'dashboard' || this.activeTab === 'projects') {
+      this.renderActiveTab();
+      if (!isAuto) {
+        if (window.soundEngine && typeof window.soundEngine.playPop === 'function') {
+          window.soundEngine.playPop();
+        }
+        this.showToast('✅ Reportes y métricas actualizados en tiempo real', 'success');
+      }
+    }
+  },
+
+  // ==========================================
+  // ACCIONES RÁPIDAS DEL HERO BANNER DE ADMIN
+  // ==========================================
+
+  bannerAction(action) {
+    if (window.soundEngine && typeof window.soundEngine.playClick === 'function') {
+      window.soundEngine.playClick();
+    }
+    if (action === 'join') {
+      if (window.ProjectsView) {
+        window.ProjectsView.viewMode = 'join';
+      }
+      window.appRouter.navigate('projects', { viewMode: 'join' });
+    } else if (action === 'create') {
+      if (window.ProjectsView) {
+        window.ProjectsView.viewMode = 'create';
+      }
+      window.appRouter.navigate('projects', { viewMode: 'create' });
+    } else if (action === 'code') {
+      if (window.ProjectsView) {
+        window.ProjectsView.viewMode = 'selector';
+      }
+      window.appRouter.navigate('projects', { viewMode: 'selector' });
+      setTimeout(() => {
+        const inp = document.getElementById('custom-project-code-input');
+        if (inp) inp.focus();
+      }, 150);
+    } else if (action === 'categories') {
+      if (window.appRouter && typeof window.appRouter.openCategoryModal === 'function') {
+        window.appRouter.openCategoryModal();
+      } else {
+        this.switchTab('categories');
+      }
+    }
+  },
+
+  // ==========================================
+  // MODAL INTERACTIVO PARA CAMBIAR BANNER DE ADMIN
+  // ==========================================
+
+  openBannerCustomizerModal() {
+    const existing = document.getElementById('admin-banner-customizer-modal');
+    if (existing) existing.remove();
+
+    const currentBanner = this.getHeroBannerUrl();
+    this._stagedModalBanner = currentBanner;
+
+    const presets = [
+      { id: 'robot', name: '🤖 Robot Cyber Educador', path: 'assets/projects_ui/robot_hero_banner.png', desc: 'AI Robot futurista para Mentix' },
+      { id: 'disney', name: '🏰 Reino Mágico / Fantasía', path: 'assets/projects_ui/disney_hero_banner.png', desc: 'Castillo y magia estilo Disney/Pixar' },
+      { id: 'space', name: '🌌 Espacio Futurista Digital', path: 'assets/student_create_bg.jpg', desc: 'Digital Space & Holo Geometry' },
+      { id: 'govdata', name: '📊 Nexus GovData & Innovación', path: 'assets/projects_ui/card_data_gov.png', desc: 'Analítica, data y tecnología ejecutiva' }
+    ];
+
+    const modal = document.createElement('div');
+    modal.id = 'admin-banner-customizer-modal';
+    modal.className = 'custom-modal';
+    modal.style.cssText = 'position:fixed; inset:0; z-index:100080; background:rgba(3,8,22,0.88); backdrop-filter:blur(16px); display:flex; align-items:center; justify-content:center; padding:1.25rem;';
+
+    modal.innerHTML = `
+      <div class="glass-panel" style="max-width: 680px; width: 100%; max-height: 90vh; overflow-y: auto; background: linear-gradient(145deg, rgba(12, 32, 64, 0.96) 0%, rgba(7, 21, 43, 0.99) 100%); border: 2px solid rgba(0, 245, 212, 0.4); border-radius: 24px; padding: 2rem; box-shadow: 0 25px 70px rgba(0,0,0,0.8), 0 0 35px rgba(0, 245, 212, 0.2); color: #ffffff;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.25rem;">
+          <div>
+            <span class="badge-tag" style="background:rgba(0,245,212,0.15); border:1px solid #00f5d4; color:#00f5d4; font-weight:800; font-size:0.75rem;">CONFIGURACIÓN EXCLUSIVA ADMIN</span>
+            <h2 style="font-size:1.6rem; font-weight:900; margin:0.35rem 0 0; color:#ffffff; text-shadow:0 0 14px rgba(0,245,212,0.4);">
+              🖼️ Personalizar Banner de Proyectos &amp; Robot
+            </h2>
+          </div>
+          <button type="button" class="btn btn-outline" style="border-radius:50%; width:38px; height:38px; padding:0; display:grid; place-items:center; font-size:1.1rem; color:#ffffff;" onclick="document.getElementById('admin-banner-customizer-modal').remove()">✕</button>
+        </div>
+
+        <p style="color:#cbd5e1; font-size:0.92rem; margin-bottom:1.5rem; line-height:1.5;">
+          Selecciona una portada institucional predefinida, sube tu propia imagen desde tu computadora o pega un enlace web. El banner se sincronizará en tiempo real en todo Mentix.
+        </p>
+
+        <!-- Vista previa en tiempo real -->
+        <div style="margin-bottom:1.5rem;">
+          <label style="display:block; font-size:0.85rem; font-weight:800; color:#00f5d4; margin-bottom:0.45rem; text-transform:uppercase; letter-spacing:0.04em;">VISTA PREVIA ACTUAL:</label>
+          <div style="width:100%; aspect-ratio:2090/422; max-height:180px; border-radius:16px; overflow:hidden; border:2px solid rgba(56,189,248,0.4); box-shadow:0 8px 25px rgba(0,0,0,0.5); background:#071739;">
+            <img id="admin-modal-banner-preview" src="${currentBanner}" style="width:100%; height:100%; object-fit:cover; display:block;" alt="Vista previa banner" />
+          </div>
+        </div>
+
+        <!-- Opciones Predefinidas -->
+        <div style="margin-bottom:1.5rem;">
+          <label style="display:block; font-size:0.85rem; font-weight:800; color:#cbd5e1; margin-bottom:0.65rem;">BANNERS INSTITUCIONALES PREDEFINIDOS:</label>
+          <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:0.75rem;">
+            ${presets.map(p => `
+              <button type="button" class="btn btn-outline" style="display:flex; align-items:center; justify-content:flex-start; gap:0.65rem; padding:0.75rem 1rem; border-radius:14px; text-align:left; background:rgba(255,255,255,0.05); border:1.5px solid rgba(255,255,255,0.12); color:#ffffff; font-weight:700;" onclick="window.AdminView.selectBannerInModal('${p.path}')">
+                <span style="font-size:1.3rem;">🖼️</span>
+                <div>
+                  <div style="font-weight:800; font-size:0.88rem; color:#ffffff;">${p.name}</div>
+                  <div style="font-size:0.75rem; color:#94a3b8;">${p.desc}</div>
+                </div>
+              </button>
+            `).join('')}
+          </div>
+        </div>
+
+        <!-- Subir archivo o ingresar URL -->
+        <div style="background:rgba(0,0,0,0.35); border:1.5px dashed rgba(56,189,248,0.35); border-radius:16px; padding:1.25rem; margin-bottom:1.5rem;">
+          <label style="display:block; font-size:0.85rem; font-weight:800; color:#38bdf8; margin-bottom:0.5rem;">SUBIR IMAGEN DESDE TU DISPOSITIVO:</label>
+          <input type="file" accept="image/*" id="admin-modal-banner-file" style="display:block; width:100%; font-size:0.85rem; color:#cbd5e1;" onchange="window.AdminView.handleModalBannerUpload(event)" />
+
+          <div style="display:flex; align-items:center; gap:0.75rem; margin-top:1rem;">
+            <input type="text" id="admin-modal-banner-url-input" placeholder="O pega una URL de imagen (https://...)" style="flex:1; padding:0.65rem 1rem; border-radius:10px; background:#08162d; border:1.5px solid rgba(56,189,248,0.3); color:#ffffff; font-weight:600; outline:none;" />
+            <button type="button" class="btn btn-cyan" style="padding:0.65rem 1rem; font-size:0.85rem;" onclick="window.AdminView.applyBannerUrlFromModal()">Cargar URL</button>
+          </div>
+        </div>
+
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.75rem; border-top:1px solid rgba(255,255,255,0.1); padding-top:1.25rem;">
+          <button type="button" class="btn btn-outline" onclick="window.AdminView.switchTab('settings'); document.getElementById('admin-banner-customizer-modal').remove();">
+            ⚙️ Ir a Ajustes Completos
+          </button>
+          <div style="display:flex; gap:0.65rem;">
+            <button type="button" class="btn btn-outline" onclick="document.getElementById('admin-banner-customizer-modal').remove()">Cancelar</button>
+            <button type="button" class="btn btn-primary" onclick="window.AdminView.saveBannerFromModal()" style="font-weight:900;">
+              💾 Guardar y Aplicar en Todo Mentix
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+
+    document.body.appendChild(modal);
+  },
+
+  selectBannerInModal(path) {
+    this._stagedModalBanner = path;
+    const preview = document.getElementById('admin-modal-banner-preview');
+    if (preview) preview.src = path;
+    if (window.soundEngine && typeof window.soundEngine.playPop === 'function') {
+      window.soundEngine.playPop();
+    }
+  },
+
+  handleModalBannerUpload(e) {
+    const file = e.target.files && e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (evt) => {
+      const dataUrl = evt.target.result;
+      this._stagedModalBanner = dataUrl;
+      const preview = document.getElementById('admin-modal-banner-preview');
+      if (preview) preview.src = dataUrl;
+      if (window.soundEngine && typeof window.soundEngine.playPop === 'function') {
+        window.soundEngine.playPop();
+      }
+    };
+    reader.readAsDataURL(file);
+  },
+
+  applyBannerUrlFromModal() {
+    const inp = document.getElementById('admin-modal-banner-url-input');
+    const url = inp ? inp.value.trim() : '';
+    if (!url) {
+      this.showToast('⚠️ Ingresa una URL válida', 'warning');
+      return;
+    }
+    this._stagedModalBanner = url;
+    const preview = document.getElementById('admin-modal-banner-preview');
+    if (preview) preview.src = url;
+    this.showToast('Vista previa cargada');
+  },
+
+  saveBannerFromModal() {
+    const bannerPath = this._stagedModalBanner || this.getHeroBannerUrl();
+    this.setRobotBannerPreset(bannerPath);
+    const modal = document.getElementById('admin-banner-customizer-modal');
+    if (modal) modal.remove();
+  },
+
+  // ==========================================
   // PERSONALIZACIÓN DEL ROBOT HERO BANNER Y TEMAS
   // ==========================================
 
   setRobotBannerPreset(bannerPath) {
-    if (window.ProjectsView && typeof window.ProjectsView.setHeroBannerUrl === 'function') {
-      window.ProjectsView.setHeroBannerUrl(bannerPath);
-    } else {
-      localStorage.setItem('mentix_admin_hero_banner', bannerPath);
-      localStorage.setItem('mentix_projects_hero_banner', bannerPath);
-      if (window.appState) window.appState.projectsHeroBanner = bannerPath;
-    }
-    const img = document.getElementById('admin-banner-preview-img');
-    if (img) img.src = bannerPath;
-    const heroImg = document.getElementById('mentix-admin-projects-hero-banner-img');
-    if (heroImg) heroImg.src = bannerPath;
+    if (!bannerPath) return;
+    const cleanUrl = bannerPath.trim();
 
-    this.logAuditEvent(`Banner de proyectos actualizado a preset: ${bannerPath}`, 'Diseño');
-    this.showToast('Banner del robot actualizado y sincronizado globalmente para todos', 'success');
+    localStorage.setItem('mentix_admin_hero_banner', cleanUrl);
+    localStorage.setItem('mentix_projects_hero_banner', cleanUrl);
+    localStorage.setItem('te_reto_projects_hero_banner', cleanUrl);
+    localStorage.setItem('te_reto_hero_banner', cleanUrl);
+
+    if (window.appState) window.appState.projectsHeroBanner = cleanUrl;
+
+    if (window.ProjectsView && typeof window.ProjectsView.setHeroBannerUrl === 'function') {
+      try { window.ProjectsView.setHeroBannerUrl(cleanUrl); } catch (e) {}
+    }
+
+    // Actualizar todas las imágenes de banner en pantalla en tiempo real
+    const previewImg = document.getElementById('admin-banner-preview-img');
+    if (previewImg) previewImg.src = cleanUrl;
+    const heroImg = document.getElementById('mentix-admin-projects-hero-banner-img');
+    if (heroImg) heroImg.src = cleanUrl;
+    const projectsHeroImg = document.getElementById('mentix-projects-hero-banner-img');
+    if (projectsHeroImg) projectsHeroImg.src = cleanUrl;
+    document.querySelectorAll('.saas-hero-banner-wrapper img').forEach(im => { im.src = cleanUrl; });
+
+    // Notificar globalmente a toda la app
+    window.dispatchEvent(new CustomEvent('mentix:hero-banner-changed', { detail: { bannerUrl: cleanUrl } }));
+
+    if (window.soundEngine && typeof window.soundEngine.playCorrect === 'function') {
+      window.soundEngine.playCorrect();
+    } else if (window.soundEngine && typeof window.soundEngine.playPop === 'function') {
+      window.soundEngine.playPop();
+    }
+
+    this.logAuditEvent(`Banner de proyectos actualizado: ${cleanUrl.substring(0, 50)}...`, 'Diseño');
+    this.showToast('🖼️ ¡Banner institucional del robot guardado y sincronizado globalmente!', 'success');
   },
 
   handleCustomBannerUpload(e) {
@@ -4469,20 +4739,7 @@ window.AdminView = {
     const reader = new FileReader();
     reader.onload = (evt) => {
       const dataUrl = evt.target.result;
-      if (window.ProjectsView && typeof window.ProjectsView.setHeroBannerUrl === 'function') {
-        window.ProjectsView.setHeroBannerUrl(dataUrl);
-      } else {
-        localStorage.setItem('mentix_admin_hero_banner', dataUrl);
-        localStorage.setItem('mentix_projects_hero_banner', dataUrl);
-        if (window.appState) window.appState.projectsHeroBanner = dataUrl;
-      }
-      const img = document.getElementById('admin-banner-preview-img');
-      if (img) img.src = dataUrl;
-      const heroImg = document.getElementById('mentix-admin-projects-hero-banner-img');
-      if (heroImg) heroImg.src = dataUrl;
-
-      this.logAuditEvent('Banner personalizado de robot subido por el administrador', 'Diseño');
-      this.showToast('Banner personalizado guardado y activado globalmente para todos', 'success');
+      this.setRobotBannerPreset(dataUrl);
     };
     reader.readAsDataURL(file);
   },

@@ -4257,6 +4257,12 @@ window.ProjectsView = {
       console.warn('Error saving updated project data:', e);
     }
 
+    try {
+      if (typeof window !== 'undefined' && typeof window.dispatchEvent === 'function') {
+        window.dispatchEvent(new CustomEvent('mentix:projects-updated', { detail: { timestamp: Date.now() } }));
+      }
+    } catch (e) {}
+
     const fieldLabel = field === 'title' ? 'Título' : (field === 'objective' ? 'Objetivo principal' : 'Descripción');
     const msg = `✨ <strong>¡Dato aplicado al proyecto!</strong> El campo <strong>${fieldLabel}</strong> se ha actualizado a: <strong>«${this.escapeHtml(cleanVal)}»</strong>.`;
     this.appendAgentChatMessage(msg, 'agent', true);
