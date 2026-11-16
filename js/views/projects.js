@@ -3975,7 +3975,7 @@ window.ProjectsView = {
       c.projectType === 'presentation' || c.projectType === 'video' || c.projectType === 'document' || c.projectType === 'url' || c.isGovDataProject || c.isProject
     );
 
-    // 1. Buscar SOLO en códigos personalizados creados por docentes/admin (con projectId vinculado)
+    // 1. Buscar SOLO en códigos personalizados creados por docentes/admin
     const savedCodes = this.getSavedProjectCodes();
     const matchedCustom = savedCodes.find(sc => String(sc.code || '').trim().toLowerCase() === lower);
 
@@ -3989,29 +3989,25 @@ window.ProjectsView = {
       return;
     }
 
-    if (!matchedCustom.projectId) {
-      // Código antiguo sin proyecto vinculado
-      if (errEl) {
-        errEl.textContent = '❌ Este código aún no tiene un proyecto asociado. Pide al docente que lo vuelva a crear.';
-        errEl.style.display = 'block';
-      }
-      if (input) { input.focus(); input.select(); }
-      return;
+    // Encontrar el proyecto correspondiente (si tiene projectId o el proyecto principal de la plataforma)
+    let matchedProject = null;
+    if (matchedCustom.projectId) {
+      matchedProject = challenges.find(c => String(c.id).trim() === String(matchedCustom.projectId).trim());
     }
-
-    // Encontrar el proyecto específico vinculado a este código
-    const matchedProject = challenges.find(c => String(c.id).trim() === String(matchedCustom.projectId).trim());
+    if (!matchedProject) {
+      matchedProject = projectItems.find(c => c.isGovDataProject || c.slug === 'innovatech-nexus' || c.status === 'published') || projectItems[0] || challenges[0];
+    }
 
     if (!matchedProject) {
       if (errEl) {
-        errEl.textContent = '❌ No se encontró el proyecto vinculado a este código. Contacta a tu docente.';
+        errEl.textContent = '❌ No se encontró ningún proyecto disponible para este código. Contacta a tu docente.';
         errEl.style.display = 'block';
       }
       if (input) { input.focus(); input.select(); }
       return;
     }
 
-    // ✅ Código válido → abrir únicamente el proyecto vinculado
+    // ✅ Código válido → abrir el proyecto
     try { localStorage.setItem('mentix_active_join_code', clean); } catch (e) {}
     try { sessionStorage.setItem('mentix_active_join_code', clean); } catch (e) {}
     if (window.soundEngine && window.soundEngine.playSuccess) window.soundEngine.playSuccess();
@@ -8057,24 +8053,9 @@ Generado por Mentix - Plataforma de Proyectos y Retos
       : (u.name || u.username || 'Profesor');
     const authorRole = isAdmin ? 'admin' : (u.role || 'teacher');
 
-    // Capturar el proyecto vinculado a este código (el select ya fue declarado arriba)
-    const linkedProjectId = projectSelect ? projectSelect.value : '';
-
-    if (!linkedProjectId) {
-      if (errEl) {
-        errEl.textContent = '⚠️ Debes seleccionar el proyecto al que dará acceso este código.';
-        errEl.style.display = 'block';
-      } else {
-        alert('Por favor selecciona un proyecto para vincular al código.');
-      }
-      if (projectSelect) projectSelect.focus();
-      return;
-    }
-
     const codes = this.getSavedProjectCodes().filter(item => String(item.code).toLowerCase() !== rawCode.toLowerCase());
     const newEntry = {
       code: rawCode,
-      projectId: linkedProjectId,
       author: authorName,
       authorRole: authorRole,
       createdAt: new Date().toLocaleString()
@@ -8241,20 +8222,8 @@ Generado por Mentix - Plataforma de Proyectos y Retos
                 placeholder="Ej: PROYECTO1, 2026, CLASE10..."
                 autocomplete="off"
                 maxlength="24"
-                style="width: 100%; box-sizing: border-box; padding: 1.15rem 1.25rem; font-size: 1.6rem; font-weight: 900; text-align: center; letter-spacing: 2px; color: ${inputColor} !important; background: ${inputBg} !important; border: ${inputBorder} !important; border-radius: 14px; outline: none; box-shadow: ${isLight ? '0 4px 15px rgba(0,0,0,0.04)' : 'inset 0 2px 10px rgba(0,0,0,0.6)'}; margin-bottom: 1.25rem;"
+                style="width: 100%; box-sizing: border-box; padding: 1.15rem 1.25rem; font-size: 1.6rem; font-weight: 900; text-align: center; letter-spacing: 2px; color: ${inputColor} !important; background: ${inputBg} !important; border: ${inputBorder} !important; border-radius: 14px; outline: none; box-shadow: ${isLight ? '0 4px 15px rgba(0,0,0,0.04)' : 'inset 0 2px 10px rgba(0,0,0,0.6)'}; margin-bottom: 1.5rem;"
               />
-
-              <label for="custom-project-code-project-select" style="display: block; text-align: left; font-size: 0.88rem; font-weight: 900; color: ${isLight ? '#0e7490' : 'var(--neon-cyan)'} !important; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 0.5rem;">
-                📁 Proyecto que abrirá este código:
-              </label>
-              <select
-                id="custom-project-code-project-select"
-                required
-                style="width: 100%; box-sizing: border-box; padding: 0.85rem 1rem; font-size: 1rem; font-weight: 800; color: ${inputColor} !important; background: ${inputBg} !important; border: ${inputBorder} !important; border-radius: 12px; outline: none; margin-bottom: 1.25rem; cursor: pointer;"
-              >
-                <option value="">— Selecciona el proyecto —</option>
-                ${projectOptionsHtml}
-              </select>
 
               <div id="custom-code-error" style="display: none; color: #ff4d6d; background: rgba(239, 68, 68, 0.12); border: 1px solid rgba(239, 68, 68, 0.35); border-radius: 10px; padding: 0.75rem 1rem; font-size: 0.9rem; font-weight: 700; margin-bottom: 1.25rem;"></div>
 
@@ -8321,11 +8290,6 @@ Generado por Mentix - Plataforma de Proyectos y Retos
               ` : `
                 <div style="display: flex; flex-direction: column; gap: 0.65rem; max-height: 380px; overflow-y: auto; padding-right: 0.25rem;">
                   ${savedCodes.map(item => {
-                    const linkedProj = item.projectId ? allProjects.find(p => p.id === item.projectId) : null;
-                    const linkedName = linkedProj
-                      ? this.escapeHtml(linkedProj.title || item.projectId)
-                      : (item.projectId ? '(proyecto eliminado)' : '⚠️ Sin proyecto vinculado');
-
                     const isItemAdmin = item.authorRole === 'admin' || 
                                         (typeof item.author === 'string' && item.author.toLowerCase().includes('admin'));
                     const authorLabel = isItemAdmin ? (item.author || 'Administrador') : (isAdminUser && (!item.author || item.author === 'Profesor') ? (currentUserForCode?.name || 'Administrador') : (item.author || autorDefault));
@@ -8343,18 +8307,11 @@ Generado por Mentix - Plataforma de Proyectos y Retos
                           ${roleBadge}
                         </div>
                         <div style="font-size: 0.76rem; color: ${itemSub} !important; margin-top: 0.2rem; display: flex; align-items: center; gap: 0.35rem; flex-wrap: wrap;">
-                          <span>📁 ${linkedName}</span>
+                          <span>🔑 Código de acceso activo</span>
                           <span>·</span>
                           <span>por: <strong>${this.escapeHtml(authorLabel)}</strong></span>
+                          ${item.createdAt ? `<span>·</span><span>${this.escapeHtml(item.createdAt)}</span>` : ''}
                         </div>
-                        ${!item.projectId ? `
-                          <div style="margin-top: 0.45rem;">
-                            <select onchange="window.ProjectsView.linkCodeToProject('${this.escapeHtml(item.code)}', this.value)" style="padding: 0.3rem 0.6rem; font-size: 0.75rem; border-radius: 8px; background: ${inputBg}; color: ${inputColor}; border: 1.5px dashed #f59e0b; outline: none; cursor: pointer; max-width: 250px;">
-                              <option value="">🔗 Vincular proyecto ahora...</option>
-                              ${projectOptionsHtml}
-                            </select>
-                          </div>
-                        ` : ''}
                       </div>
                       <div style="display: flex; gap: 0.45rem; align-items: center; flex-shrink: 0;">
                         <button type="button" class="btn btn-outline btn-sm" onclick="window.ProjectsView.copyCustomProjectCode('${this.escapeHtml(item.code)}')" style="padding: 0.4rem 0.75rem; font-size: 0.8rem; font-weight: 800; background: ${isLight ? '#ffffff' : 'transparent'}; color: ${isLight ? '#0f172a' : '#fff'}; border-color: ${isLight ? '#cbd5e1' : 'rgba(255,255,255,0.2)'};" title="Copiar código">
