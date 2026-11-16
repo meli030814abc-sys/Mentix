@@ -4,9 +4,9 @@
     "slug": "proyecto-belleza",
     "title": "fdhgf",
     "subtitle": "gfbf",
-    "description": "Iniciativa integral que aborda \"Belleza\" mediante metodologías activas de aprendizaje, diseño de prototipos e investigación aplicada para generar impacto positivo.",
-    "shortDescription": "Iniciativa integral que aborda \"Belleza\" mediante metodologías activas de aprendizaje, diseño de prototipos e investigación aplicada para generar impacto positivo.",
-    "fullDescription": "Este proyecto surge como respuesta a la necesidad de investigar y proponer soluciones concretas en torno a \"Belleza\". A través de un enfoque basado en retos y trabajo colaborativo, el equipo analiza antecedentes, recopila datos del entorno y diseña prototipos viables que promueven la sostenibilidad, el pensamiento crítico y la apropiación de conocimientos en toda la comunidad educativa.",
+    "description": "Iniciativa integral que aborda \"Belleza\" mediante metodologías activas de aprendizaje, diseño de prototipos e investigación aplicada para generar imbfpacto positivo.",
+    "shortDescription": "Iniciativa integral que aborda \"Belleza\" mediante metodologías activas de aprendizaje, diseño de prototipos e investigación aplicada para generar imbfpacto positivo.",
+    "fullDescription": "Este proyecto surge como respuesta a la fdbfdfbnecesidad de investigar y proponer soluciones concretas en torno a \"Belleza\". A través de un enfoque basado en retos y trabajo colaborativo, el equipo analiza antecedentes, recopila datos del entorno y diseña prototipos viables que promueven la sostenibilidad, el pensamiento crítico y la apropiación de conocimientos en toda la comunidad educativa.",
     "category": "tecnologia",
     "categoryName": "Tecnología & Programación",
     "projectType": "presentation",
@@ -29,8 +29,10 @@
     "isPublic": false,
     "startDate": "2026-11-16",
     "endDate": "2027-02-16",
-    "currentStep": 1,
-    "completedSteps": [],
+    "currentStep": 2,
+    "completedSteps": [
+      1
+    ],
     "progress": 90,
     "calculatedProgress": 90,
     "valueProp": {
@@ -199,8 +201,8 @@
       "id": "proj_1794856083172",
       "title": "fdhgf",
       "subtitle": "gfbf",
-      "shortDescription": "Iniciativa integral que aborda \"Belleza\" mediante metodologías activas de aprendizaje, diseño de prototipos e investigación aplicada para generar impacto positivo.",
-      "fullDescription": "Este proyecto surge como respuesta a la necesidad de investigar y proponer soluciones concretas en torno a \"Belleza\". A través de un enfoque basado en retos y trabajo colaborativo, el equipo analiza antecedentes, recopila datos del entorno y diseña prototipos viables que promueven la sostenibilidad, el pensamiento crítico y la apropiación de conocimientos en toda la comunidad educativa.",
+      "shortDescription": "Iniciativa integral que aborda \"Belleza\" mediante metodologías activas de aprendizaje, diseño de prototipos e investigación aplicada para generar imbfpacto positivo.",
+      "fullDescription": "Este proyecto surge como respuesta a la fdbfdfbnecesidad de investigar y proponer soluciones concretas en torno a \"Belleza\". A través de un enfoque basado en retos y trabajo colaborativo, el equipo analiza antecedentes, recopila datos del entorno y diseña prototipos viables que promueven la sostenibilidad, el pensamiento crítico y la apropiación de conocimientos en toda la comunidad educativa.",
       "category": "tecnologia",
       "categoryName": "Tecnología & Programación",
       "projectSubtype": "Gobierno de Datos e IA",
@@ -269,8 +271,10 @@
         "featuredVideoPublic": true
       },
       "publicationStatus": "draft",
-      "completedSteps": [],
-      "currentStep": 1,
+      "completedSteps": [
+        1
+      ],
+      "currentStep": 2,
       "author": "Annie",
       "authorId": "user_1793482866924",
       "authorEmail": "acanon@ciudadmontesbilingue.edu.co",
@@ -293,7 +297,7 @@
         "collaborators": ""
       },
       "createdAt": "2026-11-16T19:08:03.172Z",
-      "updatedAt": "2026-11-16T19:08:39.548Z",
+      "updatedAt": "2026-11-16T19:08:43.356Z",
       "joinCode": "61321",
       "accessCode": "61321",
       "projectRoadmap": [
@@ -335,7 +339,7 @@
     "authorAvatar": "🦊",
     "authorRole": "student",
     "createdAt": "2026-11-16T19:08:03.172Z",
-    "updatedAt": "2026-11-16T19:08:38.314Z",
+    "updatedAt": "2026-11-16T19:08:42.117Z",
     "image": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
     "rejectionReason": ""
   },
