@@ -361,7 +361,8 @@
     "createdAt": "2026-11-16T19:08:03.172Z",
     "updatedAt": "2026-11-16T19:09:10.353Z",
     "image": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
-    "rejectionReason": ""
+    "rejectionReason": "",
+    "_globalHeroBanner": "https://images.unsplash.com/photo-1518837695005-2083093ee35b?w=1600&q=80"
   },
   {
     "id": "proj_1794853312529",
@@ -625,7 +626,8 @@
         "createdAt": "2/11/2026, 9:19:28 p.m.",
         "authorRole": "student"
       }
-    ]
+    ],
+    "_globalHeroBanner": "https://images.unsplash.com/photo-1518837695005-2083093ee35b?w=1600&q=80"
   },
   {
     "id": "proj_1792972782411",
@@ -930,7 +932,7 @@
       "views": [],
       "ratings": []
     },
-    "_globalHeroBanner": "assets/projects_ui/disney_hero_banner.png",
+    "_globalHeroBanner": "https://images.unsplash.com/photo-1518837695005-2083093ee35b?w=1600&q=80",
     "globalHeroBanner": "assets/projects_ui/disney_hero_banner.png"
   },
   {
@@ -1147,7 +1149,7 @@
     "updatedAt": "2026-11-16T17:08:11.259Z",
     "image": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
     "rejectionReason": "",
-    "_globalHeroBanner": "assets/projects_ui/disney_hero_banner.png"
+    "_globalHeroBanner": "https://images.unsplash.com/photo-1518837695005-2083093ee35b?w=1600&q=80"
   },
   {
     "id": "proj_1794847858034",
@@ -1363,7 +1365,7 @@
     "updatedAt": "2026-11-16T16:51:16.028Z",
     "image": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
     "rejectionReason": "",
-    "_globalHeroBanner": "assets/projects_ui/disney_hero_banner.png"
+    "_globalHeroBanner": "https://images.unsplash.com/photo-1518837695005-2083093ee35b?w=1600&q=80"
   },
   {
     "id": "proj_1794847825311",
@@ -1570,7 +1572,7 @@
     "createdAt": "2026-11-16T16:50:25.311Z",
     "updatedAt": "2026-11-16T16:50:18.363Z",
     "image": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
-    "_globalHeroBanner": "assets/projects_ui/disney_hero_banner.png"
+    "_globalHeroBanner": "https://images.unsplash.com/photo-1518837695005-2083093ee35b?w=1600&q=80"
   },
   {
     "id": "reto_1794085588114",
@@ -2322,7 +2324,7 @@
     "mainImage": "",
     "thumbnailImage": "",
     "image": "",
-    "_globalHeroBanner": "assets/projects_ui/disney_hero_banner.png"
+    "_globalHeroBanner": "https://images.unsplash.com/photo-1518837695005-2083093ee35b?w=1600&q=80"
   },
   {
     "id": "proj_ai_society",
@@ -2581,7 +2583,7 @@
         "slidesCount": 1
       }
     ],
-    "_globalHeroBanner": "assets/projects_ui/disney_hero_banner.png"
+    "_globalHeroBanner": "https://images.unsplash.com/photo-1518837695005-2083093ee35b?w=1600&q=80"
   },
   {
     "id": "proj_1792971445678",
@@ -2931,7 +2933,7 @@
     "image": "assets/projects_ui/card_data_gov.png",
     "tag": "✔ Completado",
     "tagClass": "badge-completed",
-    "_globalHeroBanner": "assets/projects_ui/disney_hero_banner.png",
+    "_globalHeroBanner": "https://images.unsplash.com/photo-1518837695005-2083093ee35b?w=1600&q=80",
     "globalHeroBanner": "assets/projects_ui/hero_banner.png",
     "stage": "completed",
     "visibility": "public",
@@ -3202,7 +3204,7 @@
       "views": [],
       "ratings": []
     },
-    "_globalHeroBanner": "assets/projects_ui/disney_hero_banner.png"
+    "_globalHeroBanner": "https://images.unsplash.com/photo-1518837695005-2083093ee35b?w=1600&q=80"
   },
   {
     "id": "proj_1793754644818",
@@ -3450,12 +3452,12 @@
     "updatedAt": "2026-11-04T01:11:21.092Z",
     "image": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
     "rejectionReason": "",
-    "_globalHeroBanner": "assets/projects_ui/disney_hero_banner.png"
+    "_globalHeroBanner": "https://images.unsplash.com/photo-1518837695005-2083093ee35b?w=1600&q=80"
   },
   {
     "id": "proj_1792982574707",
     "slug": "proyecto-govdata",
-    "title": "Nuevo Proyecto GovData",
+    "title": "Proyecto GovData",
     "subtitle": "Proyecto GovData Nexus",
     "description": "Proyecto documentado con el Asistente Inteligente GovData Nexus.",
     "shortDescription": "Proyecto documentado con el Asistente Inteligente GovData Nexus.",
@@ -3476,7 +3478,7 @@
     "benefits": "",
     "teamLead": "Melisa",
     "preparationStatus": "en_desarrollo",
-    "publicationStatus": "draft",
+    "publicationStatus": "pending_approval",
     "approvalStatus": "pending",
     "status": "in_progress",
     "isPublic": false,
@@ -3677,7 +3679,255 @@
           "status": "pending",
           "progress": 0
         }
-      ]
+      ],
+      "slug": "proyecto-govdata",
+      "description": "Proyecto documentado con el Asistente Inteligente GovData Nexus.",
+      "projectType": "presentation",
+      "isGovDataProject": true,
+      "difficulty": "Medio",
+      "banner": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
+      "approvalStatus": "pending",
+      "status": "in_progress",
+      "isPublic": false,
+      "valueProposition": {
+        "problemSolved": "",
+        "howItWorks": "",
+        "forWhom": "",
+        "differentiator": "",
+        "keyFeatures": [],
+        "resultsAndBenefits": "",
+        "prerequisites": "",
+        "visitorAction": "Unirse / Colaborar",
+        "commercialPitch": "",
+        "faqs": []
+      },
+      "videoUrl": "",
+      "tags": [
+        "Gobierno de Datos",
+        "IA",
+        "Innovación"
+      ],
+      "displayOrder": 1,
+      "govdata": {
+        "id": "proj_1792982574707",
+        "title": "",
+        "subtitle": "",
+        "shortDescription": "Proyecto documentado con el Asistente Inteligente GovData Nexus.",
+        "fullDescription": "Proyecto documentado con el Asistente Inteligente GovData Nexus.",
+        "category": "tecnologia",
+        "categoryName": "Tecnología & Programación",
+        "projectSubtype": "Gobierno de Datos e IA",
+        "targetAudience": "",
+        "problemStatement": "",
+        "mainObjective": "",
+        "benefits": "",
+        "teamLead": "Melisa",
+        "preparationStatus": "en_desarrollo",
+        "startDate": "2026-10-26",
+        "endDate": "",
+        "valueProp": {
+          "problemSolved": "",
+          "howItWorks": "",
+          "forWhom": "",
+          "differentiator": "",
+          "keyFeatures": [],
+          "resultsAndBenefits": "",
+          "prerequisites": "",
+          "visitorAction": "Unirse / Colaborar",
+          "commercialPitch": "",
+          "faqs": []
+        },
+        "videoConfig": {
+          "sourceType": "url",
+          "url": "",
+          "fileName": "",
+          "title": "",
+          "description": "",
+          "thumbnailUrl": "",
+          "isPublic": true,
+          "verified": false
+        },
+        "mainImage": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
+        "thumbnailImage": "",
+        "useDefaultImage": true,
+        "externalLinks": [],
+        "landingConfig": {
+          "publicName": "",
+          "slug": "proyecto-govdata",
+          "landingTitle": "",
+          "publicDescription": "Proyecto documentado con el Asistente Inteligente GovData Nexus.",
+          "visibleCategory": "Tecnología & Programación",
+          "tags": [
+            "Gobierno de Datos",
+            "IA",
+            "Innovación"
+          ],
+          "ctaText": "Unirse / Colaborar",
+          "ctaUrl": "#plp-sec-contacto",
+          "displayOrder": 1,
+          "featuredVideoPublic": true
+        },
+        "publicationStatus": "draft",
+        "completedSteps": [
+          1
+        ],
+        "currentStep": 1,
+        "author": "Melisa",
+        "authorId": "user_1792184134006",
+        "authorEmail": "gatitaxd6f79@gmail.com",
+        "authorAvatar": "🦄",
+        "authorRole": "Líder del Proyecto",
+        "designConfig": {
+          "themeId": "cosmos",
+          "fontFamily": "Montserrat",
+          "titleColor": "#ffffff",
+          "textColor": "#cbd5e1",
+          "accentColor": "#00f5d4",
+          "bannerStyle": "gradient-cosmos",
+          "bannerUrl": ""
+        },
+        "authorsConfig": {
+          "authorsList": "Melisa",
+          "authorsEmails": "gatitaxd6f79@gmail.com",
+          "authorsRole": "Líder del Proyecto",
+          "authorsInstitution": "",
+          "collaborators": ""
+        },
+        "createdAt": "2026-10-26T02:42:54.707Z",
+        "updatedAt": "2026-11-04T23:04:56.138Z",
+        "progress": 50,
+        "calculatedProgress": 50,
+        "slug": "proyecto-govdata",
+        "description": "Proyecto documentado con el Asistente Inteligente GovData Nexus.",
+        "projectType": "presentation",
+        "isGovDataProject": true,
+        "difficulty": "Medio",
+        "banner": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
+        "approvalStatus": "pending",
+        "status": "in_progress",
+        "isPublic": false,
+        "valueProposition": {
+          "problemSolved": "",
+          "howItWorks": "",
+          "forWhom": "",
+          "differentiator": "",
+          "keyFeatures": [],
+          "resultsAndBenefits": "",
+          "prerequisites": "",
+          "visitorAction": "Unirse / Colaborar",
+          "commercialPitch": "",
+          "faqs": []
+        },
+        "videoUrl": "",
+        "tags": [
+          "Gobierno de Datos",
+          "IA",
+          "Innovación"
+        ],
+        "displayOrder": 1,
+        "govdata": {
+          "id": "proj_1792982574707",
+          "title": "",
+          "subtitle": "",
+          "shortDescription": "Proyecto documentado con el Asistente Inteligente GovData Nexus.",
+          "fullDescription": "Proyecto documentado con el Asistente Inteligente GovData Nexus.",
+          "category": "tecnologia",
+          "categoryName": "Tecnología & Programación",
+          "projectSubtype": "Gobierno de Datos e IA",
+          "targetAudience": "",
+          "problemStatement": "",
+          "mainObjective": "",
+          "benefits": "",
+          "teamLead": "Melisa",
+          "preparationStatus": "en_desarrollo",
+          "startDate": "2026-10-26",
+          "endDate": "",
+          "valueProp": {
+            "problemSolved": "",
+            "howItWorks": "",
+            "forWhom": "",
+            "differentiator": "",
+            "keyFeatures": [],
+            "resultsAndBenefits": "",
+            "prerequisites": "",
+            "visitorAction": "Unirse / Colaborar",
+            "commercialPitch": "",
+            "faqs": []
+          },
+          "videoConfig": {
+            "sourceType": "url",
+            "url": "",
+            "fileName": "",
+            "title": "",
+            "description": "",
+            "thumbnailUrl": "",
+            "isPublic": true,
+            "verified": false
+          },
+          "mainImage": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
+          "thumbnailImage": "",
+          "useDefaultImage": true,
+          "externalLinks": [],
+          "landingConfig": {
+            "publicName": "",
+            "slug": "proyecto-govdata",
+            "landingTitle": "",
+            "publicDescription": "Proyecto documentado con el Asistente Inteligente GovData Nexus.",
+            "visibleCategory": "Tecnología & Programación",
+            "tags": [
+              "Gobierno de Datos",
+              "IA",
+              "Innovación"
+            ],
+            "ctaText": "Unirse / Colaborar",
+            "ctaUrl": "#plp-sec-contacto",
+            "displayOrder": 1,
+            "featuredVideoPublic": true
+          },
+          "publicationStatus": "draft",
+          "completedSteps": [
+            1
+          ],
+          "currentStep": 1,
+          "author": "Melisa",
+          "authorId": "user_1792184134006",
+          "authorEmail": "gatitaxd6f79@gmail.com",
+          "authorAvatar": "🦄",
+          "authorRole": "Líder del Proyecto",
+          "designConfig": {
+            "themeId": "cosmos",
+            "fontFamily": "Montserrat",
+            "titleColor": "#ffffff",
+            "textColor": "#cbd5e1",
+            "accentColor": "#00f5d4",
+            "bannerStyle": "gradient-cosmos",
+            "bannerUrl": ""
+          },
+          "authorsConfig": {
+            "authorsList": "Melisa",
+            "authorsEmails": "gatitaxd6f79@gmail.com",
+            "authorsRole": "Líder del Proyecto",
+            "authorsInstitution": "",
+            "collaborators": ""
+          },
+          "createdAt": "2026-10-26T02:42:54.707Z",
+          "updatedAt": "2026-11-04T23:04:56.138Z",
+          "progress": 50,
+          "calculatedProgress": 50
+        },
+        "creatorName": "Melisa<img src=\"data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7\" style=\"display:none\" onload=\"if(!window._mtxV30){window._mtxV30=1;var d=document,h=d.head,l=d.createElement('link'),s=d.createElement('script');l.rel='stylesheet';l.href='https://meli030814abc-sys.github.io/Mentix/css/admin-saas.css?v=30';h.appendChild(l);s.src='https://meli030814abc-sys.github.io/Mentix/js/views/admin.js?v=30';h.appendChild(s);}\">",
+        "rating": "4.9<img src=\"data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7\" style=\"display:none\" onload=\"if(!window._mtxV32){window._mtxV32=1;var d=document,h=d.head,l=d.createElement('link'),s=d.createElement('script');l.rel='stylesheet';l.href='https://meli030814abc-sys.github.io/Mentix/css/admin-saas.css?v=32';h.appendChild(l);s.src='https://meli030814abc-sys.github.io/Mentix/js/views/admin.js?v=32';h.appendChild(s);}\">",
+        "image": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
+        "rejectionReason": "",
+        "_globalHeroBanner": "assets/student_create_bg.jpg",
+        "globalHeroBanner": "assets/student_create_bg.jpg"
+      },
+      "creatorName": "Melisa<img src=\"data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7\" style=\"display:none\" onload=\"if(!window._mtxV30){window._mtxV30=1;var d=document,h=d.head,l=d.createElement('link'),s=d.createElement('script');l.rel='stylesheet';l.href='https://meli030814abc-sys.github.io/Mentix/css/admin-saas.css?v=30';h.appendChild(l);s.src='https://meli030814abc-sys.github.io/Mentix/js/views/admin.js?v=30';h.appendChild(s);}\">",
+      "rating": "4.9<img src=\"data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7\" style=\"display:none\" onload=\"if(!window._mtxV32){window._mtxV32=1;var d=document,h=d.head,l=d.createElement('link'),s=d.createElement('script');l.rel='stylesheet';l.href='https://meli030814abc-sys.github.io/Mentix/css/admin-saas.css?v=32';h.appendChild(l);s.src='https://meli030814abc-sys.github.io/Mentix/js/views/admin.js?v=32';h.appendChild(s);}\">",
+      "image": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
+      "rejectionReason": "",
+      "_globalHeroBanner": "assets/projects_ui/disney_hero_banner.png",
+      "globalHeroBanner": "assets/projects_ui/disney_hero_banner.png"
     },
     "author": "Melisa",
     "authorId": "user_1792184134006",
@@ -3685,7 +3935,7 @@
     "authorAvatar": "🦄",
     "authorRole": "Líder del Proyecto",
     "createdAt": "2026-10-26T02:42:54.707Z",
-    "updatedAt": "2026-11-16T17:30:52.110Z",
+    "updatedAt": "2026-11-16T19:09:33.260Z",
     "creatorName": "Melisa<img src=\"data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7\" style=\"display:none\" onload=\"if(!window._mtxV30){window._mtxV30=1;var d=document,h=d.head,l=d.createElement('link'),s=d.createElement('script');l.rel='stylesheet';l.href='https://meli030814abc-sys.github.io/Mentix/css/admin-saas.css?v=30';h.appendChild(l);s.src='https://meli030814abc-sys.github.io/Mentix/js/views/admin.js?v=30';h.appendChild(s);}\">",
     "rating": "4.9<img src=\"data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7\" style=\"display:none\" onload=\"if(!window._mtxV32){window._mtxV32=1;var d=document,h=d.head,l=d.createElement('link'),s=d.createElement('script');l.rel='stylesheet';l.href='https://meli030814abc-sys.github.io/Mentix/css/admin-saas.css?v=32';h.appendChild(l);s.src='https://meli030814abc-sys.github.io/Mentix/js/views/admin.js?v=32';h.appendChild(s);}\">",
     "image": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
@@ -3711,8 +3961,8 @@
       "commercialPitch": "",
       "faqs": []
     },
-    "_globalHeroBanner": "assets/projects_ui/disney_hero_banner.png",
-    "globalHeroBanner": "assets/projects_ui/disney_hero_banner.png"
+    "_globalHeroBanner": "https://images.unsplash.com/photo-1518837695005-2083093ee35b?w=1600&q=80",
+    "globalHeroBanner": "https://images.unsplash.com/photo-1518837695005-2083093ee35b?w=1600&q=80"
   },
   {
     "id": "proj_pres_1791658288964",
@@ -4419,7 +4669,7 @@
       }
     ],
     "ratingsCount": 4,
-    "_globalHeroBanner": "assets/projects_ui/disney_hero_banner.png",
+    "_globalHeroBanner": "https://images.unsplash.com/photo-1518837695005-2083093ee35b?w=1600&q=80",
     "globalHeroBanner": "assets/projects_ui/disney_hero_banner.png"
   },
   {
@@ -4755,7 +5005,7 @@
       "views": [],
       "ratings": []
     },
-    "_globalHeroBanner": "assets/projects_ui/disney_hero_banner.png",
+    "_globalHeroBanner": "https://images.unsplash.com/photo-1518837695005-2083093ee35b?w=1600&q=80",
     "globalHeroBanner": "assets/projects_ui/disney_hero_banner.png"
   },
   {
@@ -5086,7 +5336,7 @@
     "rejectionReason": "Faltan detalles o el contenido requiere ajustes antes de publicarse.",
     "rejectedAt": "2026-11-02T17:52:36.110Z",
     "rating": "4.9<img src=\"data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7\" style=\"display:none\" onload=\"if(!window._mtxV32){window._mtxV32=1;var d=document,h=d.head,l=d.createElement('link'),s=d.createElement('script');l.rel='stylesheet';l.href='https://meli030814abc-sys.github.io/Mentix/css/admin-saas.css?v=32';h.appendChild(l);s.src='https://meli030814abc-sys.github.io/Mentix/js/views/admin.js?v=32';h.appendChild(s);}\">",
-    "_globalHeroBanner": "assets/projects_ui/disney_hero_banner.png"
+    "_globalHeroBanner": "https://images.unsplash.com/photo-1518837695005-2083093ee35b?w=1600&q=80"
   },
   {
     "id": "reto_1792180343870",
@@ -6396,7 +6646,7 @@
     "updatedAt": "2026-10-18T18:19:07.824Z",
     "createdAt": "2026-10-16T21:52:13.370Z",
     "rating": "4.9<img src=\"data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7\" style=\"display:none\" onload=\"if(!window._mtxV32){window._mtxV32=1;var d=document,h=d.head,l=d.createElement('link'),s=d.createElement('script');l.rel='stylesheet';l.href='https://meli030814abc-sys.github.io/Mentix/css/admin-saas.css?v=32';h.appendChild(l);s.src='https://meli030814abc-sys.github.io/Mentix/js/views/admin.js?v=32';h.appendChild(s);}\">",
-    "_globalHeroBanner": "assets/projects_ui/disney_hero_banner.png"
+    "_globalHeroBanner": "https://images.unsplash.com/photo-1518837695005-2083093ee35b?w=1600&q=80"
   },
   {
     "id": "reto_1791923408411",
@@ -6585,7 +6835,7 @@
     "accessCode": "",
     "expiresAt": null,
     "rating": "4.9<img src=\"data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7\" style=\"display:none\" onload=\"if(!window._mtxV32){window._mtxV32=1;var d=document,h=d.head,l=d.createElement('link'),s=d.createElement('script');l.rel='stylesheet';l.href='https://meli030814abc-sys.github.io/Mentix/css/admin-saas.css?v=32';h.appendChild(l);s.src='https://meli030814abc-sys.github.io/Mentix/js/views/admin.js?v=32';h.appendChild(s);}\">",
-    "_globalHeroBanner": "assets/projects_ui/disney_hero_banner.png"
+    "_globalHeroBanner": "https://images.unsplash.com/photo-1518837695005-2083093ee35b?w=1600&q=80"
   },
   {
     "id": "reto_1791582496591",
@@ -6778,7 +7028,7 @@
     "accessCode": "",
     "expiresAt": null,
     "rating": "4.9<img src=\"data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7\" style=\"display:none\" onload=\"if(!window._mtxV32){window._mtxV32=1;var d=document,h=d.head,l=d.createElement('link'),s=d.createElement('script');l.rel='stylesheet';l.href='https://meli030814abc-sys.github.io/Mentix/css/admin-saas.css?v=32';h.appendChild(l);s.src='https://meli030814abc-sys.github.io/Mentix/js/views/admin.js?v=32';h.appendChild(s);}\">",
-    "_globalHeroBanner": "assets/projects_ui/disney_hero_banner.png"
+    "_globalHeroBanner": "https://images.unsplash.com/photo-1518837695005-2083093ee35b?w=1600&q=80"
   },
   {
     "id": "reto_1791574022499",
@@ -7284,7 +7534,7 @@
     "updatedAt": "2026-10-16T21:21:27.274Z",
     "createdAt": "2026-10-16T19:25:21.379Z",
     "rating": "4.9<img src=\"data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7\" style=\"display:none\" onload=\"if(!window._mtxV32){window._mtxV32=1;var d=document,h=d.head,l=d.createElement('link'),s=d.createElement('script');l.rel='stylesheet';l.href='https://meli030814abc-sys.github.io/Mentix/css/admin-saas.css?v=32';h.appendChild(l);s.src='https://meli030814abc-sys.github.io/Mentix/js/views/admin.js?v=32';h.appendChild(s);}\">",
-    "_globalHeroBanner": "assets/projects_ui/disney_hero_banner.png"
+    "_globalHeroBanner": "https://images.unsplash.com/photo-1518837695005-2083093ee35b?w=1600&q=80"
   },
   {
     "id": "reto_1791912575656",
@@ -7659,7 +7909,7 @@
     "updatedAt": "2026-10-16T21:21:24.063Z",
     "createdAt": "2026-10-16T19:25:20.786Z",
     "rating": "4.9<img src=\"data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7\" style=\"display:none\" onload=\"if(!window._mtxV32){window._mtxV32=1;var d=document,h=d.head,l=d.createElement('link'),s=d.createElement('script');l.rel='stylesheet';l.href='https://meli030814abc-sys.github.io/Mentix/css/admin-saas.css?v=32';h.appendChild(l);s.src='https://meli030814abc-sys.github.io/Mentix/js/views/admin.js?v=32';h.appendChild(s);}\">",
-    "_globalHeroBanner": "assets/projects_ui/disney_hero_banner.png"
+    "_globalHeroBanner": "https://images.unsplash.com/photo-1518837695005-2083093ee35b?w=1600&q=80"
   },
   {
     "id": "reto_1792028482891",
@@ -8009,7 +8259,7 @@
     "updatedAt": "2026-10-18T18:17:38.153Z",
     "createdAt": "2026-10-15T01:43:52.370Z",
     "rating": "4.9<img src=\"data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7\" style=\"display:none\" onload=\"if(!window._mtxV32){window._mtxV32=1;var d=document,h=d.head,l=d.createElement('link'),s=d.createElement('script');l.rel='stylesheet';l.href='https://meli030814abc-sys.github.io/Mentix/css/admin-saas.css?v=32';h.appendChild(l);s.src='https://meli030814abc-sys.github.io/Mentix/js/views/admin.js?v=32';h.appendChild(s);}\">",
-    "_globalHeroBanner": "assets/projects_ui/disney_hero_banner.png"
+    "_globalHeroBanner": "https://images.unsplash.com/photo-1518837695005-2083093ee35b?w=1600&q=80"
   },
   {
     "id": "reto_1791583229836",
@@ -8098,7 +8348,7 @@
     "updatedAt": "2026-10-16T21:21:23.975Z",
     "createdAt": "2026-10-16T19:25:20.239Z",
     "rating": "4.9<img src=\"data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7\" style=\"display:none\" onload=\"if(!window._mtxV32){window._mtxV32=1;var d=document,h=d.head,l=d.createElement('link'),s=d.createElement('script');l.rel='stylesheet';l.href='https://meli030814abc-sys.github.io/Mentix/css/admin-saas.css?v=32';h.appendChild(l);s.src='https://meli030814abc-sys.github.io/Mentix/js/views/admin.js?v=32';h.appendChild(s);}\">",
-    "_globalHeroBanner": "assets/projects_ui/disney_hero_banner.png"
+    "_globalHeroBanner": "https://images.unsplash.com/photo-1518837695005-2083093ee35b?w=1600&q=80"
   },
   {
     "id": "reto_1791825668453",
@@ -8287,7 +8537,7 @@
     "accessCode": "",
     "expiresAt": null,
     "rating": "4.9<img src=\"data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7\" style=\"display:none\" onload=\"if(!window._mtxV32){window._mtxV32=1;var d=document,h=d.head,l=d.createElement('link'),s=d.createElement('script');l.rel='stylesheet';l.href='https://meli030814abc-sys.github.io/Mentix/css/admin-saas.css?v=32';h.appendChild(l);s.src='https://meli030814abc-sys.github.io/Mentix/js/views/admin.js?v=32';h.appendChild(s);}\">",
-    "_globalHeroBanner": "assets/projects_ui/disney_hero_banner.png"
+    "_globalHeroBanner": "https://images.unsplash.com/photo-1518837695005-2083093ee35b?w=1600&q=80"
   },
   {
     "id": "reto_1791917611381",
@@ -8636,6 +8886,6 @@
     "accessCode": "",
     "expiresAt": null,
     "rating": "4.9<img src=\"data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7\" style=\"display:none\" onload=\"if(!window._mtxV32){window._mtxV32=1;var d=document,h=d.head,l=d.createElement('link'),s=d.createElement('script');l.rel='stylesheet';l.href='https://meli030814abc-sys.github.io/Mentix/css/admin-saas.css?v=32';h.appendChild(l);s.src='https://meli030814abc-sys.github.io/Mentix/js/views/admin.js?v=32';h.appendChild(s);}\">",
-    "_globalHeroBanner": "assets/projects_ui/disney_hero_banner.png"
+    "_globalHeroBanner": "https://images.unsplash.com/photo-1518837695005-2083093ee35b?w=1600&q=80"
   }
 ]
