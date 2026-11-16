@@ -133,25 +133,17 @@
         "notes": "Introducción al tema de gggggggggggggggggggg y presentación del equipo de trabajo.",
         "subtitle": "",
         "media": "",
-        "bullets": [],
-        "imageUrl": "",
-        "bgImage": ""
+        "bullets": []
       },
       {
         "title": "El Reto y la Oportunidad",
         "content": "¿Por qué es crucial investigar sobre Gggggggggggggggggggg?\n\nProblema identificado: Falta de herramientas accesibles, metodologías prácticas y conciencia comunitaria para abordar con éxito los retos de gggggggggggggggggggg.\n\nObjetivo: Diseñar e implementar una propuesta innovadora y funcional que promueva el conocimiento y aporte soluciones prácticas a gggggggggggggggggggg.",
-        "notes": "Explicación del contexto y motivación del proyecto.",
-        "media": "",
-        "imageUrl": "",
-        "bgImage": ""
+        "notes": "Explicación del contexto y motivación del proyecto."
       },
       {
         "title": "Nuestra Propuesta de Solución",
         "content": "Cómo abordamos Gggggggggggggggggggg:\n• Investigación contextualizada.\n• Desarrollo de prototipos funcionales.\n• Divulgación abierta a la comunidad educativa.",
-        "notes": "Detalles técnicos y metodológicos de la propuesta.",
-        "media": "",
-        "imageUrl": "",
-        "bgImage": ""
+        "notes": "Detalles técnicos y metodológicos de la propuesta."
       }
     ],
     "externalLinks": [],
@@ -380,7 +372,7 @@
     "authorAvatar": "🦊",
     "authorRole": "Líder del Proyecto",
     "createdAt": "2026-11-16T23:19:35.753Z",
-    "updatedAt": "2026-11-16T23:22:36.214Z",
+    "updatedAt": "2026-11-16T23:22:36.258Z",
     "image": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
     "customProjectCodes": [
       {
