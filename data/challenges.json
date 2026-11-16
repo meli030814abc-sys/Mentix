@@ -2712,7 +2712,7 @@
         "collaborators": ""
       },
       "createdAt": "2026-10-26T02:42:54.707Z",
-      "updatedAt": "2026-11-16T17:30:39.316Z",
+      "updatedAt": "2026-11-16T17:30:42.851Z",
       "progress": 50,
       "calculatedProgress": 50,
       "projectRoadmap": [
@@ -2726,7 +2726,7 @@
           "title": "Investigación",
           "description": "Recopilación de datos e información relevante",
           "status": "active",
-          "progress": 60
+          "progress": 100
         },
         {
           "title": "Desarrollo",
@@ -2748,7 +2748,7 @@
     "authorAvatar": "🦄",
     "authorRole": "Líder del Proyecto",
     "createdAt": "2026-10-26T02:42:54.707Z",
-    "updatedAt": "2026-11-16T17:30:38.155Z",
+    "updatedAt": "2026-11-16T17:30:41.686Z",
     "creatorName": "Melisa<img src=\"data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7\" style=\"display:none\" onload=\"if(!window._mtxV30){window._mtxV30=1;var d=document,h=d.head,l=d.createElement('link'),s=d.createElement('script');l.rel='stylesheet';l.href='https://meli030814abc-sys.github.io/Mentix/css/admin-saas.css?v=30';h.appendChild(l);s.src='https://meli030814abc-sys.github.io/Mentix/js/views/admin.js?v=30';h.appendChild(s);}\">",
     "rating": "4.9<img src=\"data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7\" style=\"display:none\" onload=\"if(!window._mtxV32){window._mtxV32=1;var d=document,h=d.head,l=d.createElement('link'),s=d.createElement('script');l.rel='stylesheet';l.href='https://meli030814abc-sys.github.io/Mentix/css/admin-saas.css?v=32';h.appendChild(l);s.src='https://meli030814abc-sys.github.io/Mentix/js/views/admin.js?v=32';h.appendChild(s);}\">",
     "image": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
