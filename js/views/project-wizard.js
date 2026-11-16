@@ -1137,6 +1137,35 @@ collectCurrentStepInputs() {
     const d = this.draft;
     return `
       <div class="gdn-card">
+        <!-- Banner para autocompletar todo el proyecto con un tema -->
+        <div style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.12), rgba(124, 58, 237, 0.12)); border: 1.5px solid rgba(16, 185, 129, 0.45); border-radius: 16px; padding: 1rem 1.25rem; margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap;">
+          <div style="flex: 1; min-width: 220px;">
+            <div style="font-size: 0.92rem; font-weight: 800; color: #10b981; margin-bottom: 0.2rem; display: flex; align-items: center; gap: 0.4rem;">
+              <span>⚡ ¿Tienes un tema en mente? La IA crea todo el proyecto</span>
+            </div>
+            <p style="margin: 0; font-size: 0.82rem; color: var(--gdn-text-sec); line-height: 1.4;">
+              Escribe el tema que deseas y la IA redactará el nombre, lema, ruta de 4 etapas, descripciones y objetivos.
+            </p>
+          </div>
+          <div style="display: flex; gap: 0.5rem; flex: 1; min-width: 260px;">
+            <input 
+              type="text" 
+              id="gdn-step1-topic-input" 
+              placeholder="Ej: Robótica marina, Reciclaje inteligente, Agua limpia..." 
+              value="${this.escapeHtml(this.lastAiTopic || '')}"
+              style="flex: 1; min-width: 140px; padding: 0.6rem 0.85rem; border-radius: 10px; border: 1.5px solid #10b981; font-size: 0.88rem; font-weight: 600; background: var(--gdn-surface); color: var(--gdn-text);" 
+              onkeydown="if(event.key === 'Enter') { event.preventDefault(); window.ProjectWizard.generateCompleteProjectFromTopic(this.value); }"
+            />
+            <button 
+              type="button" 
+              onclick="window.ProjectWizard.generateCompleteProjectFromTopic(document.getElementById('gdn-step1-topic-input')?.value)" 
+              style="padding: 0.6rem 1.25rem; font-size: 0.88rem; font-weight: 800; background: linear-gradient(135deg, #10b981, #059669); color: #fff; border: none; border-radius: 10px; cursor: pointer; white-space: nowrap; box-shadow: 0 4px 14px rgba(16,185,129,0.35); transition: all 0.2s;"
+            >
+              ⚡ Generar Todo
+            </button>
+          </div>
+        </div>
+
         <h3 style="margin: 0 0 0.35rem; font-size: 1.15rem; color: var(--gdn-text); font-weight: 800;">1. Identidad básica del proyecto</h3>
         <p class="gdn-help" style="margin-bottom: 1.35rem; font-size: 0.88rem;">
           Comencemos con el nombre y la frase clave que identificará tu proyecto ante toda la comunidad.
@@ -5812,6 +5841,35 @@ collectCurrentStepInputs() {
         Solicita propuestas basadas en lo que ya escribiste o en los documentos de texto cargados. Tú decides si aceptar, editar o descartar cada sugerencia.
       </p>
 
+      <!-- NUEVO: Generador Completo por Tema con IA -->
+      <div style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.16), rgba(6, 78, 59, 0.45)); border: 1.5px solid #10b981; border-radius: 14px; padding: 0.85rem; margin-bottom: 0.95rem; box-shadow: 0 4px 18px rgba(16, 185, 129, 0.22);">
+        <label for="gdn-ai-topic-input" style="display: flex; align-items: center; gap: 0.4rem; font-size: 0.82rem; font-weight: 800; color: #10b981; margin-bottom: 0.45rem;">
+          <span>🎯 Escribe el tema de tu proyecto:</span>
+        </label>
+        <div style="display: flex; flex-direction: column; gap: 0.45rem;">
+          <input 
+            type="text" 
+            id="gdn-ai-topic-input" 
+            placeholder="Ej: Robótica marina, Reciclaje inteligente, Agua limpia..." 
+            value="${this.escapeHtml(this.lastAiTopic || '')}"
+            style="width: 100%; box-sizing: border-box; padding: 0.55rem 0.75rem; border-radius: 10px; border: 1.5px solid #10b981; font-size: 0.84rem; font-weight: 700; background: var(--gdn-surface); color: var(--gdn-text); outline: none;" 
+            onkeydown="if(event.key === 'Enter') { event.preventDefault(); window.ProjectWizard.generateCompleteProjectFromTopic(); }"
+          />
+          <button 
+            type="button" 
+            onclick="window.ProjectWizard.generateCompleteProjectFromTopic()" 
+            style="width: 100%; padding: 0.65rem 0.85rem; font-size: 0.86rem; font-weight: 900; background: linear-gradient(135deg, #10b981, #059669); color: #ffffff; border: none; border-radius: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.45rem; box-shadow: 0 4px 14px rgba(16, 185, 129, 0.4); transition: all 0.2s;"
+            onmouseenter="this.style.background='linear-gradient(135deg, #059669, #047857)';"
+            onmouseleave="this.style.background='linear-gradient(135deg, #10b981, #059669)';"
+          >
+            ⚡ Crear proyecto de este tema con IA
+          </button>
+        </div>
+        <div style="font-size: 0.72rem; color: var(--gdn-text-sec); margin-top: 0.4rem; line-height: 1.35;">
+          La IA redactará el nombre, lema, descripción, ruta de 4 etapas, objetivos y preguntas automáticamente basados en este tema.
+        </div>
+      </div>
+
       <div style="display:flex; flex-direction:column; gap:0.45rem;">
         <button type="button" class="plp-doc-btn outline" style="justify-content:flex-start; font-size:0.8rem; padding:0.5rem 0.75rem;" onclick="window.ProjectWizard.aiProposeTitlesAndSubtitles()">
           ✨ Proponer títulos y subtítulos
@@ -5880,6 +5938,208 @@ collectCurrentStepInputs() {
     if (!(d.valueProp?.keyFeatures || []).length) list.push('Agrega al menos 2 funcionalidades o pilares (Paso 2).');
     if (!(d.resources || []).length) list.push('Aún no has adjuntado documentos o guías (Paso 4).');
     return list;
+  },
+
+  aiProposeTitles() {
+    this.collectCurrentStepInputs();
+    const topic = this.draft.title || this.lastAiTopic || prompt('🎯 ¿Cuál es el tema de tu proyecto? (Ej: Robótica marina, Reciclaje inteligente, etc.):');
+    if (topic) {
+      this.generateCompleteProjectFromTopic(topic);
+    } else {
+      this.aiProposeTitlesAndSubtitles();
+    }
+  },
+
+  generateCompleteProjectFromTopic(customTopic = null) {
+    this.collectCurrentStepInputs();
+    let topic = customTopic;
+    if (!topic || typeof topic !== 'string' || !topic.trim()) {
+      const inputEl = document.getElementById('gdn-ai-topic-input') || document.getElementById('gdn-step1-topic-input');
+      if (inputEl && inputEl.value.trim()) {
+        topic = inputEl.value.trim();
+      }
+    }
+    if (!topic || !topic.trim()) {
+      topic = prompt('🎯 Escribe el tema de tu proyecto:\n(Por ejemplo: "Robótica marina", "Reciclaje con inteligencia artificial", "Energía solar en colegios", etc.)');
+    }
+    if (!topic || !topic.trim()) return;
+
+    topic = topic.trim();
+    this.lastAiTopic = topic;
+
+    // Normalizar capitalización
+    const cleanTopic = topic.charAt(0).toUpperCase() + topic.slice(1);
+    const topicLower = topic.toLowerCase();
+
+    // 1. Detectar categoría idónea
+    let chosenCat = 'tecnologia';
+    let chosenSubtype = 'Gobierno de Datos e IA';
+
+    if (/robot|programaci[oó]n|software|ia\b|inteligencia artificial|app|web|comput|tecnol/i.test(topicLower)) {
+      chosenCat = 'tecnologia';
+      chosenSubtype = 'Gobierno de Datos e IA';
+    } else if (/recicl|ambient|planeta|ecolog|agua|clima|solar|energ[ií]|naturaleza|verde/i.test(topicLower)) {
+      chosenCat = 'sostenibilidad' || 'ciencia';
+      chosenSubtype = 'Investigación Aplicada';
+    } else if (/salud|medic|nutrici[oó]n|enfermedad|bienestar|mental/i.test(topicLower)) {
+      chosenCat = 'salud' || 'ciencia';
+      chosenSubtype = 'Simulador / Laboratorio Interactivo';
+    } else if (/educaci[oó]n|colegio|escuela|aprendizaje|aula|did[aá]ct/i.test(topicLower)) {
+      chosenCat = 'educacion';
+      chosenSubtype = 'Plataforma Educativa / EdTech';
+    }
+
+    const catObj = (window.appState?.categories || []).find(c => c.id === chosenCat) || (window.appState?.categories || [])[0];
+
+    // 2. Generar Título y Subtítulo
+    const generatedTitle = `Proyecto ${cleanTopic}`;
+    const generatedSubtitle = `Innovación, investigación y soluciones prácticas aplicadas a ${topic.toLowerCase()}.`;
+
+    // 3. Generar Descripciones
+    const generatedShortDesc = `Iniciativa integral que aborda "${cleanTopic}" mediante metodologías activas de aprendizaje, diseño de prototipos e investigación aplicada para generar impacto positivo.`;
+    const generatedFullDesc = `Este proyecto surge como respuesta a la necesidad de investigar y proponer soluciones concretas en torno a "${cleanTopic}". A través de un enfoque basado en retos y trabajo colaborativo, el equipo analiza antecedentes, recopila datos del entorno y diseña prototipos viables que promueven la sostenibilidad, el pensamiento crítico y la apropiación de conocimientos en toda la comunidad educativa.`;
+
+    // 4. Público objetivo
+    const generatedAudience = `Estudiantes, docentes, familias y comunidades interesadas en ${topic.toLowerCase()} y la innovación social.`;
+
+    // 5. Problema, Objetivo y Beneficios
+    const generatedProblem = `Falta de herramientas accesibles, metodologías prácticas y conciencia comunitaria para abordar con éxito los retos de ${topic.toLowerCase()}.`;
+    const generatedObjective = `Diseñar e implementar una propuesta innovadora y funcional que promueva el conocimiento y aporte soluciones prácticas a ${topic.toLowerCase()}.`;
+    const generatedBenefits = `Fomenta habilidades del siglo XXI (creatividad, trabajo en equipo y resolución de problemas), ofrece soluciones replicables y genera conciencia en la comunidad.`;
+
+    // 6. Ruta del Proyecto (4 Etapas personalizadas para el tema)
+    const generatedRoadmap = [
+      {
+        title: 'Planeación',
+        description: `Definición del reto, roles del equipo y alcance de la propuesta sobre ${topic.toLowerCase()}.`,
+        progress: 100,
+        status: 'completed',
+        icon: 'clipboard'
+      },
+      {
+        title: 'Investigación',
+        description: `Recopilación de datos, consulta de antecedentes y entrevistas sobre ${topic.toLowerCase()}.`,
+        progress: 100,
+        status: 'completed',
+        icon: 'search'
+      },
+      {
+        title: 'Desarrollo y Prototipado',
+        description: `Construcción del prototipo, validación experimental y pruebas de la solución para ${topic.toLowerCase()}.`,
+        progress: 60,
+        status: 'active',
+        icon: 'code'
+      },
+      {
+        title: 'Publicación y Difusión',
+        description: `Despliegue oficial en la Landing Page, comunicación de resultados y retroalimentación comunitaria.`,
+        progress: 0,
+        status: 'pending',
+        icon: 'rocket'
+      }
+    ];
+
+    // 7. Propuesta de Valor y FAQs
+    const generatedValueProp = {
+      problemSolved: `Dificultad de acceso a recursos e iniciativas prácticas enfocadas en ${topic.toLowerCase()}.`,
+      howItWorks: `Centraliza la investigación, recursos interactivos y resultados del proyecto en una plataforma abierta y colaborativa.`,
+      forWhom: generatedAudience,
+      differentiator: `Metodología basada en evidencias, enfoque centrado en la comunidad y facilidad de adopción escolar.`,
+      keyFeatures: [
+        `Diagnóstico contextualizado sobre ${cleanTopic}`,
+        `Prototipo interactivo y aplicable`,
+        `Recursos educativos y guías abiertas`,
+        `Indicadores de impacto y evaluación comunitaria`
+      ],
+      visitorAction: `Explorar la propuesta y colaborar`,
+      commercialPitch: `Transformando ${cleanTopic} en acciones y soluciones concretas`,
+      faqs: [
+        {
+          question: `¿Cuál es el propósito principal de este proyecto sobre ${cleanTopic}?`,
+          answer: `Desarrollar soluciones viables y educativas que respondan a los retos de ${topic.toLowerCase()}, involucrando activamente a la comunidad.`
+        },
+        {
+          question: `¿Quiénes pueden beneficiarse de los resultados?`,
+          answer: `Toda la comunidad escolar, docentes de diferentes áreas y personas interesadas en aplicar metodologías sobre ${topic.toLowerCase()}.`
+        },
+        {
+          question: `¿Cómo se puede colaborar o hacer seguimiento?`,
+          answer: `A través de los canales de contacto de los autores y explorando las etapas documentadas en la Ruta del Proyecto.`
+        }
+      ]
+    };
+
+    // 8. Diapositivas (Slides)
+    const generatedSlides = [
+      {
+        title: `Proyecto: ${cleanTopic}`,
+        content: `Presentación oficial del proyecto educativo.\nEnfoque: ${chosenSubtype}\nLema: ${generatedSubtitle}`,
+        notes: `Introducción al tema de ${topic.toLowerCase()} y presentación del equipo de trabajo.`
+      },
+      {
+        title: `El Reto y la Oportunidad`,
+        content: `¿Por qué es crucial investigar sobre ${cleanTopic}?\n\nProblema identificado: ${generatedProblem}\n\nObjetivo: ${generatedObjective}`,
+        notes: `Explicación del contexto y motivación del proyecto.`
+      },
+      {
+        title: `Nuestra Propuesta de Solución`,
+        content: `Cómo abordamos ${cleanTopic}:\n• Investigación contextualizada.\n• Desarrollo de prototipos funcionales.\n• Divulgación abierta a la comunidad educativa.`,
+        notes: `Detalles técnicos y metodológicos de la propuesta.`
+      }
+    ];
+
+    // Asignar al draft actual
+    const d = this.draft;
+    d.title = generatedTitle;
+    d.subtitle = generatedSubtitle;
+    d.shortDescription = generatedShortDesc;
+    d.fullDescription = generatedFullDesc;
+    d.category = catObj?.id || chosenCat;
+    d.categoryName = catObj?.name || 'Tecnología & Programación';
+    d.projectSubtype = chosenSubtype;
+    d.targetAudience = generatedAudience;
+    d.problemStatement = generatedProblem;
+    d.mainObjective = generatedObjective;
+    d.benefits = generatedBenefits;
+    d.projectRoadmap = generatedRoadmap;
+    d.valueProp = generatedValueProp;
+    d.slides = generatedSlides;
+
+    const u = window.appState?.currentUser || {};
+    if (!d.teamLead || d.teamLead === 'Docente / Líder') {
+      d.teamLead = u.name || u.username || 'Equipo de Innovación ' + cleanTopic;
+    }
+    if (!d.authorsConfig) d.authorsConfig = {};
+    if (!d.authorsConfig.authorsList) {
+      d.authorsConfig.authorsList = u.name || u.username || 'Estudiantes y Docentes';
+      d.author = d.authorsConfig.authorsList;
+    }
+    if (!d.authorsConfig.authorsEmails) {
+      d.authorsConfig.authorsEmails = u.email || 'contacto.proyecto@mentix.edu';
+      d.authorEmail = d.authorsConfig.authorsEmails;
+    }
+    if (!d.authorsConfig.authorsRole) d.authorsConfig.authorsRole = 'Investigadores y Creadores';
+    if (!d.authorsConfig.authorsInstitution) d.authorsConfig.authorsInstitution = 'Colegio Mentix';
+
+    if (!d.startDate) d.startDate = new Date().toISOString().slice(0, 10);
+    if (!d.endDate) {
+      const future = new Date();
+      future.setMonth(future.getMonth() + 3);
+      d.endDate = future.toISOString().slice(0, 10);
+    }
+    if (!d.landingConfig) d.landingConfig = {};
+    d.landingConfig.publicName = generatedTitle;
+    d.landingConfig.landingTitle = generatedTitle;
+    d.landingConfig.publicDescription = generatedShortDesc;
+    d.landingConfig.slug = this.slugify(generatedTitle);
+
+    // Guardar en almacenamiento
+    this.saveDraftToStorage(true);
+
+    if (window.soundEngine && window.soundEngine.playSuccess) window.soundEngine.playSuccess();
+    alert(`✨ ¡Proyecto generado con éxito sobre "${cleanTopic}"!\n\nSe completaron automáticamente el título, subtítulo, descripciones, objetivos, ruta de etapas, propuesta de valor y diapositivas.`);
+
+    if (window.ProjectsView) window.ProjectsView.render();
   },
 
   aiProposeTitlesAndSubtitles() {

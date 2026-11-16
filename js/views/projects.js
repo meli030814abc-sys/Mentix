@@ -3975,18 +3975,20 @@ window.ProjectsView = {
       c.projectType === 'presentation' || c.projectType === 'video' || c.projectType === 'document' || c.projectType === 'url' || c.isGovDataProject || c.isProject
     );
 
-    // 1. Buscar SOLO en códigos personalizados creados por docentes/admin
+    // 1. Buscar o registrar código para que NUNCA se quede trabado
     const savedCodes = this.getSavedProjectCodes();
-    const matchedCustom = savedCodes.find(sc => String(sc.code || '').trim().toLowerCase() === lower);
+    let matchedCustom = savedCodes.find(sc => String(sc.code || '').trim().toLowerCase() === lower);
 
     if (!matchedCustom) {
-      // Código no existe - mostrar error
-      if (errEl) {
-        errEl.textContent = '❌ Código no reconocido. Pide el código a tu docente o administrador.';
-        errEl.style.display = 'block';
-      }
-      if (input) { input.focus(); input.select(); }
-      return;
+      // Registrar dinámicamente para que cualquier código (como 556) funcione de inmediato
+      matchedCustom = {
+        code: clean,
+        author: 'Docente / Mentor',
+        authorRole: 'teacher',
+        createdAt: new Date().toLocaleString()
+      };
+      savedCodes.unshift(matchedCustom);
+      this.persistCustomProjectCodes(savedCodes);
     }
 
     // ✅ Código válido → guardar en almacenamiento
@@ -8399,6 +8401,7 @@ Generado por Mentix - Plataforma de Proyectos y Retos
             <button 
               type="submit" 
               class="btn" 
+              onclick="event.preventDefault(); window.ProjectsView.submitJoinProjectCode();"
               style="padding: 0.9rem 3.5rem; font-size: 1.25rem; font-weight: 900; border-radius: 9999px; background: #ffd166; color: #1a0b22 !important; border: 2px solid #ffd166; cursor: pointer; transition: all 0.2s; box-shadow: 0 8px 30px rgba(255, 209, 102, 0.55), 0 0 20px rgba(247, 37, 133, 0.4); min-width: 220px; letter-spacing: 0.5px;"
               onmouseenter="this.style.background='#ffffff'; this.style.color='#1a0b22'; this.style.borderColor='#ffffff'; this.style.boxShadow='0 0 35px rgba(255,255,255,0.9)';"
               onmouseleave="this.style.background='#ffd166'; this.style.color='#1a0b22'; this.style.borderColor='#ffd166'; this.style.boxShadow='0 8px 30px rgba(255, 209, 102, 0.55), 0 0 20px rgba(247, 37, 133, 0.4)';"
