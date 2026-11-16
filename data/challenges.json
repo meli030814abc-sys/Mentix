@@ -29,10 +29,11 @@
     "isPublic": false,
     "startDate": "2026-11-16",
     "endDate": "2027-02-16",
-    "currentStep": 3,
+    "currentStep": 4,
     "completedSteps": [
       1,
-      2
+      2,
+      3
     ],
     "progress": 90,
     "calculatedProgress": 90,
@@ -100,7 +101,8 @@
       "title": "",
       "description": "",
       "isPublic": true,
-      "verified": false
+      "verified": false,
+      "thumbnailUrl": ""
     },
     "resources": [],
     "visualAssets": [],
@@ -108,17 +110,26 @@
       {
         "title": "Proyecto: Belleza",
         "content": "Presentación oficial del proyecto educativo.\nEnfoque: Gobierno de Datos e IA\nLema: Innovación, investigación y soluciones prácticas aplicadas a belleza.",
-        "notes": "Introducción al tema de belleza y presentación del equipo de trabajo."
+        "notes": "Introducción al tema de belleza y presentación del equipo de trabajo.",
+        "media": "",
+        "imageUrl": "",
+        "bgImage": ""
       },
       {
         "title": "El Reto y la Oportunidad",
         "content": "¿Por qué es crucial investigar sobre Belleza?\n\nProblema identificado: Falta de herramientas accesibles, metodologías prácticas y conciencia comunitaria para abordar con éxito los retos de belleza.\n\nObjetivo: Diseñar e implementar una propuesta innovadora y funcional que promueva el conocimiento y aporte soluciones prácticas a belleza.",
-        "notes": "Explicación del contexto y motivación del proyecto."
+        "notes": "Explicación del contexto y motivación del proyecto.",
+        "media": "",
+        "imageUrl": "",
+        "bgImage": ""
       },
       {
         "title": "Nuestra Propuesta de Solución",
         "content": "Cómo abordamos Belleza:\n• Investigación contextualizada.\n• Desarrollo de prototipos funcionales.\n• Divulgación abierta a la comunidad educativa.",
-        "notes": "Detalles técnicos y metodológicos de la propuesta."
+        "notes": "Detalles técnicos y metodológicos de la propuesta.",
+        "media": "",
+        "imageUrl": "",
+        "bgImage": ""
       }
     ],
     "externalLinks": [],
@@ -264,9 +275,10 @@
       "publicationStatus": "draft",
       "completedSteps": [
         1,
-        2
+        2,
+        3
       ],
-      "currentStep": 3,
+      "currentStep": 4,
       "author": "Annie",
       "authorId": "user_1793482866924",
       "authorEmail": "acanon@ciudadmontesbilingue.edu.co",
@@ -289,7 +301,7 @@
         "collaborators": ""
       },
       "createdAt": "2026-11-16T19:08:03.172Z",
-      "updatedAt": "2026-11-16T19:08:49.960Z",
+      "updatedAt": "2026-11-16T19:08:53.096Z",
       "joinCode": "61321",
       "accessCode": "61321",
       "projectRoadmap": [
@@ -331,7 +343,7 @@
     "authorAvatar": "🦊",
     "authorRole": "student",
     "createdAt": "2026-11-16T19:08:03.172Z",
-    "updatedAt": "2026-11-16T19:08:48.803Z",
+    "updatedAt": "2026-11-16T19:08:51.840Z",
     "image": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
     "rejectionReason": ""
   },
