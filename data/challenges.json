@@ -29,7 +29,7 @@
     "isPublic": false,
     "startDate": "2026-11-16",
     "endDate": "2027-02-16",
-    "currentStep": 16,
+    "currentStep": 15,
     "completedSteps": [
       1,
       2,
@@ -44,8 +44,7 @@
       11,
       12,
       13,
-      14,
-      15
+      14
     ],
     "progress": 95,
     "calculatedProgress": 95,
@@ -144,7 +143,8 @@
         "order": 1,
         "status": "verified",
         "extractedText": "",
-        "uploadedAt": "2026-11-16T23:22:53.086Z"
+        "uploadedAt": "2026-11-16T23:22:53.086Z",
+        "thumbnailUrl": ""
       }
     ],
     "visualAssets": [],
@@ -155,17 +155,25 @@
         "notes": "Introducción al tema de gggggggggggggggggggg y presentación del equipo de trabajo.",
         "subtitle": "",
         "media": "",
-        "bullets": []
+        "bullets": [],
+        "imageUrl": "",
+        "bgImage": ""
       },
       {
         "title": "El Reto y la Oportunidad",
         "content": "¿Por qué es crucial investigar sobre Gggggggggggggggggggg?\n\nProblema identificado: Falta de herramientas accesibles, metodologías prácticas y conciencia comunitaria para abordar con éxito los retos de gggggggggggggggggggg.\n\nObjetivo: Diseñar e implementar una propuesta innovadora y funcional que promueva el conocimiento y aporte soluciones prácticas a gggggggggggggggggggg.",
-        "notes": "Explicación del contexto y motivación del proyecto."
+        "notes": "Explicación del contexto y motivación del proyecto.",
+        "media": "",
+        "imageUrl": "",
+        "bgImage": ""
       },
       {
         "title": "Nuestra Propuesta de Solución",
         "content": "Cómo abordamos Gggggggggggggggggggg:\n• Investigación contextualizada.\n• Desarrollo de prototipos funcionales.\n• Divulgación abierta a la comunidad educativa.",
-        "notes": "Detalles técnicos y metodológicos de la propuesta."
+        "notes": "Detalles técnicos y metodológicos de la propuesta.",
+        "media": "",
+        "imageUrl": "",
+        "bgImage": ""
       }
     ],
     "externalLinks": [
@@ -176,7 +184,8 @@
         "description": "",
         "category": "Página web oficial",
         "visibility": "public",
-        "verified": false
+        "verified": false,
+        "thumbnailUrl": ""
       }
     ],
     "landingConfig": {
@@ -350,10 +359,9 @@
         11,
         12,
         13,
-        14,
-        15
+        14
       ],
-      "currentStep": 16,
+      "currentStep": 15,
       "author": "caca",
       "authorId": "user_1794871108052",
       "authorEmail": "caca@gmail.com",
@@ -376,7 +384,7 @@
         "collaborators": ""
       },
       "createdAt": "2026-11-16T23:19:35.753Z",
-      "updatedAt": "2026-11-16T23:23:19.716Z",
+      "updatedAt": "2026-11-16T23:23:17.503Z",
       "joinCode": "1234",
       "accessCode": "1234",
       "progress": 95,
@@ -418,7 +426,7 @@
     "authorAvatar": "🦊",
     "authorRole": "Líder del Proyecto",
     "createdAt": "2026-11-16T23:19:35.753Z",
-    "updatedAt": "2026-11-16T23:23:09.157Z",
+    "updatedAt": "2026-11-16T23:23:06.951Z",
     "image": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
     "customProjectCodes": [
       {
