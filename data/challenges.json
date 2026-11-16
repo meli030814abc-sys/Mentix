@@ -29,8 +29,11 @@
     "isPublic": false,
     "startDate": "2026-11-16",
     "endDate": "2027-02-16",
-    "currentStep": 1,
-    "completedSteps": [],
+    "currentStep": 3,
+    "completedSteps": [
+      1,
+      2
+    ],
     "progress": 90,
     "calculatedProgress": 90,
     "valueProp": {
@@ -259,8 +262,11 @@
         "featuredVideoPublic": true
       },
       "publicationStatus": "draft",
-      "completedSteps": [],
-      "currentStep": 1,
+      "completedSteps": [
+        1,
+        2
+      ],
+      "currentStep": 3,
       "author": "caca",
       "authorId": "user_1794871108052",
       "authorEmail": "caca@gmail.com",
@@ -283,7 +289,7 @@
         "collaborators": ""
       },
       "createdAt": "2026-11-16T23:19:35.753Z",
-      "updatedAt": "2026-11-16T23:22:01.816Z",
+      "updatedAt": "2026-11-16T23:22:06.622Z",
       "joinCode": "1234",
       "accessCode": "1234",
       "progress": 90,
@@ -325,7 +331,7 @@
     "authorAvatar": "🦊",
     "authorRole": "student",
     "createdAt": "2026-11-16T23:19:35.753Z",
-    "updatedAt": "2026-11-16T23:21:52.336Z",
+    "updatedAt": "2026-11-16T23:21:55.975Z",
     "image": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
     "customProjectCodes": [
       {
