@@ -72,7 +72,7 @@ window.ProjectWizard = {
     { step: 1, icon: '🏷️', shortTitle: 'Nombre del proyecto', title: 'Paso 1. Nombre e identidad', question: '¿Cómo se llama tu proyecto y cuál es su subtítulo?' },
     { step: 2, icon: '📝', shortTitle: 'Descripción', title: 'Paso 2. Descripción y resumen', question: '¿En qué consiste tu proyecto y cuál es su resumen ejecutivo?' },
     { step: 3, icon: '📁', shortTitle: 'Clasificación', title: 'Paso 3. Categoría y público objetivo', question: '¿A qué categoría pertenece y para quién está diseñado?' },
-    { step: 4, icon: '🎨', shortTitle: 'Diseño y estilo', title: 'Paso 4. Configuración del diseño y banner', question: '¿Qué estilo visual, tipo de letra, colores y banner llevará la Landing Page?' },
+    { step: 4, icon: '🗺️', shortTitle: 'Ruta del proyecto', title: 'Paso 4. Ruta del Proyecto', question: '¿Por qué etapas ha pasado el proyecto y qué progreso lleva cada una?' },
     { step: 5, icon: '👥', shortTitle: 'Autores y correos', title: 'Paso 5. Autores y correos del proyecto', question: '¿Quiénes crearon el proyecto y cuáles son sus correos de contacto?' },
     { step: 6, icon: '🎯', shortTitle: 'Problema y objetivo', title: 'Paso 6. Problema, objetivo y beneficios', question: '¿Qué reto busca resolver y qué impacto generará?' },
     { step: 7, icon: '💡', shortTitle: 'Propuesta de valor', title: 'Paso 7. Propuesta de valor y funcionamiento', question: '¿Por qué este proyecto es valioso y cómo funciona?' },
@@ -844,6 +844,21 @@ collectCurrentStepInputs() {
     if (val('gdn-pub-cta-url') !== null) this.draft.landingConfig.ctaUrl = val('gdn-pub-cta-url').trim();
     if (val('gdn-pub-order') !== null) this.draft.landingConfig.displayOrder = Number(val('gdn-pub-order') || 1);
     if (val('gdn-pub-status') !== null) this.draft.publicationStatus = val('gdn-pub-status');
+
+    // Recolectar etapas de la Ruta del Proyecto (Paso 4)
+    if (document.getElementById('gdn-roadmap-title-0') !== null) {
+      const roadmap = [];
+      let ri = 0;
+      while (document.getElementById(`gdn-roadmap-title-${ri}`) !== null) {
+        const rTitle    = val(`gdn-roadmap-title-${ri}`)    || '';
+        const rDesc     = val(`gdn-roadmap-desc-${ri}`)     || '';
+        const rStatus   = val(`gdn-roadmap-status-${ri}`)   || 'pending';
+        const rProgress = parseInt(val(`gdn-roadmap-progress-${ri}`) || '0', 10);
+        roadmap.push({ title: rTitle.trim(), description: rDesc.trim(), status: rStatus, progress: isNaN(rProgress) ? 0 : rProgress });
+        ri++;
+      }
+      if (roadmap.length > 0) this.draft.projectRoadmap = roadmap;
+    }
   },
 
   // =========================================================================
@@ -954,7 +969,7 @@ collectCurrentStepInputs() {
       case 1: return this.renderStep1Name();
       case 2: return this.renderStep2Desc();
       case 3: return this.renderStep3Classification();
-      case 4: return this.renderStep4Design();
+      case 4: return this.renderStep4Roadmap();
       case 5: return this.renderStep5Authors();
       case 6: return this.renderStep4ProblemObjective();
       case 7: return this.renderStep6ValueProp();
@@ -1095,8 +1110,197 @@ collectCurrentStepInputs() {
   },
 
   // =========================================================================
-  // PASO 4: CONFIGURACIÓN DEL DISEÑO Y ESTILO VISUAL DE LA LANDING PAGE
   // =========================================================================
+  // PASO 4: RUTA DEL PROYECTO — Etapas y progreso personalizados
+  // =========================================================================
+  renderStep4Roadmap() {
+    const d = this.draft;
+    if (!Array.isArray(d.projectRoadmap) || d.projectRoadmap.length === 0) {
+      d.projectRoadmap = [
+        { title: 'Inicio del Proyecto', description: 'Conformación del equipo y definición de objetivos', progress: 100, status: 'completed' },
+        { title: 'Investigación', description: 'Recopilación de datos e información relevante', progress: 60, status: 'active' },
+        { title: 'Desarrollo', description: 'Implementación de la solución propuesta', progress: 0, status: 'pending' },
+        { title: 'Publicación', description: 'Socialización y presentación pública del proyecto', progress: 0, status: 'pending' }
+      ];
+    }
+    const stages = d.projectRoadmap;
+    const fillPct = this._roadmapFillPct(stages);
+
+    return `
+      <div class="gdn-card">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:1rem; flex-wrap:wrap; margin-bottom:1.25rem;">
+          <div>
+            <h3 style="margin: 0 0 0.35rem; font-size: 1.15rem; color: var(--gdn-text); font-weight: 800;">
+              4. Ruta del Proyecto
+            </h3>
+            <p class="gdn-help" style="margin: 0; font-size: 0.88rem;">
+              Agrega las etapas por las que pasó tu proyecto, describe lo que hicieron en cada una y marca el progreso. Esto aparecerá en tu Landing Page.
+            </p>
+          </div>
+          <span style="font-size:0.8rem; background:rgba(16,185,129,0.15); color:#10b981; border:1px solid rgba(16,185,129,0.4); padding:0.25rem 0.75rem; border-radius:9999px; font-weight:800;">
+            🗺️ ${stages.length} Etapa(s)
+          </span>
+        </div>
+
+        <!-- Vista previa de la ruta -->
+        <div style="background: rgba(0,0,0,0.3); border: 1.5px solid var(--gdn-border); border-radius: 14px; padding: 1.25rem 1.5rem; margin-bottom: 1.75rem; overflow-x: auto;">
+          <div style="font-size: 0.78rem; font-weight: 800; color: #00f5d4; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 1.1rem;">
+            📍 Vista previa de la Ruta en la Landing Page
+          </div>
+          <div style="display: flex; align-items: flex-start; min-width: max-content; padding-bottom: 0.5rem; position: relative;">
+            <!-- Track de fondo -->
+            <div style="position: absolute; top: 20px; left: 20px; right: 20px; height: 3px; background: rgba(255,255,255,0.12); border-radius: 9999px; z-index: 0;"></div>
+            <!-- Fill de progreso -->
+            <div style="position: absolute; top: 20px; left: 20px; height: 3px; width: ${fillPct}%; background: linear-gradient(90deg, #10b981, #00f5d4); border-radius: 9999px; z-index: 1; transition: width 0.4s;"></div>
+            ${stages.map((s, i) => `
+              <div style="display: flex; flex-direction: column; align-items: center; min-width: 110px; padding: 0 0.5rem; position: relative; z-index: 2;">
+                <div style="width: 40px; height: 40px; border-radius: 50%; border: 3px solid ${s.status === 'completed' ? '#10b981' : (s.status === 'active' ? '#00f5d4' : 'rgba(255,255,255,0.2)')}; background: ${s.status === 'completed' ? '#10b981' : (s.status === 'active' ? 'rgba(0,245,212,0.18)' : 'rgba(255,255,255,0.05)')}; display: flex; align-items: center; justify-content: center; font-size: 1rem; color: #fff; font-weight: 900; margin-bottom: 0.5rem; box-shadow: ${s.status !== 'pending' ? '0 0 14px rgba(16,185,129,0.5)' : 'none'};">
+                  ${s.status === 'completed' ? '✓' : (s.status === 'active' ? '▶' : String(i + 1))}
+                </div>
+                <div style="font-size: 0.78rem; font-weight: 800; color: ${s.status === 'active' ? '#00f5d4' : (s.status === 'completed' ? '#10b981' : 'rgba(255,255,255,0.5)')}; text-align: center; line-height: 1.3; max-width: 100px;">
+                  ${this.escapeHtml(s.title || `Etapa ${i + 1}`)}
+                </div>
+                <div style="font-size: 0.69rem; color: rgba(255,255,255,0.45); text-align: center; margin-top: 0.2rem;">
+                  ${s.progress || 0}%
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+
+        <!-- Etapas editables -->
+        <div id="gdn-roadmap-stages" style="display: flex; flex-direction: column; gap: 1rem; margin-bottom: 1.25rem;">
+          ${stages.map((s, i) => this._renderRoadmapStageRow(s, i)).join('')}
+        </div>
+
+        <!-- Botón agregar etapa -->
+        <button
+          type="button"
+          onclick="window.ProjectWizard.addRoadmapStage()"
+          style="width: 100%; padding: 0.85rem; font-size: 0.95rem; font-weight: 800; border-radius: 12px; border: 2px dashed rgba(0,245,212,0.45); background: rgba(0,245,212,0.06); color: #00f5d4; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.5rem; transition: all 0.2s;"
+          onmouseenter="this.style.background='rgba(0,245,212,0.14)'; this.style.borderColor='#00f5d4';"
+          onmouseleave="this.style.background='rgba(0,245,212,0.06)'; this.style.borderColor='rgba(0,245,212,0.45)';"
+        >
+          ➕ Agregar Etapa
+        </button>
+
+        <div class="gdn-help" style="margin-top: 0.75rem; font-size: 0.82rem; color: rgba(255,255,255,0.45); text-align: center;">
+          💡 Puedes añadir tantas etapas como necesites y editarlas en cualquier momento. Los cambios se reflejan en la Landing Page.
+        </div>
+      </div>
+    `;
+  },
+
+  _roadmapFillPct(stages) {
+    if (!stages || stages.length === 0) return 0;
+    if (stages.length === 1) {
+      const s = stages[0];
+      if (s.status === 'completed') return 100;
+      return s.progress || 0;
+    }
+    const completed = stages.filter(s => s.status === 'completed').length;
+    const active = stages.filter(s => s.status === 'active').length;
+    return Math.round(((completed + (active > 0 ? 0.5 : 0)) / stages.length) * 100);
+  },
+
+  _renderRoadmapStageRow(stage, index) {
+    const statusColors = {
+      completed: { border: '#10b981', bg: 'rgba(16,185,129,0.12)', label: '✅ Completado' },
+      active:    { border: '#00f5d4', bg: 'rgba(0,245,212,0.08)',  label: '▶ En Progreso' },
+      pending:   { border: 'rgba(255,255,255,0.15)', bg: 'rgba(255,255,255,0.03)', label: '⏳ Pendiente' }
+    };
+    const sc = statusColors[stage.status] || statusColors.pending;
+    return `
+      <div style="background: rgba(255,255,255,0.03); border: 1.5px solid ${sc.border}; border-radius: 14px; padding: 1rem 1.25rem; transition: border-color 0.2s;">
+        <!-- Fila superior: número, nombre y botón eliminar -->
+        <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.85rem; flex-wrap: wrap;">
+          <div style="width: 32px; height: 32px; border-radius: 50%; background: ${sc.bg}; border: 2px solid ${sc.border}; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; font-weight: 900; color: #fff; flex-shrink: 0;">
+            ${stage.status === 'completed' ? '✓' : (stage.status === 'active' ? '▶' : String(index + 1))}
+          </div>
+          <input
+            type="text"
+            id="gdn-roadmap-title-${index}"
+            class="gdn-input"
+            value="${this.escapeHtml(stage.title || '')}"
+            placeholder="Nombre de la etapa (ej: Investigación, Diseño, Desarrollo...)"
+            style="flex: 1; min-width: 180px; font-weight: 800;"
+            oninput="window.ProjectWizard.triggerFieldAutoSave()"
+          />
+          <button
+            type="button"
+            onclick="window.ProjectWizard.removeRoadmapStage(${index})"
+            title="Eliminar etapa"
+            style="background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.3); color: #f87171; border-radius: 8px; padding: 0.4rem 0.65rem; cursor: pointer; font-size: 0.85rem; flex-shrink: 0; transition: background 0.2s;"
+            onmouseenter="this.style.background='rgba(239,68,68,0.22)';"
+            onmouseleave="this.style.background='rgba(239,68,68,0.1)';"
+          >🗑️</button>
+        </div>
+
+        <!-- Descripción + Estado en grid -->
+        <div style="display: grid; grid-template-columns: 1fr auto; gap: 0.75rem; align-items: end; margin-bottom: 0.85rem; flex-wrap: wrap;">
+          <div>
+            <label class="gdn-label" style="font-size: 0.8rem; margin-bottom: 0.3rem; display: block;">📝 ¿Qué hicieron en esta etapa?</label>
+            <input
+              type="text"
+              id="gdn-roadmap-desc-${index}"
+              class="gdn-input"
+              value="${this.escapeHtml(stage.description || '')}"
+              placeholder="Ej: Recopilamos 50 fuentes, realizamos 3 entrevistas, diseñamos el prototipo..."
+              oninput="window.ProjectWizard.triggerFieldAutoSave()"
+            />
+          </div>
+          <div>
+            <label class="gdn-label" style="font-size: 0.8rem; margin-bottom: 0.3rem; display: block;">📌 Estado</label>
+            <select
+              id="gdn-roadmap-status-${index}"
+              class="gdn-select"
+              onchange="window.ProjectWizard.triggerFieldAutoSave()"
+              style="min-width: 155px;"
+            >
+              <option value="pending"   ${stage.status === 'pending'   ? 'selected' : ''}>⏳ Pendiente</option>
+              <option value="active"    ${stage.status === 'active'    ? 'selected' : ''}>▶ En Progreso</option>
+              <option value="completed" ${stage.status === 'completed' ? 'selected' : ''}>✅ Completado</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Barra de progreso -->
+        <div>
+          <label class="gdn-label" style="font-size: 0.8rem; margin-bottom: 0.4rem; display: flex; justify-content: space-between; align-items: center;">
+            <span>📊 Progreso de esta etapa</span>
+            <strong id="gdn-roadmap-pct-label-${index}" style="color: #00f5d4; font-size: 1rem;">${stage.progress || 0}%</strong>
+          </label>
+          <input
+            type="range"
+            id="gdn-roadmap-progress-${index}"
+            min="0" max="100" step="5"
+            value="${stage.progress || 0}"
+            style="width: 100%; accent-color: #00f5d4; cursor: pointer; height: 6px;"
+            oninput="document.getElementById('gdn-roadmap-pct-label-${index}').textContent = this.value + '%'; window.ProjectWizard.triggerFieldAutoSave();"
+          />
+          <div style="display: flex; justify-content: space-between; font-size: 0.72rem; color: rgba(255,255,255,0.35); margin-top: 0.2rem;">
+            <span>0%</span><span>50%</span><span>100%</span>
+          </div>
+        </div>
+      </div>
+    `;
+  },
+
+  addRoadmapStage() {
+    this.collectCurrentStepInputs();
+    if (!Array.isArray(this.draft.projectRoadmap)) this.draft.projectRoadmap = [];
+    this.draft.projectRoadmap.push({ title: '', description: '', progress: 0, status: 'pending' });
+    this.saveDraftToStorage(true);
+  },
+
+  removeRoadmapStage(index) {
+    this.collectCurrentStepInputs();
+    if (!Array.isArray(this.draft.projectRoadmap)) return;
+    this.draft.projectRoadmap.splice(index, 1);
+    this.saveDraftToStorage(true);
+  },
+
+  // PASO 4 (legacy): Configuración del Diseño y Banner — mantenido para compatibilidad interna
   renderStep4Design() {
     const d = this.draft;
     if (!d.designConfig) {

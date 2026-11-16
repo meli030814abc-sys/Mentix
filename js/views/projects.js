@@ -6048,8 +6048,26 @@ window.ProjectsView = {
 
     // Cronograma / Timeline 100% REAL según el estado verídico de este proyecto
     let timelineStepsHtml = '';
+    const hasCustomRoadmap = Array.isArray(selected?.projectRoadmap) && selected.projectRoadmap.length > 0;
     const hasTimelineArray = Array.isArray(selected?.timeline) && selected.timeline.length > 0;
-    if (hasTimelineArray) {
+
+    if (hasCustomRoadmap) {
+      // ✅ Usar la Ruta del Proyecto personalizada definida por el equipo en el asistente
+      const stages = selected.projectRoadmap;
+      const completedCount = stages.filter(s => s.status === 'completed').length;
+      const activeCount    = stages.filter(s => s.status === 'active').length;
+      const roadmapFillPct = stages.length > 0
+        ? Math.round(((completedCount + (activeCount > 0 ? 0.5 : 0)) / stages.length) * 100)
+        : 0;
+      // Reemplazar el track fill del wrapper con el valor correcto
+      timelineStepsHtml = `__ROADMAP_FILL_PCT_${roadmapFillPct}__` + stages.map((st, i) => `
+        <div class="inno-road-step ${st.status === 'completed' ? 'completed' : (st.status === 'active' ? 'active' : '')}">
+          <div class="inno-road-badge">${st.status === 'completed' ? '✓' : (st.status === 'active' ? '▶' : String(i + 1))}</div>
+          <div class="inno-road-name ${st.status === 'active' ? 'active' : ''}">${this.escapeHtml(st.title || `Etapa ${i + 1}`)}</div>
+          <div class="inno-road-sub ${st.status === 'active' ? 'active' : ''}">${this.escapeHtml(st.description || (st.progress + '% completado'))}</div>
+        </div>
+      `).join('');
+    } else if (hasTimelineArray) {
       timelineStepsHtml = selected.timeline.map((st, i) => `
         <div class="inno-road-step ${st.completed ? 'completed' : (i === 1 ? 'active' : '')}">
           <div class="inno-road-badge">${st.completed ? '✓' : (i === 1 ? '▶' : '○')}</div>
@@ -6478,17 +6496,27 @@ window.ProjectsView = {
               <section class="inno-roadmap-block" id="inno-sec-roadmap">
                 <div class="inno-section-head">
                   <h2 class="inno-section-title">Ruta del Proyecto</h2>
-                  <p class="inno-section-sub">Seguimos un camino claro para alcanzar nuestros objetivos.</p>
+                  <p class="inno-section-sub">${hasCustomRoadmap ? 'Las etapas por las que pasó este proyecto.' : 'Seguimos un camino claro para alcanzar nuestros objetivos.'}</p>
                 </div>
 
-                <div class="inno-roadmap-track-wrap">
-                  <div class="inno-roadmap-track-line"></div>
-                  <div class="inno-roadmap-track-fill" style="width: 48%;"></div>
-
-                  <div class="inno-roadmap-steps">
-                    ${timelineStepsHtml}
-                  </div>
-                </div>
+                ${(() => {
+                  // Extraer el fill pct del token si es ruta personalizada
+                  let fillPct = 48;
+                  let cleanHtml = timelineStepsHtml;
+                  const fillMatch = timelineStepsHtml.match(/^__ROADMAP_FILL_PCT_(\d+)__/);
+                  if (fillMatch) {
+                    fillPct = parseInt(fillMatch[1], 10);
+                    cleanHtml = timelineStepsHtml.replace(/^__ROADMAP_FILL_PCT_\d+__/, '');
+                  }
+                  return `
+                  <div class="inno-roadmap-track-wrap">
+                    <div class="inno-roadmap-track-line"></div>
+                    <div class="inno-roadmap-track-fill" style="width: ${fillPct}%;"></div>
+                    <div class="inno-roadmap-steps">
+                      ${cleanHtml}
+                    </div>
+                  </div>`;
+                })()}
               </section>
 
             </div>
