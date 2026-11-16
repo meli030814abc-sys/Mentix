@@ -199,11 +199,41 @@
         "collaborators": ""
       },
       "createdAt": "2026-11-16T18:21:52.529Z",
-      "updatedAt": "2026-11-16T18:43:45.152Z",
+      "updatedAt": "2026-11-16T18:43:56.841Z",
       "joinCode": "556",
       "accessCode": "556",
       "progress": 50,
-      "calculatedProgress": 50
+      "calculatedProgress": 50,
+      "projectRoadmap": [
+        {
+          "title": "Planeación",
+          "description": "Conformación del equipo y definición de objetivos.",
+          "status": "active",
+          "icon": "clipboard",
+          "progress": 40
+        },
+        {
+          "title": "Investigación",
+          "description": "Recopilación de datos e información relevante.",
+          "status": "completed",
+          "icon": "search",
+          "progress": 100
+        },
+        {
+          "title": "Desarrollo",
+          "description": "Construcción de la solución y prototipos.",
+          "status": "pending",
+          "icon": "code",
+          "progress": 0
+        },
+        {
+          "title": "Publicación",
+          "description": "Despliegue en la Landing Page y comunicación.",
+          "status": "pending",
+          "icon": "rocket",
+          "progress": 0
+        }
+      ]
     },
     "author": "Melisa",
     "authorId": "user_1792184134006",
@@ -211,7 +241,7 @@
     "authorAvatar": "🐯",
     "authorRole": "admin",
     "createdAt": "2026-11-16T18:21:52.529Z",
-    "updatedAt": "2026-11-16T18:43:44.043Z",
+    "updatedAt": "2026-11-16T18:43:55.618Z",
     "image": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
     "rejectionReason": "",
     "joinCode": "556",
