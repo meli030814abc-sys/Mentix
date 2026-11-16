@@ -29,7 +29,7 @@
     "isPublic": false,
     "startDate": "2026-11-16",
     "endDate": "2027-02-16",
-    "currentStep": 4,
+    "currentStep": 3,
     "completedSteps": [
       1,
       2,
@@ -276,7 +276,7 @@
         2,
         3
       ],
-      "currentStep": 4,
+      "currentStep": 3,
       "author": "Annie",
       "authorId": "user_1793482866924",
       "authorEmail": "acanon@ciudadmontesbilingue.edu.co",
@@ -299,7 +299,7 @@
         "collaborators": ""
       },
       "createdAt": "2026-11-16T19:08:03.172Z",
-      "updatedAt": "2026-11-16T19:09:03.024Z",
+      "updatedAt": "2026-11-16T19:09:11.536Z",
       "joinCode": "61321",
       "accessCode": "61321",
       "projectRoadmap": [
@@ -349,7 +349,7 @@
     "authorAvatar": "🦊",
     "authorRole": "student",
     "createdAt": "2026-11-16T19:08:03.172Z",
-    "updatedAt": "2026-11-16T19:09:01.847Z",
+    "updatedAt": "2026-11-16T19:09:10.372Z",
     "image": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
     "rejectionReason": ""
   },
