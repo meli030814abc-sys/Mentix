@@ -3975,105 +3975,57 @@ window.ProjectsView = {
       c.projectType === 'presentation' || c.projectType === 'video' || c.projectType === 'document' || c.projectType === 'url' || c.isGovDataProject || c.isProject
     );
 
-    // 1. Buscar en mentix_custom_project_codes (localStorage + sessionStorage + memoria + nube)
+    // 1. Buscar SOLO en códigos personalizados creados por docentes/admin (con projectId vinculado)
     const savedCodes = this.getSavedProjectCodes();
     const matchedCustom = savedCodes.find(sc => String(sc.code || '').trim().toLowerCase() === lower);
 
-    let matchedProject = null;
-
-    if (matchedCustom && matchedCustom.projectId) {
-      matchedProject = challenges.find(c => String(c.id).trim() === String(matchedCustom.projectId).trim());
-    }
-
-    // 2. Buscar en proyectos por id, pin, slug, code, customProjectCodes o título
-    if (!matchedProject) {
-      matchedProject = projectItems.find(c => {
-        const cId = String(c.id || '').trim().toLowerCase();
-        const cPin = String(c.pin || '').trim().toLowerCase();
-        const cCode = String(c.code || '').trim().toLowerCase();
-        const cSlug = String(c.slug || '').trim().toLowerCase();
-        const cTitle = String(c.title || '').trim().toLowerCase();
-
-        if (cId === lower || cPin === lower || cCode === lower || cSlug === lower) return true;
-        if (cleanDigits && cPin && cPin.replace(/\D/g, '') === cleanDigits) return true;
-        if (cTitle === lower) return true;
-        if (Array.isArray(c.customProjectCodes) && c.customProjectCodes.some(item => String(item?.code || item || '').trim().toLowerCase() === lower)) {
-          return true;
-        }
-        return false;
-      });
-    }
-
-    // 3. Buscar en todos los retos
-    if (!matchedProject) {
-      matchedProject = challenges.find(c => {
-        const cId = String(c.id || '').trim().toLowerCase();
-        const cPin = String(c.pin || '').trim().toLowerCase();
-        const cCode = String(c.code || '').trim().toLowerCase();
-        const cSlug = String(c.slug || '').trim().toLowerCase();
-        if (cId === lower || cPin === lower || cCode === lower || cSlug === lower) return true;
-        if (cleanDigits && cPin && cPin.replace(/\D/g, '') === cleanDigits) return true;
-        return false;
-      });
-    }
-
-    // 4. Buscar en borradores del asistente de proyectos
-    if (!matchedProject && window.ProjectWizard && window.ProjectWizard.getAllSavedDrafts) {
-      const drafts = window.ProjectWizard.getAllSavedDrafts();
-      const matchedDraft = drafts.find(d => {
-        const dId = String(d.id || '').trim().toLowerCase();
-        const dTitle = String(d.title || '').trim().toLowerCase();
-        return dId === lower || (d.code && String(d.code).toLowerCase() === lower) || (d.joinedCode && String(d.joinedCode).toLowerCase() === lower) || dTitle === lower;
-      });
-      if (matchedDraft) {
-        try { localStorage.setItem('mentix_active_join_code', clean); } catch (e) {}
-        if (window.soundEngine && window.soundEngine.playSuccess) window.soundEngine.playSuccess();
-        window.ProjectWizard.openWizard(matchedDraft.id, 1);
-        return;
+    if (!matchedCustom) {
+      // Código no existe - mostrar error
+      if (errEl) {
+        errEl.textContent = '❌ Código no reconocido. Pide el código a tu docente o administrador.';
+        errEl.style.display = 'block';
       }
-    }
-
-    // Guardar el código activo con el que el usuario se está uniendo
-    try { localStorage.setItem('mentix_active_join_code', clean); } catch (e) {}
-    try { sessionStorage.setItem('mentix_active_join_code', clean); } catch (e) {}
-
-    if (matchedProject && !matchedCustom) {
-      if (window.soundEngine && window.soundEngine.playSuccess) {
-        window.soundEngine.playSuccess();
-      } else if (window.soundEngine && window.soundEngine.playClick) {
-        window.soundEngine.playClick();
-      }
-      window.ProjectWizard.openWizard(matchedProject.id, 1);
+      if (input) { input.focus(); input.select(); }
       return;
     }
 
-    // 5. Si coincide con código creado por el profesor (o es un código compartido por el docente como pROYECT),
-    // registrarlo si aún no estaba sincronizado localmente y abrir el asistente de proyecto de inmediato
-    if (!matchedCustom) {
-      const updatedCodes = [
-        { code: clean, author: 'Docente', createdAt: new Date().toLocaleString() },
-        ...savedCodes.filter(sc => String(sc.code || '').trim().toLowerCase() !== lower)
-      ];
-      this.persistCustomProjectCodes(updatedCodes);
+    if (!matchedCustom.projectId) {
+      // Código antiguo sin proyecto vinculado
+      if (errEl) {
+        errEl.textContent = '❌ Este código aún no tiene un proyecto asociado. Pide al docente que lo vuelva a crear.';
+        errEl.style.display = 'block';
+      }
+      if (input) { input.focus(); input.select(); }
+      return;
     }
 
-    if (window.soundEngine && window.soundEngine.playSuccess) {
-      window.soundEngine.playSuccess();
-    } else if (window.soundEngine && window.soundEngine.playClick) {
-      window.soundEngine.playClick();
+    // Encontrar el proyecto específico vinculado a este código
+    const matchedProject = challenges.find(c => String(c.id).trim() === String(matchedCustom.projectId).trim());
+
+    if (!matchedProject) {
+      if (errEl) {
+        errEl.textContent = '❌ No se encontró el proyecto vinculado a este código. Contacta a tu docente.';
+        errEl.style.display = 'block';
+      }
+      if (input) { input.focus(); input.select(); }
+      return;
     }
 
-    const targetId = (matchedCustom && matchedCustom.projectId) ? matchedCustom.projectId : null;
-    if (window.ProjectWizard && typeof window.ProjectWizard.openWizard === 'function') {
-      window.ProjectWizard.openWizard(targetId, 1).then(() => {
-        if (window.ProjectWizard.draft) {
-          window.ProjectWizard.draft.code = clean;
-          window.ProjectWizard.draft.joinedCode = clean;
-        }
-      }).catch(() => {});
+    // ✅ Código válido → abrir únicamente el proyecto vinculado
+    try { localStorage.setItem('mentix_active_join_code', clean); } catch (e) {}
+    try { sessionStorage.setItem('mentix_active_join_code', clean); } catch (e) {}
+    if (window.soundEngine && window.soundEngine.playSuccess) window.soundEngine.playSuccess();
+    if (window.appRouter && typeof window.appRouter.navigate === 'function') {
+      window.appRouter.navigate('projects');
     }
+    setTimeout(() => {
+      if (window.ProjectsView && typeof window.ProjectsView.openProjectLanding === 'function') {
+        window.ProjectsView.openProjectLanding(matchedProject.id);
+      } else if (window.ProjectWizard && typeof window.ProjectWizard.openWizard === 'function') {
+        window.ProjectWizard.openWizard(matchedProject.id, 1);
+      }
+    }, 120);
   },
-
 
   // Al hacer clic en un proyecto se muestra su landing page
   openProjectLanding(projectId) {
@@ -8013,6 +7965,7 @@ Generado por Mentix - Plataforma de Proyectos y Retos
       return;
     }
     const input = document.getElementById('custom-project-code-input');
+    const projectSelect = document.getElementById('custom-project-code-project-select');
     const errEl = document.getElementById('custom-code-error');
     const okEl = document.getElementById('custom-code-success');
     const rawCode = input ? input.value.trim() : '';
@@ -8032,9 +7985,24 @@ Generado por Mentix - Plataforma de Proyectos y Retos
     }
 
     const u = window.appState?.currentUser || {};
+    // Capturar el proyecto vinculado a este código (el select ya fue declarado arriba)
+    const linkedProjectId = projectSelect ? projectSelect.value : '';
+
+    if (!linkedProjectId) {
+      if (errEl) {
+        errEl.textContent = '⚠️ Debes seleccionar el proyecto al que dará acceso este código.';
+        errEl.style.display = 'block';
+      } else {
+        alert('Por favor selecciona un proyecto para vincular al código.');
+      }
+      if (projectSelect) projectSelect.focus();
+      return;
+    }
+
     const codes = this.getSavedProjectCodes().filter(item => String(item.code).toLowerCase() !== rawCode.toLowerCase());
     const newEntry = {
       code: rawCode,
+      projectId: linkedProjectId,
       author: u.name || u.username || 'Profesor',
       createdAt: new Date().toLocaleString()
     };
@@ -8087,6 +8055,14 @@ Generado por Mentix - Plataforma de Proyectos y Retos
 
     const savedCodes = this.getSavedProjectCodes();
     const recentCode = this.lastCreatedCode || (savedCodes[0] ? savedCodes[0].code : '');
+
+    // Construir lista de proyectos disponibles para ligar al código
+    const allProjects = (window.appState?.challenges || []).filter(c =>
+      c && c.id && (c.isProject || c.isGovDataProject || c.projectType === 'presentation' || c.projectType === 'video' || c.projectType === 'document' || c.projectType === 'url' || c.type === 'project')
+    );
+    const projectOptionsHtml = allProjects.length > 0
+      ? allProjects.map(c => `<option value="${this.escapeHtml(c.id)}">${this.escapeHtml(c.title || c.id)}</option>`).join('')
+      : '<option value="">— Sin proyectos disponibles —</option>';
 
     // Variables de estilo adaptativas 100% legibles para modo claro y modo oscuro
     const cardBg = isLight ? '#ffffff' : 'linear-gradient(145deg, rgba(15, 23, 42, 0.96), rgba(19, 27, 46, 0.96))';
@@ -8155,6 +8131,18 @@ Generado por Mentix - Plataforma de Proyectos y Retos
                 style="width: 100%; box-sizing: border-box; padding: 1.15rem 1.25rem; font-size: 1.6rem; font-weight: 900; text-align: center; letter-spacing: 2px; color: ${inputColor} !important; background: ${inputBg} !important; border: ${inputBorder} !important; border-radius: 14px; outline: none; box-shadow: ${isLight ? '0 4px 15px rgba(0,0,0,0.04)' : 'inset 0 2px 10px rgba(0,0,0,0.6)'}; margin-bottom: 1.25rem;"
               />
 
+              <label for="custom-project-code-project-select" style="display: block; text-align: left; font-size: 0.88rem; font-weight: 900; color: ${isLight ? '#0e7490' : 'var(--neon-cyan)'} !important; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 0.5rem;">
+                📁 Proyecto que abrirá este código:
+              </label>
+              <select
+                id="custom-project-code-project-select"
+                required
+                style="width: 100%; box-sizing: border-box; padding: 0.85rem 1rem; font-size: 1rem; font-weight: 800; color: ${inputColor} !important; background: ${inputBg} !important; border: ${inputBorder} !important; border-radius: 12px; outline: none; margin-bottom: 1.25rem; cursor: pointer;"
+              >
+                <option value="">— Selecciona el proyecto —</option>
+                ${projectOptionsHtml}
+              </select>
+
               <div id="custom-code-error" style="display: none; color: #ff4d6d; background: rgba(239, 68, 68, 0.12); border: 1px solid rgba(239, 68, 68, 0.35); border-radius: 10px; padding: 0.75rem 1rem; font-size: 0.9rem; font-weight: 700; margin-bottom: 1.25rem;"></div>
 
               <div style="display: flex; gap: 0.85rem; align-items: center; flex-wrap: wrap;">
@@ -8219,14 +8207,19 @@ Generado por Mentix - Plataforma de Proyectos y Retos
                 </div>
               ` : `
                 <div style="display: flex; flex-direction: column; gap: 0.65rem; max-height: 380px; overflow-y: auto; padding-right: 0.25rem;">
-                  ${savedCodes.map(item => `
+                  ${savedCodes.map(item => {
+                    const linkedProj = item.projectId ? allProjects.find(p => p.id === item.projectId) : null;
+                    const linkedName = linkedProj
+                      ? this.escapeHtml(linkedProj.title || item.projectId)
+                      : (item.projectId ? '(proyecto eliminado)' : '⚠️ Sin proyecto vinculado');
+                    return `
                     <div style="display: flex; align-items: center; justify-content: space-between; background: ${itemBg}; border: ${itemBorder}; padding: 0.75rem 1rem; border-radius: 12px; gap: 0.75rem; transition: transform 0.15s, border-color 0.15s;">
                       <div>
                         <div style="font-weight: 900; color: ${itemText} !important; font-size: 1.1rem; letter-spacing: 1.5px;">
                           ${this.escapeHtml(item.code)}
                         </div>
                         <div style="font-size: 0.76rem; color: ${itemSub} !important; margin-top: 0.15rem;">
-                          Creado por: ${this.escapeHtml(item.author || 'Profesor')}
+                          📁 ${linkedName} · por: ${this.escapeHtml(item.author || 'Profesor')}
                         </div>
                       </div>
                       <div style="display: flex; gap: 0.45rem; align-items: center;">
@@ -8238,7 +8231,7 @@ Generado por Mentix - Plataforma de Proyectos y Retos
                         </button>
                       </div>
                     </div>
-                  `).join('')}
+                  `}).join('')}
                 </div>
               `}
             </div>
@@ -8319,27 +8312,7 @@ Generado por Mentix - Plataforma de Proyectos y Retos
             </button>
           </form>
 
-          ${savedCodes && savedCodes.length > 0 ? `
-            <!-- Códigos Activos Sugeridos (Pills) -->
-            <div style="margin-top: 2rem; display: flex; flex-direction: column; align-items: center; gap: 0.65rem;">
-              <span style="font-size: 0.85rem; font-weight: 700; color: rgba(255,255,255,0.7); text-shadow: 0 1px 4px rgba(0,0,0,0.8);">
-                Códigos disponibles:
-              </span>
-              <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; justify-content: center; max-width: 520px;">
-                ${savedCodes.slice(0, 6).map(sc => `
-                  <button 
-                    type="button" 
-                    onclick="document.getElementById('project-join-code-input').value='${this.escapeHtml(sc.code)}'; window.ProjectsView.submitJoinProjectCode();" 
-                    style="background: rgba(247, 37, 133, 0.2); border: 1.5px solid rgba(255, 209, 102, 0.6); color: #ffffff !important; padding: 0.45rem 1rem; border-radius: 9999px; font-weight: 800; font-size: 0.92rem; cursor: pointer; transition: all 0.2s; letter-spacing: 0.8px; text-shadow: 0 1px 3px rgba(0,0,0,0.8);" 
-                    onmouseenter="this.style.background='rgba(255, 209, 102, 0.35)'; this.style.borderColor='#ffd166'; this.style.transform='scale(1.05)';" 
-                    onmouseleave="this.style.background='rgba(247, 37, 133, 0.2)'; this.style.borderColor='rgba(255, 209, 102, 0.6)'; this.style.transform='scale(1)';"
-                  >
-                    #${this.escapeHtml(sc.code)}
-                  </button>
-                `).join('')}
-              </div>
-            </div>
-          ` : ''}
+          <!-- Códigos disponibles: ocultados intencionalmente para mantener privacidad. Los estudiantes deben escribir el código manualmente. -->
 
           <!-- Enlace para volver -->
           <div style="margin-top: 2.75rem;">
