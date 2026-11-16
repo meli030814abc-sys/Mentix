@@ -29,7 +29,7 @@
     "isPublic": false,
     "startDate": "2026-11-16",
     "endDate": "",
-    "currentStep": 2,
+    "currentStep": 3,
     "completedSteps": [
       1,
       2
@@ -173,7 +173,7 @@
         1,
         2
       ],
-      "currentStep": 2,
+      "currentStep": 3,
       "author": "Carlos Canon",
       "authorId": "user_1793449738905",
       "authorEmail": "vivianacastanedam@gmail.com",
@@ -196,7 +196,7 @@
         "collaborators": ""
       },
       "createdAt": "2026-11-16T16:50:58.034Z",
-      "updatedAt": "2026-11-16T16:51:13.505Z",
+      "updatedAt": "2026-11-16T16:51:15.815Z",
       "code": "456456",
       "joinedCode": "456456",
       "progress": 40,
@@ -208,7 +208,7 @@
     "authorAvatar": "👨‍🏫",
     "authorRole": "admin",
     "createdAt": "2026-11-16T16:50:58.034Z",
-    "updatedAt": "2026-11-16T16:51:02.575Z",
+    "updatedAt": "2026-11-16T16:51:04.904Z",
     "image": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
     "rejectionReason": ""
   },
