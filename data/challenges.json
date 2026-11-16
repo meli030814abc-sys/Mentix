@@ -1,5 +1,344 @@
 [
   {
+    "id": "proj_1794856083172",
+    "slug": "proyecto-belleza",
+    "title": "Proyecto Belleza",
+    "subtitle": "Proyecto GovData Nexus",
+    "description": "Iniciativa integral que aborda \"Belleza\" mediante metodologías activas de aprendizaje, diseño de prototipos e investigación aplicada para generar impacto positivo.",
+    "shortDescription": "Iniciativa integral que aborda \"Belleza\" mediante metodologías activas de aprendizaje, diseño de prototipos e investigación aplicada para generar impacto positivo.",
+    "fullDescription": "Este proyecto surge como respuesta a la necesidad de investigar y proponer soluciones concretas en torno a \"Belleza\". A través de un enfoque basado en retos y trabajo colaborativo, el equipo analiza antecedentes, recopila datos del entorno y diseña prototipos viables que promueven la sostenibilidad, el pensamiento crítico y la apropiación de conocimientos en toda la comunidad educativa.",
+    "category": "tecnologia",
+    "categoryName": "Tecnología & Programación",
+    "projectType": "presentation",
+    "isGovDataProject": true,
+    "projectSubtype": "Gobierno de Datos e IA",
+    "difficulty": "Medio",
+    "banner": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
+    "mainImage": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
+    "thumbnailImage": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
+    "useDefaultImage": true,
+    "targetAudience": "Estudiantes, docentes, familias y comunidades interesadas en belleza y la innovación social.",
+    "problemStatement": "Falta de herramientas accesibles, metodologías prácticas y conciencia comunitaria para abordar con éxito los retos de belleza.",
+    "mainObjective": "Diseñar e implementar una propuesta innovadora y funcional que promueva el conocimiento y aporte soluciones prácticas a belleza.",
+    "benefits": "Fomenta habilidades del siglo XXI (creatividad, trabajo en equipo y resolución de problemas), ofrece soluciones replicables y genera conciencia en la comunidad.",
+    "teamLead": "Annie",
+    "preparationStatus": "en_desarrollo",
+    "publicationStatus": "draft",
+    "approvalStatus": "pending",
+    "status": "in_progress",
+    "isPublic": false,
+    "startDate": "2026-11-16",
+    "endDate": "2027-02-16",
+    "currentStep": 1,
+    "completedSteps": [],
+    "progress": 80,
+    "calculatedProgress": 80,
+    "valueProp": {
+      "problemSolved": "Dificultad de acceso a recursos e iniciativas prácticas enfocadas en belleza.",
+      "howItWorks": "Centraliza la investigación, recursos interactivos y resultados del proyecto en una plataforma abierta y colaborativa.",
+      "forWhom": "Estudiantes, docentes, familias y comunidades interesadas en belleza y la innovación social.",
+      "differentiator": "Metodología basada en evidencias, enfoque centrado en la comunidad y facilidad de adopción escolar.",
+      "keyFeatures": [
+        "Diagnóstico contextualizado sobre Belleza",
+        "Prototipo interactivo y aplicable",
+        "Recursos educativos y guías abiertas",
+        "Indicadores de impacto y evaluación comunitaria"
+      ],
+      "visitorAction": "Explorar la propuesta y colaborar",
+      "commercialPitch": "Transformando Belleza en acciones y soluciones concretas",
+      "faqs": [
+        {
+          "question": "¿Cuál es el propósito principal de este proyecto sobre Belleza?",
+          "answer": "Desarrollar soluciones viables y educativas que respondan a los retos de belleza, involucrando activamente a la comunidad."
+        },
+        {
+          "question": "¿Quiénes pueden beneficiarse de los resultados?",
+          "answer": "Toda la comunidad escolar, docentes de diferentes áreas y personas interesadas en aplicar metodologías sobre belleza."
+        },
+        {
+          "question": "¿Cómo se puede colaborar o hacer seguimiento?",
+          "answer": "A través de los canales de contacto de los autores y explorando las etapas documentadas en la Ruta del Proyecto."
+        }
+      ]
+    },
+    "valueProposition": {
+      "problemSolved": "Dificultad de acceso a recursos e iniciativas prácticas enfocadas en belleza.",
+      "howItWorks": "Centraliza la investigación, recursos interactivos y resultados del proyecto en una plataforma abierta y colaborativa.",
+      "forWhom": "Estudiantes, docentes, familias y comunidades interesadas en belleza y la innovación social.",
+      "differentiator": "Metodología basada en evidencias, enfoque centrado en la comunidad y facilidad de adopción escolar.",
+      "keyFeatures": [
+        "Diagnóstico contextualizado sobre Belleza",
+        "Prototipo interactivo y aplicable",
+        "Recursos educativos y guías abiertas",
+        "Indicadores de impacto y evaluación comunitaria"
+      ],
+      "visitorAction": "Explorar la propuesta y colaborar",
+      "commercialPitch": "Transformando Belleza en acciones y soluciones concretas",
+      "faqs": [
+        {
+          "question": "¿Cuál es el propósito principal de este proyecto sobre Belleza?",
+          "answer": "Desarrollar soluciones viables y educativas que respondan a los retos de belleza, involucrando activamente a la comunidad."
+        },
+        {
+          "question": "¿Quiénes pueden beneficiarse de los resultados?",
+          "answer": "Toda la comunidad escolar, docentes de diferentes áreas y personas interesadas en aplicar metodologías sobre belleza."
+        },
+        {
+          "question": "¿Cómo se puede colaborar o hacer seguimiento?",
+          "answer": "A través de los canales de contacto de los autores y explorando las etapas documentadas en la Ruta del Proyecto."
+        }
+      ]
+    },
+    "videoUrl": "",
+    "videoConfig": {
+      "sourceType": "url",
+      "url": "",
+      "fileName": "",
+      "title": "",
+      "description": "",
+      "isPublic": true,
+      "verified": false,
+      "thumbnailUrl": ""
+    },
+    "resources": [],
+    "visualAssets": [],
+    "slides": [
+      {
+        "title": "Proyecto: Belleza",
+        "content": "Presentación oficial del proyecto educativo.\nEnfoque: Gobierno de Datos e IA\nLema: Innovación, investigación y soluciones prácticas aplicadas a belleza.",
+        "notes": "Introducción al tema de belleza y presentación del equipo de trabajo.",
+        "media": "",
+        "imageUrl": "",
+        "bgImage": ""
+      },
+      {
+        "title": "El Reto y la Oportunidad",
+        "content": "¿Por qué es crucial investigar sobre Belleza?\n\nProblema identificado: Falta de herramientas accesibles, metodologías prácticas y conciencia comunitaria para abordar con éxito los retos de belleza.\n\nObjetivo: Diseñar e implementar una propuesta innovadora y funcional que promueva el conocimiento y aporte soluciones prácticas a belleza.",
+        "notes": "Explicación del contexto y motivación del proyecto.",
+        "media": "",
+        "imageUrl": "",
+        "bgImage": ""
+      },
+      {
+        "title": "Nuestra Propuesta de Solución",
+        "content": "Cómo abordamos Belleza:\n• Investigación contextualizada.\n• Desarrollo de prototipos funcionales.\n• Divulgación abierta a la comunidad educativa.",
+        "notes": "Detalles técnicos y metodológicos de la propuesta.",
+        "media": "",
+        "imageUrl": "",
+        "bgImage": ""
+      }
+    ],
+    "externalLinks": [],
+    "landingConfig": {
+      "publicName": "Proyecto Belleza",
+      "slug": "proyecto-belleza",
+      "landingTitle": "Proyecto Belleza",
+      "publicDescription": "Iniciativa integral que aborda \"Belleza\" mediante metodologías activas de aprendizaje, diseño de prototipos e investigación aplicada para generar impacto positivo.",
+      "visibleCategory": "Tecnología & Programación",
+      "tags": [
+        "Gobierno de Datos",
+        "IA"
+      ],
+      "ctaText": "Unirse / Colaborar",
+      "ctaUrl": "#plp-sec-contacto",
+      "displayOrder": 1,
+      "featuredVideoPublic": true
+    },
+    "projectRoadmap": [
+      {
+        "title": "Planeación",
+        "description": "Definición del reto, roles del equipo y alcance de la propuesta sobre belleza.",
+        "progress": 100,
+        "status": "completed",
+        "icon": "clipboard"
+      },
+      {
+        "title": "Investigación",
+        "description": "Recopilación de datos, consulta de antecedentes y entrevistas sobre belleza.",
+        "progress": 100,
+        "status": "completed",
+        "icon": "search"
+      },
+      {
+        "title": "Desarrollo y Prototipado",
+        "description": "Construcción del prototipo, validación experimental y pruebas de la solución para belleza.",
+        "progress": 60,
+        "status": "active",
+        "icon": "code"
+      },
+      {
+        "title": "Publicación y Difusión",
+        "description": "Despliegue oficial en la Landing Page, comunicación de resultados y retroalimentación comunitaria.",
+        "progress": 0,
+        "status": "pending",
+        "icon": "rocket"
+      }
+    ],
+    "designConfig": {
+      "themeId": "cosmos",
+      "fontFamily": "Montserrat",
+      "titleColor": "#ffffff",
+      "textColor": "#cbd5e1",
+      "accentColor": "#00f5d4",
+      "bannerStyle": "gradient-cosmos",
+      "bannerUrl": ""
+    },
+    "authorsConfig": {
+      "authorsList": "Annie",
+      "authorsEmails": "acanon@ciudadmontesbilingue.edu.co",
+      "authorsRole": "Líder del Proyecto",
+      "authorsInstitution": "Colegio Mentix",
+      "collaborators": ""
+    },
+    "tags": [
+      "Gobierno de Datos",
+      "IA"
+    ],
+    "displayOrder": 1,
+    "govdata": {
+      "id": "proj_1794856083172",
+      "title": "",
+      "subtitle": "",
+      "shortDescription": "Iniciativa integral que aborda \"Belleza\" mediante metodologías activas de aprendizaje, diseño de prototipos e investigación aplicada para generar impacto positivo.",
+      "fullDescription": "Este proyecto surge como respuesta a la necesidad de investigar y proponer soluciones concretas en torno a \"Belleza\". A través de un enfoque basado en retos y trabajo colaborativo, el equipo analiza antecedentes, recopila datos del entorno y diseña prototipos viables que promueven la sostenibilidad, el pensamiento crítico y la apropiación de conocimientos en toda la comunidad educativa.",
+      "category": "tecnologia",
+      "categoryName": "Tecnología & Programación",
+      "projectSubtype": "Gobierno de Datos e IA",
+      "targetAudience": "Estudiantes, docentes, familias y comunidades interesadas en belleza y la innovación social.",
+      "problemStatement": "Falta de herramientas accesibles, metodologías prácticas y conciencia comunitaria para abordar con éxito los retos de belleza.",
+      "mainObjective": "Diseñar e implementar una propuesta innovadora y funcional que promueva el conocimiento y aporte soluciones prácticas a belleza.",
+      "benefits": "Fomenta habilidades del siglo XXI (creatividad, trabajo en equipo y resolución de problemas), ofrece soluciones replicables y genera conciencia en la comunidad.",
+      "teamLead": "Annie",
+      "preparationStatus": "en_desarrollo",
+      "startDate": "2026-11-16",
+      "endDate": "2027-02-16",
+      "valueProp": {
+        "problemSolved": "Dificultad de acceso a recursos e iniciativas prácticas enfocadas en belleza.",
+        "howItWorks": "Centraliza la investigación, recursos interactivos y resultados del proyecto en una plataforma abierta y colaborativa.",
+        "forWhom": "Estudiantes, docentes, familias y comunidades interesadas en belleza y la innovación social.",
+        "differentiator": "Metodología basada en evidencias, enfoque centrado en la comunidad y facilidad de adopción escolar.",
+        "keyFeatures": [
+          "Diagnóstico contextualizado sobre Belleza",
+          "Prototipo interactivo y aplicable",
+          "Recursos educativos y guías abiertas",
+          "Indicadores de impacto y evaluación comunitaria"
+        ],
+        "visitorAction": "Explorar la propuesta y colaborar",
+        "commercialPitch": "Transformando Belleza en acciones y soluciones concretas",
+        "faqs": [
+          {
+            "question": "¿Cuál es el propósito principal de este proyecto sobre Belleza?",
+            "answer": "Desarrollar soluciones viables y educativas que respondan a los retos de belleza, involucrando activamente a la comunidad."
+          },
+          {
+            "question": "¿Quiénes pueden beneficiarse de los resultados?",
+            "answer": "Toda la comunidad escolar, docentes de diferentes áreas y personas interesadas en aplicar metodologías sobre belleza."
+          },
+          {
+            "question": "¿Cómo se puede colaborar o hacer seguimiento?",
+            "answer": "A través de los canales de contacto de los autores y explorando las etapas documentadas en la Ruta del Proyecto."
+          }
+        ]
+      },
+      "videoConfig": {
+        "sourceType": "url",
+        "url": "",
+        "fileName": "",
+        "title": "",
+        "description": "",
+        "isPublic": true,
+        "verified": false
+      },
+      "mainImage": "",
+      "thumbnailImage": "",
+      "useDefaultImage": true,
+      "externalLinks": [],
+      "landingConfig": {
+        "publicName": "Proyecto Belleza",
+        "slug": "proyecto-belleza",
+        "landingTitle": "Proyecto Belleza",
+        "publicDescription": "Iniciativa integral que aborda \"Belleza\" mediante metodologías activas de aprendizaje, diseño de prototipos e investigación aplicada para generar impacto positivo.",
+        "visibleCategory": "Tecnología & Programación",
+        "tags": [
+          "Gobierno de Datos",
+          "IA"
+        ],
+        "ctaText": "Unirse / Colaborar",
+        "ctaUrl": "#plp-sec-contacto",
+        "displayOrder": 1,
+        "featuredVideoPublic": true
+      },
+      "publicationStatus": "draft",
+      "completedSteps": [],
+      "currentStep": 1,
+      "author": "Annie",
+      "authorId": "user_1793482866924",
+      "authorEmail": "acanon@ciudadmontesbilingue.edu.co",
+      "authorAvatar": "🦊",
+      "authorRole": "student",
+      "designConfig": {
+        "themeId": "cosmos",
+        "fontFamily": "Montserrat",
+        "titleColor": "#ffffff",
+        "textColor": "#cbd5e1",
+        "accentColor": "#00f5d4",
+        "bannerStyle": "gradient-cosmos",
+        "bannerUrl": ""
+      },
+      "authorsConfig": {
+        "authorsList": "Annie",
+        "authorsEmails": "acanon@ciudadmontesbilingue.edu.co",
+        "authorsRole": "Líder del Proyecto",
+        "authorsInstitution": "Colegio Mentix",
+        "collaborators": ""
+      },
+      "createdAt": "2026-11-16T19:08:03.172Z",
+      "updatedAt": "2026-11-16T19:08:19.209Z",
+      "joinCode": "61321",
+      "accessCode": "61321",
+      "projectRoadmap": [
+        {
+          "title": "Planeación",
+          "description": "Definición del reto, roles del equipo y alcance de la propuesta sobre belleza.",
+          "progress": 100,
+          "status": "completed",
+          "icon": "clipboard"
+        },
+        {
+          "title": "Investigación",
+          "description": "Recopilación de datos, consulta de antecedentes y entrevistas sobre belleza.",
+          "progress": 100,
+          "status": "completed",
+          "icon": "search"
+        },
+        {
+          "title": "Desarrollo y Prototipado",
+          "description": "Construcción del prototipo, validación experimental y pruebas de la solución para belleza.",
+          "progress": 60,
+          "status": "active",
+          "icon": "code"
+        },
+        {
+          "title": "Publicación y Difusión",
+          "description": "Despliegue oficial en la Landing Page, comunicación de resultados y retroalimentación comunitaria.",
+          "progress": 0,
+          "status": "pending",
+          "icon": "rocket"
+        }
+      ],
+      "progress": 80,
+      "calculatedProgress": 80
+    },
+    "author": "Annie",
+    "authorId": "user_1793482866924",
+    "authorEmail": "acanon@ciudadmontesbilingue.edu.co",
+    "authorAvatar": "🦊",
+    "authorRole": "student",
+    "createdAt": "2026-11-16T19:08:03.172Z",
+    "updatedAt": "2026-11-16T19:08:18.032Z",
+    "image": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80"
+  },
+  {
     "id": "proj_1794853312529",
     "slug": "nuevo-proyecto-govdata",
     "title": "Personajes de Disney",
