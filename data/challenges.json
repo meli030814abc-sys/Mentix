@@ -111,10 +111,10 @@
         }
       ]
     },
-    "videoUrl": "",
+    "videoUrl": "https://accounts.google.com/v3/signin/identifier?opparams=%253Faudience%253D799222349882-ne3i0s9jdm5s0p7ll2d7tlsi1vc1halt.apps.googleusercontent.com&dsh=S990461129%3A1794871277943593&client_id=799222349882-ne3i0s9jdm5s0p7ll2d7tlsi1vc1halt.apps.googleusercontent.com&nonce=jUuzgGXhv2P81HEDxCNo&o2v=2&redirect_uri=https%3A%2F%2Fauth.openai.com%2Fapi%2Faccounts%2Fcallback%2Fgoogle&response_type=code&scope=openid+profile+email&service=lso&state=2d320bce-cbcf-4b8a-996f-059dad5f82ff&flowName=GeneralOAuthFlow&continue=https%3A%2F%2Faccounts.google.com%2Fsignin%2Foauth%2Fv3%2Fconsent%3Fauthuser%3Dunknown%26part%3DAJi8hAPpxFUE5TL2VlWqrRpZ4PuC7DtCVkkE9EN0ANJ8gthBFyWVQBare5fm2voSX5WjfSdHHeOyT954ycgnO7V5_NwDrmAfrZfzVJUVhG8ClRVVw9A9mHaxIfI7VUUQteBZ1PqwfTQXha6kM1ryTfQUYSlQb22WlaRpgqtaEtLIYC1VW4kMxBAUiark2ch8xqoImcB2A50V3RACOrrhOkDH2OA3vDz_dqH61tCqa8nqGjgDyGKz0bEmJxaO8EHLhFafX-VXpemOtQPG6iIIUoMRC2Q4uyIepyM5z15K_T6Ki2vtOdm0ZjwObT2Gqu4QQDz3wtCDIsqDq3qn41zQg5a_os_gx3Q2ytPVVnG1Kftk5TxTUxgC6OKM9HO_QIYXjZmGb3wJ6VVzW1mijnEcqS9r9F1u8OylIjRityjQcg3_tnXZ_a8GDsq0ssXNy9_jv_L59FZB410x-Kpfw7B916nABepQrnGXYA%26flowName%3DGeneralOAuthFlow%26as%3DS990461129%253A1794871277943593%26client_id%3D799222349882-ne3i0s9jdm5s0p7ll2d7tlsi1vc1halt.apps.googleusercontent.com%26requestPath%3D%252Fsignin%252Foauth%252Fv3%252Fconsent%23&app_domain=https%3A%2F%2Fauth.openai.com&rart=ANgoxcfOVWMg-l4BL_yDeoOI9AThUF5JaI5l2kGljzp0FSB48TETDFRrL8IFa3qjioPoVGJLWjd8KHepaRU16Cs72P4i_2EXSkRbd7WSc_Ukgy9lb3c5Jng",
     "videoConfig": {
       "sourceType": "url",
-      "url": "",
+      "url": "https://accounts.google.com/v3/signin/identifier?opparams=%253Faudience%253D799222349882-ne3i0s9jdm5s0p7ll2d7tlsi1vc1halt.apps.googleusercontent.com&dsh=S990461129%3A1794871277943593&client_id=799222349882-ne3i0s9jdm5s0p7ll2d7tlsi1vc1halt.apps.googleusercontent.com&nonce=jUuzgGXhv2P81HEDxCNo&o2v=2&redirect_uri=https%3A%2F%2Fauth.openai.com%2Fapi%2Faccounts%2Fcallback%2Fgoogle&response_type=code&scope=openid+profile+email&service=lso&state=2d320bce-cbcf-4b8a-996f-059dad5f82ff&flowName=GeneralOAuthFlow&continue=https%3A%2F%2Faccounts.google.com%2Fsignin%2Foauth%2Fv3%2Fconsent%3Fauthuser%3Dunknown%26part%3DAJi8hAPpxFUE5TL2VlWqrRpZ4PuC7DtCVkkE9EN0ANJ8gthBFyWVQBare5fm2voSX5WjfSdHHeOyT954ycgnO7V5_NwDrmAfrZfzVJUVhG8ClRVVw9A9mHaxIfI7VUUQteBZ1PqwfTQXha6kM1ryTfQUYSlQb22WlaRpgqtaEtLIYC1VW4kMxBAUiark2ch8xqoImcB2A50V3RACOrrhOkDH2OA3vDz_dqH61tCqa8nqGjgDyGKz0bEmJxaO8EHLhFafX-VXpemOtQPG6iIIUoMRC2Q4uyIepyM5z15K_T6Ki2vtOdm0ZjwObT2Gqu4QQDz3wtCDIsqDq3qn41zQg5a_os_gx3Q2ytPVVnG1Kftk5TxTUxgC6OKM9HO_QIYXjZmGb3wJ6VVzW1mijnEcqS9r9F1u8OylIjRityjQcg3_tnXZ_a8GDsq0ssXNy9_jv_L59FZB410x-Kpfw7B916nABepQrnGXYA%26flowName%3DGeneralOAuthFlow%26as%3DS990461129%253A1794871277943593%26client_id%3D799222349882-ne3i0s9jdm5s0p7ll2d7tlsi1vc1halt.apps.googleusercontent.com%26requestPath%3D%252Fsignin%252Foauth%252Fv3%252Fconsent%23&app_domain=https%3A%2F%2Fauth.openai.com&rart=ANgoxcfOVWMg-l4BL_yDeoOI9AThUF5JaI5l2kGljzp0FSB48TETDFRrL8IFa3qjioPoVGJLWjd8KHepaRU16Cs72P4i_2EXSkRbd7WSc_Ukgy9lb3c5Jng",
       "fileName": "",
       "title": "",
       "description": "",
@@ -270,7 +270,7 @@
       },
       "videoConfig": {
         "sourceType": "url",
-        "url": "",
+        "url": "https://accounts.google.com/v3/signin/identifier?opparams=%253Faudience%253D799222349882-ne3i0s9jdm5s0p7ll2d7tlsi1vc1halt.apps.googleusercontent.com&dsh=S990461129%3A1794871277943593&client_id=799222349882-ne3i0s9jdm5s0p7ll2d7tlsi1vc1halt.apps.googleusercontent.com&nonce=jUuzgGXhv2P81HEDxCNo&o2v=2&redirect_uri=https%3A%2F%2Fauth.openai.com%2Fapi%2Faccounts%2Fcallback%2Fgoogle&response_type=code&scope=openid+profile+email&service=lso&state=2d320bce-cbcf-4b8a-996f-059dad5f82ff&flowName=GeneralOAuthFlow&continue=https%3A%2F%2Faccounts.google.com%2Fsignin%2Foauth%2Fv3%2Fconsent%3Fauthuser%3Dunknown%26part%3DAJi8hAPpxFUE5TL2VlWqrRpZ4PuC7DtCVkkE9EN0ANJ8gthBFyWVQBare5fm2voSX5WjfSdHHeOyT954ycgnO7V5_NwDrmAfrZfzVJUVhG8ClRVVw9A9mHaxIfI7VUUQteBZ1PqwfTQXha6kM1ryTfQUYSlQb22WlaRpgqtaEtLIYC1VW4kMxBAUiark2ch8xqoImcB2A50V3RACOrrhOkDH2OA3vDz_dqH61tCqa8nqGjgDyGKz0bEmJxaO8EHLhFafX-VXpemOtQPG6iIIUoMRC2Q4uyIepyM5z15K_T6Ki2vtOdm0ZjwObT2Gqu4QQDz3wtCDIsqDq3qn41zQg5a_os_gx3Q2ytPVVnG1Kftk5TxTUxgC6OKM9HO_QIYXjZmGb3wJ6VVzW1mijnEcqS9r9F1u8OylIjRityjQcg3_tnXZ_a8GDsq0ssXNy9_jv_L59FZB410x-Kpfw7B916nABepQrnGXYA%26flowName%3DGeneralOAuthFlow%26as%3DS990461129%253A1794871277943593%26client_id%3D799222349882-ne3i0s9jdm5s0p7ll2d7tlsi1vc1halt.apps.googleusercontent.com%26requestPath%3D%252Fsignin%252Foauth%252Fv3%252Fconsent%23&app_domain=https%3A%2F%2Fauth.openai.com&rart=ANgoxcfOVWMg-l4BL_yDeoOI9AThUF5JaI5l2kGljzp0FSB48TETDFRrL8IFa3qjioPoVGJLWjd8KHepaRU16Cs72P4i_2EXSkRbd7WSc_Ukgy9lb3c5Jng",
         "fileName": "",
         "title": "",
         "description": "",
@@ -332,7 +332,7 @@
         "collaborators": ""
       },
       "createdAt": "2026-11-16T23:19:35.753Z",
-      "updatedAt": "2026-11-16T23:22:32.269Z",
+      "updatedAt": "2026-11-16T23:22:36.845Z",
       "joinCode": "1234",
       "accessCode": "1234",
       "progress": 95,
@@ -374,7 +374,7 @@
     "authorAvatar": "🦊",
     "authorRole": "Líder del Proyecto",
     "createdAt": "2026-11-16T23:19:35.753Z",
-    "updatedAt": "2026-11-16T23:22:21.566Z",
+    "updatedAt": "2026-11-16T23:22:26.209Z",
     "image": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
     "customProjectCodes": [
       {
