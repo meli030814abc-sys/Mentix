@@ -3950,7 +3950,7 @@ window.ProjectsView = {
     }
   },
 
-  submitJoinProjectCode() {
+  async submitJoinProjectCode() {
     const input = document.getElementById('project-join-code-input');
     const errEl = document.getElementById('project-join-error');
     const raw = input ? input.value.trim() : '';
@@ -3960,6 +3960,7 @@ window.ProjectsView = {
     if (!raw) {
       if (errEl) {
         errEl.textContent = '⚠️ Por favor escribe el código o PIN del proyecto.';
+        errEl.style.color = '#ff4d6d';
         errEl.style.display = 'block';
       }
       if (input) input.focus();
@@ -3967,36 +3968,143 @@ window.ProjectsView = {
     }
 
     const clean = raw.trim();
-    const lower = clean.toLowerCase();
-    const cleanDigits = clean.replace(/\D/g, '');
+    const normalize = str => String(str || '').trim().toLowerCase().replace(/[\s\-_]/g, '');
+    const cleanNorm = normalize(clean);
 
+    // Función auxiliar para buscar si el código existe en una lista de códigos
+    const findInCodes = (codeList) => {
+      if (!Array.isArray(codeList)) return null;
+      return codeList.find(c => {
+        if (!c) return false;
+        const targetStr = typeof c === 'string' ? c : (c.code || c.pin || c.joinCode || c.accessCode || '');
+        return normalize(targetStr) === cleanNorm;
+      }) || null;
+    };
+
+    // 1. Verificar primero en los códigos guardados localmente
+    const localCodes = this.getSavedProjectCodes();
+    let matchedCustom = findInCodes(localCodes);
+
+    // 2. Si no está en savedCodes, buscar en retos/proyectos locales de appState
     const challenges = window.appState?.challenges || [];
-    const projectItems = challenges.filter(c => 
-      c.projectType === 'presentation' || c.projectType === 'video' || c.projectType === 'document' || c.projectType === 'url' || c.isGovDataProject || c.isProject
-    );
-
-    // 1. Buscar o registrar código para que NUNCA se quede trabado
-    const savedCodes = this.getSavedProjectCodes();
-    let matchedCustom = savedCodes.find(sc => String(sc.code || '').trim().toLowerCase() === lower);
-
+    let matchedProject = null;
     if (!matchedCustom) {
-      // Registrar dinámicamente para que cualquier código (como 556) funcione de inmediato
-      matchedCustom = {
-        code: clean,
-        author: 'Docente / Mentor',
-        authorRole: 'teacher',
-        createdAt: new Date().toLocaleString()
-      };
-      savedCodes.unshift(matchedCustom);
-      this.persistCustomProjectCodes(savedCodes);
+      matchedProject = challenges.find(c => 
+        c && (
+          normalize(c.pin) === cleanNorm ||
+          normalize(c.code) === cleanNorm ||
+          normalize(c.joinCode) === cleanNorm ||
+          normalize(c.accessCode) === cleanNorm ||
+          normalize(c.id) === cleanNorm
+        )
+      );
+      if (matchedProject) {
+        matchedCustom = {
+          code: clean,
+          projectId: matchedProject.id,
+          author: matchedProject.author || 'Profesor',
+          authorRole: matchedProject.authorRole || 'teacher'
+        };
+      }
     }
 
-    // ✅ Código válido → guardar en almacenamiento
+    // 3. Si aún no se encuentra, consultar la NUBE (/api/challenges y Supabase)
+    // para verificar si el profesor o admin lo creó desde otro computador o red
+    if (!matchedCustom) {
+      if (errEl) {
+        errEl.textContent = '🔄 Verificando código con la red del profesor...';
+        errEl.style.color = '#38bdf8';
+        errEl.style.display = 'block';
+      }
+
+      // A. Consultar /api/challenges?customCodes=1
+      try {
+        const apiBase = (window.appRouter && typeof window.appRouter.getApiBase === 'function') ? window.appRouter.getApiBase() : '';
+        const res = await fetch(`${apiBase}/api/challenges?customCodes=1&t=${Date.now()}`);
+        if (res.ok) {
+          const cloudCodes = await res.json();
+          const list = Array.isArray(cloudCodes) ? cloudCodes : (cloudCodes?.customProjectCodes || []);
+          if (Array.isArray(list) && list.length > 0) {
+            this.persistCustomProjectCodes(list);
+            matchedCustom = findInCodes(list);
+          }
+        }
+      } catch (errCloud) {}
+
+      // B. Consultar archivo de retos global si aún no está
+      if (!matchedCustom) {
+        try {
+          const apiBase = (window.appRouter && typeof window.appRouter.getApiBase === 'function') ? window.appRouter.getApiBase() : '';
+          const resAll = await fetch(`${apiBase}/api/challenges?t=${Date.now()}`);
+          if (resAll.ok) {
+            const allCh = await resAll.json();
+            if (Array.isArray(allCh) && allCh.length > 0) {
+              const cloudCustomCodes = allCh[0]?.customProjectCodes || [];
+              if (Array.isArray(cloudCustomCodes) && cloudCustomCodes.length > 0) {
+                this.persistCustomProjectCodes(cloudCustomCodes);
+                matchedCustom = findInCodes(cloudCustomCodes);
+              }
+              if (!matchedCustom) {
+                const foundCh = allCh.find(c => 
+                  c && (
+                    normalize(c.pin) === cleanNorm ||
+                    normalize(c.code) === cleanNorm ||
+                    normalize(c.joinCode) === cleanNorm ||
+                    normalize(c.accessCode) === cleanNorm ||
+                    normalize(c.id) === cleanNorm
+                  )
+                );
+                if (foundCh) {
+                  matchedCustom = {
+                    code: clean,
+                    projectId: foundCh.id,
+                    author: foundCh.author || 'Profesor',
+                    authorRole: foundCh.authorRole || 'teacher'
+                  };
+                }
+              }
+            }
+          }
+        } catch (errCh) {}
+      }
+
+      // C. Consultar Supabase si está disponible
+      if (!matchedCustom && window.supabaseService && window.supabaseService.client) {
+        try {
+          const { data } = await window.supabaseService.client
+            .from('challenges')
+            .select('govdata_payload')
+            .eq('id', 'custom_project_codes_cloud_registry')
+            .single();
+          if (data && data.govdata_payload && Array.isArray(data.govdata_payload.codes)) {
+            this.persistCustomProjectCodes(data.govdata_payload.codes);
+            matchedCustom = findInCodes(data.govdata_payload.codes);
+          }
+        } catch (errSupa) {}
+      }
+    }
+
+    // 4. VALIDACIÓN ESTRICTA: Si después de buscar localmente y en la nube NO existe, RECHAZAR EL ACCESO
+    if (!matchedCustom) {
+      if (errEl) {
+        errEl.textContent = '❌ Código no válido o no encontrado. Solicita el código específico que te dio tu profesor o administrador.';
+        errEl.style.color = '#ff4d6d';
+        errEl.style.display = 'block';
+      }
+      if (input) {
+        input.focus();
+        input.select();
+      }
+      if (window.soundEngine && window.soundEngine.playError) window.soundEngine.playError();
+      return; // <-- BLOQUEA COMPLETAMENTE LA ENTRADA SI EL CÓDIGO NO ES REAL
+    }
+
+    // 5. ✅ Código específico válido encontrado → autorizar acceso
     try { localStorage.setItem('mentix_active_join_code', clean); } catch (e) {}
     try { sessionStorage.setItem('mentix_active_join_code', clean); } catch (e) {}
     if (window.soundEngine && window.soundEngine.playSuccess) window.soundEngine.playSuccess();
 
-    // 2. Determinar el proyecto o borrador para abrir directamente en el Asistente de Proyectos
+    // 6. Determinar el proyecto o borrador para abrir directamente en el Asistente de Proyectos
     let targetProjectId = null;
     if (matchedCustom.projectId) {
       const foundInChallenges = challenges.find(c => String(c.id).trim() === String(matchedCustom.projectId).trim());
@@ -4005,12 +4113,12 @@ window.ProjectsView = {
     if (!targetProjectId && window.ProjectWizard && typeof window.ProjectWizard.getAllSavedDrafts === 'function') {
       const savedDrafts = window.ProjectWizard.getAllSavedDrafts();
       const existingDraft = savedDrafts.find(d => 
-        d && (String(d.joinCode || '').trim().toLowerCase() === lower || String(d.accessCode || '').trim().toLowerCase() === lower || String(d.code || '').trim().toLowerCase() === lower)
+        d && (normalize(d.joinCode) === cleanNorm || normalize(d.accessCode) === cleanNorm || normalize(d.code) === cleanNorm)
       );
       if (existingDraft) targetProjectId = existingDraft.id;
     }
 
-    // 3. Cerrar vista de unirse y abrir DIRECTAMENTE el Asistente (Project Wizard)
+    // 7. Cerrar vista de unirse y abrir DIRECTAMENTE el Asistente (Project Wizard)
     const modalEl = document.getElementById('project-join-modal');
     if (modalEl) modalEl.remove();
 
@@ -8013,7 +8121,8 @@ Generado por Mentix - Plataforma de Proyectos y Retos
           saveGlobalState(window.appState);
         }
       }
-      fetch('/api/challenges', {
+      const apiBase = (window.appRouter && typeof window.appRouter.getApiBase === 'function') ? window.appRouter.getApiBase() : '';
+      fetch(`${apiBase}/api/challenges`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -8021,6 +8130,18 @@ Generado por Mentix - Plataforma de Proyectos y Retos
           customProjectCodes: cleanCodes
         })
       }).catch(() => {});
+
+      if (window.supabaseService && window.supabaseService.client) {
+        window.supabaseService.client.from('challenges').upsert({
+          id: 'custom_project_codes_cloud_registry',
+          title: 'Custom Project Codes Registry',
+          description: 'Registro de códigos de proyectos Mentix',
+          project_type: 'config',
+          is_public: true,
+          govdata_payload: { codes: cleanCodes },
+          updated_at: new Date().toISOString()
+        }).catch(() => {});
+      }
     } catch (e) {}
   },
 

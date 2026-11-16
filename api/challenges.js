@@ -9,10 +9,69 @@ let inMemoryChallenges = null;
 const DELETED_PATH = 'data/deleted_challenges.json';
 let inMemoryDeleted = [];
 
+const CODES_PATH = 'data/custom_project_codes.json';
+let inMemoryCodes = null;
+
 function ghHeaders() {
   const h = { 'Accept': 'application/vnd.github.v3+json', 'User-Agent': 'Mentix-App' };
   if (GITHUB_TOKEN) h['Authorization'] = `Bearer ${GITHUB_TOKEN}`;
   return h;
+}
+
+async function readCustomProjectCodes() {
+  if (Array.isArray(inMemoryCodes) && inMemoryCodes.length > 0) {
+    return { codes: inMemoryCodes, sha: null };
+  }
+  try {
+    const r = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/contents/${CODES_PATH}?ref=main`, { headers: ghHeaders(), cache: 'no-store' });
+    if (r.ok) {
+      const d = await r.json();
+      const str = Buffer.from(d.content, 'base64').toString('utf8');
+      const arr = JSON.parse(str);
+      if (Array.isArray(arr)) {
+        inMemoryCodes = arr;
+        return { codes: arr, sha: d.sha };
+      }
+    }
+  } catch (e) {}
+  try {
+    const fs = await import('fs');
+    const path = await import('path');
+    const localPath = path.join(process.cwd(), CODES_PATH);
+    if (fs.existsSync(localPath)) {
+      const parsed = JSON.parse(fs.readFileSync(localPath, 'utf8'));
+      if (Array.isArray(parsed)) {
+        inMemoryCodes = parsed;
+        return { codes: parsed, sha: null };
+      }
+    }
+  } catch (e) {}
+  return { codes: inMemoryCodes || [], sha: null };
+}
+
+async function saveCustomProjectCodes(newCodes) {
+  const cleanList = Array.isArray(newCodes) ? newCodes : [];
+  inMemoryCodes = cleanList;
+  if (!GITHUB_TOKEN) return false;
+  for (let attempt = 0; attempt < 3; attempt++) {
+    const { sha } = await readCustomProjectCodes();
+    const payload = {
+      message: `chore(data): sincronizar codigos de proyectos [skip ci]`,
+      content: Buffer.from(JSON.stringify(cleanList, null, 2), 'utf8').toString('base64'),
+      branch: 'main'
+    };
+    if (sha) payload.sha = sha;
+    try {
+      const r = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/contents/${CODES_PATH}`, {
+        method: 'PUT',
+        headers: { ...ghHeaders(), 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      if (r.ok) return true;
+    } catch (e) {}
+    await new Promise(r => setTimeout(r, 600));
+  }
+  return false;
 }
 
 async function readDeletedIds() {
@@ -82,6 +141,12 @@ export default async function handler(req, res) {
   }
 
   // 1. GET: Consultar todos los retos y proyectos compartidos en la nube
+  if (req.method === 'GET' && req.query && (req.query.customCodes || req.query.codes)) {
+    const { codes } = await readCustomProjectCodes();
+    res.setHeader('Cache-Control', 'no-store');
+    return res.status(200).json(codes);
+  }
+
   if (req.method === 'GET' && req.query && req.query.deleted) {
     const { ids } = await readDeletedIds();
     res.setHeader('Cache-Control', 'no-store');
@@ -212,11 +277,13 @@ export default async function handler(req, res) {
       // B. Soporte para sincronización y persistencia mundial de códigos de proyectos
       if (body && (body.type === 'CUSTOM_PROJECT_CODES' || body.customProjectCodes)) {
         const newCodes = Array.isArray(body.customProjectCodes) ? body.customProjectCodes : [];
+        const savedDedicated = await saveCustomProjectCodes(newCodes);
+
         let currentChallenges = [];
         let currentSha = null;
         const headers = { 'Accept': 'application/vnd.github.v3+json', 'User-Agent': 'Mentix-App' };
         if (GITHUB_TOKEN) headers['Authorization'] = `Bearer ${GITHUB_TOKEN}`;
-        let savedInGitHub = false;
+        let savedInGitHub = savedDedicated;
 
         for (let attempt = 0; attempt < 3 && !savedInGitHub; attempt++) {
           try {
@@ -256,7 +323,7 @@ export default async function handler(req, res) {
             break;
           }
         }
-        inMemoryChallenges = currentChallenges;
+        if (currentChallenges.length > 0) inMemoryChallenges = currentChallenges;
         return res.status(200).json({ success: true, customProjectCodes: newCodes, persisted: savedInGitHub });
       }
 

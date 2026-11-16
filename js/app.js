@@ -1525,6 +1525,18 @@ class AppRouter {
     try {
       let cloudChallenges = null;
 
+      // Sincronizar códigos de proyectos creados por profesores y admins en la nube
+      try {
+        const apiBase = this.getApiBase();
+        const resCodes = await fetch(`${apiBase}/api/challenges?customCodes=1&t=${Date.now()}`);
+        if (resCodes.ok) {
+          const list = await resCodes.json();
+          if (Array.isArray(list) && list.length > 0 && window.ProjectsView && typeof window.ProjectsView.persistCustomProjectCodes === 'function') {
+            window.ProjectsView.persistCustomProjectCodes(list);
+          }
+        }
+      } catch (errCodes) {}
+
       // 1. Consultar API global de retos en Vercel
       try {
         const apiBase = this.getApiBase();
