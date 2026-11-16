@@ -199,7 +199,7 @@
         "collaborators": ""
       },
       "createdAt": "2026-11-16T18:21:52.529Z",
-      "updatedAt": "2026-11-16T18:44:26.421Z",
+      "updatedAt": "2026-11-16T18:44:33.078Z",
       "joinCode": "556",
       "accessCode": "556",
       "progress": 50,
@@ -207,7 +207,7 @@
       "projectRoadmap": [
         {
           "title": "Planeación",
-          "description": "Conformación del equipo y definición de objetivos.",
+          "description": "Conformación del equipo y definición de ojetivos.",
           "status": "pending",
           "icon": "clipboard",
           "progress": 10
@@ -241,7 +241,7 @@
     "authorAvatar": "🐯",
     "authorRole": "admin",
     "createdAt": "2026-11-16T18:21:52.529Z",
-    "updatedAt": "2026-11-16T18:44:25.261Z",
+    "updatedAt": "2026-11-16T18:44:31.839Z",
     "image": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
     "rejectionReason": "",
     "joinCode": "556",
