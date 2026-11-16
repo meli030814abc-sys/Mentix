@@ -970,6 +970,61 @@
   box-sizing: border-box;
 }
 
+/* ============================================================
+   BLINDAJE DE TÍTULOS Y TEXTOS EN phub-fullpage-join
+   Evita que body.light-theme / body.projects-pure-white-theme
+   sobreescriban los colores del panel oscuro de unión
+   ============================================================ */
+body.light-theme #phub-fullpage-join h1,
+body.light-theme #phub-fullpage-join h2,
+body.light-theme #phub-fullpage-join h3,
+body.light-theme #phub-fullpage-join h4,
+body.light-theme #phub-fullpage-join h5,
+body.light-theme #phub-fullpage-join h6,
+body.projects-pure-white-theme #phub-fullpage-join h1,
+body.projects-pure-white-theme #phub-fullpage-join h2,
+body.projects-pure-white-theme #phub-fullpage-join h3,
+body.projects-pure-white-theme #phub-fullpage-join h4,
+body.projects-pure-white-theme #phub-fullpage-join h5,
+body.projects-pure-white-theme #phub-fullpage-join h6,
+#phub-fullpage-join h1,
+#phub-fullpage-join h2,
+#phub-fullpage-join h3,
+#phub-fullpage-join .phub-fp-title {
+  color: #ffffff !important;
+  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.75) !important;
+}
+
+body.light-theme #phub-fullpage-join p,
+body.light-theme #phub-fullpage-join .phub-fp-subtitle,
+body.light-theme #phub-fullpage-join .phub-fp-callout .txt p,
+body.projects-pure-white-theme #phub-fullpage-join p,
+body.projects-pure-white-theme #phub-fullpage-join .phub-fp-subtitle,
+body.projects-pure-white-theme #phub-fullpage-join .phub-fp-callout .txt p,
+#phub-fullpage-join .phub-fp-subtitle,
+#phub-fullpage-join .phub-fp-callout .txt p {
+  color: #cbd5e1 !important;
+}
+
+body.light-theme #phub-fullpage-join .phub-fp-subtitle strong,
+body.light-theme #phub-fullpage-join strong,
+body.projects-pure-white-theme #phub-fullpage-join .phub-fp-subtitle strong,
+#phub-fullpage-join .phub-fp-subtitle strong {
+  color: #38bdf8 !important;
+}
+
+body.light-theme #phub-fullpage-join .phub-fp-callout .txt strong,
+body.projects-pure-white-theme #phub-fullpage-join .phub-fp-callout .txt strong,
+#phub-fullpage-join .phub-fp-callout .txt strong {
+  color: #93c5fd !important;
+}
+
+body.light-theme #phub-fullpage-join .phub-fp-label-txt,
+body.projects-pure-white-theme #phub-fullpage-join .phub-fp-label-txt,
+#phub-fullpage-join .phub-fp-label-txt {
+  color: #e2e8f0 !important;
+}
+
 .phub-fp-bg {
   position: fixed;
   inset: 0;
