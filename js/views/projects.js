@@ -7900,6 +7900,17 @@ Generado por Mentix - Plataforma de Proyectos y Retos
   getSavedProjectCodes() {
     const merged = [];
     const seen = new Set();
+    const u = window.appState?.currentUser;
+    const isCurrentAdmin = this.isAdminUser ? this.isAdminUser() : Boolean(
+      u && (
+        (u.role || '').toLowerCase() === 'admin' ||
+        (u.role || '').toLowerCase() === 'administrador' ||
+        localStorage.getItem('mentix_admin_override') === 'true'
+      )
+    );
+    const defaultAuthor = isCurrentAdmin ? (u?.name || u?.username || 'Administrador') : (u?.name || u?.username || 'Profesor');
+    const defaultRole = isCurrentAdmin ? 'admin' : (u?.role || 'teacher');
+
     const addEntry = (item) => {
       if (!item) return;
       const codeStr = typeof item === 'string' ? item.trim() : String(item.code || '').trim();
@@ -7907,11 +7918,32 @@ Generado por Mentix - Plataforma de Proyectos y Retos
       const key = codeStr.toLowerCase();
       if (seen.has(key)) return;
       seen.add(key);
-      merged.push(typeof item === 'object' ? { ...item, code: codeStr } : { code: codeStr, author: 'Profesor', createdAt: '' });
+      if (typeof item === 'object' && item !== null) {
+        const itemIsAdmin = item.authorRole === 'admin' || 
+          (typeof item.author === 'string' && item.author.toLowerCase().includes('admin'));
+        merged.push({
+          ...item,
+          code: codeStr,
+          author: item.author || defaultAuthor,
+          authorRole: itemIsAdmin ? 'admin' : (item.authorRole || defaultRole)
+        });
+      } else {
+        merged.push({
+          code: codeStr,
+          author: defaultAuthor,
+          authorRole: defaultRole,
+          createdAt: ''
+        });
+      }
     };
 
     if (this.lastCreatedCode) {
-      addEntry({ code: this.lastCreatedCode, author: 'Profesor', createdAt: new Date().toLocaleString() });
+      addEntry({
+        code: this.lastCreatedCode,
+        author: defaultAuthor,
+        authorRole: defaultRole,
+        createdAt: new Date().toLocaleString()
+      });
     }
     if (Array.isArray(this._memoryCustomCodes)) {
       this._memoryCustomCodes.forEach(addEntry);
@@ -8013,6 +8045,18 @@ Generado por Mentix - Plataforma de Proyectos y Retos
     }
 
     const u = window.appState?.currentUser || {};
+    const isAdmin = this.isAdminUser ? this.isAdminUser() : Boolean(
+      u && (
+        (u.role || '').toLowerCase() === 'admin' ||
+        (u.role || '').toLowerCase() === 'administrador' ||
+        localStorage.getItem('mentix_admin_override') === 'true'
+      )
+    );
+    const authorName = isAdmin
+      ? (u.name || u.username || 'Administrador')
+      : (u.name || u.username || 'Profesor');
+    const authorRole = isAdmin ? 'admin' : (u.role || 'teacher');
+
     // Capturar el proyecto vinculado a este código (el select ya fue declarado arriba)
     const linkedProjectId = projectSelect ? projectSelect.value : '';
 
@@ -8031,7 +8075,8 @@ Generado por Mentix - Plataforma de Proyectos y Retos
     const newEntry = {
       code: rawCode,
       projectId: linkedProjectId,
-      author: u.name || u.username || 'Profesor',
+      author: authorName,
+      authorRole: authorRole,
       createdAt: new Date().toLocaleString()
     };
     codes.unshift(newEntry);
@@ -8069,6 +8114,18 @@ Generado por Mentix - Plataforma de Proyectos y Retos
     this.render();
   },
 
+  linkCodeToProject(code, projectId) {
+    if (!code || !projectId) return;
+    const codes = this.getSavedProjectCodes();
+    const target = codes.find(c => String(c.code).toLowerCase() === String(code).toLowerCase());
+    if (target) {
+      target.projectId = projectId;
+      this.persistCustomProjectCodes(codes);
+      if (window.soundEngine) window.soundEngine.playClick();
+      this.render();
+    }
+  },
+
   renderProjectSelectorView(container) {
     const isTeacherOrAdmin = this.isTeacherOrAdmin();
     if (!isTeacherOrAdmin) {
@@ -8076,6 +8133,22 @@ Generado por Mentix - Plataforma de Proyectos y Retos
       this.render();
       return;
     }
+
+    // Detectar si el usuario actual es admin para adaptar textos y estilos
+    const currentUserForCode = window.appState?.currentUser;
+    const isAdminUser = this.isAdminUser ? this.isAdminUser() : Boolean(
+      currentUserForCode && (
+        (currentUserForCode.role || '').toLowerCase() === 'admin' ||
+        (currentUserForCode.role || '').toLowerCase() === 'administrador' ||
+        localStorage.getItem('mentix_admin_override') === 'true'
+      )
+    );
+    const panelLabel = isAdminUser ? '🛡️ Panel de Administrador' : '🛡️ Panel Docente Exclusivo';
+    const generadorIcon = isAdminUser ? '⚙️' : '👨‍🏫';
+    const generadorLabel = isAdminUser ? 'Generador Admin de Códigos' : 'Generador de Código de Acceso';
+    const autorDefault = isAdminUser
+      ? (currentUserForCode?.name || currentUserForCode?.username || 'Administrador')
+      : (currentUserForCode?.name || currentUserForCode?.username || 'Profesor');
 
     const isLight = document.body.classList.contains('projects-pure-white-theme') || 
                     document.body.classList.contains('light-theme') || 
@@ -8109,6 +8182,18 @@ Generado por Mentix - Plataforma de Proyectos y Retos
     const cancelBtnColor = isLight ? '#334155' : '#ffffff';
     const cancelBtnBorder = isLight ? '1.5px solid #cbd5e1' : '1.5px solid rgba(255, 255, 255, 0.2)';
 
+    const backBtnText = isAdminUser ? '← Volver al Panel Admin' : '← Volver a Proyectos';
+    const backBtnOnclick = isAdminUser
+      ? "if (window.appRouter && window.appRouter.navigate) { window.appRouter.navigate('admin', { tab: 'projects' }); } else { window.ProjectsView.closeCreateProjectModal(); }"
+      : "window.ProjectsView.closeCreateProjectModal()";
+    const headerDescription = isAdminUser
+      ? 'Como Administrador, genera y administra los códigos de acceso vinculados a proyectos educativos para estudiantes y docentes.'
+      : 'Escribe tú mismo el código personalizado que elijas para tu proyecto didáctico y compártelo con tus estudiantes para que se unan a la sesión.';
+    const instructionsTitle = isAdminUser ? '¿Cómo funciona la asignación de códigos?' : '¿Cómo lo usan tus estudiantes?';
+    const instructionsBody = isAdminUser
+      ? 'Al crear o asignar un código vinculado a un proyecto, cualquier estudiante o docente que entre a <strong>"🎮 Unirse a un código"</strong> accederá instantáneamente a las actividades y recursos del proyecto.'
+      : 'Tus alumnos solo deben ingresar a la plataforma y hacer clic en el botón <strong>"🎮 Unirse a un código"</strong>. Al escribir tu código, entrarán automáticamente a tus materiales y lecciones.';
+
     container.innerHTML = `
       <div class="project-code-fullpage animate-fade-in" style="width: 100%; max-width: 1200px; margin: 0 auto; padding: 2rem 1.25rem 5rem; min-height: 85vh;">
         
@@ -8116,14 +8201,14 @@ Generado por Mentix - Plataforma de Proyectos y Retos
         <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem; gap: 1rem; flex-wrap: wrap;">
           <button 
             class="btn btn-outline" 
-            onclick="ProjectsView.closeCreateProjectModal()"
+            onclick="${backBtnOnclick}"
             style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.65rem 1.25rem; font-weight: 800; border-radius: 12px; background: ${cancelBtnBg}; color: ${cancelBtnColor}; border: ${cancelBtnBorder}; cursor: pointer; font-size: 0.95rem;"
           >
-            ← Volver a Proyectos
+            ${backBtnText}
           </button>
           
           <div style="display: inline-flex; align-items: center; gap: 0.5rem; background: ${isLight ? 'rgba(14, 116, 144, 0.1)' : 'rgba(0, 245, 212, 0.15)'}; color: ${isLight ? '#0e7490' : 'var(--neon-cyan)'}; font-weight: 900; font-size: 0.82rem; text-transform: uppercase; padding: 0.4rem 1rem; border-radius: 9999px; letter-spacing: 0.6px; border: 1px solid ${isLight ? 'rgba(14, 116, 144, 0.3)' : 'rgba(0,245,212,0.4)'};">
-            <span>🛡️</span> Panel Docente Exclusivo
+            <span>🛡️</span> ${panelLabel}
           </div>
         </div>
 
@@ -8134,7 +8219,7 @@ Generado por Mentix - Plataforma de Proyectos y Retos
           <div class="glass-panel" style="padding: 2.5rem 2.25rem; border-radius: 22px; border: ${cardBorder}; background: ${cardBg}; box-shadow: ${cardShadow}; text-align: left;">
             
             <div style="display: inline-flex; align-items: center; gap: 0.45rem; background: ${isLight ? 'rgba(14, 116, 144, 0.12)' : 'rgba(0, 245, 212, 0.15)'}; color: ${isLight ? '#0e7490' : 'var(--neon-cyan)'}; font-weight: 900; font-size: 0.8rem; text-transform: uppercase; padding: 0.35rem 0.9rem; border-radius: 9999px; letter-spacing: 0.6px; margin-bottom: 1.25rem; border: 1px solid ${isLight ? 'rgba(14, 116, 144, 0.3)' : 'rgba(0,245,212,0.4)'};">
-              <span>👨‍🏫</span> Generador de Código de Acceso
+              <span>${generadorIcon}</span> ${generadorLabel}
             </div>
 
             <h1 style="font-size: clamp(1.8rem, 3.2vw, 2.4rem); font-weight: 900; color: ${titleColor} !important; margin: 0 0 0.6rem; line-height: 1.2;">
@@ -8142,7 +8227,7 @@ Generado por Mentix - Plataforma de Proyectos y Retos
             </h1>
 
             <p style="color: ${textColor} !important; font-size: 1rem; margin: 0 0 2rem; line-height: 1.55;">
-              Escribe tú mismo el código personalizado que elijas para tu proyecto didáctico y compártelo con tus estudiantes para que se unan a la sesión.
+              ${headerDescription}
             </p>
 
             <form onsubmit="event.preventDefault(); window.ProjectsView.saveCustomProjectCode();">
@@ -8177,7 +8262,7 @@ Generado por Mentix - Plataforma de Proyectos y Retos
                 <button type="submit" class="btn btn-cyan btn-lg" style="flex: 1; min-width: 200px; padding: 0.95rem 2rem; font-weight: 900; font-size: 1.05rem; border-radius: 12px; box-shadow: 0 6px 24px rgba(0,245,212,0.4); display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
                   <span>✅</span> Guardar Mi Código
                 </button>
-                <button type="button" class="btn btn-outline" onclick="window.ProjectsView.closeCreateProjectModal()" style="padding: 0.95rem 1.5rem; font-weight: 800; border-radius: 12px; background: ${cancelBtnBg}; color: ${cancelBtnColor}; border: ${cancelBtnBorder};">
+                <button type="button" class="btn btn-outline" onclick="${backBtnOnclick}" style="padding: 0.95rem 1.5rem; font-weight: 800; border-radius: 12px; background: ${cancelBtnBg}; color: ${cancelBtnColor}; border: ${cancelBtnBorder};">
                   Cancelar
                 </button>
               </div>
@@ -8186,7 +8271,7 @@ Generado por Mentix - Plataforma de Proyectos y Retos
             ${recentCode ? `
               <div style="margin-top: 2.25rem; padding-top: 1.75rem; border-top: 1px solid ${isLight ? 'rgba(0,0,0,0.08)' : 'rgba(255,255,255,0.1)'};">
                 <div style="font-size: 0.85rem; font-weight: 800; color: ${textColor} !important; text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 0.75rem;">
-                  📢 Código activo elegido para tus estudiantes:
+                  📢 Código activo elegido para los estudiantes:
                 </div>
                 <div style="display: flex; align-items: center; justify-content: space-between; gap: 1rem; background: ${isLight ? 'rgba(14, 116, 144, 0.08)' : 'rgba(0, 245, 212, 0.12)'}; border: 2px solid ${isLight ? '#0e7490' : 'var(--neon-cyan)'}; padding: 1rem 1.4rem; border-radius: 14px; flex-wrap: wrap;">
                   <div>
@@ -8194,7 +8279,7 @@ Generado por Mentix - Plataforma de Proyectos y Retos
                       ${this.escapeHtml(recentCode)}
                     </span>
                     <div style="font-size: 0.78rem; color: ${textColor}; margin-top: 0.25rem;">
-                      Comparte este código para que tus estudiantes se unan al proyecto.
+                      Comparte este código para que los estudiantes se unan al proyecto.
                     </div>
                   </div>
                   <button type="button" class="btn btn-cyan" onclick="window.ProjectsView.copyCustomProjectCode('${this.escapeHtml(recentCode)}')" style="font-weight: 800; padding: 0.65rem 1.25rem; border-radius: 10px; font-size: 0.9rem;">
@@ -8214,7 +8299,7 @@ Generado por Mentix - Plataforma de Proyectos y Retos
               <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem; gap: 0.5rem; flex-wrap: wrap;">
                 <div>
                   <h3 style="font-size: 1.15rem; font-weight: 900; color: ${titleColor} !important; margin: 0 0 0.2rem;">
-                    🗂️ Mis Códigos Creados
+                    🗂️ Códigos Creados
                   </h3>
                   <div style="font-size: 0.8rem; color: ${textColor} !important;">
                     ${savedCodes.length} código(s) disponible(s)
@@ -8230,7 +8315,7 @@ Generado por Mentix - Plataforma de Proyectos y Retos
               ${savedCodes.length === 0 ? `
                 <div style="text-align: center; padding: 2.5rem 1rem; color: ${textColor};">
                   <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">🏷️</div>
-                  <div style="font-weight: 800; margin-bottom: 0.25rem; color: ${titleColor};">Aún no has creado ningún código</div>
+                  <div style="font-weight: 800; margin-bottom: 0.25rem; color: ${titleColor};">Aún no hay códigos creados</div>
                   <div style="font-size: 0.85rem;">Escribe uno en el formulario de la izquierda para comenzar.</div>
                 </div>
               ` : `
@@ -8240,17 +8325,38 @@ Generado por Mentix - Plataforma de Proyectos y Retos
                     const linkedName = linkedProj
                       ? this.escapeHtml(linkedProj.title || item.projectId)
                       : (item.projectId ? '(proyecto eliminado)' : '⚠️ Sin proyecto vinculado');
+
+                    const isItemAdmin = item.authorRole === 'admin' || 
+                                        (typeof item.author === 'string' && item.author.toLowerCase().includes('admin'));
+                    const authorLabel = isItemAdmin ? (item.author || 'Administrador') : (isAdminUser && (!item.author || item.author === 'Profesor') ? (currentUserForCode?.name || 'Administrador') : (item.author || autorDefault));
+                    const roleBadge = (isItemAdmin || (isAdminUser && (!item.authorRole || item.authorRole === 'admin')))
+                      ? `<span class="badge-tag" style="background: rgba(168, 85, 247, 0.2); color: #c084fc; font-weight: 800; padding: 0.15rem 0.5rem; border-radius: 6px; font-size: 0.72rem; margin-left: 0.35rem; border: 1px solid rgba(168, 85, 247, 0.4);">🛡️ Admin</span>`
+                      : `<span class="badge-tag" style="background: rgba(14, 116, 144, 0.2); color: #38bdf8; font-weight: 800; padding: 0.15rem 0.5rem; border-radius: 6px; font-size: 0.72rem; margin-left: 0.35rem; border: 1px solid rgba(14, 116, 144, 0.4);">👨‍🏫 Docente</span>`;
+
                     return `
                     <div style="display: flex; align-items: center; justify-content: space-between; background: ${itemBg}; border: ${itemBorder}; padding: 0.75rem 1rem; border-radius: 12px; gap: 0.75rem; transition: transform 0.15s, border-color 0.15s;">
-                      <div>
-                        <div style="font-weight: 900; color: ${itemText} !important; font-size: 1.1rem; letter-spacing: 1.5px;">
-                          ${this.escapeHtml(item.code)}
+                      <div style="flex: 1; min-width: 0;">
+                        <div style="display: flex; align-items: center; gap: 0.4rem; flex-wrap: wrap;">
+                          <span style="font-weight: 900; color: ${itemText} !important; font-size: 1.15rem; letter-spacing: 1.5px;">
+                            ${this.escapeHtml(item.code)}
+                          </span>
+                          ${roleBadge}
                         </div>
-                        <div style="font-size: 0.76rem; color: ${itemSub} !important; margin-top: 0.15rem;">
-                          📁 ${linkedName} · por: ${this.escapeHtml(item.author || 'Profesor')}
+                        <div style="font-size: 0.76rem; color: ${itemSub} !important; margin-top: 0.2rem; display: flex; align-items: center; gap: 0.35rem; flex-wrap: wrap;">
+                          <span>📁 ${linkedName}</span>
+                          <span>·</span>
+                          <span>por: <strong>${this.escapeHtml(authorLabel)}</strong></span>
                         </div>
+                        ${!item.projectId ? `
+                          <div style="margin-top: 0.45rem;">
+                            <select onchange="window.ProjectsView.linkCodeToProject('${this.escapeHtml(item.code)}', this.value)" style="padding: 0.3rem 0.6rem; font-size: 0.75rem; border-radius: 8px; background: ${inputBg}; color: ${inputColor}; border: 1.5px dashed #f59e0b; outline: none; cursor: pointer; max-width: 250px;">
+                              <option value="">🔗 Vincular proyecto ahora...</option>
+                              ${projectOptionsHtml}
+                            </select>
+                          </div>
+                        ` : ''}
                       </div>
-                      <div style="display: flex; gap: 0.45rem; align-items: center;">
+                      <div style="display: flex; gap: 0.45rem; align-items: center; flex-shrink: 0;">
                         <button type="button" class="btn btn-outline btn-sm" onclick="window.ProjectsView.copyCustomProjectCode('${this.escapeHtml(item.code)}')" style="padding: 0.4rem 0.75rem; font-size: 0.8rem; font-weight: 800; background: ${isLight ? '#ffffff' : 'transparent'}; color: ${isLight ? '#0f172a' : '#fff'}; border-color: ${isLight ? '#cbd5e1' : 'rgba(255,255,255,0.2)'};" title="Copiar código">
                           📋 Copiar
                         </button>
@@ -8264,13 +8370,13 @@ Generado por Mentix - Plataforma de Proyectos y Retos
               `}
             </div>
 
-            <!-- Tarjeta de Instrucciones para el Docente -->
+            <!-- Tarjeta de Instrucciones Adaptativa -->
             <div class="glass-panel" style="padding: 1.5rem 1.75rem; border-radius: 18px; border: ${cardBorder}; background: ${isLight ? '#f8fafc' : 'rgba(15, 23, 42, 0.7)'}; box-shadow: ${cardShadow};">
               <h4 style="font-size: 0.95rem; font-weight: 900; color: ${titleColor} !important; margin: 0 0 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
-                <span>💡</span> ¿Cómo lo usan tus estudiantes?
+                <span>💡</span> ${instructionsTitle}
               </h4>
               <p style="font-size: 0.84rem; color: ${textColor} !important; margin: 0; line-height: 1.5;">
-                Tus alumnos solo deben ingresar a la plataforma y hacer clic en el botón <strong>"🎮 Unirse a un código"</strong>. Al escribir tu código, entrarán automáticamente a tus materiales y lecciones.
+                ${instructionsBody}
               </p>
             </div>
 

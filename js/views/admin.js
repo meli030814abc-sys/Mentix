@@ -1042,6 +1042,9 @@ window.AdminView = {
           <p>Supervisa, administra y gestiona exclusivamente los proyectos educativos de la plataforma.</p>
         </div>
         <div class="admin-header-actions">
+          <button class="btn btn-outline" onclick="window.AdminView.bannerAction('code')" style="display: inline-flex; align-items: center; gap: 0.4rem; font-weight: 800; border-color: rgba(0, 245, 212, 0.45); color: #00f5d4;">
+            <span>🔑</span> Códigos de Proyecto
+          </button>
           <button class="btn btn-outline" onclick="window.AdminView.exportProjectsCSV()">
             <span>📥</span> Exportar CSV
           </button>
