@@ -656,7 +656,13 @@ window.ProjectWizard = {
   goToStep(targetStep) {
     this.collectCurrentStepInputs();
     const num = Math.max(1, Math.min(this.totalSteps, Number(targetStep) || 1));
+    // Si avanza (va a un paso mayor), validar el paso actual obligatoriamente
     if (num > this.currentStep) {
+      const errors = this.validateStepStrict(this.currentStep);
+      if (errors.length > 0) {
+        this.showStepValidationErrors(errors);
+        return;
+      }
       if (!this.draft.completedSteps.includes(this.currentStep)) {
         this.draft.completedSteps.push(this.currentStep);
       }
@@ -670,14 +676,15 @@ window.ProjectWizard = {
 
   nextStep() {
     this.collectCurrentStepInputs();
-    const validationMsg = this.validateStepSoft(this.currentStep);
-    if (validationMsg) {
-      const warnBox = document.getElementById('gdn-step-validation-msg');
-      if (warnBox) {
-        warnBox.innerHTML = validationMsg;
-        warnBox.style.display = 'block';
-      }
+    const errors = this.validateStepStrict(this.currentStep);
+    if (errors.length > 0) {
+      this.showStepValidationErrors(errors);
+      return;
     }
+    // Ocultar mensajes previos de error
+    const warnBox = document.getElementById('gdn-step-validation-msg');
+    if (warnBox) warnBox.style.display = 'none';
+
     if (!this.draft.completedSteps.includes(this.currentStep)) {
       this.draft.completedSteps.push(this.currentStep);
     }
@@ -701,11 +708,131 @@ window.ProjectWizard = {
     }
   },
 
-  validateStepSoft(step) {
-    if (!this.draft) return '';
-    if (step === 1 && !this.draft.title.trim()) {
-      return '💡 Sugerencia: escribe al menos un nombre provisional para identificar tu proyecto más fácilmente.';
+  // Muestra los errores de validación en la UI
+  showStepValidationErrors(errors) {
+    const warnBox = document.getElementById('gdn-step-validation-msg');
+    if (warnBox) {
+      warnBox.innerHTML = `
+        <div style="display:flex; align-items:flex-start; gap:0.65rem;">
+          <span style="font-size:1.3rem; flex-shrink:0;">🚫</span>
+          <div>
+            <strong style="display:block; margin-bottom:0.35rem; font-size:0.92rem; color:#b91c1c;">Completa todos los campos obligatorios para continuar:</strong>
+            <ul style="margin:0; padding-left:1.2rem; list-style:disc; font-size:0.85rem; line-height:1.65; color:#92400e;">
+              ${errors.map(e => '<li>' + e + '</li>').join('')}
+            </ul>
+          </div>
+        </div>
+      `;
+      warnBox.style.display = 'block';
+      warnBox.style.background = 'rgba(239, 68, 68, 0.1)';
+      warnBox.style.borderColor = 'rgba(239, 68, 68, 0.5)';
+      warnBox.style.color = '#991b1b';
+      warnBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      if (window.soundEngine && window.soundEngine.playError) window.soundEngine.playError();
     }
+  },
+
+  // Validación ESTRICTA por paso — devuelve array de errores (vacío = OK)
+  validateStepStrict(step) {
+    const d = this.draft;
+    if (!d) return [];
+    const errs = [];
+
+    switch (step) {
+      case 1: // Identidad básica
+        if (!d.title || !d.title.trim()) errs.push('El <strong>Nombre del proyecto</strong> es obligatorio.');
+        if (!d.subtitle || !d.subtitle.trim()) errs.push('El <strong>Subtítulo o lema descriptivo</strong> es obligatorio.');
+        break;
+
+      case 2: // Descripción
+        if (!d.shortDescription || !d.shortDescription.trim()) errs.push('La <strong>Descripción corta (Resumen ejecutivo)</strong> es obligatoria.');
+        if (!d.fullDescription || !d.fullDescription.trim()) errs.push('La <strong>Descripción completa del proyecto</strong> es obligatoria.');
+        break;
+
+      case 3: // Categoría y público
+        if (!d.category || !d.category.trim()) errs.push('Selecciona una <strong>Categoría del proyecto</strong>.');
+        if (!d.targetAudience || !d.targetAudience.trim()) errs.push('El <strong>Público objetivo</strong> es obligatorio.');
+        break;
+
+      case 4: // Ruta del proyecto
+        if (!Array.isArray(d.projectRoadmap) || d.projectRoadmap.length === 0) {
+          errs.push('Debes agregar al menos una <strong>etapa en la Ruta del Proyecto</strong>.');
+        } else {
+          const emptyStages = d.projectRoadmap.filter(s => !s.title || !s.title.trim());
+          if (emptyStages.length > 0) errs.push('Todas las etapas deben tener un <strong>título</strong>.');
+        }
+        break;
+
+      case 5: // Autores
+        { const ac = d.authorsConfig || {};
+        if (!(ac.authorsList || d.author || '').trim()) errs.push('Los <strong>Nombres de los autores</strong> son obligatorios.');
+        if (!(ac.authorsEmails || d.authorEmail || '').trim()) errs.push('Los <strong>Correos electrónicos</strong> de contacto son obligatorios.');
+        if (!(ac.authorsRole || '').trim()) errs.push('El <strong>Rol o función</strong> en el proyecto es obligatorio.');
+        if (!(ac.authorsInstitution || '').trim()) errs.push('La <strong>Institución educativa</strong> es obligatoria.');
+        } break;
+
+      case 6: // Problema, objetivo y beneficios
+        if (!d.problemStatement || !d.problemStatement.trim()) errs.push('El <strong>Problema o necesidad</strong> que aborda es obligatorio.');
+        if (!d.mainObjective || !d.mainObjective.trim()) errs.push('El <strong>Objetivo principal</strong> es obligatorio.');
+        if (!d.benefits || !d.benefits.trim()) errs.push('Los <strong>Beneficios para el usuario</strong> son obligatorios.');
+        break;
+
+      case 7: // Propuesta de valor
+        { const vp = d.valueProp || {};
+        if (!(vp.problemSolved || '').trim() && !(d.problemStatement || '').trim()) errs.push('El campo <strong>¿Qué problema resuelve?</strong> es obligatorio.');
+        if (!(vp.howItWorks || '').trim()) errs.push('El campo <strong>¿Cómo funciona?</strong> es obligatorio.');
+        if (!(vp.forWhom || '').trim() && !(d.targetAudience || '').trim()) errs.push('El campo <strong>¿A quién está dirigido?</strong> es obligatorio.');
+        if (!(vp.differentiator || '').trim()) errs.push('El campo <strong>¿Qué lo hace diferente?</strong> es obligatorio.');
+        } break;
+
+      case 8: // Equipo y cronograma
+        if (!d.teamLead || !d.teamLead.trim()) errs.push('El <strong>Responsable o equipo</strong> del proyecto es obligatorio.');
+        if (!d.startDate || !d.startDate.trim()) errs.push('La <strong>Fecha de inicio</strong> es obligatoria.');
+        if (!d.endDate || !d.endDate.trim()) errs.push('La <strong>Fecha estimada de finalización</strong> es obligatoria.');
+        break;
+
+      case 9: // FAQs y acción
+        { const vp2 = d.valueProp || {};
+        if (!(vp2.visitorAction || '').trim()) errs.push('La <strong>Acción principal del visitante</strong> es obligatoria.');
+        if (!(vp2.commercialPitch || '').trim()) errs.push('El <strong>Lema o pitch de una línea</strong> es obligatorio.');
+        } break;
+
+      case 10: // Video
+        { const vc = d.videoConfig || {};
+        if (!(vc.url || '').trim()) errs.push('La <strong>URL del video</strong> de presentación es obligatoria.');
+        } break;
+
+      case 11: // Slides/Diapositivas
+        if (!Array.isArray(d.slides) || d.slides.length === 0) errs.push('Debes agregar al menos una <strong>diapositiva</strong>.');
+        break;
+
+      case 12: // Recursos
+        if (!Array.isArray(d.resources) || d.resources.length === 0) errs.push('Debes agregar al menos un <strong>recurso o documento</strong>.');
+        break;
+
+      case 13: // Visuals
+        if (!d.mainImage && (!Array.isArray(d.visualAssets) || d.visualAssets.length === 0)) {
+          errs.push('Debes agregar al menos una <strong>imagen o recurso visual</strong>.');
+        }
+        break;
+
+      case 14: // Enlaces externos
+        if (!Array.isArray(d.externalLinks) || d.externalLinks.length === 0) errs.push('Debes agregar al menos un <strong>enlace externo</strong>.');
+        break;
+
+      case 15: // Configuración de publicación
+        { const lc = d.landingConfig || {};
+        if (!(lc.landingTitle || d.title || '').trim()) errs.push('El <strong>Título de la Landing Page</strong> es obligatorio.');
+        if (!(lc.slug || '').trim()) errs.push('El <strong>Slug / URL amigable</strong> es obligatorio.');
+        } break;
+
+      default:
+        break;
+    }
+    return errs;
+  },
+
+  validateStepSoft(step) {
     return '';
   },
 
@@ -1028,7 +1155,7 @@ collectCurrentStepInputs() {
 
         <div class="gdn-field">
           <label class="gdn-label" for="gdn-subtitle" style="font-size: 0.95rem; font-weight: 700;">
-            <span>Subtítulo o lema descriptivo</span>
+            <span>Subtítulo o lema descriptivo <span style="color:#10b981;">*</span></span>
           </label>
           <input type="text" id="gdn-subtitle" class="gdn-input" style="font-size: 0.95rem; padding: 0.7rem 1rem;" value="${this.escapeHtml(d.subtitle)}" placeholder="Ej: Decisiones estratégicas con ética, transparencia y alto impacto" />
           <div class="gdn-help">Una frase breve que resuma la esencia o promesa principal del proyecto.</div>
@@ -1051,7 +1178,7 @@ collectCurrentStepInputs() {
 
         <div class="gdn-field" style="margin-bottom: 1.25rem;">
           <label class="gdn-label" for="gdn-short-desc">
-            <span>Descripción corta (Resumen ejecutivo)</span>
+            <span>Descripción corta (Resumen ejecutivo) <span style="color:#10b981;">*</span></span>
             <button type="button" style="background:none; border:none; color:#10b981; font-weight:700; font-size:0.8rem; cursor:pointer;" onclick="window.ProjectWizard.aiGenerateShortDesc()">
               ✨ Generar desde la descripción completa
             </button>
@@ -1062,7 +1189,7 @@ collectCurrentStepInputs() {
 
         <div class="gdn-field">
           <label class="gdn-label" for="gdn-full-desc">
-            <span>Descripción completa del proyecto</span>
+            <span>Descripción completa del proyecto <span style="color:#10b981;">*</span></span>
             <button type="button" style="background:none; border:none; color:#10b981; font-weight:700; font-size:0.8rem; cursor:pointer;" onclick="window.ProjectWizard.aiImproveDescription()">
               ✨ Mejorar redacción con IA
             </button>
@@ -1088,7 +1215,7 @@ collectCurrentStepInputs() {
 
         <div class="gdn-field-grid" style="margin-bottom: 1.25rem;">
           <div class="gdn-field">
-            <label class="gdn-label" for="gdn-category">Categoría del proyecto</label>
+            <label class="gdn-label" for="gdn-category">Categoría del proyecto <span style="color:#10b981;">*</span></label>
             <select id="gdn-category" class="gdn-select">
               ${categories.map(cat => `
                 <option value="${this.escapeHtml(cat.id)}" ${d.category === cat.id ? 'selected' : ''}>
@@ -1099,7 +1226,7 @@ collectCurrentStepInputs() {
           </div>
 
           <div class="gdn-field">
-            <label class="gdn-label" for="gdn-subtype">Tipo de proyecto</label>
+            <label class="gdn-label" for="gdn-subtype">Tipo de proyecto <span style="color:#10b981;">*</span></label>
             <select id="gdn-subtype" class="gdn-select">
               ${[
                 'Gobierno de Datos e IA',
@@ -1115,7 +1242,7 @@ collectCurrentStepInputs() {
         </div>
 
         <div class="gdn-field">
-          <label class="gdn-label" for="gdn-audience">Público objetivo</label>
+          <label class="gdn-label" for="gdn-audience">Público objetivo <span style="color:#10b981;">*</span></label>
           <input type="text" id="gdn-audience" class="gdn-input" value="${this.escapeHtml(d.targetAudience)}" placeholder="Ej: Directivos, docentes, equipos de tecnología y ciudadanía" />
           <div class="gdn-help">Personas o entidades que se beneficiarán con este proyecto.</div>
         </div>
@@ -2091,7 +2218,7 @@ collectCurrentStepInputs() {
 
         <div class="gdn-field-grid" style="margin-bottom: 1.35rem;">
           <div class="gdn-field">
-            <label class="gdn-label" for="gdn-authors-role">Rol o Función en el Proyecto</label>
+            <label class="gdn-label" for="gdn-authors-role">Rol o Función en el Proyecto <span style="color:#10b981;">*</span></label>
             <input 
               type="text" 
               id="gdn-authors-role" 
@@ -2102,7 +2229,7 @@ collectCurrentStepInputs() {
           </div>
 
           <div class="gdn-field">
-            <label class="gdn-label" for="gdn-authors-institution">Institución Educativa, Colegio o Curso</label>
+            <label class="gdn-label" for="gdn-authors-institution">Institución Educativa, Colegio o Curso <span style="color:#10b981;">*</span></label>
             <input 
               type="text" 
               id="gdn-authors-institution" 
@@ -2140,18 +2267,18 @@ collectCurrentStepInputs() {
         </p>
 
         <div class="gdn-field" style="margin-bottom: 1.25rem;">
-          <label class="gdn-label" for="gdn-problem">Problema o necesidad que aborda</label>
+          <label class="gdn-label" for="gdn-problem">Problema o necesidad que aborda <span style="color:#10b981;">*</span></label>
           <textarea id="gdn-problem" class="gdn-textarea" rows="2" placeholder="¿Qué dificultad o brecha actual motivó la creación de este proyecto?">${this.escapeHtml(d.problemStatement)}</textarea>
         </div>
 
         <div class="gdn-field-grid">
           <div class="gdn-field">
-            <label class="gdn-label" for="gdn-objective">Objetivo principal (Misión)</label>
+            <label class="gdn-label" for="gdn-objective">Objetivo principal (Misión) <span style="color:#10b981;">*</span></label>
             <textarea id="gdn-objective" class="gdn-textarea" rows="2" placeholder="¿Qué busca lograr el proyecto de forma concreta?">${this.escapeHtml(d.mainObjective)}</textarea>
           </div>
 
           <div class="gdn-field">
-            <label class="gdn-label" for="gdn-benefits">Beneficios para el usuario (Visión e impacto)</label>
+            <label class="gdn-label" for="gdn-benefits">Beneficios para el usuario (Visión e impacto) <span style="color:#10b981;">*</span></label>
             <textarea id="gdn-benefits" class="gdn-textarea" rows="2" placeholder="¿Cómo mejora el trabajo o aprendizaje de quienes lo utilizan?">${this.escapeHtml(d.benefits)}</textarea>
           </div>
         </div>
@@ -2173,7 +2300,7 @@ collectCurrentStepInputs() {
 
         <div class="gdn-field-grid" style="margin-bottom: 1.25rem;">
           <div class="gdn-field">
-            <label class="gdn-label" for="gdn-team">Responsable o equipo del proyecto</label>
+            <label class="gdn-label" for="gdn-team">Responsable o equipo del proyecto <span style="color:#10b981;">*</span></label>
             <input type="text" id="gdn-team" class="gdn-input" value="${this.escapeHtml(d.teamLead)}" placeholder="Ej: Comité de Innovación GovData / Prof. Melisa" />
           </div>
 
@@ -2189,12 +2316,12 @@ collectCurrentStepInputs() {
 
         <div class="gdn-field-grid">
           <div class="gdn-field">
-            <label class="gdn-label" for="gdn-start-date">Fecha de inicio</label>
+            <label class="gdn-label" for="gdn-start-date">Fecha de inicio <span style="color:#10b981;">*</span></label>
             <input type="date" id="gdn-start-date" class="gdn-input" value="${this.escapeHtml(d.startDate)}" />
           </div>
 
           <div class="gdn-field">
-            <label class="gdn-label" for="gdn-end-date">Fecha estimada de finalización</label>
+            <label class="gdn-label" for="gdn-end-date">Fecha estimada de finalización <span style="color:#10b981;">*</span></label>
             <input type="date" id="gdn-end-date" class="gdn-input" value="${this.escapeHtml(d.endDate)}" />
           </div>
         </div>
@@ -2223,24 +2350,24 @@ collectCurrentStepInputs() {
 
         <div class="gdn-field-grid" style="margin-bottom:1.25rem;">
           <div class="gdn-field">
-            <label class="gdn-label" for="gdn-vp-problem">¿Qué problema resuelve?</label>
+            <label class="gdn-label" for="gdn-vp-problem">¿Qué problema resuelve? <span style="color:#10b981;">*</span></label>
             <textarea id="gdn-vp-problem" class="gdn-textarea" rows="2" placeholder="Ej: Elimina la dispersión de datos y la falta de trazabilidad en los reportes.">${this.escapeHtml(vp.problemSolved || this.draft.problemStatement || '')}</textarea>
           </div>
 
           <div class="gdn-field">
-            <label class="gdn-label" for="gdn-vp-how">¿Cómo funciona?</label>
+            <label class="gdn-label" for="gdn-vp-how">¿Cómo funciona? <span style="color:#10b981;">*</span></label>
             <textarea id="gdn-vp-how" class="gdn-textarea" rows="2" placeholder="Ej: Centraliza las fuentes de información, valida su calidad y genera tableros interactivos.">${this.escapeHtml(vp.howItWorks)}</textarea>
           </div>
         </div>
 
         <div class="gdn-field-grid" style="margin-bottom:1.25rem;">
           <div class="gdn-field">
-            <label class="gdn-label" for="gdn-vp-whom">¿A quién está dirigido?</label>
+            <label class="gdn-label" for="gdn-vp-whom">¿A quién está dirigido? <span style="color:#10b981;">*</span></label>
             <textarea id="gdn-vp-whom" class="gdn-textarea" rows="2" placeholder="Ej: Equipos directivos, docentes, investigadores y estudiantes.">${this.escapeHtml(vp.forWhom || this.draft.targetAudience || '')}</textarea>
           </div>
 
           <div class="gdn-field">
-            <label class="gdn-label" for="gdn-vp-diff">¿Qué lo hace diferente?</label>
+            <label class="gdn-label" for="gdn-vp-diff">¿Qué lo hace diferente? <span style="color:#10b981;">*</span></label>
             <textarea id="gdn-vp-diff" class="gdn-textarea" rows="2" placeholder="Ej: Enfoque en gobernanza ética, facilidad de uso y recursos abiertos.">${this.escapeHtml(vp.differentiator)}</textarea>
           </div>
         </div>
@@ -2268,12 +2395,12 @@ collectCurrentStepInputs() {
 
         <div class="gdn-field-grid" style="margin-bottom:1.25rem;">
           <div class="gdn-field">
-            <label class="gdn-label" for="gdn-vp-action">Acción principal esperada del visitante</label>
+            <label class="gdn-label" for="gdn-vp-action">Acción principal esperada del visitante <span style="color:#10b981;">*</span></label>
             <input type="text" id="gdn-vp-action" class="gdn-input" value="${this.escapeHtml(vp.visitorAction)}" placeholder="Ej: Unirse al proyecto / Explorar recursos / Contactar" />
           </div>
 
           <div class="gdn-field">
-            <label class="gdn-label" for="gdn-vp-pitch">Lema o pitch de una línea</label>
+            <label class="gdn-label" for="gdn-vp-pitch">Lema o pitch de una línea <span style="color:#10b981;">*</span></label>
             <input type="text" id="gdn-vp-pitch" class="gdn-input" value="${this.escapeHtml(vp.commercialPitch)}" placeholder="Ej: Impulsando decisiones inteligentes con datos confiables" />
           </div>
         </div>
@@ -2345,7 +2472,7 @@ collectCurrentStepInputs() {
 
         <div class="gdn-field">
           <label class="gdn-label" for="gdn-short-desc">
-            <span>Descripción corta (Resumen ejecutivo)</span>
+            <span>Descripción corta (Resumen ejecutivo) <span style="color:#10b981;">*</span></span>
             <button type="button" style="background:none; border:none; color:#10b981; font-weight:700; font-size:0.78rem; cursor:pointer;" onclick="window.ProjectWizard.aiGenerateShortDesc()">
               ✨ Generar desde la descripción completa
             </button>
@@ -2356,7 +2483,7 @@ collectCurrentStepInputs() {
 
         <div class="gdn-field">
           <label class="gdn-label" for="gdn-full-desc">
-            <span>Descripción completa del proyecto</span>
+            <span>Descripción completa del proyecto <span style="color:#10b981;">*</span></span>
             <button type="button" style="background:none; border:none; color:#10b981; font-weight:700; font-size:0.78rem; cursor:pointer;" onclick="window.ProjectWizard.aiImproveDescription()">
               ✨ Mejorar redacción con IA
             </button>
@@ -2370,7 +2497,7 @@ collectCurrentStepInputs() {
 
         <div class="gdn-field-grid">
           <div class="gdn-field">
-            <label class="gdn-label" for="gdn-category">Categoría del proyecto</label>
+            <label class="gdn-label" for="gdn-category">Categoría del proyecto <span style="color:#10b981;">*</span></label>
             <select id="gdn-category" class="gdn-select">
               ${categories.map(cat => `
                 <option value="${this.escapeHtml(cat.id)}" ${d.category === cat.id ? 'selected' : ''}>
@@ -2381,7 +2508,7 @@ collectCurrentStepInputs() {
           </div>
 
           <div class="gdn-field">
-            <label class="gdn-label" for="gdn-subtype">Tipo de proyecto</label>
+            <label class="gdn-label" for="gdn-subtype">Tipo de proyecto <span style="color:#10b981;">*</span></label>
             <select id="gdn-subtype" class="gdn-select">
               ${[
                 'Gobierno de Datos e IA',
@@ -2396,24 +2523,24 @@ collectCurrentStepInputs() {
           </div>
 
           <div class="gdn-field">
-            <label class="gdn-label" for="gdn-audience">Público objetivo</label>
+            <label class="gdn-label" for="gdn-audience">Público objetivo <span style="color:#10b981;">*</span></label>
             <input type="text" id="gdn-audience" class="gdn-input" value="${this.escapeHtml(d.targetAudience)}" placeholder="Ej: Directivos, docentes, equipos de TI y estudiantes" />
           </div>
         </div>
 
         <div class="gdn-field">
-          <label class="gdn-label" for="gdn-problem">Problema o necesidad que aborda</label>
+          <label class="gdn-label" for="gdn-problem">Problema o necesidad que aborda <span style="color:#10b981;">*</span></label>
           <textarea id="gdn-problem" class="gdn-textarea" rows="2" placeholder="¿Qué dificultad o brecha actual motivó la creación de este proyecto?">${this.escapeHtml(d.problemStatement)}</textarea>
         </div>
 
         <div class="gdn-field-grid">
           <div class="gdn-field">
-            <label class="gdn-label" for="gdn-objective">Objetivo principal (Misión)</label>
+            <label class="gdn-label" for="gdn-objective">Objetivo principal (Misión) <span style="color:#10b981;">*</span></label>
             <textarea id="gdn-objective" class="gdn-textarea" rows="2" placeholder="¿Qué busca lograr el proyecto de forma concreta?">${this.escapeHtml(d.mainObjective)}</textarea>
           </div>
 
           <div class="gdn-field">
-            <label class="gdn-label" for="gdn-benefits">Beneficios para el usuario (Visión e impacto)</label>
+            <label class="gdn-label" for="gdn-benefits">Beneficios para el usuario (Visión e impacto) <span style="color:#10b981;">*</span></label>
             <textarea id="gdn-benefits" class="gdn-textarea" rows="2" placeholder="¿Cómo mejora el trabajo o aprendizaje de quienes lo utilizan?">${this.escapeHtml(d.benefits)}</textarea>
           </div>
         </div>
@@ -2423,7 +2550,7 @@ collectCurrentStepInputs() {
         <h3 style="margin: 0 0 0.85rem; font-size: 1.08rem; color: var(--gdn-text);">3. Equipo responsable, estado y fechas</h3>
         <div class="gdn-field-grid">
           <div class="gdn-field">
-            <label class="gdn-label" for="gdn-team">Responsable o equipo del proyecto</label>
+            <label class="gdn-label" for="gdn-team">Responsable o equipo del proyecto <span style="color:#10b981;">*</span></label>
             <input type="text" id="gdn-team" class="gdn-input" value="${this.escapeHtml(d.teamLead)}" placeholder="Ej: Comité de Innovación GovData / Prof. Melisa" />
           </div>
 
@@ -2437,7 +2564,7 @@ collectCurrentStepInputs() {
           </div>
 
           <div class="gdn-field">
-            <label class="gdn-label" for="gdn-start-date">Fecha de inicio</label>
+            <label class="gdn-label" for="gdn-start-date">Fecha de inicio <span style="color:#10b981;">*</span></label>
             <input type="date" id="gdn-start-date" class="gdn-input" value="${this.escapeHtml(d.startDate)}" />
           </div>
 
@@ -2649,7 +2776,7 @@ collectCurrentStepInputs() {
 
         <div class="gdn-field">
           <label class="gdn-label" for="gdn-video-url">
-            <span>URL del video (YouTube, Vimeo o enlace directo .mp4)</span>
+            <span>URL del video (YouTube, Vimeo o enlace directo .mp4) <span style="color:#10b981;">*</span></span>
             <span style="font-size:0.76rem; font-weight:800; color:${check.valid ? '#10b981' : '#64748b'};">
               ${check.valid ? '✔ Video verificado y compatible' : '⏳ Pendiente de verificar'}
             </span>
