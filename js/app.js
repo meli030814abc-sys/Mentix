@@ -164,21 +164,22 @@ class AppRouter {
 
   isGuest() {
     const u = window.appState && window.appState.currentUser;
-    return !!(u && u.isGuest);
+    return !!(u && (u.isGuest || u.username === 'invitado'));
   }
 
-  guestBlocked() {
-    alert('🔒 Los invitados solo pueden unirse a salas. Regístrate o inicia sesión para crear cuestionarios.');
+  guestBlocked(msg) {
+    alert(msg || '🔒 Los invitados tienen acceso limitado. Regístrate o inicia sesión para continuar.');
     this.openAuthModal('register');
   }
 
   navigate(viewName, params = {}, pushToHistory = true) {
-    // Invitados: solo unirse a salas (sin crear cuestionarios, proyectos ni salas)
-    if (this.isGuest() && ['creator', 'projects', 'lobby-host'].includes(viewName)) {
+    // Invitados: pueden ver home, explore y projects (modo solo lectura y landing pages).
+    // Solo bloqueados de crear cuestionarios ('creator') y hostear salas ('lobby-host')
+    if (this.isGuest() && ['creator', 'lobby-host'].includes(viewName)) {
       if (this.booting) {
         viewName = 'home';
       } else {
-        this.guestBlocked();
+        this.guestBlocked('🔒 Los invitados no pueden crear cuestionarios ni salas. Regístrate o inicia sesión.');
         return;
       }
     }

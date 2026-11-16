@@ -67,6 +67,34 @@ window.ProjectsView = {
     return false;
   },
 
+  isUserGuest() {
+    const u = window.appState && window.appState.currentUser;
+    if (!u) return true;
+    if (u.isGuest || u.username === 'invitado') return true;
+    return false;
+  },
+
+  guestJoinBlocked() {
+    alert('🔒 Para unirte a un proyecto o ingresar con un código debes registrarte o iniciar sesión en Mentix.');
+    if (window.appRouter && typeof window.appRouter.openAuthModal === 'function') {
+      window.appRouter.openAuthModal('register');
+    }
+  },
+
+  guestCreateBlocked() {
+    alert('🔒 Para crear tus propios proyectos debes registrarte o iniciar sesión en Mentix.');
+    if (window.appRouter && typeof window.appRouter.openAuthModal === 'function') {
+      window.appRouter.openAuthModal('register');
+    }
+  },
+
+  guestCodeBlocked() {
+    alert('🔒 Para generar códigos de proyecto debes registrarte o iniciar sesión como profesor o administrador.');
+    if (window.appRouter && typeof window.appRouter.openAuthModal === 'function') {
+      window.appRouter.openAuthModal('register');
+    }
+  },
+
   // =========================================================================
   // GESTIÓN DE BANNERS EXCLUSIVA PARA ADMINISTRADORES DE MENTIX (ROBOT BANNER)
   // =========================================================================
@@ -2169,8 +2197,9 @@ window.ProjectsView = {
 
     const userAvatarConfig = window.AvatarEngine ? window.AvatarEngine.getSavedAvatar() : { animal: 'fox', alias: 'Eimy' };
     const userAnimal = (userAvatarConfig && userAvatarConfig.animal) || 'fox';
-    const userName = (u && u.name) ? u.name : (userAvatarConfig.alias || 'Eimy');
-    const userRole = (u && u.role) ? (u.role === 'teacher' ? 'Docente' : (u.role === 'admin' ? 'Administrador' : 'Estudiante')) : 'Nivel 3 • Gamer Pro';
+    const isGuest = this.isUserGuest();
+    const userName = isGuest ? 'Invitado' : ((u && u.name) ? u.name : (userAvatarConfig.alias || 'Estudiante'));
+    const userRole = isGuest ? 'Modo Invitado (Solo Lectura)' : ((u && u.role) ? (u.role === 'teacher' ? 'Docente' : (u.role === 'admin' ? 'Administrador' : 'Estudiante')) : 'Estudiante');
     const animalAvatarHtml = window.AvatarEngine ? window.AvatarEngine.renderIconSVG(userAvatarConfig, 105) : `<img src="assets/sprites/${userAnimal}.png" alt="${userAnimal}" style="width: 100px; height: 100px; object-fit: contain;" onerror="this.src='assets/sprites/fox.png';" />`;
     const animalTopPillHtml = window.AvatarEngine ? window.AvatarEngine.renderIconSVG(userAvatarConfig, 30) : `<img src="assets/sprites/${userAnimal}.png" alt="${userAnimal}" style="width: 28px; height: 28px; object-fit: contain;" onerror="this.src='assets/sprites/fox.png';" />`;
 
@@ -2581,10 +2610,11 @@ window.ProjectsView = {
   },
 
   renderProjectCard(c, currentUser) {
-    const isTeacherOrAdmin = this.isTeacherOrAdmin();
-    const isAdmin = this.isAdminUser();
-    const canEditProj = this.canUserEditProject(c);
-    const isAuthor = (window.appRouter ? window.appRouter.isChallengeOwner(c) : false);
+    const isGuest = this.isUserGuest();
+    const isTeacherOrAdmin = !isGuest && this.isTeacherOrAdmin();
+    const isAdmin = !isGuest && this.isAdminUser();
+    const canEditProj = !isGuest && this.canUserEditProject(c);
+    const isAuthor = !isGuest && (window.appRouter ? window.appRouter.isChallengeOwner(c) : false);
     const isApproved = c.approvalStatus === 'approved' && !c.rejectionReason;
     const isRejected = c.approvalStatus === 'rejected';
     const isDraft = c.status === 'in_progress' || c.publicationStatus === 'draft';
@@ -2717,15 +2747,15 @@ window.ProjectsView = {
     }
 
     // Exclusividad: Solo creadores del proyecto y personas que se unan pueden ver el Project Hub ("Ver Detalles")
-    const canHubView = !!(isAuthor || (window.ProjectHub && typeof window.ProjectHub.canView === 'function' && window.ProjectHub.canView(c)));
-    const canHubEdit = !!(isAuthor || (window.ProjectHub && typeof window.ProjectHub.canEdit === 'function' && window.ProjectHub.canEdit(c)));
+    const canHubView = !isGuest && !!(isAuthor || (window.ProjectHub && typeof window.ProjectHub.canView === 'function' && window.ProjectHub.canView(c)));
+    const canHubEdit = !isGuest && !!(isAuthor || (window.ProjectHub && typeof window.ProjectHub.canEdit === 'function' && window.ProjectHub.canEdit(c)));
 
     const hubAction = window.ProjectHub ? `window.ProjectHub.open('${c.id}')` : `window.ProjectsView.openProjectLanding('${c.id}')`;
     const landingAction = `window.ProjectsView.openProjectLanding('${c.id}')`;
     const shareAction = `window.ProjectsView.shareProject('${c.id}', '${this.escapeHtml(c.title || '')}')`;
-    const joinAction = `window.ProjectHub ? window.ProjectHub.openJoinForm('${c.id}') : window.ProjectsView.openProjectLanding('${c.id}')`;
+    const joinAction = isGuest ? `window.ProjectsView.guestJoinBlocked()` : (window.ProjectHub ? `window.ProjectHub.openJoinForm('${c.id}')` : `window.ProjectsView.openProjectLanding('${c.id}')`);
 
-    // Clic en la tarjeta: Creadores y miembros van al Hub; visitantes y demás van a la Landing Page pública
+    // Clic en la tarjeta: Creadores y miembros van al Hub; visitantes, invitados y demás van a la Landing Page pública
     const cardClickAction = canHubView ? hubAction : landingAction;
 
     const dateStr = c.date || (c.createdAt ? new Date(c.createdAt).toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' }) : '12 Abr 2025');
@@ -2984,8 +3014,12 @@ window.ProjectsView = {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   },
 
-  // Habilitado para TODOS los usuarios (estudiantes, profesores y administradores)
+  // Habilitado para usuarios registrados (estudiantes, profesores y administradores)
   openCreateProjectModal() {
+    if (this.isUserGuest()) {
+      this.guestCreateBlocked();
+      return;
+    }
     if (window.soundEngine && window.soundEngine.playClick) window.soundEngine.playClick();
     const u = window.appState?.currentUser;
     let savedDraft = null;
@@ -3884,6 +3918,10 @@ window.ProjectsView = {
 
   // Habilitado EXCLUSIVAMENTE para profesores y administradores
   openCreateCodeModal() {
+    if (this.isUserGuest()) {
+      this.guestCodeBlocked();
+      return;
+    }
     if (!this.isTeacherOrAdmin()) {
       alert('🚫 Solo los profesores y administradores pueden crear un código de proyecto para estudiantes.');
       return;
@@ -3909,6 +3947,10 @@ window.ProjectsView = {
   },
 
   openJoinProjectModal(prefillCode = '') {
+    if (this.isUserGuest()) {
+      this.guestJoinBlocked();
+      return;
+    }
     if (window.soundEngine && window.soundEngine.playClick) window.soundEngine.playClick();
     const existing = document.getElementById('project-join-modal');
     if (existing) existing.remove();
@@ -3944,6 +3986,10 @@ window.ProjectsView = {
   },
 
   openProjectJoinRequestModal(projectId) {
+    if (this.isUserGuest()) {
+      this.guestJoinBlocked();
+      return;
+    }
     if (window.ProjectHub && typeof window.ProjectHub.openJoinForm === 'function') {
       window.ProjectHub.openJoinForm(projectId);
       return;
@@ -3951,6 +3997,16 @@ window.ProjectsView = {
   },
 
   async submitJoinProjectCode() {
+    if (this.isUserGuest()) {
+      const errEl = document.getElementById('project-join-error');
+      if (errEl) {
+        errEl.textContent = '🔒 Para unirte a un proyecto con código debes registrarte o iniciar sesión en Mentix.';
+        errEl.style.color = '#ff4d6d';
+        errEl.style.display = 'block';
+      }
+      this.guestJoinBlocked();
+      return;
+    }
     const input = document.getElementById('project-join-code-input');
     const errEl = document.getElementById('project-join-error');
     const raw = input ? input.value.trim() : '';
@@ -4161,6 +4217,10 @@ window.ProjectsView = {
   },
 
   editSelectedProject(id) {
+    if (this.isUserGuest()) {
+      this.guestCreateBlocked();
+      return;
+    }
     const projId = id || this.selectedProjectId;
     const c = (window.appState?.challenges || []).find(x => x && x.id === projId);
     if (!c) return;
@@ -6259,7 +6319,7 @@ window.ProjectsView = {
                 <button type="button" class="plp-mentix-btn" onclick="if (window.AdminView && window.AdminView.isAdminAuditing) { window.AdminView.exitAuditAndReturnToAdmin(); } else { window.ProjectsView.switchViewMode('list'); }">
                   <span>←</span> ${window.AdminView && window.AdminView.isAdminAuditing ? 'Volver al Admin' : 'Volver a Mis Proyectos'}
                 </button>
-                ${(selected && this.canUserEditProject(selected)) ? `
+                ${(selected && !this.isUserGuest() && this.canUserEditProject(selected)) ? `
                 <button type="button" class="plp-mentix-btn" onclick="window.ProjectsView.editSelectedProject('${selected.id}')">
                   <span>✏️</span> Editar Proyecto
                 </button>` : ''}
@@ -7640,6 +7700,10 @@ Generado por Mentix - Plataforma de Proyectos y Retos
     }
     if (cleanT.includes('unirse al proyecto')) {
       const targetId = this.selectedProjectId || (this.currentProject ? this.currentProject.id : null);
+      if (this.isUserGuest()) {
+        this.guestJoinBlocked();
+        return;
+      }
       if (window.ProjectHub && typeof window.ProjectHub.openJoinForm === 'function') {
         window.ProjectHub.openJoinForm(targetId);
         return;
@@ -8146,6 +8210,10 @@ Generado por Mentix - Plataforma de Proyectos y Retos
   },
 
   saveCustomProjectCode() {
+    if (this.isUserGuest()) {
+      this.guestCodeBlocked();
+      return;
+    }
     if (!this.isTeacherOrAdmin()) {
       alert('🚫 Solo maestros y administradores pueden crear códigos de proyecto.');
       return;
@@ -8238,6 +8306,12 @@ Generado por Mentix - Plataforma de Proyectos y Retos
   },
 
   renderProjectSelectorView(container) {
+    if (this.isUserGuest()) {
+      this.viewMode = 'list';
+      this.guestCodeBlocked();
+      this.render();
+      return;
+    }
     const isTeacherOrAdmin = this.isTeacherOrAdmin();
     if (!isTeacherOrAdmin) {
       this.viewMode = 'list';

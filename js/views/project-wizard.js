@@ -534,6 +534,16 @@ window.ProjectWizard = {
   },
 
   async openWizard(projectId = null, startStep = null, allowCodeAccess = false) {
+    const u = window.appState?.currentUser;
+    const isGuest = !u || u.isGuest || u.username === 'invitado';
+    if (isGuest) {
+      alert('🔒 Para ingresar al creador o taller de proyectos debes registrarte o iniciar sesión en Mentix.');
+      if (window.appRouter && typeof window.appRouter.openAuthModal === 'function') {
+        window.appRouter.openAuthModal('register');
+      }
+      return;
+    }
+
     const activeJoinCode = sessionStorage.getItem('mentix_active_join_code') || localStorage.getItem('mentix_active_join_code');
     const isCodeAuthorized = Boolean(allowCodeAccess) || Boolean(activeJoinCode);
 

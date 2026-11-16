@@ -1377,6 +1377,15 @@ window.ProjectHub = {
   },
 
   openJoinForm(projectId, initialMode = 'join') {
+    const u = window.appState?.currentUser;
+    const isGuest = !u || u.isGuest || u.username === 'invitado';
+    if (isGuest) {
+      alert('🔒 Para unirte a un proyecto debes registrarte o iniciar sesión en Mentix.');
+      if (window.appRouter && typeof window.appRouter.openAuthModal === 'function') {
+        window.appRouter.openAuthModal('register');
+      }
+      return;
+    }
     const proj = this.getProject(projectId);
     if (!proj) return;
     const me = this.me();
