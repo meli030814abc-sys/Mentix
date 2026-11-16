@@ -2,11 +2,11 @@
   {
     "id": "proj_1794853312529",
     "slug": "nuevo-proyecto-govdata",
-    "title": "Nuevo Proyecto GovData",
+    "title": "Personajes de Disney",
     "subtitle": "Proyecto GovData Nexus",
     "description": "Proyecto documentado con el Asistente Inteligente GovData Nexus.",
-    "shortDescription": "",
-    "fullDescription": "",
+    "shortDescription": "Proyecto documentado con el Asistente Inteligente GovData Nexus.",
+    "fullDescription": "Proyecto documentado con el Asistente Inteligente GovData Nexus.",
     "category": "tecnologia",
     "categoryName": "Tecnología & Programación",
     "projectType": "presentation",
@@ -33,8 +33,8 @@
     "completedSteps": [
       1
     ],
-    "progress": 40,
-    "calculatedProgress": 40,
+    "progress": 45,
+    "calculatedProgress": 45,
     "valueProp": {
       "problemSolved": "",
       "howItWorks": "",
@@ -66,19 +66,19 @@
       "fileName": "",
       "title": "",
       "description": "",
+      "thumbnailUrl": "",
       "isPublic": true,
-      "verified": false,
-      "thumbnailUrl": ""
+      "verified": false
     },
     "resources": [],
     "visualAssets": [],
     "slides": [],
     "externalLinks": [],
     "landingConfig": {
-      "publicName": "",
+      "publicName": "Personajes de Disney",
       "slug": "nuevo-proyecto-govdata",
-      "landingTitle": "",
-      "publicDescription": "",
+      "landingTitle": "Personajes de Disney",
+      "publicDescription": "Proyecto documentado con el Asistente Inteligente GovData Nexus.",
       "visibleCategory": "Tecnología & Programación",
       "tags": [
         "Gobierno de Datos",
@@ -112,10 +112,10 @@
     "displayOrder": 1,
     "govdata": {
       "id": "proj_1794853312529",
-      "title": "",
+      "title": "Personajes de Disney",
       "subtitle": "",
-      "shortDescription": "",
-      "fullDescription": "",
+      "shortDescription": "Proyecto documentado con el Asistente Inteligente GovData Nexus.",
+      "fullDescription": "Proyecto documentado con el Asistente Inteligente GovData Nexus.",
       "category": "tecnologia",
       "categoryName": "Tecnología & Programación",
       "projectSubtype": "Gobierno de Datos e IA",
@@ -145,18 +145,19 @@
         "fileName": "",
         "title": "",
         "description": "",
+        "thumbnailUrl": "",
         "isPublic": true,
         "verified": false
       },
-      "mainImage": "",
-      "thumbnailImage": "",
+      "mainImage": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
+      "thumbnailImage": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
       "useDefaultImage": true,
       "externalLinks": [],
       "landingConfig": {
-        "publicName": "",
+        "publicName": "Personajes de Disney",
         "slug": "nuevo-proyecto-govdata",
-        "landingTitle": "",
-        "publicDescription": "",
+        "landingTitle": "Personajes de Disney",
+        "publicDescription": "Proyecto documentado con el Asistente Inteligente GovData Nexus.",
         "visibleCategory": "Tecnología & Programación",
         "tags": [
           "Gobierno de Datos",
@@ -194,11 +195,11 @@
         "collaborators": ""
       },
       "createdAt": "2026-11-16T18:21:52.529Z",
-      "updatedAt": "2026-11-16T18:21:56.234Z",
+      "updatedAt": "2026-11-16T18:43:10.740Z",
       "joinCode": "556",
       "accessCode": "556",
-      "progress": 40,
-      "calculatedProgress": 40
+      "progress": 45,
+      "calculatedProgress": 45
     },
     "author": "Melisa",
     "authorId": "user_1792184134006",
@@ -206,9 +207,13 @@
     "authorAvatar": "🐯",
     "authorRole": "admin",
     "createdAt": "2026-11-16T18:21:52.529Z",
-    "updatedAt": "2026-11-16T18:21:55.010Z",
+    "updatedAt": "2026-11-16T18:43:09.535Z",
     "image": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
-    "rejectionReason": ""
+    "rejectionReason": "",
+    "joinCode": "556",
+    "accessCode": "556",
+    "tag": "⏳ Pendiente de Autorización",
+    "tagClass": "badge-review"
   },
   {
     "id": "proj_1792972782411",
