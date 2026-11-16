@@ -8012,12 +8012,15 @@ Generado por Mentix - Plataforma de Proyectos y Retos
         if (typeof saveGlobalState === 'function') {
           saveGlobalState(window.appState);
         }
-        fetch('/api/challenges', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ challenges: window.appState.challenges })
-        }).catch(() => {});
       }
+      fetch('/api/challenges', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type: 'CUSTOM_PROJECT_CODES',
+          customProjectCodes: cleanCodes
+        })
+      }).catch(() => {});
     } catch (e) {}
   },
 
