@@ -533,8 +533,11 @@ window.ProjectWizard = {
     }
   },
 
-  async openWizard(projectId = null, startStep = null) {
-    if (projectId) {
+  async openWizard(projectId = null, startStep = null, allowCodeAccess = false) {
+    const activeJoinCode = sessionStorage.getItem('mentix_active_join_code') || localStorage.getItem('mentix_active_join_code');
+    const isCodeAuthorized = Boolean(allowCodeAccess) || Boolean(activeJoinCode);
+
+    if (projectId && !isCodeAuthorized) {
       const projToCheck = (window.appState?.challenges || []).find(c => c && String(c.id) === String(projectId)) || this.getAllSavedDrafts().find(d => d && String(d.id) === String(projectId));
       if (projToCheck && window.ProjectsView && typeof window.ProjectsView.canUserEditProject === 'function') {
         if (!window.ProjectsView.canUserEditProject(projToCheck)) {
@@ -609,6 +612,10 @@ window.ProjectWizard = {
     }
 
     this.draft = this.createDefaultDraft(existing);
+    if (activeJoinCode) {
+      this.draft.joinCode = activeJoinCode;
+      this.draft.accessCode = activeJoinCode;
+    }
     this.activeDraftId = this.draft.id;
     this.currentStep = startStep || this.draft.currentStep || 1;
     const navEl = document.getElementById('main-navbar');

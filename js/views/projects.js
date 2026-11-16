@@ -3989,38 +3989,42 @@ window.ProjectsView = {
       return;
     }
 
-    // Encontrar el proyecto correspondiente (si tiene projectId o el proyecto principal de la plataforma)
-    let matchedProject = null;
-    if (matchedCustom.projectId) {
-      matchedProject = challenges.find(c => String(c.id).trim() === String(matchedCustom.projectId).trim());
-    }
-    if (!matchedProject) {
-      matchedProject = projectItems.find(c => c.isGovDataProject || c.slug === 'innovatech-nexus' || c.status === 'published') || projectItems[0] || challenges[0];
-    }
-
-    if (!matchedProject) {
-      if (errEl) {
-        errEl.textContent = '❌ No se encontró ningún proyecto disponible para este código. Contacta a tu docente.';
-        errEl.style.display = 'block';
-      }
-      if (input) { input.focus(); input.select(); }
-      return;
-    }
-
-    // ✅ Código válido → abrir el proyecto
+    // ✅ Código válido → guardar en almacenamiento
     try { localStorage.setItem('mentix_active_join_code', clean); } catch (e) {}
     try { sessionStorage.setItem('mentix_active_join_code', clean); } catch (e) {}
     if (window.soundEngine && window.soundEngine.playSuccess) window.soundEngine.playSuccess();
-    if (window.appRouter && typeof window.appRouter.navigate === 'function') {
-      window.appRouter.navigate('projects');
+
+    // 2. Determinar el proyecto o borrador para abrir directamente en el Asistente de Proyectos
+    let targetProjectId = null;
+    if (matchedCustom.projectId) {
+      const foundInChallenges = challenges.find(c => String(c.id).trim() === String(matchedCustom.projectId).trim());
+      if (foundInChallenges) targetProjectId = foundInChallenges.id;
     }
-    setTimeout(() => {
-      if (window.ProjectsView && typeof window.ProjectsView.openProjectLanding === 'function') {
-        window.ProjectsView.openProjectLanding(matchedProject.id);
-      } else if (window.ProjectWizard && typeof window.ProjectWizard.openWizard === 'function') {
-        window.ProjectWizard.openWizard(matchedProject.id, 1);
+    if (!targetProjectId && window.ProjectWizard && typeof window.ProjectWizard.getAllSavedDrafts === 'function') {
+      const savedDrafts = window.ProjectWizard.getAllSavedDrafts();
+      const existingDraft = savedDrafts.find(d => 
+        d && (String(d.joinCode || '').trim().toLowerCase() === lower || String(d.accessCode || '').trim().toLowerCase() === lower || String(d.code || '').trim().toLowerCase() === lower)
+      );
+      if (existingDraft) targetProjectId = existingDraft.id;
+    }
+
+    // 3. Cerrar vista de unirse y abrir DIRECTAMENTE el Asistente (Project Wizard)
+    const modalEl = document.getElementById('project-join-modal');
+    if (modalEl) modalEl.remove();
+
+    this.viewMode = 'wizard';
+    if (window.ProjectWizard && typeof window.ProjectWizard.openWizard === 'function') {
+      window.ProjectWizard.openWizard(targetProjectId, 1, true);
+    } else {
+      if (window.appRouter && typeof window.appRouter.navigate === 'function') {
+        window.appRouter.navigate('projects');
       }
-    }, 120);
+      setTimeout(() => {
+        if (window.ProjectWizard && typeof window.ProjectWizard.openWizard === 'function') {
+          window.ProjectWizard.openWizard(targetProjectId, 1, true);
+        }
+      }, 100);
+    }
   },
 
   // Al hacer clic en un proyecto se muestra su landing page
