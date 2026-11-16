@@ -979,7 +979,26 @@ collectCurrentStepInputs() {
     if (val('gdn-pub-order') !== null) this.draft.landingConfig.displayOrder = Number(val('gdn-pub-order') || 1);
     if (val('gdn-pub-status') !== null) this.draft.publicationStatus = val('gdn-pub-status');
 
-    // Recolectar etapas de la Ruta del Proyecto (Paso 4)
+    // Si el modal de edición de etapa de la Ruta está abierto, sincronizar sus valores en tiempo real
+    const modalTitleEl = document.getElementById('gdn-modal-stage-title');
+    if (modalTitleEl && this._activeRoadmapModalIndex !== undefined && this._activeRoadmapModalIndex !== null) {
+      const midx = this._activeRoadmapModalIndex;
+      if (Array.isArray(this.draft.projectRoadmap) && this.draft.projectRoadmap[midx]) {
+        const st = this.draft.projectRoadmap[midx];
+        const mTitle = modalTitleEl.value;
+        const mDesc = document.getElementById('gdn-modal-stage-desc')?.value;
+        const mStatus = document.getElementById('gdn-modal-stage-status')?.value;
+        const mProgress = parseInt(document.getElementById('gdn-modal-stage-progress')?.value || '0', 10);
+        const mEmoji = document.getElementById('gdn-modal-stage-emoji')?.value;
+        if (mTitle !== null && mTitle !== undefined && mTitle.trim()) st.title = mTitle.trim();
+        if (mDesc !== null && mDesc !== undefined) st.description = mDesc.trim();
+        if (mStatus) st.status = mStatus;
+        if (!isNaN(mProgress)) st.progress = mProgress;
+        if (mEmoji) st.emoji = mEmoji.trim();
+      }
+    }
+
+    // Recolectar etapas de la Ruta del Proyecto (Paso 4 - si existen inputs inline antiguos)
     if (document.getElementById('gdn-roadmap-title-0') !== null) {
       const roadmap = [];
       let ri = 0;
@@ -989,11 +1008,13 @@ collectCurrentStepInputs() {
         const rStatus   = val(`gdn-roadmap-status-${ri}`)   || 'pending';
         const rIcon     = val(`gdn-roadmap-icon-${ri}`)     || '';
         const rProgress = parseInt(val(`gdn-roadmap-progress-${ri}`) || '0', 10);
+        const existingStage = (this.draft.projectRoadmap && this.draft.projectRoadmap[ri]) || {};
         roadmap.push({
           title: rTitle.trim(),
           description: rDesc.trim(),
           status: rStatus,
-          icon: rIcon.trim(),
+          icon: rIcon.trim() || existingStage.icon || 'clipboard',
+          emoji: existingStage.emoji || '📋',
           progress: isNaN(rProgress) ? 0 : rProgress
         });
         ri++;
@@ -1287,12 +1308,12 @@ collectCurrentStepInputs() {
   // =========================================================================
   renderStep4Roadmap() {
     const d = this.draft;
-    if (!Array.isArray(d.projectRoadmap) || d.projectRoadmap.length === 0) {
+    if (!Array.isArray(d.projectRoadmap)) {
       d.projectRoadmap = [
-        { title: 'Planeación', description: 'Conformación del equipo y definición de objetivos.', progress: 40, status: 'active', icon: 'clipboard' },
-        { title: 'Investigación', description: 'Recopilación de datos e información relevante.', progress: 100, status: 'completed', icon: 'search' },
-        { title: 'Desarrollo', description: 'Construcción de la solución y prototipos.', progress: 0, status: 'pending', icon: 'code' },
-        { title: 'Publicación', description: 'Despliegue en la Landing Page y comunicación.', progress: 0, status: 'pending', icon: 'rocket' }
+        { title: 'Planeación', description: 'Conformación del equipo y definición de objetivos.', progress: 40, status: 'active', icon: 'clipboard', emoji: '📋' },
+        { title: 'Investigación', description: 'Recopilación de datos e información relevante.', progress: 100, status: 'completed', icon: 'search', emoji: '🔍' },
+        { title: 'Desarrollo', description: 'Construcción de la solución y prototipos.', progress: 0, status: 'pending', icon: 'code', emoji: '💻' },
+        { title: 'Publicación', description: 'Despliegue en la Landing Page y comunicación.', progress: 0, status: 'pending', icon: 'rocket', emoji: '🚀' }
       ];
     }
     const stages = d.projectRoadmap;
@@ -1305,15 +1326,11 @@ collectCurrentStepInputs() {
           <!-- Icono ilustración vectorial del camino a la cima con bandera morada -->
           <div style="width: 72px; height: 72px; flex-shrink: 0; border-radius: 20px; background: linear-gradient(135deg, #f1f5f9 0%, #e0e7ff 100%); display: flex; align-items: center; justify-content: center; box-shadow: 0 6px 16px rgba(99,102,241,0.12);">
             <svg width="56" height="56" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <!-- Siluetas de montaña -->
               <path d="M12 50 L28 20 C29 18 32 18 33 20 L48 50 Z" fill="#c7d2fe" opacity="0.6"/>
               <path d="M22 50 L36 15 C37 13 40 13 41 15 L56 50 Z" fill="#818cf8" opacity="0.4"/>
-              <!-- Camino sinuoso de asfalto oscuro con líneas discontinuas blancas -->
               <path d="M14 50 C22 46 25 38 29 32 C33 26 35 24 37 15" stroke="#1e1b4b" stroke-width="8" stroke-linecap="round"/>
               <path d="M14 50 C22 46 25 38 29 32 C33 26 35 24 37 15" stroke="#ffffff" stroke-width="1.8" stroke-dasharray="3 3" stroke-linecap="round"/>
-              <!-- Asta de la bandera morada -->
               <line x1="37" y1="15" x2="37" y2="4" stroke="#4f46e5" stroke-width="2.5" stroke-linecap="round"/>
-              <!-- Bandera morada ondeando en la cima -->
               <path d="M37 5 L51 9 L37 13 Z" fill="#7c3aed"/>
             </svg>
           </div>
@@ -1323,7 +1340,7 @@ collectCurrentStepInputs() {
               Ruta del Proyecto
             </h1>
             <p style="margin: 0; font-size: 0.94rem; color: #64748b; line-height: 1.5; font-weight: 500;">
-              Gestiona las etapas, actividades y el avance de tu proyecto. Todo se refleja automáticamente en tu Landing Page.
+              Gestiona las etapas, actividades y el avance de tu proyecto. Elige el emoji que prefieras para cada etapa y todo se reflejará automáticamente en tu Landing Page.
             </p>
           </div>
         </div>
@@ -1355,9 +1372,22 @@ collectCurrentStepInputs() {
             </button>
           </div>
 
-          <!-- Filas de las Etapas (Cards idénticas a Mockup) -->
+          <!-- Filas de las Etapas (Cards interactivas con edición modal y selector de emoji) -->
           <div id="gdn-roadmap-stages-list" style="display: flex; flex-direction: column; gap: 1rem;">
-            ${stages.map((stage, i) => this._renderRoadmapStageCard(stage, i)).join('')}
+            ${stages.length === 0 ? `
+              <div style="text-align: center; padding: 3rem 1.5rem; border: 2px dashed #cbd5e1; border-radius: 18px; background: #f8fafc;">
+                <span style="font-size: 2.2rem; display: block; margin-bottom: 0.6rem;">📋</span>
+                <p style="margin: 0; font-weight: 800; font-size: 1.05rem; color: #334155;">No hay etapas creadas en la ruta.</p>
+                <p style="margin: 0.35rem 0 1.2rem; font-size: 0.88rem; color: #64748b;">Agrega una etapa haciendo clic en el botón superior o usa el siguiente botón:</p>
+                <button
+                  type="button"
+                  onclick="window.ProjectWizard.addRoadmapStage()"
+                  style="background: #6366f1; color: #ffffff; border: none; padding: 0.65rem 1.35rem; border-radius: 12px; font-weight: 900; font-size: 0.92rem; cursor: pointer;"
+                >
+                  + Agregar Primera Etapa
+                </button>
+              </div>
+            ` : stages.map((stage, i) => this._renderRoadmapStageCard(stage, i)).join('')}
           </div>
 
         </div>
@@ -1371,7 +1401,15 @@ collectCurrentStepInputs() {
    */
   _renderRoadmapTopTimeline(stages) {
     const total = stages.length;
-    if (total === 0) return '';
+    if (total === 0) {
+      return `
+        <div style="border-radius: 22px; padding: 2.5rem 1.5rem; text-align: center; background: radial-gradient(circle at 10% 20%, #112154 0%, #0a1128 65%, #050a18 100%); border: 1.5px solid rgba(0, 245, 212, 0.28); color: #cbd5e1; box-shadow: 0 12px 36px rgba(10, 17, 40, 0.55);">
+          <span style="font-size: 2.2rem; display: block; margin-bottom: 0.5rem;">✨</span>
+          <p style="margin: 0; font-weight: 800; font-size: 1.05rem; color: #ffffff;">No hay etapas en la ruta todavía.</p>
+          <p style="margin: 0.35rem 0 0; font-size: 0.85rem; color: #94a3b8;">Haz clic en <strong>"+ Nueva etapa"</strong> abajo para crear tu primera etapa.</p>
+        </div>
+      `;
+    }
 
     // Coordenadas para SVG responsivo (viewBox="0 0 1000 160")
     const points = stages.map((s, i) => {
@@ -1462,14 +1500,15 @@ collectCurrentStepInputs() {
               ? 'box-shadow: 0 0 10px rgba(16, 185, 129, 0.5);'
               : (isActive ? 'box-shadow: 0 0 10px rgba(0, 180, 216, 0.5);' : '');
 
-            const iconSvg = this._getRoadmapNodeSvg(s.icon || this._guessIconByTitle(s.title, i), isCompleted, isActive);
+            const nodeIconOrEmoji = s.emoji || this._getStageEmojiFallback(s.icon, i);
+            const iconSvg = this._getRoadmapNodeSvg(nodeIconOrEmoji, isCompleted, isActive);
 
             return `
               <div style="display: flex; flex-direction: column; align-items: center; text-align: center; max-width: 130px; flex: 1;">
                 
                 <!-- Círculo del hito con icono y borde brillante -->
                 <div style="position: relative; width: 56px; height: 56px; border-radius: 50%; border: 3px solid ${circleBorder}; background: ${circleBg}; ${circleGlow} display: flex; align-items: center; justify-content: center; margin-bottom: 0.75rem; cursor: pointer; transition: transform 0.2s;"
-                     onclick="window.ProjectWizard.toggleRoadmapStageEditor(${i})"
+                     onclick="window.ProjectWizard.openRoadmapStageModal(${i})"
                      title="Clic para editar ${this.escapeHtml(s.title || '')}">
                   ${iconSvg}
 
@@ -1501,7 +1540,7 @@ collectCurrentStepInputs() {
   },
 
   /**
-   * Renderiza una Fila/Tarjeta de Etapa (Diseño idéntico a la segunda mitad del mockup)
+   * Renderiza una Fila/Tarjeta de Etapa (Diseño idéntico a Mockup con soporte directo de emoji y modal)
    */
   _renderRoadmapStageCard(stage, index) {
     const isCompleted = stage.status === 'completed';
@@ -1517,181 +1556,130 @@ collectCurrentStepInputs() {
     const statusPillColor = isCompleted ? '#047857' : (isActive ? '#1d4ed8' : '#64748b');
     const statusPillLabel = isCompleted ? '✔ Completado' : (isActive ? '▶ En Progreso' : '⏱ Pendiente');
 
-    // Icono y fondo del contenedor cuadrado redondeado
-    const iconKey = stage.icon || this._guessIconByTitle(stage.title, index);
-    const { svg, bg } = this._getStageSquareIcon(iconKey);
+    // Emoji seleccionado por el usuario
+    const emoji = stage.emoji || this._getStageEmojiFallback(stage.icon, index);
+
+    // Fondo y borde del cuadro contenedor del emoji
+    const squareBg = isCompleted
+      ? 'linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%)'
+      : (isActive ? 'linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%)' : 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)');
+    const squareBorder = isCompleted ? '#6ee7b7' : (isActive ? '#a5b4fc' : '#cbd5e1');
 
     return `
-      <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 18px; padding: 1.15rem 1.45rem; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02); transition: border-color 0.2s, box-shadow 0.2s;">
-        
-        <!-- Fila Principal Visible (Idéntica a Imagen del Usuario) -->
-        <div style="display: flex; align-items: center; gap: 1.25rem; flex-wrap: nowrap;">
+      <div
+        onclick="window.ProjectWizard.openRoadmapStageModal(${index})"
+        style="background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 18px; padding: 1.15rem 1.45rem; box-shadow: 0 4px 14px rgba(0, 0, 0, 0.03); transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer; position: relative;"
+        onmouseenter="this.style.borderColor='#6366f1'; this.style.boxShadow='0 8px 24px rgba(99, 102, 241, 0.12)'; this.style.transform='translateY(-2px)';"
+        onmouseleave="this.style.borderColor='#e2e8f0'; this.style.boxShadow='0 4px 14px rgba(0, 0, 0, 0.03)'; this.style.transform='translateY(0)';"
+        title="Clic para editar esta etapa"
+      >
+        <div style="display: flex; align-items: center; gap: 1.15rem; flex-wrap: nowrap;">
           
-          <!-- Indicador Redondo Izquierdo (Play azul, Check verde o Anillo gris) -->
-          <div style="flex-shrink: 0;">
+          <!-- Indicador Redondo Izquierdo -->
+          <div style="flex-shrink: 0;" onclick="event.stopPropagation(); window.ProjectWizard.toggleRoadmapStageStatus(${index});" title="Clic para alternar estado">
             ${isActive ? `
-              <div style="width: 26px; height: 26px; border-radius: 50%; background: #00b4d8; color: #ffffff; display: flex; align-items: center; justify-content: center; font-size: 0.72rem; box-shadow: 0 0 10px rgba(0, 180, 216, 0.45);" title="Etapa En Progreso">
+              <div style="width: 28px; height: 28px; border-radius: 50%; background: #00b4d8; color: #ffffff; display: flex; align-items: center; justify-content: center; font-size: 0.72rem; box-shadow: 0 0 12px rgba(0, 180, 216, 0.5); cursor: pointer;">
                 ▶
               </div>
             ` : (isCompleted ? `
-              <div style="width: 26px; height: 26px; border-radius: 50%; background: #10b981; color: #ffffff; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 900; box-shadow: 0 0 10px rgba(16, 185, 129, 0.45);" title="Etapa Completada">
+              <div style="width: 28px; height: 28px; border-radius: 50%; background: #10b981; color: #ffffff; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; font-weight: 900; box-shadow: 0 0 12px rgba(16, 185, 129, 0.5); cursor: pointer;">
                 ✔
               </div>
             ` : `
-              <div style="width: 24px; height: 24px; border-radius: 50%; border: 2px solid #cbd5e1; background: transparent;" title="Etapa Pendiente"></div>
+              <div style="width: 26px; height: 26px; border-radius: 50%; border: 2.5px solid #cbd5e1; background: #ffffff; cursor: pointer;"></div>
             `)}
           </div>
 
-          <!-- Contenedor Cuadrado con el Icono -->
-          <div style="width: 54px; height: 54px; border-radius: 14px; background: ${bg}; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-            ${svg}
+          <!-- Contenedor Cuadrado con el Emoji Elegido por el Usuario -->
+          <div style="width: 56px; height: 56px; border-radius: 16px; background: ${squareBg}; border: 1.5px solid ${squareBorder}; display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 4px 12px rgba(0,0,0,0.04);">
+            <span style="font-size: 1.85rem; line-height: 1; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.12));">${emoji}</span>
           </div>
 
-          <!-- Textos Centrales y Barra de Progreso con porcentaje numérico a la derecha -->
+          <!-- Textos Centrales y Barra de Progreso con porcentaje numérico -->
           <div style="flex: 1; min-width: 0;">
-            <div style="font-weight: 900; font-size: 1.05rem; color: #0f172a; margin-bottom: 0.2rem; letter-spacing: -0.01em;">
-              ${index + 1}. ${this.escapeHtml(stage.title || 'Nombre de la etapa')}
+            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.25rem;">
+              <span style="font-weight: 900; font-size: 1.05rem; color: #0f172a; letter-spacing: -0.01em;">
+                ${index + 1}. ${this.escapeHtml(stage.title || `Etapa ${index + 1}`)}
+              </span>
             </div>
             
-            <div style="font-size: 0.86rem; color: #64748b; margin-bottom: 0.55rem; line-height: 1.4; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+            <div style="font-size: 0.86rem; color: #64748b; margin-bottom: 0.6rem; line-height: 1.4; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
               ${this.escapeHtml(stage.description || 'Sin descripción')}
             </div>
 
             <!-- Track de Progreso Horizontal -->
             <div style="display: flex; align-items: center; gap: 0.9rem;">
               <div style="flex: 1; height: 8px; border-radius: 9999px; background: #e2e8f0; overflow: hidden; position: relative;">
-                <div id="gdn-roadmap-bar-fill-${index}" style="height: 100%; width: ${stage.progress || 0}%; background: ${barColor}; border-radius: 9999px; transition: width 0.3s ease;"></div>
+                <div style="height: 100%; width: ${stage.progress || 0}%; background: ${barColor}; border-radius: 9999px; transition: width 0.3s ease;"></div>
               </div>
-              <span id="gdn-roadmap-pct-disp-${index}" style="font-weight: 900; font-size: 0.88rem; color: ${stage.progress > 0 ? '#0f172a' : '#94a3b8'}; min-width: 38px; text-align: right;">
+              <span style="font-weight: 900; font-size: 0.88rem; color: ${stage.progress > 0 ? '#0f172a' : '#94a3b8'}; min-width: 38px; text-align: right;">
                 ${stage.progress || 0}%
               </span>
             </div>
           </div>
 
-          <!-- Píldora de Estado y Botón de 3 Puntos ⋮ a la Derecha -->
-          <div style="display: flex; align-items: center; gap: 0.75rem; flex-shrink: 0;">
+          <!-- Acciones a la Derecha: Píldora de Estado + Botón Editar + Botón Eliminar -->
+          <div style="display: flex; align-items: center; gap: 0.5rem; flex-shrink: 0;" onclick="event.stopPropagation();">
             <button
               type="button"
               onclick="window.ProjectWizard.toggleRoadmapStageStatus(${index})"
-              title="Clic para alternar estado (Pendiente ➔ En Progreso ➔ Completado)"
-              style="background: ${statusPillBg}; border: 1px solid ${statusPillBorder}; color: ${statusPillColor}; font-weight: 800; font-size: 0.82rem; padding: 0.4rem 0.95rem; border-radius: 9999px; cursor: pointer; display: inline-flex; align-items: center; gap: 0.4rem; white-space: nowrap; transition: all 0.15s;"
+              title="Alternar estado: Pendiente ➔ En Progreso ➔ Completado"
+              style="background: ${statusPillBg}; border: 1px solid ${statusPillBorder}; color: ${statusPillColor}; font-weight: 800; font-size: 0.82rem; padding: 0.45rem 0.9rem; border-radius: 9999px; cursor: pointer; display: inline-flex; align-items: center; gap: 0.35rem; white-space: nowrap; transition: all 0.15s;"
             >
               ${statusPillLabel}
             </button>
 
+            <!-- Botón Editar con Lápiz -->
             <button
               type="button"
-              onclick="window.ProjectWizard.toggleRoadmapStageEditor(${index})"
-              title="Editar detalles de esta etapa"
-              style="width: 34px; height: 34px; border-radius: 10px; background: transparent; border: none; color: #64748b; font-size: 1.35rem; font-weight: 900; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.15s, color 0.15s;"
-              onmouseenter="this.style.background='#f1f5f9'; this.style.color='#0f172a';"
-              onmouseleave="this.style.background='transparent'; this.style.color='#64748b';"
+              onclick="window.ProjectWizard.openRoadmapStageModal(${index})"
+              title="Editar título, descripción y emoji"
+              style="background: #f1f5f9; border: 1px solid #cbd5e1; color: #475569; padding: 0.45rem 0.75rem; border-radius: 10px; font-weight: 800; font-size: 0.82rem; cursor: pointer; display: inline-flex; align-items: center; gap: 0.35rem; transition: all 0.15s;"
+              onmouseenter="this.style.background='#e0e7ff'; this.style.borderColor='#818cf8'; this.style.color='#4338ca';"
+              onmouseleave="this.style.background='#f1f5f9'; this.style.borderColor='#cbd5e1'; this.style.color='#475569';"
             >
-              ⋮
+              <span>✏️</span>
+              <span>Editar</span>
             </button>
-          </div>
 
-        </div>
-
-        <!-- Cajón Desplegable para Edición Directa de la Etapa -->
-        <div id="gdn-roadmap-editor-${index}" style="display: none; margin-top: 1.25rem; padding-top: 1.25rem; border-top: 1px dashed #e2e8f0;">
-          <div style="font-size: 0.82rem; font-weight: 800; color: #6366f1; text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 0.85rem;">
-            ✏️ Editar Detalles de la Etapa ${index + 1}
-          </div>
-
-          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem; margin-bottom: 1rem;">
-            <div>
-              <label style="display: block; font-size: 0.8rem; font-weight: 800; color: #334155; margin-bottom: 0.35rem;">Nombre de la Etapa:</label>
-              <input
-                type="text"
-                id="gdn-roadmap-title-${index}"
-                value="${this.escapeHtml(stage.title || '')}"
-                placeholder="Ej: Planeación, Investigación, Prototipo..."
-                style="width: 100%; box-sizing: border-box; padding: 0.65rem 0.85rem; border: 1.5px solid #cbd5e1; border-radius: 10px; font-weight: 700; color: #0f172a; outline: none;"
-                oninput="window.ProjectWizard.triggerFieldAutoSave()"
-              />
-            </div>
-
-            <div>
-              <label style="display: block; font-size: 0.8rem; font-weight: 800; color: #334155; margin-bottom: 0.35rem;">Icono Representativo:</label>
-              <select
-                id="gdn-roadmap-icon-${index}"
-                style="width: 100%; box-sizing: border-box; padding: 0.65rem 0.85rem; border: 1.5px solid #cbd5e1; border-radius: 10px; font-weight: 700; color: #0f172a; outline: none; cursor: pointer;"
-                onchange="window.ProjectWizard.triggerFieldAutoSave(); if (window.ProjectsView) window.ProjectsView.render();"
-              >
-                <option value="clipboard" ${iconKey === 'clipboard' ? 'selected' : ''}>📋 Planeación / Tareas</option>
-                <option value="search"    ${iconKey === 'search'    ? 'selected' : ''}>🔍 Investigación / Datos</option>
-                <option value="code"      ${iconKey === 'code'      ? 'selected' : ''}>💻 Desarrollo / Prototipo (&lt;/&gt;)</option>
-                <option value="rocket"    ${iconKey === 'rocket'    ? 'selected' : ''}>🚀 Publicación / Lanzamiento</option>
-                <option value="bulb"      ${iconKey === 'bulb'      ? 'selected' : ''}>💡 Ideación / Creatividad</option>
-                <option value="palette"   ${iconKey === 'palette'   ? 'selected' : ''}>🎨 Diseño / UI / UX</option>
-              </select>
-            </div>
-          </div>
-
-          <div style="margin-bottom: 1rem;">
-            <label style="display: block; font-size: 0.8rem; font-weight: 800; color: #334155; margin-bottom: 0.35rem;">Descripción de lo que se realizó:</label>
-            <input
-              type="text"
-              id="gdn-roadmap-desc-${index}"
-              value="${this.escapeHtml(stage.description || '')}"
-              placeholder="Ej: Conformación del equipo y definición de objetivos principales..."
-              style="width: 100%; box-sizing: border-box; padding: 0.65rem 0.85rem; border: 1.5px solid #cbd5e1; border-radius: 10px; color: #334155; outline: none;"
-              oninput="window.ProjectWizard.triggerFieldAutoSave()"
-            />
-          </div>
-
-          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.25rem; align-items: center; margin-bottom: 0.75rem;">
-            <div>
-              <label style="display: block; font-size: 0.8rem; font-weight: 800; color: #334155; margin-bottom: 0.35rem;">Estado de la Etapa:</label>
-              <select
-                id="gdn-roadmap-status-${index}"
-                style="width: 100%; box-sizing: border-box; padding: 0.65rem 0.85rem; border: 1.5px solid #cbd5e1; border-radius: 10px; font-weight: 800; color: #0f172a; outline: none; cursor: pointer;"
-                onchange="window.ProjectWizard.triggerFieldAutoSave(); if (window.ProjectsView) window.ProjectsView.render();"
-              >
-                <option value="pending"   ${stage.status === 'pending'   ? 'selected' : ''}>⏱ Pendiente (0%)</option>
-                <option value="active"    ${stage.status === 'active'    ? 'selected' : ''}>▶ En Progreso</option>
-                <option value="completed" ${stage.status === 'completed' ? 'selected' : ''}>✔ Completado (100%)</option>
-              </select>
-            </div>
-
-            <div>
-              <label style="display: flex; justify-content: space-between; font-size: 0.8rem; font-weight: 800; color: #334155; margin-bottom: 0.35rem;">
-                <span>Progreso Porcentual:</span>
-                <strong id="gdn-roadmap-pct-slider-lbl-${index}" style="color: #00b4d8; font-size: 0.95rem;">${stage.progress || 0}%</strong>
-              </label>
-              <input
-                type="range"
-                id="gdn-roadmap-progress-${index}"
-                min="0" max="100" step="5"
-                value="${stage.progress || 0}"
-                style="width: 100%; accent-color: #00b4d8; cursor: pointer;"
-                oninput="window.ProjectWizard.updateRoadmapStageProgress(${index}, this.value)"
-              />
-            </div>
-          </div>
-
-          <div style="display: flex; justify-content: flex-end; gap: 0.5rem; margin-top: 0.75rem;">
+            <!-- Botón Eliminar Etapa Directo -->
             <button
               type="button"
               onclick="window.ProjectWizard.removeRoadmapStage(${index})"
-              style="background: rgba(239, 68, 68, 0.08); border: 1px solid rgba(239, 68, 68, 0.25); color: #ef4444; font-weight: 800; padding: 0.45rem 0.9rem; border-radius: 8px; font-size: 0.82rem; cursor: pointer; display: inline-flex; align-items: center; gap: 0.35rem;"
+              title="Eliminar esta etapa"
+              style="background: rgba(239, 68, 68, 0.08); border: 1px solid rgba(239, 68, 68, 0.25); color: #ef4444; padding: 0.45rem 0.65rem; border-radius: 10px; font-weight: 800; font-size: 0.85rem; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; transition: all 0.15s;"
+              onmouseenter="this.style.background='#fee2e2'; this.style.borderColor='#f87171'; this.style.color='#b91c1c';"
+              onmouseleave="this.style.background='rgba(239, 68, 68, 0.08)'; this.style.borderColor='rgba(239, 68, 68, 0.25)'; this.style.color='#ef4444';"
             >
-              🗑️ Eliminar Etapa
-            </button>
-            <button
-              type="button"
-              onclick="window.ProjectWizard.toggleRoadmapStageEditor(${index})"
-              style="background: #f1f5f9; border: 1px solid #cbd5e1; color: #334155; font-weight: 800; padding: 0.45rem 0.9rem; border-radius: 8px; font-size: 0.82rem; cursor: pointer;"
-            >
-              Cerrar Editor
+              🗑️
             </button>
           </div>
 
         </div>
-
       </div>
     `;
+  },
+
+  /**
+   * Resuelve el emoji representativo de la etapa
+   */
+  _getStageEmojiFallback(iconKey, index) {
+    const k = String(iconKey || '').trim();
+    if (k.length > 0 && !k.match(/^[a-z]+$/i)) {
+      return k; // Ya es un emoji directo (ej: '📋', '📓', '🚀')
+    }
+    const low = k.toLowerCase();
+    if (low === 'clipboard') return '📋';
+    if (low === 'search') return '🔍';
+    if (low === 'code') return '💻';
+    if (low === 'rocket') return '🚀';
+    if (low === 'bulb') return '💡';
+    if (low === 'palette') return '🎨';
+    if (index === 0) return '📋';
+    if (index === 1) return '🔍';
+    if (index === 2) return '💻';
+    if (index === 3) return '🚀';
+    return '📋';
   },
 
   /**
@@ -1707,106 +1695,297 @@ collectCurrentStepInputs() {
   },
 
   /**
-   * Retorna el SVG y color de fondo para la tarjeta cuadrada redondeada
+   * Retorna el SVG y color de fondo para compatibilidad
    */
   _getStageSquareIcon(iconKey) {
-    const k = (iconKey || '').toLowerCase();
-    if (k === 'clipboard') {
-      return {
-        bg: '#e0e7ff', // Lavanda / azul claro suave
-        svg: `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#4338ca" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
-                <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
-                <path d="M9 12l2 2 4-4"></path>
-                <path d="M9 16h6"></path>
-              </svg>`
-      };
-    }
-    if (k === 'search') {
-      return {
-        bg: '#d1fae5', // Menta / verde suave
-        svg: `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="11" cy="11" r="7.5"></circle>
-                <line x1="21" y1="21" x2="16.5" y2="16.5"></line>
-              </svg>`
-      };
-    }
-    if (k === 'code') {
-      return {
-        bg: '#f1f5f9', // Gris pizarra claro
-        svg: `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#475569" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="16 18 22 12 16 6"></polyline>
-                <polyline points="8 6 2 12 8 18"></polyline>
-              </svg>`
-      };
-    }
-    if (k === 'rocket') {
-      return {
-        bg: '#f1f5f9', // Gris pizarra claro
-        svg: `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#475569" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"></path>
-                <path d="M12 15l-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"></path>
-                <path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"></path>
-                <path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"></path>
-              </svg>`
-      };
-    }
-    if (k === 'bulb') {
-      return {
-        bg: '#fef3c7',
-        svg: `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M9 18h6"></path><path d="M10 22h4"></path>
-                <path d="M12 2a7 7 0 0 0-7 7c0 2.4 1.2 4.5 3 5.7V17h8v-2.3c1.8-1.2 3-3.3 3-5.7a7 7 0 0 0-7-7z"></path>
-              </svg>`
-      };
-    }
+    const emoji = this._getStageEmojiFallback(iconKey, 0);
     return {
-      bg: '#f1f5f9',
-      svg: `<span style="font-size:1.5rem;">📍</span>`
+      bg: '#e0e7ff',
+      svg: `<span style="font-size: 1.85rem; line-height: 1;">${emoji}</span>`
     };
   },
 
   /**
-   * Retorna el SVG para el nodo del timeline cibernético superior
+   * Retorna el contenido para el nodo del timeline cibernético superior
    */
-  _getRoadmapNodeSvg(iconKey, isCompleted, isActive) {
-    const strokeColor = isCompleted ? '#10b981' : (isActive ? '#00f5d4' : 'rgba(255,255,255,0.7)');
-    const k = (iconKey || '').toLowerCase();
-    if (k === 'clipboard') {
-      return `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="${strokeColor}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
-                <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
-                <path d="M9 12l2 2 4-4"></path>
-              </svg>`;
+  _getRoadmapNodeSvg(iconOrEmoji, isCompleted, isActive) {
+    const em = this._getStageEmojiFallback(iconOrEmoji, 0);
+    return `<span style="font-size: 1.65rem; line-height: 1; filter: drop-shadow(0 2px 6px rgba(0,0,0,0.5));">${em}</span>`;
+  },
+
+  /**
+   * Abre el Modal de Edición Completa y Selección de Emojis para una Etapa
+   */
+  openRoadmapStageModal(index) {
+    if (!Array.isArray(this.draft.projectRoadmap) || !this.draft.projectRoadmap[index]) return;
+    this._activeRoadmapModalIndex = index;
+    const stage = this.draft.projectRoadmap[index];
+    const currentEmoji = stage.emoji || this._getStageEmojiFallback(stage.icon, index);
+
+    // Lista rica de emojis sugeridos (con cuadernos, libretas, investigación, tech, etc.)
+    const suggestedEmojis = [
+      '📋', '📓', '📒', '📝', '📚', '🔍', '💡', '🎨', 
+      '💻', '⚙️', '🚀', '🧪', '📊', '🎯', '🤖', '🌐', 
+      '🏆', '⚡', '🌱', '🧩', '👥', '📢', '🛠️', '🎓'
+    ];
+
+    const existingModal = document.getElementById('gdn-roadmap-stage-modal-overlay');
+    if (existingModal) existingModal.remove();
+
+    const overlay = document.createElement('div');
+    overlay.id = 'gdn-roadmap-stage-modal-overlay';
+    overlay.style.cssText = 'position: fixed; inset: 0; background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); z-index: 999999; display: flex; align-items: center; justify-content: center; padding: 1rem;';
+
+    overlay.innerHTML = `
+      <div style="background: #ffffff; border-radius: 24px; max-width: 580px; width: 100%; max-height: 90vh; overflow-y: auto; box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(99, 102, 241, 0.2); position: relative;">
+        
+        <!-- Header -->
+        <div style="padding: 1.5rem 1.75rem 1.25rem; border-bottom: 1px solid #f1f5f9; display: flex; justify-content: space-between; align-items: center; background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%); border-top-left-radius: 24px; border-top-right-radius: 24px;">
+          <div style="display: flex; align-items: center; gap: 0.75rem;">
+            <div style="width: 42px; height: 42px; border-radius: 12px; background: #e0e7ff; color: #4f46e5; display: flex; align-items: center; justify-content: center; font-size: 1.35rem;">
+              ✏️
+            </div>
+            <div>
+              <h3 style="margin: 0; font-size: 1.25rem; font-weight: 900; color: #0f172a; letter-spacing: -0.01em;">
+                Personalizar Etapa ${index + 1}
+              </h3>
+              <p style="margin: 0.15rem 0 0; font-size: 0.82rem; color: #64748b; font-weight: 500;">
+                Elige el emoji representativo y define los objetivos
+              </p>
+            </div>
+          </div>
+          <button
+            type="button"
+            onclick="window.ProjectWizard.closeRoadmapStageModal()"
+            style="width: 36px; height: 36px; border-radius: 50%; background: #f1f5f9; border: none; font-size: 1.1rem; color: #64748b; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.15s;"
+            onmouseenter="this.style.background='#fee2e2'; this.style.color='#ef4444';"
+            onmouseleave="this.style.background='#f1f5f9'; this.style.color='#64748b';"
+          >
+            ✕
+          </button>
+        </div>
+
+        <!-- Form Body -->
+        <div style="padding: 1.5rem 1.75rem;">
+          
+          <!-- SECCIÓN DEL EMOJI INTERACTIVO ("el emoji lo elijan ellos el del cuaderno") -->
+          <div style="background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 18px; padding: 1.25rem; margin-bottom: 1.5rem;">
+            <label style="display: block; font-size: 0.85rem; font-weight: 800; color: #1e293b; margin-bottom: 0.75rem;">
+              🎨 Elige el Emoji de la Etapa:
+            </label>
+            
+            <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+              <!-- Vista previa grande del emoji activo -->
+              <div id="gdn-modal-emoji-preview" style="width: 68px; height: 68px; border-radius: 18px; background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%); border: 2px solid #818cf8; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; flex-shrink: 0; box-shadow: 0 4px 16px rgba(99, 102, 241, 0.25);">
+                ${currentEmoji}
+              </div>
+              <div style="flex: 1;">
+                <input
+                  type="text"
+                  id="gdn-modal-stage-emoji"
+                  value="${currentEmoji}"
+                  maxlength="4"
+                  placeholder="Ej: 📋 o 📓"
+                  style="width: 100%; box-sizing: border-box; padding: 0.65rem 0.85rem; border: 1.5px solid #cbd5e1; border-radius: 10px; font-size: 1.1rem; font-weight: 700; text-align: center; color: #0f172a; outline: none;"
+                  oninput="document.getElementById('gdn-modal-emoji-preview').textContent = this.value || '📋';"
+                />
+                <span style="display: block; font-size: 0.76rem; color: #64748b; margin-top: 0.35rem;">
+                  Toca cualquier emoji de la cuadrícula o escribe el que prefieras
+                </span>
+              </div>
+            </div>
+
+            <!-- Cuadrícula de Emojis Populares -->
+            <div style="display: grid; grid-template-columns: repeat(8, 1fr); gap: 0.45rem;">
+              ${suggestedEmojis.map(em => `
+                <button
+                  type="button"
+                  onclick="document.getElementById('gdn-modal-stage-emoji').value='${em}'; document.getElementById('gdn-modal-emoji-preview').textContent='${em}';"
+                  style="width: 100%; aspect-ratio: 1; border-radius: 10px; background: #ffffff; border: 1px solid #e2e8f0; font-size: 1.45rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.15s;"
+                  onmouseenter="this.style.transform='scale(1.15)'; this.style.borderColor='#6366f1'; this.style.background='#e0e7ff';"
+                  onmouseleave="this.style.transform='scale(1)'; this.style.borderColor='#e2e8f0'; this.style.background='#ffffff';"
+                  title="Elegir ${em}"
+                >
+                  ${em}
+                </button>
+              `).join('')}
+            </div>
+          </div>
+
+          <!-- Nombre de la Etapa -->
+          <div style="margin-bottom: 1.25rem;">
+            <label style="display: block; font-size: 0.85rem; font-weight: 800; color: #1e293b; margin-bottom: 0.4rem;">
+              Nombre o Título de la Etapa *
+            </label>
+            <input
+              type="text"
+              id="gdn-modal-stage-title"
+              value="${this.escapeHtml(stage.title || '')}"
+              placeholder="Ej: Planeación, Investigación, Prototipado, Lanzamiento..."
+              style="width: 100%; box-sizing: border-box; padding: 0.75rem 0.95rem; border: 1.5px solid #cbd5e1; border-radius: 12px; font-weight: 700; font-size: 0.96rem; color: #0f172a; outline: none; transition: border-color 0.2s;"
+              onfocus="this.style.borderColor='#6366f1';"
+              onblur="this.style.borderColor='#cbd5e1';"
+            />
+          </div>
+
+          <!-- Descripción de la Etapa -->
+          <div style="margin-bottom: 1.25rem;">
+            <label style="display: block; font-size: 0.85rem; font-weight: 800; color: #1e293b; margin-bottom: 0.4rem;">
+              Descripción de lo realizado o actividades clave
+            </label>
+            <textarea
+              id="gdn-modal-stage-desc"
+              rows="3"
+              placeholder="Describe los entregables, metas cumplidas o tareas realizadas en esta etapa..."
+              style="width: 100%; box-sizing: border-box; padding: 0.75rem 0.95rem; border: 1.5px solid #cbd5e1; border-radius: 12px; font-size: 0.9rem; color: #334155; outline: none; resize: vertical; line-height: 1.5; transition: border-color 0.2s;"
+              onfocus="this.style.borderColor='#6366f1';"
+              onblur="this.style.borderColor='#cbd5e1';"
+            >${this.escapeHtml(stage.description || '')}</textarea>
+          </div>
+
+          <!-- Estado y Progreso en 2 Columnas -->
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
+            <div>
+              <label style="display: block; font-size: 0.85rem; font-weight: 800; color: #1e293b; margin-bottom: 0.4rem;">
+                Estado Actual
+              </label>
+              <select
+                id="gdn-modal-stage-status"
+                style="width: 100%; box-sizing: border-box; padding: 0.75rem 0.85rem; border: 1.5px solid #cbd5e1; border-radius: 12px; font-weight: 800; font-size: 0.9rem; color: #0f172a; outline: none; background: #ffffff; cursor: pointer;"
+                onchange="window.ProjectWizard._onModalStatusChange(this.value)"
+              >
+                <option value="pending"   ${stage.status === 'pending'   ? 'selected' : ''}>⏱ Pendiente</option>
+                <option value="active"    ${stage.status === 'active'    ? 'selected' : ''}>▶ En Progreso</option>
+                <option value="completed" ${stage.status === 'completed' ? 'selected' : ''}>✔ Completado</option>
+              </select>
+            </div>
+
+            <div>
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem;">
+                <label style="font-size: 0.85rem; font-weight: 800; color: #1e293b;">Progreso:</label>
+                <strong id="gdn-modal-stage-pct-val" style="color: #6366f1; font-size: 0.96rem;">${stage.progress || 0}%</strong>
+              </div>
+              <input
+                type="range"
+                id="gdn-modal-stage-progress"
+                min="0" max="100" step="5"
+                value="${stage.progress || 0}"
+                style="width: 100%; accent-color: #6366f1; cursor: pointer; margin-top: 0.5rem;"
+                oninput="document.getElementById('gdn-modal-stage-pct-val').textContent = this.value + '%'; window.ProjectWizard._onModalProgressInput(this.value);"
+              />
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Footer Actions -->
+        <div style="padding: 1.25rem 1.75rem; border-top: 1px solid #f1f5f9; background: #f8fafc; border-bottom-left-radius: 24px; border-bottom-right-radius: 24px; display: flex; justify-content: space-between; align-items: center; gap: 0.75rem; flex-wrap: wrap;">
+          <button
+            type="button"
+            onclick="window.ProjectWizard.removeRoadmapStage(${index})"
+            style="background: rgba(239, 68, 68, 0.08); border: 1px solid rgba(239, 68, 68, 0.3); color: #ef4444; padding: 0.65rem 1.1rem; border-radius: 12px; font-weight: 800; font-size: 0.88rem; cursor: pointer; display: inline-flex; align-items: center; gap: 0.4rem; transition: all 0.15s;"
+            onmouseenter="this.style.background='#fee2e2'; this.style.borderColor='#f87171';"
+            onmouseleave="this.style.background='rgba(239, 68, 68, 0.08)'; this.style.borderColor='rgba(239, 68, 68, 0.3)';"
+          >
+            🗑️ Eliminar Etapa
+          </button>
+
+          <div style="display: flex; gap: 0.65rem;">
+            <button
+              type="button"
+              onclick="window.ProjectWizard.closeRoadmapStageModal()"
+              style="background: #ffffff; border: 1.5px solid #cbd5e1; color: #475569; padding: 0.65rem 1.25rem; border-radius: 12px; font-weight: 800; font-size: 0.88rem; cursor: pointer;"
+            >
+              Cancelar
+            </button>
+            <button
+              type="button"
+              onclick="window.ProjectWizard.saveRoadmapStageFromModal(${index})"
+              style="background: #6366f1; border: none; color: #ffffff; padding: 0.65rem 1.5rem; border-radius: 12px; font-weight: 900; font-size: 0.92rem; cursor: pointer; display: inline-flex; align-items: center; gap: 0.45rem; box-shadow: 0 4px 14px rgba(99, 102, 241, 0.35); transition: all 0.15s;"
+              onmouseenter="this.style.background='#4f46e5'; this.style.transform='translateY(-1px)';"
+              onmouseleave="this.style.background='#6366f1'; this.style.transform='translateY(0)';"
+            >
+              💾 Guardar cambios
+            </button>
+          </div>
+        </div>
+
+      </div>
+    `;
+
+    document.body.appendChild(overlay);
+  },
+
+  _onModalStatusChange(val) {
+    const slider = document.getElementById('gdn-modal-stage-progress');
+    const lbl = document.getElementById('gdn-modal-stage-pct-val');
+    if (!slider || !lbl) return;
+    if (val === 'completed') {
+      slider.value = 100;
+      lbl.textContent = '100%';
+    } else if (val === 'pending') {
+      slider.value = 0;
+      lbl.textContent = '0%';
+    } else if (val === 'active' && parseInt(slider.value, 10) === 0) {
+      slider.value = 50;
+      lbl.textContent = '50%';
     }
-    if (k === 'search') {
-      return `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="${strokeColor}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="11" cy="11" r="7"></circle>
-                <line x1="21" y1="21" x2="16.5" y2="16.5"></line>
-              </svg>`;
+  },
+
+  _onModalProgressInput(val) {
+    const statusSelect = document.getElementById('gdn-modal-stage-status');
+    if (!statusSelect) return;
+    const num = parseInt(val, 10) || 0;
+    if (num >= 100) {
+      statusSelect.value = 'completed';
+    } else if (num > 0) {
+      statusSelect.value = 'active';
+    } else {
+      statusSelect.value = 'pending';
     }
-    if (k === 'code') {
-      return `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="${strokeColor}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="16 18 22 12 16 6"></polyline>
-                <polyline points="8 6 2 12 8 18"></polyline>
-              </svg>`;
+  },
+
+  closeRoadmapStageModal() {
+    this._activeRoadmapModalIndex = null;
+    const el = document.getElementById('gdn-roadmap-stage-modal-overlay');
+    if (el) el.remove();
+  },
+
+  saveRoadmapStageFromModal(index) {
+    if (!Array.isArray(this.draft.projectRoadmap) || !this.draft.projectRoadmap[index]) return;
+    const title = (document.getElementById('gdn-modal-stage-title')?.value || '').trim();
+    if (!title) {
+      alert('⚠️ Por favor escribe un nombre o título para la etapa.');
+      document.getElementById('gdn-modal-stage-title')?.focus();
+      return;
     }
-    if (k === 'rocket') {
-      return `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="${strokeColor}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"></path>
-                <path d="M12 15l-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"></path>
-              </svg>`;
-    }
-    return `<span style="font-size:1.3rem; color:${strokeColor};">📍</span>`;
+    const desc = (document.getElementById('gdn-modal-stage-desc')?.value || '').trim();
+    const status = document.getElementById('gdn-modal-stage-status')?.value || 'pending';
+    let progress = parseInt(document.getElementById('gdn-modal-stage-progress')?.value || '0', 10);
+    if (status === 'completed' && progress < 100) progress = 100;
+    if (status === 'pending' && progress > 0 && progress === 100) progress = 0;
+    const emoji = (document.getElementById('gdn-modal-stage-emoji')?.value || '📋').trim();
+
+    this.draft.projectRoadmap[index] = {
+      title,
+      description: desc,
+      status,
+      progress: isNaN(progress) ? 0 : progress,
+      emoji: emoji || '📋',
+      icon: 'clipboard'
+    };
+
+    this.closeRoadmapStageModal();
+    this.saveDraftToStorage(true);
+    if (window.ProjectsView) window.ProjectsView.render();
   },
 
   toggleRoadmapStageStatus(index) {
-    this.collectCurrentStepInputs();
     if (!Array.isArray(this.draft.projectRoadmap) || !this.draft.projectRoadmap[index]) return;
     const s = this.draft.projectRoadmap[index];
     if (s.status === 'pending') {
       s.status = 'active';
-      if (!s.progress) s.progress = 50;
+      if (!s.progress || s.progress === 0) s.progress = 50;
     } else if (s.status === 'active') {
       s.status = 'completed';
       s.progress = 100;
@@ -1819,45 +1998,50 @@ collectCurrentStepInputs() {
   },
 
   toggleRoadmapStageEditor(index) {
-    const el = document.getElementById('gdn-roadmap-editor-' + index);
-    if (el) {
-      el.style.display = (el.style.display === 'none' || !el.style.display) ? 'block' : 'none';
-    }
+    this.openRoadmapStageModal(index);
   },
 
   updateRoadmapStageProgress(index, val) {
     const num = parseInt(val, 10) || 0;
-    const sliderLbl = document.getElementById(`gdn-roadmap-pct-slider-lbl-${index}`);
-    if (sliderLbl) sliderLbl.textContent = num + '%';
-    const disp = document.getElementById(`gdn-roadmap-pct-disp-${index}`);
-    if (disp) {
-      disp.textContent = num + '%';
-      disp.style.color = num > 0 ? '#0f172a' : '#94a3b8';
+    if (this.draft.projectRoadmap && this.draft.projectRoadmap[index]) {
+      this.draft.projectRoadmap[index].progress = num;
+      if (num >= 100) this.draft.projectRoadmap[index].status = 'completed';
+      else if (num > 0) this.draft.projectRoadmap[index].status = 'active';
+      else this.draft.projectRoadmap[index].status = 'pending';
     }
-    const bar = document.getElementById(`gdn-roadmap-bar-fill-${index}`);
-    if (bar) bar.style.width = num + '%';
-    this.triggerFieldAutoSave();
-  },
-
-  addRoadmapStage() {
-    this.collectCurrentStepInputs();
-    if (!Array.isArray(this.draft.projectRoadmap)) this.draft.projectRoadmap = [];
-    const count = this.draft.projectRoadmap.length + 1;
-    this.draft.projectRoadmap.push({
-      title: `Etapa ${count}`,
-      description: 'Descripción de las metas y entregables de esta etapa.',
-      progress: 0,
-      status: 'pending',
-      icon: count === 1 ? 'clipboard' : (count === 2 ? 'search' : (count === 3 ? 'code' : 'rocket'))
-    });
     this.saveDraftToStorage(true);
     if (window.ProjectsView) window.ProjectsView.render();
   },
 
+  addRoadmapStage() {
+    if (!Array.isArray(this.draft.projectRoadmap)) this.draft.projectRoadmap = [];
+    const count = this.draft.projectRoadmap.length + 1;
+    const defaultEmoji = count === 1 ? '📋' : (count === 2 ? '🔍' : (count === 3 ? '💻' : (count === 4 ? '🚀' : '💡')));
+    this.draft.projectRoadmap.push({
+      title: `Etapa ${count}`,
+      description: 'Descripción de las metas y actividades de esta etapa.',
+      progress: 0,
+      status: 'pending',
+      emoji: defaultEmoji,
+      icon: 'clipboard'
+    });
+    this.saveDraftToStorage(true);
+    if (window.ProjectsView) window.ProjectsView.render();
+    const newIdx = this.draft.projectRoadmap.length - 1;
+    setTimeout(() => {
+      this.openRoadmapStageModal(newIdx);
+    }, 80);
+  },
+
   removeRoadmapStage(index) {
-    this.collectCurrentStepInputs();
-    if (!Array.isArray(this.draft.projectRoadmap)) return;
+    if (!Array.isArray(this.draft.projectRoadmap) || !this.draft.projectRoadmap[index]) return;
+    const stage = this.draft.projectRoadmap[index];
+    const stageName = stage.title || `Etapa ${index + 1}`;
+    if (!confirm(`¿Estás seguro de eliminar "${stageName}" de la Ruta del Proyecto?`)) {
+      return;
+    }
     this.draft.projectRoadmap.splice(index, 1);
+    this.closeRoadmapStageModal();
     this.saveDraftToStorage(true);
     if (window.ProjectsView) window.ProjectsView.render();
   },
@@ -6537,6 +6721,7 @@ collectCurrentStepInputs() {
       slides: Array.isArray(d.slides) ? d.slides : [],
       externalLinks: Array.isArray(d.externalLinks) ? d.externalLinks : [],
       landingConfig: d.landingConfig || {},
+      projectRoadmap: Array.isArray(d.projectRoadmap) ? d.projectRoadmap : [],
       designConfig: d.designConfig || { themeId: 'cosmos', fontFamily: 'Montserrat', titleColor: '#ffffff', textColor: '#cbd5e1', accentColor: '#00f5d4', bannerStyle: 'gradient-cosmos', bannerUrl: '' },
       authorsConfig: d.authorsConfig || { authorsList: d.author || '', authorsEmails: d.authorEmail || '', authorsRole: 'Líder del Proyecto', authorsInstitution: '', collaborators: '' },
       tags: d.landingConfig?.tags || ['Gobierno de Datos', 'IA'],
