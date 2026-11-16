@@ -853,8 +853,15 @@ collectCurrentStepInputs() {
         const rTitle    = val(`gdn-roadmap-title-${ri}`)    || '';
         const rDesc     = val(`gdn-roadmap-desc-${ri}`)     || '';
         const rStatus   = val(`gdn-roadmap-status-${ri}`)   || 'pending';
+        const rIcon     = val(`gdn-roadmap-icon-${ri}`)     || '';
         const rProgress = parseInt(val(`gdn-roadmap-progress-${ri}`) || '0', 10);
-        roadmap.push({ title: rTitle.trim(), description: rDesc.trim(), status: rStatus, progress: isNaN(rProgress) ? 0 : rProgress });
+        roadmap.push({
+          title: rTitle.trim(),
+          description: rDesc.trim(),
+          status: rStatus,
+          icon: rIcon.trim(),
+          progress: isNaN(rProgress) ? 0 : rProgress
+        });
         ri++;
       }
       if (roadmap.length > 0) this.draft.projectRoadmap = roadmap;
@@ -1113,184 +1120,575 @@ collectCurrentStepInputs() {
   // =========================================================================
   // PASO 4: RUTA DEL PROYECTO — Etapas y progreso personalizados
   // =========================================================================
+  // PASO 4: RUTA DEL PROYECTO (DISEÑO IDÉNTICO A MOCKUP PROFESIONAL)
+  // =========================================================================
   renderStep4Roadmap() {
     const d = this.draft;
     if (!Array.isArray(d.projectRoadmap) || d.projectRoadmap.length === 0) {
       d.projectRoadmap = [
-        { title: 'Inicio del Proyecto', description: 'Conformación del equipo y definición de objetivos', progress: 100, status: 'completed' },
-        { title: 'Investigación', description: 'Recopilación de datos e información relevante', progress: 60, status: 'active' },
-        { title: 'Desarrollo', description: 'Implementación de la solución propuesta', progress: 0, status: 'pending' },
-        { title: 'Publicación', description: 'Socialización y presentación pública del proyecto', progress: 0, status: 'pending' }
+        { title: 'Planeación', description: 'Conformación del equipo y definición de objetivos.', progress: 40, status: 'active', icon: 'clipboard' },
+        { title: 'Investigación', description: 'Recopilación de datos e información relevante.', progress: 100, status: 'completed', icon: 'search' },
+        { title: 'Desarrollo', description: 'Construcción de la solución y prototipos.', progress: 0, status: 'pending', icon: 'code' },
+        { title: 'Publicación', description: 'Despliegue en la Landing Page y comunicación.', progress: 0, status: 'pending', icon: 'rocket' }
       ];
     }
     const stages = d.projectRoadmap;
-    const fillPct = this._roadmapFillPct(stages);
 
     return `
-      <div class="gdn-card">
-        <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:1rem; flex-wrap:wrap; margin-bottom:1.25rem;">
-          <div>
-            <h3 style="margin: 0 0 0.35rem; font-size: 1.15rem; color: var(--gdn-text); font-weight: 800;">
-              4. Ruta del Proyecto
-            </h3>
-            <p class="gdn-help" style="margin: 0; font-size: 0.88rem;">
-              Agrega las etapas por las que pasó tu proyecto, describe lo que hicieron en cada una y marca el progreso. Esto aparecerá en tu Landing Page.
+      <div class="gdn-roadmap-step4-container" style="max-width: 980px; margin: 0 auto;">
+        
+        <!-- ENCABEZADO SUPERIOR: Montaña, Camino y Bandera Morada (Idéntico a Mockup) -->
+        <div style="display: flex; align-items: center; gap: 1.25rem; margin-bottom: 1.5rem; background: #ffffff; padding: 1.5rem 1.85rem; border-radius: 22px; border: 1px solid #e2e8f0; box-shadow: 0 4px 20px rgba(0,0,0,0.03);">
+          <!-- Icono ilustración vectorial del camino a la cima con bandera morada -->
+          <div style="width: 72px; height: 72px; flex-shrink: 0; border-radius: 20px; background: linear-gradient(135deg, #f1f5f9 0%, #e0e7ff 100%); display: flex; align-items: center; justify-content: center; box-shadow: 0 6px 16px rgba(99,102,241,0.12);">
+            <svg width="56" height="56" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <!-- Siluetas de montaña -->
+              <path d="M12 50 L28 20 C29 18 32 18 33 20 L48 50 Z" fill="#c7d2fe" opacity="0.6"/>
+              <path d="M22 50 L36 15 C37 13 40 13 41 15 L56 50 Z" fill="#818cf8" opacity="0.4"/>
+              <!-- Camino sinuoso de asfalto oscuro con líneas discontinuas blancas -->
+              <path d="M14 50 C22 46 25 38 29 32 C33 26 35 24 37 15" stroke="#1e1b4b" stroke-width="8" stroke-linecap="round"/>
+              <path d="M14 50 C22 46 25 38 29 32 C33 26 35 24 37 15" stroke="#ffffff" stroke-width="1.8" stroke-dasharray="3 3" stroke-linecap="round"/>
+              <!-- Asta de la bandera morada -->
+              <line x1="37" y1="15" x2="37" y2="4" stroke="#4f46e5" stroke-width="2.5" stroke-linecap="round"/>
+              <!-- Bandera morada ondeando en la cima -->
+              <path d="M37 5 L51 9 L37 13 Z" fill="#7c3aed"/>
+            </svg>
+          </div>
+          
+          <div style="flex: 1; min-width: 0;">
+            <h1 style="font-size: clamp(1.6rem, 2.8vw, 2.1rem); font-weight: 900; color: #0f172a; margin: 0 0 0.35rem; letter-spacing: -0.025em; line-height: 1.2;">
+              Ruta del Proyecto
+            </h1>
+            <p style="margin: 0; font-size: 0.94rem; color: #64748b; line-height: 1.5; font-weight: 500;">
+              Gestiona las etapas, actividades y el avance de tu proyecto. Todo se refleja automáticamente en tu Landing Page.
             </p>
           </div>
-          <span style="font-size:0.8rem; background:rgba(16,185,129,0.15); color:#10b981; border:1px solid rgba(16,185,129,0.4); padding:0.25rem 0.75rem; border-radius:9999px; font-weight:800;">
-            🗺️ ${stages.length} Etapa(s)
-          </span>
         </div>
 
-        <!-- Vista previa de la ruta -->
-        <div style="background: rgba(0,0,0,0.3); border: 1.5px solid var(--gdn-border); border-radius: 14px; padding: 1.25rem 1.5rem; margin-bottom: 1.75rem; overflow-x: auto;">
-          <div style="font-size: 0.78rem; font-weight: 800; color: #00f5d4; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 1.1rem;">
-            📍 Vista previa de la Ruta en la Landing Page
+        <!-- HERO TIMELINE CURVA Y NEÓN (Idéntico a Mockup en degradado azul cósmico) -->
+        ${this._renderRoadmapTopTimeline(stages)}
+
+        <!-- SECCIÓN INFERIOR: Lista de Etapas (Idéntica a Mockup) -->
+        <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 22px; padding: 1.75rem 1.85rem; box-shadow: 0 6px 25px rgba(0,0,0,0.03); margin-top: 1.5rem;">
+          
+          <!-- Encabezado de la Sección -->
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+            <div style="display: flex; align-items: center; gap: 0.65rem;">
+              <span style="font-size: 1.35rem; filter: drop-shadow(0 2px 4px rgba(99,102,241,0.25));">🗂️</span>
+              <h2 style="font-size: 1.25rem; font-weight: 900; color: #0f172a; margin: 0; letter-spacing: -0.01em;">
+                Etapas del Proyecto (${stages.length})
+              </h2>
+            </div>
+            
+            <button
+              type="button"
+              onclick="window.ProjectWizard.addRoadmapStage()"
+              style="background: #6366f1; color: #ffffff; border: none; padding: 0.65rem 1.35rem; border-radius: 12px; font-weight: 900; font-size: 0.92rem; cursor: pointer; display: inline-flex; align-items: center; gap: 0.45rem; box-shadow: 0 4px 16px rgba(99, 102, 241, 0.4); transition: all 0.2s cubic-bezier(0.4,0,0.2,1);"
+              onmouseenter="this.style.transform='translateY(-1px)'; this.style.boxShadow='0 6px 20px rgba(99, 102, 241, 0.6)';"
+              onmouseleave="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 16px rgba(99, 102, 241, 0.4)';"
+            >
+              <span style="font-size: 1.1rem; line-height: 1;">+</span>
+              <span>Nueva etapa</span>
+            </button>
           </div>
-          <div style="display: flex; align-items: flex-start; min-width: max-content; padding-bottom: 0.5rem; position: relative;">
-            <!-- Track de fondo -->
-            <div style="position: absolute; top: 20px; left: 20px; right: 20px; height: 3px; background: rgba(255,255,255,0.12); border-radius: 9999px; z-index: 0;"></div>
-            <!-- Fill de progreso -->
-            <div style="position: absolute; top: 20px; left: 20px; height: 3px; width: ${fillPct}%; background: linear-gradient(90deg, #10b981, #00f5d4); border-radius: 9999px; z-index: 1; transition: width 0.4s;"></div>
-            ${stages.map((s, i) => `
-              <div style="display: flex; flex-direction: column; align-items: center; min-width: 110px; padding: 0 0.5rem; position: relative; z-index: 2;">
-                <div style="width: 40px; height: 40px; border-radius: 50%; border: 3px solid ${s.status === 'completed' ? '#10b981' : (s.status === 'active' ? '#00f5d4' : 'rgba(255,255,255,0.2)')}; background: ${s.status === 'completed' ? '#10b981' : (s.status === 'active' ? 'rgba(0,245,212,0.18)' : 'rgba(255,255,255,0.05)')}; display: flex; align-items: center; justify-content: center; font-size: 1rem; color: #fff; font-weight: 900; margin-bottom: 0.5rem; box-shadow: ${s.status !== 'pending' ? '0 0 14px rgba(16,185,129,0.5)' : 'none'};">
-                  ${s.status === 'completed' ? '✓' : (s.status === 'active' ? '▶' : String(i + 1))}
-                </div>
-                <div style="font-size: 0.78rem; font-weight: 800; color: ${s.status === 'active' ? '#00f5d4' : (s.status === 'completed' ? '#10b981' : 'rgba(255,255,255,0.5)')}; text-align: center; line-height: 1.3; max-width: 100px;">
-                  ${this.escapeHtml(s.title || `Etapa ${i + 1}`)}
-                </div>
-                <div style="font-size: 0.69rem; color: rgba(255,255,255,0.45); text-align: center; margin-top: 0.2rem;">
-                  ${s.progress || 0}%
-                </div>
-              </div>
-            `).join('')}
+
+          <!-- Filas de las Etapas (Cards idénticas a Mockup) -->
+          <div id="gdn-roadmap-stages-list" style="display: flex; flex-direction: column; gap: 1rem;">
+            ${stages.map((stage, i) => this._renderRoadmapStageCard(stage, i)).join('')}
           </div>
+
         </div>
 
-        <!-- Etapas editables -->
-        <div id="gdn-roadmap-stages" style="display: flex; flex-direction: column; gap: 1rem; margin-bottom: 1.25rem;">
-          ${stages.map((s, i) => this._renderRoadmapStageRow(s, i)).join('')}
-        </div>
-
-        <!-- Botón agregar etapa -->
-        <button
-          type="button"
-          onclick="window.ProjectWizard.addRoadmapStage()"
-          style="width: 100%; padding: 0.85rem; font-size: 0.95rem; font-weight: 800; border-radius: 12px; border: 2px dashed rgba(0,245,212,0.45); background: rgba(0,245,212,0.06); color: #00f5d4; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.5rem; transition: all 0.2s;"
-          onmouseenter="this.style.background='rgba(0,245,212,0.14)'; this.style.borderColor='#00f5d4';"
-          onmouseleave="this.style.background='rgba(0,245,212,0.06)'; this.style.borderColor='rgba(0,245,212,0.45)';"
-        >
-          ➕ Agregar Etapa
-        </button>
-
-        <div class="gdn-help" style="margin-top: 0.75rem; font-size: 0.82rem; color: rgba(255,255,255,0.45); text-align: center;">
-          💡 Puedes añadir tantas etapas como necesites y editarlas en cualquier momento. Los cambios se reflejan en la Landing Page.
-        </div>
       </div>
     `;
   },
 
-  _roadmapFillPct(stages) {
-    if (!stages || stages.length === 0) return 0;
-    if (stages.length === 1) {
-      const s = stages[0];
-      if (s.status === 'completed') return 100;
-      return s.progress || 0;
-    }
-    const completed = stages.filter(s => s.status === 'completed').length;
-    const active = stages.filter(s => s.status === 'active').length;
-    return Math.round(((completed + (active > 0 ? 0.5 : 0)) / stages.length) * 100);
-  },
+  /**
+   * Genera el Timeline Curvo Neón Superior (Hero Banner con línea ondulante continua y nodos circulares)
+   */
+  _renderRoadmapTopTimeline(stages) {
+    const total = stages.length;
+    if (total === 0) return '';
 
-  _renderRoadmapStageRow(stage, index) {
-    const statusColors = {
-      completed: { border: '#10b981', bg: 'rgba(16,185,129,0.12)', label: '✅ Completado' },
-      active:    { border: '#00f5d4', bg: 'rgba(0,245,212,0.08)',  label: '▶ En Progreso' },
-      pending:   { border: 'rgba(255,255,255,0.15)', bg: 'rgba(255,255,255,0.03)', label: '⏳ Pendiente' }
-    };
-    const sc = statusColors[stage.status] || statusColors.pending;
+    // Coordenadas para SVG responsivo (viewBox="0 0 1000 160")
+    const points = stages.map((s, i) => {
+      const x = Math.round((1000 / total) * (i + 0.5));
+      return { x, y: 52, stage: s, index: i };
+    });
+
+    // Generar curva ondulante Bezier suave que conecta todos los puntos
+    let wavyPathAll = '';
+    let wavyPathActive = '';
+    let activeUpTo = -1;
+    for (let i = 0; i < stages.length; i++) {
+      if (stages[i].status === 'completed' || stages[i].status === 'active') {
+        activeUpTo = i;
+      }
+    }
+
+    for (let i = 0; i < points.length - 1; i++) {
+      const p1 = points[i];
+      const p2 = points[i + 1];
+      const midX = (p1.x + p2.x) / 2;
+      const dipY = 74; // Ondulación suave hacia abajo entre nodos
+      const seg = `C ${p1.x + (midX - p1.x) * 0.4} 52, ${p1.x + (midX - p1.x) * 0.6} ${dipY}, ${midX} ${dipY} C ${midX + (p2.x - midX) * 0.4} ${dipY}, ${midX + (p2.x - midX) * 0.6} 52, ${p2.x} 52`;
+      
+      if (i === 0) {
+        wavyPathAll += `M ${p1.x} 52 ` + seg;
+      } else {
+        wavyPathAll += ' ' + seg;
+      }
+
+      if (i < activeUpTo) {
+        if (wavyPathActive === '') {
+          wavyPathActive += `M ${p1.x} 52 ` + seg;
+        } else {
+          wavyPathActive += ' ' + seg;
+        }
+      }
+    }
+
     return `
-      <div style="background: rgba(255,255,255,0.03); border: 1.5px solid ${sc.border}; border-radius: 14px; padding: 1rem 1.25rem; transition: border-color 0.2s;">
-        <!-- Fila superior: número, nombre y botón eliminar -->
-        <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.85rem; flex-wrap: wrap;">
-          <div style="width: 32px; height: 32px; border-radius: 50%; background: ${sc.bg}; border: 2px solid ${sc.border}; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; font-weight: 900; color: #fff; flex-shrink: 0;">
-            ${stage.status === 'completed' ? '✓' : (stage.status === 'active' ? '▶' : String(index + 1))}
-          </div>
-          <input
-            type="text"
-            id="gdn-roadmap-title-${index}"
-            class="gdn-input"
-            value="${this.escapeHtml(stage.title || '')}"
-            placeholder="Nombre de la etapa (ej: Investigación, Diseño, Desarrollo...)"
-            style="flex: 1; min-width: 180px; font-weight: 800;"
-            oninput="window.ProjectWizard.triggerFieldAutoSave()"
-          />
-          <button
-            type="button"
-            onclick="window.ProjectWizard.removeRoadmapStage(${index})"
-            title="Eliminar etapa"
-            style="background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.3); color: #f87171; border-radius: 8px; padding: 0.4rem 0.65rem; cursor: pointer; font-size: 0.85rem; flex-shrink: 0; transition: background 0.2s;"
-            onmouseenter="this.style.background='rgba(239,68,68,0.22)';"
-            onmouseleave="this.style.background='rgba(239,68,68,0.1)';"
-          >🗑️</button>
+      <div style="position: relative; border-radius: 22px; overflow: hidden; background: radial-gradient(circle at 10% 20%, #112154 0%, #0a1128 65%, #050a18 100%); border: 1.5px solid rgba(0, 245, 212, 0.28); box-shadow: 0 12px 36px rgba(10, 17, 40, 0.55); padding: 2.2rem 1rem 1.85rem;">
+        
+        <!-- Malla de luz cibernética en el fondo -->
+        <div style="position: absolute; inset: 0; pointer-events: none; opacity: 0.18; background-image: linear-gradient(rgba(0,245,212,0.15) 1px, transparent 1px), linear-gradient(90deg, rgba(0,245,212,0.15) 1px, transparent 1px); background-size: 28px 28px;"></div>
+        
+        <!-- Resplandor neón inferior -->
+        <div style="position: absolute; bottom: -30px; left: 10%; width: 40%; height: 80px; background: radial-gradient(ellipse, rgba(0,245,212,0.3) 0%, transparent 70%); pointer-events: none;"></div>
+        <div style="position: absolute; top: -30px; right: 10%; width: 40%; height: 80px; background: radial-gradient(ellipse, rgba(124,58,237,0.3) 0%, transparent 70%); pointer-events: none;"></div>
+
+        <!-- SVG con la curva ondulante conectora continua -->
+        <svg viewBox="0 0 1000 160" preserveAspectRatio="none" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1;">
+          <defs>
+            <linearGradient id="neonRoadmapGlowGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="#00f5d4" />
+              <stop offset="50%" stop-color="#10b981" />
+              <stop offset="100%" stop-color="#00f5d4" />
+            </linearGradient>
+            <filter id="glowDropFilter" x="-20%" y="-20%" width="140%" height="140%">
+              <feDropShadow dx="0" dy="0" stdDeviation="5" flood-color="#00f5d4" flood-opacity="0.9"/>
+            </filter>
+          </defs>
+
+          <!-- Camino base gris traslúcido -->
+          ${wavyPathAll ? `<path d="${wavyPathAll}" fill="none" stroke="rgba(255, 255, 255, 0.22)" stroke-width="3" stroke-linecap="round"/>` : ''}
+          
+          <!-- Camino activo neón brillante que pasa por las etapas completadas y en progreso -->
+          ${wavyPathActive ? `<path d="${wavyPathActive}" fill="none" stroke="url(#neonRoadmapGlowGrad)" stroke-width="4.5" stroke-linecap="round" filter="url(#glowDropFilter)"/>` : ''}
+        </svg>
+
+        <!-- Nodos de las etapas sobre la línea curva -->
+        <div style="position: relative; z-index: 2; display: flex; justify-content: space-around; align-items: flex-start; gap: 0.5rem;">
+          ${stages.map((s, i) => {
+            const isCompleted = s.status === 'completed';
+            const isActive = s.status === 'active';
+            const isPending = !isCompleted && !isActive;
+
+            const circleBorder = isCompleted ? '#10b981' : (isActive ? '#00f5d4' : 'rgba(255, 255, 255, 0.28)');
+            const circleBg = isCompleted
+              ? 'radial-gradient(circle, rgba(16, 185, 129, 0.4) 0%, rgba(9, 27, 33, 0.95) 100%)'
+              : (isActive ? 'radial-gradient(circle, rgba(0, 245, 212, 0.4) 0%, rgba(8, 23, 45, 0.95) 100%)' : 'rgba(255, 255, 255, 0.06)');
+            const circleGlow = isCompleted
+              ? 'box-shadow: 0 0 22px rgba(16, 185, 129, 0.65);'
+              : (isActive ? 'box-shadow: 0 0 22px rgba(0, 245, 212, 0.7);' : '');
+
+            const pillBg = isCompleted ? '#10b981' : (isActive ? '#00b4d8' : 'rgba(255, 255, 255, 0.12)');
+            const pillColor = isPending ? '#94a3b8' : '#ffffff';
+            const pillGlow = isCompleted
+              ? 'box-shadow: 0 0 10px rgba(16, 185, 129, 0.5);'
+              : (isActive ? 'box-shadow: 0 0 10px rgba(0, 180, 216, 0.5);' : '');
+
+            const iconSvg = this._getRoadmapNodeSvg(s.icon || this._guessIconByTitle(s.title, i), isCompleted, isActive);
+
+            return `
+              <div style="display: flex; flex-direction: column; align-items: center; text-align: center; max-width: 130px; flex: 1;">
+                
+                <!-- Círculo del hito con icono y borde brillante -->
+                <div style="position: relative; width: 56px; height: 56px; border-radius: 50%; border: 3px solid ${circleBorder}; background: ${circleBg}; ${circleGlow} display: flex; align-items: center; justify-content: center; margin-bottom: 0.75rem; cursor: pointer; transition: transform 0.2s;"
+                     onclick="window.ProjectWizard.toggleRoadmapStageEditor(${i})"
+                     title="Clic para editar ${this.escapeHtml(s.title || '')}">
+                  ${iconSvg}
+
+                  <!-- Mini badge verde de checkmark en la esquina derecha para completados -->
+                  ${isCompleted ? `
+                    <div style="position: absolute; top: -3px; right: -3px; width: 19px; height: 19px; border-radius: 50%; background: #10b981; color: #ffffff; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 900; border: 2px solid #0a1128; box-shadow: 0 0 8px rgba(16,185,129,0.9);">
+                      ✓
+                    </div>
+                  ` : ''}
+                </div>
+
+                <!-- Título del hito -->
+                <div style="font-size: 0.92rem; font-weight: 800; color: #ffffff; line-height: 1.25; margin-bottom: 0.35rem; text-shadow: 0 2px 8px rgba(0,0,0,0.6);">
+                  ${i + 1}. ${this.escapeHtml(s.title || `Etapa ${i + 1}`)}
+                </div>
+
+                <!-- Píldora de porcentaje inferior -->
+                <div style="background: ${pillBg}; color: ${pillColor}; font-weight: 900; font-size: 0.76rem; padding: 0.22rem 0.8rem; border-radius: 9999px; ${pillGlow} letter-spacing: 0.4px;">
+                  ${s.progress || 0}%
+                </div>
+
+              </div>
+            `;
+          }).join('')}
         </div>
 
-        <!-- Descripción + Estado en grid -->
-        <div style="display: grid; grid-template-columns: 1fr auto; gap: 0.75rem; align-items: end; margin-bottom: 0.85rem; flex-wrap: wrap;">
-          <div>
-            <label class="gdn-label" style="font-size: 0.8rem; margin-bottom: 0.3rem; display: block;">📝 ¿Qué hicieron en esta etapa?</label>
+      </div>
+    `;
+  },
+
+  /**
+   * Renderiza una Fila/Tarjeta de Etapa (Diseño idéntico a la segunda mitad del mockup)
+   */
+  _renderRoadmapStageCard(stage, index) {
+    const isCompleted = stage.status === 'completed';
+    const isActive = stage.status === 'active';
+    const isPending = !isCompleted && !isActive;
+
+    // Color de la barra de progreso
+    const barColor = isCompleted ? '#10b981' : (isActive ? '#00b4d8' : '#cbd5e1');
+
+    // Estilo de la píldora de estado a la derecha
+    const statusPillBg = isCompleted ? '#ecfdf5' : (isActive ? '#eff6ff' : '#f8fafc');
+    const statusPillBorder = isCompleted ? '#a7f3d0' : (isActive ? '#bfdbfe' : '#e2e8f0');
+    const statusPillColor = isCompleted ? '#047857' : (isActive ? '#1d4ed8' : '#64748b');
+    const statusPillLabel = isCompleted ? '✔ Completado' : (isActive ? '▶ En Progreso' : '⏱ Pendiente');
+
+    // Icono y fondo del contenedor cuadrado redondeado
+    const iconKey = stage.icon || this._guessIconByTitle(stage.title, index);
+    const { svg, bg } = this._getStageSquareIcon(iconKey);
+
+    return `
+      <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 18px; padding: 1.15rem 1.45rem; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02); transition: border-color 0.2s, box-shadow 0.2s;">
+        
+        <!-- Fila Principal Visible (Idéntica a Imagen del Usuario) -->
+        <div style="display: flex; align-items: center; gap: 1.25rem; flex-wrap: nowrap;">
+          
+          <!-- Indicador Redondo Izquierdo (Play azul, Check verde o Anillo gris) -->
+          <div style="flex-shrink: 0;">
+            ${isActive ? `
+              <div style="width: 26px; height: 26px; border-radius: 50%; background: #00b4d8; color: #ffffff; display: flex; align-items: center; justify-content: center; font-size: 0.72rem; box-shadow: 0 0 10px rgba(0, 180, 216, 0.45);" title="Etapa En Progreso">
+                ▶
+              </div>
+            ` : (isCompleted ? `
+              <div style="width: 26px; height: 26px; border-radius: 50%; background: #10b981; color: #ffffff; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 900; box-shadow: 0 0 10px rgba(16, 185, 129, 0.45);" title="Etapa Completada">
+                ✔
+              </div>
+            ` : `
+              <div style="width: 24px; height: 24px; border-radius: 50%; border: 2px solid #cbd5e1; background: transparent;" title="Etapa Pendiente"></div>
+            `)}
+          </div>
+
+          <!-- Contenedor Cuadrado con el Icono -->
+          <div style="width: 54px; height: 54px; border-radius: 14px; background: ${bg}; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+            ${svg}
+          </div>
+
+          <!-- Textos Centrales y Barra de Progreso con porcentaje numérico a la derecha -->
+          <div style="flex: 1; min-width: 0;">
+            <div style="font-weight: 900; font-size: 1.05rem; color: #0f172a; margin-bottom: 0.2rem; letter-spacing: -0.01em;">
+              ${index + 1}. ${this.escapeHtml(stage.title || 'Nombre de la etapa')}
+            </div>
+            
+            <div style="font-size: 0.86rem; color: #64748b; margin-bottom: 0.55rem; line-height: 1.4; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+              ${this.escapeHtml(stage.description || 'Sin descripción')}
+            </div>
+
+            <!-- Track de Progreso Horizontal -->
+            <div style="display: flex; align-items: center; gap: 0.9rem;">
+              <div style="flex: 1; height: 8px; border-radius: 9999px; background: #e2e8f0; overflow: hidden; position: relative;">
+                <div id="gdn-roadmap-bar-fill-${index}" style="height: 100%; width: ${stage.progress || 0}%; background: ${barColor}; border-radius: 9999px; transition: width 0.3s ease;"></div>
+              </div>
+              <span id="gdn-roadmap-pct-disp-${index}" style="font-weight: 900; font-size: 0.88rem; color: ${stage.progress > 0 ? '#0f172a' : '#94a3b8'}; min-width: 38px; text-align: right;">
+                ${stage.progress || 0}%
+              </span>
+            </div>
+          </div>
+
+          <!-- Píldora de Estado y Botón de 3 Puntos ⋮ a la Derecha -->
+          <div style="display: flex; align-items: center; gap: 0.75rem; flex-shrink: 0;">
+            <button
+              type="button"
+              onclick="window.ProjectWizard.toggleRoadmapStageStatus(${index})"
+              title="Clic para alternar estado (Pendiente ➔ En Progreso ➔ Completado)"
+              style="background: ${statusPillBg}; border: 1px solid ${statusPillBorder}; color: ${statusPillColor}; font-weight: 800; font-size: 0.82rem; padding: 0.4rem 0.95rem; border-radius: 9999px; cursor: pointer; display: inline-flex; align-items: center; gap: 0.4rem; white-space: nowrap; transition: all 0.15s;"
+            >
+              ${statusPillLabel}
+            </button>
+
+            <button
+              type="button"
+              onclick="window.ProjectWizard.toggleRoadmapStageEditor(${index})"
+              title="Editar detalles de esta etapa"
+              style="width: 34px; height: 34px; border-radius: 10px; background: transparent; border: none; color: #64748b; font-size: 1.35rem; font-weight: 900; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.15s, color 0.15s;"
+              onmouseenter="this.style.background='#f1f5f9'; this.style.color='#0f172a';"
+              onmouseleave="this.style.background='transparent'; this.style.color='#64748b';"
+            >
+              ⋮
+            </button>
+          </div>
+
+        </div>
+
+        <!-- Cajón Desplegable para Edición Directa de la Etapa -->
+        <div id="gdn-roadmap-editor-${index}" style="display: none; margin-top: 1.25rem; padding-top: 1.25rem; border-top: 1px dashed #e2e8f0;">
+          <div style="font-size: 0.82rem; font-weight: 800; color: #6366f1; text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 0.85rem;">
+            ✏️ Editar Detalles de la Etapa ${index + 1}
+          </div>
+
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem; margin-bottom: 1rem;">
+            <div>
+              <label style="display: block; font-size: 0.8rem; font-weight: 800; color: #334155; margin-bottom: 0.35rem;">Nombre de la Etapa:</label>
+              <input
+                type="text"
+                id="gdn-roadmap-title-${index}"
+                value="${this.escapeHtml(stage.title || '')}"
+                placeholder="Ej: Planeación, Investigación, Prototipo..."
+                style="width: 100%; box-sizing: border-box; padding: 0.65rem 0.85rem; border: 1.5px solid #cbd5e1; border-radius: 10px; font-weight: 700; color: #0f172a; outline: none;"
+                oninput="window.ProjectWizard.triggerFieldAutoSave()"
+              />
+            </div>
+
+            <div>
+              <label style="display: block; font-size: 0.8rem; font-weight: 800; color: #334155; margin-bottom: 0.35rem;">Icono Representativo:</label>
+              <select
+                id="gdn-roadmap-icon-${index}"
+                style="width: 100%; box-sizing: border-box; padding: 0.65rem 0.85rem; border: 1.5px solid #cbd5e1; border-radius: 10px; font-weight: 700; color: #0f172a; outline: none; cursor: pointer;"
+                onchange="window.ProjectWizard.triggerFieldAutoSave(); if (window.ProjectsView) window.ProjectsView.render();"
+              >
+                <option value="clipboard" ${iconKey === 'clipboard' ? 'selected' : ''}>📋 Planeación / Tareas</option>
+                <option value="search"    ${iconKey === 'search'    ? 'selected' : ''}>🔍 Investigación / Datos</option>
+                <option value="code"      ${iconKey === 'code'      ? 'selected' : ''}>💻 Desarrollo / Prototipo (&lt;/&gt;)</option>
+                <option value="rocket"    ${iconKey === 'rocket'    ? 'selected' : ''}>🚀 Publicación / Lanzamiento</option>
+                <option value="bulb"      ${iconKey === 'bulb'      ? 'selected' : ''}>💡 Ideación / Creatividad</option>
+                <option value="palette"   ${iconKey === 'palette'   ? 'selected' : ''}>🎨 Diseño / UI / UX</option>
+              </select>
+            </div>
+          </div>
+
+          <div style="margin-bottom: 1rem;">
+            <label style="display: block; font-size: 0.8rem; font-weight: 800; color: #334155; margin-bottom: 0.35rem;">Descripción de lo que se realizó:</label>
             <input
               type="text"
               id="gdn-roadmap-desc-${index}"
-              class="gdn-input"
               value="${this.escapeHtml(stage.description || '')}"
-              placeholder="Ej: Recopilamos 50 fuentes, realizamos 3 entrevistas, diseñamos el prototipo..."
+              placeholder="Ej: Conformación del equipo y definición de objetivos principales..."
+              style="width: 100%; box-sizing: border-box; padding: 0.65rem 0.85rem; border: 1.5px solid #cbd5e1; border-radius: 10px; color: #334155; outline: none;"
               oninput="window.ProjectWizard.triggerFieldAutoSave()"
             />
           </div>
-          <div>
-            <label class="gdn-label" style="font-size: 0.8rem; margin-bottom: 0.3rem; display: block;">📌 Estado</label>
-            <select
-              id="gdn-roadmap-status-${index}"
-              class="gdn-select"
-              onchange="window.ProjectWizard.triggerFieldAutoSave()"
-              style="min-width: 155px;"
-            >
-              <option value="pending"   ${stage.status === 'pending'   ? 'selected' : ''}>⏳ Pendiente</option>
-              <option value="active"    ${stage.status === 'active'    ? 'selected' : ''}>▶ En Progreso</option>
-              <option value="completed" ${stage.status === 'completed' ? 'selected' : ''}>✅ Completado</option>
-            </select>
+
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.25rem; align-items: center; margin-bottom: 0.75rem;">
+            <div>
+              <label style="display: block; font-size: 0.8rem; font-weight: 800; color: #334155; margin-bottom: 0.35rem;">Estado de la Etapa:</label>
+              <select
+                id="gdn-roadmap-status-${index}"
+                style="width: 100%; box-sizing: border-box; padding: 0.65rem 0.85rem; border: 1.5px solid #cbd5e1; border-radius: 10px; font-weight: 800; color: #0f172a; outline: none; cursor: pointer;"
+                onchange="window.ProjectWizard.triggerFieldAutoSave(); if (window.ProjectsView) window.ProjectsView.render();"
+              >
+                <option value="pending"   ${stage.status === 'pending'   ? 'selected' : ''}>⏱ Pendiente (0%)</option>
+                <option value="active"    ${stage.status === 'active'    ? 'selected' : ''}>▶ En Progreso</option>
+                <option value="completed" ${stage.status === 'completed' ? 'selected' : ''}>✔ Completado (100%)</option>
+              </select>
+            </div>
+
+            <div>
+              <label style="display: flex; justify-content: space-between; font-size: 0.8rem; font-weight: 800; color: #334155; margin-bottom: 0.35rem;">
+                <span>Progreso Porcentual:</span>
+                <strong id="gdn-roadmap-pct-slider-lbl-${index}" style="color: #00b4d8; font-size: 0.95rem;">${stage.progress || 0}%</strong>
+              </label>
+              <input
+                type="range"
+                id="gdn-roadmap-progress-${index}"
+                min="0" max="100" step="5"
+                value="${stage.progress || 0}"
+                style="width: 100%; accent-color: #00b4d8; cursor: pointer;"
+                oninput="window.ProjectWizard.updateRoadmapStageProgress(${index}, this.value)"
+              />
+            </div>
           </div>
+
+          <div style="display: flex; justify-content: flex-end; gap: 0.5rem; margin-top: 0.75rem;">
+            <button
+              type="button"
+              onclick="window.ProjectWizard.removeRoadmapStage(${index})"
+              style="background: rgba(239, 68, 68, 0.08); border: 1px solid rgba(239, 68, 68, 0.25); color: #ef4444; font-weight: 800; padding: 0.45rem 0.9rem; border-radius: 8px; font-size: 0.82rem; cursor: pointer; display: inline-flex; align-items: center; gap: 0.35rem;"
+            >
+              🗑️ Eliminar Etapa
+            </button>
+            <button
+              type="button"
+              onclick="window.ProjectWizard.toggleRoadmapStageEditor(${index})"
+              style="background: #f1f5f9; border: 1px solid #cbd5e1; color: #334155; font-weight: 800; padding: 0.45rem 0.9rem; border-radius: 8px; font-size: 0.82rem; cursor: pointer;"
+            >
+              Cerrar Editor
+            </button>
+          </div>
+
         </div>
 
-        <!-- Barra de progreso -->
-        <div>
-          <label class="gdn-label" style="font-size: 0.8rem; margin-bottom: 0.4rem; display: flex; justify-content: space-between; align-items: center;">
-            <span>📊 Progreso de esta etapa</span>
-            <strong id="gdn-roadmap-pct-label-${index}" style="color: #00f5d4; font-size: 1rem;">${stage.progress || 0}%</strong>
-          </label>
-          <input
-            type="range"
-            id="gdn-roadmap-progress-${index}"
-            min="0" max="100" step="5"
-            value="${stage.progress || 0}"
-            style="width: 100%; accent-color: #00f5d4; cursor: pointer; height: 6px;"
-            oninput="document.getElementById('gdn-roadmap-pct-label-${index}').textContent = this.value + '%'; window.ProjectWizard.triggerFieldAutoSave();"
-          />
-          <div style="display: flex; justify-content: space-between; font-size: 0.72rem; color: rgba(255,255,255,0.35); margin-top: 0.2rem;">
-            <span>0%</span><span>50%</span><span>100%</span>
-          </div>
-        </div>
       </div>
     `;
+  },
+
+  /**
+   * Deduce el icono adecuado a partir del título o la posición
+   */
+  _guessIconByTitle(title, index) {
+    const t = String(title || '').toLowerCase();
+    if (t.includes('plan') || t.includes('equip') || t.includes('inici') || index === 0) return 'clipboard';
+    if (t.includes('investig') || t.includes('dat') || t.includes('analis') || index === 1) return 'search';
+    if (t.includes('desarroll') || t.includes('proto') || t.includes('soft') || t.includes('cons') || index === 2) return 'code';
+    if (t.includes('public') || t.includes('lanz') || t.includes('comunic') || index === 3) return 'rocket';
+    return 'clipboard';
+  },
+
+  /**
+   * Retorna el SVG y color de fondo para la tarjeta cuadrada redondeada
+   */
+  _getStageSquareIcon(iconKey) {
+    const k = (iconKey || '').toLowerCase();
+    if (k === 'clipboard') {
+      return {
+        bg: '#e0e7ff', // Lavanda / azul claro suave
+        svg: `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#4338ca" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+                <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+                <path d="M9 12l2 2 4-4"></path>
+                <path d="M9 16h6"></path>
+              </svg>`
+      };
+    }
+    if (k === 'search') {
+      return {
+        bg: '#d1fae5', // Menta / verde suave
+        svg: `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="11" cy="11" r="7.5"></circle>
+                <line x1="21" y1="21" x2="16.5" y2="16.5"></line>
+              </svg>`
+      };
+    }
+    if (k === 'code') {
+      return {
+        bg: '#f1f5f9', // Gris pizarra claro
+        svg: `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#475569" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="16 18 22 12 16 6"></polyline>
+                <polyline points="8 6 2 12 8 18"></polyline>
+              </svg>`
+      };
+    }
+    if (k === 'rocket') {
+      return {
+        bg: '#f1f5f9', // Gris pizarra claro
+        svg: `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#475569" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"></path>
+                <path d="M12 15l-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"></path>
+                <path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"></path>
+                <path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"></path>
+              </svg>`
+      };
+    }
+    if (k === 'bulb') {
+      return {
+        bg: '#fef3c7',
+        svg: `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9 18h6"></path><path d="M10 22h4"></path>
+                <path d="M12 2a7 7 0 0 0-7 7c0 2.4 1.2 4.5 3 5.7V17h8v-2.3c1.8-1.2 3-3.3 3-5.7a7 7 0 0 0-7-7z"></path>
+              </svg>`
+      };
+    }
+    return {
+      bg: '#f1f5f9',
+      svg: `<span style="font-size:1.5rem;">📍</span>`
+    };
+  },
+
+  /**
+   * Retorna el SVG para el nodo del timeline cibernético superior
+   */
+  _getRoadmapNodeSvg(iconKey, isCompleted, isActive) {
+    const strokeColor = isCompleted ? '#10b981' : (isActive ? '#00f5d4' : 'rgba(255,255,255,0.7)');
+    const k = (iconKey || '').toLowerCase();
+    if (k === 'clipboard') {
+      return `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="${strokeColor}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+                <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+                <path d="M9 12l2 2 4-4"></path>
+              </svg>`;
+    }
+    if (k === 'search') {
+      return `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="${strokeColor}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="11" cy="11" r="7"></circle>
+                <line x1="21" y1="21" x2="16.5" y2="16.5"></line>
+              </svg>`;
+    }
+    if (k === 'code') {
+      return `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="${strokeColor}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="16 18 22 12 16 6"></polyline>
+                <polyline points="8 6 2 12 8 18"></polyline>
+              </svg>`;
+    }
+    if (k === 'rocket') {
+      return `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="${strokeColor}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"></path>
+                <path d="M12 15l-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"></path>
+              </svg>`;
+    }
+    return `<span style="font-size:1.3rem; color:${strokeColor};">📍</span>`;
+  },
+
+  toggleRoadmapStageStatus(index) {
+    this.collectCurrentStepInputs();
+    if (!Array.isArray(this.draft.projectRoadmap) || !this.draft.projectRoadmap[index]) return;
+    const s = this.draft.projectRoadmap[index];
+    if (s.status === 'pending') {
+      s.status = 'active';
+      if (!s.progress) s.progress = 50;
+    } else if (s.status === 'active') {
+      s.status = 'completed';
+      s.progress = 100;
+    } else {
+      s.status = 'pending';
+      s.progress = 0;
+    }
+    this.saveDraftToStorage(true);
+    if (window.ProjectsView) window.ProjectsView.render();
+  },
+
+  toggleRoadmapStageEditor(index) {
+    const el = document.getElementById('gdn-roadmap-editor-' + index);
+    if (el) {
+      el.style.display = (el.style.display === 'none' || !el.style.display) ? 'block' : 'none';
+    }
+  },
+
+  updateRoadmapStageProgress(index, val) {
+    const num = parseInt(val, 10) || 0;
+    const sliderLbl = document.getElementById(`gdn-roadmap-pct-slider-lbl-${index}`);
+    if (sliderLbl) sliderLbl.textContent = num + '%';
+    const disp = document.getElementById(`gdn-roadmap-pct-disp-${index}`);
+    if (disp) {
+      disp.textContent = num + '%';
+      disp.style.color = num > 0 ? '#0f172a' : '#94a3b8';
+    }
+    const bar = document.getElementById(`gdn-roadmap-bar-fill-${index}`);
+    if (bar) bar.style.width = num + '%';
+    this.triggerFieldAutoSave();
   },
 
   addRoadmapStage() {
     this.collectCurrentStepInputs();
     if (!Array.isArray(this.draft.projectRoadmap)) this.draft.projectRoadmap = [];
-    this.draft.projectRoadmap.push({ title: '', description: '', progress: 0, status: 'pending' });
+    const count = this.draft.projectRoadmap.length + 1;
+    this.draft.projectRoadmap.push({
+      title: `Etapa ${count}`,
+      description: 'Descripción de las metas y entregables de esta etapa.',
+      progress: 0,
+      status: 'pending',
+      icon: count === 1 ? 'clipboard' : (count === 2 ? 'search' : (count === 3 ? 'code' : 'rocket'))
+    });
     this.saveDraftToStorage(true);
+    if (window.ProjectsView) window.ProjectsView.render();
   },
 
   removeRoadmapStage(index) {
@@ -1298,6 +1696,7 @@ collectCurrentStepInputs() {
     if (!Array.isArray(this.draft.projectRoadmap)) return;
     this.draft.projectRoadmap.splice(index, 1);
     this.saveDraftToStorage(true);
+    if (window.ProjectsView) window.ProjectsView.render();
   },
 
   // PASO 4 (legacy): Configuración del Diseño y Banner — mantenido para compatibilidad interna
