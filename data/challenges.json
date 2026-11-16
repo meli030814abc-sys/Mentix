@@ -29,10 +29,11 @@
     "isPublic": false,
     "startDate": "2026-11-16",
     "endDate": "",
-    "currentStep": 3,
+    "currentStep": 4,
     "completedSteps": [
       1,
-      2
+      2,
+      3
     ],
     "progress": 50,
     "calculatedProgress": 50,
@@ -172,9 +173,10 @@
       "publicationStatus": "draft",
       "completedSteps": [
         1,
-        2
+        2,
+        3
       ],
-      "currentStep": 3,
+      "currentStep": 4,
       "author": "Melisa",
       "authorId": "user_1792184134006",
       "authorEmail": "gatitaxd6f79@gmail.com",
@@ -197,7 +199,7 @@
         "collaborators": ""
       },
       "createdAt": "2026-11-16T18:21:52.529Z",
-      "updatedAt": "2026-11-16T18:43:44.766Z",
+      "updatedAt": "2026-11-16T18:43:45.152Z",
       "joinCode": "556",
       "accessCode": "556",
       "progress": 50,
@@ -209,7 +211,7 @@
     "authorAvatar": "🐯",
     "authorRole": "admin",
     "createdAt": "2026-11-16T18:21:52.529Z",
-    "updatedAt": "2026-11-16T18:43:43.537Z",
+    "updatedAt": "2026-11-16T18:43:44.043Z",
     "image": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
     "rejectionReason": "",
     "joinCode": "556",
