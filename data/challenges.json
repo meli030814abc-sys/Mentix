@@ -1,12 +1,12 @@
 [
   {
     "id": "proj_1794871175753",
-    "slug": "innovacion-total",
+    "slug": "proyecto-gggggggggggggggggggg",
     "title": "Innovación Total",
-    "subtitle": "Proyecto GovData Nexus",
-    "description": "Proyecto documentado con el Asistente Inteligente GovData Nexus.",
-    "shortDescription": "",
-    "fullDescription": "",
+    "subtitle": "hhhhhhhhhhhhhhhhhhhhhhhhhhh",
+    "description": "Iniciativa integral que aborda \"Gggggggggggggggggggg\" mediante metodologías activas de aprendizaje, diseño de prototipos e investigación aplicada para generar impacto positivo.",
+    "shortDescription": "Iniciativa integral que aborda \"Gggggggggggggggggggg\" mediante metodologías activas de aprendizaje, diseño de prototipos e investigación aplicada para generar impacto positivo.",
+    "fullDescription": "Este proyecto surge como respuesta a la necesidad de investigar y proponer soluciones concretas en torno a \"Gggggggggggggggggggg\". A través de un enfoque basado en retos y trabajo colaborativo, el equipo analiza antecedentes, recopila datos del entorno y diseña prototipos viables que promueven la sostenibilidad, el pensamiento crítico y la apropiación de conocimientos en toda la comunidad educativa.",
     "category": "tecnologia",
     "categoryName": "Tecnología & Programación",
     "projectType": "presentation",
@@ -17,10 +17,10 @@
     "mainImage": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
     "thumbnailImage": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
     "useDefaultImage": true,
-    "targetAudience": "",
-    "problemStatement": "",
-    "mainObjective": "",
-    "benefits": "",
+    "targetAudience": "Estudiantes, docentes, familias y comunidades interesadas en gggggggggggggggggggg y la innovación social.",
+    "problemStatement": "Falta de herramientas accesibles, metodologías prácticas y conciencia comunitaria para abordar con éxito los retos de gggggggggggggggggggg.",
+    "mainObjective": "Diseñar e implementar una propuesta innovadora y funcional que promueva el conocimiento y aporte soluciones prácticas a gggggggggggggggggggg.",
+    "benefits": "Fomenta habilidades del siglo XXI (creatividad, trabajo en equipo y resolución de problemas), ofrece soluciones replicables y genera conciencia en la comunidad.",
     "teamLead": "caca",
     "preparationStatus": "en_desarrollo",
     "publicationStatus": "draft",
@@ -28,34 +28,66 @@
     "status": "in_progress",
     "isPublic": false,
     "startDate": "2026-11-16",
-    "endDate": "",
+    "endDate": "2027-02-16",
     "currentStep": 1,
     "completedSteps": [],
-    "progress": 35,
-    "calculatedProgress": 35,
+    "progress": 90,
+    "calculatedProgress": 90,
     "valueProp": {
-      "problemSolved": "",
-      "howItWorks": "",
-      "forWhom": "",
-      "differentiator": "",
-      "keyFeatures": [],
-      "resultsAndBenefits": "",
-      "prerequisites": "",
-      "visitorAction": "Unirse / Colaborar",
-      "commercialPitch": "",
-      "faqs": []
+      "problemSolved": "Dificultad de acceso a recursos e iniciativas prácticas enfocadas en gggggggggggggggggggg.",
+      "howItWorks": "Centraliza la investigación, recursos interactivos y resultados del proyecto en una plataforma abierta y colaborativa.",
+      "forWhom": "Estudiantes, docentes, familias y comunidades interesadas en gggggggggggggggggggg y la innovación social.",
+      "differentiator": "Metodología basada en evidencias, enfoque centrado en la comunidad y facilidad de adopción escolar.",
+      "keyFeatures": [
+        "Diagnóstico contextualizado sobre Gggggggggggggggggggg",
+        "Prototipo interactivo y aplicable",
+        "Recursos educativos y guías abiertas",
+        "Indicadores de impacto y evaluación comunitaria"
+      ],
+      "visitorAction": "Explorar la propuesta y colaborar",
+      "commercialPitch": "Transformando Gggggggggggggggggggg en acciones y soluciones concretas",
+      "faqs": [
+        {
+          "question": "¿Cuál es el propósito principal de este proyecto sobre Gggggggggggggggggggg?",
+          "answer": "Desarrollar soluciones viables y educativas que respondan a los retos de gggggggggggggggggggg, involucrando activamente a la comunidad."
+        },
+        {
+          "question": "¿Quiénes pueden beneficiarse de los resultados?",
+          "answer": "Toda la comunidad escolar, docentes de diferentes áreas y personas interesadas en aplicar metodologías sobre gggggggggggggggggggg."
+        },
+        {
+          "question": "¿Cómo se puede colaborar o hacer seguimiento?",
+          "answer": "A través de los canales de contacto de los autores y explorando las etapas documentadas en la Ruta del Proyecto."
+        }
+      ]
     },
     "valueProposition": {
-      "problemSolved": "",
-      "howItWorks": "",
-      "forWhom": "",
-      "differentiator": "",
-      "keyFeatures": [],
-      "resultsAndBenefits": "",
-      "prerequisites": "",
-      "visitorAction": "Unirse / Colaborar",
-      "commercialPitch": "",
-      "faqs": []
+      "problemSolved": "Dificultad de acceso a recursos e iniciativas prácticas enfocadas en gggggggggggggggggggg.",
+      "howItWorks": "Centraliza la investigación, recursos interactivos y resultados del proyecto en una plataforma abierta y colaborativa.",
+      "forWhom": "Estudiantes, docentes, familias y comunidades interesadas en gggggggggggggggggggg y la innovación social.",
+      "differentiator": "Metodología basada en evidencias, enfoque centrado en la comunidad y facilidad de adopción escolar.",
+      "keyFeatures": [
+        "Diagnóstico contextualizado sobre Gggggggggggggggggggg",
+        "Prototipo interactivo y aplicable",
+        "Recursos educativos y guías abiertas",
+        "Indicadores de impacto y evaluación comunitaria"
+      ],
+      "visitorAction": "Explorar la propuesta y colaborar",
+      "commercialPitch": "Transformando Gggggggggggggggggggg en acciones y soluciones concretas",
+      "faqs": [
+        {
+          "question": "¿Cuál es el propósito principal de este proyecto sobre Gggggggggggggggggggg?",
+          "answer": "Desarrollar soluciones viables y educativas que respondan a los retos de gggggggggggggggggggg, involucrando activamente a la comunidad."
+        },
+        {
+          "question": "¿Quiénes pueden beneficiarse de los resultados?",
+          "answer": "Toda la comunidad escolar, docentes de diferentes áreas y personas interesadas en aplicar metodologías sobre gggggggggggggggggggg."
+        },
+        {
+          "question": "¿Cómo se puede colaborar o hacer seguimiento?",
+          "answer": "A través de los canales de contacto de los autores y explorando las etapas documentadas en la Ruta del Proyecto."
+        }
+      ]
     },
     "videoUrl": "",
     "videoConfig": {
@@ -65,17 +97,43 @@
       "title": "",
       "description": "",
       "isPublic": true,
-      "verified": false
+      "verified": false,
+      "thumbnailUrl": ""
     },
     "resources": [],
     "visualAssets": [],
-    "slides": [],
+    "slides": [
+      {
+        "title": "Proyecto: Gggggggggggggggggggg",
+        "content": "Presentación oficial del proyecto educativo.\nEnfoque: Gobierno de Datos e IA\nLema: Innovación, investigación y soluciones prácticas aplicadas a gggggggggggggggggggg.",
+        "notes": "Introducción al tema de gggggggggggggggggggg y presentación del equipo de trabajo.",
+        "media": "",
+        "imageUrl": "",
+        "bgImage": ""
+      },
+      {
+        "title": "El Reto y la Oportunidad",
+        "content": "¿Por qué es crucial investigar sobre Gggggggggggggggggggg?\n\nProblema identificado: Falta de herramientas accesibles, metodologías prácticas y conciencia comunitaria para abordar con éxito los retos de gggggggggggggggggggg.\n\nObjetivo: Diseñar e implementar una propuesta innovadora y funcional que promueva el conocimiento y aporte soluciones prácticas a gggggggggggggggggggg.",
+        "notes": "Explicación del contexto y motivación del proyecto.",
+        "media": "",
+        "imageUrl": "",
+        "bgImage": ""
+      },
+      {
+        "title": "Nuestra Propuesta de Solución",
+        "content": "Cómo abordamos Gggggggggggggggggggg:\n• Investigación contextualizada.\n• Desarrollo de prototipos funcionales.\n• Divulgación abierta a la comunidad educativa.",
+        "notes": "Detalles técnicos y metodológicos de la propuesta.",
+        "media": "",
+        "imageUrl": "",
+        "bgImage": ""
+      }
+    ],
     "externalLinks": [],
     "landingConfig": {
-      "publicName": "Innovación Total",
-      "slug": "innovacion-total",
-      "landingTitle": "Innovación Total",
-      "publicDescription": "",
+      "publicName": "Proyecto Gggggggggggggggggggg",
+      "slug": "proyecto-gggggggggggggggggggg",
+      "landingTitle": "Proyecto Gggggggggggggggggggg",
+      "publicDescription": "Iniciativa integral que aborda \"Gggggggggggggggggggg\" mediante metodologías activas de aprendizaje, diseño de prototipos e investigación aplicada para generar impacto positivo.",
       "visibleCategory": "Tecnología & Programación",
       "tags": [
         "Gobierno de Datos",
@@ -86,7 +144,36 @@
       "displayOrder": 1,
       "featuredVideoPublic": true
     },
-    "projectRoadmap": [],
+    "projectRoadmap": [
+      {
+        "title": "Planeación",
+        "description": "Definición del reto, roles del equipo y alcance de la propuesta sobre gggggggggggggggggggg.",
+        "progress": 100,
+        "status": "completed",
+        "icon": "clipboard"
+      },
+      {
+        "title": "Investigación",
+        "description": "Recopilación de datos, consulta de antecedentes y entrevistas sobre gggggggggggggggggggg.",
+        "progress": 100,
+        "status": "completed",
+        "icon": "search"
+      },
+      {
+        "title": "Desarrollo y Prototipado",
+        "description": "Construcción del prototipo, validación experimental y pruebas de la solución para gggggggggggggggggggg.",
+        "progress": 60,
+        "status": "active",
+        "icon": "code"
+      },
+      {
+        "title": "Publicación y Difusión",
+        "description": "Despliegue oficial en la Landing Page, comunicación de resultados y retroalimentación comunitaria.",
+        "progress": 0,
+        "status": "pending",
+        "icon": "rocket"
+      }
+    ],
     "designConfig": {
       "themeId": "cosmos",
       "fontFamily": "Montserrat",
@@ -100,7 +187,7 @@
       "authorsList": "caca",
       "authorsEmails": "caca@gmail.com",
       "authorsRole": "Líder del Proyecto",
-      "authorsInstitution": "",
+      "authorsInstitution": "Colegio Mentix",
       "collaborators": ""
     },
     "tags": [
@@ -111,31 +198,47 @@
     "govdata": {
       "id": "proj_1794871175753",
       "title": "Innovación Total",
-      "subtitle": "",
-      "shortDescription": "",
-      "fullDescription": "",
+      "subtitle": "hhhhhhhhhhhhhhhhhhhhhhhhhhh",
+      "shortDescription": "Iniciativa integral que aborda \"Gggggggggggggggggggg\" mediante metodologías activas de aprendizaje, diseño de prototipos e investigación aplicada para generar impacto positivo.",
+      "fullDescription": "Este proyecto surge como respuesta a la necesidad de investigar y proponer soluciones concretas en torno a \"Gggggggggggggggggggg\". A través de un enfoque basado en retos y trabajo colaborativo, el equipo analiza antecedentes, recopila datos del entorno y diseña prototipos viables que promueven la sostenibilidad, el pensamiento crítico y la apropiación de conocimientos en toda la comunidad educativa.",
       "category": "tecnologia",
       "categoryName": "Tecnología & Programación",
       "projectSubtype": "Gobierno de Datos e IA",
-      "targetAudience": "",
-      "problemStatement": "",
-      "mainObjective": "",
-      "benefits": "",
+      "targetAudience": "Estudiantes, docentes, familias y comunidades interesadas en gggggggggggggggggggg y la innovación social.",
+      "problemStatement": "Falta de herramientas accesibles, metodologías prácticas y conciencia comunitaria para abordar con éxito los retos de gggggggggggggggggggg.",
+      "mainObjective": "Diseñar e implementar una propuesta innovadora y funcional que promueva el conocimiento y aporte soluciones prácticas a gggggggggggggggggggg.",
+      "benefits": "Fomenta habilidades del siglo XXI (creatividad, trabajo en equipo y resolución de problemas), ofrece soluciones replicables y genera conciencia en la comunidad.",
       "teamLead": "caca",
       "preparationStatus": "en_desarrollo",
       "startDate": "2026-11-16",
-      "endDate": "",
+      "endDate": "2027-02-16",
       "valueProp": {
-        "problemSolved": "",
-        "howItWorks": "",
-        "forWhom": "",
-        "differentiator": "",
-        "keyFeatures": [],
-        "resultsAndBenefits": "",
-        "prerequisites": "",
-        "visitorAction": "Unirse / Colaborar",
-        "commercialPitch": "",
-        "faqs": []
+        "problemSolved": "Dificultad de acceso a recursos e iniciativas prácticas enfocadas en gggggggggggggggggggg.",
+        "howItWorks": "Centraliza la investigación, recursos interactivos y resultados del proyecto en una plataforma abierta y colaborativa.",
+        "forWhom": "Estudiantes, docentes, familias y comunidades interesadas en gggggggggggggggggggg y la innovación social.",
+        "differentiator": "Metodología basada en evidencias, enfoque centrado en la comunidad y facilidad de adopción escolar.",
+        "keyFeatures": [
+          "Diagnóstico contextualizado sobre Gggggggggggggggggggg",
+          "Prototipo interactivo y aplicable",
+          "Recursos educativos y guías abiertas",
+          "Indicadores de impacto y evaluación comunitaria"
+        ],
+        "visitorAction": "Explorar la propuesta y colaborar",
+        "commercialPitch": "Transformando Gggggggggggggggggggg en acciones y soluciones concretas",
+        "faqs": [
+          {
+            "question": "¿Cuál es el propósito principal de este proyecto sobre Gggggggggggggggggggg?",
+            "answer": "Desarrollar soluciones viables y educativas que respondan a los retos de gggggggggggggggggggg, involucrando activamente a la comunidad."
+          },
+          {
+            "question": "¿Quiénes pueden beneficiarse de los resultados?",
+            "answer": "Toda la comunidad escolar, docentes de diferentes áreas y personas interesadas en aplicar metodologías sobre gggggggggggggggggggg."
+          },
+          {
+            "question": "¿Cómo se puede colaborar o hacer seguimiento?",
+            "answer": "A través de los canales de contacto de los autores y explorando las etapas documentadas en la Ruta del Proyecto."
+          }
+        ]
       },
       "videoConfig": {
         "sourceType": "url",
@@ -151,10 +254,10 @@
       "useDefaultImage": true,
       "externalLinks": [],
       "landingConfig": {
-        "publicName": "Innovación Total",
-        "slug": "innovacion-total",
-        "landingTitle": "Innovación Total",
-        "publicDescription": "",
+        "publicName": "Proyecto Gggggggggggggggggggg",
+        "slug": "proyecto-gggggggggggggggggggg",
+        "landingTitle": "Proyecto Gggggggggggggggggggg",
+        "publicDescription": "Iniciativa integral que aborda \"Gggggggggggggggggggg\" mediante metodologías activas de aprendizaje, diseño de prototipos e investigación aplicada para generar impacto positivo.",
         "visibleCategory": "Tecnología & Programación",
         "tags": [
           "Gobierno de Datos",
@@ -186,15 +289,45 @@
         "authorsList": "caca",
         "authorsEmails": "caca@gmail.com",
         "authorsRole": "Líder del Proyecto",
-        "authorsInstitution": "",
+        "authorsInstitution": "Colegio Mentix",
         "collaborators": ""
       },
       "createdAt": "2026-11-16T23:19:35.753Z",
-      "updatedAt": "2026-11-16T23:21:03.276Z",
+      "updatedAt": "2026-11-16T23:22:01.816Z",
       "joinCode": "1234",
       "accessCode": "1234",
-      "progress": 35,
-      "calculatedProgress": 35
+      "progress": 90,
+      "calculatedProgress": 90,
+      "projectRoadmap": [
+        {
+          "title": "Planeación",
+          "description": "Definición del reto, roles del equipo y alcance de la propuesta sobre gggggggggggggggggggg.",
+          "progress": 100,
+          "status": "completed",
+          "icon": "clipboard"
+        },
+        {
+          "title": "Investigación",
+          "description": "Recopilación de datos, consulta de antecedentes y entrevistas sobre gggggggggggggggggggg.",
+          "progress": 100,
+          "status": "completed",
+          "icon": "search"
+        },
+        {
+          "title": "Desarrollo y Prototipado",
+          "description": "Construcción del prototipo, validación experimental y pruebas de la solución para gggggggggggggggggggg.",
+          "progress": 60,
+          "status": "active",
+          "icon": "code"
+        },
+        {
+          "title": "Publicación y Difusión",
+          "description": "Despliegue oficial en la Landing Page, comunicación de resultados y retroalimentación comunitaria.",
+          "progress": 0,
+          "status": "pending",
+          "icon": "rocket"
+        }
+      ]
     },
     "author": "caca",
     "authorId": "user_1794871108052",
@@ -202,7 +335,7 @@
     "authorAvatar": "🦊",
     "authorRole": "student",
     "createdAt": "2026-11-16T23:19:35.753Z",
-    "updatedAt": "2026-11-16T23:20:52.598Z",
+    "updatedAt": "2026-11-16T23:21:51.126Z",
     "image": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
     "customProjectCodes": [
       {
