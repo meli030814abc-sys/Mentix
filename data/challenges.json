@@ -29,7 +29,7 @@
     "isPublic": false,
     "startDate": "2026-11-16",
     "endDate": "2027-02-16",
-    "currentStep": 9,
+    "currentStep": 10,
     "completedSteps": [
       1,
       2,
@@ -38,10 +38,11 @@
       5,
       6,
       7,
-      8
+      8,
+      9
     ],
-    "progress": 90,
-    "calculatedProgress": 90,
+    "progress": 95,
+    "calculatedProgress": 95,
     "valueProp": {
       "problemSolved": "Dificultad de acceso a recursos e iniciativas prácticas enfocadas en gggggggggggggggggggg.",
       "howItWorks": "Centraliza la investigación, recursos interactivos y resultados del proyecto en una plataforma abierta y colaborativa.",
@@ -110,15 +111,16 @@
         }
       ]
     },
-    "videoUrl": "",
+    "videoUrl": "yyyyyyyyyyyy",
     "videoConfig": {
       "sourceType": "url",
-      "url": "",
+      "url": "yyyyyyyyyyyy",
       "fileName": "",
       "title": "",
       "description": "",
       "isPublic": true,
-      "verified": false
+      "verified": false,
+      "thumbnailUrl": ""
     },
     "resources": [],
     "visualAssets": [],
@@ -126,17 +128,26 @@
       {
         "title": "Proyecto: Gggggggggggggggggggg",
         "content": "Presentación oficial del proyecto educativo.\nEnfoque: Gobierno de Datos e IA\nLema: Innovación, investigación y soluciones prácticas aplicadas a gggggggggggggggggggg.",
-        "notes": "Introducción al tema de gggggggggggggggggggg y presentación del equipo de trabajo."
+        "notes": "Introducción al tema de gggggggggggggggggggg y presentación del equipo de trabajo.",
+        "media": "",
+        "imageUrl": "",
+        "bgImage": ""
       },
       {
         "title": "El Reto y la Oportunidad",
         "content": "¿Por qué es crucial investigar sobre Gggggggggggggggggggg?\n\nProblema identificado: Falta de herramientas accesibles, metodologías prácticas y conciencia comunitaria para abordar con éxito los retos de gggggggggggggggggggg.\n\nObjetivo: Diseñar e implementar una propuesta innovadora y funcional que promueva el conocimiento y aporte soluciones prácticas a gggggggggggggggggggg.",
-        "notes": "Explicación del contexto y motivación del proyecto."
+        "notes": "Explicación del contexto y motivación del proyecto.",
+        "media": "",
+        "imageUrl": "",
+        "bgImage": ""
       },
       {
         "title": "Nuestra Propuesta de Solución",
         "content": "Cómo abordamos Gggggggggggggggggggg:\n• Investigación contextualizada.\n• Desarrollo de prototipos funcionales.\n• Divulgación abierta a la comunidad educativa.",
-        "notes": "Detalles técnicos y metodológicos de la propuesta."
+        "notes": "Detalles técnicos y metodológicos de la propuesta.",
+        "media": "",
+        "imageUrl": "",
+        "bgImage": ""
       }
     ],
     "externalLinks": [],
@@ -259,12 +270,13 @@
       },
       "videoConfig": {
         "sourceType": "url",
-        "url": "",
+        "url": "yyyyyyyyyyyy",
         "fileName": "",
         "title": "",
         "description": "",
         "isPublic": true,
-        "verified": false
+        "verified": false,
+        "thumbnailUrl": ""
       },
       "mainImage": "",
       "thumbnailImage": "",
@@ -294,9 +306,10 @@
         5,
         6,
         7,
-        8
+        8,
+        9
       ],
-      "currentStep": 9,
+      "currentStep": 10,
       "author": "caca",
       "authorId": "user_1794871108052",
       "authorEmail": "caca@gmail.com",
@@ -319,11 +332,11 @@
         "collaborators": ""
       },
       "createdAt": "2026-11-16T23:19:35.753Z",
-      "updatedAt": "2026-11-16T23:22:24.769Z",
+      "updatedAt": "2026-11-16T23:22:29.337Z",
       "joinCode": "1234",
       "accessCode": "1234",
-      "progress": 90,
-      "calculatedProgress": 90,
+      "progress": 95,
+      "calculatedProgress": 95,
       "projectRoadmap": [
         {
           "title": "Planeación",
@@ -361,7 +374,7 @@
     "authorAvatar": "🦊",
     "authorRole": "Líder del Proyecto",
     "createdAt": "2026-11-16T23:19:35.753Z",
-    "updatedAt": "2026-11-16T23:22:14.247Z",
+    "updatedAt": "2026-11-16T23:22:18.693Z",
     "image": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
     "customProjectCodes": [
       {
