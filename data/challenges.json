@@ -101,7 +101,8 @@
       "title": "",
       "description": "",
       "isPublic": true,
-      "verified": false
+      "verified": false,
+      "thumbnailUrl": ""
     },
     "resources": [],
     "visualAssets": [],
@@ -109,17 +110,26 @@
       {
         "title": "Proyecto: Belleza",
         "content": "Presentación oficial del proyecto educativo.\nEnfoque: Gobierno de Datos e IA\nLema: Innovación, investigación y soluciones prácticas aplicadas a belleza.",
-        "notes": "Introducción al tema de belleza y presentación del equipo de trabajo."
+        "notes": "Introducción al tema de belleza y presentación del equipo de trabajo.",
+        "media": "",
+        "imageUrl": "",
+        "bgImage": ""
       },
       {
         "title": "El Reto y la Oportunidad",
         "content": "¿Por qué es crucial investigar sobre Belleza?\n\nProblema identificado: Falta de herramientas accesibles, metodologías prácticas y conciencia comunitaria para abordar con éxito los retos de belleza.\n\nObjetivo: Diseñar e implementar una propuesta innovadora y funcional que promueva el conocimiento y aporte soluciones prácticas a belleza.",
-        "notes": "Explicación del contexto y motivación del proyecto."
+        "notes": "Explicación del contexto y motivación del proyecto.",
+        "media": "",
+        "imageUrl": "",
+        "bgImage": ""
       },
       {
         "title": "Nuestra Propuesta de Solución",
         "content": "Cómo abordamos Belleza:\n• Investigación contextualizada.\n• Desarrollo de prototipos funcionales.\n• Divulgación abierta a la comunidad educativa.",
-        "notes": "Detalles técnicos y metodológicos de la propuesta."
+        "notes": "Detalles técnicos y metodológicos de la propuesta.",
+        "media": "",
+        "imageUrl": "",
+        "bgImage": ""
       }
     ],
     "externalLinks": [],
@@ -166,6 +176,14 @@
         "progress": 0,
         "status": "pending",
         "icon": "rocket"
+      },
+      {
+        "title": "Etapa 5",
+        "description": "Descripción de las metas y actividades de esta etapa.",
+        "progress": 0,
+        "status": "pending",
+        "emoji": "💡",
+        "icon": "clipboard"
       }
     ],
     "designConfig": {
@@ -291,7 +309,7 @@
         "collaborators": ""
       },
       "createdAt": "2026-11-16T19:08:03.172Z",
-      "updatedAt": "2026-11-16T19:08:53.096Z",
+      "updatedAt": "2026-11-16T19:09:03.024Z",
       "joinCode": "61321",
       "accessCode": "61321",
       "projectRoadmap": [
@@ -322,6 +340,14 @@
           "progress": 0,
           "status": "pending",
           "icon": "rocket"
+        },
+        {
+          "title": "Etapa 5",
+          "description": "Descripción de las metas y actividades de esta etapa.",
+          "progress": 0,
+          "status": "pending",
+          "emoji": "💡",
+          "icon": "clipboard"
         }
       ],
       "progress": 90,
@@ -333,7 +359,7 @@
     "authorAvatar": "🦊",
     "authorRole": "student",
     "createdAt": "2026-11-16T19:08:03.172Z",
-    "updatedAt": "2026-11-16T19:08:52.001Z",
+    "updatedAt": "2026-11-16T19:09:01.769Z",
     "image": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
     "rejectionReason": ""
   },
