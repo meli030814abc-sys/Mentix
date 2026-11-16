@@ -29,7 +29,7 @@
     "isPublic": false,
     "startDate": "2026-11-16",
     "endDate": "2027-02-16",
-    "currentStep": 11,
+    "currentStep": 12,
     "completedSteps": [
       1,
       2,
@@ -40,7 +40,8 @@
       7,
       8,
       9,
-      10
+      10,
+      11
     ],
     "progress": 95,
     "calculatedProgress": 95,
@@ -129,17 +130,28 @@
       {
         "title": "Proyecto: Gggggggggggggggggggg",
         "content": "Presentación oficial del proyecto educativo.\nEnfoque: Gobierno de Datos e IA\nLema: Innovación, investigación y soluciones prácticas aplicadas a gggggggggggggggggggg.",
-        "notes": "Introducción al tema de gggggggggggggggggggg y presentación del equipo de trabajo."
+        "notes": "Introducción al tema de gggggggggggggggggggg y presentación del equipo de trabajo.",
+        "subtitle": "",
+        "media": "",
+        "bullets": [],
+        "imageUrl": "",
+        "bgImage": ""
       },
       {
         "title": "El Reto y la Oportunidad",
         "content": "¿Por qué es crucial investigar sobre Gggggggggggggggggggg?\n\nProblema identificado: Falta de herramientas accesibles, metodologías prácticas y conciencia comunitaria para abordar con éxito los retos de gggggggggggggggggggg.\n\nObjetivo: Diseñar e implementar una propuesta innovadora y funcional que promueva el conocimiento y aporte soluciones prácticas a gggggggggggggggggggg.",
-        "notes": "Explicación del contexto y motivación del proyecto."
+        "notes": "Explicación del contexto y motivación del proyecto.",
+        "media": "",
+        "imageUrl": "",
+        "bgImage": ""
       },
       {
         "title": "Nuestra Propuesta de Solución",
         "content": "Cómo abordamos Gggggggggggggggggggg:\n• Investigación contextualizada.\n• Desarrollo de prototipos funcionales.\n• Divulgación abierta a la comunidad educativa.",
-        "notes": "Detalles técnicos y metodológicos de la propuesta."
+        "notes": "Detalles técnicos y metodológicos de la propuesta.",
+        "media": "",
+        "imageUrl": "",
+        "bgImage": ""
       }
     ],
     "externalLinks": [],
@@ -300,9 +312,10 @@
         7,
         8,
         9,
-        10
+        10,
+        11
       ],
-      "currentStep": 11,
+      "currentStep": 12,
       "author": "caca",
       "authorId": "user_1794871108052",
       "authorEmail": "caca@gmail.com",
@@ -325,7 +338,7 @@
         "collaborators": ""
       },
       "createdAt": "2026-11-16T23:19:35.753Z",
-      "updatedAt": "2026-11-16T23:22:43.321Z",
+      "updatedAt": "2026-11-16T23:22:46.898Z",
       "joinCode": "1234",
       "accessCode": "1234",
       "progress": 95,
@@ -367,7 +380,7 @@
     "authorAvatar": "🦊",
     "authorRole": "Líder del Proyecto",
     "createdAt": "2026-11-16T23:19:35.753Z",
-    "updatedAt": "2026-11-16T23:22:32.714Z",
+    "updatedAt": "2026-11-16T23:22:36.214Z",
     "image": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
     "customProjectCodes": [
       {
