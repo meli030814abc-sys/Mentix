@@ -29,10 +29,13 @@
     "isPublic": false,
     "startDate": "2026-11-16",
     "endDate": "2027-02-16",
-    "currentStep": 3,
+    "currentStep": 6,
     "completedSteps": [
       1,
-      2
+      2,
+      3,
+      4,
+      5
     ],
     "progress": 90,
     "calculatedProgress": 90,
@@ -274,14 +277,17 @@
       "publicationStatus": "draft",
       "completedSteps": [
         1,
-        2
+        2,
+        3,
+        4,
+        5
       ],
-      "currentStep": 3,
+      "currentStep": 6,
       "author": "caca",
       "authorId": "user_1794871108052",
       "authorEmail": "caca@gmail.com",
       "authorAvatar": "🦊",
-      "authorRole": "student",
+      "authorRole": "Líder del Proyecto",
       "designConfig": {
         "themeId": "cosmos",
         "fontFamily": "Montserrat",
@@ -299,7 +305,7 @@
         "collaborators": ""
       },
       "createdAt": "2026-11-16T23:19:35.753Z",
-      "updatedAt": "2026-11-16T23:22:06.622Z",
+      "updatedAt": "2026-11-16T23:22:11.137Z",
       "joinCode": "1234",
       "accessCode": "1234",
       "progress": 90,
@@ -339,9 +345,9 @@
     "authorId": "user_1794871108052",
     "authorEmail": "caca@gmail.com",
     "authorAvatar": "🦊",
-    "authorRole": "student",
+    "authorRole": "Líder del Proyecto",
     "createdAt": "2026-11-16T23:19:35.753Z",
-    "updatedAt": "2026-11-16T23:21:55.911Z",
+    "updatedAt": "2026-11-16T23:22:00.418Z",
     "image": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
     "customProjectCodes": [
       {
