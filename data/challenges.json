@@ -199,7 +199,7 @@
         "collaborators": ""
       },
       "createdAt": "2026-11-16T18:21:52.529Z",
-      "updatedAt": "2026-11-16T18:44:17.923Z",
+      "updatedAt": "2026-11-16T18:44:19.948Z",
       "joinCode": "556",
       "accessCode": "556",
       "progress": 50,
@@ -210,7 +210,7 @@
           "description": "Conformación del equipo y definición de objetivos.",
           "status": "active",
           "icon": "clipboard",
-          "progress": 25
+          "progress": 5
         },
         {
           "title": "Investigación",
@@ -241,7 +241,7 @@
     "authorAvatar": "🐯",
     "authorRole": "admin",
     "createdAt": "2026-11-16T18:21:52.529Z",
-    "updatedAt": "2026-11-16T18:44:16.778Z",
+    "updatedAt": "2026-11-16T18:44:18.735Z",
     "image": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
     "rejectionReason": "",
     "joinCode": "556",
