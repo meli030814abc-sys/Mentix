@@ -2,8 +2,8 @@
   {
     "id": "proj_1794856083172",
     "slug": "proyecto-belleza",
-    "title": "Proyecto Belleza",
-    "subtitle": "Proyecto GovData Nexus",
+    "title": "fdhgf",
+    "subtitle": "gfbf",
     "description": "Iniciativa integral que aborda \"Belleza\" mediante metodologías activas de aprendizaje, diseño de prototipos e investigación aplicada para generar impacto positivo.",
     "shortDescription": "Iniciativa integral que aborda \"Belleza\" mediante metodologías activas de aprendizaje, diseño de prototipos e investigación aplicada para generar impacto positivo.",
     "fullDescription": "Este proyecto surge como respuesta a la necesidad de investigar y proponer soluciones concretas en torno a \"Belleza\". A través de un enfoque basado en retos y trabajo colaborativo, el equipo analiza antecedentes, recopila datos del entorno y diseña prototipos viables que promueven la sostenibilidad, el pensamiento crítico y la apropiación de conocimientos en toda la comunidad educativa.",
@@ -31,8 +31,8 @@
     "endDate": "2027-02-16",
     "currentStep": 1,
     "completedSteps": [],
-    "progress": 80,
-    "calculatedProgress": 80,
+    "progress": 90,
+    "calculatedProgress": 90,
     "valueProp": {
       "problemSolved": "Dificultad de acceso a recursos e iniciativas prácticas enfocadas en belleza.",
       "howItWorks": "Centraliza la investigación, recursos interactivos y resultados del proyecto en una plataforma abierta y colaborativa.",
@@ -197,8 +197,8 @@
     "displayOrder": 1,
     "govdata": {
       "id": "proj_1794856083172",
-      "title": "",
-      "subtitle": "",
+      "title": "fdhgf",
+      "subtitle": "gfbf",
       "shortDescription": "Iniciativa integral que aborda \"Belleza\" mediante metodologías activas de aprendizaje, diseño de prototipos e investigación aplicada para generar impacto positivo.",
       "fullDescription": "Este proyecto surge como respuesta a la necesidad de investigar y proponer soluciones concretas en torno a \"Belleza\". A través de un enfoque basado en retos y trabajo colaborativo, el equipo analiza antecedentes, recopila datos del entorno y diseña prototipos viables que promueven la sostenibilidad, el pensamiento crítico y la apropiación de conocimientos en toda la comunidad educativa.",
       "category": "tecnologia",
@@ -293,7 +293,7 @@
         "collaborators": ""
       },
       "createdAt": "2026-11-16T19:08:03.172Z",
-      "updatedAt": "2026-11-16T19:08:26.448Z",
+      "updatedAt": "2026-11-16T19:08:39.548Z",
       "joinCode": "61321",
       "accessCode": "61321",
       "projectRoadmap": [
@@ -326,8 +326,8 @@
           "icon": "rocket"
         }
       ],
-      "progress": 80,
-      "calculatedProgress": 80
+      "progress": 90,
+      "calculatedProgress": 90
     },
     "author": "Annie",
     "authorId": "user_1793482866924",
@@ -335,7 +335,7 @@
     "authorAvatar": "🦊",
     "authorRole": "student",
     "createdAt": "2026-11-16T19:08:03.172Z",
-    "updatedAt": "2026-11-16T19:08:25.199Z",
+    "updatedAt": "2026-11-16T19:08:38.314Z",
     "image": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
     "rejectionReason": ""
   },
