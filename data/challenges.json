@@ -65,8 +65,7 @@
       "title": "",
       "description": "",
       "isPublic": true,
-      "verified": false,
-      "thumbnailUrl": ""
+      "verified": false
     },
     "resources": [],
     "visualAssets": [],
@@ -203,7 +202,7 @@
     "authorAvatar": "🦊",
     "authorRole": "student",
     "createdAt": "2026-11-16T23:19:35.753Z",
-    "updatedAt": "2026-11-16T23:20:52.560Z",
+    "updatedAt": "2026-11-16T23:20:52.598Z",
     "image": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
     "customProjectCodes": [
       {
