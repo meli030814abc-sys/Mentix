@@ -1,19 +1,155 @@
 [
   {
     "id": "proj_1794878836543",
-    "slug": "nuevo-proyecto-govdata",
     "title": "dfdsfgsdfds fdsfds",
     "subtitle": "dsfsdfds fdsfdsf",
     "description": "Proyecto documentado con el Asistente Inteligente GovData Nexus.",
-    "shortDescription": "Proyecto documentado con el Asistente Inteligente GovData Nexus.",
-    "fullDescription": "Proyecto documentado con el Asistente Inteligente GovData Nexus.",
-    "category": "derecho",
-    "categoryName": "Derecho & Leyes",
     "projectType": "presentation",
     "isGovDataProject": true,
+    "category": "derecho",
+    "categoryName": "Derecho & Leyes",
+    "author": "Carlos Canon",
+    "authorRole": "admin",
+    "status": "in_progress",
+    "publicationStatus": "draft",
+    "approvalStatus": "pending",
+    "isPublic": false,
+    "image": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
+    "banner": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
+    "createdAt": "2026-11-17T01:27:16.543Z",
+    "updatedAt": "2026-11-17T01:30:35.814Z",
+    "govdata": {
+      "id": "proj_1794878836543",
+      "title": "dfdsfgsdfds fdsfds",
+      "subtitle": "dsfsdfds fdsfdsf",
+      "shortDescription": "Proyecto documentado con el Asistente Inteligente GovData Nexus.",
+      "fullDescription": "Proyecto documentado con el Asistente Inteligente GovData Nexus.",
+      "category": "derecho",
+      "categoryName": "Derecho & Leyes",
+      "projectSubtype": "Gobierno de Datos e IA",
+      "targetAudience": "dfsdf",
+      "problemStatement": "",
+      "mainObjective": "",
+      "benefits": "",
+      "teamLead": "Carlos Canon",
+      "preparationStatus": "en_desarrollo",
+      "startDate": "2026-11-17",
+      "endDate": "",
+      "valueProp": {
+        "problemSolved": "",
+        "howItWorks": "",
+        "forWhom": "",
+        "differentiator": "",
+        "keyFeatures": [],
+        "resultsAndBenefits": "",
+        "prerequisites": "",
+        "visitorAction": "Unirse / Colaborar",
+        "commercialPitch": "",
+        "faqs": []
+      },
+      "videoConfig": {
+        "sourceType": "url",
+        "url": "",
+        "fileName": "",
+        "title": "",
+        "description": "",
+        "thumbnailUrl": "",
+        "isPublic": true,
+        "verified": false
+      },
+      "mainImage": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
+      "thumbnailImage": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
+      "useDefaultImage": true,
+      "externalLinks": [],
+      "landingConfig": {
+        "publicName": "dfdsfgsdfds fdsfds",
+        "slug": "nuevo-proyecto-govdata",
+        "landingTitle": "dfdsfgsdfds fdsfds: dsfsdfds fdsfdsf",
+        "publicDescription": "Proyecto documentado con el Asistente Inteligente GovData Nexus.",
+        "visibleCategory": "Derecho & Leyes",
+        "tags": [
+          "Gobierno de Datos",
+          "IA"
+        ],
+        "ctaText": "Unirse / Colaborar",
+        "ctaUrl": "#plp-sec-contacto",
+        "displayOrder": 1,
+        "featuredVideoPublic": true
+      },
+      "publicationStatus": "draft",
+      "completedSteps": [
+        1,
+        2,
+        3
+      ],
+      "currentStep": 4,
+      "author": "Carlos Canon",
+      "authorId": "user_1793449738905",
+      "authorEmail": "vivianacastanedam@gmail.com",
+      "authorAvatar": "👨‍🏫",
+      "authorRole": "admin",
+      "designConfig": {
+        "themeId": "cosmos",
+        "fontFamily": "Montserrat",
+        "titleColor": "#ffffff",
+        "textColor": "#cbd5e1",
+        "accentColor": "#00f5d4",
+        "bannerStyle": "gradient-cosmos",
+        "bannerUrl": ""
+      },
+      "authorsConfig": {
+        "authorsList": "Carlos Canon",
+        "authorsEmails": "vivianacastanedam@gmail.com",
+        "authorsRole": "Líder del Proyecto",
+        "authorsInstitution": "Colegio Mentix",
+        "collaborators": ""
+      },
+      "createdAt": "2026-11-17T01:27:16.543Z",
+      "updatedAt": "2026-11-17T01:30:46.875Z",
+      "joinCode": "55858",
+      "accessCode": "55858",
+      "progress": 75,
+      "calculatedProgress": 75,
+      "projectRoadmap": [
+        {
+          "title": "Planeación",
+          "description": "Conformación del equipo y definición de objetivos.",
+          "status": "active",
+          "progress": 55,
+          "emoji": "📋",
+          "icon": "clipboard"
+        },
+        {
+          "title": "Investigación",
+          "description": "Recopilación de datos e información relevante.",
+          "progress": 100,
+          "status": "completed",
+          "icon": "search",
+          "emoji": "🔍"
+        },
+        {
+          "title": "Desarrollo",
+          "description": "Construcción de la solución y prototipos.",
+          "status": "active",
+          "progress": 55,
+          "emoji": "💻",
+          "icon": "clipboard"
+        },
+        {
+          "title": "Publicación",
+          "description": "Despliegue en la Landing Page y comunicación.",
+          "progress": 0,
+          "status": "pending",
+          "icon": "rocket",
+          "emoji": "🚀"
+        }
+      ]
+    },
+    "slug": "nuevo-proyecto-govdata",
+    "shortDescription": "Proyecto documentado con el Asistente Inteligente GovData Nexus.",
+    "fullDescription": "Proyecto documentado con el Asistente Inteligente GovData Nexus.",
     "projectSubtype": "Gobierno de Datos e IA",
     "difficulty": "Medio",
-    "banner": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
     "mainImage": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
     "thumbnailImage": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
     "useDefaultImage": true,
@@ -23,10 +159,6 @@
     "benefits": "",
     "teamLead": "Carlos Canon",
     "preparationStatus": "en_desarrollo",
-    "publicationStatus": "draft",
-    "approvalStatus": "pending",
-    "status": "in_progress",
-    "isPublic": false,
     "startDate": "2026-11-17",
     "endDate": "",
     "currentStep": 4,
@@ -171,140 +303,18 @@
       "IA"
     ],
     "displayOrder": 1,
-    "govdata": {
-      "id": "proj_1794878836543",
-      "title": "dfdsfgsdfds fdsfds",
-      "subtitle": "dsfsdfds fdsfdsf",
-      "shortDescription": "Proyecto documentado con el Asistente Inteligente GovData Nexus.",
-      "fullDescription": "Proyecto documentado con el Asistente Inteligente GovData Nexus.",
-      "category": "derecho",
-      "categoryName": "Derecho & Leyes",
-      "projectSubtype": "Gobierno de Datos e IA",
-      "targetAudience": "dfsdf",
-      "problemStatement": "",
-      "mainObjective": "",
-      "benefits": "",
-      "teamLead": "Carlos Canon",
-      "preparationStatus": "en_desarrollo",
-      "startDate": "2026-11-17",
-      "endDate": "",
-      "valueProp": {
-        "problemSolved": "",
-        "howItWorks": "",
-        "forWhom": "",
-        "differentiator": "",
-        "keyFeatures": [],
-        "resultsAndBenefits": "",
-        "prerequisites": "",
-        "visitorAction": "Unirse / Colaborar",
-        "commercialPitch": "",
-        "faqs": []
-      },
-      "videoConfig": {
-        "sourceType": "url",
-        "url": "",
-        "fileName": "",
-        "title": "",
-        "description": "",
-        "thumbnailUrl": "",
-        "isPublic": true,
-        "verified": false
-      },
-      "mainImage": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
-      "thumbnailImage": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
-      "useDefaultImage": true,
-      "externalLinks": [],
-      "landingConfig": {
-        "publicName": "dfdsfgsdfds fdsfds",
-        "slug": "nuevo-proyecto-govdata",
-        "landingTitle": "dfdsfgsdfds fdsfds: dsfsdfds fdsfdsf",
-        "publicDescription": "Proyecto documentado con el Asistente Inteligente GovData Nexus.",
-        "visibleCategory": "Derecho & Leyes",
-        "tags": [
-          "Gobierno de Datos",
-          "IA"
-        ],
-        "ctaText": "Unirse / Colaborar",
-        "ctaUrl": "#plp-sec-contacto",
-        "displayOrder": 1,
-        "featuredVideoPublic": true
-      },
-      "publicationStatus": "draft",
-      "completedSteps": [
-        1,
-        2,
-        3
-      ],
-      "currentStep": 4,
-      "author": "Carlos Canon",
-      "authorId": "user_1793449738905",
-      "authorEmail": "vivianacastanedam@gmail.com",
-      "authorAvatar": "👨‍🏫",
-      "authorRole": "admin",
-      "designConfig": {
-        "themeId": "cosmos",
-        "fontFamily": "Montserrat",
-        "titleColor": "#ffffff",
-        "textColor": "#cbd5e1",
-        "accentColor": "#00f5d4",
-        "bannerStyle": "gradient-cosmos",
-        "bannerUrl": ""
-      },
-      "authorsConfig": {
-        "authorsList": "Carlos Canon",
-        "authorsEmails": "vivianacastanedam@gmail.com",
-        "authorsRole": "Líder del Proyecto",
-        "authorsInstitution": "Colegio Mentix",
-        "collaborators": ""
-      },
-      "createdAt": "2026-11-17T01:27:16.543Z",
-      "updatedAt": "2026-11-17T01:30:46.875Z",
-      "joinCode": "55858",
-      "accessCode": "55858",
-      "progress": 75,
-      "calculatedProgress": 75,
-      "projectRoadmap": [
-        {
-          "title": "Planeación",
-          "description": "Conformación del equipo y definición de objetivos.",
-          "status": "active",
-          "progress": 55,
-          "emoji": "📋",
-          "icon": "clipboard"
-        },
-        {
-          "title": "Investigación",
-          "description": "Recopilación de datos e información relevante.",
-          "progress": 100,
-          "status": "completed",
-          "icon": "search",
-          "emoji": "🔍"
-        },
-        {
-          "title": "Desarrollo",
-          "description": "Construcción de la solución y prototipos.",
-          "status": "active",
-          "progress": 55,
-          "emoji": "💻",
-          "icon": "clipboard"
-        },
-        {
-          "title": "Publicación",
-          "description": "Despliegue en la Landing Page y comunicación.",
-          "progress": 0,
-          "status": "pending",
-          "icon": "rocket",
-          "emoji": "🚀"
-        }
-      ]
-    },
-    "author": "Carlos Canon",
     "authorId": "user_1793449738905",
     "authorEmail": "vivianacastanedam@gmail.com",
     "authorAvatar": "👨‍🏫",
-    "authorRole": "admin",
-    "createdAt": "2026-11-17T01:27:16.543Z",
-    "updatedAt": "2026-11-17T01:30:35.864Z"
+    "rejectionReason": "",
+    "customProjectCodes": [
+      {
+        "code": "12345678",
+        "author": "Profesor / Administrador Mentix",
+        "authorRole": "admin",
+        "createdAt": "2026-11-16"
+      }
+    ]
   },
   {
     "id": "proj_1794871175753",
