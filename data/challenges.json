@@ -1,5 +1,212 @@
 [
   {
+    "id": "proj_1794878836543",
+    "slug": "nuevo-proyecto-govdata",
+    "title": "Nuevo Proyecto GovData",
+    "subtitle": "Proyecto GovData Nexus",
+    "description": "Proyecto documentado con el Asistente Inteligente GovData Nexus.",
+    "shortDescription": "",
+    "fullDescription": "",
+    "category": "tecnologia",
+    "categoryName": "Tecnología & Programación",
+    "projectType": "presentation",
+    "isGovDataProject": true,
+    "projectSubtype": "Gobierno de Datos e IA",
+    "difficulty": "Medio",
+    "banner": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
+    "mainImage": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
+    "thumbnailImage": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
+    "useDefaultImage": true,
+    "targetAudience": "",
+    "problemStatement": "",
+    "mainObjective": "",
+    "benefits": "",
+    "teamLead": "Carlos Canon",
+    "preparationStatus": "en_desarrollo",
+    "publicationStatus": "draft",
+    "approvalStatus": "pending",
+    "status": "in_progress",
+    "isPublic": false,
+    "startDate": "2026-11-17",
+    "endDate": "",
+    "currentStep": 1,
+    "completedSteps": [],
+    "progress": 30,
+    "calculatedProgress": 30,
+    "valueProp": {
+      "problemSolved": "",
+      "howItWorks": "",
+      "forWhom": "",
+      "differentiator": "",
+      "keyFeatures": [],
+      "resultsAndBenefits": "",
+      "prerequisites": "",
+      "visitorAction": "Unirse / Colaborar",
+      "commercialPitch": "",
+      "faqs": []
+    },
+    "valueProposition": {
+      "problemSolved": "",
+      "howItWorks": "",
+      "forWhom": "",
+      "differentiator": "",
+      "keyFeatures": [],
+      "resultsAndBenefits": "",
+      "prerequisites": "",
+      "visitorAction": "Unirse / Colaborar",
+      "commercialPitch": "",
+      "faqs": []
+    },
+    "videoUrl": "",
+    "videoConfig": {
+      "sourceType": "url",
+      "url": "",
+      "fileName": "",
+      "title": "",
+      "description": "",
+      "isPublic": true,
+      "verified": false,
+      "thumbnailUrl": ""
+    },
+    "resources": [],
+    "visualAssets": [],
+    "slides": [],
+    "externalLinks": [],
+    "landingConfig": {
+      "publicName": "",
+      "slug": "nuevo-proyecto-govdata",
+      "landingTitle": "",
+      "publicDescription": "",
+      "visibleCategory": "Tecnología & Programación",
+      "tags": [
+        "Gobierno de Datos",
+        "IA"
+      ],
+      "ctaText": "Unirse / Colaborar",
+      "ctaUrl": "#plp-sec-contacto",
+      "displayOrder": 1,
+      "featuredVideoPublic": true
+    },
+    "projectRoadmap": [],
+    "designConfig": {
+      "themeId": "cosmos",
+      "fontFamily": "Montserrat",
+      "titleColor": "#ffffff",
+      "textColor": "#cbd5e1",
+      "accentColor": "#00f5d4",
+      "bannerStyle": "gradient-cosmos",
+      "bannerUrl": ""
+    },
+    "authorsConfig": {
+      "authorsList": "Carlos Canon",
+      "authorsEmails": "vivianacastanedam@gmail.com",
+      "authorsRole": "Líder del Proyecto",
+      "authorsInstitution": "",
+      "collaborators": ""
+    },
+    "tags": [
+      "Gobierno de Datos",
+      "IA"
+    ],
+    "displayOrder": 1,
+    "govdata": {
+      "id": "proj_1794878836543",
+      "title": "",
+      "subtitle": "",
+      "shortDescription": "",
+      "fullDescription": "",
+      "category": "tecnologia",
+      "categoryName": "Tecnología & Programación",
+      "projectSubtype": "Gobierno de Datos e IA",
+      "targetAudience": "",
+      "problemStatement": "",
+      "mainObjective": "",
+      "benefits": "",
+      "teamLead": "Carlos Canon",
+      "preparationStatus": "en_desarrollo",
+      "startDate": "2026-11-17",
+      "endDate": "",
+      "valueProp": {
+        "problemSolved": "",
+        "howItWorks": "",
+        "forWhom": "",
+        "differentiator": "",
+        "keyFeatures": [],
+        "resultsAndBenefits": "",
+        "prerequisites": "",
+        "visitorAction": "Unirse / Colaborar",
+        "commercialPitch": "",
+        "faqs": []
+      },
+      "videoConfig": {
+        "sourceType": "url",
+        "url": "",
+        "fileName": "",
+        "title": "",
+        "description": "",
+        "isPublic": true,
+        "verified": false
+      },
+      "mainImage": "",
+      "thumbnailImage": "",
+      "useDefaultImage": true,
+      "externalLinks": [],
+      "landingConfig": {
+        "publicName": "",
+        "slug": "nuevo-proyecto-govdata",
+        "landingTitle": "",
+        "publicDescription": "",
+        "visibleCategory": "Tecnología & Programación",
+        "tags": [
+          "Gobierno de Datos",
+          "IA"
+        ],
+        "ctaText": "Unirse / Colaborar",
+        "ctaUrl": "#plp-sec-contacto",
+        "displayOrder": 1,
+        "featuredVideoPublic": true
+      },
+      "publicationStatus": "draft",
+      "completedSteps": [],
+      "currentStep": 1,
+      "author": "Carlos Canon",
+      "authorId": "user_1793449738905",
+      "authorEmail": "vivianacastanedam@gmail.com",
+      "authorAvatar": "👨‍🏫",
+      "authorRole": "admin",
+      "designConfig": {
+        "themeId": "cosmos",
+        "fontFamily": "Montserrat",
+        "titleColor": "#ffffff",
+        "textColor": "#cbd5e1",
+        "accentColor": "#00f5d4",
+        "bannerStyle": "gradient-cosmos",
+        "bannerUrl": ""
+      },
+      "authorsConfig": {
+        "authorsList": "Carlos Canon",
+        "authorsEmails": "vivianacastanedam@gmail.com",
+        "authorsRole": "Líder del Proyecto",
+        "authorsInstitution": "",
+        "collaborators": ""
+      },
+      "createdAt": "2026-11-17T01:27:16.543Z",
+      "updatedAt": "2026-11-17T01:27:32.516Z",
+      "joinCode": "55858",
+      "accessCode": "55858",
+      "progress": 30,
+      "calculatedProgress": 30
+    },
+    "author": "Carlos Canon",
+    "authorId": "user_1793449738905",
+    "authorEmail": "vivianacastanedam@gmail.com",
+    "authorAvatar": "👨‍🏫",
+    "authorRole": "admin",
+    "createdAt": "2026-11-17T01:27:16.543Z",
+    "updatedAt": "2026-11-17T01:27:21.435Z",
+    "image": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80"
+  },
+  {
     "id": "proj_1794871175753",
     "slug": "proyecto-gggggggggggggggggggg",
     "title": "Innovación Total",
@@ -403,58 +610,10 @@
     "image": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
     "customProjectCodes": [
       {
-        "code": "55858",
-        "author": "Melisa",
-        "authorRole": "admin",
-        "createdAt": "16/11/2026, 8:26:15 p.m."
-      },
-      {
-        "code": "pROYECT",
-        "author": "Docente",
-        "createdAt": "2/11/2026, 9:19:28 p.m.",
-        "authorRole": "student"
-      },
-      {
-        "code": "777666",
-        "author": "Carlos Canon",
-        "authorRole": "admin",
-        "createdAt": "16/11/2026, 14:11:45"
-      },
-      {
-        "code": "456456",
-        "author": "Docente",
-        "createdAt": "16/11/2026, 11:50:58",
-        "authorRole": "admin"
-      },
-      {
         "code": "12345678",
         "author": "Profesor / Administrador Mentix",
         "authorRole": "admin",
         "createdAt": "2026-11-16"
-      },
-      {
-        "code": "61321",
-        "author": "Docente / Mentor",
-        "authorRole": "teacher",
-        "createdAt": "16/11/2026, 2:08:03 p.m."
-      },
-      {
-        "code": "1234",
-        "author": "Carlos Canon",
-        "createdAt": "1/11/2026, 21:39:17",
-        "authorRole": "admin"
-      },
-      {
-        "code": "1234156",
-        "author": "Carlos Canon",
-        "createdAt": "31/10/2026, 10:24:51",
-        "authorRole": "admin"
-      },
-      {
-        "code": "3132165465",
-        "author": "Docente",
-        "createdAt": "16/11/2026, 11:50:25",
-        "authorRole": "admin"
       }
     ],
     "rejectionReason": ""
