@@ -17,7 +17,7 @@
     "image": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
     "banner": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
     "createdAt": "2026-11-17T01:27:16.543Z",
-    "updatedAt": "2026-11-17T01:31:04.208Z",
+    "updatedAt": "2026-11-17T01:31:04.290Z",
     "govdata": {
       "id": "proj_1794878836543",
       "title": "dfdsfgsdfds fdsfds",
@@ -85,9 +85,10 @@
         3,
         4,
         5,
-        6
+        6,
+        7
       ],
-      "currentStep": 7,
+      "currentStep": 8,
       "author": "Carlos Canon",
       "authorId": "user_1793449738905",
       "authorEmail": "vivianacastanedam@gmail.com",
@@ -110,7 +111,7 @@
         "collaborators": "fdsfs"
       },
       "createdAt": "2026-11-17T01:27:16.543Z",
-      "updatedAt": "2026-11-17T01:31:15.280Z",
+      "updatedAt": "2026-11-17T01:31:15.355Z",
       "joinCode": "55858",
       "accessCode": "55858",
       "progress": 83,
@@ -166,14 +167,15 @@
     "preparationStatus": "en_desarrollo",
     "startDate": "2026-11-17",
     "endDate": "",
-    "currentStep": 7,
+    "currentStep": 8,
     "completedSteps": [
       1,
       2,
       3,
       4,
       5,
-      6
+      6,
+      7
     ],
     "progress": 83,
     "calculatedProgress": 83,
