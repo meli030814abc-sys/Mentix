@@ -29,7 +29,7 @@
     "isPublic": false,
     "startDate": "2026-11-17",
     "endDate": "2026-11-18",
-    "currentStep": 8,
+    "currentStep": 10,
     "completedSteps": [
       1,
       2,
@@ -265,7 +265,7 @@
         8,
         9
       ],
-      "currentStep": 8,
+      "currentStep": 10,
       "author": "Carlos Canon",
       "authorId": "user_1793449738905",
       "authorEmail": "vivianacastanedam@gmail.com",
@@ -288,7 +288,7 @@
         "collaborators": "fdsfs"
       },
       "createdAt": "2026-11-17T01:27:16.543Z",
-      "updatedAt": "2026-11-17T01:33:56.088Z",
+      "updatedAt": "2026-11-17T01:33:58.933Z",
       "joinCode": "55858",
       "accessCode": "55858",
       "progress": 83,
@@ -334,7 +334,7 @@
     "authorAvatar": "👨‍🏫",
     "authorRole": "Líder del Proyecto",
     "createdAt": "2026-11-17T01:27:16.543Z",
-    "updatedAt": "2026-11-17T01:33:45.084Z"
+    "updatedAt": "2026-11-17T01:33:48.045Z"
   },
   {
     "id": "proj_1794871175753",
