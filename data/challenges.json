@@ -403,6 +403,12 @@
     "image": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
     "customProjectCodes": [
       {
+        "code": "1234",
+        "author": "Carlos Canon",
+        "createdAt": "1/11/2026, 21:39:17",
+        "authorRole": "admin"
+      },
+      {
         "code": "1234156",
         "author": "Carlos Canon",
         "createdAt": "31/10/2026, 10:24:51",
@@ -436,12 +442,6 @@
         "code": "456456",
         "author": "Docente",
         "createdAt": "16/11/2026, 11:50:58",
-        "authorRole": "admin"
-      },
-      {
-        "code": "3132165465",
-        "author": "Docente",
-        "createdAt": "16/11/2026, 11:50:25",
         "authorRole": "admin"
       }
     ],
