@@ -2932,10 +2932,10 @@ window.ProjectsView = {
                 ✏️
               </button>
             ` : ''}
-            ${isAuthor ? `
+            ${(isAuthor || isAdmin) ? `
               <button 
                 title="Eliminar proyecto" 
-                onclick="event.stopPropagation(); window.appRouter.deleteChallenge('${c.id}')"
+                onclick="event.stopPropagation(); window.appRouter.purgeProjectCompletely('${c.id}')"
                 style="width: 30px; height: 30px; border-radius: 8px; background: rgba(239, 68, 68, 0.9); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; cursor: pointer; border: none; font-size: 0.85rem; color: #ffffff; box-shadow: 0 2px 8px rgba(0,0,0,0.18);"
               >
                 🗑️

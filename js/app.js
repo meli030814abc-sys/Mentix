@@ -828,60 +828,174 @@ class AppRouter {
   }
 
   deleteChallenge(challengeId) {
-    const c = window.appState.challenges.find(item => item.id === challengeId);
-    if (!c) return;
+    // Redirigir a la función maestra de purga total
+    this.purgeProjectCompletely(challengeId);
+  }
 
-    if (!this.isChallengeOwner(c)) {
-      alert('🚫 Solo el creador original de este proyecto tiene permiso para eliminarlo.');
+  /**
+   * 🗑️ PURGA TOTAL DE PROYECTO — Elimina un proyecto completamente de toda la plataforma:
+   * local, nube (GitHub/Vercel + Supabase), localStorage y tiempo real (MQTT + BroadcastChannel).
+   * Solo el autor original o un Administrador pueden invocar esta función.
+   * @param {string} projectId - ID del proyecto a eliminar
+   * @param {boolean} skipConfirm - Si true, no muestra el diálogo de confirmación (usado desde AdminView)
+   */
+  async purgeProjectCompletely(projectId, skipConfirm = false) {
+    if (!projectId) return;
+
+    const pidStr = String(projectId);
+    const allChallenges = window.appState.challenges || [];
+    const c = allChallenges.find(item => item && String(item.id) === pidStr);
+    // Si no existe en el estado, buscar en Supabase o simplemente proceder con limpieza
+    const pTitle = c ? c.title : pidStr;
+
+    // ── 1. Verificar permisos: solo autor o administrador pueden borrar ──────
+    if (c && !this.isChallengeOwner(c)) {
+      alert('🚫 Solo el creador original o un Administrador pueden eliminar este proyecto.');
       return;
     }
 
-    const ok = confirm(`⚠️ ¿Deseas eliminar definitivamente tu proyecto "${c.title}"?\n\nEsta acción borrará el reto de la plataforma para todos los usuarios.`);
-    if (!ok) return;
+    // ── 2. Confirmación ──────────────────────────────────────────────────────
+    if (!skipConfirm) {
+      const ok = confirm(`⚠️ ¿Eliminar DEFINITIVAMENTE el proyecto "${pTitle}"?\n\nSe borrará de la plataforma para TODOS los usuarios en todos los dispositivos.`);
+      if (!ok) return;
+    }
 
-    // Eliminar del estado local
-    window.appState.challenges = window.appState.challenges.filter(item => item.id !== challengeId);
+    // ── 3. Eliminar del estado en memoria ────────────────────────────────────
+    window.appState.challenges = (window.appState.challenges || []).filter(item => item && String(item.id) !== pidStr);
+    if (window.appState.projects) {
+      window.appState.projects = (window.appState.projects || []).filter(item => item && String(item.id) !== pidStr);
+    }
+    // Decrementar contador del usuario si era el autor
     const u = window.appState.currentUser;
-    if (u && u.challengesCreated && u.challengesCreated > 0) {
+    if (u && u.challengesCreated && u.challengesCreated > 0 && c && this.isChallengeOwner(c)) {
       u.challengesCreated--;
     }
+
+    // ── 4. Registrar ID como eliminado en localStorage ───────────────────────
     try {
       const del = JSON.parse(localStorage.getItem('te_reto_deleted_ids') || '[]');
-      if (!del.includes(challengeId)) del.push(challengeId);
+      if (!del.includes(pidStr)) del.push(pidStr);
       localStorage.setItem('te_reto_deleted_ids', JSON.stringify(del));
     } catch (e) {}
+
+    // ── 5. Limpiar todos los almacenes de localStorage ───────────────────────
+    try {
+      // Mapa de proyectos aprobados
+      const approvedMap = JSON.parse(localStorage.getItem('mentix_approved_projects_map') || '{}');
+      if (approvedMap[pidStr]) { delete approvedMap[pidStr]; localStorage.setItem('mentix_approved_projects_map', JSON.stringify(approvedMap)); }
+    } catch (e) {}
+    try {
+      // Borradores del asistente GovData
+      const drafts = JSON.parse(localStorage.getItem('mentix_govdata_wizard_drafts') || '[]');
+      const filteredDrafts = Array.isArray(drafts) ? drafts.filter(d => d && String(d.id) !== pidStr) : [];
+      localStorage.setItem('mentix_govdata_wizard_drafts', JSON.stringify(filteredDrafts));
+    } catch (e) {}
+    try {
+      // Landing activo
+      const activeLanding = JSON.parse(localStorage.getItem('mentix_active_landing_project') || 'null');
+      if (activeLanding && String(activeLanding.id) === pidStr) { localStorage.removeItem('mentix_active_landing_project'); }
+    } catch (e) {}
+    try {
+      // Bóvedas personales de todos los usuarios
+      for (let i = 0; i < localStorage.length; i++) {
+        const k = localStorage.key(i);
+        if (k && k.startsWith('mentix_user_projects_')) {
+          const raw = localStorage.getItem(k);
+          if (raw) {
+            const list = JSON.parse(raw);
+            if (Array.isArray(list) && list.some(item => item && String(item.id) === pidStr)) {
+              localStorage.setItem(k, JSON.stringify(list.filter(item => item && String(item.id) !== pidStr)));
+            }
+          }
+        }
+      }
+    } catch (e) {}
+    try {
+      // Project Hub
+      const allHub = JSON.parse(localStorage.getItem('mentix_project_hub_v1') || '{}');
+      if (allHub[pidStr]) { delete allHub[pidStr]; localStorage.setItem('mentix_project_hub_v1', JSON.stringify(allHub)); }
+    } catch (e) {}
+    try {
+      // Códigos personalizados de proyecto
+      const codes = JSON.parse(localStorage.getItem('mentix_custom_project_codes') || '[]');
+      const filteredCodes = Array.isArray(codes) ? codes.filter(item => item && String(item.projectId) !== pidStr) : [];
+      localStorage.setItem('mentix_custom_project_codes', JSON.stringify(filteredCodes));
+    } catch (e) {}
+    try {
+      // IDs de proyectos creados por este navegador
+      const myIds = JSON.parse(localStorage.getItem('mentix_my_created_challenge_ids') || '[]');
+      if (Array.isArray(myIds) && myIds.includes(pidStr)) {
+        localStorage.setItem('mentix_my_created_challenge_ids', JSON.stringify(myIds.filter(id => id !== pidStr)));
+      }
+      localStorage.removeItem('mentix_creator_' + pidStr);
+    } catch (e) {}
+
+    // ── 6. Guardar estado global actualizado ─────────────────────────────────
     saveGlobalState(window.appState);
 
-    if (window.CreatorView && window.CreatorView.currentChallenge && window.CreatorView.currentChallenge.id === challengeId) {
+    // ── 7. Resetear CreatorView si estaba editando este proyecto ─────────────
+    if (window.CreatorView && window.CreatorView.currentChallenge && String(window.CreatorView.currentChallenge.id) === pidStr) {
       window.CreatorView.resetForm();
     }
 
-    // Eliminar de la nube persistente
-    this.deleteChallengeFromCloud(challengeId);
-
-    // Eliminar de la nube pública Vercel / GitHub
+    // ── 8. Eliminar de la nube (Vercel/GitHub) ───────────────────────────────
     try {
-      fetch('/api/challenges?id=' + encodeURIComponent(challengeId), { method: 'DELETE' }).catch(() => {});
+      const apiBase = this.getApiBase ? this.getApiBase() : '';
+      fetch(`${apiBase}/api/challenges?id=${encodeURIComponent(pidStr)}`, { method: 'DELETE' }).catch(() => {});
     } catch (e) {}
 
-    // Eliminar de Supabase en la nube si está conectado
+    // ── 9. Eliminar de Supabase ───────────────────────────────────────────────
     if (window.supabaseService && window.supabaseService.isConnected && window.supabaseService.client) {
       try {
-        window.supabaseService.client.from('challenges').delete().eq('id', challengeId).then(() => {});
-      } catch(e) {}
+        window.supabaseService.client.from('challenges').delete().eq('id', pidStr).then(() => {}).catch(() => {});
+      } catch (e) {}
     }
 
+    // ── 10. Broadcast en tiempo real a TODOS los demás clientes ──────────────
+    const broadcastPayload = { type: 'PROJECT_DELETED', projectId: pidStr, timestamp: Date.now() };
+    // Via MQTT global
+    if (window.realtimeEngine) {
+      try {
+        const payloadStr = JSON.stringify(broadcastPayload);
+        if (window.realtimeEngine.globalMqttClient && window.realtimeEngine.globalMqttClient.connected) {
+          window.realtimeEngine.globalMqttClient.publish('mentix/global/project_deleted', payloadStr, { qos: 0 });
+        }
+        if (window.realtimeEngine.mqttClient && window.realtimeEngine.mqttClient.connected) {
+          window.realtimeEngine.mqttClient.publish('mentix/global/project_deleted', payloadStr, { qos: 0 });
+        }
+        // Via BroadcastChannel (misma pestaña/mismo dispositivo)
+        window.realtimeEngine.broadcast(broadcastPayload);
+      } catch (e) {}
+    }
+    // Via localStorage (fallback cross-tab)
+    try {
+      localStorage.setItem('mentix_realtime_project_deleted', JSON.stringify({ id: pidStr, t: Date.now() }));
+    } catch (e) {}
+
+    // ── 11. Feedback sonoro y toast/alert ────────────────────────────────────
+    if (window.soundEngine && window.soundEngine.playWrong) { try { window.soundEngine.playWrong(); } catch (e) {} }
     this.closeModal('preview-modal');
-    if (window.soundEngine && window.soundEngine.playWrong) {
-      window.soundEngine.playWrong();
-    }
-    alert(`🗑️ Tu proyecto "${c.title}" ha sido eliminado exitosamente.`);
+    alert(`🗑️ Proyecto "${pTitle}" eliminado definitivamente de toda la plataforma.`);
 
-    // Actualizar la vista actual
+    // ── 12. Redirigir si el usuario estaba viendo el landing/hub de ese proyecto ─
+    if (window.ProjectsView) {
+      if (window.ProjectsView.selectedProjectId === pidStr || window.ProjectsView.viewMode === 'landing') {
+        window.ProjectsView.selectedProjectId = null;
+        window.ProjectsView.viewMode = 'grid';
+      }
+    }
+    if (window.ProjectHub && document.getElementById('phub-overlay')) {
+      window.ProjectHub.close();
+    }
+
+    // ── 13. Refrescar todas las vistas ────────────────────────────────────────
     if (this.currentView === 'home' && window.HomeView) window.HomeView.render();
     if (this.currentView === 'projects' && window.ProjectsView) window.ProjectsView.render();
     if (this.currentView === 'profile' && window.ProfileView) window.ProfileView.render();
     if (this.currentView === 'creator' && window.CreatorView) this.navigate('home');
+    if (window.AdminView && typeof window.AdminView.renderActiveTab === 'function') {
+      try { window.AdminView.renderActiveTab(); } catch (e) {}
+    }
   }
 
   // Progreso de XP y subida de nivel

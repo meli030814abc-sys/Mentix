@@ -49,6 +49,13 @@ class RealtimeEngine {
             window.ProjectHub.handleIncomingJoinRequest(data);
           }
         } catch (err) {}
+      } else if (event.key === 'mentix_realtime_project_deleted' && event.newValue) {
+        try {
+          const data = JSON.parse(event.newValue);
+          if (data && data.id) {
+            this._handleRemoteProjectDeleted(data.id);
+          }
+        } catch (err) {}
       }
     });
   }
@@ -232,6 +239,7 @@ class RealtimeEngine {
         client.subscribe('mentix/global/design', { qos: 0 });
         client.subscribe('mentix/global/banners', { qos: 0 });
         client.subscribe('mentix/global/join_requests', { qos: 0 });
+        client.subscribe('mentix/global/project_deleted', { qos: 0 });
       });
 
       client.on('message', (topic, messageBuffer) => {
@@ -265,6 +273,13 @@ class RealtimeEngine {
             const data = JSON.parse(messageBuffer.toString());
             if (data && window.ProjectHub && typeof window.ProjectHub.handleIncomingJoinRequest === 'function') {
               window.ProjectHub.handleIncomingJoinRequest(data);
+            }
+          } catch(e) {}
+        } else if (topic === 'mentix/global/project_deleted') {
+          try {
+            const data = JSON.parse(messageBuffer.toString());
+            if (data && data.projectId) {
+              this._handleRemoteProjectDeleted(data.projectId);
             }
           } catch(e) {}
         }
@@ -715,6 +730,11 @@ class RealtimeEngine {
       if (window.ProjectHub && typeof window.ProjectHub.handleIncomingJoinRequest === 'function') {
         window.ProjectHub.handleIncomingJoinRequest(msg);
       }
+    }
+
+    // 🗑️ Borrado global en tiempo real: alguien (admin/autor) borró un proyecto
+    if (msg.type === 'PROJECT_DELETED' && msg.projectId) {
+      this._handleRemoteProjectDeleted(msg.projectId);
     }
 
     if (msg.type === 'ROOM_CLOSED') {
@@ -1417,6 +1437,74 @@ class RealtimeEngine {
 
   generateQRCodeSVG(text) {
     return this.generateQRCodeHTML(text);
+  }
+
+  /**
+   * 🗑️ Maneja la eliminación remota de un proyecto recibida por MQTT/Storage.
+   * Purga el proyecto del estado local y redirecciona si el usuario lo tenía abierto.
+   * @param {string} projectId
+   */
+  _handleRemoteProjectDeleted(projectId) {
+    if (!projectId) return;
+    const pidStr = String(projectId);
+
+    // Registrar como eliminado localmente
+    try {
+      const del = JSON.parse(localStorage.getItem('te_reto_deleted_ids') || '[]');
+      if (!del.includes(pidStr)) { del.push(pidStr); localStorage.setItem('te_reto_deleted_ids', JSON.stringify(del)); }
+    } catch (e) {}
+
+    // Eliminar del estado en memoria
+    let changed = false;
+    if (window.appState) {
+      const before = (window.appState.challenges || []).length;
+      window.appState.challenges = (window.appState.challenges || []).filter(c => c && String(c.id) !== pidStr);
+      if (window.appState.projects) {
+        window.appState.projects = (window.appState.projects || []).filter(c => c && String(c.id) !== pidStr);
+      }
+      if (window.appState.challenges.length !== before) {
+        changed = true;
+        try { if (typeof saveGlobalState === 'function') saveGlobalState(window.appState); } catch (e) {}
+      }
+    }
+
+    // Limpiar localStorage local
+    try {
+      const activeLanding = JSON.parse(localStorage.getItem('mentix_active_landing_project') || 'null');
+      if (activeLanding && String(activeLanding.id) === pidStr) { localStorage.removeItem('mentix_active_landing_project'); }
+    } catch (e) {}
+
+    // Si el usuario está viendo ese proyecto en landing o hub → redirigir
+    let wasViewing = false;
+    if (window.ProjectsView && window.ProjectsView.selectedProjectId === pidStr) {
+      wasViewing = true;
+      window.ProjectsView.selectedProjectId = null;
+      window.ProjectsView.viewMode = 'grid';
+    }
+    if (window.ProjectHub && document.getElementById('phub-overlay')) {
+      // Si el hub abierto es el proyecto eliminado, cerrarlo
+      if (window.ProjectHub.currentProjectId === pidStr) {
+        wasViewing = true;
+        window.ProjectHub.close();
+      }
+    }
+
+    if (wasViewing || changed) {
+      if (wasViewing) {
+        setTimeout(() => {
+          alert('⚠️ Este proyecto ha sido eliminado por el administrador.');
+          if (window.appRouter) window.appRouter.navigate('projects');
+        }, 100);
+      } else {
+        // Solo refrescar la vista sin alertar
+        if (window.appRouter) {
+          const v = window.appRouter.currentView;
+          if (v === 'home' && window.HomeView) window.HomeView.render();
+          else if (v === 'projects' && window.ProjectsView) window.ProjectsView.render();
+          else if (v === 'profile' && window.ProfileView) window.ProfileView.render();
+        }
+      }
+    }
   }
 }
 

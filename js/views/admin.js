@@ -3091,42 +3091,23 @@ window.AdminView = {
   },
 
   deleteProject(projectId) {
-    if (!confirm('¿Estás seguro de que deseas eliminar este proyecto de manera permanente?')) return;
-
-    let projects = (window.appState && window.appState.challenges) ? window.appState.challenges : [];
-    const p = projects.find(item => item.id === projectId);
+    // ── Delegar a la función maestra de purga total (admin siempre puede borrar) ──
+    if (!window.appRouter || typeof window.appRouter.purgeProjectCompletely !== 'function') {
+      alert('⚠️ Error interno: función de purga no disponible.');
+      return;
+    }
+    // isChallengeOwner ya devuelve true para admins, así que skipConfirm=false para confirmar
+    // Pero queremos que el diálogo diga "admin eliminando", así que ponemos skipConfirm=false
+    // para que el usuario vea la confirmación
+    const projects = (window.appState && window.appState.challenges) ? window.appState.challenges : [];
+    const p = projects.find(item => item && item.id === projectId);
     const pTitle = p ? p.title : projectId;
 
-    projects = projects.filter(item => item.id !== projectId);
-    window.appState.challenges = projects;
+    if (!confirm(`⚠️ ¿Eliminar DEFINITIVAMENTE el proyecto "${pTitle}"?\n\nSe borrará de la plataforma para TODOS los usuarios en todos los dispositivos.`)) return;
 
-    if (typeof saveGlobalState === 'function') {
-      saveGlobalState(window.appState);
-    } else {
-      try {
-        localStorage.setItem('mentix_challenges', JSON.stringify(projects));
-        localStorage.setItem('mentix_projects', JSON.stringify(projects));
-      } catch(e) {}
-    }
-    // Limpiar de bóvedas personales si el admin lo elimina
-    try {
-      for (let i = 0; i < localStorage.length; i++) {
-        const k = localStorage.key(i);
-        if (k && k.startsWith('mentix_user_projects_')) {
-          const raw = localStorage.getItem(k);
-          if (raw) {
-            const list = JSON.parse(raw);
-            if (Array.isArray(list) && list.some(item => item.id === projectId)) {
-              localStorage.setItem(k, JSON.stringify(list.filter(item => item.id !== projectId)));
-            }
-          }
-        }
-      }
-    } catch(e) {}
-
-    this.logAuditEvent(`Proyecto eliminado: "${pTitle}"`, 'Proyectos');
-    this.showToast('Proyecto eliminado del sistema', 'success');
-    this.renderActiveTab();
+    this.logAuditEvent(`Proyecto eliminado por Admin: "${pTitle}"`, 'Proyectos');
+    // Llamar a la función maestra con skipConfirm=true (ya confirmamos arriba)
+    window.appRouter.purgeProjectCompletely(projectId, true);
   },
 
   shareProject(projectId) {
