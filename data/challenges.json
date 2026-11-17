@@ -1,8 +1,8 @@
 [
   {
     "id": "proj_1794878836543",
-    "title": "Nuevo Proyecto GovData",
-    "subtitle": "Proyecto GovData Nexus",
+    "title": "dfdsfgsdfds fdsfds",
+    "subtitle": "dsfsdfds fdsfdsf",
     "description": "Proyecto documentado con el Asistente Inteligente GovData Nexus.",
     "projectType": "presentation",
     "isGovDataProject": true,
@@ -17,11 +17,11 @@
     "image": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
     "banner": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
     "createdAt": "2026-11-17T01:27:16.543Z",
-    "updatedAt": "2026-11-17T01:30:06.322Z",
+    "updatedAt": "2026-11-17T01:30:11.110Z",
     "govdata": {
       "id": "proj_1794878836543",
-      "title": "",
-      "subtitle": "",
+      "title": "dfdsfgsdfds fdsfds",
+      "subtitle": "dsfsdfds fdsfdsf",
       "shortDescription": "Proyecto documentado con el Asistente Inteligente GovData Nexus.",
       "fullDescription": "Proyecto documentado con el Asistente Inteligente GovData Nexus.",
       "category": "tecnologia",
@@ -62,9 +62,9 @@
       "useDefaultImage": true,
       "externalLinks": [],
       "landingConfig": {
-        "publicName": "",
+        "publicName": "dfdsfgsdfds fdsfds",
         "slug": "nuevo-proyecto-govdata",
-        "landingTitle": "",
+        "landingTitle": "dfdsfgsdfds fdsfds: dsfsdfds fdsfdsf",
         "publicDescription": "Proyecto documentado con el Asistente Inteligente GovData Nexus.",
         "visibleCategory": "Tecnología & Programación",
         "tags": [
@@ -101,11 +101,11 @@
         "collaborators": ""
       },
       "createdAt": "2026-11-17T01:27:16.543Z",
-      "updatedAt": "2026-11-17T01:30:17.405Z",
+      "updatedAt": "2026-11-17T01:30:22.174Z",
       "joinCode": "55858",
       "accessCode": "55858",
-      "progress": 55,
-      "calculatedProgress": 55
+      "progress": 65,
+      "calculatedProgress": 65
     },
     "slug": "nuevo-proyecto-govdata",
     "shortDescription": "Proyecto documentado con el Asistente Inteligente GovData Nexus.",
@@ -125,8 +125,8 @@
     "endDate": "",
     "currentStep": 1,
     "completedSteps": [],
-    "progress": 55,
-    "calculatedProgress": 55,
+    "progress": 65,
+    "calculatedProgress": 65,
     "valueProp": {
       "problemSolved": "",
       "howItWorks": "",
@@ -192,9 +192,9 @@
     ],
     "externalLinks": [],
     "landingConfig": {
-      "publicName": "",
+      "publicName": "dfdsfgsdfds fdsfds",
       "slug": "nuevo-proyecto-govdata",
-      "landingTitle": "",
+      "landingTitle": "dfdsfgsdfds fdsfds: dsfsdfds fdsfdsf",
       "publicDescription": "Proyecto documentado con el Asistente Inteligente GovData Nexus.",
       "visibleCategory": "Tecnología & Programación",
       "tags": [
