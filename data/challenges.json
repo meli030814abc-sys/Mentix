@@ -403,10 +403,10 @@
     "image": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
     "customProjectCodes": [
       {
-        "code": "61321",
-        "author": "Docente / Mentor",
-        "authorRole": "teacher",
-        "createdAt": "16/11/2026, 2:08:03 p.m."
+        "code": "55858",
+        "author": "Melisa",
+        "authorRole": "admin",
+        "createdAt": "16/11/2026, 8:26:15 p.m."
       },
       {
         "code": "pROYECT",
@@ -427,10 +427,16 @@
         "authorRole": "admin"
       },
       {
-        "code": "3132165465",
-        "author": "Docente",
-        "createdAt": "16/11/2026, 11:50:25",
-        "authorRole": "admin"
+        "code": "12345678",
+        "author": "Profesor / Administrador Mentix",
+        "authorRole": "admin",
+        "createdAt": "2026-11-16"
+      },
+      {
+        "code": "61321",
+        "author": "Docente / Mentor",
+        "authorRole": "teacher",
+        "createdAt": "16/11/2026, 2:08:03 p.m."
       },
       {
         "code": "1234",
@@ -442,6 +448,12 @@
         "code": "1234156",
         "author": "Carlos Canon",
         "createdAt": "31/10/2026, 10:24:51",
+        "authorRole": "admin"
+      },
+      {
+        "code": "3132165465",
+        "author": "Docente",
+        "createdAt": "16/11/2026, 11:50:25",
         "authorRole": "admin"
       }
     ],
