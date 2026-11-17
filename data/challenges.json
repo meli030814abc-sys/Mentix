@@ -252,7 +252,15 @@
     "authorizedAt": "2026-11-17T02:07:26.664Z",
     "authorizedBy": "Melisa",
     "rejectionReason": "Faltan detalles o el contenido requiere ajustes antes de publicarse.",
-    "rejectedAt": "2026-11-17T02:07:28.472Z"
+    "rejectedAt": "2026-11-17T02:07:28.472Z",
+    "customProjectCodes": [
+      {
+        "code": "12345678",
+        "author": "Profesor / Administrador Mentix",
+        "authorRole": "admin",
+        "createdAt": "2026-11-16"
+      }
+    ]
   },
   {
     "id": "proj_1792972782411",
