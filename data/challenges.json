@@ -293,13 +293,6 @@
     "accessMode": "private",
     "authorizedAt": "2026-11-17T01:50:38.347Z",
     "rejectedAt": "2026-11-17T01:50:44.560Z",
-    "customProjectCodes": [
-      {
-        "code": "12345678",
-        "author": "Profesor / Administrador Mentix",
-        "authorRole": "admin",
-        "createdAt": "2026-11-16"
-      }
-    ]
+    "customProjectCodes": []
   }
 ]
