@@ -95,6 +95,105 @@ window.ProjectsView = {
     }
   },
 
+  getCreatorPendingRequests() {
+    const u = window.appState?.currentUser;
+    if (!u || u.isGuest || u.username === 'invitado') return [];
+    const myProjects = (window.appState?.challenges || []).filter(c => c && window.appRouter && window.appRouter.isChallengeOwner(c));
+    const allReqs = [];
+    myProjects.forEach(p => {
+      const hub = (window.ProjectHub && typeof window.ProjectHub.getHub === 'function') ? window.ProjectHub.getHub(p.id) : (p.hub || {});
+      const pending = (hub.joinRequests || []).filter(r => r && r.status === 'pending');
+      pending.forEach(req => {
+        allReqs.push({
+          ...req,
+          projectId: p.id,
+          projectTitle: p.title || 'Proyecto'
+        });
+      });
+    });
+    return allReqs;
+  },
+
+  updateNotificationBellBadge() {
+    const badge = document.getElementById('mentix-projects-notif-badge');
+    const bell = document.getElementById('mentix-projects-notif-bell');
+    const count = this.getCreatorPendingRequests().length;
+    if (badge) {
+      if (count > 0) {
+        badge.textContent = count;
+        badge.style.display = 'flex';
+      } else {
+        badge.style.display = 'none';
+      }
+    } else if (count > 0 && bell) {
+      const newBadge = document.createElement('span');
+      newBadge.id = 'mentix-projects-notif-badge';
+      newBadge.style.cssText = 'position: absolute; top: -3px; right: -3px; background: #ef4444; color: #ffffff; font-size: 0.68rem; font-weight: 900; min-width: 19px; height: 19px; padding: 0 4px; border-radius: 9999px; display: flex; align-items: center; justify-content: center; border: 2px solid #ffffff; box-shadow: 0 2px 6px rgba(239, 68, 68, 0.45); animation: pulse 1.8s infinite;';
+      newBadge.textContent = count;
+      bell.appendChild(newBadge);
+    }
+  },
+
+  openCreatorNotificationsModal() {
+    const reqs = this.getCreatorPendingRequests();
+    if (reqs.length === 0) {
+      this.showToast('🔔 No tienes solicitudes pendientes en tus proyectos. ¡Todo está al día!');
+      return;
+    }
+    const existing = document.getElementById('mentix-creator-notif-modal');
+    if (existing) existing.remove();
+
+    const modal = document.createElement('div');
+    modal.id = 'mentix-creator-notif-modal';
+    modal.className = 'modal-backdrop active';
+    modal.style.cssText = 'position: fixed; inset: 0; z-index: 100000; background: rgba(7, 23, 57, 0.75); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; padding: 1rem;';
+    modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
+
+    modal.innerHTML = `
+      <div style="background: #ffffff; border-radius: 20px; max-width: 540px; width: 100%; padding: 1.75rem; box-shadow: 0 20px 50px rgba(0,0,0,0.25); border: 2px solid #e2e8f0; position: relative;">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem;">
+          <div style="display: flex; align-items: center; gap: 0.65rem;">
+            <div style="width: 42px; height: 42px; border-radius: 12px; background: rgba(239, 68, 68, 0.12); color: #ef4444; display: flex; align-items: center; justify-content: center; font-size: 1.3rem;">
+              🔔
+            </div>
+            <div>
+              <h3 style="margin: 0; font-size: 1.2rem; font-weight: 800; color: #0f172a;">Solicitudes de Unión (${reqs.length})</h3>
+              <p style="margin: 0; font-size: 0.85rem; color: #64748b;">Estudiantes que desean colaborar en tus proyectos</p>
+            </div>
+          </div>
+          <button type="button" onclick="this.closest('#mentix-creator-notif-modal').remove()" style="background: none; border: none; font-size: 1.35rem; color: #64748b; cursor: pointer;">✕</button>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 0.85rem; max-height: 55vh; overflow-y: auto; padding-right: 0.25rem;">
+          ${reqs.map(r => `
+            <div style="background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 14px; padding: 1rem 1.15rem; display: flex; align-items: center; justify-content: space-between; gap: 0.75rem;">
+              <div>
+                <div style="font-size: 0.95rem; font-weight: 800; color: #0f172a; margin-bottom: 0.2rem;">👤 ${this.escapeHtml(r.name)}</div>
+                <div style="font-size: 0.82rem; color: #64748b; margin-bottom: 0.25rem;">✉️ ${this.escapeHtml(r.email)}</div>
+                <div style="font-size: 0.78rem; font-weight: 700; color: #0284c7;">📁 Proyecto: ${this.escapeHtml(r.projectTitle)}</div>
+              </div>
+              <button 
+                type="button" 
+                onclick="document.getElementById('mentix-creator-notif-modal')?.remove(); window.ProjectHub.open('${r.projectId}', 'users');"
+                style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: #ffffff; border: none; border-radius: 9999px; padding: 0.55rem 1.1rem; font-size: 0.85rem; font-weight: 800; cursor: pointer; white-space: nowrap; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.35);"
+              >
+                ✔ Revisar y Unir
+              </button>
+            </div>
+          `).join('')}
+        </div>
+
+        <div style="margin-top: 1.25rem; display: flex; justify-content: flex-end;">
+          <button type="button" onclick="this.closest('#mentix-creator-notif-modal').remove()" class="btn btn-secondary" style="border-radius: 9999px; padding: 0.55rem 1.4rem; font-weight: 700;">
+            Cerrar
+          </button>
+        </div>
+      </div>
+    `;
+
+    document.body.appendChild(modal);
+  },
+
   // =========================================================================
   // GESTIÓN DE BANNERS EXCLUSIVA PARA ADMINISTRADORES DE MENTIX (ROBOT BANNER)
   // =========================================================================
@@ -2203,6 +2302,9 @@ window.ProjectsView = {
     const animalAvatarHtml = window.AvatarEngine ? window.AvatarEngine.renderIconSVG(userAvatarConfig, 105) : `<img src="assets/sprites/${userAnimal}.png" alt="${userAnimal}" style="width: 100px; height: 100px; object-fit: contain;" onerror="this.src='assets/sprites/fox.png';" />`;
     const animalTopPillHtml = window.AvatarEngine ? window.AvatarEngine.renderIconSVG(userAvatarConfig, 30) : `<img src="assets/sprites/${userAnimal}.png" alt="${userAnimal}" style="width: 28px; height: 28px; object-fit: contain;" onerror="this.src='assets/sprites/fox.png';" />`;
 
+    const creatorPendingRequests = (typeof this.getCreatorPendingRequests === 'function') ? this.getCreatorPendingRequests() : [];
+    const pendingRequestsCount = creatorPendingRequests.length;
+
     const cardsHtml = displayList.length === 0 ? `
       <div style="grid-column: 1 / -1; background: #ffffff; border-radius: 16px; padding: 3rem 1.5rem; text-align: center; border: 1.5px dashed #cbd5e1;">
         <div style="font-size: 3rem; margin-bottom: 0.75rem;">🔍</div>
@@ -2268,12 +2370,19 @@ window.ProjectsView = {
 
               <!-- Bell with Badge -->
               <div 
-                onclick="window.ProjectsView.showToast('🔔 Tienes 3 notificaciones nuevas de tus proyectos')" 
-                title="Notificaciones"
+                id="mentix-projects-notif-bell"
+                onclick="window.ProjectsView.openCreatorNotificationsModal()" 
+                title="${pendingRequestsCount > 0 ? `Tienes ${pendingRequestsCount} solicitud(es) de unión pendiente(s)` : 'Centro de Notificaciones'}"
                 style="position: relative; width: 42px; height: 42px; border-radius: 50%; background: #ffffff; border: 1.5px solid #e2e8f0; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s ease; box-shadow: 0 2px 8px rgba(0,0,0,0.03);"
+                onmouseenter="this.style.transform='scale(1.08)';"
+                onmouseleave="this.style.transform='scale(1)';"
               >
                 <span style="font-size: 1.15rem;">🔔</span>
-                <span style="position: absolute; top: -3px; right: -3px; background: #ef4444; color: #ffffff; font-size: 0.68rem; font-weight: 900; width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid #ffffff;">3</span>
+                ${pendingRequestsCount > 0 ? `
+                  <span id="mentix-projects-notif-badge" style="position: absolute; top: -3px; right: -3px; background: #ef4444; color: #ffffff; font-size: 0.68rem; font-weight: 900; min-width: 19px; height: 19px; padding: 0 4px; border-radius: 9999px; display: flex; align-items: center; justify-content: center; border: 2px solid #ffffff; box-shadow: 0 2px 6px rgba(239, 68, 68, 0.45); animation: pulse 1.8s infinite;">
+                    ${pendingRequestsCount}
+                  </span>
+                ` : ''}
               </div>
 
               <!-- User Pill -->
@@ -2750,6 +2859,9 @@ window.ProjectsView = {
     const canHubView = !isGuest && !!(isAuthor || (window.ProjectHub && typeof window.ProjectHub.canView === 'function' && window.ProjectHub.canView(c)));
     const canHubEdit = !isGuest && !!(isAuthor || (window.ProjectHub && typeof window.ProjectHub.canEdit === 'function' && window.ProjectHub.canEdit(c)));
 
+    const cHub = (window.ProjectHub && typeof window.ProjectHub.getHub === 'function') ? window.ProjectHub.getHub(c.id) : (c.hub || {});
+    const cardPendingReqs = (cHub.joinRequests || []).filter(r => r && r.status === 'pending');
+
     const hubAction = window.ProjectHub ? `window.ProjectHub.open('${c.id}')` : `window.ProjectsView.openProjectLanding('${c.id}')`;
     const landingAction = `window.ProjectsView.openProjectLanding('${c.id}')`;
     const shareAction = `window.ProjectsView.shareProject('${c.id}', '${this.escapeHtml(c.title || '')}')`;
@@ -2867,6 +2979,17 @@ window.ProjectsView = {
                 <span>Detalles</span>
                 <span>→</span>
               </button>
+              ${isAuthor && cardPendingReqs.length > 0 ? `
+                <button 
+                  class="saas-card-btn-join"
+                  style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%) !important; color: #ffffff !important; box-shadow: 0 4px 14px rgba(239, 68, 68, 0.45) !important;"
+                  onclick="event.stopPropagation(); window.ProjectHub.open('${c.id}', 'users');" 
+                  title="Tienes ${cardPendingReqs.length} solicitud(es) de unión por responder"
+                >
+                  <span>🔔</span>
+                  <span>${cardPendingReqs.length} Solicitud${cardPendingReqs.length > 1 ? 'es' : ''}</span>
+                </button>
+              ` : ''}
             ` : `
               <button 
                 class="saas-card-btn-join"
@@ -6110,6 +6233,7 @@ window.ProjectsView = {
     const cu = window.appState?.currentUser || {};
     const currentUserName = this.escapeHtml(cu.name || (window.AvatarEngine && window.AvatarEngine.getSavedAvatar ? window.AvatarEngine.getSavedAvatar().alias : null) || selected?.author || 'Usuario Mentix');
     const currentUserRole = this.escapeHtml(cu.role === 'admin' ? 'Administrador' : (cu.role === 'teacher' ? 'Docente' : (selected?.author && selected.author.toLowerCase() === (cu.name || '').toLowerCase() ? 'Autor Principal' : 'Colaborador')));
+    const landingPendingReqsCount = (typeof this.getCreatorPendingRequests === 'function') ? this.getCreatorPendingRequests().length : 0;
     
     // Avatar animal oficial de Mentix del usuario conectado (Zorro, Panda, Gato, etc.)
     const currentUserAvatar = this.getUserAnimalSprite(cu);
@@ -6376,9 +6500,9 @@ window.ProjectsView = {
                 <button type="button" class="inno-theme-btn dark ${currentTheme === 'dark' ? 'active' : ''}" onclick="window.ProjectsView.setLandingTheme('dark')" title="Modo Oscuro">🌙</button>
               </div>
 
-              <div class="inno-bell-btn" title="Notificaciones" onclick="alert('🔔 Tienes las actualizaciones al día')">
+              <div class="inno-bell-btn" title="Notificaciones de Solicitudes" onclick="window.ProjectsView.openCreatorNotificationsModal()">
                 🔔
-                <span class="inno-bell-badge">1</span>
+                ${landingPendingReqsCount > 0 ? `<span class="inno-bell-badge" style="animation: pulse 1.8s infinite;">${landingPendingReqsCount}</span>` : ''}
               </div>
               <div class="inno-user-avatar-wrap" title="${currentUserName}">
                 <img src="${currentUserAvatar}" alt="${currentUserName}" class="inno-user-avatar-img" />

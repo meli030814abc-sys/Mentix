@@ -112,8 +112,8 @@ window.ProjectHub = {
         { name: 'David Soto', email: 'david.soto@mentix.edu', role: 'viewer' }
       ];
     }
-    // Si no tiene solicitudes, inicializar con solicitud pendiente realista
-    if (hub.joinRequests.length === 0) {
+    // Solo para proyectos de demostración se inicializa con una solicitud de prueba
+    if (hub.joinRequests.length === 0 && (id === 'demo-gov-data' || id === 'proj_gov_data')) {
       hub.joinRequests = [
         { id: 'req_demo_1', name: 'Carlos Ruiz', email: 'carlos.ruiz@mentix.edu', passHash: 'demo', status: 'pending', created: Date.now() - 3600000 }
       ];
@@ -124,6 +124,8 @@ window.ProjectHub = {
     const p = this.getProject(id);
     if (p && this.isStored(id)) {
       p.hub = hub;
+      p.joinRequests = hub.joinRequests;
+      p.members = hub.members;
       if (typeof saveGlobalState === 'function') saveGlobalState(window.appState);
     } else {
       let all = {};
@@ -1597,21 +1599,61 @@ window.ProjectHub = {
     const e = this.norm(email);
     if (hub.members.some(m => this.norm(m.email) === e)) { this.toast('ℹ️ Ya eres miembro de este proyecto.'); return; }
     if (hub.joinRequests.some(r => r.status === 'pending' && this.norm(r.email) === e)) { this.toast('⏳ Ya enviaste una solicitud con ese correo.'); return; }
-    hub.joinRequests.push({
+    const newReq = {
       id: 'req_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
       name: name.trim(), email: email.trim(), passHash: await this.hash(pass),
-      status: 'pending', createdAt: Date.now()
-    });
+      status: 'pending', createdAt: Date.now(), role: 'editor'
+    };
+    hub.joinRequests = (hub.joinRequests || []).filter(r => this.norm(r.email) !== e);
+    hub.joinRequests.unshift(newReq);
     this.saveHub(projectId, hub);
+
+    const proj = this.getProject(projectId);
+    if (proj) {
+      proj.hub = hub;
+      proj.joinRequests = hub.joinRequests;
+      // 1. Sincronizar en la nube con Supabase y GitHub para que viaje al creador en cualquier red
+      if (window.appRouter && typeof window.appRouter.pushChallengeToCloud === 'function') {
+        try { window.appRouter.pushChallengeToCloud(proj); } catch(err) {}
+      }
+    }
+
+    // 2. Enviar notificación directa en tiempo real al creador
+    const notifPayload = {
+      projectId: projectId,
+      projectTitle: proj ? (proj.title || 'Proyecto') : 'Proyecto',
+      request: newReq,
+      creatorName: proj ? (proj.author || proj.creatorName || proj.teamLead) : '',
+      authorEmail: proj ? proj.authorEmail : '',
+      authorId: proj ? (proj.authorId || proj.creatorId) : '',
+      timestamp: Date.now()
+    };
+
+    if (window.realtimeEngine && typeof window.realtimeEngine.publishProjectJoinRequest === 'function') {
+      try { window.realtimeEngine.publishProjectJoinRequest(notifPayload); } catch(err) {}
+    } else {
+      if (window.BroadcastChannel) {
+        try {
+          const bc = new BroadcastChannel('te_reto_realtime');
+          bc.postMessage({ type: 'PROJECT_JOIN_REQUEST', ...notifPayload });
+        } catch(e) {}
+      }
+      try {
+        localStorage.setItem('mentix_realtime_join_request_event', JSON.stringify({ ...notifPayload, t: Date.now() }));
+      } catch(err) {}
+    }
+
+    this.recordCreatorNotification(notifPayload);
+
     if (window.soundEngine && typeof window.soundEngine.playPop === 'function') {
       window.soundEngine.playPop();
     }
     this.showNotificationBanner({
       icon: '📨',
-      title: '¡Solicitud enviada!',
-      message: `Se envió una notificación al creador para aceptarte con tu rol en el proyecto.`
+      title: '¡Solicitud enviada al creador!',
+      message: `Se envió tu solicitud directamente a ${proj ? (proj.author || 'el creador') : 'el creador'} para autorizar tu participación.`
     });
-    this.toast('📨 ¡Solicitud enviada! El creador la revisará pronto.');
+    this.toast('📨 ¡Solicitud enviada de una vez al creador!');
     this.renderJoinSuccessPage(projectId, name.trim(), email.trim());
     if (document.getElementById('phub-overlay')) this.render();
   },
@@ -1637,6 +1679,134 @@ window.ProjectHub = {
     overlay.appendChild(banner);
     setTimeout(() => { if (banner.parentNode) banner.classList.add('phub-banner-fadeout'); }, 4200);
     setTimeout(() => { if (banner.parentNode) banner.remove(); }, 4700);
+  },
+
+  recordCreatorNotification(data) {
+    try {
+      const all = JSON.parse(localStorage.getItem('mentix_creator_notifications') || '[]');
+      const notif = {
+        id: 'notif_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
+        type: 'join_request',
+        projectId: data.projectId,
+        projectTitle: data.projectTitle,
+        request: data.request,
+        creatorName: data.creatorName,
+        authorEmail: data.authorEmail,
+        authorId: data.authorId,
+        read: false,
+        createdAt: Date.now()
+      };
+      all.unshift(notif);
+      localStorage.setItem('mentix_creator_notifications', JSON.stringify(all.slice(0, 40)));
+    } catch(e) {}
+  },
+
+  handleIncomingJoinRequest(data) {
+    if (!data || !data.projectId || !data.request) return;
+    const u = window.appState?.currentUser;
+    if (!u) return;
+
+    const proj = this.getProject(data.projectId);
+    const clean = s => String(s || '').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    const myName = clean(u.name);
+    const myUsername = clean(u.username);
+    const myEmail = clean(u.email);
+    const myId = String(u.id || '').trim();
+
+    const isMelisa = myName === 'melisa' || myUsername === 'melisa' || myEmail === 'meli030814abc@gmail.com';
+    const isOwner = isMelisa ||
+      (proj && window.appRouter && window.appRouter.isChallengeOwner(proj)) ||
+      (data.authorEmail && clean(data.authorEmail) === myEmail) ||
+      (data.creatorName && (clean(data.creatorName) === myName || clean(data.creatorName) === myUsername)) ||
+      (data.authorId && myId && String(data.authorId) === myId);
+
+    // Solo notificar si este usuario es el creador o administrador
+    if (!isOwner) return;
+
+    // Actualizar estado local del proyecto con la nueva solicitud
+    if (proj) {
+      const hub = this.getHub(data.projectId);
+      if (!hub.joinRequests.some(r => r.id === data.request.id || this.norm(r.email) === this.norm(data.request.email))) {
+        hub.joinRequests.unshift(data.request);
+        this.saveHub(data.projectId, hub);
+      }
+    }
+
+    // Registrar en el historial de notificaciones
+    this.recordCreatorNotification(data);
+
+    // Alerta sonora
+    if (window.soundEngine && typeof window.soundEngine.playCorrect === 'function') {
+      window.soundEngine.playCorrect();
+    } else if (window.soundEngine && typeof window.soundEngine.playPop === 'function') {
+      window.soundEngine.playPop();
+    }
+
+    // Mostrar el popup flotante interactivo de inmediato
+    this.showCreatorJoinNotificationPopup(data);
+
+    // Actualizar campana en la vista de proyectos si está visible
+    if (window.ProjectsView && typeof window.ProjectsView.updateNotificationBellBadge === 'function') {
+      window.ProjectsView.updateNotificationBellBadge();
+    }
+
+    // Si el creador tiene abierto el ProjectHub de este proyecto, refrescar en tiempo real
+    if (this.currentId === data.projectId && document.getElementById('phub-overlay')) {
+      this.render();
+    }
+  },
+
+  showCreatorJoinNotificationPopup(data) {
+    const existing = document.getElementById('mentix-creator-notif-toast');
+    if (existing) existing.remove();
+
+    const toast = document.createElement('div');
+    toast.id = 'mentix-creator-notif-toast';
+    toast.style.cssText = 'position:fixed; top:24px; right:24px; z-index:9999999; max-width:420px; width:calc(100vw - 48px); background:linear-gradient(135deg, rgba(15,23,42,0.98) 0%, rgba(30,27,75,0.98) 100%); border:2px solid #00f5d4; border-radius:20px; padding:1.25rem 1.35rem; box-shadow:0 12px 40px rgba(0,245,212,0.35), 0 0 25px rgba(247,37,133,0.25); color:#ffffff; font-family:"Outfit","Poppins",sans-serif; animation:phubSlideDown 0.3s cubic-bezier(0.16,1,0.3,1) forwards; display:flex; flex-direction:column; gap:0.75rem; backdrop-filter:blur(16px);';
+
+    const reqName = this.esc(data.request?.name || 'Un estudiante');
+    const reqEmail = this.esc(data.request?.email || '');
+    const projTitle = this.esc(data.projectTitle || 'tu proyecto');
+    const projId = this.esc(data.projectId);
+
+    toast.innerHTML = `
+      <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 0.75rem;">
+        <div style="display: flex; align-items: center; gap: 0.65rem;">
+          <div style="width: 40px; height: 40px; border-radius: 12px; background: rgba(0, 245, 212, 0.18); border: 1.5px solid #00f5d4; display: flex; align-items: center; justify-content: center; font-size: 1.3rem;">
+            📨
+          </div>
+          <div>
+            <div style="font-size: 0.75rem; font-weight: 800; color: #00f5d4; text-transform: uppercase; letter-spacing: 0.05em;">Nueva Solicitud de Unión</div>
+            <h4 style="margin: 0; font-size: 1rem; font-weight: 900; color: #ffffff;">${reqName} quiere unirse</h4>
+          </div>
+        </div>
+        <button type="button" onclick="this.closest('#mentix-creator-notif-toast').remove()" style="background: none; border: none; color: #94a3b8; font-size: 1.25rem; cursor: pointer; padding: 0.2rem; line-height: 1;">✕</button>
+      </div>
+
+      <p style="margin: 0; font-size: 0.88rem; color: #cbd5e1; line-height: 1.45;">
+        <strong>${reqName}</strong> (${reqEmail}) envió una solicitud para unirse a tu proyecto <strong>“${projTitle}”</strong>.
+      </p>
+
+      <div style="display: flex; align-items: center; gap: 0.6rem; margin-top: 0.25rem;">
+        <button type="button" onclick="window.ProjectHub.open('${projId}', 'users'); this.closest('#mentix-creator-notif-toast').remove();" style="flex: 1; background: linear-gradient(135deg, #00f5d4 0%, #00b4d8 100%); color: #071739; font-weight: 900; font-size: 0.88rem; padding: 0.6rem 1rem; border-radius: 12px; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.4rem; box-shadow: 0 4px 14px rgba(0, 245, 212, 0.4); transition: transform 0.15s ease;">
+          <span>👥</span>
+          <span>Revisar y Unir Ahora</span>
+        </button>
+        <button type="button" onclick="this.closest('#mentix-creator-notif-toast').remove()" style="background: rgba(255, 255, 255, 0.08); color: #cbd5e1; font-weight: 700; font-size: 0.85rem; padding: 0.6rem 0.9rem; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.15); cursor: pointer;">
+          Descartar
+        </button>
+      </div>
+    `;
+
+    document.body.appendChild(toast);
+    setTimeout(() => {
+      if (toast.parentNode) {
+        toast.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateY(-20px)';
+        setTimeout(() => toast.remove(), 400);
+      }
+    }, 14000);
   },
 
   /* ------------------------------ meter persona (creador / admin) ------------------------------ */
@@ -1782,6 +1952,16 @@ window.ProjectHub = {
     req.role = role;
     this.saveHub(projectId, hub);
 
+    const proj = this.getProject(projectId);
+    if (proj) {
+      proj.hub = hub;
+      proj.joinRequests = hub.joinRequests;
+      proj.members = hub.members;
+      if (window.appRouter && typeof window.appRouter.pushChallengeToCloud === 'function') {
+        try { window.appRouter.pushChallengeToCloud(proj); } catch(err) {}
+      }
+    }
+
     if (window.soundEngine && typeof window.soundEngine.playCorrect === 'function') {
       window.soundEngine.playCorrect();
     }
@@ -1804,6 +1984,15 @@ window.ProjectHub = {
     if (!req) return;
     req.status = 'rejected';
     this.saveHub(projectId, hub);
+
+    const proj = this.getProject(projectId);
+    if (proj) {
+      proj.hub = hub;
+      proj.joinRequests = hub.joinRequests;
+      if (window.appRouter && typeof window.appRouter.pushChallengeToCloud === 'function') {
+        try { window.appRouter.pushChallengeToCloud(proj); } catch(err) {}
+      }
+    }
 
     if (window.soundEngine && typeof window.soundEngine.playPop === 'function') {
       window.soundEngine.playPop();

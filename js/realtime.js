@@ -42,6 +42,13 @@ class RealtimeEngine {
           const data = JSON.parse(event.newValue);
           this.handleMessage(data);
         } catch (err) {}
+      } else if (event.key === 'mentix_realtime_join_request_event' && event.newValue) {
+        try {
+          const data = JSON.parse(event.newValue);
+          if (data && window.ProjectHub && typeof window.ProjectHub.handleIncomingJoinRequest === 'function') {
+            window.ProjectHub.handleIncomingJoinRequest(data);
+          }
+        } catch (err) {}
       }
     });
   }
@@ -224,6 +231,7 @@ class RealtimeEngine {
       client.on('connect', () => {
         client.subscribe('mentix/global/design', { qos: 0 });
         client.subscribe('mentix/global/banners', { qos: 0 });
+        client.subscribe('mentix/global/join_requests', { qos: 0 });
       });
 
       client.on('message', (topic, messageBuffer) => {
@@ -250,6 +258,13 @@ class RealtimeEngine {
               if (window.AdminView && typeof window.AdminView.applyGlobalBannerUpdate === 'function') {
                 window.AdminView.applyGlobalBannerUpdate(data);
               }
+            }
+          } catch(e) {}
+        } else if (topic === 'mentix/global/join_requests') {
+          try {
+            const data = JSON.parse(messageBuffer.toString());
+            if (data && window.ProjectHub && typeof window.ProjectHub.handleIncomingJoinRequest === 'function') {
+              window.ProjectHub.handleIncomingJoinRequest(data);
             }
           } catch(e) {}
         }
@@ -296,6 +311,29 @@ class RealtimeEngine {
       } catch(e) {}
     }
     this.broadcast({ type: 'GLOBAL_DESIGN_UPDATED', design: design });
+  }
+
+  publishProjectJoinRequest(data) {
+    if (!data) return;
+    const payload = JSON.stringify({
+      type: 'PROJECT_JOIN_REQUEST',
+      ...data,
+      timestamp: Date.now()
+    });
+    if (this.globalMqttClient && this.globalMqttClient.connected) {
+      try {
+        this.globalMqttClient.publish('mentix/global/join_requests', payload, { qos: 0 });
+      } catch(e) {}
+    }
+    if (this.mqttClient && this.mqttClient.connected) {
+      try {
+        this.mqttClient.publish('mentix/global/join_requests', payload, { qos: 0 });
+      } catch(e) {}
+    }
+    this.broadcast({ type: 'PROJECT_JOIN_REQUEST', ...data });
+    try {
+      localStorage.setItem('mentix_realtime_join_request_event', JSON.stringify({ ...data, t: Date.now() }));
+    } catch(e) {}
   }
 
   // Descubrir y validar si existe una sala activa (Local o Cloud)
@@ -669,6 +707,13 @@ class RealtimeEngine {
       }
       if (window.AdminView && typeof window.AdminView.applyGlobalBannerUpdate === 'function') {
         window.AdminView.applyGlobalBannerUpdate(msg);
+      }
+    }
+
+    // Notificación en tiempo real de solicitud de unión al creador del proyecto
+    if (msg.type === 'PROJECT_JOIN_REQUEST') {
+      if (window.ProjectHub && typeof window.ProjectHub.handleIncomingJoinRequest === 'function') {
+        window.ProjectHub.handleIncomingJoinRequest(msg);
       }
     }
 
