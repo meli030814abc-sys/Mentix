@@ -17,7 +17,7 @@
     "image": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
     "banner": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
     "createdAt": "2026-11-17T01:27:16.543Z",
-    "updatedAt": "2026-11-17T01:30:03.151Z",
+    "updatedAt": "2026-11-17T01:30:06.322Z",
     "govdata": {
       "id": "proj_1794878836543",
       "title": "",
@@ -101,11 +101,11 @@
         "collaborators": ""
       },
       "createdAt": "2026-11-17T01:27:16.543Z",
-      "updatedAt": "2026-11-17T01:30:14.226Z",
+      "updatedAt": "2026-11-17T01:30:17.405Z",
       "joinCode": "55858",
       "accessCode": "55858",
-      "progress": 65,
-      "calculatedProgress": 65
+      "progress": 55,
+      "calculatedProgress": 55
     },
     "slug": "nuevo-proyecto-govdata",
     "shortDescription": "Proyecto documentado con el Asistente Inteligente GovData Nexus.",
@@ -125,8 +125,8 @@
     "endDate": "",
     "currentStep": 1,
     "completedSteps": [],
-    "progress": 65,
-    "calculatedProgress": 65,
+    "progress": 55,
+    "calculatedProgress": 55,
     "valueProp": {
       "problemSolved": "",
       "howItWorks": "",
