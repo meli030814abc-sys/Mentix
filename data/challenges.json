@@ -136,10 +136,10 @@
       {
         "title": "Desarrollo",
         "description": "Construcción de la solución y prototipos.",
-        "progress": 0,
-        "status": "pending",
-        "icon": "code",
-        "emoji": "💻"
+        "status": "active",
+        "progress": 55,
+        "emoji": "💻",
+        "icon": "clipboard"
       },
       {
         "title": "Publicación",
@@ -258,7 +258,7 @@
         "collaborators": ""
       },
       "createdAt": "2026-11-17T01:27:16.543Z",
-      "updatedAt": "2026-11-17T01:30:42.953Z",
+      "updatedAt": "2026-11-17T01:30:46.875Z",
       "joinCode": "55858",
       "accessCode": "55858",
       "progress": 75,
@@ -283,10 +283,10 @@
         {
           "title": "Desarrollo",
           "description": "Construcción de la solución y prototipos.",
-          "progress": 0,
-          "status": "pending",
-          "icon": "code",
-          "emoji": "💻"
+          "status": "active",
+          "progress": 55,
+          "emoji": "💻",
+          "icon": "clipboard"
         },
         {
           "title": "Publicación",
@@ -304,7 +304,7 @@
     "authorAvatar": "👨‍🏫",
     "authorRole": "admin",
     "createdAt": "2026-11-17T01:27:16.543Z",
-    "updatedAt": "2026-11-17T01:30:31.997Z"
+    "updatedAt": "2026-11-17T01:30:35.864Z"
   },
   {
     "id": "proj_1794871175753",
