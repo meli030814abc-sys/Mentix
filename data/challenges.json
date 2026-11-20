@@ -1,5 +1,40 @@
 [
   {
+    "approvalStatus": "pending",
+    "accessCode": "CODIGOPRUEBA94",
+    "fullDescription": "Descripcion completa de prueba paso 4",
+    "id": "govdata_code_testuserqa_codigoprueba94",
+    "shortDescription": "Avance guardado en Chrome PC 1",
+    "govdata": {
+      "id": "govdata_code_testuserqa_codigoprueba94",
+      "currentStep": 4,
+      "joinCode": "CODIGOPRUEBA94",
+      "shortDescription": "Avance guardado en Chrome PC 1",
+      "ownerUsername": "testuserqa",
+      "title": "Proyecto QA Multi-Navegador"
+    },
+    "author": "Usuario QA",
+    "authorId": "user_qa_94",
+    "joinCode": "CODIGOPRUEBA94",
+    "projectType": "presentation",
+    "publicationStatus": "draft",
+    "currentStep": 4,
+    "completedSteps": [
+      1,
+      2,
+      3
+    ],
+    "category": "tecnologia",
+    "isGovDataProject": true,
+    "isPublic": false,
+    "categoryName": "Tecnologia",
+    "ownerId": "user_qa_94",
+    "ownerUsername": "testuserqa",
+    "title": "Proyecto QA Multi-Navegador",
+    "updatedAt": "2026-11-20T18:51:24.279Z",
+    "createdAt": "2026-11-20T18:51:24.279Z"
+  },
+  {
     "id": "proj_1794847825311",
     "slug": "nuevo-proyecto-govdata",
     "title": "Nuevo Proyecto GovData",
