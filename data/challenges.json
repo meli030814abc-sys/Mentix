@@ -1,5 +1,44 @@
 [
   {
+    "approvalStatus": "pending",
+    "accessCode": "PRUEBASYNC2839",
+    "fullDescription": "Descripcion completa del proyecto paso 4",
+    "id": "govdata_code_eimytest_pruebasync2839",
+    "shortDescription": "Avance guardado desde Chrome en PC 1",
+    "slides": [
+      {
+        "content": "Introduccion",
+        "title": "Portada Robotica",
+        "id": "s1"
+      },
+      {
+        "content": "Solucion tecnologica",
+        "title": "Problema",
+        "id": "s2"
+      }
+    ],
+    "author": "Eimy",
+    "authorId": "uid_eimy_01",
+    "joinCode": "PRUEBASYNC2839",
+    "projectType": "presentation",
+    "publicationStatus": "draft",
+    "currentStep": 4,
+    "completedSteps": [
+      1,
+      2,
+      3
+    ],
+    "category": "tecnologia",
+    "isGovDataProject": true,
+    "isPublic": false,
+    "categoryName": "Tecnologia",
+    "ownerId": "uid_eimy_01",
+    "ownerUsername": "eimytest",
+    "title": "Robotica Educativa Mentix",
+    "updatedAt": "2026-11-20T18:54:44.002Z",
+    "createdAt": "2026-11-20T18:54:44.002Z"
+  },
+  {
     "id": "proj_1794847825311",
     "slug": "nuevo-proyecto-govdata",
     "title": "Nuevo Proyecto GovData",
