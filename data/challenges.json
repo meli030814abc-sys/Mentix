@@ -3,7 +3,7 @@
     "id": "govdata_code_mentilona_245801",
     "slug": "6456345",
     "title": "6456345",
-    "subtitle": "Proyecto GovData Nexus",
+    "subtitle": "5+4+576+6",
     "description": "Proyecto documentado con el Asistente Inteligente GovData Nexus.",
     "shortDescription": "",
     "fullDescription": "",
@@ -31,8 +31,8 @@
     "endDate": "",
     "currentStep": 1,
     "completedSteps": [],
-    "progress": 35,
-    "calculatedProgress": 35,
+    "progress": 50,
+    "calculatedProgress": 50,
     "valueProp": {
       "problemSolved": "",
       "howItWorks": "",
@@ -111,7 +111,7 @@
     "govdata": {
       "id": "govdata_code_mentilona_245801",
       "title": "6456345",
-      "subtitle": "",
+      "subtitle": "5+4+576+6",
       "shortDescription": "",
       "fullDescription": "",
       "category": "tecnologia",
@@ -194,9 +194,9 @@
         "collaborators": ""
       },
       "createdAt": "2026-11-20T23:43:24.796Z",
-      "updatedAt": "2026-11-20T23:43:30.583Z",
-      "progress": 35,
-      "calculatedProgress": 35
+      "updatedAt": "2026-11-20T23:43:32.105Z",
+      "progress": 50,
+      "calculatedProgress": 50
     },
     "author": "Melisa",
     "authorId": "user_1792184134006",
@@ -208,7 +208,7 @@
     "authorAvatar": "🐯",
     "authorRole": "admin",
     "createdAt": "2026-11-20T23:43:24.796Z",
-    "updatedAt": "2026-11-20T23:43:29.740Z"
+    "updatedAt": "2026-11-20T23:43:31.277Z"
   },
   {
     "id": "govdata_code_mentilona_12345678",
