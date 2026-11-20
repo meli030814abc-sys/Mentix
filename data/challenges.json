@@ -5,8 +5,8 @@
     "title": "Nuevo Proyecto GovData",
     "subtitle": "Proyecto GovData Nexus",
     "description": "Proyecto documentado con el Asistente Inteligente GovData Nexus.",
-    "shortDescription": "",
-    "fullDescription": "",
+    "shortDescription": "Proyecto documentado con el Asistente Inteligente GovData Nexus.",
+    "fullDescription": "Proyecto documentado con el Asistente Inteligente GovData Nexus.",
     "category": "tecnologia",
     "categoryName": "Tecnología & Programación",
     "projectType": "presentation",
@@ -64,9 +64,9 @@
       "fileName": "",
       "title": "",
       "description": "",
+      "thumbnailUrl": "",
       "isPublic": true,
-      "verified": false,
-      "thumbnailUrl": ""
+      "verified": false
     },
     "resources": [],
     "visualAssets": [],
@@ -76,7 +76,7 @@
       "publicName": "",
       "slug": "nuevo-proyecto-govdata",
       "landingTitle": "",
-      "publicDescription": "",
+      "publicDescription": "Proyecto documentado con el Asistente Inteligente GovData Nexus.",
       "visibleCategory": "Tecnología & Programación",
       "tags": [
         "Gobierno de Datos",
@@ -113,8 +113,8 @@
       "id": "govdata_code_mentilona_12345678",
       "title": "",
       "subtitle": "",
-      "shortDescription": "",
-      "fullDescription": "",
+      "shortDescription": "Proyecto documentado con el Asistente Inteligente GovData Nexus.",
+      "fullDescription": "Proyecto documentado con el Asistente Inteligente GovData Nexus.",
       "category": "tecnologia",
       "categoryName": "Tecnología & Programación",
       "projectSubtype": "Gobierno de Datos e IA",
@@ -144,10 +144,11 @@
         "fileName": "",
         "title": "",
         "description": "",
+        "thumbnailUrl": "",
         "isPublic": true,
         "verified": false
       },
-      "mainImage": "",
+      "mainImage": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
       "thumbnailImage": "",
       "useDefaultImage": true,
       "externalLinks": [],
@@ -155,7 +156,7 @@
         "publicName": "",
         "slug": "nuevo-proyecto-govdata",
         "landingTitle": "",
-        "publicDescription": "",
+        "publicDescription": "Proyecto documentado con el Asistente Inteligente GovData Nexus.",
         "visibleCategory": "Tecnología & Programación",
         "tags": [
           "Gobierno de Datos",
@@ -195,7 +196,7 @@
         "collaborators": ""
       },
       "createdAt": "2026-11-20T19:01:06.291Z",
-      "updatedAt": "2026-11-20T19:01:37.553Z",
+      "updatedAt": "2026-11-20T19:42:09.377Z",
       "progress": 40,
       "calculatedProgress": 40
     },
@@ -209,8 +210,11 @@
     "authorAvatar": "🐯",
     "authorRole": "admin",
     "createdAt": "2026-11-20T19:01:06.291Z",
-    "updatedAt": "2026-11-20T19:01:36.833Z",
-    "image": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80"
+    "updatedAt": "2026-11-20T19:42:08.659Z",
+    "image": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
+    "rejectionReason": "",
+    "tag": "⏳ Pendiente de Autorización",
+    "tagClass": "badge-review"
   },
   {
     "id": "proj_1794848887966",
