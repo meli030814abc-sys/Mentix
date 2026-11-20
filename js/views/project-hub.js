@@ -250,7 +250,7 @@ window.ProjectHub = {
   },
 
   /* ------------------------------ apertura ------------------------------ */
-  open(projectId, tab = 'home') {
+  open(projectId, tab = 'home', pushHistory = true) {
     const proj = this.getProject(projectId);
     if (!proj) { this.toast('No se encontró el proyecto'); return; }
     this.currentId = projectId;
@@ -262,17 +262,37 @@ window.ProjectHub = {
     if (window.soundEngine && window.soundEngine.playClick) window.soundEngine.playClick();
     this.tab = tab;
     this.registerView(proj);
+    if (pushHistory && window.appRouter && typeof window.appRouter.pushSubState === 'function') {
+      const baseView = window.appRouter.currentView || 'projects';
+      window.appRouter.pushSubState(
+        { view: baseView, subMode: 'hub', projectId: projectId, tab: tab },
+        `#${baseView}?hub=${encodeURIComponent(projectId)}&tab=${encodeURIComponent(tab)}`
+      );
+    }
     this.render();
   },
-  close() {
+  close(pushHistory = true) {
     const el = document.getElementById('phub-overlay');
     if (el) el.remove();
     document.body.style.overflow = '';
+    if (pushHistory && window.history && window.history.state && window.history.state.subMode === 'hub') {
+      try { window.history.back(); return; } catch (e) {}
+    }
     if (window.ProjectsView && typeof window.ProjectsView.render === 'function' && window.appRouter && window.appRouter.currentView === 'projects') {
       try { window.ProjectsView.render(); } catch (e) {}
     }
   },
-  setTab(tab) { this.tab = tab; this.render(); },
+  setTab(tab, pushHistory = true) {
+    this.tab = tab;
+    if (pushHistory && this.currentId && window.appRouter && typeof window.appRouter.pushSubState === 'function') {
+      const baseView = window.appRouter.currentView || 'projects';
+      window.appRouter.pushSubState(
+        { view: baseView, subMode: 'hub', projectId: this.currentId, tab: tab },
+        `#${baseView}?hub=${encodeURIComponent(this.currentId)}&tab=${encodeURIComponent(tab)}`
+      );
+    }
+    this.render();
+  },
 
   /* ------------------------------ render ------------------------------ */
   render() {

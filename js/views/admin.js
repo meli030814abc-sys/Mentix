@@ -513,10 +513,17 @@ window.AdminView = {
   /**
    * Cambiar de sección en el sidebar
    */
-  switchTab(tabName) {
+  switchTab(tabName, pushHistory = true) {
     if (tabName === 'design') tabName = 'settings';
     if (tabName === 'roles' || tabName === 'users') tabName = 'community';
     this.activeTab = tabName;
+
+    if (pushHistory && window.appRouter && typeof window.appRouter.pushSubState === 'function') {
+      window.appRouter.pushSubState(
+        { view: 'admin', tab: tabName },
+        '#admin?tab=' + encodeURIComponent(tabName)
+      );
+    }
     
     // Actualizar clase activa en nav
     const navItems = document.querySelectorAll('.admin-nav-item');

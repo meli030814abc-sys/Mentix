@@ -112,17 +112,27 @@ class AppRouter {
           this.navigate('lobby-join', { pin: params.pin }, false);
           return true;
         }
-        if (viewPart === 'experience') {
-          const id = params.id || window.appState.challenges[0]?.id;
-          if (id) {
-            this.selectExperience(id);
+        if (viewPart === 'experience' || viewPart === 'select-experience') {
+          const id = params.id || params.challengeId || window.appState.challenges[0]?.id;
+          const ch = (window.appState?.challenges || []).find(c => c && String(c.id) === String(id)) || window.appState?.challenges?.[0];
+          if (ch) {
+            this.navigate('select-experience', { challenge: ch, challengeId: ch.id, gameMode: params.gameMode || 'clasico', roomType: params.roomType || 'presented' }, false);
             return true;
           }
+        }
+        if (viewPart === 'admin') {
+          this.navigate('admin', params, false);
+          if (params.tab && window.AdminView && typeof window.AdminView.switchTab === 'function') {
+            window.AdminView.switchTab(params.tab, false);
+          }
+          return true;
         }
         if (viewPart === 'projects') {
           this.navigate('projects', params, false);
           if (window.ProjectsView) {
-            if (params.landing) {
+            if (params.hub && window.ProjectHub) {
+              window.ProjectHub.open(params.hub, params.tab || 'home', false);
+            } else if (params.landing) {
               window.ProjectsView.openProjectLanding(params.landing, false);
             } else if (params.mode === 'join') {
               window.ProjectsView.openJoinProjectModal('', false);
@@ -184,7 +194,46 @@ class AppRouter {
   applyHistoryState(state) {
     this._isPopStateNav = true;
     try {
+      // Cerrar cualquier modal/overlay flotante si el estado al que retrocedemos no es ese modal
+      if (!state || state.subMode !== 'hub') {
+        const hubEl = document.getElementById('phub-overlay');
+        if (hubEl) {
+          if (window.ProjectHub && typeof window.ProjectHub.close === 'function') window.ProjectHub.close(false);
+          else hubEl.remove();
+        }
+      }
+      if (!state || state.subMode !== 'join') {
+        const joinModal = document.getElementById('project-join-modal');
+        if (joinModal) joinModal.remove();
+      }
+      // Si salimos de un examen/juego en curso al retroceder, detener temporizadores activos
+      if (this.currentView === 'game' && (!state || state.view !== 'game')) {
+        try {
+          if (window.GameView && typeof window.GameView.stopTimer === 'function') window.GameView.stopTimer();
+          if (window.GameView && window.GameView.timerInterval) {
+            clearInterval(window.GameView.timerInterval);
+            window.GameView.timerInterval = null;
+          }
+        } catch (e) {}
+      }
+
       if (state && state.mentix) {
+        if (state.subMode === 'hub' && state.projectId && window.ProjectHub) {
+          if (state.view && this.currentView !== state.view) {
+            this.navigate(state.view, state.params || {}, false);
+          }
+          window.ProjectHub.open(state.projectId, state.tab || 'home', false);
+          return;
+        }
+        if (state.view === 'admin') {
+          if (this.currentView !== 'admin') {
+            this.navigate('admin', state.params || {}, false);
+          }
+          if (state.tab && window.AdminView && typeof window.AdminView.switchTab === 'function') {
+            window.AdminView.switchTab(state.tab, false);
+          }
+          return;
+        }
         if (state.view === 'projects') {
           if (this.currentView !== 'projects') {
             this.navigate('projects', {}, false);
@@ -203,8 +252,6 @@ class AppRouter {
               }
             } else {
               window.ProjectsView.viewMode = 'list';
-              const modalEl = document.getElementById('project-join-modal');
-              if (modalEl) modalEl.remove();
               document.body.classList.add('projects-pure-white-theme');
               window.ProjectsView.render();
               window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -306,23 +353,29 @@ class AppRouter {
     } catch (e) {}
 
     // Sincronizar historial real del navegador (pushState) para que la flecha atrás/adelante de Chrome
-    // retroceda paso a paso dentro de Mentix en lugar de devolver al inicio o sacar de la página
+    // retroceda paso a paso dentro de todo Mentix (exámenes, juegos, creador, perfil, admin, proyectos, etc.)
     try {
       const safeParams = {};
       if (params && typeof params === 'object') {
-        ['id', 'edit', 'pin', 'tab', 'mode', 'landing', 'wizard', 'step', 'editId'].forEach(k => {
+        ['id', 'edit', 'pin', 'tab', 'mode', 'landing', 'wizard', 'step', 'editId', 'challengeId', 'gameMode', 'roomType'].forEach(k => {
           if (params[k] !== undefined && params[k] !== null && typeof params[k] !== 'object') {
             safeParams[k] = params[k];
           }
         });
+        if (params.challenge && params.challenge.id && !safeParams.challengeId) {
+          safeParams.challengeId = params.challenge.id;
+        }
       }
       let hash = '#' + viewName;
-      if (safeParams.id) hash += '?id=' + encodeURIComponent(safeParams.id);
+      const hashId = safeParams.id || safeParams.challengeId || safeParams.editId;
+      if (hashId) hash += '?id=' + encodeURIComponent(hashId);
       if (safeParams.edit) hash += (hash.includes('?') ? '&' : '?') + 'edit=true';
       if (safeParams.pin) hash += (hash.includes('?') ? '&' : '?') + 'pin=' + encodeURIComponent(safeParams.pin);
+      if (safeParams.tab) hash += (hash.includes('?') ? '&' : '?') + 'tab=' + encodeURIComponent(safeParams.tab);
       const statePayload = {
         mentix: true,
         view: viewName,
+        tab: viewName === 'admin' ? (safeParams.tab || window.AdminView?.activeTab || 'dashboard') : safeParams.tab,
         subMode: viewName === 'projects' ? (window.ProjectsView?.viewMode || 'list') : undefined,
         params: safeParams
       };
@@ -398,19 +451,36 @@ class AppRouter {
 
       case 'select-experience':
         document.getElementById('view-experience')?.classList.add('active');
-        if (params.challenge) {
-          window.ExperienceView.render(params.challenge, params.gameMode || 'clasico', params.roomType || 'presented');
+        {
+          const expId = params.challenge?.id || params.challengeId || params.id;
+          const expChallenge = params.challenge
+            || (expId ? (window.appState?.challenges || []).find(c => c && String(c.id) === String(expId)) : null)
+            || window.ExperienceView?.currentChallenge
+            || window.appState?.challenges?.[0];
+          if (expChallenge) {
+            window.ExperienceView.render(expChallenge, params.gameMode || 'clasico', params.roomType || 'presented');
+          } else {
+            this.navigate('home', {}, false);
+          }
         }
         break;
 
       case 'lobby-host':
         document.getElementById('view-lobby')?.classList.add('active');
-        const hostChallenge = params.challenge || window.LobbyView?.pendingChallenge || window.ExperienceView?.currentChallenge || window.realtimeEngine?.currentRoom?.challenge || window.appState?.challenges?.[0];
-        if (hostChallenge) {
-          const cleanRoomType = (params.roomType === 'normal') ? 'normal' : 'presented';
-          window.LobbyView.initHost(hostChallenge, params.gameMode || 'clasico', params.modeConfig || {}, params.rosterConfig || null, cleanRoomType);
-        } else {
-          this.navigate('home');
+        {
+          const hostId = params.challenge?.id || params.challengeId || params.id;
+          const hostChallenge = params.challenge
+            || (hostId ? (window.appState?.challenges || []).find(c => c && String(c.id) === String(hostId)) : null)
+            || window.LobbyView?.pendingChallenge
+            || window.ExperienceView?.currentChallenge
+            || window.realtimeEngine?.currentRoom?.challenge
+            || window.appState?.challenges?.[0];
+          if (hostChallenge) {
+            const cleanRoomType = (params.roomType === 'normal') ? 'normal' : 'presented';
+            window.LobbyView.initHost(hostChallenge, params.gameMode || 'clasico', params.modeConfig || {}, params.rosterConfig || null, cleanRoomType);
+          } else {
+            this.navigate('home', {}, false);
+          }
         }
         break;
 
