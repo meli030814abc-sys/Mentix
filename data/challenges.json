@@ -111,10 +111,10 @@
       {
         "title": "Desarrollo",
         "description": "Construcción de la solución y prototipos.",
-        "progress": 0,
-        "status": "pending",
-        "icon": "code",
-        "emoji": "💻"
+        "status": "completed",
+        "progress": 100,
+        "emoji": "💻",
+        "icon": "clipboard"
       },
       {
         "title": "Publicación",
@@ -236,7 +236,7 @@
         "collaborators": ""
       },
       "createdAt": "2026-11-20T23:43:24.796Z",
-      "updatedAt": "2026-11-20T23:44:08.935Z",
+      "updatedAt": "2026-11-20T23:44:12.999Z",
       "progress": 55,
       "calculatedProgress": 55,
       "projectRoadmap": [
@@ -259,10 +259,10 @@
         {
           "title": "Desarrollo",
           "description": "Construcción de la solución y prototipos.",
-          "progress": 0,
-          "status": "pending",
-          "icon": "code",
-          "emoji": "💻"
+          "status": "completed",
+          "progress": 100,
+          "emoji": "💻",
+          "icon": "clipboard"
         },
         {
           "title": "Publicación",
@@ -284,7 +284,7 @@
     "authorAvatar": "🐯",
     "authorRole": "admin",
     "createdAt": "2026-11-20T23:43:24.796Z",
-    "updatedAt": "2026-11-20T23:44:08.020Z",
+    "updatedAt": "2026-11-20T23:44:12.095Z",
     "image": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
     "rejectionReason": ""
   },
