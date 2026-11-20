@@ -92,12 +92,12 @@
     },
     "projectRoadmap": [
       {
-        "title": "Planeación",
+        "title": "Planeación3665",
         "description": "Conformación del equipo y definición de objetivos.",
-        "progress": 40,
         "status": "active",
-        "icon": "clipboard",
-        "emoji": "📋"
+        "progress": 90,
+        "emoji": "👥",
+        "icon": "clipboard"
       },
       {
         "title": "Investigación",
@@ -235,17 +235,17 @@
         "collaborators": ""
       },
       "createdAt": "2026-11-20T23:43:24.796Z",
-      "updatedAt": "2026-11-20T23:44:12.999Z",
+      "updatedAt": "2026-11-20T23:44:24.799Z",
       "progress": 55,
       "calculatedProgress": 55,
       "projectRoadmap": [
         {
-          "title": "Planeación",
+          "title": "Planeación3665",
           "description": "Conformación del equipo y definición de objetivos.",
-          "progress": 40,
           "status": "active",
-          "icon": "clipboard",
-          "emoji": "📋"
+          "progress": 90,
+          "emoji": "👥",
+          "icon": "clipboard"
         },
         {
           "title": "Investigación",
@@ -283,7 +283,7 @@
     "authorAvatar": "🐯",
     "authorRole": "admin",
     "createdAt": "2026-11-20T23:43:24.796Z",
-    "updatedAt": "2026-11-20T23:44:12.165Z",
+    "updatedAt": "2026-11-20T23:44:24.002Z",
     "image": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
     "rejectionReason": ""
   },
