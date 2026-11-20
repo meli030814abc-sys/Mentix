@@ -4176,7 +4176,7 @@ window.ProjectsView = {
 
     if (!raw) {
       if (errEl) {
-        errEl.textContent = '⚠️ Por favor escribe el código o PIN del proyecto.';
+        errEl.textContent = 'Verifica el código';
         errEl.style.color = '#ff4d6d';
         errEl.style.display = 'block';
       }
@@ -4335,7 +4335,7 @@ window.ProjectsView = {
     // 4. VALIDACIÓN ESTRICTA: Si después de buscar localmente y en la nube NO existe, RECHAZAR EL ACCESO
     if (!matchedCustom) {
       if (errEl) {
-        errEl.textContent = '❌ Código no válido o no encontrado. Solicita el código específico que te dio tu profesor o administrador.';
+        errEl.textContent = 'Verifica el código';
         errEl.style.color = '#ff4d6d';
         errEl.style.display = 'block';
       }
@@ -4347,7 +4347,12 @@ window.ProjectsView = {
       return; // <-- BLOQUEA COMPLETAMENTE LA ENTRADA SI EL CÓDIGO NO ES REAL
     }
 
-    // 5. ✅ Código específico válido encontrado → autorizar acceso
+    // 5. ✅ Código específico válido encontrado → autorizar acceso y mostrar "¡Listo!"
+    if (errEl) {
+      errEl.textContent = '¡Listo!';
+      errEl.style.color = '#22c55e';
+      errEl.style.display = 'block';
+    }
     try { localStorage.setItem('mentix_active_join_code', clean); } catch (e) {}
     try { sessionStorage.setItem('mentix_active_join_code', clean); } catch (e) {}
     if (window.soundEngine && window.soundEngine.playSuccess) window.soundEngine.playSuccess();
