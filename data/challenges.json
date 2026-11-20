@@ -29,7 +29,7 @@
     "isPublic": false,
     "startDate": "2026-11-20",
     "endDate": "",
-    "currentStep": 4,
+    "currentStep": 5,
     "completedSteps": [
       1,
       2,
@@ -92,40 +92,7 @@
       "displayOrder": 1,
       "featuredVideoPublic": true
     },
-    "projectRoadmap": [
-      {
-        "title": "Planeación",
-        "description": "Conformación del equipo y definición de objetivos.",
-        "progress": 40,
-        "status": "active",
-        "icon": "clipboard",
-        "emoji": "📋"
-      },
-      {
-        "title": "Investigación",
-        "description": "Recopilación de datos e información relevante.",
-        "progress": 100,
-        "status": "completed",
-        "icon": "search",
-        "emoji": "🔍"
-      },
-      {
-        "title": "Desarrollo",
-        "description": "Construcción de la solución y prototipos.",
-        "progress": 0,
-        "status": "pending",
-        "icon": "code",
-        "emoji": "💻"
-      },
-      {
-        "title": "Publicación",
-        "description": "Despliegue en la Landing Page y comunicación.",
-        "progress": 0,
-        "status": "pending",
-        "icon": "rocket",
-        "emoji": "🚀"
-      }
-    ],
+    "projectRoadmap": [],
     "designConfig": {
       "themeId": "cosmos",
       "fontFamily": "Montserrat",
@@ -187,7 +154,7 @@
         "verified": false
       },
       "mainImage": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
-      "thumbnailImage": "",
+      "thumbnailImage": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
       "useDefaultImage": true,
       "externalLinks": [],
       "landingConfig": {
@@ -212,7 +179,7 @@
         3,
         4
       ],
-      "currentStep": 4,
+      "currentStep": 5,
       "author": "Melisa",
       "authorId": "user_1792184134006",
       "ownerId": "user_1792184134006",
@@ -239,43 +206,9 @@
         "collaborators": "63556"
       },
       "createdAt": "2026-11-20T23:43:24.796Z",
-      "updatedAt": "2026-11-20T23:47:37.617Z",
+      "updatedAt": "2026-11-20T23:47:37.549Z",
       "progress": 55,
-      "calculatedProgress": 55,
-      "projectRoadmap": [
-        {
-          "title": "Planeación",
-          "description": "Conformación del equipo y definición de objetivos.",
-          "progress": 40,
-          "status": "active",
-          "icon": "clipboard",
-          "emoji": "📋"
-        },
-        {
-          "title": "Investigación",
-          "description": "Recopilación de datos e información relevante.",
-          "progress": 100,
-          "status": "completed",
-          "icon": "search",
-          "emoji": "🔍"
-        },
-        {
-          "title": "Desarrollo",
-          "description": "Construcción de la solución y prototipos.",
-          "progress": 0,
-          "status": "pending",
-          "icon": "code",
-          "emoji": "💻"
-        },
-        {
-          "title": "Publicación",
-          "description": "Despliegue en la Landing Page y comunicación.",
-          "progress": 0,
-          "status": "pending",
-          "icon": "rocket",
-          "emoji": "🚀"
-        }
-      ]
+      "calculatedProgress": 55
     },
     "author": "Melisa",
     "authorId": "user_1792184134006",
@@ -287,7 +220,7 @@
     "authorAvatar": "🐯",
     "authorRole": "Líder del Proyecto",
     "createdAt": "2026-11-20T23:43:24.796Z",
-    "updatedAt": "2026-11-20T23:47:36.696Z",
+    "updatedAt": "2026-11-20T23:47:36.777Z",
     "image": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
     "rejectionReason": "",
     "tag": "⏳ Pendiente de Autorización",
