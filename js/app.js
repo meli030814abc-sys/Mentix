@@ -1882,14 +1882,62 @@ class AppRouter {
         if (Array.isArray(own)) deletedIds = Array.from(new Set([...deletedIds, ...own]));
       } catch (e) {}
       if (deletedIds.length > 0) {
-        const gone = new Set(deletedIds);
-        if (Array.isArray(cloudChallenges)) cloudChallenges = cloudChallenges.filter(c => c && !gone.has(c.id));
+        const gone = new Set(deletedIds.map(id => String(id)));
+        // Persistir globalmente la lista de eliminados en localStorage para que ninguna vista los resucite
+        try { localStorage.setItem('te_reto_deleted_ids', JSON.stringify(Array.from(gone))); } catch (e) {}
+
+        let purgedAny = false;
+        if (Array.isArray(cloudChallenges)) {
+          cloudChallenges = cloudChallenges.filter(c => c && !gone.has(String(c.id)));
+        }
         const before = (window.appState.challenges || []).length;
-        window.appState.challenges = (window.appState.challenges || []).filter(c => c && !gone.has(c.id));
-        if (window.appState.challenges.length !== before) {
+        window.appState.challenges = (window.appState.challenges || []).filter(c => c && !gone.has(String(c.id)));
+        if (window.appState.challenges.length !== before) purgedAny = true;
+
+        // Purgar también todos los cachés/borradores locales del navegador (estudiantes, docentes, admins)
+        ['mentix_govdata_wizard_drafts', 'mentix_projects_vault', 'te_reto_challenges', 'mentix_challenges', 'mentix_projects'].forEach(key => {
+          try {
+            const raw = localStorage.getItem(key);
+            if (!raw) return;
+            const parsed = JSON.parse(raw);
+            if (Array.isArray(parsed)) {
+              const filtered = parsed.filter(item => item && !gone.has(String(item.id)));
+              if (filtered.length !== parsed.length) {
+                localStorage.setItem(key, JSON.stringify(filtered));
+                purgedAny = true;
+              }
+            }
+          } catch (e) {}
+        });
+
+        try {
+          const activeLanding = JSON.parse(localStorage.getItem('mentix_active_landing_project') || 'null');
+          if (activeLanding && gone.has(String(activeLanding.id))) {
+            localStorage.removeItem('mentix_active_landing_project');
+            purgedAny = true;
+          }
+        } catch (e) {}
+
+        try {
+          const appMap = JSON.parse(localStorage.getItem('mentix_approved_projects_map') || '{}');
+          let changedMap = false;
+          gone.forEach(gid => { if (appMap[gid]) { delete appMap[gid]; changedMap = true; } });
+          if (changedMap) localStorage.setItem('mentix_approved_projects_map', JSON.stringify(appMap));
+        } catch (e) {}
+
+        try {
+          const codeMap = JSON.parse(localStorage.getItem('mentix_code_draft_map') || '{}');
+          let changedCodeMap = false;
+          Object.keys(codeMap).forEach(k => { if (gone.has(String(codeMap[k]))) { delete codeMap[k]; changedCodeMap = true; } });
+          if (changedCodeMap) localStorage.setItem('mentix_code_draft_map', JSON.stringify(codeMap));
+        } catch (e) {}
+
+        if (purgedAny) {
           saveGlobalState(window.appState);
           if (this.currentView === 'home' && window.HomeView) window.HomeView.render();
           else if (this.currentView === 'projects' && window.ProjectsView && window.ProjectsView.viewMode !== 'wizard') window.ProjectsView.render();
+          else if (this.currentView === 'admin' && window.AdminView) window.AdminView.render();
+          else if (this.currentView === 'profile' && window.ProfileView) window.ProfileView.render();
         }
       }
 

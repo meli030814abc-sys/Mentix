@@ -2025,17 +2025,25 @@ window.ProjectsView = {
     const u = window.appState.currentUser;
     const isTeacherOrAdmin = this.isTeacherOrAdmin();
     const isAdmin = this.isAdminUser();
-    // Asegurar que existan los proyectos estructurados en la base de datos
+    // Asegurar que existan los proyectos estructurados en la base de datos y filtrar eliminados por Admin
     if (!window.appState.challenges) window.appState.challenges = [];
+    let deletedIdsSet = new Set();
+    try {
+      const delArr = JSON.parse(localStorage.getItem('te_reto_deleted_ids') || '[]');
+      if (Array.isArray(delArr)) deletedIdsSet = new Set(delArr.map(id => String(id)));
+    } catch (e) {}
+    if (deletedIdsSet.size > 0) {
+      window.appState.challenges = window.appState.challenges.filter(c => c && !deletedIdsSet.has(String(c.id)));
+    }
 
-    // Integrar proyectos y borradores del Asistente Inteligente (mentix_govdata_wizard_drafts)
+    // Integrar proyectos y borradores del Asistente Inteligente (mentix_govdata_wizard_drafts) excluyendo eliminados
     try {
       const rawDrafts = localStorage.getItem('mentix_govdata_wizard_drafts');
       if (rawDrafts) {
         const wizardDrafts = JSON.parse(rawDrafts);
         if (Array.isArray(wizardDrafts)) {
           wizardDrafts.forEach(wd => {
-            if (wd && wd.id) {
+            if (wd && wd.id && !deletedIdsSet.has(String(wd.id))) {
               const exIdx = window.appState.challenges.findIndex(c => c && c.id === wd.id);
               const formatted = {
                 id: wd.id,
