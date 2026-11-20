@@ -4080,6 +4080,8 @@ window.ProjectsView = {
     this.viewMode = 'join';
     this.prefillJoinCode = prefillCode;
     this.render();
+    // Pre-cargar silenciosamente códigos y progreso de la nube mientras el usuario escribe el código
+    this.preloadCloudForJoinCode();
     window.scrollTo({ top: 0, behavior: 'smooth' });
     setTimeout(() => {
       const input = document.getElementById('project-join-code-input');
@@ -4117,6 +4119,42 @@ window.ProjectsView = {
       window.ProjectHub.openJoinForm(projectId);
       return;
     }
+  },
+
+  preloadCloudForJoinCode() {
+    try {
+      const now = Date.now();
+      if (this._cloudPreload && (now - this._cloudPreload.ts) < 15000) return this._cloudPreload.promise;
+      const apiBase = (window.appRouter && typeof window.appRouter.getApiBase === 'function') ? window.appRouter.getApiBase() : '';
+      const fetchQuiet = async (url) => {
+        const ctrl = (typeof AbortController !== 'undefined') ? new AbortController() : null;
+        const tid = ctrl ? setTimeout(() => ctrl.abort(), 2500) : null;
+        try {
+          const r = await fetch(url, { cache: 'no-store', signal: ctrl ? ctrl.signal : undefined });
+          if (tid) clearTimeout(tid);
+          if (r && r.ok) return await r.json();
+        } catch (e) { if (tid) clearTimeout(tid); }
+        return null;
+      };
+      const entry = { ts: now, codes: null, challenges: null, promise: null };
+      entry.promise = Promise.all([
+        fetchQuiet(`${apiBase}/api/challenges?customCodes=1&t=${now}`),
+        fetchQuiet(`${apiBase}/api/challenges?t=${now}`)
+      ]).then(([codesRes, chRes]) => {
+        const codesList = Array.isArray(codesRes) ? codesRes : (codesRes?.customProjectCodes || null);
+        if (Array.isArray(codesList) && codesList.length > 0) {
+          entry.codes = codesList;
+          this.persistCustomProjectCodes(codesList);
+        }
+        const chList = Array.isArray(chRes?.challenges) ? chRes.challenges : (Array.isArray(chRes) ? chRes : null);
+        if (Array.isArray(chList)) {
+          entry.challenges = chList;
+        }
+        return entry;
+      }).catch(() => entry);
+      this._cloudPreload = entry;
+      return entry.promise;
+    } catch (e) { return Promise.resolve(null); }
   },
 
   async submitJoinProjectCode() {
@@ -4207,20 +4245,32 @@ window.ProjectsView = {
     };
 
     const apiBase = (window.appRouter && typeof window.appRouter.getApiBase === 'function') ? window.appRouter.getApiBase() : '';
-    let prefetchedCloudChallenges = null;
+    let prefetchedCloudChallenges = (this._cloudPreload && Array.isArray(this._cloudPreload.challenges))
+      ? this._cloudPreload.challenges
+      : null;
 
-    // 3. Si aún no se encuentra localmente, consultar la NUBE EN PARALELO (/api/challenges y Supabase)
-    //    con timeout estricto para verificar códigos creados desde otro computador o red sin demoras
+    // 3. Si aún no se encuentra localmente, evaluar silenciosamente con los datos pre-cargados o en la NUBE EN PARALELO
+    //    (sin mostrar textos de carga al usuario)
     if (!matchedCustom) {
-      if (errEl) {
-        errEl.textContent = '🔄 Verificando código...';
-        errEl.style.color = '#38bdf8';
-        errEl.style.display = 'block';
+      if (this._cloudPreload && this._cloudPreload.promise && !this._cloudPreload.codes && !this._cloudPreload.challenges) {
+        await withTimeout(this._cloudPreload.promise, 1200, null);
       }
+      if (this._cloudPreload && Array.isArray(this._cloudPreload.codes)) {
+        matchedCustom = findInCodes(this._cloudPreload.codes);
+      }
+      if (this._cloudPreload && Array.isArray(this._cloudPreload.challenges)) {
+        prefetchedCloudChallenges = this._cloudPreload.challenges;
+      }
+    }
 
+    if (!matchedCustom) {
       const [cloudCodesRes, allChRes, supaCodesRes] = await Promise.all([
-        fetchJsonFast(`${apiBase}/api/challenges?customCodes=1&t=${Date.now()}`, 2500),
-        fetchJsonFast(`${apiBase}/api/challenges?t=${Date.now()}`, 2500),
+        (this._cloudPreload && Array.isArray(this._cloudPreload.codes))
+          ? Promise.resolve(this._cloudPreload.codes)
+          : fetchJsonFast(`${apiBase}/api/challenges?customCodes=1&t=${Date.now()}`, 2200),
+        prefetchedCloudChallenges
+          ? Promise.resolve(prefetchedCloudChallenges)
+          : fetchJsonFast(`${apiBase}/api/challenges?t=${Date.now()}`, 2200),
         (window.supabaseService && window.supabaseService.client)
           ? withTimeout(
               window.supabaseService.client
@@ -4228,7 +4278,7 @@ window.ProjectsView = {
                 .select('govdata_payload')
                 .eq('id', 'custom_project_codes_cloud_registry')
                 .single(),
-              2000,
+              1500,
               null
             )
           : Promise.resolve(null)
@@ -4371,26 +4421,29 @@ window.ProjectsView = {
     const stateMatch = challenges.find(c => c && ((deterministicId && String(c.id) === deterministicId) || (recordMatchesCode(c) && recordMatchesUser(c))));
     if (stateMatch) candidates.push(stateMatch);
 
-    // 7. Sincronizar EN PARALELO y con timeout corto con la nube (/api/challenges y Supabase)
-    //    para recuperar progreso hecho en otro navegador o computador sin demoras
-    if (errEl) {
-      errEl.textContent = '⚡ Abriendo proyecto...';
-      errEl.style.color = '#38bdf8';
-      errEl.style.display = 'block';
+    // 7. Evaluar internamente en silencio el progreso en la nube (sin mensajes visibles de carga)
+    //    Si ya se pre-cargó mientras el usuario escribía el código, esto toma 0 ms
+    if (!prefetchedCloudChallenges && this._cloudPreload && this._cloudPreload.promise) {
+      await withTimeout(this._cloudPreload.promise, candidates.length > 0 ? 400 : 1200, null);
+      if (Array.isArray(this._cloudPreload.challenges)) {
+        prefetchedCloudChallenges = this._cloudPreload.challenges;
+      }
     }
 
-    const cloudTimeoutMs = candidates.length > 0 ? 1200 : 2000;
+    const cloudTimeoutMs = candidates.length > 0 ? 600 : 1500;
     const [cloudDataRes, supaHit] = await Promise.all([
       prefetchedCloudChallenges
         ? Promise.resolve(prefetchedCloudChallenges)
         : fetchJsonFast(`${apiBase}/api/challenges?t=${Date.now()}`, cloudTimeoutMs),
-      (window.supabaseService && typeof window.supabaseService.loadWizardDraftByCodeAndUser === 'function')
-        ? withTimeout(
-            window.supabaseService.loadWizardDraftByCodeAndUser(cleanNorm, userId, username, deterministicId),
-            1500,
-            null
-          )
-        : Promise.resolve(null)
+      (candidates.length > 0)
+        ? Promise.resolve(null)
+        : (window.supabaseService && typeof window.supabaseService.loadWizardDraftByCodeAndUser === 'function')
+          ? withTimeout(
+              window.supabaseService.loadWizardDraftByCodeAndUser(cleanNorm, userId, username, deterministicId),
+              1000,
+              null
+            )
+          : Promise.resolve(null)
     ]);
 
     if (cloudDataRes) {
