@@ -68,7 +68,8 @@
       "title": "",
       "description": "",
       "isPublic": true,
-      "verified": false
+      "verified": false,
+      "thumbnailUrl": ""
     },
     "resources": [],
     "visualAssets": [],
@@ -214,7 +215,9 @@
     "authorAvatar": "🐯",
     "authorRole": "admin",
     "createdAt": "2026-11-20T23:43:24.796Z",
-    "updatedAt": "2026-11-20T23:43:35.212Z"
+    "updatedAt": "2026-11-20T23:43:35.179Z",
+    "image": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
+    "rejectionReason": ""
   },
   {
     "id": "govdata_code_mentilona_12345678",
