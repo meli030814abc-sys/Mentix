@@ -440,6 +440,90 @@ class SupabaseService {
     return null;
   }
 
+  // Cargar borrador del asistente en la nube por código de proyecto y usuario (funciona desde cualquier navegador/dispositivo)
+  async loadWizardDraftByCodeAndUser(codeNorm, userId, username, deterministicId = null) {
+    if (!this.client || !codeNorm) return null;
+    const normalize = (s) => String(s || '').trim().toLowerCase().replace(/[\s\-_]/g, '');
+    const targetNorm = normalize(codeNorm);
+    const userTokens = [userId, username]
+      .map(v => String(v || '').trim().toLowerCase())
+      .filter(Boolean);
+
+    const matchesCode = (obj) => {
+      if (!obj || typeof obj !== 'object') return false;
+      const c1 = normalize(obj.joinCode || obj.accessCode || obj.code);
+      const c2 = normalize(obj.govdata?.joinCode || obj.govdata?.accessCode || obj.govdata?.code);
+      return c1 === targetNorm || c2 === targetNorm;
+    };
+
+    const matchesUser = (obj, rowUserId = '') => {
+      if (userTokens.length === 0) return true;
+      const candidates = [
+        rowUserId,
+        obj?.authorId,
+        obj?.ownerId,
+        obj?.ownerUsername,
+        obj?.authorEmail,
+        obj?.author,
+        obj?.govdata?.authorId,
+        obj?.govdata?.ownerUsername
+      ].map(v => String(v || '').trim().toLowerCase()).filter(Boolean);
+      return candidates.some(c => userTokens.includes(c));
+    };
+
+    // 1. Búsqueda directa por ID determinístico (la más rápida y exacta entre navegadores)
+    if (deterministicId) {
+      try {
+        const direct = await this.loadWizardDraft(deterministicId);
+        if (direct && typeof direct === 'object') {
+          return direct;
+        }
+      } catch (e) {}
+    }
+
+    // 2. Buscar en govdata_wizard_drafts por user_id
+    if (userTokens.length > 0) {
+      try {
+        const { data, error } = await this.client
+          .from('govdata_wizard_drafts')
+          .select('*')
+          .in('user_id', userTokens)
+          .order('updated_at', { ascending: false })
+          .limit(30);
+
+        if (!error && Array.isArray(data)) {
+          const hit = data.find(row => row && row.draft_data && matchesCode(row.draft_data));
+          if (hit && hit.draft_data) {
+            return { ...hit.draft_data, id: hit.draft_data.id || hit.project_id, currentStep: Math.max(Number(hit.current_step) || 1, Number(hit.draft_data.currentStep) || 1) };
+          }
+        }
+      } catch (e) {}
+    }
+
+    // 3. Buscar en challenges (respaldo universal en Supabase)
+    try {
+      const { data: chRows, error: chErr } = await this.client
+        .from('challenges')
+        .select('id, govdata_payload, author, updated_at')
+        .order('updated_at', { ascending: false })
+        .limit(80);
+
+      if (!chErr && Array.isArray(chRows)) {
+        const hit = chRows.find(row => {
+          const payload = row?.govdata_payload;
+          if (!payload || typeof payload !== 'object') return false;
+          if (deterministicId && String(row.id) === String(deterministicId)) return true;
+          return matchesCode(payload) && matchesUser(payload, row.author);
+        });
+        if (hit && hit.govdata_payload) {
+          return { ...hit.govdata_payload, id: hit.govdata_payload.id || hit.id };
+        }
+      }
+    } catch (e) {}
+
+    return null;
+  }
+
   // Guardar proyecto completo de GovData Nexus y sus recursos en Supabase
   async saveGovDataProject(projectObj) {
     if (!this.client || !projectObj || !projectObj.id) return false;

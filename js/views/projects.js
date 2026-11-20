@@ -4284,31 +4284,152 @@ window.ProjectsView = {
     if (window.soundEngine && window.soundEngine.playSuccess) window.soundEngine.playSuccess();
 
     // 6. Determinar el proyecto o borrador para abrir directamente en el Asistente de Proyectos
-    let targetProjectId = null;
-    if (matchedCustom.projectId) {
-      const foundInChallenges = challenges.find(c => String(c.id).trim() === String(matchedCustom.projectId).trim());
-      if (foundInChallenges) targetProjectId = foundInChallenges.id;
-    }
-    if (!targetProjectId && window.ProjectWizard && typeof window.ProjectWizard.getAllSavedDrafts === 'function') {
-      const savedDrafts = window.ProjectWizard.getAllSavedDrafts();
-      const existingDraft = savedDrafts.find(d => 
-        d && (normalize(d.joinCode) === cleanNorm || normalize(d.accessCode) === cleanNorm || normalize(d.code) === cleanNorm)
+    //    Busca en local Y en la nube (/api/challenges + Supabase) para que funcione desde CUALQUIER navegador o dispositivo
+    const currentUser = window.appState?.currentUser || {};
+    const userId = String(currentUser.id || currentUser.username || '').trim();
+    const username = String(currentUser.username || '').trim();
+    const userEmail = String(currentUser.email || '').trim().toLowerCase();
+    const userSlug = String(username || userId || userEmail).toLowerCase().replace(/[^a-z0-9]/g, '');
+    const deterministicId = (userSlug && cleanNorm) ? `govdata_code_${userSlug}_${cleanNorm}` : null;
+
+    const userTokens = [userId, username, userEmail, currentUser.name]
+      .map(v => String(v || '').trim().toLowerCase())
+      .filter(Boolean);
+
+    const recordMatchesCode = (rec) => {
+      if (!rec || typeof rec !== 'object') return false;
+      const g = rec.govdata || {};
+      return (
+        normalize(rec.joinCode) === cleanNorm ||
+        normalize(rec.accessCode) === cleanNorm ||
+        normalize(rec.code) === cleanNorm ||
+        normalize(g.joinCode) === cleanNorm ||
+        normalize(g.accessCode) === cleanNorm ||
+        normalize(g.code) === cleanNorm
       );
-      if (existingDraft) targetProjectId = existingDraft.id;
+    };
+
+    const recordMatchesUser = (rec) => {
+      if (!rec || typeof rec !== 'object') return false;
+      if (deterministicId && String(rec.id) === deterministicId) return true;
+      if (userTokens.length === 0) return true;
+      const g = rec.govdata || {};
+      const cands = [
+        rec.ownerId, rec.ownerUsername, rec.authorId, rec.authorEmail, rec.author,
+        g.ownerId, g.ownerUsername, g.authorId, g.authorEmail, g.author
+      ].map(v => String(v || '').trim().toLowerCase()).filter(Boolean);
+      return cands.some(c => userTokens.includes(c));
+    };
+
+    let targetProjectId = null;
+    const candidates = [];
+
+    if (matchedCustom.projectId) {
+      const foundInChallenges = challenges.find(c => c && String(c.id).trim() === String(matchedCustom.projectId).trim());
+      if (foundInChallenges) candidates.push(foundInChallenges);
     }
 
-    // 7b. Si todavía no encontramos un borrador, buscar en el mapa código→draftId persistente
-    if (!targetProjectId) {
+    // 6a. Buscar en borradores locales (localStorage) y mapa persistente código→draftId
+    if (window.ProjectWizard && typeof window.ProjectWizard.getAllSavedDrafts === 'function') {
+      const savedDrafts = window.ProjectWizard.getAllSavedDrafts();
+      const localByDet = deterministicId ? savedDrafts.find(d => d && String(d.id) === deterministicId) : null;
+      if (localByDet) candidates.push(localByDet);
+
+      const localByCodeAndUser = savedDrafts.find(d => d && recordMatchesCode(d) && recordMatchesUser(d));
+      if (localByCodeAndUser) candidates.push(localByCodeAndUser);
+
       try {
         const codeMap = JSON.parse(localStorage.getItem('mentix_code_draft_map') || '{}');
-        const userId = window.appState?.currentUser?.id || window.appState?.currentUser?.username || '';
         const mapKey = userId ? `${userId}_${cleanNorm}` : cleanNorm;
         if (codeMap[mapKey]) {
-          const allDrafts = window.ProjectWizard ? window.ProjectWizard.getAllSavedDrafts() : [];
-          const draftFromMap = allDrafts.find(d => d && d.id === codeMap[mapKey]);
-          if (draftFromMap) targetProjectId = draftFromMap.id;
+          const draftFromMap = savedDrafts.find(d => d && d.id === codeMap[mapKey]);
+          if (draftFromMap) candidates.push(draftFromMap);
         }
       } catch (e) { /* silent */ }
+    }
+
+    // 6b. Buscar en appState.challenges locales
+    const stateMatch = challenges.find(c => c && ((deterministicId && String(c.id) === deterministicId) || (recordMatchesCode(c) && recordMatchesUser(c))));
+    if (stateMatch) candidates.push(stateMatch);
+
+    // 7. Sincronizar SIEMPRE con la nube (/api/challenges y Supabase) para recuperar progreso hecho en otro navegador o computador
+    if (errEl) {
+      errEl.textContent = '☁️ Buscando tu progreso guardado en la nube...';
+      errEl.style.color = '#38bdf8';
+      errEl.style.display = 'block';
+    }
+
+    // 7a. Consultar /api/challenges
+    try {
+      const apiBase = (window.appRouter && typeof window.appRouter.getApiBase === 'function') ? window.appRouter.getApiBase() : '';
+      const controller = (typeof AbortController !== 'undefined') ? new AbortController() : null;
+      const timeoutId = controller ? setTimeout(() => controller.abort(), 4000) : null;
+      const resCloud = await fetch(`${apiBase}/api/challenges?t=${Date.now()}`, {
+        cache: 'no-store',
+        signal: controller ? controller.signal : undefined
+      });
+      if (timeoutId) clearTimeout(timeoutId);
+      if (resCloud && resCloud.ok) {
+        const cloudData = await resCloud.json();
+        const cloudList = Array.isArray(cloudData?.challenges) ? cloudData.challenges : (Array.isArray(cloudData) ? cloudData : []);
+        const cloudHit = cloudList.find(c => c && (
+          (deterministicId && String(c.id) === deterministicId) ||
+          (matchedCustom.projectId && String(c.id).trim() === String(matchedCustom.projectId).trim()) ||
+          (recordMatchesCode(c) && recordMatchesUser(c))
+        ));
+        if (cloudHit) {
+          candidates.push(cloudHit);
+        }
+      }
+    } catch (errCloudSync) {}
+
+    // 7b. Consultar Supabase (govdata_wizard_drafts y challenges)
+    if (window.supabaseService && typeof window.supabaseService.loadWizardDraftByCodeAndUser === 'function') {
+      try {
+        const supaHit = await window.supabaseService.loadWizardDraftByCodeAndUser(cleanNorm, userId, username, deterministicId);
+        if (supaHit) {
+          candidates.push(supaHit);
+        }
+      } catch (errSupaSync) {}
+    }
+
+    // 7c. Elegir el candidato con mayor progreso / actualización más reciente y cachearlo en local + appState
+    if (candidates.length > 0) {
+      candidates.sort((a, b) => {
+        const stepA = Number(a?.currentStep || a?.govdata?.currentStep || 1);
+        const stepB = Number(b?.currentStep || b?.govdata?.currentStep || 1);
+        const tsA = Date.parse(a?.updatedAt || a?.govdata?.updatedAt || '') || 0;
+        const tsB = Date.parse(b?.updatedAt || b?.govdata?.updatedAt || '') || 0;
+        if (tsB !== tsA) return tsB - tsA;
+        return stepB - stepA;
+      });
+      const best = candidates[0];
+      targetProjectId = best.id || deterministicId;
+
+      // Inyectar en appState.challenges y en el almacenamiento local de borradores para que openWizard lo cargue completo
+      try {
+        if (!window.appState) window.appState = { challenges: [] };
+        if (!Array.isArray(window.appState.challenges)) window.appState.challenges = [];
+        const existingIdx = window.appState.challenges.findIndex(c => c && String(c.id) === String(targetProjectId));
+        if (existingIdx >= 0) {
+          window.appState.challenges[existingIdx] = { ...window.appState.challenges[existingIdx], ...best, id: targetProjectId };
+        } else {
+          window.appState.challenges.unshift({ ...best, id: targetProjectId });
+        }
+        if (window.ProjectWizard && typeof window.ProjectWizard.getAllSavedDrafts === 'function') {
+          const allLocal = window.ProjectWizard.getAllSavedDrafts().filter(d => d && String(d.id) !== String(targetProjectId));
+          const mergedDraft = { ...(best.govdata || {}), ...best, id: targetProjectId, joinCode: clean, accessCode: clean };
+          allLocal.unshift(mergedDraft);
+          localStorage.setItem('mentix_govdata_wizard_drafts', JSON.stringify(allLocal.slice(0, 15)));
+        }
+        const codeMap = JSON.parse(localStorage.getItem('mentix_code_draft_map') || '{}');
+        const mapKey = userId ? `${userId}_${cleanNorm}` : cleanNorm;
+        codeMap[mapKey] = targetProjectId;
+        localStorage.setItem('mentix_code_draft_map', JSON.stringify(codeMap));
+      } catch (eCache) {}
+    } else {
+      // Primera vez que este usuario entra con este código: usar ID determinístico para que cualquier otro navegador lo encuentre luego
+      targetProjectId = deterministicId;
     }
 
     // 8. Cerrar vista de unirse y abrir DIRECTAMENTE el Asistente (Project Wizard)

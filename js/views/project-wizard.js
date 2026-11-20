@@ -210,10 +210,14 @@ window.ProjectWizard = {
         completedSteps: Array.isArray(existingProject.completedSteps) && existingProject.completedSteps.length > 0 ? existingProject.completedSteps : (Array.isArray(gp.completedSteps) ? gp.completedSteps : [1]),
         currentStep: Number(existingProject.currentStep || gp.currentStep || 1),
         author: existingProject.author || u.name || u.username || 'Docente / Líder',
-        authorId: existingProject.authorId || u.id || u.username || '',
+        authorId: existingProject.authorId || gp.authorId || u.id || u.username || '',
+        ownerId: existingProject.ownerId || gp.ownerId || existingProject.authorId || u.id || '',
+        ownerUsername: existingProject.ownerUsername || gp.ownerUsername || u.username || '',
         authorEmail: existingProject.authorEmail || u.email || '',
         authorAvatar: existingProject.authorAvatar || u.avatar || '👨‍🏫',
         authorRole: existingProject.authorRole || u.role || 'teacher',
+        joinCode: existingProject.joinCode || gp.joinCode || existingProject.accessCode || gp.accessCode || '',
+        accessCode: existingProject.accessCode || gp.accessCode || existingProject.joinCode || gp.joinCode || '',
         designConfig: existingProject.designConfig || gp.designConfig || {
           themeId: 'cosmos',
           fontFamily: 'Montserrat',
@@ -298,9 +302,13 @@ window.ProjectWizard = {
       currentStep: 1,
       author: u.name || u.username || 'Docente / Líder',
       authorId: u.id || u.username || '',
+      ownerId: u.id || '',
+      ownerUsername: u.username || '',
       authorEmail: u.email || '',
       authorAvatar: u.avatar || '👨‍🏫',
       authorRole: u.role || 'teacher',
+      joinCode: '',
+      accessCode: '',
       designConfig: {
         themeId: 'cosmos',
         fontFamily: 'Montserrat',
@@ -424,6 +432,20 @@ window.ProjectWizard = {
     this.draft.currentStep = this.currentStep;
     this.draft.updatedAt = new Date().toISOString();
 
+    // Asegurar metadatos de usuario y código para sincronización multi-navegador/dispositivo
+    try {
+      const cu = window.appState?.currentUser || {};
+      if (!this.draft.authorId && (cu.id || cu.username)) this.draft.authorId = cu.id || cu.username;
+      if (!this.draft.ownerId && cu.id) this.draft.ownerId = cu.id;
+      if (!this.draft.ownerUsername && cu.username) this.draft.ownerUsername = cu.username;
+      if (!this.draft.authorEmail && cu.email) this.draft.authorEmail = cu.email;
+      const activeCode = sessionStorage.getItem('mentix_active_join_code') || localStorage.getItem('mentix_active_join_code') || '';
+      if (activeCode && !this.draft.joinCode) {
+        this.draft.joinCode = activeCode;
+        this.draft.accessCode = activeCode;
+      }
+    } catch (e) {}
+
     // Respaldar inmediatamente en la bóveda de imágenes
     if (window.MentixImageVault) {
       window.MentixImageVault.backupProjectImages(this.draft);
@@ -523,9 +545,13 @@ window.ProjectWizard = {
       }
     }
 
-    if (this.draft.title && this.draft.title.trim() && window.appRouter && typeof window.appRouter.pushChallengeToCloud === 'function') {
+    const hasTitleOrCode = Boolean((this.draft.title && this.draft.title.trim()) || this.draft.joinCode || this.draft.accessCode);
+    if (hasTitleOrCode && window.appRouter && typeof window.appRouter.pushChallengeToCloud === 'function') {
       try {
         const cloudRec = syncedRecord || this.buildChallengeCompatibleRecord();
+        if (!cloudRec.title || !cloudRec.title.trim()) {
+          cloudRec.title = this.draft.joinCode ? `Borrador (${this.draft.joinCode})` : 'Borrador de Proyecto';
+        }
         window.appRouter.pushChallengeToCloud(cloudRec);
       } catch (errCloud) {}
     }
@@ -624,11 +650,17 @@ window.ProjectWizard = {
         try {
           const cloudDraft = await window.supabaseService.loadWizardDraft(projectId);
           if (cloudDraft) {
-            const mergedCloud = { ...(existing || {}), ...cloudDraft };
+            const existingTs = Date.parse(existing?.updatedAt || '') || 0;
+            const cloudTs = Date.parse(cloudDraft?.updatedAt || '') || 0;
+            const mergedCloud = cloudTs >= existingTs
+              ? { ...(existing || {}), ...cloudDraft }
+              : { ...cloudDraft, ...(existing || {}) };
             mergedCloud.slides = pickLongerArr(existing?.slides, cloudDraft?.slides);
             mergedCloud.completedSteps = pickLongerArr(existing?.completedSteps, cloudDraft?.completedSteps);
             mergedCloud.resources = pickLongerArr(existing?.resources, cloudDraft?.resources);
             mergedCloud.externalLinks = pickLongerArr(existing?.externalLinks, cloudDraft?.externalLinks);
+            mergedCloud.visualAssets = pickLongerArr(existing?.visualAssets, cloudDraft?.visualAssets);
+            mergedCloud.currentStep = Math.max(Number(existing?.currentStep) || 1, Number(cloudDraft?.currentStep) || 1);
             existing = mergedCloud;
           }
         } catch (e) {
@@ -638,6 +670,10 @@ window.ProjectWizard = {
     }
 
     this.draft = this.createDefaultDraft(existing);
+    // Si es un borrador nuevo creado con ID determinístico por (usuario + código), conservar ese ID para sincronización multi-navegador
+    if (!existing && projectId && String(projectId).startsWith('govdata_code_')) {
+      this.draft.id = String(projectId);
+    }
     if (activeJoinCode) {
       this.draft.joinCode = activeJoinCode;
       this.draft.accessCode = activeJoinCode;
@@ -645,8 +681,33 @@ window.ProjectWizard = {
     this.activeDraftId = this.draft.id;
     this.currentStep = startStep || this.draft.currentStep || 1;
 
+    // Registrar guardado de emergencia al cambiar de pestaña o cerrar el navegador (una sola vez)
+    if (!this._unloadSaveBound) {
+      this._unloadSaveBound = true;
+      const flushDraftNow = () => {
+        try {
+          if (this.draft && window.ProjectsView && window.ProjectsView.viewMode === 'wizard') {
+            this.collectCurrentStepInputs();
+            this.saveDraftToStorage(true, true);
+          }
+        } catch (e) {}
+      };
+      document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'hidden') flushDraftNow();
+      });
+      window.addEventListener('beforeunload', flushDraftNow);
+    }
+
     // Toast de restauración: mostrar si se recuperó un borrador existente con progreso
-    if (existing && (this.currentStep > 1) && allowCodeAccess) {
+    const hasRestoredContent = Boolean(
+      existing && (
+        this.currentStep > 1 ||
+        (this.draft.title && this.draft.title.trim()) ||
+        (this.draft.shortDescription && this.draft.shortDescription.trim()) ||
+        (Array.isArray(this.draft.slides) && this.draft.slides.length > 0)
+      )
+    );
+    if (hasRestoredContent && allowCodeAccess) {
       setTimeout(() => {
         const toastMsg = `✅ ¡Tu progreso ha sido restaurado! Continúas desde el Paso ${this.currentStep}.`;
         if (window.showToast && typeof window.showToast === 'function') {
@@ -6781,6 +6842,10 @@ collectCurrentStepInputs() {
       })(),
       author: d.authorsConfig?.authorsList || d.author || 'Docente',
       authorId: d.authorId || '',
+      ownerId: d.ownerId || d.authorId || '',
+      ownerUsername: d.ownerUsername || (window.appState?.currentUser?.username) || '',
+      joinCode: d.joinCode || d.accessCode || '',
+      accessCode: d.accessCode || d.joinCode || '',
       authorEmail: d.authorsConfig?.authorsEmails || d.authorEmail || '',
       authorAvatar: d.authorAvatar || '👨‍🏫',
       authorRole: d.authorRole || 'teacher',
