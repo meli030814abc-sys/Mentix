@@ -29,7 +29,7 @@
     "isPublic": false,
     "startDate": "2026-11-16",
     "endDate": "",
-    "currentStep": 3,
+    "currentStep": 2,
     "completedSteps": [
       1,
       2,
@@ -210,7 +210,7 @@
         2,
         3
       ],
-      "currentStep": 3,
+      "currentStep": 2,
       "author": "Melisa",
       "authorId": "user_1792184134006",
       "ownerId": "user_1792184134006",
@@ -237,7 +237,7 @@
         "collaborators": ""
       },
       "createdAt": "2026-11-16T17:08:07.966Z",
-      "updatedAt": "2026-11-20T19:00:40.793Z",
+      "updatedAt": "2026-11-20T19:00:43.008Z",
       "projectRoadmap": [
         {
           "title": "Planeación",
@@ -285,7 +285,9 @@
     "authorAvatar": "🐯",
     "authorRole": "admin",
     "createdAt": "2026-11-16T17:08:07.966Z",
-    "updatedAt": "2026-11-20T19:00:40.215Z"
+    "updatedAt": "2026-11-20T19:00:42.291Z",
+    "image": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
+    "rejectionReason": ""
   },
   {
     "id": "proj_1794847825311",
