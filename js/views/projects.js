@@ -4069,7 +4069,7 @@ window.ProjectsView = {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   },
 
-  openJoinProjectModal(prefillCode = '') {
+  openJoinProjectModal(prefillCode = '', pushHistory = true) {
     if (this.isUserGuest()) {
       this.guestJoinBlocked();
       return;
@@ -4079,6 +4079,9 @@ window.ProjectsView = {
     if (existing) existing.remove();
     this.viewMode = 'join';
     this.prefillJoinCode = prefillCode;
+    if (pushHistory && window.appRouter && typeof window.appRouter.pushSubState === 'function') {
+      window.appRouter.pushSubState({ view: 'projects', subMode: 'join' }, '#projects?mode=join');
+    }
     this.render();
     // Pre-cargar silenciosamente códigos y progreso de la nube mientras el usuario escribe el código
     this.preloadCloudForJoinCode();
@@ -4092,7 +4095,7 @@ window.ProjectsView = {
     }, 80);
   },
 
-  closeJoinProjectModal() {
+  closeJoinProjectModal(pushHistory = true) {
     this.viewMode = 'list';
     const existing = document.getElementById('project-join-modal');
     if (existing) existing.remove();
@@ -4104,6 +4107,9 @@ window.ProjectsView = {
       container.style.padding = '';
       container.style.margin = '';
       container.style.background = '';
+    }
+    if (pushHistory && window.appRouter && typeof window.appRouter.pushSubState === 'function') {
+      window.appRouter.pushSubState({ view: 'projects', subMode: 'list' }, '#projects');
     }
     if (window.soundEngine && window.soundEngine.playClick) window.soundEngine.playClick();
     this.render();
@@ -4527,10 +4533,16 @@ window.ProjectsView = {
   },
 
   // Al hacer clic en un proyecto se muestra su landing page
-  openProjectLanding(projectId) {
+  openProjectLanding(projectId, pushHistory = true) {
     this.selectedProjectId = projectId;
     this.isWizardPreview = false;
     this.viewMode = 'landing';
+    if (pushHistory && window.appRouter && typeof window.appRouter.pushSubState === 'function') {
+      window.appRouter.pushSubState(
+        { view: 'projects', subMode: 'landing', projectId: projectId },
+        '#projects?landing=' + encodeURIComponent(projectId)
+      );
+    }
     const proj = this.getMergedProjectRecord(projectId) || (window.appState?.challenges || []).find(x => x && (x.id === projectId || x.slug === projectId));
     if (proj) {
       const resolvedBanner = (typeof this.getProjectHeroBanner === 'function') ? this.getProjectHeroBanner(projectId, proj) : null;

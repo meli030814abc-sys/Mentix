@@ -77,7 +77,7 @@ class AppRouter {
     }
   }
 
-  restoreInitialRoute() {
+  restoreInitialRoute(fromPopState = false) {
     const hash = window.location.hash;
     if (hash && hash.length > 1) {
       const cleanHash = hash.replace(/^#/, '');
@@ -91,7 +91,7 @@ class AppRouter {
       }
       if (viewPart) {
         if (viewPart === 'join' || viewPart === 'lobby-join') {
-          this.navigate('lobby-join', { pin: params.pin });
+          this.navigate('lobby-join', { pin: params.pin }, false);
           return true;
         }
         if (viewPart === 'experience') {
@@ -101,9 +101,33 @@ class AppRouter {
             return true;
           }
         }
+        if (viewPart === 'projects') {
+          this.navigate('projects', params, false);
+          if (window.ProjectsView) {
+            if (params.landing) {
+              window.ProjectsView.openProjectLanding(params.landing, false);
+            } else if (params.mode === 'join') {
+              window.ProjectsView.openJoinProjectModal('', false);
+            } else if (params.wizard && window.ProjectWizard) {
+              window.ProjectWizard.openWizard(params.wizard, Number(params.step) || null, true, false);
+            } else {
+              window.ProjectsView.viewMode = 'list';
+              const navEl = document.getElementById('main-navbar');
+              if (navEl) navEl.style.display = 'none';
+              document.body.classList.add('projects-pure-white-theme');
+              window.ProjectsView.render();
+            }
+          }
+          return true;
+        }
         this.navigate(viewPart, params, false);
         return true;
       }
+    }
+
+    if (fromPopState) {
+      this.navigate('home', {}, false);
+      return true;
     }
 
     // Si no hay hash, restaurar la última vista desde sessionStorage
@@ -121,17 +145,77 @@ class AppRouter {
     return false;
   }
 
-  setupGlobalEvents() {
-    window.addEventListener('popstate', () => {
-      if (this.historyStack.length > 1) {
-        this.historyStack.pop();
-        const prev = this.historyStack[this.historyStack.length - 1];
-        if (prev) this.navigate(prev, {}, false);
+  pushSubState(stateObj, hash, replace = false) {
+    if (this._isPopStateNav) return;
+    try {
+      const payload = { mentix: true, ...(stateObj || {}) };
+      const targetHash = hash || window.location.hash || ('#' + (payload.view || this.currentView || 'home'));
+      if (replace || window.location.hash === targetHash) {
+        history.replaceState(payload, '', targetHash);
+      } else {
+        history.pushState(payload, '', targetHash);
       }
+      sessionStorage.setItem('mentix_last_route', JSON.stringify({
+        view: payload.view || this.currentView,
+        params: payload.params || {},
+        subState: payload
+      }));
+    } catch (e) {}
+  }
+
+  applyHistoryState(state) {
+    this._isPopStateNav = true;
+    try {
+      if (state && state.mentix) {
+        if (state.view === 'projects') {
+          if (this.currentView !== 'projects') {
+            this.navigate('projects', {}, false);
+          }
+          if (window.ProjectsView) {
+            if (state.subMode === 'landing' && state.projectId) {
+              window.ProjectsView.openProjectLanding(state.projectId, false);
+            } else if (state.subMode === 'join') {
+              window.ProjectsView.openJoinProjectModal('', false);
+            } else if (state.subMode === 'wizard' && window.ProjectWizard) {
+              const targetStep = Number(state.step) || 1;
+              if (window.ProjectsView.viewMode === 'wizard' && window.ProjectWizard.draft && (!state.projectId || String(window.ProjectWizard.draft.id) === String(state.projectId))) {
+                window.ProjectWizard.goToStep(targetStep, false);
+              } else {
+                window.ProjectWizard.openWizard(state.projectId || null, targetStep, true, false);
+              }
+            } else {
+              window.ProjectsView.viewMode = 'list';
+              const modalEl = document.getElementById('project-join-modal');
+              if (modalEl) modalEl.remove();
+              document.body.classList.add('projects-pure-white-theme');
+              window.ProjectsView.render();
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+          }
+          return;
+        }
+        if (state.view) {
+          this.navigate(state.view, state.params || {}, false);
+          return;
+        }
+      }
+      // Si no hay state explícito, reconstruir exactamente desde el hash actual del navegador
+      this.restoreInitialRoute(true);
+    } finally {
+      setTimeout(() => { this._isPopStateNav = false; }, 50);
+    }
+  }
+
+  setupGlobalEvents() {
+    window.addEventListener('popstate', (event) => {
+      this._lastPopStateAt = Date.now();
+      this.applyHistoryState(event.state);
     });
 
     window.addEventListener('hashchange', () => {
-      this.restoreInitialRoute();
+      // Evitar doble disparo cuando el cambio vino del botón atrás/adelante (popstate)
+      if (this._isPopStateNav || (Date.now() - (this._lastPopStateAt || 0)) < 150) return;
+      this.restoreInitialRoute(true);
     });
 
     // Sincronización global automática: cuando el usuario regresa a la pestaña o periódicamente cada 30 segundos
@@ -203,14 +287,31 @@ class AppRouter {
       sessionStorage.setItem('mentix_last_route', JSON.stringify({ view: viewName, params: params || {} }));
     } catch (e) {}
 
-    // Sincronizar hash en la URL para F5 y favoritos
+    // Sincronizar historial real del navegador (pushState) para que la flecha atrás/adelante de Chrome
+    // retroceda paso a paso dentro de Mentix en lugar de devolver al inicio o sacar de la página
     try {
+      const safeParams = {};
+      if (params && typeof params === 'object') {
+        ['id', 'edit', 'pin', 'tab', 'mode', 'landing', 'wizard', 'step', 'editId'].forEach(k => {
+          if (params[k] !== undefined && params[k] !== null && typeof params[k] !== 'object') {
+            safeParams[k] = params[k];
+          }
+        });
+      }
       let hash = '#' + viewName;
-      if (params && params.id) hash += '?id=' + encodeURIComponent(params.id);
-      if (params && params.edit) hash += (hash.includes('?') ? '&' : '?') + 'edit=true';
-      if (params && params.pin) hash += (hash.includes('?') ? '&' : '?') + 'pin=' + encodeURIComponent(params.pin);
-      if (window.location.hash !== hash) {
-        history.replaceState(null, '', hash);
+      if (safeParams.id) hash += '?id=' + encodeURIComponent(safeParams.id);
+      if (safeParams.edit) hash += (hash.includes('?') ? '&' : '?') + 'edit=true';
+      if (safeParams.pin) hash += (hash.includes('?') ? '&' : '?') + 'pin=' + encodeURIComponent(safeParams.pin);
+      const statePayload = {
+        mentix: true,
+        view: viewName,
+        subMode: viewName === 'projects' ? (window.ProjectsView?.viewMode || 'list') : undefined,
+        params: safeParams
+      };
+      if (pushToHistory && !this._isPopStateNav && window.location.hash !== hash) {
+        history.pushState(statePayload, '', hash);
+      } else {
+        history.replaceState(statePayload, '', hash);
       }
     } catch (e) {}
 

@@ -575,7 +575,7 @@ window.ProjectWizard = {
     }
   },
 
-  async openWizard(projectId = null, startStep = null, allowCodeAccess = false) {
+  async openWizard(projectId = null, startStep = null, allowCodeAccess = false, pushHistory = true) {
     const u = window.appState?.currentUser;
     const isGuest = !u || u.isGuest || u.username === 'invitado';
     if (isGuest) {
@@ -736,6 +736,12 @@ window.ProjectWizard = {
     if (window.ProjectsView) {
       window.ProjectsView.viewMode = 'wizard';
       window.ProjectsView.selectedProjectId = this.draft.id;
+      if (pushHistory && window.appRouter && typeof window.appRouter.pushSubState === 'function') {
+        window.appRouter.pushSubState(
+          { view: 'projects', subMode: 'wizard', projectId: this.draft.id, step: this.currentStep },
+          '#projects?wizard=' + encodeURIComponent(this.draft.id) + '&step=' + this.currentStep
+        );
+      }
       window.ProjectsView.render();
     }
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -764,11 +770,11 @@ window.ProjectWizard = {
     if (window.ProjectsView) window.ProjectsView.render();
   },
 
-  goToStep(targetStep) {
+  goToStep(targetStep, pushHistory = true) {
     this.collectCurrentStepInputs();
     const num = Math.max(1, Math.min(this.totalSteps, Number(targetStep) || 1));
-    // Si avanza (va a un paso mayor), validar el paso actual obligatoriamente
-    if (num > this.currentStep) {
+    // Si avanza (va a un paso mayor) por acción del usuario, validar el paso actual obligatoriamente
+    if (pushHistory && num > this.currentStep) {
       const errors = this.validateStepStrict(this.currentStep);
       if (errors.length > 0) {
         this.showStepValidationErrors(errors);
@@ -781,6 +787,12 @@ window.ProjectWizard = {
     this.currentStep = num;
     this.pendingAiProposal = null;
     this.saveDraftToStorage(true);
+    if (pushHistory && window.appRouter && typeof window.appRouter.pushSubState === 'function' && this.draft) {
+      window.appRouter.pushSubState(
+        { view: 'projects', subMode: 'wizard', projectId: this.draft.id, step: this.currentStep },
+        '#projects?wizard=' + encodeURIComponent(this.draft.id) + '&step=' + this.currentStep
+      );
+    }
     if (window.ProjectsView) window.ProjectsView.render();
     window.scrollTo({ top: 0, behavior: 'smooth' });
   },
@@ -803,6 +815,12 @@ window.ProjectWizard = {
       this.currentStep += 1;
       this.pendingAiProposal = null;
       this.saveDraftToStorage(true);
+      if (window.appRouter && typeof window.appRouter.pushSubState === 'function' && this.draft) {
+        window.appRouter.pushSubState(
+          { view: 'projects', subMode: 'wizard', projectId: this.draft.id, step: this.currentStep },
+          '#projects?wizard=' + encodeURIComponent(this.draft.id) + '&step=' + this.currentStep
+        );
+      }
       if (window.ProjectsView) window.ProjectsView.render();
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
@@ -814,6 +832,12 @@ window.ProjectWizard = {
       this.currentStep -= 1;
       this.pendingAiProposal = null;
       this.saveDraftToStorage(true);
+      if (window.appRouter && typeof window.appRouter.pushSubState === 'function' && this.draft) {
+        window.appRouter.pushSubState(
+          { view: 'projects', subMode: 'wizard', projectId: this.draft.id, step: this.currentStep },
+          '#projects?wizard=' + encodeURIComponent(this.draft.id) + '&step=' + this.currentStep
+        );
+      }
       if (window.ProjectsView) window.ProjectsView.render();
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
