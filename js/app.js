@@ -69,6 +69,24 @@ class AppRouter {
     }
     this.booting = false;
 
+    // Si arrancó directamente en una sub-vista (ej. #projects), sembrar #home debajo en el historial de Chrome
+    // para que el 1er "Atrás" lleve a la página principal de Mentix y el 2do "Atrás" vuelva a Google
+    try {
+      if (this.currentView && this.currentView !== 'home') {
+        const currentHash = window.location.hash || ('#' + this.currentView);
+        const curState = (history.state && history.state.mentix)
+          ? history.state
+          : { mentix: true, view: this.currentView, subMode: this.currentView === 'projects' ? (window.ProjectsView?.viewMode || 'list') : undefined };
+        if (!curState._seededOverHome) {
+          history.replaceState({ mentix: true, view: 'home' }, '', '#home');
+          if (this.currentView === 'projects' && window.ProjectsView && window.ProjectsView.viewMode && window.ProjectsView.viewMode !== 'list') {
+            history.pushState({ mentix: true, view: 'projects', subMode: 'list', _seededOverHome: true }, '', '#projects');
+          }
+          history.pushState({ ...curState, _seededOverHome: true }, '', currentHash);
+        }
+      }
+    } catch (e) {}
+
     // Registro obligatorio antes de mostrar la página
     if (oauthReturn) {
       this.checkOAuthSession().then(ok => { if (!ok) this.requireAuth(); });
