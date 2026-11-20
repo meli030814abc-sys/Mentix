@@ -29,11 +29,12 @@
     "isPublic": false,
     "startDate": "2026-11-20",
     "endDate": "",
-    "currentStep": 4,
+    "currentStep": 5,
     "completedSteps": [
       1,
       2,
-      3
+      3,
+      4
     ],
     "progress": 55,
     "calculatedProgress": 55,
@@ -69,8 +70,7 @@
       "title": "",
       "description": "",
       "isPublic": true,
-      "verified": false,
-      "thumbnailUrl": ""
+      "verified": false
     },
     "resources": [],
     "visualAssets": [],
@@ -207,9 +207,10 @@
       "completedSteps": [
         1,
         2,
-        3
+        3,
+        4
       ],
-      "currentStep": 4,
+      "currentStep": 5,
       "author": "Melisa",
       "authorId": "user_1792184134006",
       "ownerId": "user_1792184134006",
@@ -236,7 +237,7 @@
         "collaborators": ""
       },
       "createdAt": "2026-11-20T23:43:24.796Z",
-      "updatedAt": "2026-11-20T23:44:24.799Z",
+      "updatedAt": "2026-11-20T23:44:26.608Z",
       "progress": 55,
       "calculatedProgress": 55,
       "projectRoadmap": [
@@ -284,7 +285,7 @@
     "authorAvatar": "🐯",
     "authorRole": "admin",
     "createdAt": "2026-11-20T23:43:24.796Z",
-    "updatedAt": "2026-11-20T23:44:23.920Z",
+    "updatedAt": "2026-11-20T23:44:25.786Z",
     "image": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
     "rejectionReason": ""
   },
