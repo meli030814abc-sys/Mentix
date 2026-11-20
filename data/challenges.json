@@ -102,8 +102,8 @@
       {
         "title": "Investigación",
         "description": "Recopilación de datos e información relevante.",
-        "status": "completed",
-        "progress": 100,
+        "status": "active",
+        "progress": 35,
         "emoji": "🧩",
         "icon": "clipboard"
       },
@@ -235,7 +235,7 @@
         "collaborators": ""
       },
       "createdAt": "2026-11-20T23:43:24.796Z",
-      "updatedAt": "2026-11-20T23:43:58.112Z",
+      "updatedAt": "2026-11-20T23:44:08.935Z",
       "progress": 55,
       "calculatedProgress": 55,
       "projectRoadmap": [
@@ -250,8 +250,8 @@
         {
           "title": "Investigación",
           "description": "Recopilación de datos e información relevante.",
-          "status": "completed",
-          "progress": 100,
+          "status": "active",
+          "progress": 35,
           "emoji": "🧩",
           "icon": "clipboard"
         },
@@ -283,7 +283,7 @@
     "authorAvatar": "🐯",
     "authorRole": "admin",
     "createdAt": "2026-11-20T23:43:24.796Z",
-    "updatedAt": "2026-11-20T23:43:57.318Z",
+    "updatedAt": "2026-11-20T23:44:08.107Z",
     "image": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
     "rejectionReason": ""
   },
