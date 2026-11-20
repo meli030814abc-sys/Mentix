@@ -1,29 +1,5 @@
 [
   {
-    "completedSteps": [
-      1,
-      2,
-      3
-    ],
-    "isGovDataProject": true,
-    "isPublic": false,
-    "approvalStatus": "pending",
-    "shortDescription": "Avance guardado en Chrome PC 1",
-    "ownerId": "user_qa_95",
-    "authorId": "user_qa_95",
-    "id": "govdata_code_testuserqa_codigoprueba95",
-    "accessCode": "CODIGOPRUEBA95",
-    "ownerUsername": "testuserqa",
-    "projectType": "presentation",
-    "joinCode": "CODIGOPRUEBA95",
-    "currentStep": 4,
-    "updatedAt": "2026-11-20T18:51:57.733Z",
-    "author": "Usuario QA",
-    "publicationStatus": "draft",
-    "title": "Proyecto QA Sync 95",
-    "createdAt": "2026-11-20T18:51:57.733Z"
-  },
-  {
     "id": "proj_1794847825311",
     "slug": "nuevo-proyecto-govdata",
     "title": "Nuevo Proyecto GovData",
