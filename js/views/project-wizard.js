@@ -645,10 +645,14 @@ window.ProjectWizard = {
         existing = base;
       }
 
-      // Buscar datos reales guardados en Supabase
-      if (window.supabaseService && window.supabaseService.client) {
+      // Buscar datos reales guardados en Supabase (con timeout estricto de 1.2s para apertura rápida;
+      // si ya venimos de submitJoinProjectCode con allowCodeAccess, ya se sincronizó arriba)
+      if (!allowCodeAccess && window.supabaseService && window.supabaseService.client) {
         try {
-          const cloudDraft = await window.supabaseService.loadWizardDraft(projectId);
+          const cloudDraft = await Promise.race([
+            window.supabaseService.loadWizardDraft(projectId).catch(() => null),
+            new Promise(resolve => setTimeout(() => resolve(null), 1200))
+          ]);
           if (cloudDraft) {
             const existingTs = Date.parse(existing?.updatedAt || '') || 0;
             const cloudTs = Date.parse(cloudDraft?.updatedAt || '') || 0;

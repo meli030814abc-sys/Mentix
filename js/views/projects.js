@@ -4187,79 +4187,98 @@ window.ProjectsView = {
       }
     }
 
-    // 3. Si aún no se encuentra, consultar la NUBE (/api/challenges y Supabase)
-    // para verificar si el profesor o admin lo creó desde otro computador o red
+    // Helper de timeout estricto para que ninguna llamada de red o Supabase trabe el ingreso
+    const withTimeout = (promise, ms, fallback = null) => Promise.race([
+      Promise.resolve(promise).catch(() => fallback),
+      new Promise(resolve => setTimeout(() => resolve(fallback), ms))
+    ]);
+
+    const fetchJsonFast = async (url, timeoutMs = 2500) => {
+      const controller = (typeof AbortController !== 'undefined') ? new AbortController() : null;
+      const tid = controller ? setTimeout(() => controller.abort(), timeoutMs) : null;
+      try {
+        const res = await fetch(url, { cache: 'no-store', signal: controller ? controller.signal : undefined });
+        if (tid) clearTimeout(tid);
+        if (res && res.ok) return await res.json();
+      } catch (e) {
+        if (tid) clearTimeout(tid);
+      }
+      return null;
+    };
+
+    const apiBase = (window.appRouter && typeof window.appRouter.getApiBase === 'function') ? window.appRouter.getApiBase() : '';
+    let prefetchedCloudChallenges = null;
+
+    // 3. Si aún no se encuentra localmente, consultar la NUBE EN PARALELO (/api/challenges y Supabase)
+    //    con timeout estricto para verificar códigos creados desde otro computador o red sin demoras
     if (!matchedCustom) {
       if (errEl) {
-        errEl.textContent = '🔄 Verificando código con la red del profesor...';
+        errEl.textContent = '🔄 Verificando código...';
         errEl.style.color = '#38bdf8';
         errEl.style.display = 'block';
       }
 
-      // A. Consultar /api/challenges?customCodes=1
-      try {
-        const apiBase = (window.appRouter && typeof window.appRouter.getApiBase === 'function') ? window.appRouter.getApiBase() : '';
-        const res = await fetch(`${apiBase}/api/challenges?customCodes=1&t=${Date.now()}`);
-        if (res.ok) {
-          const cloudCodes = await res.json();
-          const list = Array.isArray(cloudCodes) ? cloudCodes : (cloudCodes?.customProjectCodes || []);
-          if (Array.isArray(list) && list.length > 0) {
-            this.persistCustomProjectCodes(list);
-            matchedCustom = findInCodes(list);
-          }
-        }
-      } catch (errCloud) {}
+      const [cloudCodesRes, allChRes, supaCodesRes] = await Promise.all([
+        fetchJsonFast(`${apiBase}/api/challenges?customCodes=1&t=${Date.now()}`, 2500),
+        fetchJsonFast(`${apiBase}/api/challenges?t=${Date.now()}`, 2500),
+        (window.supabaseService && window.supabaseService.client)
+          ? withTimeout(
+              window.supabaseService.client
+                .from('challenges')
+                .select('govdata_payload')
+                .eq('id', 'custom_project_codes_cloud_registry')
+                .single(),
+              2000,
+              null
+            )
+          : Promise.resolve(null)
+      ]);
 
-      // B. Consultar archivo de retos global si aún no está
-      if (!matchedCustom) {
-        try {
-          const apiBase = (window.appRouter && typeof window.appRouter.getApiBase === 'function') ? window.appRouter.getApiBase() : '';
-          const resAll = await fetch(`${apiBase}/api/challenges?t=${Date.now()}`);
-          if (resAll.ok) {
-            const allCh = await resAll.json();
-            if (Array.isArray(allCh) && allCh.length > 0) {
-              const cloudCustomCodes = allCh[0]?.customProjectCodes || [];
-              if (Array.isArray(cloudCustomCodes) && cloudCustomCodes.length > 0) {
-                this.persistCustomProjectCodes(cloudCustomCodes);
-                matchedCustom = findInCodes(cloudCustomCodes);
-              }
-              if (!matchedCustom) {
-                const foundCh = allCh.find(c => 
-                  c && (
-                    normalize(c.pin) === cleanNorm ||
-                    normalize(c.code) === cleanNorm ||
-                    normalize(c.joinCode) === cleanNorm ||
-                    normalize(c.accessCode) === cleanNorm ||
-                    normalize(c.id) === cleanNorm
-                  )
-                );
-                if (foundCh) {
-                  matchedCustom = {
-                    code: clean,
-                    projectId: foundCh.id,
-                    author: foundCh.author || 'Profesor',
-                    authorRole: foundCh.authorRole || 'teacher'
-                  };
-                }
-              }
-            }
-          }
-        } catch (errCh) {}
+      // A. Revisar customCodes de /api/challenges?customCodes=1
+      if (cloudCodesRes) {
+        const list = Array.isArray(cloudCodesRes) ? cloudCodesRes : (cloudCodesRes?.customProjectCodes || []);
+        if (Array.isArray(list) && list.length > 0) {
+          this.persistCustomProjectCodes(list);
+          matchedCustom = findInCodes(list);
+        }
       }
 
-      // C. Consultar Supabase si está disponible
-      if (!matchedCustom && window.supabaseService && window.supabaseService.client) {
-        try {
-          const { data } = await window.supabaseService.client
-            .from('challenges')
-            .select('govdata_payload')
-            .eq('id', 'custom_project_codes_cloud_registry')
-            .single();
-          if (data && data.govdata_payload && Array.isArray(data.govdata_payload.codes)) {
-            this.persistCustomProjectCodes(data.govdata_payload.codes);
-            matchedCustom = findInCodes(data.govdata_payload.codes);
+      // B. Revisar lista de retos global (y guardarla en memoria para reutilizarla al restaurar progreso)
+      const allCh = Array.isArray(allChRes?.challenges) ? allChRes.challenges : (Array.isArray(allChRes) ? allChRes : null);
+      if (Array.isArray(allCh)) {
+        prefetchedCloudChallenges = allCh;
+        if (!matchedCustom && allCh.length > 0) {
+          const cloudCustomCodes = allCh[0]?.customProjectCodes || [];
+          if (Array.isArray(cloudCustomCodes) && cloudCustomCodes.length > 0) {
+            this.persistCustomProjectCodes(cloudCustomCodes);
+            matchedCustom = findInCodes(cloudCustomCodes);
           }
-        } catch (errSupa) {}
+          if (!matchedCustom) {
+            const foundCh = allCh.find(c =>
+              c && (
+                normalize(c.pin) === cleanNorm ||
+                normalize(c.code) === cleanNorm ||
+                normalize(c.joinCode) === cleanNorm ||
+                normalize(c.accessCode) === cleanNorm ||
+                normalize(c.id) === cleanNorm
+              )
+            );
+            if (foundCh) {
+              matchedCustom = {
+                code: clean,
+                projectId: foundCh.id,
+                author: foundCh.author || 'Profesor',
+                authorRole: foundCh.authorRole || 'teacher'
+              };
+            }
+          }
+        }
+      }
+
+      // C. Revisar respuesta de Supabase si aún no hubo coincidencia
+      if (!matchedCustom && supaCodesRes && supaCodesRes.data && supaCodesRes.data.govdata_payload && Array.isArray(supaCodesRes.data.govdata_payload.codes)) {
+        this.persistCustomProjectCodes(supaCodesRes.data.govdata_payload.codes);
+        matchedCustom = findInCodes(supaCodesRes.data.govdata_payload.codes);
       }
     }
 
@@ -4352,45 +4371,42 @@ window.ProjectsView = {
     const stateMatch = challenges.find(c => c && ((deterministicId && String(c.id) === deterministicId) || (recordMatchesCode(c) && recordMatchesUser(c))));
     if (stateMatch) candidates.push(stateMatch);
 
-    // 7. Sincronizar SIEMPRE con la nube (/api/challenges y Supabase) para recuperar progreso hecho en otro navegador o computador
+    // 7. Sincronizar EN PARALELO y con timeout corto con la nube (/api/challenges y Supabase)
+    //    para recuperar progreso hecho en otro navegador o computador sin demoras
     if (errEl) {
-      errEl.textContent = '☁️ Buscando tu progreso guardado en la nube...';
+      errEl.textContent = '⚡ Abriendo proyecto...';
       errEl.style.color = '#38bdf8';
       errEl.style.display = 'block';
     }
 
-    // 7a. Consultar /api/challenges
-    try {
-      const apiBase = (window.appRouter && typeof window.appRouter.getApiBase === 'function') ? window.appRouter.getApiBase() : '';
-      const controller = (typeof AbortController !== 'undefined') ? new AbortController() : null;
-      const timeoutId = controller ? setTimeout(() => controller.abort(), 4000) : null;
-      const resCloud = await fetch(`${apiBase}/api/challenges?t=${Date.now()}`, {
-        cache: 'no-store',
-        signal: controller ? controller.signal : undefined
-      });
-      if (timeoutId) clearTimeout(timeoutId);
-      if (resCloud && resCloud.ok) {
-        const cloudData = await resCloud.json();
-        const cloudList = Array.isArray(cloudData?.challenges) ? cloudData.challenges : (Array.isArray(cloudData) ? cloudData : []);
-        const cloudHit = cloudList.find(c => c && (
-          (deterministicId && String(c.id) === deterministicId) ||
-          (matchedCustom.projectId && String(c.id).trim() === String(matchedCustom.projectId).trim()) ||
-          (recordMatchesCode(c) && recordMatchesUser(c))
-        ));
-        if (cloudHit) {
-          candidates.push(cloudHit);
-        }
-      }
-    } catch (errCloudSync) {}
+    const cloudTimeoutMs = candidates.length > 0 ? 1200 : 2000;
+    const [cloudDataRes, supaHit] = await Promise.all([
+      prefetchedCloudChallenges
+        ? Promise.resolve(prefetchedCloudChallenges)
+        : fetchJsonFast(`${apiBase}/api/challenges?t=${Date.now()}`, cloudTimeoutMs),
+      (window.supabaseService && typeof window.supabaseService.loadWizardDraftByCodeAndUser === 'function')
+        ? withTimeout(
+            window.supabaseService.loadWizardDraftByCodeAndUser(cleanNorm, userId, username, deterministicId),
+            1500,
+            null
+          )
+        : Promise.resolve(null)
+    ]);
 
-    // 7b. Consultar Supabase (govdata_wizard_drafts y challenges)
-    if (window.supabaseService && typeof window.supabaseService.loadWizardDraftByCodeAndUser === 'function') {
-      try {
-        const supaHit = await window.supabaseService.loadWizardDraftByCodeAndUser(cleanNorm, userId, username, deterministicId);
-        if (supaHit) {
-          candidates.push(supaHit);
-        }
-      } catch (errSupaSync) {}
+    if (cloudDataRes) {
+      const cloudList = Array.isArray(cloudDataRes?.challenges) ? cloudDataRes.challenges : (Array.isArray(cloudDataRes) ? cloudDataRes : []);
+      const cloudHit = cloudList.find(c => c && (
+        (deterministicId && String(c.id) === deterministicId) ||
+        (matchedCustom.projectId && String(c.id).trim() === String(matchedCustom.projectId).trim()) ||
+        (recordMatchesCode(c) && recordMatchesUser(c))
+      ));
+      if (cloudHit) {
+        candidates.push(cloudHit);
+      }
+    }
+
+    if (supaHit) {
+      candidates.push(supaHit);
     }
 
     // 7c. Elegir el candidato con mayor progreso / actualización más reciente y cachearlo en local + appState
