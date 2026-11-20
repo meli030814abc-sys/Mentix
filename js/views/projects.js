@@ -4297,20 +4297,35 @@ window.ProjectsView = {
       if (existingDraft) targetProjectId = existingDraft.id;
     }
 
-    // 7. Cerrar vista de unirse y abrir DIRECTAMENTE el Asistente (Project Wizard)
+    // 7b. Si todavía no encontramos un borrador, buscar en el mapa código→draftId persistente
+    if (!targetProjectId) {
+      try {
+        const codeMap = JSON.parse(localStorage.getItem('mentix_code_draft_map') || '{}');
+        const userId = window.appState?.currentUser?.id || window.appState?.currentUser?.username || '';
+        const mapKey = userId ? `${userId}_${cleanNorm}` : cleanNorm;
+        if (codeMap[mapKey]) {
+          const allDrafts = window.ProjectWizard ? window.ProjectWizard.getAllSavedDrafts() : [];
+          const draftFromMap = allDrafts.find(d => d && d.id === codeMap[mapKey]);
+          if (draftFromMap) targetProjectId = draftFromMap.id;
+        }
+      } catch (e) { /* silent */ }
+    }
+
+    // 8. Cerrar vista de unirse y abrir DIRECTAMENTE el Asistente (Project Wizard)
+    // Pasamos null como startStep para que el wizard restaure el paso guardado en el borrador
     const modalEl = document.getElementById('project-join-modal');
     if (modalEl) modalEl.remove();
 
     this.viewMode = 'wizard';
     if (window.ProjectWizard && typeof window.ProjectWizard.openWizard === 'function') {
-      window.ProjectWizard.openWizard(targetProjectId, 1, true);
+      window.ProjectWizard.openWizard(targetProjectId, null, true);
     } else {
       if (window.appRouter && typeof window.appRouter.navigate === 'function') {
         window.appRouter.navigate('projects');
       }
       setTimeout(() => {
         if (window.ProjectWizard && typeof window.ProjectWizard.openWizard === 'function') {
-          window.ProjectWizard.openWizard(targetProjectId, 1, true);
+          window.ProjectWizard.openWizard(targetProjectId, null, true);
         }
       }, 100);
     }

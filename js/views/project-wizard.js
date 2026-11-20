@@ -469,6 +469,22 @@ window.ProjectWizard = {
       console.warn('Aviso al guardar borrador local:', e);
     }
 
+    // Registrar mapa código→draftId para restauración entre sesiones
+    try {
+      const draftCode = this.draft.joinCode || this.draft.accessCode || this.draft.code || '';
+      if (draftCode && this.draft.id) {
+        const normalizeCode = s => String(s || '').trim().toLowerCase().replace(/[\s\-_]/g, '');
+        const codeKey = normalizeCode(draftCode);
+        if (codeKey) {
+          const codeMap = JSON.parse(localStorage.getItem('mentix_code_draft_map') || '{}');
+          const userId = window.appState?.currentUser?.id || window.appState?.currentUser?.username || '';
+          const mapKey = userId ? `${userId}_${codeKey}` : codeKey;
+          codeMap[mapKey] = this.draft.id;
+          localStorage.setItem('mentix_code_draft_map', JSON.stringify(codeMap));
+        }
+      }
+    } catch (e) { /* silent */ }
+
     // Sincronizar inmediatamente con window.appState.challenges y el almacenamiento global para que aparezca en Admin y en Proyectos
     let syncedRecord = null;
     try {
@@ -628,6 +644,26 @@ window.ProjectWizard = {
     }
     this.activeDraftId = this.draft.id;
     this.currentStep = startStep || this.draft.currentStep || 1;
+
+    // Toast de restauración: mostrar si se recuperó un borrador existente con progreso
+    if (existing && (this.currentStep > 1) && allowCodeAccess) {
+      setTimeout(() => {
+        const toastMsg = `✅ ¡Tu progreso ha sido restaurado! Continúas desde el Paso ${this.currentStep}.`;
+        if (window.showToast && typeof window.showToast === 'function') {
+          window.showToast(toastMsg, 'success', 4000);
+        } else if (window.ProjectsView && typeof window.ProjectsView.showToast === 'function') {
+          window.ProjectsView.showToast(toastMsg, 'success');
+        } else {
+          // Fallback: notificación visual simple
+          const toastEl = document.createElement('div');
+          toastEl.style.cssText = 'position:fixed;top:20px;right:20px;z-index:99999;background:#22c55e;color:#fff;padding:14px 20px;border-radius:12px;font-size:15px;font-weight:600;box-shadow:0 4px 20px rgba(0,0,0,0.2);transition:opacity 0.5s';
+          toastEl.textContent = toastMsg;
+          document.body.appendChild(toastEl);
+          setTimeout(() => { toastEl.style.opacity = '0'; setTimeout(() => toastEl.remove(), 500); }, 4000);
+        }
+      }, 600);
+    }
+
     const navEl = document.getElementById('main-navbar');
     if (navEl) navEl.style.display = 'none';
     document.body.classList.remove('projects-pure-white-theme');
