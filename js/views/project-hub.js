@@ -186,13 +186,24 @@ window.ProjectHub = {
     if (m) return m.role || 'viewer';
     return 'guest';
   },
+  isAdminUser() {
+    const u = window.appState?.currentUser;
+    if (!u || u.isGuest || u.username === 'invitado') return false;
+    const r = String(u.role || '').toLowerCase().trim();
+    const uname = String(u.username || '').toLowerCase().trim();
+    const email = String(u.email || '').toLowerCase().trim();
+    return r === 'admin' || r === 'administrador' || uname === 'melisa' || uname === 'admin' || email === 'melisa@mentix.edu.co';
+  },
   canView(proj) {
     if (!proj) return false;
-    const r = this.getRole(proj);
-    return r === 'owner' || r === 'editor' || r === 'collaborator' || r === 'commenter' || r === 'viewer';
+    const u = window.appState?.currentUser;
+    if (!u || u.isGuest || u.username === 'invitado') return false;
+    // Administradores, creadores, miembros y usuarios registrados pueden ver la ventana de Detalles (Project Hub)
+    return true;
   },
   canEdit(proj) {
     if (!proj) return false;
+    if (this.isAdminUser()) return true;
     if (window.appRouter && typeof window.appRouter.isChallengeOwner === 'function') {
       return window.appRouter.isChallengeOwner(proj);
     }
@@ -201,7 +212,7 @@ window.ProjectHub = {
     }
     return this.getRole(proj) === 'owner';
   },
-  canManage(proj) { return this.getRole(proj) === 'owner'; },
+  canManage(proj) { return this.isAdminUser() || this.getRole(proj) === 'owner'; },
 
   progressOf(proj) {
     try {
@@ -305,9 +316,9 @@ window.ProjectHub = {
       return;
     }
     const hub = this.getHub(proj.id);
-    const role = this.getRole(proj);
+    const role = this.isAdminUser() ? 'owner' : this.getRole(proj);
     const roleInfo = this.ROLES[role] || this.ROLES.guest;
-    const manage = role === 'owner';
+    const manage = this.canManage(proj);
     const edit = this.canEdit(proj);
 
     let overlay = document.getElementById('phub-overlay');

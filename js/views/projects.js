@@ -2855,9 +2855,10 @@ window.ProjectsView = {
       primaryText = 'Ver Detalles →';
     }
 
-    // Exclusividad: Solo creadores del proyecto y personas que se unan pueden ver el Project Hub ("Ver Detalles")
-    const canHubView = !isGuest && !!(isAuthor || (window.ProjectHub && typeof window.ProjectHub.canView === 'function' && window.ProjectHub.canView(c)));
-    const canHubEdit = !isGuest && !!(isAuthor || (window.ProjectHub && typeof window.ProjectHub.canEdit === 'function' && window.ProjectHub.canEdit(c)));
+    // Ventana de Detalles (Project Hub): visible para administradores, creadores, miembros y usuarios registrados
+    const isMemberOrAuthor = !isGuest && !!(isAuthor || isAdmin || (window.ProjectHub && typeof window.ProjectHub.getRole === 'function' && ['owner', 'editor', 'collaborator', 'commenter', 'viewer'].includes(window.ProjectHub.getRole(c))));
+    const canHubView = !isGuest;
+    const canHubEdit = !isGuest && !!(isAuthor || isAdmin || (window.ProjectHub && typeof window.ProjectHub.canEdit === 'function' && window.ProjectHub.canEdit(c)));
 
     const cHub = (window.ProjectHub && typeof window.ProjectHub.getHub === 'function') ? window.ProjectHub.getHub(c.id) : (c.hub || {});
     const cardPendingReqs = (cHub.joinRequests || []).filter(r => r && r.status === 'pending');
@@ -2968,18 +2969,18 @@ window.ProjectsView = {
             <span style="display: inline-flex; align-items: center; gap: 0.25rem; color: #eab308; cursor: pointer; transition: transform 0.15s ease;" onmouseenter="this.style.transform='scale(1.1)';" onmouseleave="this.style.transform='scale(1)';" onclick="event.stopPropagation(); window.ProjectsView.openReviewFullPage('${c.id}');" title="Ver comentarios y calificar este proyecto">⭐ ${ratingStr}</span>
           </div>
 
-          <!-- Action Buttons Row: Ver Detalles (Creador/Miembro) o Unirme (Visitantes), Ver Landing Page, Compartir, y Autorizar (Admin) -->
+          <!-- Action Buttons Row: Detalles (ventana Project Hub), Unirme (si aún no es miembro), Ver Landing Page, Autorizar (Admin) y Compartir -->
           <div class="saas-card-actions">
             ${canHubView ? `
               <button 
                 class="saas-card-btn-secondary"
                 onclick="event.stopPropagation(); ${hubAction}" 
-                title="Ver detalles y panel del proyecto"
+                title="Ver detalles, miembros, solicitudes y calificaciones del proyecto"
               >
                 <span>Detalles</span>
                 <span>→</span>
               </button>
-              ${isAuthor && cardPendingReqs.length > 0 ? `
+              ${(isAuthor || isAdmin) && cardPendingReqs.length > 0 ? `
                 <button 
                   class="saas-card-btn-join"
                   style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%) !important; color: #ffffff !important; box-shadow: 0 4px 14px rgba(239, 68, 68, 0.45) !important;"
@@ -2990,7 +2991,8 @@ window.ProjectsView = {
                   <span>${cardPendingReqs.length} Solicitud${cardPendingReqs.length > 1 ? 'es' : ''}</span>
                 </button>
               ` : ''}
-            ` : `
+            ` : ''}
+            ${!isMemberOrAuthor ? `
               <button 
                 class="saas-card-btn-join"
                 onclick="event.stopPropagation(); ${joinAction}" 
@@ -2999,7 +3001,7 @@ window.ProjectsView = {
                 <span>👥</span>
                 <span>Unirme</span>
               </button>
-            `}
+            ` : ''}
 
             <button 
               class="saas-card-btn-landing"
