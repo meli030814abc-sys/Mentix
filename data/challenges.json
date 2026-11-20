@@ -29,9 +29,10 @@
     "isPublic": false,
     "startDate": "2026-11-20",
     "endDate": "",
-    "currentStep": 2,
+    "currentStep": 3,
     "completedSteps": [
-      1
+      1,
+      2
     ],
     "progress": 45,
     "calculatedProgress": 45,
@@ -169,9 +170,10 @@
       },
       "publicationStatus": "draft",
       "completedSteps": [
-        1
+        1,
+        2
       ],
-      "currentStep": 2,
+      "currentStep": 3,
       "author": "Melisa",
       "authorId": "user_1792184134006",
       "ownerId": "user_1792184134006",
@@ -198,7 +200,7 @@
         "collaborators": ""
       },
       "createdAt": "2026-11-20T23:43:24.796Z",
-      "updatedAt": "2026-11-20T23:43:35.080Z",
+      "updatedAt": "2026-11-20T23:43:36.039Z",
       "progress": 45,
       "calculatedProgress": 45
     },
@@ -212,7 +214,7 @@
     "authorAvatar": "🐯",
     "authorRole": "admin",
     "createdAt": "2026-11-20T23:43:24.796Z",
-    "updatedAt": "2026-11-20T23:43:34.241Z"
+    "updatedAt": "2026-11-20T23:43:35.212Z"
   },
   {
     "id": "govdata_code_mentilona_12345678",
