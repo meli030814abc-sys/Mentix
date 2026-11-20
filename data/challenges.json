@@ -2,7 +2,7 @@
   {
     "id": "govdata_code_mentilona_12345678",
     "slug": "nuevo-proyecto-govdata",
-    "title": "Nuevo Proyecto GovData",
+    "title": "*9+",
     "subtitle": "Proyecto GovData Nexus",
     "description": "Proyecto documentado con el Asistente Inteligente GovData Nexus.",
     "shortDescription": "Proyecto documentado con el Asistente Inteligente GovData Nexus.",
@@ -31,8 +31,8 @@
     "endDate": "",
     "currentStep": 1,
     "completedSteps": [],
-    "progress": 40,
-    "calculatedProgress": 40,
+    "progress": 45,
+    "calculatedProgress": 45,
     "valueProp": {
       "problemSolved": "",
       "howItWorks": "",
@@ -73,9 +73,9 @@
     "slides": [],
     "externalLinks": [],
     "landingConfig": {
-      "publicName": "",
+      "publicName": "*9+",
       "slug": "nuevo-proyecto-govdata",
-      "landingTitle": "",
+      "landingTitle": "*9+",
       "publicDescription": "Proyecto documentado con el Asistente Inteligente GovData Nexus.",
       "visibleCategory": "Tecnología & Programación",
       "tags": [
@@ -111,7 +111,7 @@
     "displayOrder": 1,
     "govdata": {
       "id": "govdata_code_mentilona_12345678",
-      "title": "",
+      "title": "*9+",
       "subtitle": "",
       "shortDescription": "Proyecto documentado con el Asistente Inteligente GovData Nexus.",
       "fullDescription": "Proyecto documentado con el Asistente Inteligente GovData Nexus.",
@@ -153,9 +153,9 @@
       "useDefaultImage": true,
       "externalLinks": [],
       "landingConfig": {
-        "publicName": "",
+        "publicName": "*9+",
         "slug": "nuevo-proyecto-govdata",
-        "landingTitle": "",
+        "landingTitle": "*9+",
         "publicDescription": "Proyecto documentado con el Asistente Inteligente GovData Nexus.",
         "visibleCategory": "Tecnología & Programación",
         "tags": [
@@ -196,9 +196,9 @@
         "collaborators": ""
       },
       "createdAt": "2026-11-20T19:01:06.291Z",
-      "updatedAt": "2026-11-20T19:42:11.582Z",
-      "progress": 40,
-      "calculatedProgress": 40
+      "updatedAt": "2026-11-20T19:42:21.979Z",
+      "progress": 45,
+      "calculatedProgress": 45
     },
     "author": "Melisa",
     "authorId": "user_1792184134006",
@@ -210,7 +210,7 @@
     "authorAvatar": "🐯",
     "authorRole": "admin",
     "createdAt": "2026-11-20T19:01:06.291Z",
-    "updatedAt": "2026-11-20T19:42:10.953Z",
+    "updatedAt": "2026-11-20T19:42:21.254Z",
     "image": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
     "rejectionReason": "",
     "tag": "⏳ Pendiente de Autorización",
