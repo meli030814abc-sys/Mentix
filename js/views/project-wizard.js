@@ -194,6 +194,9 @@ window.ProjectWizard = {
         useDefaultImage: existingProject.useDefaultImage !== undefined ? existingProject.useDefaultImage : true,
         visualAssets: Array.isArray(existingProject.visualAssets) && existingProject.visualAssets.length > 0 ? JSON.parse(JSON.stringify(existingProject.visualAssets)) : (Array.isArray(gp.visualAssets) ? JSON.parse(JSON.stringify(gp.visualAssets)) : []),
         externalLinks: Array.isArray(existingProject.externalLinks) && existingProject.externalLinks.length > 0 ? JSON.parse(JSON.stringify(existingProject.externalLinks)) : (Array.isArray(gp.externalLinks) ? JSON.parse(JSON.stringify(gp.externalLinks)) : []),
+        projectRoadmap: Array.isArray(existingProject.projectRoadmap) && existingProject.projectRoadmap.length > 0
+          ? JSON.parse(JSON.stringify(existingProject.projectRoadmap))
+          : (Array.isArray(gp.projectRoadmap) && gp.projectRoadmap.length > 0 ? JSON.parse(JSON.stringify(gp.projectRoadmap)) : undefined),
         landingConfig: {
           publicName: existingProject.landingConfig?.publicName || gp.landingConfig?.publicName || existingProject.title || '',
           slug: existingProject.slug || existingProject.landingConfig?.slug || gp.landingConfig?.slug || this.slugify(existingProject.title || 'proyecto-govdata'),
@@ -536,8 +539,8 @@ window.ProjectWizard = {
         console.warn('Aviso al respaldar borrador en Supabase:', err);
       }
 
-      // Si el proyecto ya tiene título, sincronizar también el registro en challenges / govdata_projects
-      if (this.draft.title && this.draft.title.trim()) {
+      // Sincronizar también en govdata_projects cuando tiene título o código de proyecto
+      if ((this.draft.title && this.draft.title.trim()) || this.draft.joinCode || this.draft.accessCode) {
         try {
           const fullRecord = syncedRecord || this.buildChallengeCompatibleRecord();
           window.supabaseService.saveGovDataProject(fullRecord);
@@ -619,14 +622,53 @@ window.ProjectWizard = {
         }
         return best;
       };
+      const mergeNonEmptyObj = (...objs) => {
+        const out = {};
+        for (const obj of objs) {
+          if (!obj || typeof obj !== 'object' || Array.isArray(obj)) continue;
+          for (const [k, v] of Object.entries(obj)) {
+            if (v === undefined || v === null) continue;
+            if (typeof v === 'string') {
+              if (v.trim().length > 0 && (!out[k] || typeof out[k] !== 'string' || v.trim().length >= out[k].trim().length)) {
+                out[k] = v;
+              }
+            } else if (Array.isArray(v)) {
+              if (v.length > 0 && (!Array.isArray(out[k]) || v.length >= out[k].length)) {
+                out[k] = JSON.parse(JSON.stringify(v));
+              }
+            } else if (typeof v === 'boolean' || typeof v === 'number') {
+              out[k] = v;
+            } else if (typeof v === 'object') {
+              out[k] = { ...(out[k] || {}), ...JSON.parse(JSON.stringify(v)) };
+            }
+          }
+        }
+        return out;
+      };
+      const pickBestRoadmap = (...sources) => {
+        // Elegir el projectRoadmap de la fuente más reciente que tenga etapas reales
+        const valid = sources.filter(s => s && Array.isArray(s.list) && s.list.length > 0);
+        if (valid.length === 0) return undefined;
+        valid.sort((a, b) => {
+          const tsDiff = (b.ts || 0) - (a.ts || 0);
+          if (tsDiff !== 0) return tsDiff;
+          return b.list.length - a.list.length;
+        });
+        return JSON.parse(JSON.stringify(valid[0].list));
+      };
 
       if (savedDraft || savedChallenge) {
+        const tsDraft = Date.parse(savedDraft?.updatedAt || '') || 0;
+        const tsChal = Date.parse(savedChallenge?.updatedAt || '') || 0;
+        const tsGov = Date.parse(gov?.updatedAt || '') || 0;
         let base = (typeof window.mergeProjectPreservingImages === 'function')
           ? window.mergeProjectPreservingImages(savedChallenge, savedDraft)
           : { ...(savedChallenge || {}), ...(gov || {}), ...(savedDraft || {}) };
         if (gov && typeof window.mergeProjectPreservingImages === 'function') {
           base = window.mergeProjectPreservingImages(base, gov);
         }
+        base.title = pickLongerStr(savedDraft?.title, savedChallenge?.title, gov?.title, base.title);
+        base.subtitle = pickLongerStr(savedDraft?.subtitle, savedChallenge?.subtitle, gov?.subtitle, base.subtitle);
         base.slides = pickLongerArr(savedDraft?.slides, savedChallenge?.slides, gov?.slides, base.slides);
         if (typeof window.sanitizeProjectSlides === 'function') {
           base.slides = window.sanitizeProjectSlides(base.slides, base.title);
@@ -635,12 +677,24 @@ window.ProjectWizard = {
         base.resources = pickLongerArr(savedDraft?.resources, savedChallenge?.resources, gov?.resources, base.resources);
         base.externalLinks = pickLongerArr(savedDraft?.externalLinks, savedChallenge?.externalLinks, gov?.externalLinks, base.externalLinks);
         base.visualAssets = pickLongerArr(savedDraft?.visualAssets, savedChallenge?.visualAssets, gov?.visualAssets, base.visualAssets);
+        base.projectRoadmap = pickBestRoadmap(
+          { list: savedDraft?.projectRoadmap, ts: tsDraft },
+          { list: savedChallenge?.projectRoadmap, ts: tsChal },
+          { list: gov?.projectRoadmap, ts: tsGov }
+        );
         base.fullDescription = pickLongerStr(savedDraft?.fullDescription, savedChallenge?.fullDescription, gov?.fullDescription);
         base.shortDescription = pickLongerStr(savedDraft?.shortDescription, savedChallenge?.shortDescription, gov?.shortDescription, savedChallenge?.description);
         base.problemStatement = pickLongerStr(savedDraft?.problemStatement, savedChallenge?.problemStatement, gov?.problemStatement);
         base.mainObjective = pickLongerStr(savedDraft?.mainObjective, savedChallenge?.mainObjective, gov?.mainObjective);
-        base.valueProp = pickLongerStr(savedDraft?.valueProp, savedChallenge?.valueProp, gov?.valueProp);
         base.benefits = pickLongerStr(savedDraft?.benefits, savedChallenge?.benefits, gov?.benefits);
+        base.targetAudience = pickLongerStr(savedDraft?.targetAudience, savedChallenge?.targetAudience, gov?.targetAudience);
+        base.mainImage = pickLongerStr(savedDraft?.mainImage, savedChallenge?.mainImage, savedChallenge?.banner, gov?.mainImage, base.mainImage);
+        base.thumbnailImage = pickLongerStr(savedDraft?.thumbnailImage, savedChallenge?.thumbnailImage, gov?.thumbnailImage, base.thumbnailImage);
+        base.valueProp = mergeNonEmptyObj(gov?.valueProp, savedChallenge?.valueProp, savedChallenge?.valueProposition, savedDraft?.valueProp);
+        base.videoConfig = mergeNonEmptyObj(gov?.videoConfig, savedChallenge?.videoConfig, savedDraft?.videoConfig);
+        base.designConfig = mergeNonEmptyObj(gov?.designConfig, savedChallenge?.designConfig, savedDraft?.designConfig);
+        base.authorsConfig = mergeNonEmptyObj(gov?.authorsConfig, savedChallenge?.authorsConfig, savedDraft?.authorsConfig);
+        base.landingConfig = mergeNonEmptyObj(gov?.landingConfig, savedChallenge?.landingConfig, savedDraft?.landingConfig);
         base.currentStep = Math.max(Number(savedDraft?.currentStep) || 1, Number(savedChallenge?.currentStep) || 1, Number(gov?.currentStep) || 1);
         existing = base;
       }
@@ -664,6 +718,15 @@ window.ProjectWizard = {
             mergedCloud.resources = pickLongerArr(existing?.resources, cloudDraft?.resources);
             mergedCloud.externalLinks = pickLongerArr(existing?.externalLinks, cloudDraft?.externalLinks);
             mergedCloud.visualAssets = pickLongerArr(existing?.visualAssets, cloudDraft?.visualAssets);
+            mergedCloud.projectRoadmap = pickBestRoadmap(
+              { list: existing?.projectRoadmap, ts: existingTs },
+              { list: cloudDraft?.projectRoadmap, ts: cloudTs }
+            );
+            mergedCloud.valueProp = mergeNonEmptyObj(existing?.valueProp, cloudDraft?.valueProp);
+            mergedCloud.videoConfig = mergeNonEmptyObj(existing?.videoConfig, cloudDraft?.videoConfig);
+            mergedCloud.designConfig = mergeNonEmptyObj(existing?.designConfig, cloudDraft?.designConfig);
+            mergedCloud.authorsConfig = mergeNonEmptyObj(existing?.authorsConfig, cloudDraft?.authorsConfig);
+            mergedCloud.landingConfig = mergeNonEmptyObj(existing?.landingConfig, cloudDraft?.landingConfig);
             mergedCloud.currentStep = Math.max(Number(existing?.currentStep) || 1, Number(cloudDraft?.currentStep) || 1);
             existing = mergedCloud;
           }
