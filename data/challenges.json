@@ -69,7 +69,8 @@
       "title": "",
       "description": "",
       "isPublic": true,
-      "verified": false
+      "verified": false,
+      "thumbnailUrl": ""
     },
     "resources": [],
     "visualAssets": [],
@@ -102,10 +103,10 @@
       {
         "title": "Investigación",
         "description": "Recopilación de datos e información relevante.",
-        "progress": 100,
         "status": "completed",
-        "icon": "search",
-        "emoji": "🔍"
+        "progress": 100,
+        "emoji": "🧩",
+        "icon": "clipboard"
       },
       {
         "title": "Desarrollo",
@@ -235,7 +236,7 @@
         "collaborators": ""
       },
       "createdAt": "2026-11-20T23:43:24.796Z",
-      "updatedAt": "2026-11-20T23:43:41.085Z",
+      "updatedAt": "2026-11-20T23:43:58.112Z",
       "progress": 55,
       "calculatedProgress": 55,
       "projectRoadmap": [
@@ -250,10 +251,10 @@
         {
           "title": "Investigación",
           "description": "Recopilación de datos e información relevante.",
-          "progress": 100,
           "status": "completed",
-          "icon": "search",
-          "emoji": "🔍"
+          "progress": 100,
+          "emoji": "🧩",
+          "icon": "clipboard"
         },
         {
           "title": "Desarrollo",
@@ -283,7 +284,7 @@
     "authorAvatar": "🐯",
     "authorRole": "admin",
     "createdAt": "2026-11-20T23:43:24.796Z",
-    "updatedAt": "2026-11-20T23:43:40.273Z",
+    "updatedAt": "2026-11-20T23:43:57.262Z",
     "image": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
     "rejectionReason": ""
   },
