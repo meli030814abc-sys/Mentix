@@ -65,8 +65,7 @@
       "title": "",
       "description": "",
       "isPublic": true,
-      "verified": false,
-      "thumbnailUrl": ""
+      "verified": false
     },
     "resources": [],
     "visualAssets": [],
@@ -209,7 +208,7 @@
     "authorAvatar": "🐯",
     "authorRole": "admin",
     "createdAt": "2026-11-20T19:01:06.291Z",
-    "updatedAt": "2026-11-20T19:01:36.648Z",
+    "updatedAt": "2026-11-20T19:01:36.738Z",
     "image": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80"
   },
   {
