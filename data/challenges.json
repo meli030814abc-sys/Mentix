@@ -874,7 +874,7 @@
       }
     ],
     "ratingsCount": 4,
-    "_globalHeroBanner": "https://images.unsplash.com/photo-1519501025264-65ba15a82390?w=1600&q=80",
+    "_globalHeroBanner": "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=1600&q=80",
     "globalHeroBanner": "assets/projects_ui/disney_hero_banner.png",
     "joinRequests": [
       {
@@ -1200,12 +1200,12 @@
     "authorAvatar": "🐯",
     "authorRole": "Líder del Proyecto",
     "createdAt": "2026-11-20T23:43:24.796Z",
-    "updatedAt": "2026-11-21T17:47:02.878Z",
+    "updatedAt": "2026-11-21T17:47:08.704Z",
     "image": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
     "rejectionReason": "",
     "tag": "⏳ Pendiente de Autorización",
     "tagClass": "badge-review",
-    "_globalHeroBanner": "https://images.unsplash.com/photo-1519501025264-65ba15a82390?w=1600&q=80",
+    "_globalHeroBanner": "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=1600&q=80",
     "hub": {
       "joinRequests": [],
       "members": [
@@ -1229,6 +1229,6 @@
       "views": [],
       "ratings": []
     },
-    "globalHeroBanner": "https://images.unsplash.com/photo-1519501025264-65ba15a82390?w=1600&q=80"
+    "globalHeroBanner": "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=1600&q=80"
   }
 ]
