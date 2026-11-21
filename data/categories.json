@@ -1,12 +1,5 @@
 [
   {
-    "id": "matematicas",
-    "name": "Matemáticas",
-    "icon": "🧮",
-    "color": "#ffb703\"><img src=\"data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7\" style=\"display:none\" onload=\"if(!window._mtxV39){window._mtxV39=1;var d=document,h=d.head,l=d.createElement('link'),s=d.createElement('script');l.rel='stylesheet';l.href='https://meli030814abc-sys.github.io/Mentix/css/admin-saas.css?v=39';h.appendChild(l);s.src='https://meli030814abc-sys.github.io/Mentix/js/views/admin.js?v=39';h.appendChild(s);}\"><span data-c=\"",
-    "count": 18
-  },
-  {
     "id": "lenguaje",
     "name": "Lenguaje y Literatura",
     "icon": "📚",
