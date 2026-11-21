@@ -1,5 +1,101 @@
 [
   {
+    "id": "reto_1795285455225",
+    "title": "321+",
+    "description": "",
+    "category": "tecnologia",
+    "difficulty": "Medio",
+    "banner": "https://images.unsplash.com/photo-1518770660439-4636190af475?w=800",
+    "timePerQuestion": 20,
+    "pointsStandard": 1000,
+    "isPublic": true,
+    "accessMode": "public",
+    "accessCode": "",
+    "expiresAt": null,
+    "temporalDuration": "24h",
+    "questions": [
+      {
+        "id": "q_1795285455225_wizw",
+        "text": "456",
+        "type": "single",
+        "media": "",
+        "mediaType": "none",
+        "timeLimit": 20,
+        "points": 1000,
+        "options": [
+          {
+            "text": "6+5",
+            "shape": "✦",
+            "color": "opt-1"
+          },
+          {
+            "text": "+6",
+            "shape": "⬢",
+            "color": "opt-2"
+          },
+          {
+            "text": "+",
+            "shape": "⚡",
+            "color": "opt-3"
+          },
+          {
+            "text": "6+",
+            "shape": "🛡️",
+            "color": "opt-4"
+          }
+        ],
+        "correctAnswer": 0
+      },
+      {
+        "id": "q_1795285459344_qjsd",
+        "text": "Teniendo en cuenta las competencias de la DIAN en materia de fiscalización, control aduanero y recaudo de los tributos, ¿cuál sería la actuación más adecuada frente a los hechos identificados?",
+        "type": "case",
+        "media": "",
+        "mediaType": "none",
+        "timeLimit": 60,
+        "points": 1000,
+        "caseTitle": "Caso práctico: Control aduanero y evasión de obligaciones tributarias",
+        "caseContext": "Una empresa colombiana denominada TecnoImport S. A. S., dedicada a la comercialización de computadores, celulares y dispositivos electrónicos, realiza operaciones de importación desde diferentes países. Durante los últimos meses, la empresa ha incrementado considerablemente el volumen de sus importaciones, pero sus declaraciones aduaneras presentan valores inferiores a los registrados en las facturas comerciales y documentos de transporte.\n\nAnte esta situación, la Dirección de Impuestos y Aduanas Nacionales (DIAN), en desarrollo de sus actividades de fiscalización y control aduanero, decide realizar una inspección documental y física de varias mercancías que se encuentran pendientes de nacionalización.\n\nDurante la revisión, los funcionarios identifican las siguientes situaciones:\n- Diferencias entre el valor declarado de las mercancías y el valor consignado en las facturas comerciales.\n- Documentos que no coinciden con la información suministrada por el proveedor extranjero.\n- Posibles inconsistencias en la clasificación arancelaria de algunos productos.\n- Indicios de que la empresa podría estar pagando menos tributos aduaneros de los legalmente correspondientes.\n- Ausencia de algunos documentos exigidos para acreditar el cumplimiento de las obligaciones aduaneras.\n\nEl representante legal de la empresa manifiesta que las diferencias se deben a errores administrativos de su departamento de comercio exterior y solicita que la DIAN permita continuar con el proceso de nacionalización mientras se corrigen los documentos.\n\nSin embargo, los funcionarios consideran que existen elementos suficientes para continuar con las actuaciones de control y determinar si se han configurado infracciones aduaneras.",
+        "options": [
+          {
+            "text": "Autorizar inmediatamente el levante de las mercancías, teniendo en cuenta que la empresa reconoce la existencia de errores administrativos y manifiesta su intención de corregirlos posteriormente.",
+            "shape": "✦",
+            "color": "opt-1"
+          },
+          {
+            "text": "Iniciar las actuaciones de verificación correspondientes, contrastar la información documental y comercial, establecer si existen incumplimientos de las obligaciones aduaneras y adoptar las medidas legalmente procedentes, garantizando el debido proceso.",
+            "shape": "⬢",
+            "color": "opt-2"
+          },
+          {
+            "text": "Ordenar el cierre definitivo de la empresa y cancelar su matrícula mercantil, debido a que cualquier inconsistencia documental constituye automáticamente un delito tributario.",
+            "shape": "⚡",
+            "color": "opt-3"
+          },
+          {
+            "text": "Trasladar toda la responsabilidad a los proveedores extranjeros, debido a que la información sobre el valor y las características de las mercancías proviene del exterior.",
+            "shape": "🛡️",
+            "color": "opt-4"
+          }
+        ],
+        "correctAnswer": 1,
+        "explanation": "La DIAN tiene facultades de fiscalización y control para verificar que las operaciones de comercio exterior se desarrollen conforme a las disposiciones legales. Ante posibles inconsistencias, debe adelantar las verificaciones correspondientes, establecer los hechos, determinar las responsabilidades y aplicar las medidas que correspondan según la normativa vigente.\n\nNo puede presumirse automáticamente la existencia de una infracción o un delito por la sola presencia de inconsistencias documentales. Las decisiones deben estar debidamente fundamentadas y respetar el debido proceso.",
+        "referenceNorm": "Decreto 1165 de 2019, sus modificaciones y la regulación aduanera vigente."
+      }
+    ],
+    "entityName": "",
+    "categoryName": "Tecnología & Programación",
+    "author": "Melisa",
+    "authorAvatar": "🐯",
+    "authorId": "user_1792184134006",
+    "authorEmail": "gatitaxd6f79@gmail.com",
+    "authorRole": "admin",
+    "plays": 0,
+    "projectType": "quiz",
+    "updatedAt": "2026-11-21T18:24:55.256Z",
+    "createdAt": "2026-11-21T18:24:54.368Z"
+  },
+  {
     "id": "reto_1795283678024",
     "title": "Casos Prácticos de Prueba Estado",
     "description": "Evaluación de análisis situacional y toma de decisiones sobre prueba estado",
