@@ -1,5 +1,216 @@
 [
   {
+    "id": "reto_1795283678024",
+    "title": "Casos Prácticos de Prueba Estado",
+    "description": "Evaluación de análisis situacional y toma de decisiones sobre prueba estado",
+    "category": "cultura",
+    "difficulty": "Medio",
+    "banner": "https://images.unsplash.com/photo-1513151233558-d860c5398176?auto=format&fit=crop&w=1200&q=80",
+    "timePerQuestion": 0,
+    "pointsStandard": 1000,
+    "isPublic": true,
+    "accessMode": "public",
+    "accessCode": "",
+    "expiresAt": null,
+    "temporalDuration": "24h",
+    "questions": [
+      {
+        "id": "q_1795283741598_6smig",
+        "text": "Teniendo en cuenta los fundamentos teóricos, normativos y procedimentales de Prueba Estado, ¿cuál es la actuación más adecuada frente a los hechos identificados?",
+        "type": "case",
+        "caseTitle": "Caso práctico: Aplicación crítica y resolución situacional en Prueba Estado (Escenario 1)",
+        "caseContext": "En una organización y equipo profesional especializado en **Prueba Estado**, se presenta una situación crítica durante la fase de ejecución y control operativo.\n\nDurante el diagnóstico técnico y la revisión de evidencias, se identifican los siguientes hechos y hallazgos relevantes:\n- La disciplina de Prueba Estado opera bajo principios teóricos y metodológicos rigurosos orientados a la optimización de procesos y la toma de decisiones basada en evidencia.\n- Durante la última evaluación de desempeño, se detectaron discrepancias significativas entre los resultados proyectados y los datos reales obtenidos en la implementación.\n- Existen presiones operativas y limitaciones de tiempo que han llevado a miembros del equipo a proponer atajos procedimentales no validados.\n- Se identifican indicios de vulnerabilidad metodológica que podrían comprometer la validez y sostenibilidad de los resultados finales.\n- Los líderes del proyecto solicitan una intervención inmediata antes de autorizar el cierre formal de la fase.\n\nEl equipo directivo y los especialistas técnicos deben definir la actuación técnica más rigurosa y justificada conforme a las mejores prácticas de la disciplina.",
+        "explanation": "En el ámbito de Prueba Estado, las decisiones profesionales deben sustentarse en evidencia empírica contrastada y en el apego a los estándares metodológicos. Ante la presencia de inconsistencias, el deber técnico exige investigar la causa raíz, subsanar las desviaciones y aplicar controles proporcionales, descartando atajos negligentes o reacciones desmedidas.",
+        "referenceNorm": "Marco de referencia profesional, estándares metodológicos internacionales y mejores prácticas vigentes en Prueba Estado.",
+        "media": "",
+        "mediaType": "none",
+        "timeLimit": 90,
+        "points": 1500,
+        "options": [
+          {
+            "text": "Omitir las discrepancias detectadas y autorizar inmediatamente la continuidad del proyecto para evitar retrasos en los cronogramas comerciales.",
+            "shape": "✦",
+            "color": "opt-1"
+          },
+          {
+            "text": "Iniciar las actuaciones de verificación técnica correspondientes, contrastar las evidencias con los estándares de Prueba Estado, subsanar las inconsistencias detectadas y adoptar las medidas correctivas pertinentes garantizando el rigor metodológico.",
+            "shape": "⬢",
+            "color": "opt-2"
+          },
+          {
+            "text": "Suspender de forma permanente e irrevocable todas las operaciones de la entidad y descartar todo el trabajo previo sin realizar análisis causal.",
+            "shape": "⚡",
+            "color": "opt-3"
+          },
+          {
+            "text": "Trasladar toda la responsabilidad de las fallas a factores externos imprevistos sin formular ningún plan de mitigación interno.",
+            "shape": "🛡️",
+            "color": "opt-4"
+          }
+        ],
+        "correctAnswer": 1
+      },
+      {
+        "id": "q_1795283741598_ba7hs",
+        "text": "Teniendo en cuenta los fundamentos teóricos, normativos y procedimentales de Prueba Estado, ¿cuál es la actuación más adecuada frente a los hechos identificados?",
+        "type": "case",
+        "caseTitle": "Caso práctico: Aplicación crítica y resolución situacional en Prueba Estado (Escenario 2)",
+        "caseContext": "En una organización y equipo profesional especializado en **Prueba Estado**, se presenta una situación crítica durante la fase de ejecución y control operativo.\n\nDurante el diagnóstico técnico y la revisión de evidencias, se identifican los siguientes hechos y hallazgos relevantes:\n- La disciplina de Prueba Estado opera bajo principios teóricos y metodológicos rigurosos orientados a la optimización de procesos y la toma de decisiones basada en evidencia.\n- Durante la última evaluación de desempeño, se detectaron discrepancias significativas entre los resultados proyectados y los datos reales obtenidos en la implementación.\n- Existen presiones operativas y limitaciones de tiempo que han llevado a miembros del equipo a proponer atajos procedimentales no validados.\n- Se identifican indicios de vulnerabilidad metodológica que podrían comprometer la validez y sostenibilidad de los resultados finales.\n- Los líderes del proyecto solicitan una intervención inmediata antes de autorizar el cierre formal de la fase.\n\nEl equipo directivo y los especialistas técnicos deben definir la actuación técnica más rigurosa y justificada conforme a las mejores prácticas de la disciplina.",
+        "explanation": "En el ámbito de Prueba Estado, las decisiones profesionales deben sustentarse en evidencia empírica contrastada y en el apego a los estándares metodológicos. Ante la presencia de inconsistencias, el deber técnico exige investigar la causa raíz, subsanar las desviaciones y aplicar controles proporcionales, descartando atajos negligentes o reacciones desmedidas.",
+        "referenceNorm": "Marco de referencia profesional, estándares metodológicos internacionales y mejores prácticas vigentes en Prueba Estado.",
+        "media": "",
+        "mediaType": "none",
+        "timeLimit": 90,
+        "points": 1500,
+        "options": [
+          {
+            "text": "Omitir las discrepancias detectadas y autorizar inmediatamente la continuidad del proyecto para evitar retrasos en los cronogramas comerciales.",
+            "shape": "✦",
+            "color": "opt-1"
+          },
+          {
+            "text": "Iniciar las actuaciones de verificación técnica correspondientes, contrastar las evidencias con los estándares de Prueba Estado, subsanar las inconsistencias detectadas y adoptar las medidas correctivas pertinentes garantizando el rigor metodológico.",
+            "shape": "⬢",
+            "color": "opt-2"
+          },
+          {
+            "text": "Suspender de forma permanente e irrevocable todas las operaciones de la entidad y descartar todo el trabajo previo sin realizar análisis causal.",
+            "shape": "⚡",
+            "color": "opt-3"
+          },
+          {
+            "text": "Trasladar toda la responsabilidad de las fallas a factores externos imprevistos sin formular ningún plan de mitigación interno.",
+            "shape": "🛡️",
+            "color": "opt-4"
+          }
+        ],
+        "correctAnswer": 1
+      },
+      {
+        "id": "q_1795283741598_o3mb0",
+        "text": "Teniendo en cuenta los fundamentos teóricos, normativos y procedimentales de Prueba Estado, ¿cuál es la actuación más adecuada frente a los hechos identificados?",
+        "type": "case",
+        "caseTitle": "Caso práctico: Aplicación crítica y resolución situacional en Prueba Estado (Escenario 3)",
+        "caseContext": "En una organización y equipo profesional especializado en **Prueba Estado**, se presenta una situación crítica durante la fase de ejecución y control operativo.\n\nDurante el diagnóstico técnico y la revisión de evidencias, se identifican los siguientes hechos y hallazgos relevantes:\n- La disciplina de Prueba Estado opera bajo principios teóricos y metodológicos rigurosos orientados a la optimización de procesos y la toma de decisiones basada en evidencia.\n- Durante la última evaluación de desempeño, se detectaron discrepancias significativas entre los resultados proyectados y los datos reales obtenidos en la implementación.\n- Existen presiones operativas y limitaciones de tiempo que han llevado a miembros del equipo a proponer atajos procedimentales no validados.\n- Se identifican indicios de vulnerabilidad metodológica que podrían comprometer la validez y sostenibilidad de los resultados finales.\n- Los líderes del proyecto solicitan una intervención inmediata antes de autorizar el cierre formal de la fase.\n\nEl equipo directivo y los especialistas técnicos deben definir la actuación técnica más rigurosa y justificada conforme a las mejores prácticas de la disciplina.",
+        "explanation": "En el ámbito de Prueba Estado, las decisiones profesionales deben sustentarse en evidencia empírica contrastada y en el apego a los estándares metodológicos. Ante la presencia de inconsistencias, el deber técnico exige investigar la causa raíz, subsanar las desviaciones y aplicar controles proporcionales, descartando atajos negligentes o reacciones desmedidas.",
+        "referenceNorm": "Marco de referencia profesional, estándares metodológicos internacionales y mejores prácticas vigentes en Prueba Estado.",
+        "media": "",
+        "mediaType": "none",
+        "timeLimit": 90,
+        "points": 1500,
+        "options": [
+          {
+            "text": "Omitir las discrepancias detectadas y autorizar inmediatamente la continuidad del proyecto para evitar retrasos en los cronogramas comerciales.",
+            "shape": "✦",
+            "color": "opt-1"
+          },
+          {
+            "text": "Iniciar las actuaciones de verificación técnica correspondientes, contrastar las evidencias con los estándares de Prueba Estado, subsanar las inconsistencias detectadas y adoptar las medidas correctivas pertinentes garantizando el rigor metodológico.",
+            "shape": "⬢",
+            "color": "opt-2"
+          },
+          {
+            "text": "Suspender de forma permanente e irrevocable todas las operaciones de la entidad y descartar todo el trabajo previo sin realizar análisis causal.",
+            "shape": "⚡",
+            "color": "opt-3"
+          },
+          {
+            "text": "Trasladar toda la responsabilidad de las fallas a factores externos imprevistos sin formular ningún plan de mitigación interno.",
+            "shape": "🛡️",
+            "color": "opt-4"
+          }
+        ],
+        "correctAnswer": 1
+      },
+      {
+        "id": "q_1795283741598_gdrh2",
+        "text": "Teniendo en cuenta los fundamentos teóricos, normativos y procedimentales de Prueba Estado, ¿cuál es la actuación más adecuada frente a los hechos identificados?",
+        "type": "case",
+        "caseTitle": "Caso práctico: Aplicación crítica y resolución situacional en Prueba Estado (Escenario 4)",
+        "caseContext": "En una organización y equipo profesional especializado en **Prueba Estado**, se presenta una situación crítica durante la fase de ejecución y control operativo.\n\nDurante el diagnóstico técnico y la revisión de evidencias, se identifican los siguientes hechos y hallazgos relevantes:\n- La disciplina de Prueba Estado opera bajo principios teóricos y metodológicos rigurosos orientados a la optimización de procesos y la toma de decisiones basada en evidencia.\n- Durante la última evaluación de desempeño, se detectaron discrepancias significativas entre los resultados proyectados y los datos reales obtenidos en la implementación.\n- Existen presiones operativas y limitaciones de tiempo que han llevado a miembros del equipo a proponer atajos procedimentales no validados.\n- Se identifican indicios de vulnerabilidad metodológica que podrían comprometer la validez y sostenibilidad de los resultados finales.\n- Los líderes del proyecto solicitan una intervención inmediata antes de autorizar el cierre formal de la fase.\n\nEl equipo directivo y los especialistas técnicos deben definir la actuación técnica más rigurosa y justificada conforme a las mejores prácticas de la disciplina.",
+        "explanation": "En el ámbito de Prueba Estado, las decisiones profesionales deben sustentarse en evidencia empírica contrastada y en el apego a los estándares metodológicos. Ante la presencia de inconsistencias, el deber técnico exige investigar la causa raíz, subsanar las desviaciones y aplicar controles proporcionales, descartando atajos negligentes o reacciones desmedidas.",
+        "referenceNorm": "Marco de referencia profesional, estándares metodológicos internacionales y mejores prácticas vigentes en Prueba Estado.",
+        "media": "",
+        "mediaType": "none",
+        "timeLimit": 90,
+        "points": 1500,
+        "options": [
+          {
+            "text": "Omitir las discrepancias detectadas y autorizar inmediatamente la continuidad del proyecto para evitar retrasos en los cronogramas comerciales.",
+            "shape": "✦",
+            "color": "opt-1"
+          },
+          {
+            "text": "Iniciar las actuaciones de verificación técnica correspondientes, contrastar las evidencias con los estándares de Prueba Estado, subsanar las inconsistencias detectadas y adoptar las medidas correctivas pertinentes garantizando el rigor metodológico.",
+            "shape": "⬢",
+            "color": "opt-2"
+          },
+          {
+            "text": "Suspender de forma permanente e irrevocable todas las operaciones de la entidad y descartar todo el trabajo previo sin realizar análisis causal.",
+            "shape": "⚡",
+            "color": "opt-3"
+          },
+          {
+            "text": "Trasladar toda la responsabilidad de las fallas a factores externos imprevistos sin formular ningún plan de mitigación interno.",
+            "shape": "🛡️",
+            "color": "opt-4"
+          }
+        ],
+        "correctAnswer": 1
+      },
+      {
+        "id": "q_1795283741598_njhpj",
+        "text": "Teniendo en cuenta los fundamentos teóricos, normativos y procedimentales de Prueba Estado, ¿cuál es la actuación más adecuada frente a los hechos identificados?",
+        "type": "case",
+        "caseTitle": "Caso práctico: Aplicación crítica y resolución situacional en Prueba Estado (Escenario 5)",
+        "caseContext": "En una organización y equipo profesional especializado en **Prueba Estado**, se presenta una situación crítica durante la fase de ejecución y control operativo.\n\nDurante el diagnóstico técnico y la revisión de evidencias, se identifican los siguientes hechos y hallazgos relevantes:\n- La disciplina de Prueba Estado opera bajo principios teóricos y metodológicos rigurosos orientados a la optimización de procesos y la toma de decisiones basada en evidencia.\n- Durante la última evaluación de desempeño, se detectaron discrepancias significativas entre los resultados proyectados y los datos reales obtenidos en la implementación.\n- Existen presiones operativas y limitaciones de tiempo que han llevado a miembros del equipo a proponer atajos procedimentales no validados.\n- Se identifican indicios de vulnerabilidad metodológica que podrían comprometer la validez y sostenibilidad de los resultados finales.\n- Los líderes del proyecto solicitan una intervención inmediata antes de autorizar el cierre formal de la fase.\n\nEl equipo directivo y los especialistas técnicos deben definir la actuación técnica más rigurosa y justificada conforme a las mejores prácticas de la disciplina.",
+        "explanation": "En el ámbito de Prueba Estado, las decisiones profesionales deben sustentarse en evidencia empírica contrastada y en el apego a los estándares metodológicos. Ante la presencia de inconsistencias, el deber técnico exige investigar la causa raíz, subsanar las desviaciones y aplicar controles proporcionales, descartando atajos negligentes o reacciones desmedidas.",
+        "referenceNorm": "Marco de referencia profesional, estándares metodológicos internacionales y mejores prácticas vigentes en Prueba Estado.",
+        "media": "",
+        "mediaType": "none",
+        "timeLimit": 90,
+        "points": 1500,
+        "options": [
+          {
+            "text": "Omitir las discrepancias detectadas y autorizar inmediatamente la continuidad del proyecto para evitar retrasos en los cronogramas comerciales.",
+            "shape": "✦",
+            "color": "opt-1"
+          },
+          {
+            "text": "Iniciar las actuaciones de verificación técnica correspondientes, contrastar las evidencias con los estándares de Prueba Estado, subsanar las inconsistencias detectadas y adoptar las medidas correctivas pertinentes garantizando el rigor metodológico.",
+            "shape": "⬢",
+            "color": "opt-2"
+          },
+          {
+            "text": "Suspender de forma permanente e irrevocable todas las operaciones de la entidad y descartar todo el trabajo previo sin realizar análisis causal.",
+            "shape": "⚡",
+            "color": "opt-3"
+          },
+          {
+            "text": "Trasladar toda la responsabilidad de las fallas a factores externos imprevistos sin formular ningún plan de mitigación interno.",
+            "shape": "🛡️",
+            "color": "opt-4"
+          }
+        ],
+        "correctAnswer": 1
+      }
+    ],
+    "categoryName": "Cultura General",
+    "entityName": "FUGA",
+    "author": "Pruebas",
+    "authorAvatar": "🦊",
+    "authorId": "user_1795283632158",
+    "authorEmail": "Pruebas@gmail.com",
+    "authorRole": "student",
+    "plays": 0,
+    "projectType": "quiz",
+    "updatedAt": "2026-11-21T17:56:34.691Z",
+    "createdAt": "2026-11-21T17:56:34.879Z",
+    "mainImage": "",
+    "thumbnailImage": "",
+    "image": ""
+  },
+  {
     "id": "proj_pres_1791658288964",
     "title": "Personajes de Disney",
     "subtitle": "Disney app",
