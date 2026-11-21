@@ -8159,3 +8159,167 @@ body[data-theme="light"] .inno-btn-resources:hover * {
     line-height: 1.2 !important;
   }
 }
+
+/* ==========================================================================
+   v116 · BOTONES DE CATEGORÍAS DE EXÁMENES VIBRANTES Y LLAMATIVOS
+   ========================================================================== */
+.exam-cat-strip {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  overflow-x: auto;
+  padding: 0.4rem 0.2rem 0.9rem;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(14, 165, 233, 0.35) transparent;
+}
+
+.exam-cat-strip::-webkit-scrollbar {
+  height: 6px;
+}
+
+.exam-cat-strip::-webkit-scrollbar-track {
+  background: rgba(148, 163, 184, 0.14);
+  border-radius: 999px;
+}
+
+.exam-cat-strip::-webkit-scrollbar-thumb {
+  background: linear-gradient(90deg, #0ea5e9, #6366f1);
+  border-radius: 999px;
+}
+
+.exam-cat-pill {
+  --cat-accent: #0ea5e9;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.52rem 1rem 0.52rem 0.58rem;
+  border-radius: 9999px;
+  border: 1.5px solid color-mix(in srgb, var(--cat-accent) 42%, transparent);
+  background: linear-gradient(
+    145deg,
+    color-mix(in srgb, var(--cat-accent) 11%, var(--bg-card, #ffffff)) 0%,
+    color-mix(in srgb, var(--cat-accent) 4%, var(--bg-card, #ffffff)) 100%
+  );
+  color: var(--text-primary, #0f172a);
+  font-weight: 800;
+  font-size: 0.9rem;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  cursor: pointer;
+  flex-shrink: 0;
+  box-shadow:
+    0 4px 12px color-mix(in srgb, var(--cat-accent) 14%, transparent),
+    0 2.5px 0 color-mix(in srgb, var(--cat-accent) 28%, transparent);
+  transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1),
+              box-shadow 0.22s ease,
+              background 0.22s ease,
+              border-color 0.22s ease,
+              color 0.2s ease;
+}
+
+.exam-cat-pill:hover {
+  transform: translateY(-3px) scale(1.03);
+  border-color: var(--cat-accent);
+  background: linear-gradient(
+    145deg,
+    color-mix(in srgb, var(--cat-accent) 20%, var(--bg-card, #ffffff)) 0%,
+    color-mix(in srgb, var(--cat-accent) 10%, var(--bg-card, #ffffff)) 100%
+  );
+  box-shadow:
+    0 10px 22px -6px color-mix(in srgb, var(--cat-accent) 38%, transparent),
+    0 3px 0 color-mix(in srgb, var(--cat-accent) 45%, transparent);
+}
+
+.exam-cat-pill:active {
+  transform: translateY(0px) scale(0.98);
+}
+
+.exam-cat-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  font-size: 1.05rem;
+  line-height: 1;
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--cat-accent) 26%, #ffffff),
+    color-mix(in srgb, var(--cat-accent) 12%, #ffffff)
+  );
+  box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.7), 0 2px 6px color-mix(in srgb, var(--cat-accent) 24%, transparent);
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.2s ease;
+}
+
+.exam-cat-pill:hover .exam-cat-icon {
+  transform: scale(1.14) rotate(-6deg);
+}
+
+.exam-cat-label {
+  line-height: 1.15;
+}
+
+.exam-cat-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.35rem;
+  height: 1.35rem;
+  padding: 0 0.38rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 900;
+  color: color-mix(in srgb, var(--cat-accent) 85%, #0f172a);
+  background: color-mix(in srgb, var(--cat-accent) 18%, transparent);
+  border: 1px solid color-mix(in srgb, var(--cat-accent) 28%, transparent);
+}
+
+/* Estado Activo: gradiente vibrante 3D con texto blanco súper legible */
+.exam-cat-pill.is-active {
+  background: linear-gradient(
+    135deg,
+    var(--cat-accent) 0%,
+    var(--cat-accent-2, color-mix(in srgb, var(--cat-accent) 72%, #1e1b4b)) 100%
+  );
+  color: #ffffff;
+  border-color: color-mix(in srgb, var(--cat-accent) 85%, #ffffff);
+  transform: translateY(-2px);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+  box-shadow:
+    0 10px 24px -4px color-mix(in srgb, var(--cat-accent) 55%, transparent),
+    0 3px 0 color-mix(in srgb, var(--cat-accent) 68%, #0f172a),
+    inset 0 1px 1px rgba(255, 255, 255, 0.35);
+}
+
+.exam-cat-pill.is-active .exam-cat-icon {
+  background: rgba(255, 255, 255, 0.24);
+  box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.45);
+}
+
+.exam-cat-pill.is-active .exam-cat-count {
+  background: rgba(255, 255, 255, 0.24);
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.38);
+}
+
+@media (max-width: 640px) {
+  .exam-cat-strip {
+    gap: 0.5rem;
+    padding: 0.3rem 0.1rem 0.7rem;
+  }
+
+  .exam-cat-pill {
+    padding: 0.42rem 0.82rem 0.42rem 0.46rem;
+    font-size: 0.84rem;
+    gap: 0.42rem;
+  }
+
+  .exam-cat-icon {
+    width: 1.75rem;
+    height: 1.75rem;
+    font-size: 0.95rem;
+  }
+}

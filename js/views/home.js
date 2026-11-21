@@ -247,19 +247,32 @@ window.HomeView = {
           </button>
         </div>
 
-        <div style="display: flex; gap: 0.75rem; overflow-x: auto; padding-bottom: 0.75rem; scrollbar-width: thin;">
-          <button 
-            onclick="window.HomeView.filterCategory('all')"
-            style="display: flex; align-items: center; gap: 0.5rem; padding: 0.6rem 1.1rem; border-radius: 9999px; background: ${this.activeCategory === 'all' ? 'var(--neon-cyan)' : 'var(--bg-card)'}; color: ${this.activeCategory === 'all' ? '#0b0f19' : 'var(--text-primary)'}; border: 1px solid ${this.activeCategory === 'all' ? 'var(--neon-cyan)' : 'var(--border-color)'}; font-weight: 700; cursor: pointer; white-space: nowrap; transition: var(--transition-bounce);">
-            <span>🌟</span> Todos
+        <div class="exam-cat-strip">
+          <button
+            type="button"
+            class="exam-cat-pill ${this.activeCategory === 'all' ? 'is-active' : ''}"
+            style="--cat-accent: #0284c7; --cat-accent-2: #06b6d4;"
+            onclick="window.HomeView.filterCategory('all')">
+            <span class="exam-cat-icon">🌟</span>
+            <span class="exam-cat-label">Todos</span>
+            <span class="exam-cat-count">${quizChallenges.length}</span>
           </button>
-          ${categories.map(cat => `
-            <button 
-              onclick="window.HomeView.filterCategory('${cat.id}')"
-              style="display: flex; align-items: center; gap: 0.5rem; padding: 0.6rem 1.1rem; border-radius: 9999px; background: ${this.activeCategory === cat.id ? cat.color : 'var(--bg-card)'}; color: ${this.activeCategory === cat.id ? '#0b0f19' : 'var(--text-primary)'}; border: 1px solid ${this.activeCategory === cat.id ? cat.color : 'var(--border-color)'}; font-weight: 700; cursor: pointer; white-space: nowrap; transition: var(--transition-bounce);">
-              <span>${cat.icon}</span> ${cat.name}
+          ${categories.map(cat => {
+            const catAccent = cat.color || '#6366f1';
+            const catCount = quizChallenges.filter(c => c.category === cat.id).length;
+            const isActive = this.activeCategory === cat.id;
+            return `
+            <button
+              type="button"
+              class="exam-cat-pill ${isActive ? 'is-active' : ''}"
+              style="--cat-accent: ${catAccent};"
+              onclick="window.HomeView.filterCategory('${cat.id}')">
+              <span class="exam-cat-icon">${cat.icon}</span>
+              <span class="exam-cat-label">${cat.name}</span>
+              ${catCount > 0 ? `<span class="exam-cat-count">${catCount}</span>` : ''}
             </button>
-          `).join('')}
+          `;
+          }).join('')}
         </div>
       </section>
 
