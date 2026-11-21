@@ -120,10 +120,10 @@
       {
         "title": "Publicación",
         "description": "Despliegue en la Landing Page y comunicación.",
-        "progress": 0,
-        "status": "pending",
-        "icon": "rocket",
-        "emoji": "🚀"
+        "status": "active",
+        "progress": 15,
+        "emoji": "📢",
+        "icon": "clipboard"
       }
     ],
     "designConfig": {
@@ -132,8 +132,7 @@
       "titleColor": "#ffffff",
       "textColor": "#cbd5e1",
       "accentColor": "#00f5d4",
-      "bannerStyle": "gradient-cosmos",
-      "bannerUrl": ""
+      "bannerStyle": "gradient-cosmos"
     },
     "authorsConfig": {
       "authorsList": "Melisa",
@@ -217,10 +216,10 @@
         {
           "title": "Publicación",
           "description": "Despliegue en la Landing Page y comunicación.",
-          "progress": 0,
-          "status": "pending",
-          "icon": "rocket",
-          "emoji": "🚀"
+          "status": "active",
+          "progress": 15,
+          "emoji": "📢",
+          "icon": "clipboard"
         }
       ],
       "landingConfig": {
@@ -270,7 +269,7 @@
         "collaborators": "63556"
       },
       "createdAt": "2026-11-20T23:43:24.796Z",
-      "updatedAt": "2026-11-21T00:23:00.721Z",
+      "updatedAt": "2026-11-21T00:23:08.168Z",
       "progress": 55,
       "calculatedProgress": 55
     },
@@ -284,7 +283,7 @@
     "authorAvatar": "🐯",
     "authorRole": "Líder del Proyecto",
     "createdAt": "2026-11-20T23:43:24.796Z",
-    "updatedAt": "2026-11-21T00:22:59.752Z",
+    "updatedAt": "2026-11-21T00:23:07.264Z",
     "image": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
     "rejectionReason": "",
     "tag": "⏳ Pendiente de Autorización",
