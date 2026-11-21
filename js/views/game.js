@@ -783,7 +783,7 @@ window.GameView = {
           <div class="pedagogical-case-grid">
             <!-- Columna Izquierda: Situación del Caso y Pregunta en Negrita -->
             <div class="pedagogical-case-left">
-              <div class="pedagogical-case-context-text">${this.escapeHtml(q.caseContext || '')}</div>
+              <div class="pedagogical-case-context-text">${this.escapeHtml((q.caseContext || '').trim())}</div>
 
               ${q.media && q.mediaType === 'image' ? `
                 <div style="text-align: center; margin: 0.5rem 0;">
@@ -979,9 +979,7 @@ window.GameView = {
                 </div>
               ` : ''}
             </div>
-            <div style="color: #f1f5f9; font-size: 1rem; line-height: 1.7; white-space: pre-wrap; font-family: inherit;">
-              ${this.escapeHtml(q.caseContext || '')}
-            </div>
+            <div style="color: #f1f5f9; font-size: 0.98rem; line-height: 1.34; white-space: pre-line; text-align: left; font-family: inherit;">${this.escapeHtml((q.caseContext || '').trim())}</div>
             ${q.referenceNorm ? `
               <div style="margin-top: 1rem; padding-top: 0.75rem; border-top: 1px dashed rgba(255,255,255,0.18); display: flex; align-items: center; gap: 0.5rem; font-size: 0.88rem; color: #ffd166;">
                 <span>⚖️ Marco normativo:</span>
@@ -1349,9 +1347,7 @@ window.GameView = {
                 </div>
               ` : ''}
             </div>
-            <div style="color: #f1f5f9; font-size: 0.96rem; line-height: 1.7; white-space: pre-wrap; font-family: inherit;">
-              ${this.escapeHtml(q.caseContext || '')}
-            </div>
+            <div style="color: #f1f5f9; font-size: 0.95rem; line-height: 1.34; white-space: pre-line; text-align: left; font-family: inherit;">${this.escapeHtml((q.caseContext || '').trim())}</div>
             ${q.referenceNorm ? `
               <div style="margin-top: 1rem; padding-top: 0.75rem; border-top: 1px dashed rgba(255,255,255,0.18); display: flex; align-items: center; gap: 0.5rem; font-size: 0.84rem; color: #ffd166;">
                 <span>⚖️ Marco normativo:</span>
@@ -2858,21 +2854,19 @@ window.GameView = {
 
         feedbackContainer.innerHTML = `
           <div class="pedagogical-feedback-box">
-            <div style="font-weight: 800; color: ${isCorrect ? (isLightMode ? '#059669' : '#00ff88') : (isLightMode ? '#dc2626' : '#ff4d6d')}; font-size: 1.05rem; margin-bottom: 0.65rem; display: flex; align-items: center; gap: 0.45rem;">
+            <div style="font-weight: 800; color: ${isCorrect ? (isLightMode ? '#059669' : '#00ff88') : (isLightMode ? '#dc2626' : '#ff4d6d')}; font-size: 1.02rem; margin-bottom: 0.4rem; display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem; line-height: 1.25;">
               <span>${isCorrect ? '✅ ¡Respuesta Correcta!' : (isTimeout ? '⏱️ ¡Tiempo Agotado!' : '❌ Respuesta Incorrecta')}</span>
-              ${!isCorrect ? `<span style="font-size: 0.92rem; color: ${subKeyColor}; font-weight: 600;">(Opción clave: <strong style="color: ${keyAccentColor};">${correctLetter} - ${this.escapeHtml(correctText)}</strong>)</span>` : ''}
+              ${!isCorrect ? `<span style="font-size: 0.9rem; color: ${subKeyColor}; font-weight: 600;">(Opción clave: <strong style="color: ${keyAccentColor};">${correctLetter} - ${this.escapeHtml(correctText)}</strong>)</span>` : ''}
             </div>
             ${q.explanation ? `
-              <div style="font-size: 0.82rem; font-weight: 800; text-transform: uppercase; color: ${keyAccentColor}; margin-bottom: 0.35rem; display: flex; align-items: center; gap: 0.35rem;">
+              <div style="font-size: 0.8rem; font-weight: 800; text-transform: uppercase; color: ${keyAccentColor}; margin-bottom: 0.25rem; display: flex; align-items: center; gap: 0.35rem; line-height: 1.2;">
                 <span>💡</span> Justificación Pedagógica:
               </div>
-              <div style="color: ${explTextColor}; font-size: 0.95rem; line-height: 1.65; white-space: pre-wrap;">
-                ${this.escapeHtml(q.explanation)}
-              </div>
+              <div style="color: ${explTextColor}; font-size: 0.93rem; line-height: 1.34; white-space: pre-line; text-align: left; margin: 0;">${this.escapeHtml((q.explanation || '').trim())}</div>
             ` : ''}
             ${q.referenceNorm ? `
-              <div style="margin-top: 0.75rem; padding-top: 0.6rem; border-top: 1px dashed ${isLightMode ? 'rgba(0,0,0,0.15)' : 'rgba(255,255,255,0.18)'}; font-size: 0.88rem; color: ${isLightMode ? '#b45309' : '#ffd166'};">
-                <strong>⚖️ Marco normativo:</strong> <span style="color: ${normTextColor}; font-weight: 600;">${this.escapeHtml(q.referenceNorm)}</span>
+              <div style="margin-top: 0.55rem; padding-top: 0.5rem; border-top: 1px dashed ${isLightMode ? 'rgba(0,0,0,0.15)' : 'rgba(255,255,255,0.18)'}; font-size: 0.86rem; line-height: 1.3; color: ${isLightMode ? '#b45309' : '#ffd166'}; text-align: left;">
+                <strong>⚖️ Marco normativo:</strong> <span style="color: ${normTextColor}; font-weight: 600;">${this.escapeHtml((q.referenceNorm || '').trim())}</span>
               </div>
             ` : ''}
           </div>
@@ -2980,12 +2974,10 @@ window.GameView = {
             <!-- Justificación Pedagógica y Normativa de Referencia para el Alumno -->
             <div style="background: rgba(8, 20, 52, 0.94) !important; border: 1.5px solid #00f5d4 !important; border-radius: 16px; padding: 1.2rem 1.5rem; margin: 1.25rem auto; max-width: 580px; text-align: left; box-shadow: 0 10px 30px rgba(0,0,0,0.7), 0 0 20px rgba(0, 245, 212, 0.2);">
               ${q.explanation ? `
-                <div style="font-size: 0.8rem; text-transform: uppercase; font-weight: 800; color: #00f5d4 !important; margin-bottom: 0.45rem; letter-spacing: 0.5px; display: flex; align-items: center; gap: 0.4rem;">
+                <div style="font-size: 0.78rem; text-transform: uppercase; font-weight: 800; color: #00f5d4 !important; margin-bottom: 0.25rem; letter-spacing: 0.5px; display: flex; align-items: center; gap: 0.35rem; line-height: 1.2;">
                   <span>💡</span> Justificación Pedagógica:
                 </div>
-                <div style="font-size: 0.95rem; color: #f1f5f9 !important; line-height: 1.6; white-space: pre-wrap;">
-                  ${this.escapeHtml(q.explanation)}
-                </div>
+                <div style="font-size: 0.92rem; color: #f1f5f9 !important; line-height: 1.34; white-space: pre-line; text-align: left; margin: 0;">${this.escapeHtml((q.explanation || '').trim())}</div>
               ` : ''}
               ${q.referenceNorm ? `
                 <div style="margin-top: 0.85rem; padding-top: 0.65rem; border-top: 1px dashed rgba(255,255,255,0.18); display: flex; align-items: flex-start; gap: 0.55rem; font-size: 0.86rem;">
@@ -3499,9 +3491,7 @@ window.GameView = {
                 ` : ''}
               </div>
               ${q.explanation ? `
-                <div style="font-size: 1rem; color: #f1f5f9; line-height: 1.65; white-space: pre-wrap; margin-bottom: 0.75rem;">
-                  ${this.escapeHtml(q.explanation)}
-                </div>
+                <div style="font-size: 0.95rem; color: #f1f5f9; line-height: 1.34; white-space: pre-line; text-align: left; margin-bottom: 0.5rem;">${this.escapeHtml((q.explanation || '').trim())}</div>
               ` : ''}
               ${q.referenceNorm ? `
                 <div style="margin-top: 1rem; padding: 0.85rem 1.1rem; background: rgba(0, 245, 212, 0.08); border-radius: 10px; border-left: 4px solid #ffd166; display: flex; align-items: flex-start; gap: 0.6rem;">
