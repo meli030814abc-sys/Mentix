@@ -850,21 +850,30 @@ window.CreatorView = {
 
             <!-- Contexto y Hechos -->
             <div>
-              <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.35rem;">
+              <div style="display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 0.35rem;">
                 <label style="font-weight: 800; font-size: 0.85rem; color: #cbd5e1;">
                   📖 Hechos, antecedentes y descripción de la situación (Contexto del caso):
                 </label>
-                <span style="font-size: 0.74rem; color: var(--text-secondary);">Soporta párrafos y viñetas (-)</span>
+                <span style="font-size: 0.74rem; color: #fbbf24; font-weight: 700;">⚠️ Máximo 2 párrafos normales · Sin viñetas ni listas</span>
               </div>
               <textarea 
+                id="creator-case-context-${idx}"
                 class="creator-case-context-textarea"
-                rows="6"
-                placeholder="Describe aquí la situación, hechos ocurridos, personas o entidades involucradas, viñetas de hallazgos..."
-                style="width: 100%; min-height: 120px; padding: 0.75rem 0.9rem; border-radius: 8px; background: rgba(0,0,0,0.45); border: 1.5px solid var(--border-color); color: #ffffff; font-size: 0.9rem; line-height: 1.55; outline: none; resize: vertical; font-family: inherit; box-sizing: border-box;"
+                rows="5"
+                placeholder="Redacta el caso en 1 o máximo 2 párrafos normales de texto corrido (sin viñetas, guiones ni listas numeradas)..."
+                style="width: 100%; min-height: 110px; padding: 0.75rem 0.9rem; border-radius: 8px; background: rgba(0,0,0,0.45); border: 1.5px solid ${this.validateProseFormat(q.caseContext, 2, 'El caso práctico') ? '#ef4444' : 'var(--border-color)'}; color: #ffffff; font-size: 0.9rem; line-height: 1.45; outline: none; resize: vertical; font-family: inherit; box-sizing: border-box;"
                 oninput="window.CreatorView.updateQuestionCaseContext(${idx}, this.value)"
                 onfocus="this.style.borderColor='var(--neon-cyan)'"
-                onblur="this.style.borderColor='var(--border-color)'"
+                onblur="window.CreatorView.updateQuestionCaseContext(${idx}, this.value)"
               >${this.escapeHtml(q.caseContext || '')}</textarea>
+              <div id="creator-case-format-status-${idx}" style="margin-top: 0.35rem; font-size: 0.78rem; font-weight: 700; ${this.validateProseFormat(q.caseContext, 2, 'El caso práctico') ? 'color: #f87171;' : 'color: #34d399;'}">
+                ${(() => {
+                  const err = this.validateProseFormat(q.caseContext, 2, 'El caso práctico');
+                  if (err) return '🚫 Debes volver a revisar: ' + this.escapeHtml(err) + ' (No te dejará publicar así).';
+                  const pCount = (q.caseContext || '').replace(/\r\n/g, '\n').trim().split(/\n+/).map(s => s.trim()).filter(Boolean).length;
+                  return pCount > 0 ? '✅ Formato válido (' + pCount + '/2 párrafos normales, sin viñetas).' : '';
+                })()}
+              </div>
             </div>
           </div>
         ` : ''}
@@ -1110,6 +1119,22 @@ window.CreatorView = {
     if (this.currentChallenge?.questions?.[idx]) {
       this.currentChallenge.questions[idx].caseContext = val;
     }
+    const err = this.validateProseFormat(val, 2, 'El caso práctico');
+    const ta = document.getElementById(`creator-case-context-${idx}`);
+    if (ta) {
+      ta.style.borderColor = err ? '#ef4444' : 'var(--border-color)';
+    }
+    const statusEl = document.getElementById(`creator-case-format-status-${idx}`);
+    if (statusEl) {
+      if (err) {
+        statusEl.style.color = '#f87171';
+        statusEl.textContent = `🚫 Debes volver a revisar: ${err} (No te dejará publicar así).`;
+      } else {
+        const pCount = String(val || '').replace(/\r\n/g, '\n').trim().split(/\n+/).map(s => s.trim()).filter(Boolean).length;
+        statusEl.style.color = '#34d399';
+        statusEl.textContent = pCount > 0 ? `✅ Formato válido (${pCount}/2 párrafos normales, sin viñetas).` : '';
+      }
+    }
   },
 
   updateQuestionExplanation(idx, val) {
@@ -1129,20 +1154,9 @@ window.CreatorView = {
     if (!q) return;
     q.type = 'case';
     q.caseTitle = 'Caso práctico: Control aduanero y evasión de obligaciones tributarias';
-    q.caseContext = `Una empresa colombiana denominada TecnoImport S. A. S., dedicada a la comercialización de computadores, celulares y dispositivos electrónicos, realiza operaciones de importación desde diferentes países. Durante los últimos meses, la empresa ha incrementado considerablemente el volumen de sus importaciones, pero sus declaraciones aduaneras presentan valores inferiores a los registrados en las facturas comerciales y documentos de transporte.
+    q.caseContext = `Una empresa colombiana denominada TecnoImport S. A. S., dedicada a la comercialización de computadores, celulares y dispositivos electrónicos, realiza operaciones de importación desde diferentes países. Durante los últimos meses incrementó el volumen de sus compras, pero sus declaraciones aduaneras presentan valores inferiores a los registrados en las facturas comerciales y documentos de transporte.
 
-Ante esta situación, la Dirección de Impuestos y Aduanas Nacionales (DIAN), en desarrollo de sus actividades de fiscalización y control aduanero, decide realizar una inspección documental y física de varias mercancías que se encuentran pendientes de nacionalización.
-
-Durante la revisión, los funcionarios identifican las siguientes situaciones:
-- Diferencias entre el valor declarado de las mercancías y el valor consignado en las facturas comerciales.
-- Documentos que no coinciden con la información suministrada por el proveedor extranjero.
-- Posibles inconsistencias en la clasificación arancelaria de algunos productos.
-- Indicios de que la empresa podría estar pagando menos tributos aduaneros de los legalmente correspondientes.
-- Ausencia de algunos documentos exigidos para acreditar el cumplimiento de las obligaciones aduaneras.
-
-El representante legal de la empresa manifiesta que las diferencias se deben a errores administrativos de su departamento de comercio exterior y solicita que la DIAN permita continuar con el proceso de nacionalización mientras se corrigen los documentos.
-
-Sin embargo, los funcionarios consideran que existen elementos suficientes para continuar con las actuaciones de control y determinar si se han configurado infracciones aduaneras.`;
+Ante esta situación, la Dirección de Impuestos y Aduanas Nacionales (DIAN) realiza una inspección documental y física de las mercancías pendientes de nacionalización y detecta inconsistencias entre el valor declarado, la clasificación arancelaria y los documentos del proveedor extranjero. Aunque el representante legal alega errores administrativos y pide continuar con el levante, los funcionarios evidencian indicios suficientes para adelantar actuaciones de control aduanero.`;
     q.text = 'Teniendo en cuenta las competencias de la DIAN en materia de fiscalización, control aduanero y recaudo de los tributos, ¿cuál sería la actuación más adecuada frente a los hechos identificados?';
     q.options = [
       { text: 'Autorizar inmediatamente el levante de las mercancías, teniendo en cuenta que la empresa reconoce la existencia de errores administrativos y manifiesta su intención de corregirlos posteriormente.', shape: '✦', color: 'opt-1' },
@@ -1327,6 +1341,57 @@ Sin embargo, los funcionarios consideran que existen elementos suficientes para 
     }
   },
 
+  validateProseFormat(text, maxParagraphs = 2, fieldLabel = 'El texto') {
+    const raw = String(text || '').replace(/\r\n/g, '\n').trim();
+    if (!raw) return null;
+
+    const lines = raw.split(/\n+/).map(l => l.trim()).filter(Boolean);
+    const hasInlineBullet = /[•▪●◦‣⁃∙►▸▹➤➔➜➢]/.test(raw);
+    const hasLineList = lines.some(line =>
+      /^([-–—*•▪●◦‣⁃∙►▸▹➤➔➜→➢⇒✓✔✅❌✘✗☐☑■□◆◇★☆]+)(\s+|$)/.test(line) ||
+      /^[-–—*•▪●◦‣⁃∙►▸](?=\S)/.test(line) ||
+      /^(\d+[\.\)\-]|[a-zA-Z][\.\)])\s+/.test(line)
+    );
+
+    if (hasInlineBullet || hasLineList) {
+      return `${fieldLabel} contiene viñetas, guiones o listas. Debe redactarse en párrafo normal sin viñetas ni numeraciones.`;
+    }
+
+    if (lines.length > maxParagraphs) {
+      if (maxParagraphs === 1) {
+        return `${fieldLabel} tiene ${lines.length} párrafos. Debe escribirse como 1 párrafo normal (pregunta directa).`;
+      }
+      return `${fieldLabel} tiene ${lines.length} párrafos. El máximo permitido es de ${maxParagraphs} párrafos normales.`;
+    }
+
+    return null;
+  },
+
+  sanitizeCaseToProse(text, maxParagraphs = 2) {
+    const raw = String(text || '').replace(/\r\n/g, '\n').trim();
+    if (!raw) return '';
+    const cleanedLines = raw
+      .split(/\n+/)
+      .map(l => l.trim()
+        .replace(/^([-–—*•▪●◦‣⁃∙►▸▹➤➔➜→➢⇒✓✔✅❌✘✗☐☑■□◆◇★☆]+|\d+[\.\)\-]|[a-zA-Z][\.\)])\s*/g, '')
+        .replace(/[•▪●◦‣⁃∙►▸▹➤➔➜➢]/g, '')
+        .replace(/\*\*/g, '')
+        .trim()
+      )
+      .filter(Boolean);
+
+    if (cleanedLines.length <= maxParagraphs) {
+      return cleanedLines.join('\n\n');
+    }
+    const splitAt = Math.ceil(cleanedLines.length / maxParagraphs);
+    const merged = [];
+    for (let i = 0; i < cleanedLines.length; i += splitAt) {
+      const chunk = cleanedLines.slice(i, i + splitAt).map(s => /[.!?;:]$/.test(s) ? s : s + '.').join(' ');
+      merged.push(chunk.replace(/:\s*/g, ': ').replace(/\s{2,}/g, ' ').trim());
+    }
+    return merged.slice(0, maxParagraphs).join('\n\n');
+  },
+
   validateChallenge() {
     const c = this.currentChallenge;
     if (!c.title.trim()) {
@@ -1337,12 +1402,37 @@ Sin embargo, los funcionarios consideran que existen elementos suficientes para 
       alert('⚠️ No se puede publicar un reto sin preguntas.');
       return false;
     }
+
+    const formatViolations = [];
+    let firstViolationIdx = -1;
+
     for (let i = 0; i < c.questions.length; i++) {
       const q = c.questions[i];
       if (!q.text.trim()) {
         alert(`⚠️ La pregunta #${i + 1} no tiene texto.`);
         return false;
       }
+
+      const isCaseQuestion = q.type === 'case' || c.isCaseStudy || Boolean((q.caseContext || '').trim());
+      if (isCaseQuestion) {
+        if ((q.type === 'case' || c.isCaseStudy) && !(q.caseContext || '').trim()) {
+          formatViolations.push(`• Pregunta #${i + 1}: falta redactar el caso práctico (máximo 2 párrafos normales, sin viñetas).`);
+          if (firstViolationIdx === -1) firstViolationIdx = i;
+        } else if ((q.caseContext || '').trim()) {
+          const caseErr = this.validateProseFormat(q.caseContext, 2, 'El caso práctico');
+          if (caseErr) {
+            formatViolations.push(`• Pregunta #${i + 1}: ${caseErr}`);
+            if (firstViolationIdx === -1) firstViolationIdx = i;
+          }
+        }
+      }
+
+      const qTextErr = this.validateProseFormat(q.text, 1, 'La pregunta');
+      if (qTextErr) {
+        formatViolations.push(`• Pregunta #${i + 1}: ${qTextErr}`);
+        if (firstViolationIdx === -1) firstViolationIdx = i;
+      }
+
       if (q.type === 'open') {
         // Pregunta abierta no requiere opciones predefinidas
       } else if (q.type === 'text') {
@@ -1380,6 +1470,25 @@ Sin embargo, los funcionarios consideran que existen elementos suficientes para 
         }
       }
     }
+
+    if (formatViolations.length > 0) {
+      if (firstViolationIdx >= 0) {
+        const badEl = document.getElementById(`creator-case-context-${firstViolationIdx}`) || document.querySelector(`[data-question-index="${firstViolationIdx}"]`);
+        if (badEl) {
+          badEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          if (typeof badEl.focus === 'function') badEl.focus();
+        }
+      }
+      alert(
+        `🚫 NO SE PUEDE PUBLICAR EL EXAMEN\n\n` +
+        `Debes volver a revisar y corregir los siguientes puntos porque no cumplen el formato permitido (casos prácticos: máximo 2 párrafos normales sin viñetas ni listas; preguntas: 1 párrafo normal sin viñetas):\n\n` +
+        formatViolations.slice(0, 8).join('\n') +
+        (formatViolations.length > 8 ? `\n... y ${formatViolations.length - 8} revisión(es) más.` : '') +
+        `\n\nCorrige estos textos y vuelve a intentar publicar.`
+      );
+      return false;
+    }
+
     return true;
   },
 
@@ -3525,7 +3634,7 @@ El oficial de cumplimiento normativo advierte que omitir el reporte vulnera el p
           1500,
           {
             caseTitle: item.caseTitle,
-            caseContext: item.caseContext,
+            caseContext: this.sanitizeCaseToProse(item.caseContext, 2),
             explanation: item.explanation,
             referenceNorm: item.referenceNorm
           }
@@ -3548,17 +3657,13 @@ El oficial de cumplimiento normativo advierte que omitir el reporte vulnera el p
       const fact2 = sentences[i * 3 + 1] || `Durante la última evaluación de desempeño, se detectaron discrepancias significativas entre los resultados proyectados y los datos reales obtenidos en la implementación.`;
       const fact3 = sentences[i * 3 + 2] || `Existen presiones operativas y limitaciones de tiempo que han llevado a miembros del equipo a proponer atajos procedimentales no validados.`;
 
+      const cleanF1 = fact1.replace(/^[•\-\s]+/, '').replace(/\.+$/, '');
+      const cleanF2 = fact2.replace(/^[•\-\s]+/, '').replace(/\.+$/, '');
+      const cleanF3 = fact3.replace(/^[•\-\s]+/, '').replace(/\.+$/, '');
       const dynamicTitle = `Caso práctico: Aplicación crítica y resolución situacional en ${cleanTopic} (Escenario ${caseNumber})`;
-      const dynamicContext = `En una organización y equipo profesional especializado en **${cleanTopic}**, se presenta una situación crítica durante la fase de ejecución y control operativo.
+      const dynamicContext = `En una organización y equipo profesional especializado en ${cleanTopic}, se presenta una situación crítica durante la fase de ejecución y control operativo. ${cleanF1}. Además, ${cleanF2.charAt(0).toLowerCase() + cleanF2.slice(1)}.
 
-Durante el diagnóstico técnico y la revisión de evidencias, se identifican los siguientes hechos y hallazgos relevantes:
-- ${fact1.replace(/^[•\-\s]+/, '')}
-- ${fact2.replace(/^[•\-\s]+/, '')}
-- ${fact3.replace(/^[•\-\s]+/, '')}
-- Se identifican indicios de vulnerabilidad metodológica que podrían comprometer la validez y sostenibilidad de los resultados finales.
-- Los líderes del proyecto solicitan una intervención inmediata antes de autorizar el cierre formal de la fase.
-
-El equipo directivo y los especialistas técnicos deben definir la actuación técnica más rigurosa y justificada conforme a las mejores prácticas de la disciplina.`;
+Durante la revisión técnica de evidencias, ${cleanF3.charAt(0).toLowerCase() + cleanF3.slice(1)}, lo que revela vulnerabilidades metodológicas que podrían comprometer la validez y sostenibilidad de los resultados finales. Ante la solicitud de intervención inmediata antes del cierre formal, el equipo directivo y los especialistas deben definir la actuación técnica más rigurosa conforme a las mejores prácticas de la disciplina.`;
 
       const dynamicText = `Teniendo en cuenta los fundamentos teóricos, normativos y procedimentales de ${cleanTopic}, ¿cuál es la actuación más adecuada frente a los hechos identificados?`;
 
