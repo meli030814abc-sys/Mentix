@@ -5412,7 +5412,7 @@ body.projects-pure-white-theme #view-projects:has(.gdn-wizard-shell) {
 .pedagogical-case-grid {
   display: grid;
   grid-template-columns: 1.18fr 1fr;
-  gap: 2.8rem;
+  gap: 1.5rem;
   align-items: start;
 }
 
@@ -5420,25 +5420,26 @@ body.projects-pure-white-theme #view-projects:has(.gdn-wizard-shell) {
 .pedagogical-case-left {
   display: flex;
   flex-direction: column;
-  gap: 1.35rem;
+  gap: 0.7rem;
   text-align: left;
 }
 
 .pedagogical-case-context-text {
-  font-size: clamp(1.02rem, 1.25vw, 1.2rem);
-  line-height: 1.72;
+  font-size: clamp(0.9rem, 1.02vw, 1.02rem);
+  line-height: 1.35;
   color: #f1f5f9;
   font-weight: 400;
   white-space: pre-wrap;
-  text-align: justify;
+  text-align: left;
+  letter-spacing: -0.005em;
 }
 
 .pedagogical-case-question-statement {
-  font-size: clamp(1.18rem, 1.45vw, 1.38rem);
+  font-size: clamp(1.05rem, 1.25vw, 1.22rem);
   font-weight: 900;
   color: var(--neon-cyan, #00f5d4);
-  line-height: 1.4;
-  margin-top: 0.2rem;
+  line-height: 1.28;
+  margin-top: 0.1rem;
   text-shadow: 0 0 16px rgba(0, 245, 212, 0.25);
 }
 
@@ -5446,11 +5447,11 @@ body.projects-pure-white-theme #view-projects:has(.gdn-wizard-shell) {
   background: rgba(0, 0, 0, 0.4);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-left: 3.5px solid #ef4444;
-  padding: 0.75rem 1rem;
+  padding: 0.55rem 0.85rem;
   border-radius: 8px;
-  font-size: 0.88rem;
+  font-size: 0.84rem;
   color: #cbd5e1;
-  line-height: 1.45;
+  line-height: 1.32;
 }
 
 .pedagogical-case-norm-box strong {
@@ -5461,7 +5462,7 @@ body.projects-pure-white-theme #view-projects:has(.gdn-wizard-shell) {
 .pedagogical-case-right {
   display: flex;
   flex-direction: column;
-  gap: 0.9rem;
+  gap: 0.65rem;
 }
 
 .pedagogical-case-options-list {
@@ -5933,13 +5934,13 @@ body[data-theme="light"] .pedagogical-feedback-box span,
     gap: 1.25rem;
   }
   .pedagogical-case-context-text {
-    font-size: 0.98rem;
-    line-height: 1.62;
+    font-size: 0.9rem;
+    line-height: 1.32;
     text-align: left;
   }
   .pedagogical-case-question-statement {
-    font-size: 1.08rem;
-    line-height: 1.4;
+    font-size: 1rem;
+    line-height: 1.28;
   }
   .pedagogical-case-option-card {
     padding: 0.8rem 1rem;

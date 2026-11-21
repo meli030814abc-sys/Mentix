@@ -979,7 +979,7 @@ window.GameView = {
                 </div>
               ` : ''}
             </div>
-            <div style="color: #f1f5f9; font-size: 1rem; line-height: 1.7; white-space: pre-wrap; font-family: inherit;">
+            <div style="color: #f1f5f9; font-size: 0.94rem; line-height: 1.35; white-space: pre-wrap; font-family: inherit;">
               ${this.escapeHtml(q.caseContext || '')}
             </div>
             ${q.referenceNorm ? `
@@ -1154,7 +1154,7 @@ window.GameView = {
               </span>
               <span style="font-weight: 800; font-size: 0.95rem; color: #ffffff;">${this.escapeHtml(q.caseTitle || 'Análisis Situacional')}</span>
             </div>
-            <div style="color: #f1f5f9; font-size: 0.92rem; line-height: 1.65; white-space: pre-wrap; font-family: inherit;">
+            <div style="color: #f1f5f9; font-size: 0.88rem; line-height: 1.32; white-space: pre-wrap; font-family: inherit;">
               ${this.escapeHtml(q.caseContext || '')}
             </div>
           </div>
@@ -1349,7 +1349,7 @@ window.GameView = {
                 </div>
               ` : ''}
             </div>
-            <div style="color: #f1f5f9; font-size: 0.96rem; line-height: 1.7; white-space: pre-wrap; font-family: inherit;">
+            <div style="color: #f1f5f9; font-size: 0.92rem; line-height: 1.35; white-space: pre-wrap; font-family: inherit;">
               ${this.escapeHtml(q.caseContext || '')}
             </div>
             ${q.referenceNorm ? `
