@@ -194,6 +194,9 @@ window.ProjectWizard = {
         useDefaultImage: existingProject.useDefaultImage !== undefined ? existingProject.useDefaultImage : true,
         visualAssets: Array.isArray(existingProject.visualAssets) && existingProject.visualAssets.length > 0 ? JSON.parse(JSON.stringify(existingProject.visualAssets)) : (Array.isArray(gp.visualAssets) ? JSON.parse(JSON.stringify(gp.visualAssets)) : []),
         externalLinks: Array.isArray(existingProject.externalLinks) && existingProject.externalLinks.length > 0 ? JSON.parse(JSON.stringify(existingProject.externalLinks)) : (Array.isArray(gp.externalLinks) ? JSON.parse(JSON.stringify(gp.externalLinks)) : []),
+        projectRoadmap: Array.isArray(existingProject.projectRoadmap) && existingProject.projectRoadmap.length > 0
+          ? JSON.parse(JSON.stringify(existingProject.projectRoadmap))
+          : (Array.isArray(gp.projectRoadmap) && gp.projectRoadmap.length > 0 ? JSON.parse(JSON.stringify(gp.projectRoadmap)) : undefined),
         landingConfig: {
           publicName: existingProject.landingConfig?.publicName || gp.landingConfig?.publicName || existingProject.title || '',
           slug: existingProject.slug || existingProject.landingConfig?.slug || gp.landingConfig?.slug || this.slugify(existingProject.title || 'proyecto-govdata'),
@@ -210,10 +213,14 @@ window.ProjectWizard = {
         completedSteps: Array.isArray(existingProject.completedSteps) && existingProject.completedSteps.length > 0 ? existingProject.completedSteps : (Array.isArray(gp.completedSteps) ? gp.completedSteps : [1]),
         currentStep: Number(existingProject.currentStep || gp.currentStep || 1),
         author: existingProject.author || u.name || u.username || 'Docente / Líder',
-        authorId: existingProject.authorId || u.id || u.username || '',
+        authorId: existingProject.authorId || gp.authorId || u.id || u.username || '',
+        ownerId: existingProject.ownerId || gp.ownerId || existingProject.authorId || u.id || '',
+        ownerUsername: existingProject.ownerUsername || gp.ownerUsername || u.username || '',
         authorEmail: existingProject.authorEmail || u.email || '',
         authorAvatar: existingProject.authorAvatar || u.avatar || '👨‍🏫',
         authorRole: existingProject.authorRole || u.role || 'teacher',
+        joinCode: existingProject.joinCode || gp.joinCode || existingProject.accessCode || gp.accessCode || '',
+        accessCode: existingProject.accessCode || gp.accessCode || existingProject.joinCode || gp.joinCode || '',
         designConfig: existingProject.designConfig || gp.designConfig || {
           themeId: 'cosmos',
           fontFamily: 'Montserrat',
@@ -298,9 +305,13 @@ window.ProjectWizard = {
       currentStep: 1,
       author: u.name || u.username || 'Docente / Líder',
       authorId: u.id || u.username || '',
+      ownerId: u.id || '',
+      ownerUsername: u.username || '',
       authorEmail: u.email || '',
       authorAvatar: u.avatar || '👨‍🏫',
       authorRole: u.role || 'teacher',
+      joinCode: '',
+      accessCode: '',
       designConfig: {
         themeId: 'cosmos',
         fontFamily: 'Montserrat',
@@ -424,6 +435,20 @@ window.ProjectWizard = {
     this.draft.currentStep = this.currentStep;
     this.draft.updatedAt = new Date().toISOString();
 
+    // Asegurar metadatos de usuario y código para sincronización multi-navegador/dispositivo
+    try {
+      const cu = window.appState?.currentUser || {};
+      if (!this.draft.authorId && (cu.id || cu.username)) this.draft.authorId = cu.id || cu.username;
+      if (!this.draft.ownerId && cu.id) this.draft.ownerId = cu.id;
+      if (!this.draft.ownerUsername && cu.username) this.draft.ownerUsername = cu.username;
+      if (!this.draft.authorEmail && cu.email) this.draft.authorEmail = cu.email;
+      const activeCode = sessionStorage.getItem('mentix_active_join_code') || localStorage.getItem('mentix_active_join_code') || '';
+      if (activeCode && !this.draft.joinCode) {
+        this.draft.joinCode = activeCode;
+        this.draft.accessCode = activeCode;
+      }
+    } catch (e) {}
+
     // Respaldar inmediatamente en la bóveda de imágenes
     if (window.MentixImageVault) {
       window.MentixImageVault.backupProjectImages(this.draft);
@@ -469,6 +494,22 @@ window.ProjectWizard = {
       console.warn('Aviso al guardar borrador local:', e);
     }
 
+    // Registrar mapa código→draftId para restauración entre sesiones
+    try {
+      const draftCode = this.draft.joinCode || this.draft.accessCode || this.draft.code || '';
+      if (draftCode && this.draft.id) {
+        const normalizeCode = s => String(s || '').trim().toLowerCase().replace(/[\s\-_]/g, '');
+        const codeKey = normalizeCode(draftCode);
+        if (codeKey) {
+          const codeMap = JSON.parse(localStorage.getItem('mentix_code_draft_map') || '{}');
+          const userId = window.appState?.currentUser?.id || window.appState?.currentUser?.username || '';
+          const mapKey = userId ? `${userId}_${codeKey}` : codeKey;
+          codeMap[mapKey] = this.draft.id;
+          localStorage.setItem('mentix_code_draft_map', JSON.stringify(codeMap));
+        }
+      }
+    } catch (e) { /* silent */ }
+
     // Sincronizar inmediatamente con window.appState.challenges y el almacenamiento global para que aparezca en Admin y en Proyectos
     let syncedRecord = null;
     try {
@@ -498,8 +539,8 @@ window.ProjectWizard = {
         console.warn('Aviso al respaldar borrador en Supabase:', err);
       }
 
-      // Si el proyecto ya tiene título, sincronizar también el registro en challenges / govdata_projects
-      if (this.draft.title && this.draft.title.trim()) {
+      // Sincronizar también en govdata_projects cuando tiene título o código de proyecto
+      if ((this.draft.title && this.draft.title.trim()) || this.draft.joinCode || this.draft.accessCode) {
         try {
           const fullRecord = syncedRecord || this.buildChallengeCompatibleRecord();
           window.supabaseService.saveGovDataProject(fullRecord);
@@ -507,9 +548,13 @@ window.ProjectWizard = {
       }
     }
 
-    if (this.draft.title && this.draft.title.trim() && window.appRouter && typeof window.appRouter.pushChallengeToCloud === 'function') {
+    const hasTitleOrCode = Boolean((this.draft.title && this.draft.title.trim()) || this.draft.joinCode || this.draft.accessCode);
+    if (hasTitleOrCode && window.appRouter && typeof window.appRouter.pushChallengeToCloud === 'function') {
       try {
         const cloudRec = syncedRecord || this.buildChallengeCompatibleRecord();
+        if (!cloudRec.title || !cloudRec.title.trim()) {
+          cloudRec.title = this.draft.joinCode ? `Borrador (${this.draft.joinCode})` : 'Borrador de Proyecto';
+        }
         window.appRouter.pushChallengeToCloud(cloudRec);
       } catch (errCloud) {}
     }
@@ -533,7 +578,7 @@ window.ProjectWizard = {
     }
   },
 
-  async openWizard(projectId = null, startStep = null, allowCodeAccess = false) {
+  async openWizard(projectId = null, startStep = null, allowCodeAccess = false, pushHistory = true) {
     const u = window.appState?.currentUser;
     const isGuest = !u || u.isGuest || u.username === 'invitado';
     if (isGuest) {
@@ -577,14 +622,53 @@ window.ProjectWizard = {
         }
         return best;
       };
+      const mergeNonEmptyObj = (...objs) => {
+        const out = {};
+        for (const obj of objs) {
+          if (!obj || typeof obj !== 'object' || Array.isArray(obj)) continue;
+          for (const [k, v] of Object.entries(obj)) {
+            if (v === undefined || v === null) continue;
+            if (typeof v === 'string') {
+              if (v.trim().length > 0 && (!out[k] || typeof out[k] !== 'string' || v.trim().length >= out[k].trim().length)) {
+                out[k] = v;
+              }
+            } else if (Array.isArray(v)) {
+              if (v.length > 0 && (!Array.isArray(out[k]) || v.length >= out[k].length)) {
+                out[k] = JSON.parse(JSON.stringify(v));
+              }
+            } else if (typeof v === 'boolean' || typeof v === 'number') {
+              out[k] = v;
+            } else if (typeof v === 'object') {
+              out[k] = { ...(out[k] || {}), ...JSON.parse(JSON.stringify(v)) };
+            }
+          }
+        }
+        return out;
+      };
+      const pickBestRoadmap = (...sources) => {
+        // Elegir el projectRoadmap de la fuente más reciente que tenga etapas reales
+        const valid = sources.filter(s => s && Array.isArray(s.list) && s.list.length > 0);
+        if (valid.length === 0) return undefined;
+        valid.sort((a, b) => {
+          const tsDiff = (b.ts || 0) - (a.ts || 0);
+          if (tsDiff !== 0) return tsDiff;
+          return b.list.length - a.list.length;
+        });
+        return JSON.parse(JSON.stringify(valid[0].list));
+      };
 
       if (savedDraft || savedChallenge) {
+        const tsDraft = Date.parse(savedDraft?.updatedAt || '') || 0;
+        const tsChal = Date.parse(savedChallenge?.updatedAt || '') || 0;
+        const tsGov = Date.parse(gov?.updatedAt || '') || 0;
         let base = (typeof window.mergeProjectPreservingImages === 'function')
           ? window.mergeProjectPreservingImages(savedChallenge, savedDraft)
           : { ...(savedChallenge || {}), ...(gov || {}), ...(savedDraft || {}) };
         if (gov && typeof window.mergeProjectPreservingImages === 'function') {
           base = window.mergeProjectPreservingImages(base, gov);
         }
+        base.title = pickLongerStr(savedDraft?.title, savedChallenge?.title, gov?.title, base.title);
+        base.subtitle = pickLongerStr(savedDraft?.subtitle, savedChallenge?.subtitle, gov?.subtitle, base.subtitle);
         base.slides = pickLongerArr(savedDraft?.slides, savedChallenge?.slides, gov?.slides, base.slides);
         if (typeof window.sanitizeProjectSlides === 'function') {
           base.slides = window.sanitizeProjectSlides(base.slides, base.title);
@@ -593,26 +677,57 @@ window.ProjectWizard = {
         base.resources = pickLongerArr(savedDraft?.resources, savedChallenge?.resources, gov?.resources, base.resources);
         base.externalLinks = pickLongerArr(savedDraft?.externalLinks, savedChallenge?.externalLinks, gov?.externalLinks, base.externalLinks);
         base.visualAssets = pickLongerArr(savedDraft?.visualAssets, savedChallenge?.visualAssets, gov?.visualAssets, base.visualAssets);
+        base.projectRoadmap = pickBestRoadmap(
+          { list: savedDraft?.projectRoadmap, ts: tsDraft },
+          { list: savedChallenge?.projectRoadmap, ts: tsChal },
+          { list: gov?.projectRoadmap, ts: tsGov }
+        );
         base.fullDescription = pickLongerStr(savedDraft?.fullDescription, savedChallenge?.fullDescription, gov?.fullDescription);
         base.shortDescription = pickLongerStr(savedDraft?.shortDescription, savedChallenge?.shortDescription, gov?.shortDescription, savedChallenge?.description);
         base.problemStatement = pickLongerStr(savedDraft?.problemStatement, savedChallenge?.problemStatement, gov?.problemStatement);
         base.mainObjective = pickLongerStr(savedDraft?.mainObjective, savedChallenge?.mainObjective, gov?.mainObjective);
-        base.valueProp = pickLongerStr(savedDraft?.valueProp, savedChallenge?.valueProp, gov?.valueProp);
         base.benefits = pickLongerStr(savedDraft?.benefits, savedChallenge?.benefits, gov?.benefits);
+        base.targetAudience = pickLongerStr(savedDraft?.targetAudience, savedChallenge?.targetAudience, gov?.targetAudience);
+        base.mainImage = pickLongerStr(savedDraft?.mainImage, savedChallenge?.mainImage, savedChallenge?.banner, gov?.mainImage, base.mainImage);
+        base.thumbnailImage = pickLongerStr(savedDraft?.thumbnailImage, savedChallenge?.thumbnailImage, gov?.thumbnailImage, base.thumbnailImage);
+        base.valueProp = mergeNonEmptyObj(gov?.valueProp, savedChallenge?.valueProp, savedChallenge?.valueProposition, savedDraft?.valueProp);
+        base.videoConfig = mergeNonEmptyObj(gov?.videoConfig, savedChallenge?.videoConfig, savedDraft?.videoConfig);
+        base.designConfig = mergeNonEmptyObj(gov?.designConfig, savedChallenge?.designConfig, savedDraft?.designConfig);
+        base.authorsConfig = mergeNonEmptyObj(gov?.authorsConfig, savedChallenge?.authorsConfig, savedDraft?.authorsConfig);
+        base.landingConfig = mergeNonEmptyObj(gov?.landingConfig, savedChallenge?.landingConfig, savedDraft?.landingConfig);
         base.currentStep = Math.max(Number(savedDraft?.currentStep) || 1, Number(savedChallenge?.currentStep) || 1, Number(gov?.currentStep) || 1);
         existing = base;
       }
 
-      // Buscar datos reales guardados en Supabase
-      if (window.supabaseService && window.supabaseService.client) {
+      // Buscar datos reales guardados en Supabase (con timeout estricto de 1.2s para apertura rápida;
+      // si ya venimos de submitJoinProjectCode con allowCodeAccess, ya se sincronizó arriba)
+      if (!allowCodeAccess && window.supabaseService && window.supabaseService.client) {
         try {
-          const cloudDraft = await window.supabaseService.loadWizardDraft(projectId);
+          const cloudDraft = await Promise.race([
+            window.supabaseService.loadWizardDraft(projectId).catch(() => null),
+            new Promise(resolve => setTimeout(() => resolve(null), 1200))
+          ]);
           if (cloudDraft) {
-            const mergedCloud = { ...(existing || {}), ...cloudDraft };
+            const existingTs = Date.parse(existing?.updatedAt || '') || 0;
+            const cloudTs = Date.parse(cloudDraft?.updatedAt || '') || 0;
+            const mergedCloud = cloudTs >= existingTs
+              ? { ...(existing || {}), ...cloudDraft }
+              : { ...cloudDraft, ...(existing || {}) };
             mergedCloud.slides = pickLongerArr(existing?.slides, cloudDraft?.slides);
             mergedCloud.completedSteps = pickLongerArr(existing?.completedSteps, cloudDraft?.completedSteps);
             mergedCloud.resources = pickLongerArr(existing?.resources, cloudDraft?.resources);
             mergedCloud.externalLinks = pickLongerArr(existing?.externalLinks, cloudDraft?.externalLinks);
+            mergedCloud.visualAssets = pickLongerArr(existing?.visualAssets, cloudDraft?.visualAssets);
+            mergedCloud.projectRoadmap = pickBestRoadmap(
+              { list: existing?.projectRoadmap, ts: existingTs },
+              { list: cloudDraft?.projectRoadmap, ts: cloudTs }
+            );
+            mergedCloud.valueProp = mergeNonEmptyObj(existing?.valueProp, cloudDraft?.valueProp);
+            mergedCloud.videoConfig = mergeNonEmptyObj(existing?.videoConfig, cloudDraft?.videoConfig);
+            mergedCloud.designConfig = mergeNonEmptyObj(existing?.designConfig, cloudDraft?.designConfig);
+            mergedCloud.authorsConfig = mergeNonEmptyObj(existing?.authorsConfig, cloudDraft?.authorsConfig);
+            mergedCloud.landingConfig = mergeNonEmptyObj(existing?.landingConfig, cloudDraft?.landingConfig);
+            mergedCloud.currentStep = Math.max(Number(existing?.currentStep) || 1, Number(cloudDraft?.currentStep) || 1);
             existing = mergedCloud;
           }
         } catch (e) {
@@ -622,12 +737,61 @@ window.ProjectWizard = {
     }
 
     this.draft = this.createDefaultDraft(existing);
+    // Si es un borrador nuevo creado con ID determinístico por (usuario + código), conservar ese ID para sincronización multi-navegador
+    if (!existing && projectId && String(projectId).startsWith('govdata_code_')) {
+      this.draft.id = String(projectId);
+    }
     if (activeJoinCode) {
       this.draft.joinCode = activeJoinCode;
       this.draft.accessCode = activeJoinCode;
     }
     this.activeDraftId = this.draft.id;
     this.currentStep = startStep || this.draft.currentStep || 1;
+
+    // Registrar guardado de emergencia al cambiar de pestaña o cerrar el navegador (una sola vez)
+    if (!this._unloadSaveBound) {
+      this._unloadSaveBound = true;
+      const flushDraftNow = () => {
+        try {
+          if (this.draft && window.ProjectsView && window.ProjectsView.viewMode === 'wizard') {
+            this.collectCurrentStepInputs();
+            this.saveDraftToStorage(true, true);
+          }
+        } catch (e) {}
+      };
+      document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'hidden') flushDraftNow();
+      });
+      window.addEventListener('beforeunload', flushDraftNow);
+    }
+
+    // Toast de restauración: mostrar si se recuperó un borrador existente con progreso
+    const hasRestoredContent = Boolean(
+      existing && (
+        this.currentStep > 1 ||
+        (this.draft.title && this.draft.title.trim()) ||
+        (this.draft.shortDescription && this.draft.shortDescription.trim()) ||
+        (Array.isArray(this.draft.slides) && this.draft.slides.length > 0)
+      )
+    );
+    if (hasRestoredContent && allowCodeAccess) {
+      setTimeout(() => {
+        const toastMsg = `✅ ¡Tu progreso ha sido restaurado! Continúas desde el Paso ${this.currentStep}.`;
+        if (window.showToast && typeof window.showToast === 'function') {
+          window.showToast(toastMsg, 'success', 4000);
+        } else if (window.ProjectsView && typeof window.ProjectsView.showToast === 'function') {
+          window.ProjectsView.showToast(toastMsg, 'success');
+        } else {
+          // Fallback: notificación visual simple
+          const toastEl = document.createElement('div');
+          toastEl.style.cssText = 'position:fixed;top:20px;right:20px;z-index:99999;background:#22c55e;color:#fff;padding:14px 20px;border-radius:12px;font-size:15px;font-weight:600;box-shadow:0 4px 20px rgba(0,0,0,0.2);transition:opacity 0.5s';
+          toastEl.textContent = toastMsg;
+          document.body.appendChild(toastEl);
+          setTimeout(() => { toastEl.style.opacity = '0'; setTimeout(() => toastEl.remove(), 500); }, 4000);
+        }
+      }, 600);
+    }
+
     const navEl = document.getElementById('main-navbar');
     if (navEl) navEl.style.display = 'none';
     document.body.classList.remove('projects-pure-white-theme');
@@ -635,6 +799,12 @@ window.ProjectWizard = {
     if (window.ProjectsView) {
       window.ProjectsView.viewMode = 'wizard';
       window.ProjectsView.selectedProjectId = this.draft.id;
+      if (pushHistory && window.appRouter && typeof window.appRouter.pushSubState === 'function') {
+        window.appRouter.pushSubState(
+          { view: 'projects', subMode: 'wizard', projectId: this.draft.id, step: this.currentStep },
+          '#projects?wizard=' + encodeURIComponent(this.draft.id) + '&step=' + this.currentStep
+        );
+      }
       window.ProjectsView.render();
     }
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -663,11 +833,11 @@ window.ProjectWizard = {
     if (window.ProjectsView) window.ProjectsView.render();
   },
 
-  goToStep(targetStep) {
+  goToStep(targetStep, pushHistory = true) {
     this.collectCurrentStepInputs();
     const num = Math.max(1, Math.min(this.totalSteps, Number(targetStep) || 1));
-    // Si avanza (va a un paso mayor), validar el paso actual obligatoriamente
-    if (num > this.currentStep) {
+    // Si avanza (va a un paso mayor) por acción del usuario, validar el paso actual obligatoriamente
+    if (pushHistory && num > this.currentStep) {
       const errors = this.validateStepStrict(this.currentStep);
       if (errors.length > 0) {
         this.showStepValidationErrors(errors);
@@ -680,6 +850,12 @@ window.ProjectWizard = {
     this.currentStep = num;
     this.pendingAiProposal = null;
     this.saveDraftToStorage(true);
+    if (pushHistory && window.appRouter && typeof window.appRouter.pushSubState === 'function' && this.draft) {
+      window.appRouter.pushSubState(
+        { view: 'projects', subMode: 'wizard', projectId: this.draft.id, step: this.currentStep },
+        '#projects?wizard=' + encodeURIComponent(this.draft.id) + '&step=' + this.currentStep
+      );
+    }
     if (window.ProjectsView) window.ProjectsView.render();
     window.scrollTo({ top: 0, behavior: 'smooth' });
   },
@@ -702,6 +878,12 @@ window.ProjectWizard = {
       this.currentStep += 1;
       this.pendingAiProposal = null;
       this.saveDraftToStorage(true);
+      if (window.appRouter && typeof window.appRouter.pushSubState === 'function' && this.draft) {
+        window.appRouter.pushSubState(
+          { view: 'projects', subMode: 'wizard', projectId: this.draft.id, step: this.currentStep },
+          '#projects?wizard=' + encodeURIComponent(this.draft.id) + '&step=' + this.currentStep
+        );
+      }
       if (window.ProjectsView) window.ProjectsView.render();
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
@@ -713,6 +895,12 @@ window.ProjectWizard = {
       this.currentStep -= 1;
       this.pendingAiProposal = null;
       this.saveDraftToStorage(true);
+      if (window.appRouter && typeof window.appRouter.pushSubState === 'function' && this.draft) {
+        window.appRouter.pushSubState(
+          { view: 'projects', subMode: 'wizard', projectId: this.draft.id, step: this.currentStep },
+          '#projects?wizard=' + encodeURIComponent(this.draft.id) + '&step=' + this.currentStep
+        );
+      }
       if (window.ProjectsView) window.ProjectsView.render();
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
@@ -6745,6 +6933,10 @@ collectCurrentStepInputs() {
       })(),
       author: d.authorsConfig?.authorsList || d.author || 'Docente',
       authorId: d.authorId || '',
+      ownerId: d.ownerId || d.authorId || '',
+      ownerUsername: d.ownerUsername || (window.appState?.currentUser?.username) || '',
+      joinCode: d.joinCode || d.accessCode || '',
+      accessCode: d.accessCode || d.joinCode || '',
       authorEmail: d.authorsConfig?.authorsEmails || d.authorEmail || '',
       authorAvatar: d.authorAvatar || '👨‍🏫',
       authorRole: d.authorRole || 'teacher',

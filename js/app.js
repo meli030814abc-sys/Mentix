@@ -69,6 +69,24 @@ class AppRouter {
     }
     this.booting = false;
 
+    // Si arrancó directamente en una sub-vista (ej. #projects), sembrar #home debajo en el historial de Chrome
+    // para que el 1er "Atrás" lleve a la página principal de Mentix y el 2do "Atrás" vuelva a Google
+    try {
+      if (this.currentView && this.currentView !== 'home') {
+        const currentHash = window.location.hash || ('#' + this.currentView);
+        const curState = (history.state && history.state.mentix)
+          ? history.state
+          : { mentix: true, view: this.currentView, subMode: this.currentView === 'projects' ? (window.ProjectsView?.viewMode || 'list') : undefined };
+        if (!curState._seededOverHome) {
+          history.replaceState({ mentix: true, view: 'home' }, '', '#home');
+          if (this.currentView === 'projects' && window.ProjectsView && window.ProjectsView.viewMode && window.ProjectsView.viewMode !== 'list') {
+            history.pushState({ mentix: true, view: 'projects', subMode: 'list', _seededOverHome: true }, '', '#projects');
+          }
+          history.pushState({ ...curState, _seededOverHome: true }, '', currentHash);
+        }
+      }
+    } catch (e) {}
+
     // Registro obligatorio antes de mostrar la página
     if (oauthReturn) {
       this.checkOAuthSession().then(ok => { if (!ok) this.requireAuth(); });
@@ -77,7 +95,7 @@ class AppRouter {
     }
   }
 
-  restoreInitialRoute() {
+  restoreInitialRoute(fromPopState = false) {
     const hash = window.location.hash;
     if (hash && hash.length > 1) {
       const cleanHash = hash.replace(/^#/, '');
@@ -91,19 +109,53 @@ class AppRouter {
       }
       if (viewPart) {
         if (viewPart === 'join' || viewPart === 'lobby-join') {
-          this.navigate('lobby-join', { pin: params.pin });
+          this.navigate('lobby-join', { pin: params.pin }, false);
           return true;
         }
-        if (viewPart === 'experience') {
-          const id = params.id || window.appState.challenges[0]?.id;
-          if (id) {
-            this.selectExperience(id);
+        if (viewPart === 'experience' || viewPart === 'select-experience') {
+          const id = params.id || params.challengeId || window.appState.challenges[0]?.id;
+          const ch = (window.appState?.challenges || []).find(c => c && String(c.id) === String(id)) || window.appState?.challenges?.[0];
+          if (ch) {
+            this.navigate('select-experience', { challenge: ch, challengeId: ch.id, gameMode: params.gameMode || 'clasico', roomType: params.roomType || 'presented' }, false);
             return true;
           }
+        }
+        if (viewPart === 'admin') {
+          this.navigate('admin', params, false);
+          if (params.tab && window.AdminView && typeof window.AdminView.switchTab === 'function') {
+            window.AdminView.switchTab(params.tab, false);
+          }
+          return true;
+        }
+        if (viewPart === 'projects') {
+          this.navigate('projects', params, false);
+          if (window.ProjectsView) {
+            if (params.hub && window.ProjectHub) {
+              window.ProjectHub.open(params.hub, params.tab || 'home', false);
+            } else if (params.landing) {
+              window.ProjectsView.openProjectLanding(params.landing, false);
+            } else if (params.mode === 'join') {
+              window.ProjectsView.openJoinProjectModal('', false);
+            } else if (params.wizard && window.ProjectWizard) {
+              window.ProjectWizard.openWizard(params.wizard, Number(params.step) || null, true, false);
+            } else {
+              window.ProjectsView.viewMode = 'list';
+              const navEl = document.getElementById('main-navbar');
+              if (navEl) navEl.style.display = 'none';
+              document.body.classList.add('projects-pure-white-theme');
+              window.ProjectsView.render();
+            }
+          }
+          return true;
         }
         this.navigate(viewPart, params, false);
         return true;
       }
+    }
+
+    if (fromPopState) {
+      this.navigate('home', {}, false);
+      return true;
     }
 
     // Si no hay hash, restaurar la última vista desde sessionStorage
@@ -121,17 +173,114 @@ class AppRouter {
     return false;
   }
 
-  setupGlobalEvents() {
-    window.addEventListener('popstate', () => {
-      if (this.historyStack.length > 1) {
-        this.historyStack.pop();
-        const prev = this.historyStack[this.historyStack.length - 1];
-        if (prev) this.navigate(prev, {}, false);
+  pushSubState(stateObj, hash, replace = false) {
+    if (this._isPopStateNav) return;
+    try {
+      const payload = { mentix: true, ...(stateObj || {}) };
+      const targetHash = hash || window.location.hash || ('#' + (payload.view || this.currentView || 'home'));
+      if (replace || window.location.hash === targetHash) {
+        history.replaceState(payload, '', targetHash);
+      } else {
+        history.pushState(payload, '', targetHash);
       }
+      sessionStorage.setItem('mentix_last_route', JSON.stringify({
+        view: payload.view || this.currentView,
+        params: payload.params || {},
+        subState: payload
+      }));
+    } catch (e) {}
+  }
+
+  applyHistoryState(state) {
+    this._isPopStateNav = true;
+    try {
+      // Cerrar cualquier modal/overlay flotante si el estado al que retrocedemos no es ese modal
+      if (!state || state.subMode !== 'hub') {
+        const hubEl = document.getElementById('phub-overlay');
+        if (hubEl) {
+          if (window.ProjectHub && typeof window.ProjectHub.close === 'function') window.ProjectHub.close(false);
+          else hubEl.remove();
+        }
+      }
+      if (!state || state.subMode !== 'join') {
+        const joinModal = document.getElementById('project-join-modal');
+        if (joinModal) joinModal.remove();
+      }
+      // Si salimos de un examen/juego en curso al retroceder, detener temporizadores activos
+      if (this.currentView === 'game' && (!state || state.view !== 'game')) {
+        try {
+          if (window.GameView && typeof window.GameView.stopTimer === 'function') window.GameView.stopTimer();
+          if (window.GameView && window.GameView.timerInterval) {
+            clearInterval(window.GameView.timerInterval);
+            window.GameView.timerInterval = null;
+          }
+        } catch (e) {}
+      }
+
+      if (state && state.mentix) {
+        if (state.subMode === 'hub' && state.projectId && window.ProjectHub) {
+          if (state.view && this.currentView !== state.view) {
+            this.navigate(state.view, state.params || {}, false);
+          }
+          window.ProjectHub.open(state.projectId, state.tab || 'home', false);
+          return;
+        }
+        if (state.view === 'admin') {
+          if (this.currentView !== 'admin') {
+            this.navigate('admin', state.params || {}, false);
+          }
+          if (state.tab && window.AdminView && typeof window.AdminView.switchTab === 'function') {
+            window.AdminView.switchTab(state.tab, false);
+          }
+          return;
+        }
+        if (state.view === 'projects') {
+          if (this.currentView !== 'projects') {
+            this.navigate('projects', {}, false);
+          }
+          if (window.ProjectsView) {
+            if (state.subMode === 'landing' && state.projectId) {
+              window.ProjectsView.openProjectLanding(state.projectId, false);
+            } else if (state.subMode === 'join') {
+              window.ProjectsView.openJoinProjectModal('', false);
+            } else if (state.subMode === 'wizard' && window.ProjectWizard) {
+              const targetStep = Number(state.step) || 1;
+              if (window.ProjectsView.viewMode === 'wizard' && window.ProjectWizard.draft && (!state.projectId || String(window.ProjectWizard.draft.id) === String(state.projectId))) {
+                window.ProjectWizard.goToStep(targetStep, false);
+              } else {
+                window.ProjectWizard.openWizard(state.projectId || null, targetStep, true, false);
+              }
+            } else {
+              window.ProjectsView.viewMode = 'list';
+              document.body.classList.add('projects-pure-white-theme');
+              window.ProjectsView.render();
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+          }
+          return;
+        }
+        if (state.view) {
+          this.navigate(state.view, state.params || {}, false);
+          return;
+        }
+      }
+      // Si no hay state explícito, reconstruir exactamente desde el hash actual del navegador
+      this.restoreInitialRoute(true);
+    } finally {
+      setTimeout(() => { this._isPopStateNav = false; }, 50);
+    }
+  }
+
+  setupGlobalEvents() {
+    window.addEventListener('popstate', (event) => {
+      this._lastPopStateAt = Date.now();
+      this.applyHistoryState(event.state);
     });
 
     window.addEventListener('hashchange', () => {
-      this.restoreInitialRoute();
+      // Evitar doble disparo cuando el cambio vino del botón atrás/adelante (popstate)
+      if (this._isPopStateNav || (Date.now() - (this._lastPopStateAt || 0)) < 150) return;
+      this.restoreInitialRoute(true);
     });
 
     // Sincronización global automática: cuando el usuario regresa a la pestaña o periódicamente cada 30 segundos
@@ -203,14 +352,37 @@ class AppRouter {
       sessionStorage.setItem('mentix_last_route', JSON.stringify({ view: viewName, params: params || {} }));
     } catch (e) {}
 
-    // Sincronizar hash en la URL para F5 y favoritos
+    // Sincronizar historial real del navegador (pushState) para que la flecha atrás/adelante de Chrome
+    // retroceda paso a paso dentro de todo Mentix (exámenes, juegos, creador, perfil, admin, proyectos, etc.)
     try {
+      const safeParams = {};
+      if (params && typeof params === 'object') {
+        ['id', 'edit', 'pin', 'tab', 'mode', 'landing', 'wizard', 'step', 'editId', 'challengeId', 'gameMode', 'roomType'].forEach(k => {
+          if (params[k] !== undefined && params[k] !== null && typeof params[k] !== 'object') {
+            safeParams[k] = params[k];
+          }
+        });
+        if (params.challenge && params.challenge.id && !safeParams.challengeId) {
+          safeParams.challengeId = params.challenge.id;
+        }
+      }
       let hash = '#' + viewName;
-      if (params && params.id) hash += '?id=' + encodeURIComponent(params.id);
-      if (params && params.edit) hash += (hash.includes('?') ? '&' : '?') + 'edit=true';
-      if (params && params.pin) hash += (hash.includes('?') ? '&' : '?') + 'pin=' + encodeURIComponent(params.pin);
-      if (window.location.hash !== hash) {
-        history.replaceState(null, '', hash);
+      const hashId = safeParams.id || safeParams.challengeId || safeParams.editId;
+      if (hashId) hash += '?id=' + encodeURIComponent(hashId);
+      if (safeParams.edit) hash += (hash.includes('?') ? '&' : '?') + 'edit=true';
+      if (safeParams.pin) hash += (hash.includes('?') ? '&' : '?') + 'pin=' + encodeURIComponent(safeParams.pin);
+      if (safeParams.tab) hash += (hash.includes('?') ? '&' : '?') + 'tab=' + encodeURIComponent(safeParams.tab);
+      const statePayload = {
+        mentix: true,
+        view: viewName,
+        tab: viewName === 'admin' ? (safeParams.tab || window.AdminView?.activeTab || 'dashboard') : safeParams.tab,
+        subMode: viewName === 'projects' ? (window.ProjectsView?.viewMode || 'list') : undefined,
+        params: safeParams
+      };
+      if (pushToHistory && !this._isPopStateNav && window.location.hash !== hash) {
+        history.pushState(statePayload, '', hash);
+      } else {
+        history.replaceState(statePayload, '', hash);
       }
     } catch (e) {}
 
@@ -279,19 +451,36 @@ class AppRouter {
 
       case 'select-experience':
         document.getElementById('view-experience')?.classList.add('active');
-        if (params.challenge) {
-          window.ExperienceView.render(params.challenge, params.gameMode || 'clasico', params.roomType || 'presented');
+        {
+          const expId = params.challenge?.id || params.challengeId || params.id;
+          const expChallenge = params.challenge
+            || (expId ? (window.appState?.challenges || []).find(c => c && String(c.id) === String(expId)) : null)
+            || window.ExperienceView?.currentChallenge
+            || window.appState?.challenges?.[0];
+          if (expChallenge) {
+            window.ExperienceView.render(expChallenge, params.gameMode || 'clasico', params.roomType || 'presented');
+          } else {
+            this.navigate('home', {}, false);
+          }
         }
         break;
 
       case 'lobby-host':
         document.getElementById('view-lobby')?.classList.add('active');
-        const hostChallenge = params.challenge || window.LobbyView?.pendingChallenge || window.ExperienceView?.currentChallenge || window.realtimeEngine?.currentRoom?.challenge || window.appState?.challenges?.[0];
-        if (hostChallenge) {
-          const cleanRoomType = (params.roomType === 'normal') ? 'normal' : 'presented';
-          window.LobbyView.initHost(hostChallenge, params.gameMode || 'clasico', params.modeConfig || {}, params.rosterConfig || null, cleanRoomType);
-        } else {
-          this.navigate('home');
+        {
+          const hostId = params.challenge?.id || params.challengeId || params.id;
+          const hostChallenge = params.challenge
+            || (hostId ? (window.appState?.challenges || []).find(c => c && String(c.id) === String(hostId)) : null)
+            || window.LobbyView?.pendingChallenge
+            || window.ExperienceView?.currentChallenge
+            || window.realtimeEngine?.currentRoom?.challenge
+            || window.appState?.challenges?.[0];
+          if (hostChallenge) {
+            const cleanRoomType = (params.roomType === 'normal') ? 'normal' : 'presented';
+            window.LobbyView.initHost(hostChallenge, params.gameMode || 'clasico', params.modeConfig || {}, params.rosterConfig || null, cleanRoomType);
+          } else {
+            this.navigate('home', {}, false);
+          }
         }
         break;
 
@@ -1693,14 +1882,62 @@ class AppRouter {
         if (Array.isArray(own)) deletedIds = Array.from(new Set([...deletedIds, ...own]));
       } catch (e) {}
       if (deletedIds.length > 0) {
-        const gone = new Set(deletedIds);
-        if (Array.isArray(cloudChallenges)) cloudChallenges = cloudChallenges.filter(c => c && !gone.has(c.id));
+        const gone = new Set(deletedIds.map(id => String(id)));
+        // Persistir globalmente la lista de eliminados en localStorage para que ninguna vista los resucite
+        try { localStorage.setItem('te_reto_deleted_ids', JSON.stringify(Array.from(gone))); } catch (e) {}
+
+        let purgedAny = false;
+        if (Array.isArray(cloudChallenges)) {
+          cloudChallenges = cloudChallenges.filter(c => c && !gone.has(String(c.id)));
+        }
         const before = (window.appState.challenges || []).length;
-        window.appState.challenges = (window.appState.challenges || []).filter(c => c && !gone.has(c.id));
-        if (window.appState.challenges.length !== before) {
+        window.appState.challenges = (window.appState.challenges || []).filter(c => c && !gone.has(String(c.id)));
+        if (window.appState.challenges.length !== before) purgedAny = true;
+
+        // Purgar también todos los cachés/borradores locales del navegador (estudiantes, docentes, admins)
+        ['mentix_govdata_wizard_drafts', 'mentix_projects_vault', 'te_reto_challenges', 'mentix_challenges', 'mentix_projects'].forEach(key => {
+          try {
+            const raw = localStorage.getItem(key);
+            if (!raw) return;
+            const parsed = JSON.parse(raw);
+            if (Array.isArray(parsed)) {
+              const filtered = parsed.filter(item => item && !gone.has(String(item.id)));
+              if (filtered.length !== parsed.length) {
+                localStorage.setItem(key, JSON.stringify(filtered));
+                purgedAny = true;
+              }
+            }
+          } catch (e) {}
+        });
+
+        try {
+          const activeLanding = JSON.parse(localStorage.getItem('mentix_active_landing_project') || 'null');
+          if (activeLanding && gone.has(String(activeLanding.id))) {
+            localStorage.removeItem('mentix_active_landing_project');
+            purgedAny = true;
+          }
+        } catch (e) {}
+
+        try {
+          const appMap = JSON.parse(localStorage.getItem('mentix_approved_projects_map') || '{}');
+          let changedMap = false;
+          gone.forEach(gid => { if (appMap[gid]) { delete appMap[gid]; changedMap = true; } });
+          if (changedMap) localStorage.setItem('mentix_approved_projects_map', JSON.stringify(appMap));
+        } catch (e) {}
+
+        try {
+          const codeMap = JSON.parse(localStorage.getItem('mentix_code_draft_map') || '{}');
+          let changedCodeMap = false;
+          Object.keys(codeMap).forEach(k => { if (gone.has(String(codeMap[k]))) { delete codeMap[k]; changedCodeMap = true; } });
+          if (changedCodeMap) localStorage.setItem('mentix_code_draft_map', JSON.stringify(codeMap));
+        } catch (e) {}
+
+        if (purgedAny) {
           saveGlobalState(window.appState);
           if (this.currentView === 'home' && window.HomeView) window.HomeView.render();
           else if (this.currentView === 'projects' && window.ProjectsView && window.ProjectsView.viewMode !== 'wizard') window.ProjectsView.render();
+          else if (this.currentView === 'admin' && window.AdminView) window.AdminView.render();
+          else if (this.currentView === 'profile' && window.ProfileView) window.ProfileView.render();
         }
       }
 
@@ -1785,14 +2022,21 @@ class AppRouter {
               } else if (c.approvalStatus === 'approved') {
                 mergedItem.rejectionReason = '';
               }
+              if (c.hub && typeof c.hub === 'object') {
+                mergedItem.hub = { ...(existing.hub || {}), ...c.hub };
+                if (Array.isArray(c.hub.members) && c.hub.members.length > 0) mergedItem.hub.members = c.hub.members;
+                if (Array.isArray(c.hub.joinRequests)) mergedItem.hub.joinRequests = c.hub.joinRequests;
+                mergedItem.members = mergedItem.hub.members || c.members || existing.members || [];
+                mergedItem.joinRequests = mergedItem.hub.joinRequests || c.joinRequests || existing.joinRequests || [];
+              }
               map.set(c.id, mergedItem);
             }
           }
         });
 
         const merged = Array.from(map.values());
-        const beforeSig = (local || []).map(x => x.id + ':' + (x.updatedAt || '')).join('|');
-        const afterSig = (merged || []).map(x => x.id + ':' + (x.updatedAt || '')).join('|');
+        const beforeSig = (local || []).map(x => x.id + ':' + (x.updatedAt || '') + ':' + ((x.hub?.members?.length) || 0)).join('|');
+        const afterSig = (merged || []).map(x => x.id + ':' + (x.updatedAt || '') + ':' + ((x.hub?.members?.length) || 0)).join('|');
 
         if (beforeSig !== afterSig) {
           window.appState.challenges = merged;
@@ -1802,6 +2046,9 @@ class AppRouter {
             window.HomeView.render();
           } else if (this.currentView === 'projects' && window.ProjectsView && window.ProjectsView.viewMode !== 'wizard') {
             window.ProjectsView.render();
+          }
+          if (document.getElementById('phub-overlay') && window.ProjectHub && typeof window.ProjectHub.render === 'function') {
+            window.ProjectHub.render();
           }
         }
       }

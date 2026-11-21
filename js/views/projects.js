@@ -2025,17 +2025,25 @@ window.ProjectsView = {
     const u = window.appState.currentUser;
     const isTeacherOrAdmin = this.isTeacherOrAdmin();
     const isAdmin = this.isAdminUser();
-    // Asegurar que existan los proyectos estructurados en la base de datos
+    // Asegurar que existan los proyectos estructurados en la base de datos y filtrar eliminados por Admin
     if (!window.appState.challenges) window.appState.challenges = [];
+    let deletedIdsSet = new Set();
+    try {
+      const delArr = JSON.parse(localStorage.getItem('te_reto_deleted_ids') || '[]');
+      if (Array.isArray(delArr)) deletedIdsSet = new Set(delArr.map(id => String(id)));
+    } catch (e) {}
+    if (deletedIdsSet.size > 0) {
+      window.appState.challenges = window.appState.challenges.filter(c => c && !deletedIdsSet.has(String(c.id)));
+    }
 
-    // Integrar proyectos y borradores del Asistente Inteligente (mentix_govdata_wizard_drafts)
+    // Integrar proyectos y borradores del Asistente Inteligente (mentix_govdata_wizard_drafts) excluyendo eliminados
     try {
       const rawDrafts = localStorage.getItem('mentix_govdata_wizard_drafts');
       if (rawDrafts) {
         const wizardDrafts = JSON.parse(rawDrafts);
         if (Array.isArray(wizardDrafts)) {
           wizardDrafts.forEach(wd => {
-            if (wd && wd.id) {
+            if (wd && wd.id && !deletedIdsSet.has(String(wd.id))) {
               const exIdx = window.appState.challenges.findIndex(c => c && c.id === wd.id);
               const formatted = {
                 id: wd.id,
@@ -2855,9 +2863,10 @@ window.ProjectsView = {
       primaryText = 'Ver Detalles →';
     }
 
-    // Exclusividad: Solo creadores del proyecto y personas que se unan pueden ver el Project Hub ("Ver Detalles")
-    const canHubView = !isGuest && !!(isAuthor || (window.ProjectHub && typeof window.ProjectHub.canView === 'function' && window.ProjectHub.canView(c)));
-    const canHubEdit = !isGuest && !!(isAuthor || (window.ProjectHub && typeof window.ProjectHub.canEdit === 'function' && window.ProjectHub.canEdit(c)));
+    // Ventana de Detalles (Project Hub): visible para administradores, creadores, miembros y usuarios registrados
+    const isMemberOrAuthor = !isGuest && !!(isAuthor || isAdmin || (window.ProjectHub && typeof window.ProjectHub.getRole === 'function' && ['owner', 'editor', 'collaborator', 'commenter', 'viewer'].includes(window.ProjectHub.getRole(c))));
+    const canHubView = !isGuest;
+    const canHubEdit = !isGuest && !!(isAuthor || isAdmin || (window.ProjectHub && typeof window.ProjectHub.canEdit === 'function' && window.ProjectHub.canEdit(c)));
 
     const cHub = (window.ProjectHub && typeof window.ProjectHub.getHub === 'function') ? window.ProjectHub.getHub(c.id) : (c.hub || {});
     const cardPendingReqs = (cHub.joinRequests || []).filter(r => r && r.status === 'pending');
@@ -2968,18 +2977,18 @@ window.ProjectsView = {
             <span style="display: inline-flex; align-items: center; gap: 0.25rem; color: #eab308; cursor: pointer; transition: transform 0.15s ease;" onmouseenter="this.style.transform='scale(1.1)';" onmouseleave="this.style.transform='scale(1)';" onclick="event.stopPropagation(); window.ProjectsView.openReviewFullPage('${c.id}');" title="Ver comentarios y calificar este proyecto">⭐ ${ratingStr}</span>
           </div>
 
-          <!-- Action Buttons Row: Ver Detalles (Creador/Miembro) o Unirme (Visitantes), Ver Landing Page, Compartir, y Autorizar (Admin) -->
+          <!-- Action Buttons Row: Detalles (ventana Project Hub), Unirme (si aún no es miembro), Ver Landing Page, Autorizar (Admin) y Compartir -->
           <div class="saas-card-actions">
             ${canHubView ? `
               <button 
                 class="saas-card-btn-secondary"
                 onclick="event.stopPropagation(); ${hubAction}" 
-                title="Ver detalles y panel del proyecto"
+                title="Ver detalles, miembros, solicitudes y calificaciones del proyecto"
               >
                 <span>Detalles</span>
                 <span>→</span>
               </button>
-              ${isAuthor && cardPendingReqs.length > 0 ? `
+              ${(isAuthor || isAdmin) && cardPendingReqs.length > 0 ? `
                 <button 
                   class="saas-card-btn-join"
                   style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%) !important; color: #ffffff !important; box-shadow: 0 4px 14px rgba(239, 68, 68, 0.45) !important;"
@@ -2990,7 +2999,8 @@ window.ProjectsView = {
                   <span>${cardPendingReqs.length} Solicitud${cardPendingReqs.length > 1 ? 'es' : ''}</span>
                 </button>
               ` : ''}
-            ` : `
+            ` : ''}
+            ${!isMemberOrAuthor ? `
               <button 
                 class="saas-card-btn-join"
                 onclick="event.stopPropagation(); ${joinAction}" 
@@ -2999,7 +3009,7 @@ window.ProjectsView = {
                 <span>👥</span>
                 <span>Unirme</span>
               </button>
-            `}
+            ` : ''}
 
             <button 
               class="saas-card-btn-landing"
@@ -4069,7 +4079,7 @@ window.ProjectsView = {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   },
 
-  openJoinProjectModal(prefillCode = '') {
+  openJoinProjectModal(prefillCode = '', pushHistory = true) {
     if (this.isUserGuest()) {
       this.guestJoinBlocked();
       return;
@@ -4079,7 +4089,12 @@ window.ProjectsView = {
     if (existing) existing.remove();
     this.viewMode = 'join';
     this.prefillJoinCode = prefillCode;
+    if (pushHistory && window.appRouter && typeof window.appRouter.pushSubState === 'function') {
+      window.appRouter.pushSubState({ view: 'projects', subMode: 'join' }, '#projects?mode=join');
+    }
     this.render();
+    // Pre-cargar silenciosamente códigos y progreso de la nube mientras el usuario escribe el código
+    this.preloadCloudForJoinCode();
     window.scrollTo({ top: 0, behavior: 'smooth' });
     setTimeout(() => {
       const input = document.getElementById('project-join-code-input');
@@ -4090,7 +4105,7 @@ window.ProjectsView = {
     }, 80);
   },
 
-  closeJoinProjectModal() {
+  closeJoinProjectModal(pushHistory = true) {
     this.viewMode = 'list';
     const existing = document.getElementById('project-join-modal');
     if (existing) existing.remove();
@@ -4102,6 +4117,9 @@ window.ProjectsView = {
       container.style.padding = '';
       container.style.margin = '';
       container.style.background = '';
+    }
+    if (pushHistory && window.appRouter && typeof window.appRouter.pushSubState === 'function') {
+      window.appRouter.pushSubState({ view: 'projects', subMode: 'list' }, '#projects');
     }
     if (window.soundEngine && window.soundEngine.playClick) window.soundEngine.playClick();
     this.render();
@@ -4117,6 +4135,42 @@ window.ProjectsView = {
       window.ProjectHub.openJoinForm(projectId);
       return;
     }
+  },
+
+  preloadCloudForJoinCode() {
+    try {
+      const now = Date.now();
+      if (this._cloudPreload && (now - this._cloudPreload.ts) < 15000) return this._cloudPreload.promise;
+      const apiBase = (window.appRouter && typeof window.appRouter.getApiBase === 'function') ? window.appRouter.getApiBase() : '';
+      const fetchQuiet = async (url) => {
+        const ctrl = (typeof AbortController !== 'undefined') ? new AbortController() : null;
+        const tid = ctrl ? setTimeout(() => ctrl.abort(), 2500) : null;
+        try {
+          const r = await fetch(url, { cache: 'no-store', signal: ctrl ? ctrl.signal : undefined });
+          if (tid) clearTimeout(tid);
+          if (r && r.ok) return await r.json();
+        } catch (e) { if (tid) clearTimeout(tid); }
+        return null;
+      };
+      const entry = { ts: now, codes: null, challenges: null, promise: null };
+      entry.promise = Promise.all([
+        fetchQuiet(`${apiBase}/api/challenges?customCodes=1&t=${now}`),
+        fetchQuiet(`${apiBase}/api/challenges?t=${now}`)
+      ]).then(([codesRes, chRes]) => {
+        const codesList = Array.isArray(codesRes) ? codesRes : (codesRes?.customProjectCodes || null);
+        if (Array.isArray(codesList) && codesList.length > 0) {
+          entry.codes = codesList;
+          this.persistCustomProjectCodes(codesList);
+        }
+        const chList = Array.isArray(chRes?.challenges) ? chRes.challenges : (Array.isArray(chRes) ? chRes : null);
+        if (Array.isArray(chList)) {
+          entry.challenges = chList;
+        }
+        return entry;
+      }).catch(() => entry);
+      this._cloudPreload = entry;
+      return entry.promise;
+    } catch (e) { return Promise.resolve(null); }
   },
 
   async submitJoinProjectCode() {
@@ -4138,7 +4192,7 @@ window.ProjectsView = {
 
     if (!raw) {
       if (errEl) {
-        errEl.textContent = '⚠️ Por favor escribe el código o PIN del proyecto.';
+        errEl.textContent = 'Verifica el código';
         errEl.style.color = '#ff4d6d';
         errEl.style.display = 'block';
       }
@@ -4187,86 +4241,117 @@ window.ProjectsView = {
       }
     }
 
-    // 3. Si aún no se encuentra, consultar la NUBE (/api/challenges y Supabase)
-    // para verificar si el profesor o admin lo creó desde otro computador o red
+    // Helper de timeout estricto para que ninguna llamada de red o Supabase trabe el ingreso
+    const withTimeout = (promise, ms, fallback = null) => Promise.race([
+      Promise.resolve(promise).catch(() => fallback),
+      new Promise(resolve => setTimeout(() => resolve(fallback), ms))
+    ]);
+
+    const fetchJsonFast = async (url, timeoutMs = 2500) => {
+      const controller = (typeof AbortController !== 'undefined') ? new AbortController() : null;
+      const tid = controller ? setTimeout(() => controller.abort(), timeoutMs) : null;
+      try {
+        const res = await fetch(url, { cache: 'no-store', signal: controller ? controller.signal : undefined });
+        if (tid) clearTimeout(tid);
+        if (res && res.ok) return await res.json();
+      } catch (e) {
+        if (tid) clearTimeout(tid);
+      }
+      return null;
+    };
+
+    const apiBase = (window.appRouter && typeof window.appRouter.getApiBase === 'function') ? window.appRouter.getApiBase() : '';
+    let prefetchedCloudChallenges = (this._cloudPreload && Array.isArray(this._cloudPreload.challenges))
+      ? this._cloudPreload.challenges
+      : null;
+
+    // 3. Si aún no se encuentra localmente, evaluar silenciosamente con los datos pre-cargados o en la NUBE EN PARALELO
+    //    (sin mostrar textos de carga al usuario)
     if (!matchedCustom) {
-      if (errEl) {
-        errEl.textContent = '🔄 Verificando código con la red del profesor...';
-        errEl.style.color = '#38bdf8';
-        errEl.style.display = 'block';
+      if (this._cloudPreload && this._cloudPreload.promise && !this._cloudPreload.codes && !this._cloudPreload.challenges) {
+        await withTimeout(this._cloudPreload.promise, 1200, null);
+      }
+      if (this._cloudPreload && Array.isArray(this._cloudPreload.codes)) {
+        matchedCustom = findInCodes(this._cloudPreload.codes);
+      }
+      if (this._cloudPreload && Array.isArray(this._cloudPreload.challenges)) {
+        prefetchedCloudChallenges = this._cloudPreload.challenges;
+      }
+    }
+
+    if (!matchedCustom) {
+      const [cloudCodesRes, allChRes, supaCodesRes] = await Promise.all([
+        (this._cloudPreload && Array.isArray(this._cloudPreload.codes))
+          ? Promise.resolve(this._cloudPreload.codes)
+          : fetchJsonFast(`${apiBase}/api/challenges?customCodes=1&t=${Date.now()}`, 2200),
+        prefetchedCloudChallenges
+          ? Promise.resolve(prefetchedCloudChallenges)
+          : fetchJsonFast(`${apiBase}/api/challenges?t=${Date.now()}`, 2200),
+        (window.supabaseService && window.supabaseService.client)
+          ? withTimeout(
+              window.supabaseService.client
+                .from('challenges')
+                .select('govdata_payload')
+                .eq('id', 'custom_project_codes_cloud_registry')
+                .single(),
+              1500,
+              null
+            )
+          : Promise.resolve(null)
+      ]);
+
+      // A. Revisar customCodes de /api/challenges?customCodes=1
+      if (cloudCodesRes) {
+        const list = Array.isArray(cloudCodesRes) ? cloudCodesRes : (cloudCodesRes?.customProjectCodes || []);
+        if (Array.isArray(list) && list.length > 0) {
+          this.persistCustomProjectCodes(list);
+          matchedCustom = findInCodes(list);
+        }
       }
 
-      // A. Consultar /api/challenges?customCodes=1
-      try {
-        const apiBase = (window.appRouter && typeof window.appRouter.getApiBase === 'function') ? window.appRouter.getApiBase() : '';
-        const res = await fetch(`${apiBase}/api/challenges?customCodes=1&t=${Date.now()}`);
-        if (res.ok) {
-          const cloudCodes = await res.json();
-          const list = Array.isArray(cloudCodes) ? cloudCodes : (cloudCodes?.customProjectCodes || []);
-          if (Array.isArray(list) && list.length > 0) {
-            this.persistCustomProjectCodes(list);
-            matchedCustom = findInCodes(list);
+      // B. Revisar lista de retos global (y guardarla en memoria para reutilizarla al restaurar progreso)
+      const allCh = Array.isArray(allChRes?.challenges) ? allChRes.challenges : (Array.isArray(allChRes) ? allChRes : null);
+      if (Array.isArray(allCh)) {
+        prefetchedCloudChallenges = allCh;
+        if (!matchedCustom && allCh.length > 0) {
+          const cloudCustomCodes = allCh[0]?.customProjectCodes || [];
+          if (Array.isArray(cloudCustomCodes) && cloudCustomCodes.length > 0) {
+            this.persistCustomProjectCodes(cloudCustomCodes);
+            matchedCustom = findInCodes(cloudCustomCodes);
           }
-        }
-      } catch (errCloud) {}
-
-      // B. Consultar archivo de retos global si aún no está
-      if (!matchedCustom) {
-        try {
-          const apiBase = (window.appRouter && typeof window.appRouter.getApiBase === 'function') ? window.appRouter.getApiBase() : '';
-          const resAll = await fetch(`${apiBase}/api/challenges?t=${Date.now()}`);
-          if (resAll.ok) {
-            const allCh = await resAll.json();
-            if (Array.isArray(allCh) && allCh.length > 0) {
-              const cloudCustomCodes = allCh[0]?.customProjectCodes || [];
-              if (Array.isArray(cloudCustomCodes) && cloudCustomCodes.length > 0) {
-                this.persistCustomProjectCodes(cloudCustomCodes);
-                matchedCustom = findInCodes(cloudCustomCodes);
-              }
-              if (!matchedCustom) {
-                const foundCh = allCh.find(c => 
-                  c && (
-                    normalize(c.pin) === cleanNorm ||
-                    normalize(c.code) === cleanNorm ||
-                    normalize(c.joinCode) === cleanNorm ||
-                    normalize(c.accessCode) === cleanNorm ||
-                    normalize(c.id) === cleanNorm
-                  )
-                );
-                if (foundCh) {
-                  matchedCustom = {
-                    code: clean,
-                    projectId: foundCh.id,
-                    author: foundCh.author || 'Profesor',
-                    authorRole: foundCh.authorRole || 'teacher'
-                  };
-                }
-              }
+          if (!matchedCustom) {
+            const foundCh = allCh.find(c =>
+              c && (
+                normalize(c.pin) === cleanNorm ||
+                normalize(c.code) === cleanNorm ||
+                normalize(c.joinCode) === cleanNorm ||
+                normalize(c.accessCode) === cleanNorm ||
+                normalize(c.id) === cleanNorm
+              )
+            );
+            if (foundCh) {
+              matchedCustom = {
+                code: clean,
+                projectId: foundCh.id,
+                author: foundCh.author || 'Profesor',
+                authorRole: foundCh.authorRole || 'teacher'
+              };
             }
           }
-        } catch (errCh) {}
+        }
       }
 
-      // C. Consultar Supabase si está disponible
-      if (!matchedCustom && window.supabaseService && window.supabaseService.client) {
-        try {
-          const { data } = await window.supabaseService.client
-            .from('challenges')
-            .select('govdata_payload')
-            .eq('id', 'custom_project_codes_cloud_registry')
-            .single();
-          if (data && data.govdata_payload && Array.isArray(data.govdata_payload.codes)) {
-            this.persistCustomProjectCodes(data.govdata_payload.codes);
-            matchedCustom = findInCodes(data.govdata_payload.codes);
-          }
-        } catch (errSupa) {}
+      // C. Revisar respuesta de Supabase si aún no hubo coincidencia
+      if (!matchedCustom && supaCodesRes && supaCodesRes.data && supaCodesRes.data.govdata_payload && Array.isArray(supaCodesRes.data.govdata_payload.codes)) {
+        this.persistCustomProjectCodes(supaCodesRes.data.govdata_payload.codes);
+        matchedCustom = findInCodes(supaCodesRes.data.govdata_payload.codes);
       }
     }
 
     // 4. VALIDACIÓN ESTRICTA: Si después de buscar localmente y en la nube NO existe, RECHAZAR EL ACCESO
     if (!matchedCustom) {
       if (errEl) {
-        errEl.textContent = '❌ Código no válido o no encontrado. Solicita el código específico que te dio tu profesor o administrador.';
+        errEl.textContent = 'Verifica el código';
         errEl.style.color = '#ff4d6d';
         errEl.style.display = 'block';
       }
@@ -4278,49 +4363,196 @@ window.ProjectsView = {
       return; // <-- BLOQUEA COMPLETAMENTE LA ENTRADA SI EL CÓDIGO NO ES REAL
     }
 
-    // 5. ✅ Código específico válido encontrado → autorizar acceso
+    // 5. ✅ Código específico válido encontrado → autorizar acceso y mostrar "¡Listo!"
+    if (errEl) {
+      errEl.textContent = '¡Listo!';
+      errEl.style.color = '#22c55e';
+      errEl.style.display = 'block';
+    }
     try { localStorage.setItem('mentix_active_join_code', clean); } catch (e) {}
     try { sessionStorage.setItem('mentix_active_join_code', clean); } catch (e) {}
     if (window.soundEngine && window.soundEngine.playSuccess) window.soundEngine.playSuccess();
 
     // 6. Determinar el proyecto o borrador para abrir directamente en el Asistente de Proyectos
-    let targetProjectId = null;
-    if (matchedCustom.projectId) {
-      const foundInChallenges = challenges.find(c => String(c.id).trim() === String(matchedCustom.projectId).trim());
-      if (foundInChallenges) targetProjectId = foundInChallenges.id;
-    }
-    if (!targetProjectId && window.ProjectWizard && typeof window.ProjectWizard.getAllSavedDrafts === 'function') {
-      const savedDrafts = window.ProjectWizard.getAllSavedDrafts();
-      const existingDraft = savedDrafts.find(d => 
-        d && (normalize(d.joinCode) === cleanNorm || normalize(d.accessCode) === cleanNorm || normalize(d.code) === cleanNorm)
+    //    Busca en local Y en la nube (/api/challenges + Supabase) para que funcione desde CUALQUIER navegador o dispositivo
+    const currentUser = window.appState?.currentUser || {};
+    const userId = String(currentUser.id || currentUser.username || '').trim();
+    const username = String(currentUser.username || '').trim();
+    const userEmail = String(currentUser.email || '').trim().toLowerCase();
+    const userSlug = String(username || userId || userEmail).toLowerCase().replace(/[^a-z0-9]/g, '');
+    const deterministicId = (userSlug && cleanNorm) ? `govdata_code_${userSlug}_${cleanNorm}` : null;
+
+    const userTokens = [userId, username, userEmail, currentUser.name]
+      .map(v => String(v || '').trim().toLowerCase())
+      .filter(Boolean);
+
+    const recordMatchesCode = (rec) => {
+      if (!rec || typeof rec !== 'object') return false;
+      const g = rec.govdata || {};
+      return (
+        normalize(rec.joinCode) === cleanNorm ||
+        normalize(rec.accessCode) === cleanNorm ||
+        normalize(rec.code) === cleanNorm ||
+        normalize(g.joinCode) === cleanNorm ||
+        normalize(g.accessCode) === cleanNorm ||
+        normalize(g.code) === cleanNorm
       );
-      if (existingDraft) targetProjectId = existingDraft.id;
+    };
+
+    const recordMatchesUser = (rec) => {
+      if (!rec || typeof rec !== 'object') return false;
+      if (deterministicId && String(rec.id) === deterministicId) return true;
+      if (userTokens.length === 0) return true;
+      const g = rec.govdata || {};
+      const cands = [
+        rec.ownerId, rec.ownerUsername, rec.authorId, rec.authorEmail, rec.author,
+        g.ownerId, g.ownerUsername, g.authorId, g.authorEmail, g.author
+      ].map(v => String(v || '').trim().toLowerCase()).filter(Boolean);
+      return cands.some(c => userTokens.includes(c));
+    };
+
+    let targetProjectId = null;
+    const candidates = [];
+
+    if (matchedCustom.projectId) {
+      const foundInChallenges = challenges.find(c => c && String(c.id).trim() === String(matchedCustom.projectId).trim());
+      if (foundInChallenges) candidates.push(foundInChallenges);
     }
 
-    // 7. Cerrar vista de unirse y abrir DIRECTAMENTE el Asistente (Project Wizard)
+    // 6a. Buscar en borradores locales (localStorage) y mapa persistente código→draftId
+    if (window.ProjectWizard && typeof window.ProjectWizard.getAllSavedDrafts === 'function') {
+      const savedDrafts = window.ProjectWizard.getAllSavedDrafts();
+      const localByDet = deterministicId ? savedDrafts.find(d => d && String(d.id) === deterministicId) : null;
+      if (localByDet) candidates.push(localByDet);
+
+      const localByCodeAndUser = savedDrafts.find(d => d && recordMatchesCode(d) && recordMatchesUser(d));
+      if (localByCodeAndUser) candidates.push(localByCodeAndUser);
+
+      try {
+        const codeMap = JSON.parse(localStorage.getItem('mentix_code_draft_map') || '{}');
+        const mapKey = userId ? `${userId}_${cleanNorm}` : cleanNorm;
+        if (codeMap[mapKey]) {
+          const draftFromMap = savedDrafts.find(d => d && d.id === codeMap[mapKey]);
+          if (draftFromMap) candidates.push(draftFromMap);
+        }
+      } catch (e) { /* silent */ }
+    }
+
+    // 6b. Buscar en appState.challenges locales
+    const stateMatch = challenges.find(c => c && ((deterministicId && String(c.id) === deterministicId) || (recordMatchesCode(c) && recordMatchesUser(c))));
+    if (stateMatch) candidates.push(stateMatch);
+
+    // 7. Evaluar internamente en silencio el progreso en la nube (sin mensajes visibles de carga)
+    //    Si ya se pre-cargó mientras el usuario escribía el código, esto toma 0 ms
+    if (!prefetchedCloudChallenges && this._cloudPreload && this._cloudPreload.promise) {
+      await withTimeout(this._cloudPreload.promise, candidates.length > 0 ? 400 : 1200, null);
+      if (Array.isArray(this._cloudPreload.challenges)) {
+        prefetchedCloudChallenges = this._cloudPreload.challenges;
+      }
+    }
+
+    const cloudTimeoutMs = candidates.length > 0 ? 600 : 1500;
+    const [cloudDataRes, supaHit] = await Promise.all([
+      prefetchedCloudChallenges
+        ? Promise.resolve(prefetchedCloudChallenges)
+        : fetchJsonFast(`${apiBase}/api/challenges?t=${Date.now()}`, cloudTimeoutMs),
+      (candidates.length > 0)
+        ? Promise.resolve(null)
+        : (window.supabaseService && typeof window.supabaseService.loadWizardDraftByCodeAndUser === 'function')
+          ? withTimeout(
+              window.supabaseService.loadWizardDraftByCodeAndUser(cleanNorm, userId, username, deterministicId),
+              1000,
+              null
+            )
+          : Promise.resolve(null)
+    ]);
+
+    if (cloudDataRes) {
+      const cloudList = Array.isArray(cloudDataRes?.challenges) ? cloudDataRes.challenges : (Array.isArray(cloudDataRes) ? cloudDataRes : []);
+      const cloudHit = cloudList.find(c => c && (
+        (deterministicId && String(c.id) === deterministicId) ||
+        (matchedCustom.projectId && String(c.id).trim() === String(matchedCustom.projectId).trim()) ||
+        (recordMatchesCode(c) && recordMatchesUser(c))
+      ));
+      if (cloudHit) {
+        candidates.push(cloudHit);
+      }
+    }
+
+    if (supaHit) {
+      candidates.push(supaHit);
+    }
+
+    // 7c. Elegir el candidato con mayor progreso / actualización más reciente y cachearlo en local + appState
+    if (candidates.length > 0) {
+      candidates.sort((a, b) => {
+        const stepA = Number(a?.currentStep || a?.govdata?.currentStep || 1);
+        const stepB = Number(b?.currentStep || b?.govdata?.currentStep || 1);
+        const tsA = Date.parse(a?.updatedAt || a?.govdata?.updatedAt || '') || 0;
+        const tsB = Date.parse(b?.updatedAt || b?.govdata?.updatedAt || '') || 0;
+        if (tsB !== tsA) return tsB - tsA;
+        return stepB - stepA;
+      });
+      const best = candidates[0];
+      targetProjectId = best.id || deterministicId;
+
+      // Inyectar en appState.challenges y en el almacenamiento local de borradores para que openWizard lo cargue completo
+      try {
+        if (!window.appState) window.appState = { challenges: [] };
+        if (!Array.isArray(window.appState.challenges)) window.appState.challenges = [];
+        const existingIdx = window.appState.challenges.findIndex(c => c && String(c.id) === String(targetProjectId));
+        if (existingIdx >= 0) {
+          window.appState.challenges[existingIdx] = { ...window.appState.challenges[existingIdx], ...best, id: targetProjectId };
+        } else {
+          window.appState.challenges.unshift({ ...best, id: targetProjectId });
+        }
+        if (window.ProjectWizard && typeof window.ProjectWizard.getAllSavedDrafts === 'function') {
+          const allLocal = window.ProjectWizard.getAllSavedDrafts().filter(d => d && String(d.id) !== String(targetProjectId));
+          const mergedDraft = { ...(best.govdata || {}), ...best, id: targetProjectId, joinCode: clean, accessCode: clean };
+          allLocal.unshift(mergedDraft);
+          localStorage.setItem('mentix_govdata_wizard_drafts', JSON.stringify(allLocal.slice(0, 15)));
+        }
+        const codeMap = JSON.parse(localStorage.getItem('mentix_code_draft_map') || '{}');
+        const mapKey = userId ? `${userId}_${cleanNorm}` : cleanNorm;
+        codeMap[mapKey] = targetProjectId;
+        localStorage.setItem('mentix_code_draft_map', JSON.stringify(codeMap));
+      } catch (eCache) {}
+    } else {
+      // Primera vez que este usuario entra con este código: usar ID determinístico para que cualquier otro navegador lo encuentre luego
+      targetProjectId = deterministicId;
+    }
+
+    // 8. Cerrar vista de unirse y abrir DIRECTAMENTE el Asistente (Project Wizard)
+    // Pasamos null como startStep para que el wizard restaure el paso guardado en el borrador
     const modalEl = document.getElementById('project-join-modal');
     if (modalEl) modalEl.remove();
 
     this.viewMode = 'wizard';
     if (window.ProjectWizard && typeof window.ProjectWizard.openWizard === 'function') {
-      window.ProjectWizard.openWizard(targetProjectId, 1, true);
+      window.ProjectWizard.openWizard(targetProjectId, null, true);
     } else {
       if (window.appRouter && typeof window.appRouter.navigate === 'function') {
         window.appRouter.navigate('projects');
       }
       setTimeout(() => {
         if (window.ProjectWizard && typeof window.ProjectWizard.openWizard === 'function') {
-          window.ProjectWizard.openWizard(targetProjectId, 1, true);
+          window.ProjectWizard.openWizard(targetProjectId, null, true);
         }
       }, 100);
     }
   },
 
   // Al hacer clic en un proyecto se muestra su landing page
-  openProjectLanding(projectId) {
+  openProjectLanding(projectId, pushHistory = true) {
     this.selectedProjectId = projectId;
     this.isWizardPreview = false;
     this.viewMode = 'landing';
+    if (pushHistory && window.appRouter && typeof window.appRouter.pushSubState === 'function') {
+      window.appRouter.pushSubState(
+        { view: 'projects', subMode: 'landing', projectId: projectId },
+        '#projects?landing=' + encodeURIComponent(projectId)
+      );
+    }
     const proj = this.getMergedProjectRecord(projectId) || (window.appState?.challenges || []).find(x => x && (x.id === projectId || x.slug === projectId));
     if (proj) {
       const resolvedBanner = (typeof this.getProjectHeroBanner === 'function') ? this.getProjectHeroBanner(projectId, proj) : null;

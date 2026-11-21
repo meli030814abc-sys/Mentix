@@ -165,8 +165,8 @@ export default async function handler(req, res) {
         headers['Authorization'] = `Bearer ${GITHUB_TOKEN}`;
       }
 
-      const ghRes = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/contents/${FILE_PATH}?ref=main`, {
-        headers,
+      const ghRes = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/contents/${FILE_PATH}?ref=main&t=${Date.now()}`, {
+        headers: { ...headers, 'Cache-Control': 'no-cache' },
         cache: 'no-store'
       });
 
@@ -176,7 +176,7 @@ export default async function handler(req, res) {
         if (ghData.content) {
           contentStr = Buffer.from(ghData.content, 'base64').toString('utf8');
         } else if (ghData.download_url) {
-          const rawRes = await fetch(ghData.download_url, { cache: 'no-store' });
+          const rawRes = await fetch(`${ghData.download_url}?t=${Date.now()}`, { cache: 'no-store' });
           if (rawRes.ok) contentStr = await rawRes.text();
         }
         if (contentStr) {
@@ -184,7 +184,11 @@ export default async function handler(req, res) {
           if (Array.isArray(challenges)) {
             const visible = challenges.filter(c => !deletedNow.includes(c.id));
             inMemoryChallenges = visible;
-            res.setHeader('Cache-Control', 'public, max-age=5, s-maxage=10, stale-while-revalidate=30');
+            if (req.query && (req.query.t || req.query.fresh)) {
+              res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
+            } else {
+              res.setHeader('Cache-Control', 'public, max-age=5, s-maxage=10, stale-while-revalidate=30');
+            }
             return res.status(200).json(visible);
           }
         }

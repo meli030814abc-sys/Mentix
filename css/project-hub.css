@@ -2371,3 +2371,652 @@ body.projects-pure-white-theme #phub-fullpage-review:not(.theme-light) strong,
 }
 
 
+
+
+/* ==========================================================================
+   v107 · GRÁFICAS SVG LLAMATIVAS + ARCHIVOS DE ENTREGAS EN GRID ESPACIOSO
+   ========================================================================== */
+.phub-scroll {
+  padding-bottom: 4.5rem !important;
+}
+
+.phub-gauges-row {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.9rem;
+  margin-top: 0.4rem;
+}
+
+.phub-gauge-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  padding: 1rem 0.85rem 0.95rem;
+  border-radius: 20px;
+  background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
+  border: 1.5px solid #e2e8f0;
+  box-shadow: 0 8px 22px rgba(15, 23, 42, 0.06);
+  transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+  overflow: hidden;
+}
+
+.phub-gauge-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--g-start, #10b981), var(--g-end, #06b6d4));
+}
+
+.phub-gauge-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--g-start, #10b981);
+  box-shadow: 0 14px 28px rgba(37, 99, 235, 0.14);
+}
+
+.phub-gauge-svg-wrap {
+  position: relative;
+  width: 118px;
+  height: 118px;
+  display: grid;
+  place-items: center;
+}
+
+.phub-gauge-svg {
+  display: block;
+  filter: drop-shadow(0 6px 12px rgba(14, 165, 233, 0.22));
+}
+
+.phub-gauge-arc {
+  transition: stroke-dashoffset 0.85s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.phub-gauge-inner {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.05rem;
+}
+
+.phub-gauge-ico {
+  font-size: 1.05rem;
+  line-height: 1;
+}
+
+.phub-gauge-num {
+  font-size: 1.4rem;
+  font-weight: 900;
+  color: #0f172a;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+}
+
+.phub-gauge-caption {
+  font-size: 0.86rem;
+  font-weight: 800;
+  color: #1e293b;
+  text-align: center;
+}
+
+.phub-gauge-pill {
+  font-size: 0.72rem;
+  font-weight: 800;
+  padding: 0.18rem 0.65rem;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--g-start, #10b981), var(--g-end, #06b6d4));
+  color: #ffffff;
+  letter-spacing: 0.01em;
+}
+
+/* Sección amplia de Archivos de Entregas (todo el ancho, sin amontonarse) */
+.phub-files-section {
+  margin-top: 1.35rem;
+  padding-top: 1.15rem;
+  border-top: 1.5px dashed #cbd5e1;
+}
+
+.phub-files-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.85rem;
+}
+
+.phub-files-count {
+  font-size: 0.78rem;
+  font-weight: 800;
+  color: #1d4ed8;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  padding: 0.22rem 0.72rem;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.phub-files-grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 0.75rem;
+}
+
+.phub-file-card {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.72rem 0.9rem;
+  border-radius: 16px;
+  background: #ffffff;
+  border: 1.5px solid #e2e8f0;
+  box-shadow: 0 3px 10px rgba(15, 23, 42, 0.04);
+  cursor: pointer;
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+  min-width: 0;
+}
+
+.phub-file-card:hover {
+  transform: translateY(-2px);
+  background: #f0f9ff;
+  border-color: #38bdf8;
+  box-shadow: 0 8px 18px rgba(14, 165, 233, 0.14);
+}
+
+.phub-file-badge {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  font-size: 1.25rem;
+  flex-shrink: 0;
+}
+
+.phub-file-badge.slides {
+  background: linear-gradient(135deg, #ede9fe, #ddd6fe);
+}
+
+.phub-file-badge.pdf {
+  background: linear-gradient(135deg, #fee2e2, #fecaca);
+}
+
+.phub-file-badge.doc {
+  background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+}
+
+.phub-file-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.12rem;
+  min-width: 0;
+  flex: 1;
+}
+
+.phub-file-name {
+  font-size: 0.88rem;
+  font-weight: 800;
+  color: #0f172a;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.phub-file-type {
+  font-size: 0.74rem;
+  font-weight: 600;
+  color: #64748b;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.phub-file-open-btn {
+  flex-shrink: 0;
+  white-space: nowrap;
+  font-size: 0.78rem;
+  font-weight: 800;
+  color: #ffffff;
+  background: linear-gradient(135deg, #0ea5e9, #2563eb);
+  padding: 0.34rem 0.78rem;
+  border-radius: 999px;
+  box-shadow: 0 3px 8px rgba(37, 99, 235, 0.22);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.phub-file-card:hover .phub-file-open-btn {
+  transform: scale(1.05);
+  box-shadow: 0 5px 12px rgba(37, 99, 235, 0.35);
+}
+
+@media (max-width: 640px) {
+  .phub-gauges-row {
+    grid-template-columns: 1fr;
+  }
+  .phub-files-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+/* ==========================================================================
+   v108 · ÍCONOS SVG 3D VIBRANTES EN LA BARRA LATERAL DEL PROJECT HUB
+   ========================================================================== */
+.phub-cap {
+  display: grid;
+  place-items: center;
+  margin-bottom: 0.35rem;
+}
+
+.phub-svg-cap {
+  display: block;
+  filter: drop-shadow(0 6px 14px rgba(56, 189, 248, 0.45));
+  transition: transform 0.25s ease;
+}
+
+.phub-cap:hover .phub-svg-cap {
+  transform: scale(1.12) rotate(-5deg);
+}
+
+.phub-nav-ico {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.phub-svg-ico {
+  display: block;
+  filter: drop-shadow(0 4px 10px rgba(15, 23, 42, 0.35));
+  transition: transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.25s ease;
+}
+
+.phub-nav:hover .phub-svg-ico {
+  transform: scale(1.14) translateY(-2px);
+  filter: drop-shadow(0 6px 14px rgba(56, 189, 248, 0.55));
+}
+
+.phub-nav:hover .phub-svg-gear {
+  transform: scale(1.14) rotate(55deg);
+  filter: drop-shadow(0 6px 14px rgba(250, 204, 21, 0.6));
+}
+
+.phub-nav.active .phub-svg-ico {
+  filter: drop-shadow(0 0 12px rgba(250, 204, 21, 0.55));
+}
+
+
+/* ==========================================================================
+   v109 · BOTONES PREMIUM DE CONFIGURACIÓN EN PROJECT HUB
+   ========================================================================== */
+.phub-settings-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 0.95rem;
+  margin-top: 0.4rem;
+}
+
+.phub-cfg-btn {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  padding: 1rem 1.15rem;
+  border-radius: 20px;
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  color: #ffffff;
+  text-align: left;
+  cursor: pointer;
+  overflow: hidden;
+  transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.22s ease, filter 0.2s ease;
+  font-family: inherit;
+}
+
+.phub-cfg-btn::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.28), transparent);
+  transition: left 0.55s ease;
+  pointer-events: none;
+}
+
+.phub-cfg-btn:hover::after {
+  left: 140%;
+}
+
+.phub-cfg-btn:hover {
+  transform: translateY(-4px) scale(1.015);
+  filter: brightness(1.05);
+}
+
+.phub-cfg-btn:active {
+  transform: translateY(1px) scale(0.99);
+}
+
+.phub-cfg-btn.cfg-blue {
+  background: linear-gradient(135deg, #2563eb 0%, #4f46e5 100%);
+  box-shadow: 0 8px 20px rgba(37, 99, 235, 0.32);
+}
+
+.phub-cfg-btn.cfg-green {
+  background: linear-gradient(135deg, #10b981 0%, #0891b2 100%);
+  box-shadow: 0 8px 20px rgba(16, 185, 129, 0.32);
+}
+
+.phub-cfg-btn.cfg-purple {
+  background: linear-gradient(135deg, #7c3aed 0%, #db2777 100%);
+  box-shadow: 0 8px 20px rgba(124, 58, 237, 0.32);
+}
+
+.phub-cfg-btn.cfg-amber {
+  background: linear-gradient(135deg, #f59e0b 0%, #ea580c 100%);
+  box-shadow: 0 8px 20px rgba(245, 158, 11, 0.34);
+}
+
+.phub-cfg-icon {
+  width: 46px;
+  height: 46px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.22);
+  backdrop-filter: blur(6px);
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  transition: transform 0.25s ease;
+}
+
+.phub-cfg-btn:hover .phub-cfg-icon {
+  transform: scale(1.1) rotate(-6deg);
+}
+
+.phub-cfg-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.18rem;
+  min-width: 0;
+  flex: 1;
+}
+
+.phub-cfg-text strong {
+  font-size: 0.98rem;
+  font-weight: 900;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.phub-cfg-text small {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.88);
+  line-height: 1.3;
+}
+
+.phub-cfg-tag {
+  font-style: normal;
+  font-size: 0.68rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  background: rgba(255, 255, 255, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  padding: 0.1rem 0.45rem;
+  border-radius: 999px;
+}
+
+.phub-cfg-arrow {
+  font-size: 1.25rem;
+  font-weight: 900;
+  opacity: 0.85;
+  flex-shrink: 0;
+  transition: transform 0.2s ease;
+}
+
+.phub-cfg-btn:hover .phub-cfg-arrow {
+  transform: translateX(4px);
+  opacity: 1;
+}
+
+
+/* ==========================================================================
+   v110 · GRÁFICAS 3D Y KPIS 3D EN REPORTES DEL PROJECT HUB
+   ========================================================================== */
+.phub-kpi-3d {
+  position: relative;
+  background: linear-gradient(160deg, #ffffff 0%, #f8fafc 100%) !important;
+  border: 1.5px solid #e2e8f0 !important;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08), inset 0 2px 0 #ffffff !important;
+  overflow: hidden;
+}
+
+.phub-kpi-3d::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 5px;
+}
+.phub-kpi-3d.kpi-blue::after   { background: linear-gradient(90deg, #38bdf8, #2563eb); }
+.phub-kpi-3d.kpi-purple::after { background: linear-gradient(90deg, #a855f7, #6366f1); }
+.phub-kpi-3d.kpi-gold::after   { background: linear-gradient(90deg, #fde047, #ea580c); }
+.phub-kpi-3d.kpi-green::after  { background: linear-gradient(90deg, #34d399, #059669); }
+
+.phub-kpi-ico-3d {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 0.35rem;
+  filter: drop-shadow(0 6px 12px rgba(37, 99, 235, 0.28));
+}
+
+/* Gráfica de barras 3D isométricas */
+.phub-bars-3d {
+  position: relative;
+  height: 235px !important;
+  padding: 1.2rem 0.9rem 0.6rem !important;
+  border-radius: 20px;
+  background:
+    repeating-linear-gradient(
+      to top,
+      rgba(148, 163, 184, 0.16) 0px,
+      rgba(148, 163, 184, 0.16) 1px,
+      transparent 1px,
+      transparent 38px
+    ),
+    linear-gradient(180deg, #f8fafc 0%, #eff6ff 100%);
+  border: 1.5px solid #dbeafe;
+  box-shadow: inset 0 2px 10px rgba(30, 58, 138, 0.06);
+  align-items: flex-end;
+  gap: 0.65rem;
+}
+
+.phub-bar-col-3d {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  gap: 0.35rem;
+}
+
+.phub-bar-n-3d {
+  font-size: 0.78rem;
+  font-weight: 900;
+  color: #64748b;
+  padding: 0.12rem 0.48rem;
+  border-radius: 999px;
+  background: rgba(226, 232, 240, 0.7);
+  transition: transform 0.2s ease;
+}
+
+.phub-bar-n-3d.has-val {
+  color: #ffffff;
+  background: linear-gradient(135deg, var(--b-top, #38bdf8), var(--b-mid, #2563eb));
+  box-shadow: 0 4px 10px rgba(37, 99, 235, 0.3);
+}
+
+.phub-bar-stage {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  width: 100%;
+  padding-right: 8px;
+}
+
+.phub-bar-3d {
+  position: relative;
+  width: 30px;
+  border-radius: 6px 6px 4px 4px;
+  background: linear-gradient(180deg, var(--b-top, #38bdf8) 0%, var(--b-mid, #2563eb) 100%);
+  box-shadow:
+    inset 4px 0 6px rgba(255, 255, 255, 0.38),
+    inset -3px 0 6px rgba(15, 23, 42, 0.18),
+    0 10px 18px rgba(30, 64, 175, 0.25);
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.2s ease;
+  transform-origin: bottom center;
+  animation: phubBar3dRise 0.65s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes phubBar3dRise {
+  from { transform: scaleY(0.08); opacity: 0.4; }
+  to   { transform: scaleY(1); opacity: 1; }
+}
+
+/* Tapa superior 3D inclinada */
+.phub-bar-3d::before {
+  content: '';
+  position: absolute;
+  top: -8px;
+  left: 4px;
+  width: 100%;
+  height: 8px;
+  background: linear-gradient(90deg, rgba(255,255,255,0.65), var(--b-top, #38bdf8));
+  transform: skewX(-45deg);
+  border-radius: 3px 3px 0 0;
+}
+
+/* Cara lateral derecha 3D sombreada */
+.phub-bar-3d::after {
+  content: '';
+  position: absolute;
+  top: -4px;
+  right: -8px;
+  width: 8px;
+  height: 100%;
+  background: linear-gradient(180deg, var(--b-mid, #2563eb), var(--b-side, #1e3a8a));
+  transform: skewY(-45deg);
+  border-radius: 0 3px 3px 0;
+}
+
+.phub-bar-3d.zero {
+  opacity: 0.42;
+  filter: grayscale(0.45);
+  box-shadow: 0 4px 8px rgba(15, 23, 42, 0.1);
+}
+
+.phub-bar-col-3d:hover .phub-bar-3d.active {
+  transform: scaleY(1.06) translateY(-3px);
+  filter: brightness(1.1);
+}
+
+.phub-bar-col-3d:hover .phub-bar-n-3d.has-val {
+  transform: translateY(-4px) scale(1.1);
+}
+
+.phub-bar-col-3d small {
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: #475569;
+  white-space: nowrap;
+}
+
+/* Barras de calificación 3D glossy */
+.phub-rating-top-3d {
+  display: grid !important;
+  grid-template-columns: 165px 1fr;
+  gap: 1.25rem;
+  align-items: center;
+}
+
+.phub-dist-3d {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.phub-dist-row-3d {
+  display: grid;
+  grid-template-columns: 34px 1fr 26px;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.phub-dist-star {
+  font-size: 0.86rem;
+  font-weight: 900;
+  color: #b45309;
+}
+
+.phub-dist-bar-3d {
+  height: 14px !important;
+  border-radius: 999px !important;
+  background: linear-gradient(180deg, #dbe4f0 0%, #eef2f7 100%) !important;
+  box-shadow: inset 0 2px 4px rgba(15, 23, 42, 0.16);
+  overflow: hidden;
+  padding: 2px;
+}
+
+.phub-dist-bar-3d i {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #fde047 0%, #f59e0b 55%, #ea580c 100%) !important;
+  box-shadow:
+    inset 0 2px 2px rgba(255, 255, 255, 0.65),
+    0 2px 6px rgba(234, 88, 12, 0.35);
+  transition: width 0.75s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.phub-dist-num {
+  font-style: normal;
+  font-size: 0.84rem;
+  font-weight: 900;
+  color: #1e293b;
+  text-align: right;
+}
+
+.phub-rate-3d {
+  margin-top: 1.15rem;
+  background: linear-gradient(145deg, #fffbeb 0%, #fef3c7 100%) !important;
+  border: 2px dashed #f59e0b !important;
+  border-radius: 20px !important;
+  box-shadow: inset 0 2px 0 rgba(255, 255, 255, 0.8), 0 6px 16px rgba(245, 158, 11, 0.12);
+}
+
+@media (max-width: 720px) {
+  .phub-rating-top-3d {
+    grid-template-columns: 1fr !important;
+  }
+  .phub-bar-3d {
+    width: 22px;
+  }
+}

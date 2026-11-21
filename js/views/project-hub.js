@@ -186,22 +186,36 @@ window.ProjectHub = {
     if (m) return m.role || 'viewer';
     return 'guest';
   },
+  isAdminUser() {
+    const u = window.appState?.currentUser;
+    if (!u || u.isGuest || u.username === 'invitado') return false;
+    const r = String(u.role || '').toLowerCase().trim();
+    const uname = String(u.username || '').toLowerCase().trim();
+    const email = String(u.email || '').toLowerCase().trim();
+    return r === 'admin' || r === 'administrador' || uname === 'melisa' || uname === 'admin' || email === 'melisa@mentix.edu.co';
+  },
   canView(proj) {
     if (!proj) return false;
-    const r = this.getRole(proj);
-    return r === 'owner' || r === 'editor' || r === 'collaborator' || r === 'commenter' || r === 'viewer';
+    const u = window.appState?.currentUser;
+    if (!u || u.isGuest || u.username === 'invitado') return false;
+    // Administradores, creadores, miembros y usuarios registrados pueden ver la ventana de Detalles (Project Hub)
+    return true;
   },
   canEdit(proj) {
     if (!proj) return false;
+    if (this.isAdminUser()) return true;
+    const role = this.getRole(proj);
+    if (role === 'owner' || role === 'editor') return true;
+    if (role === 'commenter' || role === 'viewer') return false;
     if (window.appRouter && typeof window.appRouter.isChallengeOwner === 'function') {
       return window.appRouter.isChallengeOwner(proj);
     }
     if (window.ProjectsView && typeof window.ProjectsView.canUserEditProject === 'function') {
       return window.ProjectsView.canUserEditProject(proj);
     }
-    return this.getRole(proj) === 'owner';
+    return false;
   },
-  canManage(proj) { return this.getRole(proj) === 'owner'; },
+  canManage(proj) { return this.isAdminUser() || this.getRole(proj) === 'owner'; },
 
   progressOf(proj) {
     try {
@@ -250,7 +264,7 @@ window.ProjectHub = {
   },
 
   /* ------------------------------ apertura ------------------------------ */
-  open(projectId, tab = 'home') {
+  open(projectId, tab = 'home', pushHistory = true) {
     const proj = this.getProject(projectId);
     if (!proj) { this.toast('No se encontró el proyecto'); return; }
     this.currentId = projectId;
@@ -262,17 +276,88 @@ window.ProjectHub = {
     if (window.soundEngine && window.soundEngine.playClick) window.soundEngine.playClick();
     this.tab = tab;
     this.registerView(proj);
+    if (pushHistory && window.appRouter && typeof window.appRouter.pushSubState === 'function') {
+      const baseView = window.appRouter.currentView || 'projects';
+      window.appRouter.pushSubState(
+        { view: baseView, subMode: 'hub', projectId: projectId, tab: tab },
+        `#${baseView}?hub=${encodeURIComponent(projectId)}&tab=${encodeURIComponent(tab)}`
+      );
+    }
     this.render();
+    this.syncHubFromCloud(projectId);
   },
-  close() {
+
+  async syncHubFromCloud(projectId) {
+    if (!projectId) return;
+    try {
+      const apiBase = (window.appRouter && typeof window.appRouter.getApiBase === 'function') ? window.appRouter.getApiBase() : '';
+      const ctrl = (typeof AbortController !== 'undefined') ? new AbortController() : null;
+      const tid = ctrl ? setTimeout(() => ctrl.abort(), 2500) : null;
+      const res = await fetch(`${apiBase}/api/challenges?t=${Date.now()}&fresh=1`, {
+        cache: 'no-store',
+        signal: ctrl ? ctrl.signal : undefined
+      });
+      if (tid) clearTimeout(tid);
+      if (!res || !res.ok) return;
+      const data = await res.json();
+      const list = Array.isArray(data?.challenges) ? data.challenges : (Array.isArray(data) ? data : []);
+      const cloudProj = list.find(c => c && String(c.id) === String(projectId));
+      if (!cloudProj || !cloudProj.hub) return;
+
+      const localProj = this.getProject(projectId);
+      if (!localProj) return;
+      const prevRole = this.getRole(localProj);
+
+      const mergedHub = { ...(localProj.hub || {}), ...cloudProj.hub };
+      if (Array.isArray(cloudProj.hub.members) && cloudProj.hub.members.length > 0) {
+        mergedHub.members = cloudProj.hub.members;
+      }
+      if (Array.isArray(cloudProj.hub.joinRequests)) {
+        mergedHub.joinRequests = cloudProj.hub.joinRequests;
+      }
+      if (Array.isArray(cloudProj.hub.ratings) && cloudProj.hub.ratings.length >= (localProj.hub?.ratings?.length || 0)) {
+        mergedHub.ratings = cloudProj.hub.ratings;
+      }
+      localProj.hub = mergedHub;
+      localProj.members = mergedHub.members || [];
+      localProj.joinRequests = mergedHub.joinRequests || [];
+      this.saveHub(projectId, mergedHub);
+
+      const nextRole = this.getRole(localProj);
+      if (nextRole !== prevRole && nextRole !== 'guest') {
+        const info = this.ROLES[nextRole] || this.ROLES.viewer;
+        this.toast(`🎉 ¡Tu acceso se actualizó! Ahora eres ${info.icon} ${info.label}.`);
+      }
+      if (document.getElementById('phub-overlay') && String(this.currentId) === String(projectId)) {
+        this.render();
+      }
+      if (window.ProjectsView && typeof window.ProjectsView.render === 'function' && window.appRouter && window.appRouter.currentView === 'projects' && window.ProjectsView.viewMode === 'list') {
+        window.ProjectsView.render();
+      }
+    } catch (e) {}
+  },
+  close(pushHistory = true) {
     const el = document.getElementById('phub-overlay');
     if (el) el.remove();
     document.body.style.overflow = '';
+    if (pushHistory && window.history && window.history.state && window.history.state.subMode === 'hub') {
+      try { window.history.back(); return; } catch (e) {}
+    }
     if (window.ProjectsView && typeof window.ProjectsView.render === 'function' && window.appRouter && window.appRouter.currentView === 'projects') {
       try { window.ProjectsView.render(); } catch (e) {}
     }
   },
-  setTab(tab) { this.tab = tab; this.render(); },
+  setTab(tab, pushHistory = true) {
+    this.tab = tab;
+    if (pushHistory && this.currentId && window.appRouter && typeof window.appRouter.pushSubState === 'function') {
+      const baseView = window.appRouter.currentView || 'projects';
+      window.appRouter.pushSubState(
+        { view: baseView, subMode: 'hub', projectId: this.currentId, tab: tab },
+        `#${baseView}?hub=${encodeURIComponent(this.currentId)}&tab=${encodeURIComponent(tab)}`
+      );
+    }
+    this.render();
+  },
 
   /* ------------------------------ render ------------------------------ */
   render() {
@@ -285,9 +370,9 @@ window.ProjectHub = {
       return;
     }
     const hub = this.getHub(proj.id);
-    const role = this.getRole(proj);
+    const role = this.isAdminUser() ? 'owner' : this.getRole(proj);
     const roleInfo = this.ROLES[role] || this.ROLES.guest;
-    const manage = role === 'owner';
+    const manage = this.canManage(proj);
     const edit = this.canEdit(proj);
 
     let overlay = document.getElementById('phub-overlay');
@@ -300,11 +385,91 @@ window.ProjectHub = {
 
     const pending = hub.joinRequests.filter(r => r.status === 'pending').length;
 
+    const navIcons = {
+      cap: `<svg class="phub-svg-cap" viewBox="0 0 64 64" width="54" height="54" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="capTop" x1="6" y1="14" x2="58" y2="38" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#38bdf8"/><stop offset="50%" stop-color="#2563eb"/><stop offset="100%" stop-color="#1e3a8a"/>
+          </linearGradient>
+          <linearGradient id="capGold" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#fef08a"/><stop offset="100%" stop-color="#f59e0b"/>
+          </linearGradient>
+        </defs>
+        <path d="M16 33 V44 C16 49 23 53 32 53 C41 53 48 49 48 44 V33 Z" fill="#1e3a8a" stroke="#93c5fd" stroke-width="2"/>
+        <polygon points="32,12 59,26 32,40 5,26" fill="url(#capTop)" stroke="#e0f2fe" stroke-width="2.2" stroke-linejoin="round"/>
+        <polygon points="32,15 53,26 32,37 11,26" fill="#ffffff" opacity="0.16"/>
+        <path d="M32 26 L51 32 V45" stroke="url(#capGold)" stroke-width="3" stroke-linecap="round"/>
+        <circle cx="51" cy="47" r="4" fill="url(#capGold)"/>
+        <path d="M14 13 L15.5 9 L17 13 L21 14.5 L17 16 L15.5 20 L14 16 L10 14.5 Z" fill="#fde047"/>
+      </svg>`,
+      home: `<svg class="phub-svg-ico" viewBox="0 0 48 48" width="38" height="38" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="icoHomeRoof" x1="6" y1="8" x2="42" y2="26" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#fb7185"/><stop offset="100%" stop-color="#f97316"/>
+          </linearGradient>
+          <linearGradient id="icoHomeWall" x1="12" y1="20" x2="36" y2="42" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#ffffff"/><stop offset="100%" stop-color="#dbeafe"/>
+          </linearGradient>
+          <linearGradient id="icoHomeDoor" x1="20" y1="28" x2="28" y2="42" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#38bdf8"/><stop offset="100%" stop-color="#2563eb"/>
+          </linearGradient>
+        </defs>
+        <path d="M11 22 L24 11 L37 22 V39 C37 40.6 35.6 42 34 42 H14 C12.4 42 11 40.6 11 39 V22 Z" fill="url(#icoHomeWall)" stroke="#bfdbfe" stroke-width="1.5"/>
+        <path d="M6 23 L24 8 L42 23" stroke="url(#icoHomeRoof)" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <rect x="19.5" y="28" width="9" height="14" rx="4.5" fill="url(#icoHomeDoor)"/>
+        <circle cx="26" cy="35" r="1.2" fill="#fde047"/>
+        <rect x="15" y="22" width="5" height="5" rx="1.5" fill="#7dd3fc"/>
+        <rect x="28" y="22" width="5" height="5" rx="1.5" fill="#7dd3fc"/>
+      </svg>`,
+      users: `<svg class="phub-svg-ico" viewBox="0 0 48 48" width="38" height="38" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="icoUsr1" x1="8" y1="10" x2="30" y2="40" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#38bdf8"/><stop offset="100%" stop-color="#6366f1"/>
+          </linearGradient>
+          <linearGradient id="icoUsr2" x1="24" y1="12" x2="42" y2="40" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#f472b6"/><stop offset="100%" stop-color="#a855f7"/>
+          </linearGradient>
+        </defs>
+        <circle cx="31" cy="17" r="6.5" fill="url(#icoUsr2)"/>
+        <path d="M23 39 C23 32.5 26.8 28 32 28 C37.2 28 41 32.5 41 39 Z" fill="url(#icoUsr2)" opacity="0.92"/>
+        <circle cx="18" cy="16" r="7.5" fill="url(#icoUsr1)" stroke="#e0f2fe" stroke-width="1.8"/>
+        <path d="M7 40 C7 32.5 11.8 27.5 18 27.5 C24.2 27.5 29 32.5 29 40 Z" fill="url(#icoUsr1)" stroke="#e0f2fe" stroke-width="1.8" stroke-linejoin="round"/>
+      </svg>`,
+      settings: `<svg class="phub-svg-ico phub-svg-gear" viewBox="0 0 48 48" width="38" height="38" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="icoGear" x1="8" y1="8" x2="40" y2="40" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#fde047"/><stop offset="55%" stop-color="#f59e0b"/><stop offset="100%" stop-color="#ea580c"/>
+          </linearGradient>
+        </defs>
+        <path d="M21 6 H27 L28.4 11.2 C29.8 11.7 31.1 12.4 32.2 13.3 L37.3 11.5 L40.3 16.7 L36.4 20.5 C36.6 21.6 36.8 22.8 36.8 24 C36.8 25.2 36.6 26.4 36.4 27.5 L40.3 31.3 L37.3 36.5 L32.2 34.7 C31.1 35.6 29.8 36.3 28.4 36.8 L27 42 H21 L19.6 36.8 C18.2 36.3 16.9 35.6 15.8 34.7 L10.7 36.5 L7.7 31.3 L11.6 27.5 C11.4 26.4 11.2 25.2 11.2 24 C11.2 22.8 11.4 21.6 11.6 20.5 L7.7 16.7 L10.7 11.5 L15.8 13.3 C16.9 12.4 18.2 11.7 19.6 11.2 Z" fill="url(#icoGear)" stroke="#fef9c3" stroke-width="1.6" stroke-linejoin="round"/>
+        <circle cx="24" cy="24" r="7.5" fill="#1e3a8a" stroke="#fef08a" stroke-width="2.2"/>
+        <circle cx="24" cy="24" r="3" fill="#38bdf8"/>
+      </svg>`,
+      reports: `<svg class="phub-svg-ico" viewBox="0 0 48 48" width="38" height="38" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="bar1" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#34d399"/><stop offset="100%" stop-color="#059669"/></linearGradient>
+          <linearGradient id="bar2" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#38bdf8"/><stop offset="100%" stop-color="#2563eb"/></linearGradient>
+          <linearGradient id="bar3" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#c084fc"/><stop offset="100%" stop-color="#7c3aed"/></linearGradient>
+        </defs>
+        <rect x="6" y="7" width="36" height="34" rx="9" fill="#ffffff" fill-opacity="0.16" stroke="#93c5fd" stroke-width="1.6"/>
+        <rect x="11" y="24" width="6.5" height="12" rx="3" fill="url(#bar1)"/>
+        <rect x="20.7" y="18" width="6.5" height="18" rx="3" fill="url(#bar2)"/>
+        <rect x="30.5" y="12" width="6.5" height="24" rx="3" fill="url(#bar3)"/>
+        <path d="M12 20 L22 14 L34 9" stroke="#fde047" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="34" cy="9" r="2.8" fill="#fde047"/>
+      </svg>`,
+      close: `<svg class="phub-svg-ico" viewBox="0 0 36 36" width="30" height="30" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs><linearGradient id="icoClose" x1="0" y1="0" x2="36" y2="36" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#fb7185"/><stop offset="100%" stop-color="#dc2626"/></linearGradient></defs>
+        <circle cx="18" cy="18" r="15" fill="url(#icoClose)" stroke="#fecdd3" stroke-width="1.8"/>
+        <path d="M13 13 L23 23 M23 13 L13 23" stroke="#ffffff" stroke-width="3" stroke-linecap="round"/>
+      </svg>`
+    };
+
     const nav = [
-      { id: 'home', icon: '🏠', label: 'Inicio' },
-      { id: 'users', icon: '👥', label: 'Usuarios', badge: manage ? pending : 0 },
-      ...(edit ? [{ id: 'settings', icon: '⚙️', label: 'Configuración' }] : []),
-      { id: 'reports', icon: '📊', label: 'Reportes' }
+      { id: 'home', icon: navIcons.home, label: 'Inicio' },
+      { id: 'users', icon: navIcons.users, label: 'Usuarios', badge: manage ? pending : 0 },
+      ...(edit ? [{ id: 'settings', icon: navIcons.settings, label: 'Configuración' }] : []),
+      { id: 'reports', icon: navIcons.reports, label: 'Reportes' }
     ];
 
     let content = '';
@@ -326,7 +491,7 @@ window.ProjectHub = {
       </svg>
       <div class="phub-shell">
         <aside class="phub-sidebar">
-          <div class="phub-cap">🎓</div>
+          <div class="phub-cap">${navIcons.cap}</div>
           ${nav.map(n => `
             <button type="button" class="phub-nav ${this.tab === n.id || (n.id === 'home' && !['users', 'settings', 'reports'].includes(this.tab)) ? 'active' : ''}" onclick="window.ProjectHub.setTab('${n.id}')">
               <span class="phub-nav-ico">${n.icon}</span>
@@ -359,7 +524,7 @@ window.ProjectHub = {
               </g>
             </svg>
           </div>
-          <button type="button" class="phub-nav phub-nav-close" onclick="window.ProjectHub.close()"><span class="phub-nav-ico">✕</span><span>Cerrar</span></button>
+          <button type="button" class="phub-nav phub-nav-close" onclick="window.ProjectHub.close()"><span class="phub-nav-ico">${navIcons.close}</span><span>Cerrar</span></button>
         </aside>
 
         <main class="phub-main">
@@ -458,11 +623,13 @@ window.ProjectHub = {
     });
   },
 
-  actionBar(proj, edit) {
+  actionBar(proj, edit, role = 'guest') {
     const id = this.esc(proj.id);
+    const canComment = role === 'commenter' || role === 'owner' || role === 'editor' || role === 'collaborator' || this.isAdminUser();
     return `
       <div class="phub-top-actions">
         ${edit ? `<button type="button" class="phub-top-act-btn" onclick="window.ProjectHub.editProject('${id}')"><span class="act-ico">✏️</span> <span>Editar proyecto</span></button>` : ''}
+        ${canComment ? `<button type="button" class="phub-top-act-btn" style="background:linear-gradient(135deg,#0ea5e9,#2563eb); color:#fff; border-color:#38bdf8;" onclick="window.ProjectHub.openReviewPage('${id}')"><span class="act-ico">💬</span> <span>Comentar y calificar</span></button>` : ''}
         <button type="button" class="phub-top-act-btn" onclick="window.ProjectHub.openLanding('${id}')"><span class="act-ico">🌐</span> <span>Ver landing page</span></button>
         <button type="button" class="phub-top-act-btn" onclick="window.ProjectHub.share('${id}')"><span class="act-ico">🔗</span> <span>Compartir</span></button>
         <button type="button" class="phub-top-act-btn active" onclick="document.querySelector('.phub-detail-grid')?.scrollIntoView({behavior:'smooth'})"><span class="act-ico">👁️</span> <span>Ver detalles</span></button>
@@ -536,7 +703,7 @@ window.ProjectHub = {
         </section>
 
         <section class="phub-col">
-          ${this.actionBar(proj, edit)}
+          ${this.actionBar(proj, edit, role)}
           <div class="phub-card phub-card-cartoon">
             <div class="phub-pill-header-wrap">
               <h2 class="phub-pill-title yellow"><span class="ico">👁️</span> Ver detalles</h2>
@@ -558,37 +725,109 @@ window.ProjectHub = {
               </div>
 
               <div class="phub-detail-col">
-                <h4 class="phub-detail-heading">Resultados del Proyecto</h4>
+                <h4 class="phub-detail-heading">📊 Resultados del Proyecto</h4>
                 <div class="phub-gauges-row">
-                  ${this.gauge(progress, 'Metas alcanzadas', '#22c55e')}
-                  ${this.gauge(ratingPct, 'Casos de éxito', '#0ea5e9')}
+                  ${this.gauge(progress, 'Metas alcanzadas', '#10b981', '#06b6d4', '🎯')}
+                  ${this.gauge(ratingPct, 'Casos de éxito', '#3b82f6', '#8b5cf6', '🏆')}
                 </div>
-                <h4 class="phub-detail-heading" style="margin-top:1.1rem;">
+              </div>
+            </div>
+
+            <div class="phub-files-section">
+              <div class="phub-files-header">
+                <h4 class="phub-detail-heading" style="margin:0;">
                   <span class="f-ico">📁</span> Archivos de entregas
                 </h4>
-                <ul class="phub-files-list">
-                  ${slides.length ? `<li onclick="window.ProjectsView ? window.ProjectsView.openSelectedProject() : null" style="cursor:pointer;" title="Clic para ver presentación en pantalla"><span class="file-ico">📊</span> <b>Presentación (${slides.length} láminas)</b> <span style="font-size:0.75rem; color:#0ea5e9; font-weight:800; margin-left:auto;">Ver ↗</span></li>` : ''}
-                  ${resources.slice(0, 5).map(r => `<li onclick="window.ProjectsView ? window.ProjectsView.openResourceViewerByName('${this.esc(r.id || r.fileName || r.name || r.title)}', '${proj.id}') : null" style="cursor:pointer;" title="Clic para ver documento en la página"><span class="file-ico">📄</span> <b>${this.esc(r.fileName || r.name || r.title || 'Archivo')}</b> <span style="font-size:0.75rem; color:#0ea5e9; font-weight:800; margin-left:auto;">Ver ↗</span></li>`).join('')}
-                  ${(!slides.length && !resources.length) ? `
-                    <li onclick="window.ProjectsView ? window.ProjectsView.openResourceViewerByName('Proyectos.pdf', '${proj.id}') : null" style="cursor:pointer;" title="Clic para ver documento en la página"><span class="file-ico">📄</span> <b>Proyectos.pdf</b> <span style="font-size:0.75rem; color:#0ea5e9; font-weight:800; margin-left:auto;">Ver ↗</span></li>
-                    <li onclick="window.ProjectsView ? window.ProjectsView.openResourceViewerByName('Archivo a', '${proj.id}') : null" style="cursor:pointer;" title="Clic para ver documento en la página"><span class="file-ico">📄</span> <b>Archivo a</b> <span style="font-size:0.75rem; color:#0ea5e9; font-weight:800; margin-left:auto;">Ver ↗</span></li>
-                    <li onclick="window.ProjectsView ? window.ProjectsView.openResourceViewerByName('Entrega b', '${proj.id}') : null" style="cursor:pointer;" title="Clic para ver documento en la página"><span class="file-ico">📄</span> <b>Entrega b</b> <span style="font-size:0.75rem; color:#0ea5e9; font-weight:800; margin-left:auto;">Ver ↗</span></li>
-                  ` : ''}
-                </ul>
+                <span class="phub-files-count">${(slides.length ? 1 : 0) + resources.length || 3} archivo${((slides.length ? 1 : 0) + resources.length) === 1 ? '' : 's'}</span>
               </div>
+              <ul class="phub-files-grid">
+                ${slides.length ? `
+                  <li class="phub-file-card" onclick="window.ProjectsView ? window.ProjectsView.openSelectedProject() : null" title="Presentación (${slides.length} láminas)">
+                    <span class="phub-file-badge slides">📊</span>
+                    <div class="phub-file-meta">
+                      <b class="phub-file-name">Presentación (${slides.length} láminas)</b>
+                      <small class="phub-file-type">Diapositivas interactivas</small>
+                    </div>
+                    <span class="phub-file-open-btn">Ver ↗</span>
+                  </li>` : ''}
+                ${resources.slice(0, 8).map(r => {
+                  const rName = r.fileName || r.name || r.title || 'Archivo';
+                  const isPdf = /\.pdf/i.test(rName);
+                  return `
+                  <li class="phub-file-card" onclick="window.ProjectsView ? window.ProjectsView.openResourceViewerByName('${this.esc(r.id || rName)}', '${proj.id}') : null" title="${this.esc(rName)}">
+                    <span class="phub-file-badge ${isPdf ? 'pdf' : 'doc'}">${isPdf ? '📕' : '📄'}</span>
+                    <div class="phub-file-meta">
+                      <b class="phub-file-name">${this.esc(rName)}</b>
+                      <small class="phub-file-type">${isPdf ? 'Documento PDF' : 'Archivo adjunto'}</small>
+                    </div>
+                    <span class="phub-file-open-btn">Ver ↗</span>
+                  </li>`;
+                }).join('')}
+                ${(!slides.length && !resources.length) ? `
+                  <li class="phub-file-card" onclick="window.ProjectsView ? window.ProjectsView.openResourceViewerByName('Proyectos.pdf', '${proj.id}') : null" title="Proyectos.pdf">
+                    <span class="phub-file-badge pdf">📕</span>
+                    <div class="phub-file-meta">
+                      <b class="phub-file-name">Proyectos.pdf</b>
+                      <small class="phub-file-type">Documento PDF</small>
+                    </div>
+                    <span class="phub-file-open-btn">Ver ↗</span>
+                  </li>
+                  <li class="phub-file-card" onclick="window.ProjectsView ? window.ProjectsView.openResourceViewerByName('Archivo a', '${proj.id}') : null" title="Archivo a">
+                    <span class="phub-file-badge doc">📄</span>
+                    <div class="phub-file-meta">
+                      <b class="phub-file-name">Archivo a</b>
+                      <small class="phub-file-type">Archivo adjunto</small>
+                    </div>
+                    <span class="phub-file-open-btn">Ver ↗</span>
+                  </li>
+                  <li class="phub-file-card" onclick="window.ProjectsView ? window.ProjectsView.openResourceViewerByName('Entrega b', '${proj.id}') : null" title="Entrega b">
+                    <span class="phub-file-badge doc">📄</span>
+                    <div class="phub-file-meta">
+                      <b class="phub-file-name">Entrega b</b>
+                      <small class="phub-file-type">Archivo adjunto</small>
+                    </div>
+                    <span class="phub-file-open-btn">Ver ↗</span>
+                  </li>
+                ` : ''}
+              </ul>
             </div>
           </div>
         </section>
       </div>`;
   },
 
-  gauge(pct, label, color) {
+  gauge(pct, label, colorStart = '#10b981', colorEnd = '#06b6d4', icon = '🎯') {
+    const safePct = Math.max(0, Math.min(100, Number(pct) || 0));
+    const r = 46;
+    const circ = 2 * Math.PI * r;
+    const offset = circ - (safePct / 100) * circ;
+    const gid = 'phubGrad_' + Math.random().toString(36).slice(2, 8);
+    const statusTxt = safePct >= 90 ? '¡Excelente!' : (safePct >= 60 ? 'Buen ritmo' : 'En progreso');
     return `
-      <div class="phub-gauge-item">
-        <div class="phub-donut-ring" data-pct="${pct}" data-color="${color}" style="background:conic-gradient(${color} ${pct * 3.6}deg, #e2e8f0 0deg);">
-          <div class="phub-donut-center">${pct}%</div>
+      <div class="phub-gauge-card" style="--g-start:${colorStart}; --g-end:${colorEnd};">
+        <div class="phub-gauge-svg-wrap">
+          <svg class="phub-gauge-svg" viewBox="0 0 120 120" width="118" height="118">
+            <defs>
+              <linearGradient id="${gid}" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="${colorStart}"/>
+                <stop offset="100%" stop-color="${colorEnd}"/>
+              </linearGradient>
+            </defs>
+            <circle cx="60" cy="60" r="${r}" fill="none" stroke="#e2e8f0" stroke-width="11" opacity="0.75"/>
+            <circle cx="60" cy="60" r="${r}" fill="none" stroke="url(#${gid})" stroke-width="11"
+              stroke-linecap="round"
+              stroke-dasharray="${circ.toFixed(1)}"
+              stroke-dashoffset="${offset.toFixed(1)}"
+              transform="rotate(-90 60 60)"
+              class="phub-gauge-arc"/>
+          </svg>
+          <div class="phub-gauge-inner">
+            <span class="phub-gauge-ico">${icon}</span>
+            <strong class="phub-gauge-num">${safePct}%</strong>
+          </div>
         </div>
         <span class="phub-gauge-caption">${this.esc(label)}</span>
+        <span class="phub-gauge-pill">${statusTxt}</span>
       </div>`;
   },
 
@@ -645,12 +884,30 @@ window.ProjectHub = {
     const me = this.me();
     const mine = hub.joinRequests.find(r => this.norm(r.email) === this.norm(me.email) && me.email);
     if (role !== 'guest') {
+      const roleActionHtml = role === 'commenter'
+        ? `
+          <div style="margin-top:0.85rem; display:flex; flex-direction:column; gap:0.55rem;">
+            <div style="font-size:0.84rem; color:#334155; font-weight:700; display:flex; flex-wrap:wrap; gap:0.45rem; justify-content:center;">
+              <span style="background:#dcfce7; color:#166534; padding:0.2rem 0.65rem; border-radius:999px;">✔ Comentar proyecto</span>
+              <span style="background:#fef9c3; color:#854d0e; padding:0.2rem 0.65rem; border-radius:999px;">⭐ Calificar con estrellas</span>
+              <span style="background:#e2e8f0; color:#475569; padding:0.2rem 0.65rem; border-radius:999px;">🔒 Sin edición</span>
+            </div>
+            <button type="button" class="phub-glossy-btn green" style="width:100%; justify-content:center;" onclick="window.ProjectHub.openReviewPage('${id}')">
+              <span class="b-ico">💬</span> Comentar y calificar proyecto
+            </button>
+          </div>`
+        : role === 'editor'
+          ? `<div style="margin-top:0.85rem;"><button type="button" class="phub-glossy-btn blue" style="width:100%; justify-content:center;" onclick="window.ProjectHub.editProject('${id}')"><span class="b-ico">✏️</span> Editar contenido del proyecto</button></div>`
+          : role === 'collaborator'
+            ? `<div style="margin-top:0.85rem;"><button type="button" class="phub-glossy-btn green" style="width:100%; justify-content:center;" onclick="window.ProjectHub.openReviewPage('${id}')"><span class="b-ico">🤝</span> Aportar comentarios y calificación</button></div>`
+            : '';
       return `
         <div class="phub-card phub-card-cartoon">
           <div class="phub-pill-header-wrap">
             <h2 class="phub-pill-title yellow"><span class="ico">🎟️</span> Mi participación</h2>
           </div>
           <div class="phub-empty ok">${roleInfo.icon} Participas como <b>${roleInfo.label}</b>.<br><small>${roleInfo.desc}</small></div>
+          ${roleActionHtml}
         </div>`;
     }
     return `
@@ -708,16 +965,57 @@ window.ProjectHub = {
 
   renderSettings(proj, hub) {
     const id = this.esc(proj.id);
+    const isAdmin = !!(window.ProjectsView && window.ProjectsView.isAdminUser && window.ProjectsView.isAdminUser());
     return `
       <div class="phub-card phub-card-cartoon">
         <div class="phub-pill-header-wrap">
           <h2 class="phub-pill-title yellow"><span class="ico">⚙️</span> Configuración</h2>
         </div>
-        <div class="phub-settings">
-          <button type="button" class="phub-btn blue" onclick="window.ProjectHub.editProject('${id}')">✏️ Editar contenido del proyecto</button>
-          ${(window.ProjectsView && window.ProjectsView.isAdminUser && window.ProjectsView.isAdminUser()) ? `<button type="button" class="phub-btn green" onclick="window.ProjectsView.openHeroBannerPicker('${id}')">🎨 Cambiar fondo del banner (Hero - Solo Admin)</button>` : ''}
-          <button type="button" class="phub-btn ghost" onclick="window.ProjectHub.openLanding('${id}')">🌐 Ver página pública</button>
-          <button type="button" class="phub-btn ghost" onclick="window.ProjectHub.share('${id}')">🔗 Copiar enlace para compartir</button>
+        <div class="phub-settings-grid">
+          <button type="button" class="phub-cfg-btn cfg-blue" onclick="window.ProjectHub.editProject('${id}')">
+            <span class="phub-cfg-icon">
+              <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+            </span>
+            <span class="phub-cfg-text">
+              <strong>Editar contenido</strong>
+              <small>Abre el asistente y actualiza textos, videos y archivos</small>
+            </span>
+            <span class="phub-cfg-arrow">→</span>
+          </button>
+
+          ${isAdmin ? `
+          <button type="button" class="phub-cfg-btn cfg-green" onclick="window.ProjectsView.openHeroBannerPicker('${id}')">
+            <span class="phub-cfg-icon">
+              <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            </span>
+            <span class="phub-cfg-text">
+              <strong>Cambiar fondo del banner <em class="phub-cfg-tag">Admin</em></strong>
+              <small>Personaliza la imagen principal (Hero) del proyecto</small>
+            </span>
+            <span class="phub-cfg-arrow">→</span>
+          </button>` : ''}
+
+          <button type="button" class="phub-cfg-btn cfg-purple" onclick="window.ProjectHub.openLanding('${id}')">
+            <span class="phub-cfg-icon">
+              <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+            </span>
+            <span class="phub-cfg-text">
+              <strong>Ver página pública</strong>
+              <small>Previsualiza la landing page tal como la ven todos</small>
+            </span>
+            <span class="phub-cfg-arrow">→</span>
+          </button>
+
+          <button type="button" class="phub-cfg-btn cfg-amber" onclick="window.ProjectHub.share('${id}')">
+            <span class="phub-cfg-icon">
+              <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+            </span>
+            <span class="phub-cfg-text">
+              <strong>Copiar enlace</strong>
+              <small>Comparte el link directo de este proyecto</small>
+            </span>
+            <span class="phub-cfg-arrow">→</span>
+          </button>
         </div>
       </div>`;
   },
@@ -739,12 +1037,29 @@ window.ProjectHub = {
     const id = this.esc(proj.id);
     const myRating = (hub.ratings.find(r => r.who === this.me().key) || {}).stars || 0;
 
+    const kpiIcons = {
+      views: `<svg viewBox="0 0 44 44" width="38" height="38" fill="none"><defs><linearGradient id="kV" x1="4" y1="6" x2="40" y2="38" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#38bdf8"/><stop offset="100%" stop-color="#2563eb"/></linearGradient></defs><rect width="44" height="44" rx="14" fill="url(#kV)"/><path d="M9 22 C13 15 17.5 12.5 22 12.5 C26.5 12.5 31 15 35 22 C31 29 26.5 31.5 22 31.5 C17.5 31.5 13 29 9 22 Z" fill="#ffffff" fill-opacity="0.95"/><circle cx="22" cy="22" r="5" fill="#1d4ed8"/><circle cx="23.8" cy="20.2" r="1.8" fill="#ffffff"/></svg>`,
+      people: `<svg viewBox="0 0 44 44" width="38" height="38" fill="none"><defs><linearGradient id="kP" x1="4" y1="6" x2="40" y2="38" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#a855f7"/><stop offset="100%" stop-color="#6366f1"/></linearGradient></defs><rect width="44" height="44" rx="14" fill="url(#kP)"/><circle cx="28" cy="17" r="4.5" fill="#e9d5ff"/><path d="M22 33 C22 28.5 24.5 25.5 28.5 25.5 C32.5 25.5 35 28.5 35 33 Z" fill="#e9d5ff"/><circle cx="17" cy="16.5" r="5.5" fill="#ffffff"/><path d="M8.5 33.5 C8.5 28 12 24.5 17 24.5 C22 24.5 25.5 28 25.5 33.5 Z" fill="#ffffff"/></svg>`,
+      star: `<svg viewBox="0 0 44 44" width="38" height="38" fill="none"><defs><linearGradient id="kS" x1="4" y1="6" x2="40" y2="38" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#fde047"/><stop offset="100%" stop-color="#ea580c"/></linearGradient></defs><rect width="44" height="44" rx="14" fill="url(#kS)"/><path d="M22 9 L25.8 16.8 L34.4 18 L28.2 24 L29.7 32.6 L22 28.5 L14.3 32.6 L15.8 24 L9.6 18 L18.2 16.8 Z" fill="#ffffff"/></svg>`,
+      votes: `<svg viewBox="0 0 44 44" width="38" height="38" fill="none"><defs><linearGradient id="kB" x1="4" y1="6" x2="40" y2="38" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#34d399"/><stop offset="100%" stop-color="#059669"/></linearGradient></defs><rect width="44" height="44" rx="14" fill="url(#kB)"/><rect x="11" y="13" width="22" height="19" rx="4" fill="#ffffff" fill-opacity="0.95"/><path d="M16 22.5 L20 26.5 L28.5 18" stroke="#059669" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg>`
+    };
+
+    const barPalette = [
+      ['#38bdf8', '#2563eb', '#1e3a8a'],
+      ['#60a5fa', '#4f46e5', '#312e81'],
+      ['#34d399', '#059669', '#065f46'],
+      ['#a78bfa', '#7c3aed', '#4c1d95'],
+      ['#f472b6', '#db2777', '#831843'],
+      ['#fbbf24', '#ea580c', '#9a3412'],
+      ['#22d3ee', '#0284c7', '#0c4a6e']
+    ];
+
     return `
-      <div class="phub-kpis">
-        <div class="phub-kpi"><span>👁️</span><b data-count="${views.length}">0</b><small>Visitas totales</small></div>
-        <div class="phub-kpi"><span>🧑‍🤝‍🧑</span><b data-count="${uniq}">0</b><small>Personas que lo vieron</small></div>
-        <div class="phub-kpi"><span>⭐</span><b data-count="${stats.avg.toFixed(1)}" data-dec="1">0</b><small>Calificación promedio</small></div>
-        <div class="phub-kpi"><span>🗳️</span><b data-count="${stats.total}">0</b><small>Calificaciones</small></div>
+      <div class="phub-kpis phub-kpis-3d">
+        <div class="phub-kpi phub-kpi-3d kpi-blue"><span class="phub-kpi-ico-3d">${kpiIcons.views}</span><b data-count="${views.length}">0</b><small>Visitas totales</small></div>
+        <div class="phub-kpi phub-kpi-3d kpi-purple"><span class="phub-kpi-ico-3d">${kpiIcons.people}</span><b data-count="${uniq}">0</b><small>Personas que lo vieron</small></div>
+        <div class="phub-kpi phub-kpi-3d kpi-gold"><span class="phub-kpi-ico-3d">${kpiIcons.star}</span><b data-count="${stats.avg.toFixed(1)}" data-dec="1">0</b><small>Calificación promedio</small></div>
+        <div class="phub-kpi phub-kpi-3d kpi-green"><span class="phub-kpi-ico-3d">${kpiIcons.votes}</span><b data-count="${stats.total}">0</b><small>Calificaciones</small></div>
       </div>
 
       <div class="phub-report-grid">
@@ -752,15 +1067,21 @@ window.ProjectHub = {
           <div class="phub-pill-header-wrap">
             <h2 class="phub-pill-title yellow"><span class="ico">📈</span> Personas que han visto el proyecto</h2>
           </div>
-          <div class="phub-bars">
-            ${days.map(d => `
-              <div class="phub-bar-col" style="--i:${days.indexOf(d)}">
-                <span class="phub-bar-n">${d.n}</span>
-                <div class="phub-bar" style="height:${Math.max(4, Math.round((d.n / max) * 130))}px;"></div>
+          <div class="phub-bars phub-bars-3d">
+            ${days.map((d, idx) => {
+              const pal = barPalette[idx % barPalette.length];
+              const hPx = d.n > 0 ? Math.max(26, Math.round((d.n / max) * 140)) : 10;
+              return `
+              <div class="phub-bar-col phub-bar-col-3d" style="--i:${idx}; --b-top:${pal[0]}; --b-mid:${pal[1]}; --b-side:${pal[2]};">
+                <span class="phub-bar-n phub-bar-n-3d ${d.n > 0 ? 'has-val' : ''}">${d.n}</span>
+                <div class="phub-bar-stage">
+                  <div class="phub-bar-3d ${d.n > 0 ? 'active' : 'zero'}" style="height:${hPx}px;"></div>
+                </div>
                 <small>${this.esc(d.label)}</small>
-              </div>`).join('')}
+              </div>`;
+            }).join('')}
           </div>
-          <h4 class="phub-sub" style="margin-top:1rem;">Últimas visitas</h4>
+          <h4 class="phub-sub" style="margin-top:1.1rem;">Últimas visitas</h4>
           <ul class="phub-recent">
             ${recent.length ? recent.map(v => `<li>${this.avatar(v.name, 28)} <span>${this.esc(v.name || 'Visitante')}</span><small>${new Date(v.t).toLocaleString('es-ES', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}</small></li>`).join('') : '<li class="empty">Todavía nadie ha visto este proyecto.</li>'}
           </ul>
@@ -770,16 +1091,21 @@ window.ProjectHub = {
           <div class="phub-pill-header-wrap">
             <h2 class="phub-pill-title yellow"><span class="ico">⭐</span> Calificación del proyecto</h2>
           </div>
-          <div class="phub-rating-top">
-            ${this.gauge(Math.round((stats.avg / 5) * 100), stats.total ? `${stats.avg.toFixed(1)} de 5` : 'Sin calificar', '#f59e0b')}
-            <div class="phub-dist">
-              ${[5, 4, 3, 2, 1].map(s => `
-                <div class="phub-dist-row"><span>${s}★</span>
-                  <div class="phub-dist-bar"><i style="width:${stats.total ? Math.round(stats.dist[s - 1] / stats.total * 100) : 0}%"></i></div>
-                  <em>${stats.dist[s - 1]}</em></div>`).join('')}
+          <div class="phub-rating-top phub-rating-top-3d">
+            ${this.gauge(Math.round((stats.avg / 5) * 100), stats.total ? `${stats.avg.toFixed(1)} de 5` : 'Sin calificar', '#f59e0b', '#facc15', '⭐')}
+            <div class="phub-dist phub-dist-3d">
+              ${[5, 4, 3, 2, 1].map(s => {
+                const pctBar = stats.total ? Math.round(stats.dist[s - 1] / stats.total * 100) : 0;
+                return `
+                <div class="phub-dist-row phub-dist-row-3d">
+                  <span class="phub-dist-star">${s}★</span>
+                  <div class="phub-dist-bar phub-dist-bar-3d"><i style="width:${pctBar}%"></i></div>
+                  <em class="phub-dist-num">${stats.dist[s - 1]}</em>
+                </div>`;
+              }).join('')}
             </div>
           </div>
-          <div class="phub-rate">
+          <div class="phub-rate phub-rate-3d">
             <b>${myRating ? 'Tu calificación' : 'Califica este proyecto'}</b>
             <div class="phub-stars">
               ${[1, 2, 3, 4, 5].map(s => `<button type="button" class="${s <= myRating ? 'on' : ''}" onclick="window.ProjectHub.rate('${id}', ${s})" aria-label="${s} estrellas">★</button>`).join('')}
@@ -1607,6 +1933,12 @@ window.ProjectHub = {
     hub.joinRequests = (hub.joinRequests || []).filter(r => this.norm(r.email) !== e);
     hub.joinRequests.unshift(newReq);
     this.saveHub(projectId, hub);
+    // Guardar sesión local para que cuando el creador acepte (ej. como Comentarista), esta persona vea su rol actualizado al instante
+    try {
+      const s = JSON.parse(localStorage.getItem('mentix_hub_sessions') || '{}');
+      s[projectId] = { name: name.trim(), email: email.trim() };
+      localStorage.setItem('mentix_hub_sessions', JSON.stringify(s));
+    } catch (errS) {}
 
     const proj = this.getProject(projectId);
     if (proj) {
@@ -1966,7 +2298,6 @@ window.ProjectHub = {
       window.soundEngine.playCorrect();
     }
 
-    const proj = this.getProject(projectId);
     const projTitle = proj ? proj.title : 'Proyecto';
     this.showNotificationBanner({
       icon: '🎉',
@@ -2014,6 +2345,14 @@ window.ProjectHub = {
     if (!m) return;
     m.role = role;
     this.saveHub(projectId, hub);
+    const proj = this.getProject(projectId);
+    if (proj) {
+      proj.hub = hub;
+      proj.members = hub.members;
+      if (window.appRouter && typeof window.appRouter.pushChallengeToCloud === 'function') {
+        try { window.appRouter.pushChallengeToCloud(proj); } catch (err) {}
+      }
+    }
     this.toast(`Rol actualizado: ${this.ROLES[role].label}.`);
     this.render();
   },
@@ -2023,6 +2362,14 @@ window.ProjectHub = {
     const hub = this.getHub(projectId);
     hub.members = hub.members.filter(x => this.norm(x.email) !== this.norm(email));
     this.saveHub(projectId, hub);
+    const proj = this.getProject(projectId);
+    if (proj) {
+      proj.hub = hub;
+      proj.members = hub.members;
+      if (window.appRouter && typeof window.appRouter.pushChallengeToCloud === 'function') {
+        try { window.appRouter.pushChallengeToCloud(proj); } catch (err) {}
+      }
+    }
     this.render();
   },
 
