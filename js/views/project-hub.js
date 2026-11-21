@@ -891,16 +891,57 @@ window.ProjectHub = {
 
   renderSettings(proj, hub) {
     const id = this.esc(proj.id);
+    const isAdmin = !!(window.ProjectsView && window.ProjectsView.isAdminUser && window.ProjectsView.isAdminUser());
     return `
       <div class="phub-card phub-card-cartoon">
         <div class="phub-pill-header-wrap">
           <h2 class="phub-pill-title yellow"><span class="ico">⚙️</span> Configuración</h2>
         </div>
-        <div class="phub-settings">
-          <button type="button" class="phub-btn blue" onclick="window.ProjectHub.editProject('${id}')">✏️ Editar contenido del proyecto</button>
-          ${(window.ProjectsView && window.ProjectsView.isAdminUser && window.ProjectsView.isAdminUser()) ? `<button type="button" class="phub-btn green" onclick="window.ProjectsView.openHeroBannerPicker('${id}')">🎨 Cambiar fondo del banner (Hero - Solo Admin)</button>` : ''}
-          <button type="button" class="phub-btn ghost" onclick="window.ProjectHub.openLanding('${id}')">🌐 Ver página pública</button>
-          <button type="button" class="phub-btn ghost" onclick="window.ProjectHub.share('${id}')">🔗 Copiar enlace para compartir</button>
+        <div class="phub-settings-grid">
+          <button type="button" class="phub-cfg-btn cfg-blue" onclick="window.ProjectHub.editProject('${id}')">
+            <span class="phub-cfg-icon">
+              <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+            </span>
+            <span class="phub-cfg-text">
+              <strong>Editar contenido</strong>
+              <small>Abre el asistente y actualiza textos, videos y archivos</small>
+            </span>
+            <span class="phub-cfg-arrow">→</span>
+          </button>
+
+          ${isAdmin ? `
+          <button type="button" class="phub-cfg-btn cfg-green" onclick="window.ProjectsView.openHeroBannerPicker('${id}')">
+            <span class="phub-cfg-icon">
+              <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            </span>
+            <span class="phub-cfg-text">
+              <strong>Cambiar fondo del banner <em class="phub-cfg-tag">Admin</em></strong>
+              <small>Personaliza la imagen principal (Hero) del proyecto</small>
+            </span>
+            <span class="phub-cfg-arrow">→</span>
+          </button>` : ''}
+
+          <button type="button" class="phub-cfg-btn cfg-purple" onclick="window.ProjectHub.openLanding('${id}')">
+            <span class="phub-cfg-icon">
+              <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+            </span>
+            <span class="phub-cfg-text">
+              <strong>Ver página pública</strong>
+              <small>Previsualiza la landing page tal como la ven todos</small>
+            </span>
+            <span class="phub-cfg-arrow">→</span>
+          </button>
+
+          <button type="button" class="phub-cfg-btn cfg-amber" onclick="window.ProjectHub.share('${id}')">
+            <span class="phub-cfg-icon">
+              <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+            </span>
+            <span class="phub-cfg-text">
+              <strong>Copiar enlace</strong>
+              <small>Comparte el link directo de este proyecto</small>
+            </span>
+            <span class="phub-cfg-arrow">→</span>
+          </button>
         </div>
       </div>`;
   },
