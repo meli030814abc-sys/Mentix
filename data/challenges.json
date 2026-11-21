@@ -60,8 +60,11 @@
     "authorRole": "admin",
     "plays": 0,
     "projectType": "quiz",
-    "updatedAt": "2026-11-21T18:31:09.588Z",
-    "createdAt": "2026-11-21T18:31:08.560Z"
+    "updatedAt": "2026-11-21T18:31:09.599Z",
+    "createdAt": "2026-11-21T18:31:08.560Z",
+    "mainImage": "",
+    "thumbnailImage": "",
+    "image": ""
   },
   {
     "id": "reto_1795283678024",
