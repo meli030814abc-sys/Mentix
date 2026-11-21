@@ -1,12 +1,5 @@
 [
   {
-    "id": "sociales",
-    "name": "Ciencias Sociales",
-    "icon": "🌎",
-    "color": "#4361ee",
-    "count": 12
-  },
-  {
     "id": "ciencias",
     "name": "Ciencias Naturales",
     "icon": "🔬",
