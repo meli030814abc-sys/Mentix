@@ -1,12 +1,5 @@
 [
   {
-    "id": "tecnologia",
-    "name": "Tecnología & Programación",
-    "icon": "💻",
-    "color": "#00f5d4",
-    "count": 24
-  },
-  {
     "id": "ingles",
     "name": "Inglés Práctico",
     "icon": "🇬🇧",
