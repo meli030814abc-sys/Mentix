@@ -7949,3 +7949,40 @@ body[data-theme="light"] .inno-btn-resources:hover * {
   color: #0284c7 !important;
   font-weight: 800 !important;
 }
+
+
+/* ==========================================================================
+   v113 · TEXTOS COMPACTOS EN TODOS LOS EXÁMENES Y JUSTIFICACIONES DE MENTIX
+   ========================================================================== */
+#view-game .pedagogical-case-card {
+  padding: 1.25rem 1.5rem !important;
+}
+
+#view-game .pedagogical-case-context-text,
+#view-game .case-study-hero-card,
+#view-game .pedagogical-feedback-box,
+#view-game .pedagogical-case-option-card,
+#view-game .student-feedback-card {
+  line-height: 1.32 !important;
+  text-align: left !important;
+}
+
+#view-game .pedagogical-case-option-card {
+  padding: 0.65rem 0.95rem !important;
+  gap: 0.65rem !important;
+}
+
+#view-game .pedagogical-case-options-list {
+  gap: 0.55rem !important;
+}
+
+#view-game .pedagogical-feedback-box {
+  margin-top: 0.75rem !important;
+  padding: 0.75rem 1rem !important;
+}
+
+#view-game .kahoot-host-question-banner,
+#view-game .option-btn,
+#view-game .answer-card {
+  line-height: 1.28 !important;
+}
