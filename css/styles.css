@@ -5412,7 +5412,7 @@ body.projects-pure-white-theme #view-projects:has(.gdn-wizard-shell) {
 .pedagogical-case-grid {
   display: grid;
   grid-template-columns: 1.18fr 1fr;
-  gap: 1.5rem;
+  gap: 2.8rem;
   align-items: start;
 }
 
@@ -5420,26 +5420,25 @@ body.projects-pure-white-theme #view-projects:has(.gdn-wizard-shell) {
 .pedagogical-case-left {
   display: flex;
   flex-direction: column;
-  gap: 0.7rem;
+  gap: 1.35rem;
   text-align: left;
 }
 
 .pedagogical-case-context-text {
-  font-size: clamp(0.9rem, 1.02vw, 1.02rem);
-  line-height: 1.35;
+  font-size: clamp(1.02rem, 1.25vw, 1.2rem);
+  line-height: 1.72;
   color: #f1f5f9;
   font-weight: 400;
   white-space: pre-wrap;
-  text-align: left;
-  letter-spacing: -0.005em;
+  text-align: justify;
 }
 
 .pedagogical-case-question-statement {
-  font-size: clamp(1.05rem, 1.25vw, 1.22rem);
+  font-size: clamp(1.18rem, 1.45vw, 1.38rem);
   font-weight: 900;
   color: var(--neon-cyan, #00f5d4);
-  line-height: 1.28;
-  margin-top: 0.1rem;
+  line-height: 1.4;
+  margin-top: 0.2rem;
   text-shadow: 0 0 16px rgba(0, 245, 212, 0.25);
 }
 
@@ -5447,11 +5446,11 @@ body.projects-pure-white-theme #view-projects:has(.gdn-wizard-shell) {
   background: rgba(0, 0, 0, 0.4);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-left: 3.5px solid #ef4444;
-  padding: 0.55rem 0.85rem;
+  padding: 0.75rem 1rem;
   border-radius: 8px;
-  font-size: 0.84rem;
+  font-size: 0.88rem;
   color: #cbd5e1;
-  line-height: 1.32;
+  line-height: 1.45;
 }
 
 .pedagogical-case-norm-box strong {
@@ -5462,7 +5461,7 @@ body.projects-pure-white-theme #view-projects:has(.gdn-wizard-shell) {
 .pedagogical-case-right {
   display: flex;
   flex-direction: column;
-  gap: 0.65rem;
+  gap: 0.9rem;
 }
 
 .pedagogical-case-options-list {
@@ -5934,13 +5933,13 @@ body[data-theme="light"] .pedagogical-feedback-box span,
     gap: 1.25rem;
   }
   .pedagogical-case-context-text {
-    font-size: 0.9rem;
-    line-height: 1.32;
+    font-size: 0.98rem;
+    line-height: 1.62;
     text-align: left;
   }
   .pedagogical-case-question-statement {
-    font-size: 1rem;
-    line-height: 1.28;
+    font-size: 1.08rem;
+    line-height: 1.4;
   }
   .pedagogical-case-option-card {
     padding: 0.8rem 1rem;
@@ -7949,4 +7948,41 @@ body[data-theme="light"] .inno-btn-resources:hover * {
 .teacher-panel-wrapper.teacher-theme-light .teacher-student-pts {
   color: #0284c7 !important;
   font-weight: 800 !important;
+}
+
+
+/* ==========================================================================
+   v113 · TEXTOS COMPACTOS EN TODOS LOS EXÁMENES Y JUSTIFICACIONES DE MENTIX
+   ========================================================================== */
+#view-game .pedagogical-case-card {
+  padding: 1.25rem 1.5rem !important;
+}
+
+#view-game .pedagogical-case-context-text,
+#view-game .case-study-hero-card,
+#view-game .pedagogical-feedback-box,
+#view-game .pedagogical-case-option-card,
+#view-game .student-feedback-card {
+  line-height: 1.32 !important;
+  text-align: left !important;
+}
+
+#view-game .pedagogical-case-option-card {
+  padding: 0.65rem 0.95rem !important;
+  gap: 0.65rem !important;
+}
+
+#view-game .pedagogical-case-options-list {
+  gap: 0.55rem !important;
+}
+
+#view-game .pedagogical-feedback-box {
+  margin-top: 0.75rem !important;
+  padding: 0.75rem 1rem !important;
+}
+
+#view-game .kahoot-host-question-banner,
+#view-game .option-btn,
+#view-game .answer-card {
+  line-height: 1.28 !important;
 }
