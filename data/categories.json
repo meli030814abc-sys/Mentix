@@ -1,12 +1,5 @@
 [
   {
-    "id": "ingles",
-    "name": "Inglés Práctico",
-    "icon": "🇬🇧",
-    "color": "#7209b7",
-    "count": 15
-  },
-  {
     "id": "derecho",
     "name": "Derecho & Leyes",
     "icon": "⚖️",
