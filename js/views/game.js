@@ -685,6 +685,43 @@ window.GameView = {
     return this.retoShapes[index % this.retoShapes.length];
   },
 
+  normalizeCaseProse(str, maxParagraphs = 2) {
+    const raw = String(str || '').replace(/\r\n/g, '\n').trim();
+    if (!raw) return '';
+    const lines = raw.split(/\n+/).map(l => l.trim()).filter(Boolean);
+    const hasBullets = /[•▪●◦‣⁃∙►▸▹➤➔➜➢]/.test(raw) || lines.some(l =>
+      /^([-–—*•▪●◦‣⁃∙►▸▹➤➔➜→➢⇒✓✔✅❌✘✗☐☑■□◆◇★☆]+)(\s+|$)/.test(l) ||
+      /^[-–—*•▪●◦‣⁃∙►▸](?=\S)/.test(l) ||
+      /^(\d+[\.\)\-]|[a-zA-Z][\.\)])\s+/.test(l)
+    );
+    if (!hasBullets && lines.length <= maxParagraphs) {
+      return lines.join('\n\n');
+    }
+    const cleaned = lines
+      .map(l => l
+        .replace(/^([-–—*•▪●◦‣⁃∙►▸▹➤➔➜→➢⇒✓✔✅❌✘✗☐☑■□◆◇★☆]+|\d+[\.\)\-]|[a-zA-Z][\.\)])\s*/g, '')
+        .replace(/[•▪●◦‣⁃∙►▸▹➤➔➜➢]/g, '')
+        .replace(/\*\*/g, '')
+        .trim()
+      )
+      .filter(Boolean);
+    if (cleaned.length <= maxParagraphs) {
+      return cleaned.join('\n\n');
+    }
+    const splitAt = Math.ceil(cleaned.length / maxParagraphs);
+    const merged = [];
+    for (let i = 0; i < cleaned.length; i += splitAt) {
+      const chunk = cleaned.slice(i, i + splitAt)
+        .map(s => /[.!?;:]$/.test(s) ? s : s + '.')
+        .join(' ')
+        .replace(/:\s+/g, ': ')
+        .replace(/\s{2,}/g, ' ')
+        .trim();
+      if (chunk) merged.push(chunk);
+    }
+    return merged.slice(0, maxParagraphs).join('\n\n');
+  },
+
   escapeHtml(str) {
     if (str === null || str === undefined) return '';
     return String(str)
@@ -783,7 +820,7 @@ window.GameView = {
           <div class="pedagogical-case-grid">
             <!-- Columna Izquierda: Situación del Caso y Pregunta en Negrita -->
             <div class="pedagogical-case-left">
-              <div class="pedagogical-case-context-text">${this.escapeHtml((q.caseContext || '').trim())}</div>
+              <div class="pedagogical-case-context-text">${this.escapeHtml(this.normalizeCaseProse(q.caseContext || '', 2))}</div>
 
               ${q.media && q.mediaType === 'image' ? `
                 <div style="text-align: center; margin: 0.5rem 0;">
@@ -791,7 +828,7 @@ window.GameView = {
                 </div>
               ` : ''}
 
-              <div class="pedagogical-case-question-statement">${this.escapeHtml(q.text || '')}</div>
+              <div class="pedagogical-case-question-statement">${this.escapeHtml(this.normalizeCaseProse(q.text || '', 1))}</div>
 
               ${q.referenceNorm ? `
                 <div class="pedagogical-case-norm-box">
@@ -979,7 +1016,7 @@ window.GameView = {
                 </div>
               ` : ''}
             </div>
-            <div style="color: #f1f5f9; font-size: 0.98rem; line-height: 1.34; white-space: pre-line; text-align: left; font-family: inherit;">${this.escapeHtml((q.caseContext || '').trim())}</div>
+            <div style="color: #f1f5f9; font-size: 0.98rem; line-height: 1.34; white-space: pre-line; text-align: left; font-family: inherit;">${this.escapeHtml(this.normalizeCaseProse(q.caseContext || '', 2))}</div>
             ${q.referenceNorm ? `
               <div style="margin-top: 1rem; padding-top: 0.75rem; border-top: 1px dashed rgba(255,255,255,0.18); display: flex; align-items: center; gap: 0.5rem; font-size: 0.88rem; color: #ffd166;">
                 <span>⚖️ Marco normativo:</span>
@@ -1347,7 +1384,7 @@ window.GameView = {
                 </div>
               ` : ''}
             </div>
-            <div style="color: #f1f5f9; font-size: 0.95rem; line-height: 1.34; white-space: pre-line; text-align: left; font-family: inherit;">${this.escapeHtml((q.caseContext || '').trim())}</div>
+            <div style="color: #f1f5f9; font-size: 0.95rem; line-height: 1.34; white-space: pre-line; text-align: left; font-family: inherit;">${this.escapeHtml(this.normalizeCaseProse(q.caseContext || '', 2))}</div>
             ${q.referenceNorm ? `
               <div style="margin-top: 1rem; padding-top: 0.75rem; border-top: 1px dashed rgba(255,255,255,0.18); display: flex; align-items: center; gap: 0.5rem; font-size: 0.84rem; color: #ffd166;">
                 <span>⚖️ Marco normativo:</span>
