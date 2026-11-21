@@ -1,12 +1,5 @@
 [
   {
-    "id": "derecho",
-    "name": "Derecho & Leyes",
-    "icon": "⚖️",
-    "color": "#fb5607",
-    "count": 9
-  },
-  {
     "id": "admin",
     "name": "Administración Pública",
     "icon": "🏛️",
