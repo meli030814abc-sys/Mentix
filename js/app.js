@@ -2022,14 +2022,21 @@ class AppRouter {
               } else if (c.approvalStatus === 'approved') {
                 mergedItem.rejectionReason = '';
               }
+              if (c.hub && typeof c.hub === 'object') {
+                mergedItem.hub = { ...(existing.hub || {}), ...c.hub };
+                if (Array.isArray(c.hub.members) && c.hub.members.length > 0) mergedItem.hub.members = c.hub.members;
+                if (Array.isArray(c.hub.joinRequests)) mergedItem.hub.joinRequests = c.hub.joinRequests;
+                mergedItem.members = mergedItem.hub.members || c.members || existing.members || [];
+                mergedItem.joinRequests = mergedItem.hub.joinRequests || c.joinRequests || existing.joinRequests || [];
+              }
               map.set(c.id, mergedItem);
             }
           }
         });
 
         const merged = Array.from(map.values());
-        const beforeSig = (local || []).map(x => x.id + ':' + (x.updatedAt || '')).join('|');
-        const afterSig = (merged || []).map(x => x.id + ':' + (x.updatedAt || '')).join('|');
+        const beforeSig = (local || []).map(x => x.id + ':' + (x.updatedAt || '') + ':' + ((x.hub?.members?.length) || 0)).join('|');
+        const afterSig = (merged || []).map(x => x.id + ':' + (x.updatedAt || '') + ':' + ((x.hub?.members?.length) || 0)).join('|');
 
         if (beforeSig !== afterSig) {
           window.appState.challenges = merged;
@@ -2039,6 +2046,9 @@ class AppRouter {
             window.HomeView.render();
           } else if (this.currentView === 'projects' && window.ProjectsView && window.ProjectsView.viewMode !== 'wizard') {
             window.ProjectsView.render();
+          }
+          if (document.getElementById('phub-overlay') && window.ProjectHub && typeof window.ProjectHub.render === 'function') {
+            window.ProjectHub.render();
           }
         }
       }

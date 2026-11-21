@@ -204,13 +204,16 @@ window.ProjectHub = {
   canEdit(proj) {
     if (!proj) return false;
     if (this.isAdminUser()) return true;
+    const role = this.getRole(proj);
+    if (role === 'owner' || role === 'editor') return true;
+    if (role === 'commenter' || role === 'viewer') return false;
     if (window.appRouter && typeof window.appRouter.isChallengeOwner === 'function') {
       return window.appRouter.isChallengeOwner(proj);
     }
     if (window.ProjectsView && typeof window.ProjectsView.canUserEditProject === 'function') {
       return window.ProjectsView.canUserEditProject(proj);
     }
-    return this.getRole(proj) === 'owner';
+    return false;
   },
   canManage(proj) { return this.isAdminUser() || this.getRole(proj) === 'owner'; },
 
@@ -281,6 +284,57 @@ window.ProjectHub = {
       );
     }
     this.render();
+    this.syncHubFromCloud(projectId);
+  },
+
+  async syncHubFromCloud(projectId) {
+    if (!projectId) return;
+    try {
+      const apiBase = (window.appRouter && typeof window.appRouter.getApiBase === 'function') ? window.appRouter.getApiBase() : '';
+      const ctrl = (typeof AbortController !== 'undefined') ? new AbortController() : null;
+      const tid = ctrl ? setTimeout(() => ctrl.abort(), 2500) : null;
+      const res = await fetch(`${apiBase}/api/challenges?t=${Date.now()}&fresh=1`, {
+        cache: 'no-store',
+        signal: ctrl ? ctrl.signal : undefined
+      });
+      if (tid) clearTimeout(tid);
+      if (!res || !res.ok) return;
+      const data = await res.json();
+      const list = Array.isArray(data?.challenges) ? data.challenges : (Array.isArray(data) ? data : []);
+      const cloudProj = list.find(c => c && String(c.id) === String(projectId));
+      if (!cloudProj || !cloudProj.hub) return;
+
+      const localProj = this.getProject(projectId);
+      if (!localProj) return;
+      const prevRole = this.getRole(localProj);
+
+      const mergedHub = { ...(localProj.hub || {}), ...cloudProj.hub };
+      if (Array.isArray(cloudProj.hub.members) && cloudProj.hub.members.length > 0) {
+        mergedHub.members = cloudProj.hub.members;
+      }
+      if (Array.isArray(cloudProj.hub.joinRequests)) {
+        mergedHub.joinRequests = cloudProj.hub.joinRequests;
+      }
+      if (Array.isArray(cloudProj.hub.ratings) && cloudProj.hub.ratings.length >= (localProj.hub?.ratings?.length || 0)) {
+        mergedHub.ratings = cloudProj.hub.ratings;
+      }
+      localProj.hub = mergedHub;
+      localProj.members = mergedHub.members || [];
+      localProj.joinRequests = mergedHub.joinRequests || [];
+      this.saveHub(projectId, mergedHub);
+
+      const nextRole = this.getRole(localProj);
+      if (nextRole !== prevRole && nextRole !== 'guest') {
+        const info = this.ROLES[nextRole] || this.ROLES.viewer;
+        this.toast(`🎉 ¡Tu acceso se actualizó! Ahora eres ${info.icon} ${info.label}.`);
+      }
+      if (document.getElementById('phub-overlay') && String(this.currentId) === String(projectId)) {
+        this.render();
+      }
+      if (window.ProjectsView && typeof window.ProjectsView.render === 'function' && window.appRouter && window.appRouter.currentView === 'projects' && window.ProjectsView.viewMode === 'list') {
+        window.ProjectsView.render();
+      }
+    } catch (e) {}
   },
   close(pushHistory = true) {
     const el = document.getElementById('phub-overlay');
@@ -569,11 +623,13 @@ window.ProjectHub = {
     });
   },
 
-  actionBar(proj, edit) {
+  actionBar(proj, edit, role = 'guest') {
     const id = this.esc(proj.id);
+    const canComment = role === 'commenter' || role === 'owner' || role === 'editor' || role === 'collaborator' || this.isAdminUser();
     return `
       <div class="phub-top-actions">
         ${edit ? `<button type="button" class="phub-top-act-btn" onclick="window.ProjectHub.editProject('${id}')"><span class="act-ico">✏️</span> <span>Editar proyecto</span></button>` : ''}
+        ${canComment ? `<button type="button" class="phub-top-act-btn" style="background:linear-gradient(135deg,#0ea5e9,#2563eb); color:#fff; border-color:#38bdf8;" onclick="window.ProjectHub.openReviewPage('${id}')"><span class="act-ico">💬</span> <span>Comentar y calificar</span></button>` : ''}
         <button type="button" class="phub-top-act-btn" onclick="window.ProjectHub.openLanding('${id}')"><span class="act-ico">🌐</span> <span>Ver landing page</span></button>
         <button type="button" class="phub-top-act-btn" onclick="window.ProjectHub.share('${id}')"><span class="act-ico">🔗</span> <span>Compartir</span></button>
         <button type="button" class="phub-top-act-btn active" onclick="document.querySelector('.phub-detail-grid')?.scrollIntoView({behavior:'smooth'})"><span class="act-ico">👁️</span> <span>Ver detalles</span></button>
@@ -647,7 +703,7 @@ window.ProjectHub = {
         </section>
 
         <section class="phub-col">
-          ${this.actionBar(proj, edit)}
+          ${this.actionBar(proj, edit, role)}
           <div class="phub-card phub-card-cartoon">
             <div class="phub-pill-header-wrap">
               <h2 class="phub-pill-title yellow"><span class="ico">👁️</span> Ver detalles</h2>
@@ -828,12 +884,30 @@ window.ProjectHub = {
     const me = this.me();
     const mine = hub.joinRequests.find(r => this.norm(r.email) === this.norm(me.email) && me.email);
     if (role !== 'guest') {
+      const roleActionHtml = role === 'commenter'
+        ? `
+          <div style="margin-top:0.85rem; display:flex; flex-direction:column; gap:0.55rem;">
+            <div style="font-size:0.84rem; color:#334155; font-weight:700; display:flex; flex-wrap:wrap; gap:0.45rem; justify-content:center;">
+              <span style="background:#dcfce7; color:#166534; padding:0.2rem 0.65rem; border-radius:999px;">✔ Comentar proyecto</span>
+              <span style="background:#fef9c3; color:#854d0e; padding:0.2rem 0.65rem; border-radius:999px;">⭐ Calificar con estrellas</span>
+              <span style="background:#e2e8f0; color:#475569; padding:0.2rem 0.65rem; border-radius:999px;">🔒 Sin edición</span>
+            </div>
+            <button type="button" class="phub-glossy-btn green" style="width:100%; justify-content:center;" onclick="window.ProjectHub.openReviewPage('${id}')">
+              <span class="b-ico">💬</span> Comentar y calificar proyecto
+            </button>
+          </div>`
+        : role === 'editor'
+          ? `<div style="margin-top:0.85rem;"><button type="button" class="phub-glossy-btn blue" style="width:100%; justify-content:center;" onclick="window.ProjectHub.editProject('${id}')"><span class="b-ico">✏️</span> Editar contenido del proyecto</button></div>`
+          : role === 'collaborator'
+            ? `<div style="margin-top:0.85rem;"><button type="button" class="phub-glossy-btn green" style="width:100%; justify-content:center;" onclick="window.ProjectHub.openReviewPage('${id}')"><span class="b-ico">🤝</span> Aportar comentarios y calificación</button></div>`
+            : '';
       return `
         <div class="phub-card phub-card-cartoon">
           <div class="phub-pill-header-wrap">
             <h2 class="phub-pill-title yellow"><span class="ico">🎟️</span> Mi participación</h2>
           </div>
           <div class="phub-empty ok">${roleInfo.icon} Participas como <b>${roleInfo.label}</b>.<br><small>${roleInfo.desc}</small></div>
+          ${roleActionHtml}
         </div>`;
     }
     return `
@@ -1859,6 +1933,12 @@ window.ProjectHub = {
     hub.joinRequests = (hub.joinRequests || []).filter(r => this.norm(r.email) !== e);
     hub.joinRequests.unshift(newReq);
     this.saveHub(projectId, hub);
+    // Guardar sesión local para que cuando el creador acepte (ej. como Comentarista), esta persona vea su rol actualizado al instante
+    try {
+      const s = JSON.parse(localStorage.getItem('mentix_hub_sessions') || '{}');
+      s[projectId] = { name: name.trim(), email: email.trim() };
+      localStorage.setItem('mentix_hub_sessions', JSON.stringify(s));
+    } catch (errS) {}
 
     const proj = this.getProject(projectId);
     if (proj) {
@@ -2265,6 +2345,14 @@ window.ProjectHub = {
     if (!m) return;
     m.role = role;
     this.saveHub(projectId, hub);
+    const proj = this.getProject(projectId);
+    if (proj) {
+      proj.hub = hub;
+      proj.members = hub.members;
+      if (window.appRouter && typeof window.appRouter.pushChallengeToCloud === 'function') {
+        try { window.appRouter.pushChallengeToCloud(proj); } catch (err) {}
+      }
+    }
     this.toast(`Rol actualizado: ${this.ROLES[role].label}.`);
     this.render();
   },
@@ -2274,6 +2362,14 @@ window.ProjectHub = {
     const hub = this.getHub(projectId);
     hub.members = hub.members.filter(x => this.norm(x.email) !== this.norm(email));
     this.saveHub(projectId, hub);
+    const proj = this.getProject(projectId);
+    if (proj) {
+      proj.hub = hub;
+      proj.members = hub.members;
+      if (window.appRouter && typeof window.appRouter.pushChallengeToCloud === 'function') {
+        try { window.appRouter.pushChallengeToCloud(proj); } catch (err) {}
+      }
+    }
     this.render();
   },
 
