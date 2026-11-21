@@ -96,8 +96,8 @@
       {
         "title": "Planeación",
         "description": "Conformación del equipo y definición de objetivos.",
-        "status": "active",
-        "progress": 95,
+        "status": "completed",
+        "progress": 100,
         "emoji": "🎯",
         "icon": "clipboard"
       },
@@ -132,7 +132,8 @@
       "titleColor": "#ffffff",
       "textColor": "#cbd5e1",
       "accentColor": "#00f5d4",
-      "bannerStyle": "gradient-cosmos"
+      "bannerStyle": "gradient-cosmos",
+      "bannerUrl": ""
     },
     "authorsConfig": {
       "authorsList": "Melisa",
@@ -192,8 +193,8 @@
         {
           "title": "Planeación",
           "description": "Conformación del equipo y definición de objetivos.",
-          "status": "active",
-          "progress": 95,
+          "status": "completed",
+          "progress": 100,
           "emoji": "🎯",
           "icon": "clipboard"
         },
@@ -269,7 +270,7 @@
         "collaborators": "63556"
       },
       "createdAt": "2026-11-20T23:43:24.796Z",
-      "updatedAt": "2026-11-21T00:22:51.384Z",
+      "updatedAt": "2026-11-21T00:22:55.393Z",
       "progress": 55,
       "calculatedProgress": 55
     },
@@ -283,7 +284,7 @@
     "authorAvatar": "🐯",
     "authorRole": "Líder del Proyecto",
     "createdAt": "2026-11-20T23:43:24.796Z",
-    "updatedAt": "2026-11-21T00:22:50.549Z",
+    "updatedAt": "2026-11-21T00:22:54.438Z",
     "image": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
     "rejectionReason": "",
     "tag": "⏳ Pendiente de Autorización",
