@@ -1,12 +1,5 @@
 [
   {
-    "id": "ciencias",
-    "name": "Ciencias Naturales",
-    "icon": "🔬",
-    "color": "#06d6a0",
-    "count": 16
-  },
-  {
     "id": "tecnologia",
     "name": "Tecnología & Programación",
     "icon": "💻",
