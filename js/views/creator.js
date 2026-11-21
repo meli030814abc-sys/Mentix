@@ -160,7 +160,7 @@ window.CreatorView = {
     if (type === 'boolean') {
       return {
         ...base,
-        timeLimit: 15,
+        timeLimit: defaultTime === 0 ? 0 : 15,
         options: [
           { text: 'Verdadero', shape: '✦', color: 'opt-1' },
           { text: 'Falso', shape: '⬢', color: 'opt-2' }
@@ -194,7 +194,7 @@ window.CreatorView = {
     if (type === 'open') {
       return {
         ...base,
-        timeLimit: 30,
+        timeLimit: defaultTime === 0 ? 0 : 30,
         options: [],
         correctAnswer: null
       };
@@ -340,7 +340,7 @@ window.CreatorView = {
               <select 
                 id="challenge-time" 
                 style="width: 100%; padding: 0.65rem; border-radius: var(--border-radius-md); background: var(--bg-card); border: 1px solid var(--border-color); color: var(--text-primary);"
-                onchange="window.CreatorView.currentChallenge.timePerQuestion = parseInt(this.value)"
+                onchange="window.CreatorView.updateChallengeTime(parseInt(this.value, 10))"
               >
                 <option value="0" ${c.timePerQuestion === 0 ? 'selected' : ''}>⏳ Sin tiempo (Sin límite)</option>
                 <option value="10" ${c.timePerQuestion === 10 ? 'selected' : ''}>10 segundos</option>
@@ -1109,6 +1109,20 @@ window.CreatorView = {
     `;
   },
 
+  updateChallengeTime(val) {
+    const parsed = isNaN(val) ? 20 : val;
+    if (!this.currentChallenge) return;
+    this.currentChallenge.timePerQuestion = parsed;
+    if (Array.isArray(this.currentChallenge.questions)) {
+      this.currentChallenge.questions.forEach(q => {
+        if (parsed === 0 || q.timeLimit === undefined || q.timeLimit === null) {
+          q.timeLimit = parsed;
+        }
+      });
+    }
+    this.render();
+  },
+
   updateQuestionCaseTitle(idx, val) {
     if (this.currentChallenge?.questions?.[idx]) {
       this.currentChallenge.questions[idx].caseTitle = val;
@@ -1167,7 +1181,7 @@ Ante esta situación, la Dirección de Impuestos y Aduanas Nacionales (DIAN) rea
     q.correctAnswer = 1; // B
     q.explanation = `La DIAN tiene facultades de fiscalización y control para verificar que las operaciones de comercio exterior se desarrollen conforme a las disposiciones legales. Ante posibles inconsistencias, debe adelantar las verificaciones correspondientes, establecer los hechos, determinar las responsabilidades y aplicar las medidas que correspondan según la normativa vigente.\n\nNo puede presumirse automáticamente la existencia de una infracción o un delito por la sola presencia de inconsistencias documentales. Las decisiones deben estar debidamente fundamentadas y respetar el debido proceso.`;
     q.referenceNorm = 'Decreto 1165 de 2019, sus modificaciones y la regulación aduanera vigente.';
-    q.timeLimit = 60;
+    q.timeLimit = this.currentChallenge?.timePerQuestion === 0 ? 0 : 60;
     this.render();
   },
 
@@ -2531,7 +2545,7 @@ d) Insulina`;
               rawOpts,
               correct,
               q.type || (rawOpts.length === 2 ? 'boolean' : 'single'),
-              q.timeLimit || (q.type === 'case' ? 90 : 20),
+              (q.timeLimit !== undefined && q.timeLimit !== null) ? q.timeLimit : (this.currentChallenge?.timePerQuestion === 0 ? 0 : (q.type === 'case' ? 90 : 20)),
               q.points || (q.type === 'case' ? 1500 : 1000),
               {
                 caseTitle: q.caseTitle,
@@ -2785,11 +2799,11 @@ d) Insulina`;
     if (isOpen) {
       return {
         id: 'q_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
-        text: (text || '').trim(),
+        text: this.sanitizeCaseToProse(text || '', 1),
         type: 'open',
         media: '',
         mediaType: 'none',
-        timeLimit: timeLimit || 30,
+        timeLimit: (timeLimit !== undefined && timeLimit !== null) ? timeLimit : 30,
         points: points || 1000,
         options: [],
         correctAnswer: null
@@ -2800,11 +2814,11 @@ d) Insulina`;
       const ans = typeof correctAnswerIndex === 'string' ? correctAnswerIndex : (optionsArray?.[0] || 'Respuesta');
       return {
         id: 'q_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
-        text: (text || '').trim(),
+        text: this.sanitizeCaseToProse(text || '', 1),
         type: 'text',
         media: '',
         mediaType: 'none',
-        timeLimit: timeLimit || 20,
+        timeLimit: (timeLimit !== undefined && timeLimit !== null) ? timeLimit : 20,
         points: points || 1000,
         options: [],
         acceptedAnswers: [String(ans).trim()],
@@ -2831,15 +2845,15 @@ d) Insulina`;
       }
       return {
         id: 'q_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
-        text: (text || '').trim(),
+        text: this.sanitizeCaseToProse(text || '', 1),
         type: 'case',
         caseTitle: extra.caseTitle || '',
-        caseContext: extra.caseContext || '',
+        caseContext: this.sanitizeCaseToProse(extra.caseContext || '', 2),
         explanation: extra.explanation || '',
         referenceNorm: extra.referenceNorm || '',
         media: '',
         mediaType: 'none',
-        timeLimit: timeLimit || 90,
+        timeLimit: (timeLimit !== undefined && timeLimit !== null) ? timeLimit : 90,
         points: points || 1500,
         options: opts,
         correctAnswer: Math.max(0, Math.min(parseInt(correctAnswerIndex) || 0, opts.length - 1))
@@ -2888,7 +2902,7 @@ d) Insulina`;
 
     return {
       id: 'q_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
-      text: (text || '').trim(),
+      text: this.sanitizeCaseToProse(text || '', 1),
       type: isBool ? 'boolean' : isPoll ? 'poll' : isMulti ? 'multi' : 'single',
       media: '',
       mediaType: 'none',
@@ -3630,7 +3644,7 @@ El oficial de cumplimiento normativo advierte que omitir el reporte vulnera el p
           item.options,
           item.correctAnswer,
           'case',
-          timeLimit || 90,
+          (timeLimit !== undefined && timeLimit !== null) ? timeLimit : 90,
           1500,
           {
             caseTitle: item.caseTitle,
@@ -3683,7 +3697,7 @@ Durante la revisión técnica de evidencias, ${cleanF3.charAt(0).toLowerCase() +
         dynamicOptions,
         1,
         'case',
-        timeLimit || 90,
+        (timeLimit !== undefined && timeLimit !== null) ? timeLimit : 90,
         1500,
         {
           caseTitle: dynamicTitle,
@@ -3702,15 +3716,21 @@ Durante la revisión técnica de evidencias, ${cleanF3.charAt(0).toLowerCase() +
 
     // Si el tipo es 'case', priorizar la generación de casos prácticos situacionales
     if (type === 'case') {
+      const effectiveCaseTime = (timeLimit !== undefined && timeLimit !== null) ? timeLimit : 90;
       if (notes && notes.length > 20) {
-        const contextual = this.getContextualQuestionsFromNotes(notes, count, 'case', timeLimit || 90);
+        const contextual = this.getContextualQuestionsFromNotes(notes, count, 'case', effectiveCaseTime);
         questions.push(...contextual);
       }
       if (questions.length < count) {
-        const caseList = this.generateCaseStudiesList(topic, count - questions.length, timeLimit || 90, webKnowledge, notes);
+        const caseList = this.generateCaseStudiesList(topic, count - questions.length, effectiveCaseTime, webKnowledge, notes);
         questions.push(...caseList);
       }
-      return questions.slice(0, count);
+      return questions.slice(0, count).map(q => ({
+        ...q,
+        timeLimit: effectiveCaseTime,
+        caseContext: this.sanitizeCaseToProse(q.caseContext || '', 2),
+        text: this.sanitizeCaseToProse(q.text || '', 1)
+      }));
     }
 
     // 1. Si el usuario proporcionó notas o texto de base, extraer preguntas contextualmente
@@ -3879,7 +3899,13 @@ Durante la revisión técnica de evidencias, ${cleanF3.charAt(0).toLowerCase() +
     if (type === 'case' || /(?:caso\s+pr[aá]ctico|caso\s+situacional|situaci[oó]n|dian|control\s+aduanero)/i.test(notes)) {
       const parsedCases = this.parseCaseStudyFromText(notes);
       if (parsedCases && parsedCases.length > 0) {
-        return parsedCases.slice(0, count);
+        const effectiveTime = (timeLimit !== undefined && timeLimit !== null) ? timeLimit : 90;
+        return parsedCases.slice(0, count).map(c => ({
+          ...c,
+          timeLimit: effectiveTime,
+          caseContext: this.sanitizeCaseToProse(c.caseContext || '', 2),
+          text: this.sanitizeCaseToProse(c.text || '', 1)
+        }));
       }
     }
 
