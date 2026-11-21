@@ -1997,7 +1997,6 @@ window.ProjectHub = {
       window.soundEngine.playCorrect();
     }
 
-    const proj = this.getProject(projectId);
     const projTitle = proj ? proj.title : 'Proyecto';
     this.showNotificationBanner({
       icon: '🎉',
