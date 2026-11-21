@@ -2792,3 +2792,231 @@ body.projects-pure-white-theme #phub-fullpage-review:not(.theme-light) strong,
   transform: translateX(4px);
   opacity: 1;
 }
+
+
+/* ==========================================================================
+   v110 · GRÁFICAS 3D Y KPIS 3D EN REPORTES DEL PROJECT HUB
+   ========================================================================== */
+.phub-kpi-3d {
+  position: relative;
+  background: linear-gradient(160deg, #ffffff 0%, #f8fafc 100%) !important;
+  border: 1.5px solid #e2e8f0 !important;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08), inset 0 2px 0 #ffffff !important;
+  overflow: hidden;
+}
+
+.phub-kpi-3d::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 5px;
+}
+.phub-kpi-3d.kpi-blue::after   { background: linear-gradient(90deg, #38bdf8, #2563eb); }
+.phub-kpi-3d.kpi-purple::after { background: linear-gradient(90deg, #a855f7, #6366f1); }
+.phub-kpi-3d.kpi-gold::after   { background: linear-gradient(90deg, #fde047, #ea580c); }
+.phub-kpi-3d.kpi-green::after  { background: linear-gradient(90deg, #34d399, #059669); }
+
+.phub-kpi-ico-3d {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 0.35rem;
+  filter: drop-shadow(0 6px 12px rgba(37, 99, 235, 0.28));
+}
+
+/* Gráfica de barras 3D isométricas */
+.phub-bars-3d {
+  position: relative;
+  height: 235px !important;
+  padding: 1.2rem 0.9rem 0.6rem !important;
+  border-radius: 20px;
+  background:
+    repeating-linear-gradient(
+      to top,
+      rgba(148, 163, 184, 0.16) 0px,
+      rgba(148, 163, 184, 0.16) 1px,
+      transparent 1px,
+      transparent 38px
+    ),
+    linear-gradient(180deg, #f8fafc 0%, #eff6ff 100%);
+  border: 1.5px solid #dbeafe;
+  box-shadow: inset 0 2px 10px rgba(30, 58, 138, 0.06);
+  align-items: flex-end;
+  gap: 0.65rem;
+}
+
+.phub-bar-col-3d {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  gap: 0.35rem;
+}
+
+.phub-bar-n-3d {
+  font-size: 0.78rem;
+  font-weight: 900;
+  color: #64748b;
+  padding: 0.12rem 0.48rem;
+  border-radius: 999px;
+  background: rgba(226, 232, 240, 0.7);
+  transition: transform 0.2s ease;
+}
+
+.phub-bar-n-3d.has-val {
+  color: #ffffff;
+  background: linear-gradient(135deg, var(--b-top, #38bdf8), var(--b-mid, #2563eb));
+  box-shadow: 0 4px 10px rgba(37, 99, 235, 0.3);
+}
+
+.phub-bar-stage {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  width: 100%;
+  padding-right: 8px;
+}
+
+.phub-bar-3d {
+  position: relative;
+  width: 30px;
+  border-radius: 6px 6px 4px 4px;
+  background: linear-gradient(180deg, var(--b-top, #38bdf8) 0%, var(--b-mid, #2563eb) 100%);
+  box-shadow:
+    inset 4px 0 6px rgba(255, 255, 255, 0.38),
+    inset -3px 0 6px rgba(15, 23, 42, 0.18),
+    0 10px 18px rgba(30, 64, 175, 0.25);
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.2s ease;
+  transform-origin: bottom center;
+  animation: phubBar3dRise 0.65s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes phubBar3dRise {
+  from { transform: scaleY(0.08); opacity: 0.4; }
+  to   { transform: scaleY(1); opacity: 1; }
+}
+
+/* Tapa superior 3D inclinada */
+.phub-bar-3d::before {
+  content: '';
+  position: absolute;
+  top: -8px;
+  left: 4px;
+  width: 100%;
+  height: 8px;
+  background: linear-gradient(90deg, rgba(255,255,255,0.65), var(--b-top, #38bdf8));
+  transform: skewX(-45deg);
+  border-radius: 3px 3px 0 0;
+}
+
+/* Cara lateral derecha 3D sombreada */
+.phub-bar-3d::after {
+  content: '';
+  position: absolute;
+  top: -4px;
+  right: -8px;
+  width: 8px;
+  height: 100%;
+  background: linear-gradient(180deg, var(--b-mid, #2563eb), var(--b-side, #1e3a8a));
+  transform: skewY(-45deg);
+  border-radius: 0 3px 3px 0;
+}
+
+.phub-bar-3d.zero {
+  opacity: 0.42;
+  filter: grayscale(0.45);
+  box-shadow: 0 4px 8px rgba(15, 23, 42, 0.1);
+}
+
+.phub-bar-col-3d:hover .phub-bar-3d.active {
+  transform: scaleY(1.06) translateY(-3px);
+  filter: brightness(1.1);
+}
+
+.phub-bar-col-3d:hover .phub-bar-n-3d.has-val {
+  transform: translateY(-4px) scale(1.1);
+}
+
+.phub-bar-col-3d small {
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: #475569;
+  white-space: nowrap;
+}
+
+/* Barras de calificación 3D glossy */
+.phub-rating-top-3d {
+  display: grid !important;
+  grid-template-columns: 165px 1fr;
+  gap: 1.25rem;
+  align-items: center;
+}
+
+.phub-dist-3d {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.phub-dist-row-3d {
+  display: grid;
+  grid-template-columns: 34px 1fr 26px;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.phub-dist-star {
+  font-size: 0.86rem;
+  font-weight: 900;
+  color: #b45309;
+}
+
+.phub-dist-bar-3d {
+  height: 14px !important;
+  border-radius: 999px !important;
+  background: linear-gradient(180deg, #dbe4f0 0%, #eef2f7 100%) !important;
+  box-shadow: inset 0 2px 4px rgba(15, 23, 42, 0.16);
+  overflow: hidden;
+  padding: 2px;
+}
+
+.phub-dist-bar-3d i {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #fde047 0%, #f59e0b 55%, #ea580c 100%) !important;
+  box-shadow:
+    inset 0 2px 2px rgba(255, 255, 255, 0.65),
+    0 2px 6px rgba(234, 88, 12, 0.35);
+  transition: width 0.75s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.phub-dist-num {
+  font-style: normal;
+  font-size: 0.84rem;
+  font-weight: 900;
+  color: #1e293b;
+  text-align: right;
+}
+
+.phub-rate-3d {
+  margin-top: 1.15rem;
+  background: linear-gradient(145deg, #fffbeb 0%, #fef3c7 100%) !important;
+  border: 2px dashed #f59e0b !important;
+  border-radius: 20px !important;
+  box-shadow: inset 0 2px 0 rgba(255, 255, 255, 0.8), 0 6px 16px rgba(245, 158, 11, 0.12);
+}
+
+@media (max-width: 720px) {
+  .phub-rating-top-3d {
+    grid-template-columns: 1fr !important;
+  }
+  .phub-bar-3d {
+    width: 22px;
+  }
+}

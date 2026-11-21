@@ -963,12 +963,29 @@ window.ProjectHub = {
     const id = this.esc(proj.id);
     const myRating = (hub.ratings.find(r => r.who === this.me().key) || {}).stars || 0;
 
+    const kpiIcons = {
+      views: `<svg viewBox="0 0 44 44" width="38" height="38" fill="none"><defs><linearGradient id="kV" x1="4" y1="6" x2="40" y2="38" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#38bdf8"/><stop offset="100%" stop-color="#2563eb"/></linearGradient></defs><rect width="44" height="44" rx="14" fill="url(#kV)"/><path d="M9 22 C13 15 17.5 12.5 22 12.5 C26.5 12.5 31 15 35 22 C31 29 26.5 31.5 22 31.5 C17.5 31.5 13 29 9 22 Z" fill="#ffffff" fill-opacity="0.95"/><circle cx="22" cy="22" r="5" fill="#1d4ed8"/><circle cx="23.8" cy="20.2" r="1.8" fill="#ffffff"/></svg>`,
+      people: `<svg viewBox="0 0 44 44" width="38" height="38" fill="none"><defs><linearGradient id="kP" x1="4" y1="6" x2="40" y2="38" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#a855f7"/><stop offset="100%" stop-color="#6366f1"/></linearGradient></defs><rect width="44" height="44" rx="14" fill="url(#kP)"/><circle cx="28" cy="17" r="4.5" fill="#e9d5ff"/><path d="M22 33 C22 28.5 24.5 25.5 28.5 25.5 C32.5 25.5 35 28.5 35 33 Z" fill="#e9d5ff"/><circle cx="17" cy="16.5" r="5.5" fill="#ffffff"/><path d="M8.5 33.5 C8.5 28 12 24.5 17 24.5 C22 24.5 25.5 28 25.5 33.5 Z" fill="#ffffff"/></svg>`,
+      star: `<svg viewBox="0 0 44 44" width="38" height="38" fill="none"><defs><linearGradient id="kS" x1="4" y1="6" x2="40" y2="38" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#fde047"/><stop offset="100%" stop-color="#ea580c"/></linearGradient></defs><rect width="44" height="44" rx="14" fill="url(#kS)"/><path d="M22 9 L25.8 16.8 L34.4 18 L28.2 24 L29.7 32.6 L22 28.5 L14.3 32.6 L15.8 24 L9.6 18 L18.2 16.8 Z" fill="#ffffff"/></svg>`,
+      votes: `<svg viewBox="0 0 44 44" width="38" height="38" fill="none"><defs><linearGradient id="kB" x1="4" y1="6" x2="40" y2="38" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#34d399"/><stop offset="100%" stop-color="#059669"/></linearGradient></defs><rect width="44" height="44" rx="14" fill="url(#kB)"/><rect x="11" y="13" width="22" height="19" rx="4" fill="#ffffff" fill-opacity="0.95"/><path d="M16 22.5 L20 26.5 L28.5 18" stroke="#059669" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg>`
+    };
+
+    const barPalette = [
+      ['#38bdf8', '#2563eb', '#1e3a8a'],
+      ['#60a5fa', '#4f46e5', '#312e81'],
+      ['#34d399', '#059669', '#065f46'],
+      ['#a78bfa', '#7c3aed', '#4c1d95'],
+      ['#f472b6', '#db2777', '#831843'],
+      ['#fbbf24', '#ea580c', '#9a3412'],
+      ['#22d3ee', '#0284c7', '#0c4a6e']
+    ];
+
     return `
-      <div class="phub-kpis">
-        <div class="phub-kpi"><span>👁️</span><b data-count="${views.length}">0</b><small>Visitas totales</small></div>
-        <div class="phub-kpi"><span>🧑‍🤝‍🧑</span><b data-count="${uniq}">0</b><small>Personas que lo vieron</small></div>
-        <div class="phub-kpi"><span>⭐</span><b data-count="${stats.avg.toFixed(1)}" data-dec="1">0</b><small>Calificación promedio</small></div>
-        <div class="phub-kpi"><span>🗳️</span><b data-count="${stats.total}">0</b><small>Calificaciones</small></div>
+      <div class="phub-kpis phub-kpis-3d">
+        <div class="phub-kpi phub-kpi-3d kpi-blue"><span class="phub-kpi-ico-3d">${kpiIcons.views}</span><b data-count="${views.length}">0</b><small>Visitas totales</small></div>
+        <div class="phub-kpi phub-kpi-3d kpi-purple"><span class="phub-kpi-ico-3d">${kpiIcons.people}</span><b data-count="${uniq}">0</b><small>Personas que lo vieron</small></div>
+        <div class="phub-kpi phub-kpi-3d kpi-gold"><span class="phub-kpi-ico-3d">${kpiIcons.star}</span><b data-count="${stats.avg.toFixed(1)}" data-dec="1">0</b><small>Calificación promedio</small></div>
+        <div class="phub-kpi phub-kpi-3d kpi-green"><span class="phub-kpi-ico-3d">${kpiIcons.votes}</span><b data-count="${stats.total}">0</b><small>Calificaciones</small></div>
       </div>
 
       <div class="phub-report-grid">
@@ -976,15 +993,21 @@ window.ProjectHub = {
           <div class="phub-pill-header-wrap">
             <h2 class="phub-pill-title yellow"><span class="ico">📈</span> Personas que han visto el proyecto</h2>
           </div>
-          <div class="phub-bars">
-            ${days.map(d => `
-              <div class="phub-bar-col" style="--i:${days.indexOf(d)}">
-                <span class="phub-bar-n">${d.n}</span>
-                <div class="phub-bar" style="height:${Math.max(4, Math.round((d.n / max) * 130))}px;"></div>
+          <div class="phub-bars phub-bars-3d">
+            ${days.map((d, idx) => {
+              const pal = barPalette[idx % barPalette.length];
+              const hPx = d.n > 0 ? Math.max(26, Math.round((d.n / max) * 140)) : 10;
+              return `
+              <div class="phub-bar-col phub-bar-col-3d" style="--i:${idx}; --b-top:${pal[0]}; --b-mid:${pal[1]}; --b-side:${pal[2]};">
+                <span class="phub-bar-n phub-bar-n-3d ${d.n > 0 ? 'has-val' : ''}">${d.n}</span>
+                <div class="phub-bar-stage">
+                  <div class="phub-bar-3d ${d.n > 0 ? 'active' : 'zero'}" style="height:${hPx}px;"></div>
+                </div>
                 <small>${this.esc(d.label)}</small>
-              </div>`).join('')}
+              </div>`;
+            }).join('')}
           </div>
-          <h4 class="phub-sub" style="margin-top:1rem;">Últimas visitas</h4>
+          <h4 class="phub-sub" style="margin-top:1.1rem;">Últimas visitas</h4>
           <ul class="phub-recent">
             ${recent.length ? recent.map(v => `<li>${this.avatar(v.name, 28)} <span>${this.esc(v.name || 'Visitante')}</span><small>${new Date(v.t).toLocaleString('es-ES', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}</small></li>`).join('') : '<li class="empty">Todavía nadie ha visto este proyecto.</li>'}
           </ul>
@@ -994,16 +1017,21 @@ window.ProjectHub = {
           <div class="phub-pill-header-wrap">
             <h2 class="phub-pill-title yellow"><span class="ico">⭐</span> Calificación del proyecto</h2>
           </div>
-          <div class="phub-rating-top">
-            ${this.gauge(Math.round((stats.avg / 5) * 100), stats.total ? `${stats.avg.toFixed(1)} de 5` : 'Sin calificar', '#f59e0b')}
-            <div class="phub-dist">
-              ${[5, 4, 3, 2, 1].map(s => `
-                <div class="phub-dist-row"><span>${s}★</span>
-                  <div class="phub-dist-bar"><i style="width:${stats.total ? Math.round(stats.dist[s - 1] / stats.total * 100) : 0}%"></i></div>
-                  <em>${stats.dist[s - 1]}</em></div>`).join('')}
+          <div class="phub-rating-top phub-rating-top-3d">
+            ${this.gauge(Math.round((stats.avg / 5) * 100), stats.total ? `${stats.avg.toFixed(1)} de 5` : 'Sin calificar', '#f59e0b', '#facc15', '⭐')}
+            <div class="phub-dist phub-dist-3d">
+              ${[5, 4, 3, 2, 1].map(s => {
+                const pctBar = stats.total ? Math.round(stats.dist[s - 1] / stats.total * 100) : 0;
+                return `
+                <div class="phub-dist-row phub-dist-row-3d">
+                  <span class="phub-dist-star">${s}★</span>
+                  <div class="phub-dist-bar phub-dist-bar-3d"><i style="width:${pctBar}%"></i></div>
+                  <em class="phub-dist-num">${stats.dist[s - 1]}</em>
+                </div>`;
+              }).join('')}
             </div>
           </div>
-          <div class="phub-rate">
+          <div class="phub-rate phub-rate-3d">
             <b>${myRating ? 'Tu calificación' : 'Califica este proyecto'}</b>
             <div class="phub-stars">
               ${[1, 2, 3, 4, 5].map(s => `<button type="button" class="${s <= myRating ? 'on' : ''}" onclick="window.ProjectHub.rate('${id}', ${s})" aria-label="${s} estrellas">★</button>`).join('')}
