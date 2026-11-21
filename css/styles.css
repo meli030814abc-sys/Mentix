@@ -7983,6 +7983,179 @@ body[data-theme="light"] .inno-btn-resources:hover * {
 
 #view-game .kahoot-host-question-banner,
 #view-game .option-btn,
-#view-game .answer-card {
+#view-game .answer-card,
+#view-game .kahoot-card-text,
+#view-game .pad-option-text {
   line-height: 1.28 !important;
+}
+
+/* ==========================================================================
+   v114 · TEXTOS Y TARJETAS COMPACTAS EN CELULAR (TODOS LOS EXÁMENES)
+   ========================================================================== */
+@media (max-width: 768px) {
+  #view-game .pedagogical-case-wrapper {
+    padding: 0.45rem 0.5rem 1.25rem !important;
+    gap: 0.55rem !important;
+  }
+
+  #view-game .pedagogical-case-top-bar {
+    padding: 0.45rem 0.65rem !important;
+    gap: 0.4rem !important;
+    margin-bottom: 0.35rem !important;
+  }
+
+  #view-game .pedagogical-case-card {
+    padding: 0.85rem 0.85rem !important;
+    border-radius: 16px !important;
+  }
+
+  #view-game .pedagogical-case-grid {
+    gap: 0.7rem !important;
+  }
+
+  #view-game .pedagogical-case-left,
+  #view-game .pedagogical-case-right {
+    gap: 0.5rem !important;
+  }
+
+  #view-game .pedagogical-case-title-row {
+    gap: 0.45rem !important;
+    margin-bottom: 0.35rem !important;
+  }
+
+  #view-game .pedagogical-case-theme {
+    font-size: 0.98rem !important;
+    line-height: 1.22 !important;
+  }
+
+  #view-game .pedagogical-case-subtitle {
+    font-size: 0.78rem !important;
+    line-height: 1.22 !important;
+  }
+
+  #view-game .pedagogical-case-context-text,
+  #view-game .pedagogical-case-question-statement,
+  #view-game .pedagogical-case-norm-box,
+  #view-game .case-study-hero-card,
+  #view-game .pedagogical-feedback-box,
+  #view-game .student-feedback-card {
+    font-size: 0.88rem !important;
+    line-height: 1.26 !important;
+    text-align: left !important;
+    letter-spacing: -0.005em !important;
+  }
+
+  #view-game .pedagogical-case-context-text p,
+  #view-game .pedagogical-feedback-box p,
+  #view-game .student-feedback-card p,
+  #view-game .case-study-hero-card p,
+  #view-game .pedagogical-feedback-box div,
+  #view-game .student-feedback-card div {
+    line-height: 1.26 !important;
+    margin-top: 0.2rem !important;
+    margin-bottom: 0.25rem !important;
+  }
+
+  #view-game .pedagogical-case-norm-box {
+    padding: 0.55rem 0.7rem !important;
+    margin-top: 0.35rem !important;
+  }
+
+  #view-game .pedagogical-case-question-statement {
+    margin-bottom: 0.45rem !important;
+    font-size: 0.92rem !important;
+  }
+
+  #view-game .pedagogical-case-options-list {
+    gap: 0.42rem !important;
+  }
+
+  #view-game .pedagogical-case-option-card {
+    padding: 0.55rem 0.7rem !important;
+    gap: 0.5rem !important;
+    border-radius: 12px !important;
+  }
+
+  #view-game .pedagogical-case-option-text {
+    font-size: 0.86rem !important;
+    line-height: 1.24 !important;
+    text-align: left !important;
+  }
+
+  #view-game .pedagogical-feedback-box {
+    margin-top: 0.55rem !important;
+    padding: 0.6rem 0.75rem !important;
+    border-radius: 12px !important;
+  }
+
+  #view-game .pedagogical-case-actions-bar {
+    margin-top: 0.6rem !important;
+    gap: 0.45rem !important;
+  }
+
+  #view-game .case-study-hero-card {
+    padding: 0.75rem 0.85rem !important;
+    margin: 0.4rem auto !important;
+    border-radius: 14px !important;
+  }
+
+  #view-game .student-feedback-container {
+    padding: 0.6rem !important;
+  }
+
+  #view-game .student-feedback-card {
+    padding: 0.85rem 0.9rem !important;
+    gap: 0.45rem !important;
+    border-radius: 16px !important;
+  }
+
+  #view-game .kahoot-host-question-banner {
+    padding: 0.65rem 0.8rem !important;
+    font-size: 0.96rem !important;
+    line-height: 1.24 !important;
+    margin-bottom: 0.45rem !important;
+  }
+
+  #view-game .kahoot-player-grid,
+  #view-game .kahoot-answers-grid {
+    gap: 0.45rem !important;
+    padding: 0.4rem !important;
+  }
+
+  #view-game .kahoot-player-pad,
+  #view-game .kahoot-answer-card,
+  #view-game .option-btn,
+  #view-game .answer-card {
+    padding: 0.6rem 0.75rem !important;
+    min-height: 54px !important;
+    line-height: 1.22 !important;
+  }
+
+  #view-game .pad-option-text,
+  #view-game .kahoot-card-text {
+    font-size: 0.88rem !important;
+    line-height: 1.22 !important;
+    text-align: left !important;
+  }
+}
+
+@media (max-width: 480px) {
+  #view-game .pedagogical-case-card {
+    padding: 0.7rem 0.7rem !important;
+  }
+
+  #view-game .pedagogical-case-context-text,
+  #view-game .pedagogical-feedback-box,
+  #view-game .student-feedback-card,
+  #view-game .case-study-hero-card {
+    font-size: 0.84rem !important;
+    line-height: 1.24 !important;
+  }
+
+  #view-game .pedagogical-case-option-text,
+  #view-game .pad-option-text,
+  #view-game .kahoot-card-text {
+    font-size: 0.83rem !important;
+    line-height: 1.2 !important;
+  }
 }
