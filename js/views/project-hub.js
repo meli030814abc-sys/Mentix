@@ -331,11 +331,91 @@ window.ProjectHub = {
 
     const pending = hub.joinRequests.filter(r => r.status === 'pending').length;
 
+    const navIcons = {
+      cap: `<svg class="phub-svg-cap" viewBox="0 0 64 64" width="54" height="54" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="capTop" x1="6" y1="14" x2="58" y2="38" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#38bdf8"/><stop offset="50%" stop-color="#2563eb"/><stop offset="100%" stop-color="#1e3a8a"/>
+          </linearGradient>
+          <linearGradient id="capGold" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#fef08a"/><stop offset="100%" stop-color="#f59e0b"/>
+          </linearGradient>
+        </defs>
+        <path d="M16 33 V44 C16 49 23 53 32 53 C41 53 48 49 48 44 V33 Z" fill="#1e3a8a" stroke="#93c5fd" stroke-width="2"/>
+        <polygon points="32,12 59,26 32,40 5,26" fill="url(#capTop)" stroke="#e0f2fe" stroke-width="2.2" stroke-linejoin="round"/>
+        <polygon points="32,15 53,26 32,37 11,26" fill="#ffffff" opacity="0.16"/>
+        <path d="M32 26 L51 32 V45" stroke="url(#capGold)" stroke-width="3" stroke-linecap="round"/>
+        <circle cx="51" cy="47" r="4" fill="url(#capGold)"/>
+        <path d="M14 13 L15.5 9 L17 13 L21 14.5 L17 16 L15.5 20 L14 16 L10 14.5 Z" fill="#fde047"/>
+      </svg>`,
+      home: `<svg class="phub-svg-ico" viewBox="0 0 48 48" width="38" height="38" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="icoHomeRoof" x1="6" y1="8" x2="42" y2="26" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#fb7185"/><stop offset="100%" stop-color="#f97316"/>
+          </linearGradient>
+          <linearGradient id="icoHomeWall" x1="12" y1="20" x2="36" y2="42" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#ffffff"/><stop offset="100%" stop-color="#dbeafe"/>
+          </linearGradient>
+          <linearGradient id="icoHomeDoor" x1="20" y1="28" x2="28" y2="42" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#38bdf8"/><stop offset="100%" stop-color="#2563eb"/>
+          </linearGradient>
+        </defs>
+        <path d="M11 22 L24 11 L37 22 V39 C37 40.6 35.6 42 34 42 H14 C12.4 42 11 40.6 11 39 V22 Z" fill="url(#icoHomeWall)" stroke="#bfdbfe" stroke-width="1.5"/>
+        <path d="M6 23 L24 8 L42 23" stroke="url(#icoHomeRoof)" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <rect x="19.5" y="28" width="9" height="14" rx="4.5" fill="url(#icoHomeDoor)"/>
+        <circle cx="26" cy="35" r="1.2" fill="#fde047"/>
+        <rect x="15" y="22" width="5" height="5" rx="1.5" fill="#7dd3fc"/>
+        <rect x="28" y="22" width="5" height="5" rx="1.5" fill="#7dd3fc"/>
+      </svg>`,
+      users: `<svg class="phub-svg-ico" viewBox="0 0 48 48" width="38" height="38" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="icoUsr1" x1="8" y1="10" x2="30" y2="40" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#38bdf8"/><stop offset="100%" stop-color="#6366f1"/>
+          </linearGradient>
+          <linearGradient id="icoUsr2" x1="24" y1="12" x2="42" y2="40" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#f472b6"/><stop offset="100%" stop-color="#a855f7"/>
+          </linearGradient>
+        </defs>
+        <circle cx="31" cy="17" r="6.5" fill="url(#icoUsr2)"/>
+        <path d="M23 39 C23 32.5 26.8 28 32 28 C37.2 28 41 32.5 41 39 Z" fill="url(#icoUsr2)" opacity="0.92"/>
+        <circle cx="18" cy="16" r="7.5" fill="url(#icoUsr1)" stroke="#e0f2fe" stroke-width="1.8"/>
+        <path d="M7 40 C7 32.5 11.8 27.5 18 27.5 C24.2 27.5 29 32.5 29 40 Z" fill="url(#icoUsr1)" stroke="#e0f2fe" stroke-width="1.8" stroke-linejoin="round"/>
+      </svg>`,
+      settings: `<svg class="phub-svg-ico phub-svg-gear" viewBox="0 0 48 48" width="38" height="38" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="icoGear" x1="8" y1="8" x2="40" y2="40" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#fde047"/><stop offset="55%" stop-color="#f59e0b"/><stop offset="100%" stop-color="#ea580c"/>
+          </linearGradient>
+        </defs>
+        <path d="M21 6 H27 L28.4 11.2 C29.8 11.7 31.1 12.4 32.2 13.3 L37.3 11.5 L40.3 16.7 L36.4 20.5 C36.6 21.6 36.8 22.8 36.8 24 C36.8 25.2 36.6 26.4 36.4 27.5 L40.3 31.3 L37.3 36.5 L32.2 34.7 C31.1 35.6 29.8 36.3 28.4 36.8 L27 42 H21 L19.6 36.8 C18.2 36.3 16.9 35.6 15.8 34.7 L10.7 36.5 L7.7 31.3 L11.6 27.5 C11.4 26.4 11.2 25.2 11.2 24 C11.2 22.8 11.4 21.6 11.6 20.5 L7.7 16.7 L10.7 11.5 L15.8 13.3 C16.9 12.4 18.2 11.7 19.6 11.2 Z" fill="url(#icoGear)" stroke="#fef9c3" stroke-width="1.6" stroke-linejoin="round"/>
+        <circle cx="24" cy="24" r="7.5" fill="#1e3a8a" stroke="#fef08a" stroke-width="2.2"/>
+        <circle cx="24" cy="24" r="3" fill="#38bdf8"/>
+      </svg>`,
+      reports: `<svg class="phub-svg-ico" viewBox="0 0 48 48" width="38" height="38" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="bar1" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#34d399"/><stop offset="100%" stop-color="#059669"/></linearGradient>
+          <linearGradient id="bar2" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#38bdf8"/><stop offset="100%" stop-color="#2563eb"/></linearGradient>
+          <linearGradient id="bar3" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#c084fc"/><stop offset="100%" stop-color="#7c3aed"/></linearGradient>
+        </defs>
+        <rect x="6" y="7" width="36" height="34" rx="9" fill="#ffffff" fill-opacity="0.16" stroke="#93c5fd" stroke-width="1.6"/>
+        <rect x="11" y="24" width="6.5" height="12" rx="3" fill="url(#bar1)"/>
+        <rect x="20.7" y="18" width="6.5" height="18" rx="3" fill="url(#bar2)"/>
+        <rect x="30.5" y="12" width="6.5" height="24" rx="3" fill="url(#bar3)"/>
+        <path d="M12 20 L22 14 L34 9" stroke="#fde047" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="34" cy="9" r="2.8" fill="#fde047"/>
+      </svg>`,
+      close: `<svg class="phub-svg-ico" viewBox="0 0 36 36" width="30" height="30" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs><linearGradient id="icoClose" x1="0" y1="0" x2="36" y2="36" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#fb7185"/><stop offset="100%" stop-color="#dc2626"/></linearGradient></defs>
+        <circle cx="18" cy="18" r="15" fill="url(#icoClose)" stroke="#fecdd3" stroke-width="1.8"/>
+        <path d="M13 13 L23 23 M23 13 L13 23" stroke="#ffffff" stroke-width="3" stroke-linecap="round"/>
+      </svg>`
+    };
+
     const nav = [
-      { id: 'home', icon: '🏠', label: 'Inicio' },
-      { id: 'users', icon: '👥', label: 'Usuarios', badge: manage ? pending : 0 },
-      ...(edit ? [{ id: 'settings', icon: '⚙️', label: 'Configuración' }] : []),
-      { id: 'reports', icon: '📊', label: 'Reportes' }
+      { id: 'home', icon: navIcons.home, label: 'Inicio' },
+      { id: 'users', icon: navIcons.users, label: 'Usuarios', badge: manage ? pending : 0 },
+      ...(edit ? [{ id: 'settings', icon: navIcons.settings, label: 'Configuración' }] : []),
+      { id: 'reports', icon: navIcons.reports, label: 'Reportes' }
     ];
 
     let content = '';
@@ -357,7 +437,7 @@ window.ProjectHub = {
       </svg>
       <div class="phub-shell">
         <aside class="phub-sidebar">
-          <div class="phub-cap">🎓</div>
+          <div class="phub-cap">${navIcons.cap}</div>
           ${nav.map(n => `
             <button type="button" class="phub-nav ${this.tab === n.id || (n.id === 'home' && !['users', 'settings', 'reports'].includes(this.tab)) ? 'active' : ''}" onclick="window.ProjectHub.setTab('${n.id}')">
               <span class="phub-nav-ico">${n.icon}</span>
@@ -390,7 +470,7 @@ window.ProjectHub = {
               </g>
             </svg>
           </div>
-          <button type="button" class="phub-nav phub-nav-close" onclick="window.ProjectHub.close()"><span class="phub-nav-ico">✕</span><span>Cerrar</span></button>
+          <button type="button" class="phub-nav phub-nav-close" onclick="window.ProjectHub.close()"><span class="phub-nav-ico">${navIcons.close}</span><span>Cerrar</span></button>
         </aside>
 
         <main class="phub-main">
