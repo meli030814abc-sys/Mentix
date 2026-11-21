@@ -874,7 +874,7 @@
       }
     ],
     "ratingsCount": 4,
-    "_globalHeroBanner": "assets/projects_ui/disney_hero_banner.png",
+    "_globalHeroBanner": "https://images.unsplash.com/photo-1519501025264-65ba15a82390?w=1600&q=80",
     "globalHeroBanner": "assets/projects_ui/disney_hero_banner.png",
     "joinRequests": [
       {
@@ -935,7 +935,7 @@
     "benefits": "",
     "teamLead": "Melisa",
     "preparationStatus": "en_desarrollo",
-    "publicationStatus": "draft",
+    "publicationStatus": "pending_approval",
     "approvalStatus": "pending",
     "status": "in_progress",
     "isPublic": false,
@@ -1045,7 +1045,8 @@
       "titleColor": "#ffffff",
       "textColor": "#cbd5e1",
       "accentColor": "#00f5d4",
-      "bannerStyle": "gradient-cosmos"
+      "bannerStyle": "gradient-cosmos",
+      "bannerUrl": ""
     },
     "authorsConfig": {
       "authorsList": "Melisa",
@@ -1185,7 +1186,7 @@
         "authorsInstitution": "66"
       },
       "createdAt": "2026-11-20T23:43:24.796Z",
-      "updatedAt": "2026-11-21T00:24:54.798Z",
+      "updatedAt": "2026-11-21T00:24:54.956Z",
       "progress": 55,
       "calculatedProgress": 55
     },
@@ -1199,11 +1200,35 @@
     "authorAvatar": "🐯",
     "authorRole": "Líder del Proyecto",
     "createdAt": "2026-11-20T23:43:24.796Z",
-    "updatedAt": "2026-11-21T00:24:53.883Z",
+    "updatedAt": "2026-11-21T17:47:02.878Z",
     "image": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
     "rejectionReason": "",
     "tag": "⏳ Pendiente de Autorización",
     "tagClass": "badge-review",
-    "_globalHeroBanner": "assets/projects_ui/disney_hero_banner.png"
+    "_globalHeroBanner": "https://images.unsplash.com/photo-1519501025264-65ba15a82390?w=1600&q=80",
+    "hub": {
+      "joinRequests": [],
+      "members": [
+        {
+          "name": "Melisa",
+          "email": "melisa@mentix.edu",
+          "role": "owner",
+          "leader": true
+        },
+        {
+          "name": "Elena Morales",
+          "email": "elena.morales@mentix.edu",
+          "role": "collaborator"
+        },
+        {
+          "name": "David Soto",
+          "email": "david.soto@mentix.edu",
+          "role": "viewer"
+        }
+      ],
+      "views": [],
+      "ratings": []
+    },
+    "globalHeroBanner": "https://images.unsplash.com/photo-1519501025264-65ba15a82390?w=1600&q=80"
   }
 ]
