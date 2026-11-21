@@ -2371,3 +2371,238 @@ body.projects-pure-white-theme #phub-fullpage-review:not(.theme-light) strong,
 }
 
 
+
+
+/* ==========================================================================
+   v107 · GRÁFICAS SVG LLAMATIVAS + ARCHIVOS DE ENTREGAS EN GRID ESPACIOSO
+   ========================================================================== */
+.phub-scroll {
+  padding-bottom: 4.5rem !important;
+}
+
+.phub-gauges-row {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.9rem;
+  margin-top: 0.4rem;
+}
+
+.phub-gauge-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  padding: 1rem 0.85rem 0.95rem;
+  border-radius: 20px;
+  background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
+  border: 1.5px solid #e2e8f0;
+  box-shadow: 0 8px 22px rgba(15, 23, 42, 0.06);
+  transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+  overflow: hidden;
+}
+
+.phub-gauge-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--g-start, #10b981), var(--g-end, #06b6d4));
+}
+
+.phub-gauge-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--g-start, #10b981);
+  box-shadow: 0 14px 28px rgba(37, 99, 235, 0.14);
+}
+
+.phub-gauge-svg-wrap {
+  position: relative;
+  width: 118px;
+  height: 118px;
+  display: grid;
+  place-items: center;
+}
+
+.phub-gauge-svg {
+  display: block;
+  filter: drop-shadow(0 6px 12px rgba(14, 165, 233, 0.22));
+}
+
+.phub-gauge-arc {
+  transition: stroke-dashoffset 0.85s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.phub-gauge-inner {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.05rem;
+}
+
+.phub-gauge-ico {
+  font-size: 1.05rem;
+  line-height: 1;
+}
+
+.phub-gauge-num {
+  font-size: 1.4rem;
+  font-weight: 900;
+  color: #0f172a;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+}
+
+.phub-gauge-caption {
+  font-size: 0.86rem;
+  font-weight: 800;
+  color: #1e293b;
+  text-align: center;
+}
+
+.phub-gauge-pill {
+  font-size: 0.72rem;
+  font-weight: 800;
+  padding: 0.18rem 0.65rem;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--g-start, #10b981), var(--g-end, #06b6d4));
+  color: #ffffff;
+  letter-spacing: 0.01em;
+}
+
+/* Sección amplia de Archivos de Entregas (todo el ancho, sin amontonarse) */
+.phub-files-section {
+  margin-top: 1.35rem;
+  padding-top: 1.15rem;
+  border-top: 1.5px dashed #cbd5e1;
+}
+
+.phub-files-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.85rem;
+}
+
+.phub-files-count {
+  font-size: 0.78rem;
+  font-weight: 800;
+  color: #1d4ed8;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  padding: 0.22rem 0.72rem;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.phub-files-grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 0.75rem;
+}
+
+.phub-file-card {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.72rem 0.9rem;
+  border-radius: 16px;
+  background: #ffffff;
+  border: 1.5px solid #e2e8f0;
+  box-shadow: 0 3px 10px rgba(15, 23, 42, 0.04);
+  cursor: pointer;
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+  min-width: 0;
+}
+
+.phub-file-card:hover {
+  transform: translateY(-2px);
+  background: #f0f9ff;
+  border-color: #38bdf8;
+  box-shadow: 0 8px 18px rgba(14, 165, 233, 0.14);
+}
+
+.phub-file-badge {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  font-size: 1.25rem;
+  flex-shrink: 0;
+}
+
+.phub-file-badge.slides {
+  background: linear-gradient(135deg, #ede9fe, #ddd6fe);
+}
+
+.phub-file-badge.pdf {
+  background: linear-gradient(135deg, #fee2e2, #fecaca);
+}
+
+.phub-file-badge.doc {
+  background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+}
+
+.phub-file-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.12rem;
+  min-width: 0;
+  flex: 1;
+}
+
+.phub-file-name {
+  font-size: 0.88rem;
+  font-weight: 800;
+  color: #0f172a;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.phub-file-type {
+  font-size: 0.74rem;
+  font-weight: 600;
+  color: #64748b;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.phub-file-open-btn {
+  flex-shrink: 0;
+  white-space: nowrap;
+  font-size: 0.78rem;
+  font-weight: 800;
+  color: #ffffff;
+  background: linear-gradient(135deg, #0ea5e9, #2563eb);
+  padding: 0.34rem 0.78rem;
+  border-radius: 999px;
+  box-shadow: 0 3px 8px rgba(37, 99, 235, 0.22);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.phub-file-card:hover .phub-file-open-btn {
+  transform: scale(1.05);
+  box-shadow: 0 5px 12px rgba(37, 99, 235, 0.35);
+}
+
+@media (max-width: 640px) {
+  .phub-gauges-row {
+    grid-template-columns: 1fr;
+  }
+  .phub-files-grid {
+    grid-template-columns: 1fr;
+  }
+}

@@ -589,37 +589,109 @@ window.ProjectHub = {
               </div>
 
               <div class="phub-detail-col">
-                <h4 class="phub-detail-heading">Resultados del Proyecto</h4>
+                <h4 class="phub-detail-heading">📊 Resultados del Proyecto</h4>
                 <div class="phub-gauges-row">
-                  ${this.gauge(progress, 'Metas alcanzadas', '#22c55e')}
-                  ${this.gauge(ratingPct, 'Casos de éxito', '#0ea5e9')}
+                  ${this.gauge(progress, 'Metas alcanzadas', '#10b981', '#06b6d4', '🎯')}
+                  ${this.gauge(ratingPct, 'Casos de éxito', '#3b82f6', '#8b5cf6', '🏆')}
                 </div>
-                <h4 class="phub-detail-heading" style="margin-top:1.1rem;">
+              </div>
+            </div>
+
+            <div class="phub-files-section">
+              <div class="phub-files-header">
+                <h4 class="phub-detail-heading" style="margin:0;">
                   <span class="f-ico">📁</span> Archivos de entregas
                 </h4>
-                <ul class="phub-files-list">
-                  ${slides.length ? `<li onclick="window.ProjectsView ? window.ProjectsView.openSelectedProject() : null" style="cursor:pointer;" title="Clic para ver presentación en pantalla"><span class="file-ico">📊</span> <b>Presentación (${slides.length} láminas)</b> <span style="font-size:0.75rem; color:#0ea5e9; font-weight:800; margin-left:auto;">Ver ↗</span></li>` : ''}
-                  ${resources.slice(0, 5).map(r => `<li onclick="window.ProjectsView ? window.ProjectsView.openResourceViewerByName('${this.esc(r.id || r.fileName || r.name || r.title)}', '${proj.id}') : null" style="cursor:pointer;" title="Clic para ver documento en la página"><span class="file-ico">📄</span> <b>${this.esc(r.fileName || r.name || r.title || 'Archivo')}</b> <span style="font-size:0.75rem; color:#0ea5e9; font-weight:800; margin-left:auto;">Ver ↗</span></li>`).join('')}
-                  ${(!slides.length && !resources.length) ? `
-                    <li onclick="window.ProjectsView ? window.ProjectsView.openResourceViewerByName('Proyectos.pdf', '${proj.id}') : null" style="cursor:pointer;" title="Clic para ver documento en la página"><span class="file-ico">📄</span> <b>Proyectos.pdf</b> <span style="font-size:0.75rem; color:#0ea5e9; font-weight:800; margin-left:auto;">Ver ↗</span></li>
-                    <li onclick="window.ProjectsView ? window.ProjectsView.openResourceViewerByName('Archivo a', '${proj.id}') : null" style="cursor:pointer;" title="Clic para ver documento en la página"><span class="file-ico">📄</span> <b>Archivo a</b> <span style="font-size:0.75rem; color:#0ea5e9; font-weight:800; margin-left:auto;">Ver ↗</span></li>
-                    <li onclick="window.ProjectsView ? window.ProjectsView.openResourceViewerByName('Entrega b', '${proj.id}') : null" style="cursor:pointer;" title="Clic para ver documento en la página"><span class="file-ico">📄</span> <b>Entrega b</b> <span style="font-size:0.75rem; color:#0ea5e9; font-weight:800; margin-left:auto;">Ver ↗</span></li>
-                  ` : ''}
-                </ul>
+                <span class="phub-files-count">${(slides.length ? 1 : 0) + resources.length || 3} archivo${((slides.length ? 1 : 0) + resources.length) === 1 ? '' : 's'}</span>
               </div>
+              <ul class="phub-files-grid">
+                ${slides.length ? `
+                  <li class="phub-file-card" onclick="window.ProjectsView ? window.ProjectsView.openSelectedProject() : null" title="Presentación (${slides.length} láminas)">
+                    <span class="phub-file-badge slides">📊</span>
+                    <div class="phub-file-meta">
+                      <b class="phub-file-name">Presentación (${slides.length} láminas)</b>
+                      <small class="phub-file-type">Diapositivas interactivas</small>
+                    </div>
+                    <span class="phub-file-open-btn">Ver ↗</span>
+                  </li>` : ''}
+                ${resources.slice(0, 8).map(r => {
+                  const rName = r.fileName || r.name || r.title || 'Archivo';
+                  const isPdf = /\.pdf/i.test(rName);
+                  return `
+                  <li class="phub-file-card" onclick="window.ProjectsView ? window.ProjectsView.openResourceViewerByName('${this.esc(r.id || rName)}', '${proj.id}') : null" title="${this.esc(rName)}">
+                    <span class="phub-file-badge ${isPdf ? 'pdf' : 'doc'}">${isPdf ? '📕' : '📄'}</span>
+                    <div class="phub-file-meta">
+                      <b class="phub-file-name">${this.esc(rName)}</b>
+                      <small class="phub-file-type">${isPdf ? 'Documento PDF' : 'Archivo adjunto'}</small>
+                    </div>
+                    <span class="phub-file-open-btn">Ver ↗</span>
+                  </li>`;
+                }).join('')}
+                ${(!slides.length && !resources.length) ? `
+                  <li class="phub-file-card" onclick="window.ProjectsView ? window.ProjectsView.openResourceViewerByName('Proyectos.pdf', '${proj.id}') : null" title="Proyectos.pdf">
+                    <span class="phub-file-badge pdf">📕</span>
+                    <div class="phub-file-meta">
+                      <b class="phub-file-name">Proyectos.pdf</b>
+                      <small class="phub-file-type">Documento PDF</small>
+                    </div>
+                    <span class="phub-file-open-btn">Ver ↗</span>
+                  </li>
+                  <li class="phub-file-card" onclick="window.ProjectsView ? window.ProjectsView.openResourceViewerByName('Archivo a', '${proj.id}') : null" title="Archivo a">
+                    <span class="phub-file-badge doc">📄</span>
+                    <div class="phub-file-meta">
+                      <b class="phub-file-name">Archivo a</b>
+                      <small class="phub-file-type">Archivo adjunto</small>
+                    </div>
+                    <span class="phub-file-open-btn">Ver ↗</span>
+                  </li>
+                  <li class="phub-file-card" onclick="window.ProjectsView ? window.ProjectsView.openResourceViewerByName('Entrega b', '${proj.id}') : null" title="Entrega b">
+                    <span class="phub-file-badge doc">📄</span>
+                    <div class="phub-file-meta">
+                      <b class="phub-file-name">Entrega b</b>
+                      <small class="phub-file-type">Archivo adjunto</small>
+                    </div>
+                    <span class="phub-file-open-btn">Ver ↗</span>
+                  </li>
+                ` : ''}
+              </ul>
             </div>
           </div>
         </section>
       </div>`;
   },
 
-  gauge(pct, label, color) {
+  gauge(pct, label, colorStart = '#10b981', colorEnd = '#06b6d4', icon = '🎯') {
+    const safePct = Math.max(0, Math.min(100, Number(pct) || 0));
+    const r = 46;
+    const circ = 2 * Math.PI * r;
+    const offset = circ - (safePct / 100) * circ;
+    const gid = 'phubGrad_' + Math.random().toString(36).slice(2, 8);
+    const statusTxt = safePct >= 90 ? '¡Excelente!' : (safePct >= 60 ? 'Buen ritmo' : 'En progreso');
     return `
-      <div class="phub-gauge-item">
-        <div class="phub-donut-ring" data-pct="${pct}" data-color="${color}" style="background:conic-gradient(${color} ${pct * 3.6}deg, #e2e8f0 0deg);">
-          <div class="phub-donut-center">${pct}%</div>
+      <div class="phub-gauge-card" style="--g-start:${colorStart}; --g-end:${colorEnd};">
+        <div class="phub-gauge-svg-wrap">
+          <svg class="phub-gauge-svg" viewBox="0 0 120 120" width="118" height="118">
+            <defs>
+              <linearGradient id="${gid}" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="${colorStart}"/>
+                <stop offset="100%" stop-color="${colorEnd}"/>
+              </linearGradient>
+            </defs>
+            <circle cx="60" cy="60" r="${r}" fill="none" stroke="#e2e8f0" stroke-width="11" opacity="0.75"/>
+            <circle cx="60" cy="60" r="${r}" fill="none" stroke="url(#${gid})" stroke-width="11"
+              stroke-linecap="round"
+              stroke-dasharray="${circ.toFixed(1)}"
+              stroke-dashoffset="${offset.toFixed(1)}"
+              transform="rotate(-90 60 60)"
+              class="phub-gauge-arc"/>
+          </svg>
+          <div class="phub-gauge-inner">
+            <span class="phub-gauge-ico">${icon}</span>
+            <strong class="phub-gauge-num">${safePct}%</strong>
+          </div>
         </div>
         <span class="phub-gauge-caption">${this.esc(label)}</span>
+        <span class="phub-gauge-pill">${statusTxt}</span>
       </div>`;
   },
 
