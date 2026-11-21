@@ -1,5 +1,69 @@
 [
   {
+    "id": "reto_1795285823963",
+    "title": "2",
+    "description": "",
+    "category": "tecnologia",
+    "difficulty": "Medio",
+    "banner": "https://images.unsplash.com/photo-1518770660439-4636190af475?w=800",
+    "timePerQuestion": 20,
+    "pointsStandard": 1000,
+    "isPublic": true,
+    "accessMode": "public",
+    "accessCode": "",
+    "expiresAt": null,
+    "temporalDuration": "24h",
+    "questions": [
+      {
+        "id": "q_1795285826871_0w9t",
+        "text": "32\n",
+        "type": "case",
+        "media": "",
+        "mediaType": "none",
+        "timeLimit": 60,
+        "points": 1000,
+        "caseTitle": "",
+        "caseContext": "1615165654j4jk\nñ\n\n{.32\n23111333333333333333333333333333333333333333333333",
+        "options": [
+          {
+            "text": "2323\n32",
+            "shape": "✦",
+            "color": "opt-1"
+          },
+          {
+            "text": "3\n23",
+            "shape": "⬢",
+            "color": "opt-2"
+          },
+          {
+            "text": "3\n2",
+            "shape": "⚡",
+            "color": "opt-3"
+          },
+          {
+            "text": "32\n",
+            "shape": "🛡️",
+            "color": "opt-4"
+          }
+        ],
+        "correctAnswer": 0,
+        "explanation": "",
+        "referenceNorm": ""
+      }
+    ],
+    "entityName": "",
+    "categoryName": "Tecnología & Programación",
+    "author": "Melisa",
+    "authorAvatar": "🐯",
+    "authorId": "user_1792184134006",
+    "authorEmail": "gatitaxd6f79@gmail.com",
+    "authorRole": "admin",
+    "plays": 0,
+    "projectType": "quiz",
+    "updatedAt": "2026-11-21T18:31:09.588Z",
+    "createdAt": "2026-11-21T18:31:08.560Z"
+  },
+  {
     "id": "reto_1795283678024",
     "title": "Casos Prácticos de Prueba Estado",
     "description": "Evaluación de análisis situacional y toma de decisiones sobre prueba estado",
