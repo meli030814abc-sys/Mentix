@@ -22,6 +22,7 @@ export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, DELETE, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
 
   if (req.method === 'OPTIONS') {
     return res.status(200).end();
@@ -36,18 +37,14 @@ export default async function handler(req, res) {
     return BLOCKED_CATS.includes(cid) || BLOCKED_CATS.includes(cname);
   };
 
-  const mergeAndSanitize = (cats) => {
+  const sanitizeList = (cats) => {
+    if (!Array.isArray(cats)) return [...DEFAULT_CATEGORIES];
     const map = new Map();
-    DEFAULT_CATEGORIES.forEach(c => {
-      if (c && c.id && !isBlocked(c)) map.set(c.id, c);
+    cats.forEach(c => {
+      if (c && c.id && !isBlocked(c)) {
+        map.set(String(c.id), c);
+      }
     });
-    if (Array.isArray(cats)) {
-      cats.forEach(c => {
-        if (c && c.id && !isBlocked(c)) {
-          map.set(c.id, { ...map.get(c.id), ...c });
-        }
-      });
-    }
     BLOCKED_CATS.forEach(b => map.delete(b));
     return Array.from(map.values()).filter(c => !isBlocked(c));
   };
@@ -67,7 +64,7 @@ export default async function handler(req, res) {
         const ghData = await ghRes.json();
         const contentStr = Buffer.from(ghData.content, 'base64').toString('utf8');
         const categories = JSON.parse(contentStr);
-        return res.status(200).json(mergeAndSanitize(categories));
+        return res.status(200).json(sanitizeList(categories));
       }
     } catch (e) {
       console.warn('Error leyendo categorías desde GitHub:', e);
@@ -119,7 +116,7 @@ export default async function handler(req, res) {
       authorEmail: newCat.authorEmail || ''
       };
 
-      const sanitized = mergeAndSanitize(currentCategories);
+      const sanitized = sanitizeList(currentCategories);
       if (!isBlocked(preparedCat)) {
         const existingIndex = sanitized.findIndex(c => c.id === preparedCat.id);
         if (existingIndex >= 0) {
@@ -186,7 +183,12 @@ export default async function handler(req, res) {
         currentCategories = JSON.parse(contentStr);
       }
 
-      const filtered = currentCategories.filter(c => c && c.id !== catId && !isBlocked(c));
+      const targetId = String(catId).toLowerCase().trim();
+      const filtered = sanitizeList(currentCategories).filter(c => {
+        const cid = String(c.id || '').toLowerCase().trim();
+        const cname = String(c.name || '').toLowerCase().trim();
+        return cid !== targetId && cname !== targetId;
+      });
       const updatedBuffer = Buffer.from(JSON.stringify(filtered, null, 2), 'utf8').toString('base64');
 
       const putPayload = {

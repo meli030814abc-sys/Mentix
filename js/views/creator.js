@@ -1711,6 +1711,10 @@ Ante esta situación, la Dirección de Impuestos y Aduanas Nacionales (DIAN) rea
       const parsedTime = parseInt(timeEl.value, 10);
       this.currentChallenge.timePerQuestion = isNaN(parsedTime) ? 20 : parsedTime;
     }
+    // Si el examen está configurado "Sin tiempo" (0), garantizar timeLimit = 0 en TODAS las preguntas
+    if (this.currentChallenge.timePerQuestion === 0 && Array.isArray(this.currentChallenge.questions)) {
+      this.currentChallenge.questions.forEach(q => { q.timeLimit = 0; });
+    }
     if (bannerEl) this.currentChallenge.banner = bannerEl.value.trim();
     if (entityNameEl) this.currentChallenge.entityName = entityNameEl.value.trim();
     if (accessCodeEl && accessCodeEl.value.trim()) {
@@ -1965,7 +1969,7 @@ Ante esta situación, la Dirección de Impuestos y Aduanas Nacionales (DIAN) rea
             if (parsed.description) this.currentChallenge.description = parsed.description;
             if (parsed.category) this.currentChallenge.category = parsed.category;
             if (parsed.difficulty) this.currentChallenge.difficulty = parsed.difficulty;
-            if (parsed.timePerQuestion) this.currentChallenge.timePerQuestion = parsed.timePerQuestion;
+            if (parsed.timePerQuestion !== undefined && parsed.timePerQuestion !== null) this.currentChallenge.timePerQuestion = parsed.timePerQuestion;
             if (parsed.banner) this.currentChallenge.banner = parsed.banner;
             this.currentChallenge.questions = parsed.questions;
             if (window.soundEngine && window.soundEngine.playCorrect) window.soundEngine.playCorrect();
@@ -2945,6 +2949,10 @@ d) Insulina`;
     if (loader) loader.style.display = 'none';
     if (submitBtn) submitBtn.disabled = false;
     if (notesInput) notesInput.value = '';
+    const aiTimeSel = document.getElementById('ai-time-select');
+    if (aiTimeSel && this.currentChallenge && (this.currentChallenge.timePerQuestion === 0 || this.currentChallenge.timePerQuestion)) {
+      aiTimeSel.value = String(this.currentChallenge.timePerQuestion);
+    }
 
     const countInput = document.getElementById('ai-count-input');
     if (countInput && (!countInput.value || parseInt(countInput.value) <= 0)) {

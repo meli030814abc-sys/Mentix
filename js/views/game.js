@@ -591,9 +591,13 @@ window.GameView = {
     const prevModeBanner = document.getElementById('host-mode-activity-banner');
     if (prevModeBanner) prevModeBanner.remove();
 
-    const isUntimed = (q.timeLimit === 0 || q.timeLimit === null || (q.timeLimit === undefined && this.challenge?.timePerQuestion === 0));
+    const examTime = this.challenge?.timePerQuestion;
+    const examIsUntimed = (examTime === 0 || examTime === '0' || examTime === null);
+    const qTime = q.timeLimit;
+    const qIsUntimed = (qTime === 0 || qTime === '0' || qTime === null);
+    const isUntimed = examIsUntimed || qIsUntimed;
     this.isUntimed = isUntimed;
-    this.totalTime = isUntimed ? 0 : (q.timeLimit || this.challenge?.timePerQuestion || 20);
+    this.totalTime = isUntimed ? 0 : (Number(qTime) || Number(examTime) || 20);
     this.timeLeft = this.totalTime;
     this.questionStartTime = Date.now();
 
@@ -685,6 +689,43 @@ window.GameView = {
     return this.retoShapes[index % this.retoShapes.length];
   },
 
+  normalizeCaseProse(str, maxParagraphs = 2) {
+    const raw = String(str || '').replace(/\r\n/g, '\n').trim();
+    if (!raw) return '';
+    const lines = raw.split(/\n+/).map(l => l.trim()).filter(Boolean);
+    const hasBullets = /[•▪●◦‣⁃∙►▸▹➤➔➜➢]/.test(raw) || lines.some(l =>
+      /^([-–—*•▪●◦‣⁃∙►▸▹➤➔➜→➢⇒✓✔✅❌✘✗☐☑■□◆◇★☆]+)(\s+|$)/.test(l) ||
+      /^[-–—*•▪●◦‣⁃∙►▸](?=\S)/.test(l) ||
+      /^(\d+[\.\)\-]|[a-zA-Z][\.\)])\s+/.test(l)
+    );
+    if (!hasBullets && lines.length <= maxParagraphs) {
+      return lines.join('\n\n');
+    }
+    const cleaned = lines
+      .map(l => l
+        .replace(/^([-–—*•▪●◦‣⁃∙►▸▹➤➔➜→➢⇒✓✔✅❌✘✗☐☑■□◆◇★☆]+|\d+[\.\)\-]|[a-zA-Z][\.\)])\s*/g, '')
+        .replace(/[•▪●◦‣⁃∙►▸▹➤➔➜➢]/g, '')
+        .replace(/\*\*/g, '')
+        .trim()
+      )
+      .filter(Boolean);
+    if (cleaned.length <= maxParagraphs) {
+      return cleaned.join('\n\n');
+    }
+    const splitAt = Math.ceil(cleaned.length / maxParagraphs);
+    const merged = [];
+    for (let i = 0; i < cleaned.length; i += splitAt) {
+      const chunk = cleaned.slice(i, i + splitAt)
+        .map(s => /[.!?;:]$/.test(s) ? s : s + '.')
+        .join(' ')
+        .replace(/:\s+/g, ': ')
+        .replace(/\s{2,}/g, ' ')
+        .trim();
+      if (chunk) merged.push(chunk);
+    }
+    return merged.slice(0, maxParagraphs).join('\n\n');
+  },
+
   escapeHtml(str) {
     if (str === null || str === undefined) return '';
     return String(str)
@@ -736,12 +777,11 @@ window.GameView = {
     }
 
     const letters = ['A', 'B', 'C', 'D', 'E', 'F'];
-    const isLightMode = document.body.classList.contains('light-theme') || 
-                        document.body.getAttribute('data-theme') === 'light' || 
-                        document.documentElement.getAttribute('data-theme') === 'light';
+    // Siempre usar presentación clara uniforme en exámenes desde cualquier computador
+    const isLightMode = true;
 
     container.innerHTML = `
-      <div class="pedagogical-case-wrapper">
+      <div class="pedagogical-case-wrapper light-theme" data-theme="light">
         <div class="pedagogical-case-card">
           <!-- 1. Cabecera Superior: Subtítulo con Barra Roja y Estadísticas -->
           <div class="pedagogical-case-top-bar">
@@ -749,7 +789,7 @@ window.GameView = {
             <div class="pedagogical-case-red-line"></div>
             <div class="pedagogical-case-top-stats">
               <div class="pedagogical-case-timer-pill">
-                ⏱️ <span id="timer-text">${this.isUntimed ? '∞' : this.timeLeft}</span>${this.isUntimed ? '' : 's'}
+                ${this.isUntimed ? '⏳ <span id="timer-text">Sin tiempo</span>' : `⏱️ <span id="timer-text">${this.timeLeft}</span>s`}
               </div>
               ${!isHost ? `
                 <div class="pedagogical-case-score-pill">
@@ -783,7 +823,7 @@ window.GameView = {
           <div class="pedagogical-case-grid">
             <!-- Columna Izquierda: Situación del Caso y Pregunta en Negrita -->
             <div class="pedagogical-case-left">
-              <div class="pedagogical-case-context-text">${this.escapeHtml((q.caseContext || '').trim())}</div>
+              <div class="pedagogical-case-context-text">${this.escapeHtml(this.normalizeCaseProse(q.caseContext || '', 2))}</div>
 
               ${q.media && q.mediaType === 'image' ? `
                 <div style="text-align: center; margin: 0.5rem 0;">
@@ -791,16 +831,13 @@ window.GameView = {
                 </div>
               ` : ''}
 
-              <div class="pedagogical-case-question-statement">${this.escapeHtml(q.text || '')}</div>
+              <div class="pedagogical-case-question-statement">${this.escapeHtml(this.normalizeCaseProse(q.text || '', 1))}</div>
 
               ${q.referenceNorm ? `
                 <div class="pedagogical-case-norm-box">
                   <strong>⚖️ Marco normativo:</strong> ${this.escapeHtml(q.referenceNorm)}
                 </div>
               ` : ''}
-
-              <!-- Contenedor Dinámico para Feedback y Justificación -->
-              <div id="pedagogical-feedback-container" style="display: none;"></div>
             </div>
 
             <!-- Columna Derecha: Tarjetas de Opciones A, B, C... -->
@@ -855,6 +892,8 @@ window.GameView = {
                   </button>
                 `}
               </div>
+              <!-- Contenedor Dinámico para Feedback y Justificación (Columna Derecha para balance perfecto sin scroll) -->
+              <div id="pedagogical-feedback-container" style="display: none;"></div>
             </div>
           </div>
         </div>
@@ -979,7 +1018,7 @@ window.GameView = {
                 </div>
               ` : ''}
             </div>
-            <div style="color: #f1f5f9; font-size: 0.98rem; line-height: 1.34; white-space: pre-line; text-align: left; font-family: inherit;">${this.escapeHtml((q.caseContext || '').trim())}</div>
+            <div style="color: #f1f5f9; font-size: 0.98rem; line-height: 1.34; white-space: pre-line; text-align: left; font-family: inherit;">${this.escapeHtml(this.normalizeCaseProse(q.caseContext || '', 2))}</div>
             ${q.referenceNorm ? `
               <div style="margin-top: 1rem; padding-top: 0.75rem; border-top: 1px dashed rgba(255,255,255,0.18); display: flex; align-items: center; gap: 0.5rem; font-size: 0.88rem; color: #ffd166;">
                 <span>⚖️ Marco normativo:</span>
@@ -998,7 +1037,7 @@ window.GameView = {
         <div class="kahoot-host-stage">
           <!-- Temporizador Circular Morado a la Izquierda -->
           <div class="kahoot-host-circle-badge timer-badge" id="host-timer-circle">
-            <span id="host-timer-num">${this.isUntimed ? '∞' : this.timeLeft}</span>
+            <span id="host-timer-num">${this.isUntimed ? 'Sin tiempo' : this.timeLeft}</span>
           </div>
 
           <!-- Imagen / Media en el Centro -->
@@ -1132,7 +1171,7 @@ window.GameView = {
 
           <div style="display: flex; align-items: center; gap: 0.5rem;">
             <div class="badge-tag student-timer-badge" style="background: rgba(10, 20, 45, 0.85); border: 2px solid var(--timer-color, #00f5d4); color: var(--timer-color, #00f5d4) !important; font-weight: 900; font-size: 0.95rem; padding: 0.35rem 0.85rem; border-radius: 9999px; text-shadow: 0 0 10px var(--timer-glow, rgba(0, 245, 212, 0.8)); box-shadow: 0 4px 15px rgba(0,0,0,0.5);">
-              ⏱️ <span id="player-timer-num">${this.isUntimed ? '∞' : this.timeLeft}</span>${this.isUntimed ? '' : 's'}
+              ${this.isUntimed ? '⏳ <span id="player-timer-num">Sin tiempo</span>' : `⏱️ <span id="player-timer-num">${this.timeLeft}</span>s`}
             </div>
             <div class="badge-tag" style="background: rgba(10, 20, 45, 0.85); border: 1.5px solid #ffd166; color: #ffd166 !important; font-weight: 900; font-size: 0.95rem; padding: 0.35rem 0.9rem; border-radius: 9999px; text-shadow: 0 0 10px rgba(255, 209, 102, 0.6); box-shadow: 0 4px 15px rgba(0,0,0,0.5);">
               🏆 <span id="player-score-val">${window.realtimeEngine.localPlayer?.score || 0}</span> PTS
@@ -1327,7 +1366,7 @@ window.GameView = {
           </div>
 
           <div class="solo-timer-badge" style="font-size: 1.4rem; font-weight: 900; color: var(--timer-color, var(--neon-gold)) !important; background: rgba(0,0,0,0.55); padding: 0.4rem 1.1rem; border-radius: 9999px; border: 2px solid var(--timer-color, var(--border-color)); box-shadow: 0 0 15px var(--timer-glow, rgba(255, 183, 3, 0.35)); text-shadow: 0 0 10px var(--timer-glow, rgba(255, 183, 3, 0.8));">
-            ⏱️ <span id="timer-text">${this.isUntimed ? '∞' : this.timeLeft}</span>${this.isUntimed ? '' : 's'}
+            ${this.isUntimed ? '⏳ <span id="timer-text">Sin tiempo</span>' : `⏱️ <span id="timer-text">${this.timeLeft}</span>s`}
           </div>
         </div>
 
@@ -1347,7 +1386,7 @@ window.GameView = {
                 </div>
               ` : ''}
             </div>
-            <div style="color: #f1f5f9; font-size: 0.95rem; line-height: 1.34; white-space: pre-line; text-align: left; font-family: inherit;">${this.escapeHtml((q.caseContext || '').trim())}</div>
+            <div style="color: #f1f5f9; font-size: 0.95rem; line-height: 1.34; white-space: pre-line; text-align: left; font-family: inherit;">${this.escapeHtml(this.normalizeCaseProse(q.caseContext || '', 2))}</div>
             ${q.referenceNorm ? `
               <div style="margin-top: 1rem; padding-top: 0.75rem; border-top: 1px dashed rgba(255,255,255,0.18); display: flex; align-items: center; gap: 0.5rem; font-size: 0.84rem; color: #ffd166;">
                 <span>⚖️ Marco normativo:</span>
@@ -2841,9 +2880,8 @@ window.GameView = {
 
       const feedbackContainer = document.getElementById('pedagogical-feedback-container');
       if (feedbackContainer) {
-        const isLightMode = document.body.classList.contains('light-theme') || 
-                            document.body.getAttribute('data-theme') === 'light' || 
-                            document.documentElement.getAttribute('data-theme') === 'light';
+        // Siempre usar presentación clara uniforme en la justificación del examen
+        const isLightMode = true;
         const letters = ['A', 'B', 'C', 'D', 'E', 'F'];
         const correctLetter = letters[correctIdx] || (correctIdx + 1);
         const correctText = this.getOptionText(q.options?.[correctIdx]);
@@ -2854,20 +2892,15 @@ window.GameView = {
 
         feedbackContainer.innerHTML = `
           <div class="pedagogical-feedback-box">
-            <div style="font-weight: 800; color: ${isCorrect ? (isLightMode ? '#059669' : '#00ff88') : (isLightMode ? '#dc2626' : '#ff4d6d')}; font-size: 1.02rem; margin-bottom: 0.4rem; display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem; line-height: 1.25;">
+            <div style="font-weight: 800; color: ${isCorrect ? (isLightMode ? '#059669' : '#00ff88') : (isLightMode ? '#dc2626' : '#ff4d6d')}; font-size: 0.98rem; margin-bottom: 0.35rem; display: flex; flex-wrap: wrap; align-items: center; gap: 0.45rem; line-height: 1.25;">
               <span>${isCorrect ? '✅ ¡Respuesta Correcta!' : (isTimeout ? '⏱️ ¡Tiempo Agotado!' : '❌ Respuesta Incorrecta')}</span>
-              ${!isCorrect ? `<span style="font-size: 0.9rem; color: ${subKeyColor}; font-weight: 600;">(Opción clave: <strong style="color: ${keyAccentColor};">${correctLetter} - ${this.escapeHtml(correctText)}</strong>)</span>` : ''}
+              ${!isCorrect ? `<span style="font-size: 0.86rem; color: ${subKeyColor}; font-weight: 700;">(Opción correcta: <strong style="color: ${keyAccentColor};">${correctLetter}</strong>)</span>` : ''}
             </div>
             ${q.explanation ? `
-              <div style="font-size: 0.8rem; font-weight: 800; text-transform: uppercase; color: ${keyAccentColor}; margin-bottom: 0.25rem; display: flex; align-items: center; gap: 0.35rem; line-height: 1.2;">
+              <div style="font-size: 0.78rem; font-weight: 800; text-transform: uppercase; color: ${keyAccentColor}; margin-bottom: 0.22rem; display: flex; align-items: center; gap: 0.35rem; line-height: 1.2;">
                 <span>💡</span> Justificación Pedagógica:
               </div>
-              <div style="color: ${explTextColor}; font-size: 0.93rem; line-height: 1.34; white-space: pre-line; text-align: left; margin: 0;">${this.escapeHtml((q.explanation || '').trim())}</div>
-            ` : ''}
-            ${q.referenceNorm ? `
-              <div style="margin-top: 0.55rem; padding-top: 0.5rem; border-top: 1px dashed ${isLightMode ? 'rgba(0,0,0,0.15)' : 'rgba(255,255,255,0.18)'}; font-size: 0.86rem; line-height: 1.3; color: ${isLightMode ? '#b45309' : '#ffd166'}; text-align: left;">
-                <strong>⚖️ Marco normativo:</strong> <span style="color: ${normTextColor}; font-weight: 600;">${this.escapeHtml((q.referenceNorm || '').trim())}</span>
-              </div>
+              <div style="color: ${explTextColor}; font-size: 1rem; line-height: 1.4; white-space: pre-line; text-align: justify; text-justify: inter-word; margin: 0;">${this.escapeHtml((q.explanation || '').trim())}</div>
             ` : ''}
           </div>
         `;

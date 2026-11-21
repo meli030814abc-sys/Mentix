@@ -407,16 +407,17 @@ window.HomeView = {
             ${window.fixMojibake ? window.fixMojibake(challenge.title) : challenge.title}
           </h3>
 
-          <p style="color: var(--text-secondary); font-size: 0.88rem; margin-bottom: 1.25rem; flex: 1; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+          <p style="color: var(--text-secondary); font-size: 0.88rem; margin-bottom: 0.65rem; flex: 1; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
             ${window.fixMojibake ? window.fixMojibake(challenge.description || 'Contenido didáctico interactivo.') : (challenge.description || 'Contenido didáctico interactivo.')}
           </p>
 
-          <div style="display: flex; align-items: center; justify-content: space-between; border-top: 1px solid var(--border-color); padding-top: 0.85rem; gap: 0.5rem;">
-            <div style="display: flex; align-items: center; gap: 0.4rem; font-size: 0.82rem; color: var(--text-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
-              <span>${challenge.authorAvatar || '👤'}</span>
-              <span>${challenge.author || 'Profesor'}</span>
-            </div>
-            <div style="display: flex; gap: 0.5rem; flex-shrink: 0;">
+          <div style="display: flex; align-items: center; gap: 0.4rem; font-size: 0.82rem; color: var(--text-muted); margin-bottom: 0.85rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+            <span>${challenge.authorAvatar || '👤'}</span>
+            <span style="font-weight: 600;">${challenge.author || 'Profesor'}</span>
+          </div>
+
+          <div style="display: flex; align-items: center; justify-content: center; border-top: 1px solid var(--border-color); padding-top: 0.85rem;">
+            <div style="display: flex; gap: 0.5rem; flex-wrap: nowrap; width: 100%; justify-content: center;">
               ${projectType === 'presentation' ? `
                 ${isOwner ? `
                   <button 
@@ -450,32 +451,23 @@ window.HomeView = {
                   🎬 Ver Video
                 </button>
               ` : `
-                ${isOwner ? `
-                  <button 
-                    class="btn btn-gold" 
-                    title="Editar Cuestionario"
-                    style="padding: 0.45rem 0.95rem; font-size: 0.88rem; font-weight: 800;" 
-                    onclick="event.stopPropagation(); window.appRouter.navigate('creator', { editId: '${challenge.id}' })">
-                    <span>✏️</span> <span>Editar</span>
-                  </button>
-                ` : ''}
                 <button 
                   class="btn btn-cyan" 
-                  style="padding: 0.45rem 0.95rem; font-size: 0.88rem; font-weight: 800;"
+                  style="padding: 0.44rem 0.8rem; font-size: 0.84rem; font-weight: 800; white-space: nowrap;"
                   onclick="event.stopPropagation(); window.appRouter.startSinglePlayer('${challenge.id}')">
                   ▶️ Jugar
                 </button>
                 <button 
                   class="btn btn-primary" 
                   title="Crear Sala con Preguntas Presentadas (Proyector / Estilo Kahoot)"
-                  style="padding: 0.45rem 0.95rem; font-size: 0.88rem; font-weight: 800;"
+                  style="padding: 0.44rem 0.8rem; font-size: 0.84rem; font-weight: 800; white-space: nowrap;"
                   onclick="event.stopPropagation(); window.appRouter.hostRoom('${challenge.id}', 'presented')">
                   🚀 Sala
                 </button>
                 <button 
                   class="btn btn-sala-normal" 
                   title="Crear Sala Normal: Preguntas y respuestas en la pantalla de cada jugador"
-                  style="padding: 0.45rem 0.95rem; font-size: 0.88rem; font-weight: 800; display: inline-flex; align-items: center; gap: 0.35rem;"
+                  style="padding: 0.44rem 0.8rem; font-size: 0.84rem; font-weight: 800; display: inline-flex; align-items: center; gap: 0.3rem; white-space: nowrap;"
                   onclick="event.stopPropagation(); window.appRouter.hostRoom('${challenge.id}', 'normal')">
                   <span>🎮</span> <span>Sala Normal</span>
                 </button>

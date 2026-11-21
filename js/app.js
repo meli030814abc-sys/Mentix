@@ -16,9 +16,9 @@ class AppRouter {
       localStorage.removeItem('mentix_interface_design');
     } catch(e) {}
 
-    // Restaurar tema guardado (claro u oscuro)
+    // Restaurar tema guardado (modo claro uniforme por defecto en cualquier computador)
     const savedTheme = localStorage.getItem('te_reto_theme');
-    if (savedTheme === 'light') {
+    if (savedTheme !== 'dark') {
       document.body.classList.add('light-theme');
       const btn = document.getElementById('theme-toggle-btn');
       if (btn) btn.textContent = '☀️';
@@ -939,7 +939,7 @@ class AppRouter {
               ⏱️ Tiempo / Pregunta
             </div>
             <div style="font-size: 2.3rem; font-weight: 900; color: var(--neon-gold);">
-              ${c.timePerQuestion || 20}s
+              ${c.timePerQuestion === 0 ? 'Sin tiempo' : ((c.timePerQuestion || 20) + 's')}
             </div>
             <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.25rem;">segundos de límite</div>
           </div>
@@ -1482,13 +1482,75 @@ class AppRouter {
     `).join('');
   }
 
+  getDeletedCategoryIds() {
+    try {
+      const arr = JSON.parse(localStorage.getItem('mentix_deleted_categories_v1') || '[]');
+      return Array.isArray(arr) ? arr.map(x => String(x || '').toLowerCase().trim()).filter(Boolean) : [];
+    } catch (e) {
+      return [];
+    }
+  }
+
+  saveDeletedCategoryIds(ids) {
+    try {
+      const unique = Array.from(new Set((ids || []).map(x => String(x || '').toLowerCase().trim()).filter(Boolean)));
+      localStorage.setItem('mentix_deleted_categories_v1', JSON.stringify(unique));
+    } catch (e) {}
+  }
+
+  async saveGlobalCategoriesToSupabase(categoriesList, deletedIds) {
+    try {
+      if (window.supabaseEngine && typeof window.supabaseEngine.saveWizardDraft === 'function') {
+        const cleanDeleted = Array.from(new Set((deletedIds || []).map(x => String(x || '').toLowerCase().trim()).filter(Boolean)));
+        await window.supabaseEngine.saveWizardDraft(
+          'mentix_global_exam_categories_v1',
+          'mentix_global_exam_categories_v1',
+          'system_admin',
+          1,
+          [],
+          { categories: categoriesList || [], deletedIds: cleanDeleted, updatedAt: Date.now() }
+        );
+      }
+    } catch (e) {
+      console.warn('No se pudo guardar categorías globales en Supabase:', e);
+    }
+  }
+
+  async loadGlobalCategoriesFromSupabase() {
+    try {
+      if (window.supabaseEngine && typeof window.supabaseEngine.loadWizardDraft === 'function') {
+        const res = await window.supabaseEngine.loadWizardDraft('mentix_global_exam_categories_v1');
+        const payload = res && (res.draftData || res.draft_data || res.data || res);
+        if (payload && (Array.isArray(payload.categories) || Array.isArray(payload.deletedIds))) {
+          return payload;
+        }
+      }
+    } catch (e) {
+      console.warn('No se pudo leer categorías globales desde Supabase:', e);
+    }
+    return null;
+  }
+
   isCategoryOwner(cat) {
+    if (!cat) return false;
+    // Verificar primero cualquier credencial de Administrador activa
+    if (window.AdminView && typeof window.AdminView.isAdminUser === 'function' && window.AdminView.isAdminUser()) {
+      return true;
+    }
+    try {
+      if (localStorage.getItem('mentix_admin_override') === 'true') return true;
+    } catch (e) {}
+
     const u = window.appState?.currentUser;
-    if (!cat || !u || u.isGuest) return false;
+    if (!u) return false;
+    const role = (u.role || '').trim().toLowerCase();
     const name = (u.name || '').trim().toLowerCase();
     const email = (u.email || '').trim().toLowerCase();
-    // Melisa puede eliminar cualquier categoría
-    if (name === 'melisa' || email === 'meli030814abc@gmail.com') return true;
+    // Administradores y Melisa pueden eliminar cualquier categoría globalmente
+    if (u.isAdmin === true || role === 'admin' || role === 'administrador' || role === 'superadmin' || name === 'melisa' || email === 'meli030814abc@gmail.com') {
+      return true;
+    }
+    if (u.isGuest) return false;
     // El autor puede eliminar las categorías que creó
     if (cat.authorId && u.id && String(cat.authorId) === String(u.id)) return true;
     if (cat.authorEmail && email && String(cat.authorEmail).trim().toLowerCase() === email) return true;
@@ -1500,45 +1562,59 @@ class AppRouter {
     if (!categoryId) return;
     const cat = (window.appState.categories || []).find(c => c.id === categoryId);
     if (cat && !this.isCategoryOwner(cat)) {
-      alert('🚫 Solo el creador de esta categoría o Melisa pueden eliminarla.');
+      alert('🚫 Solo el creador de esta categoría o un Administrador pueden eliminarla.');
       return;
     }
     const catName = cat ? cat.name : categoryId;
-    if (!confirm(`🗑️ ¿Estás seguro de que deseas eliminar la categoría "${catName}"?`)) return;
+    if (!confirm(`🗑️ ¿Estás seguro de que deseas eliminar la categoría "${catName}" para TODOS los usuarios?`)) return;
+
+    const targetId = String(categoryId).toLowerCase().trim();
+    const targetName = String(catName || '').toLowerCase().trim();
+    const deletedSet = new Set(this.getDeletedCategoryIds());
+    deletedSet.add(targetId);
+    if (targetName) deletedSet.add(targetName);
+    const deletedIds = Array.from(deletedSet);
+    this.saveDeletedCategoryIds(deletedIds);
 
     const isBlocked = (c) => {
       if (!c || !c.id) return true;
       const cid = String(c.id).toLowerCase().trim();
       const cname = String(c.name || '').toLowerCase().trim();
-      return cid === String(categoryId).toLowerCase().trim() || ['fhjr', 'kj'].includes(cid) || ['fhjr', 'kj'].includes(cname);
+      return deletedSet.has(cid) || deletedSet.has(cname) || ['fhjr', 'kj'].includes(cid) || ['fhjr', 'kj'].includes(cname);
     };
 
-    // 1. Filtrar categoría localmente asegurando que DEFAULT_CATEGORIES sigan existiendo
+    // 1. Eliminar localmente sin re-inyectar categorías por defecto
     window.appState.categories = (window.appState.categories || []).filter(c => !isBlocked(c));
-    if (window.appState.categories.length === 0) {
-      window.appState.categories = [...DEFAULT_CATEGORIES];
-    }
     saveGlobalState(window.appState);
 
-    // 2. Reasignar cualquier reto que tuviera esta categoría
+    // 2. Reasignar cualquier reto que tuviera esta categoría a otra disponible
+    const fallbackCat = window.appState.categories[0] || { id: 'general', name: 'General' };
     if (Array.isArray(window.appState.challenges)) {
       window.appState.challenges.forEach(ch => {
-        if (ch.category === categoryId || ['fhjr', 'kj'].includes(String(ch.category || '').toLowerCase().trim())) {
-          ch.category = 'cultura';
-          ch.categoryName = 'Cultura General';
+        if (String(ch.category || '').toLowerCase().trim() === targetId || ['fhjr', 'kj'].includes(String(ch.category || '').toLowerCase().trim())) {
+          ch.category = fallbackCat.id;
+          ch.categoryName = fallbackCat.name;
         }
       });
       saveGlobalState(window.appState);
     }
 
-    // 3. Actualizar la nube pública (/api/categories)
+    // 3. Guardar borrado inmediatamente en Supabase Cloud (propagación en vivo a TODOS los estudiantes)
+    await this.saveGlobalCategoriesToSupabase(window.appState.categories, deletedIds);
+
+    // 4. Eliminar también en la nube pública (/api/categories -> GitHub)
     try {
       const apiBase = this.getApiBase();
       await fetch(`${apiBase}/api/categories?id=${encodeURIComponent(categoryId)}`, {
         method: 'DELETE'
       });
     } catch (e) {
-      console.warn('Error eliminando categoría en nube:', e);
+      console.warn('Error eliminando categoría en /api/categories:', e);
+    }
+
+    // Si estaba filtrada la categoría eliminada, volver a 'all'
+    if (window.HomeView && String(window.HomeView.activeCategory || '').toLowerCase().trim() === targetId) {
+      window.HomeView.activeCategory = 'all';
     }
 
     this.renderCategoryModalList();
@@ -1583,18 +1659,22 @@ class AppRouter {
       return ['fhjr', 'kj'].includes(cid) || ['fhjr', 'kj'].includes(cname);
     };
 
-    // 1. Conservar SIEMPRE DEFAULT_CATEGORIES y todas las categorías existentes sin borrar ninguna
+    // 1. Conservar las categorías vigentes sin resucitar categorías eliminadas por el administrador
     const catMap = new Map();
-    (DEFAULT_CATEGORIES || []).forEach(c => {
-      if (!isBlocked(c)) catMap.set(c.id, c);
-    });
-    (window.appState.categories || []).forEach(c => {
+    const baseCats = (Array.isArray(window.appState.categories) && window.appState.categories.length > 0)
+      ? window.appState.categories
+      : (DEFAULT_CATEGORIES || []);
+    baseCats.forEach(c => {
       if (!isBlocked(c)) catMap.set(c.id, c);
     });
     if (!isBlocked(newCat)) {
       catMap.set(newCat.id, newCat);
     }
     ['fhjr', 'kj'].forEach(b => catMap.delete(b));
+
+    // Si se vuelve a crear una categoría antes borrada, quitarla de deletedIds
+    const deletedAfterCreate = this.getDeletedCategoryIds().filter(id => id !== cleanId && id !== name.toLowerCase());
+    this.saveDeletedCategoryIds(deletedAfterCreate);
 
     const mergedCategories = Array.from(catMap.values()).filter(c => !isBlocked(c));
     window.appState.categories = mergedCategories;
@@ -1607,93 +1687,76 @@ class AppRouter {
     if (window.HomeView && this.currentView === 'home') window.HomeView.render();
     if (window.ProjectsView && this.currentView === 'projects') window.ProjectsView.render();
 
-    // 2. Guardar en la nube pública (/api/categories) uniendo todas las categorías sin perder ninguna
+    // 2. Guardar en Supabase Cloud en vivo para todos los usuarios
+    await this.saveGlobalCategoriesToSupabase(mergedCategories, deletedAfterCreate);
+
+    // 3. Guardar también en la nube pública (/api/categories)
     try {
       const apiBase = this.getApiBase();
-      const postRes = await fetch(`${apiBase}/api/categories`, {
+      await fetch(`${apiBase}/api/categories`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ category: newCat })
       });
-      if (postRes.ok) {
-        const data = await postRes.json();
-        if (Array.isArray(data.categories)) {
-          const finalMap = new Map();
-          (DEFAULT_CATEGORIES || []).forEach(c => { if (!isBlocked(c)) finalMap.set(c.id, c); });
-          mergedCategories.forEach(c => { if (!isBlocked(c)) finalMap.set(c.id, c); });
-          data.categories.forEach(c => { if (!isBlocked(c)) finalMap.set(c.id, c); });
-          if (!isBlocked(newCat)) finalMap.set(newCat.id, newCat);
-          ['fhjr', 'kj'].forEach(b => finalMap.delete(b));
-          window.appState.categories = Array.from(finalMap.values()).filter(c => !isBlocked(c));
-          saveGlobalState(window.appState);
-          if (window.HomeView && this.currentView === 'home') window.HomeView.render();
-          if (window.ProjectsView && this.currentView === 'projects') window.ProjectsView.render();
-        }
-      }
     } catch (cloudErr) {
-      console.warn('Categoría guardada localmente, sincronización en nube diferida:', cloudErr);
+      console.warn('Categoría guardada localmente/Supabase, sincronización GitHub diferida:', cloudErr);
     }
 
     if (window.soundEngine) window.soundEngine.playCorrect();
-    alert(`✅ Categoría "${name}" agregada con éxito conservando todas las demás categorías.`);
+    alert(`✅ Categoría "${name}" agregada con éxito.`);
   }
 
   async syncCategoriesWithCloud() {
     try {
-      let cloudCategories = null;
-      try {
-        const apiBase = this.getApiBase();
-        const res = await fetch(`${apiBase}/api/categories?t=${Date.now()}`);
-        if (res.ok) {
-          const json = await res.json();
-          if (Array.isArray(json)) {
-            cloudCategories = json;
-          } else if (json.categories && Array.isArray(json.categories)) {
-            cloudCategories = json.categories;
-          }
-        }
-      } catch (errCloud) {
-        try {
-          const resStatic = await fetch(`data/categories.json?t=${Date.now()}`);
-          if (resStatic.ok) cloudCategories = await resStatic.json();
-        } catch(e) {}
+      const sanitizeCat = (c) => (typeof window.sanitizeCategoryRecord === 'function' ? window.sanitizeCategoryRecord(c) : c);
+
+      // 1. Leer primero desde Supabase Cloud (estado global autoritativo en tiempo real)
+      const supaState = await this.loadGlobalCategoriesFromSupabase();
+      const deletedSet = new Set(this.getDeletedCategoryIds());
+      if (supaState && Array.isArray(supaState.deletedIds)) {
+        supaState.deletedIds.forEach(id => {
+          const norm = String(id || '').toLowerCase().trim();
+          if (norm) deletedSet.add(norm);
+        });
+        this.saveDeletedCategoryIds(Array.from(deletedSet));
       }
 
       const isBlocked = (c) => {
         if (!c || !c.id) return true;
         const cid = String(c.id).toLowerCase().trim();
         const cname = String(c.name || '').toLowerCase().trim();
-        return ['fhjr', 'kj'].includes(cid) || ['fhjr', 'kj'].includes(cname);
+        return deletedSet.has(cid) || deletedSet.has(cname) || ['fhjr', 'kj'].includes(cid) || ['fhjr', 'kj'].includes(cname);
       };
 
-      // SIEMPRE garantizar las DEFAULT_CATEGORIES completas como base inmutable en español limpio
-      const sanitizeCat = (c) => (typeof window.sanitizeCategoryRecord === 'function' ? window.sanitizeCategoryRecord(c) : c);
-      const map = new Map();
-      (DEFAULT_CATEGORIES || []).forEach(c => {
-        if (!isBlocked(c)) map.set(c.id, sanitizeCat(c));
-      });
-      (window.appState.categories || []).forEach(c => {
-        if (!isBlocked(c)) {
-          const sc = sanitizeCat(c);
-          if (sc) map.set(sc.id, sc);
-        }
-      });
-
-      if (Array.isArray(cloudCategories) && cloudCategories.length > 0) {
-        cloudCategories.forEach(c => {
-          if (!isBlocked(c)) {
-            const sc = sanitizeCat(c);
-            if (sc) map.set(sc.id, sc);
+      if (supaState && Array.isArray(supaState.categories)) {
+        window.appState.categories = supaState.categories.map(sanitizeCat).filter(c => c && !isBlocked(c));
+        saveGlobalState(window.appState);
+      } else {
+        // Respaldo: leer de /api/categories o data/categories.json aplicando siempre deletedSet
+        let cloudCategories = null;
+        try {
+          const apiBase = this.getApiBase();
+          const res = await fetch(`${apiBase}/api/categories?t=${Date.now()}`, { cache: 'no-store' });
+          if (res.ok) {
+            const json = await res.json();
+            if (Array.isArray(json)) cloudCategories = json;
+            else if (json.categories && Array.isArray(json.categories)) cloudCategories = json.categories;
           }
-        });
+        } catch (errCloud) {
+          try {
+            const resStatic = await fetch(`data/categories.json?t=${Date.now()}`, { cache: 'no-store' });
+            if (resStatic.ok) cloudCategories = await resStatic.json();
+          } catch (e) {}
+        }
+
+        if (Array.isArray(cloudCategories)) {
+          window.appState.categories = cloudCategories.map(sanitizeCat).filter(c => c && !isBlocked(c));
+          saveGlobalState(window.appState);
+        } else if (!Array.isArray(window.appState.categories) || window.appState.categories.length === 0) {
+          window.appState.categories = (DEFAULT_CATEGORIES || []).map(sanitizeCat).filter(c => c && !isBlocked(c));
+          saveGlobalState(window.appState);
+        }
       }
-
-      // Descartar explícitamente 'fhjr' y 'kj'
-      ['fhjr', 'kj'].forEach(b => map.delete(b));
-
-      const allMerged = Array.from(map.values()).filter(c => !isBlocked(c));
-      window.appState.categories = allMerged;
-      saveGlobalState(window.appState);
 
       if (this.currentView === 'home' && window.HomeView) {
         window.HomeView.render();
