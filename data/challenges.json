@@ -112,10 +112,10 @@
       {
         "title": "Desarrollo",
         "description": "Construcción de la solución y prototipos.",
-        "progress": 0,
-        "status": "pending",
-        "icon": "code",
-        "emoji": "💻"
+        "status": "active",
+        "progress": 90,
+        "emoji": "💻",
+        "icon": "clipboard"
       },
       {
         "title": "Publicación",
@@ -208,10 +208,10 @@
         {
           "title": "Desarrollo",
           "description": "Construcción de la solución y prototipos.",
-          "progress": 0,
-          "status": "pending",
-          "icon": "code",
-          "emoji": "💻"
+          "status": "active",
+          "progress": 90,
+          "emoji": "💻",
+          "icon": "clipboard"
         },
         {
           "title": "Publicación",
@@ -269,7 +269,7 @@
         "collaborators": "63556"
       },
       "createdAt": "2026-11-20T23:43:24.796Z",
-      "updatedAt": "2026-11-21T00:22:55.393Z",
+      "updatedAt": "2026-11-21T00:23:00.721Z",
       "progress": 55,
       "calculatedProgress": 55
     },
@@ -283,7 +283,7 @@
     "authorAvatar": "🐯",
     "authorRole": "Líder del Proyecto",
     "createdAt": "2026-11-20T23:43:24.796Z",
-    "updatedAt": "2026-11-21T00:22:54.477Z",
+    "updatedAt": "2026-11-21T00:22:59.793Z",
     "image": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
     "rejectionReason": "",
     "tag": "⏳ Pendiente de Autorización",
