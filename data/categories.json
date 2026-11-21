@@ -1,12 +1,5 @@
 [
   {
-    "id": "lenguaje",
-    "name": "Lenguaje y Literatura",
-    "icon": "📚",
-    "color": "#f72585",
-    "count": 14
-  },
-  {
     "id": "sociales",
     "name": "Ciencias Sociales",
     "icon": "🌎",
