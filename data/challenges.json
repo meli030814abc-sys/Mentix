@@ -1713,7 +1713,7 @@
         "collaborators": "hdfud"
       },
       "createdAt": "2026-11-23T03:09:16.957Z",
-      "updatedAt": "2026-11-23T21:09:10.994Z",
+      "updatedAt": "2026-11-23T21:09:16.314Z",
       "progress": 100,
       "calculatedProgress": 100
     },
@@ -1727,7 +1727,7 @@
     "authorAvatar": "🐯",
     "authorRole": "Líder del Proyecto",
     "createdAt": "2026-11-23T03:09:16.957Z",
-    "updatedAt": "2026-11-23T21:09:14.864Z",
+    "updatedAt": "2026-11-23T21:09:17.652Z",
     "image": "https://static.vecteezy.com/system/resources/thumbnails/060/843/811/small/close-up-of-raindrops-on-leaves-hd-background-luxury-hd-wallpaper-image-trendy-background-illustration-free-photo.jpg",
     "rejectionReason": "Desautorizado por el Administrador (oculto al público).",
     "tag": "✔ Completado",
@@ -2090,8 +2090,8 @@
             "layout": "full",
             "isFullImage": true,
             "isImported": true,
-            "media": "",
-            "imageUrl": "",
+            "media": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fgovdata_code_mentilona_804263%2F1795468154762_td1u_slide_11.jpg",
+            "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fgovdata_code_mentilona_804263%2F1795468154762_td1u_slide_11.jpg",
             "notes": "Mide el grado en que un conjunto de información es exacto, completo, coherente, oportuno y válido para el propósito previsto",
             "bgColor": "#ffffff",
             "themeId": "cosmos"
