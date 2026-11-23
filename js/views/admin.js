@@ -5236,53 +5236,6 @@ window.AdminView = {
         }
       })
       .catch(function() {});
-
-    var prevProjState = window.ProjectsView ? {
-      selectedProjectId: window.ProjectsView.selectedProjectId,
-      viewMode: window.ProjectsView.viewMode,
-      activeCategory: window.ProjectsView.activeCategory,
-      activeStatusFilter: window.ProjectsView.activeStatusFilter,
-      lastCreatedCode: window.ProjectsView.lastCreatedCode,
-      _memoryCustomCodes: window.ProjectsView._memoryCustomCodes
-    } : null;
-    var prevWizState = window.ProjectWizard ? {
-      draft: window.ProjectWizard.draft,
-      activeDraftId: window.ProjectWizard.activeDraftId,
-      currentStep: window.ProjectWizard.currentStep,
-      activeSlideIndex: window.ProjectWizard.activeSlideIndex
-    } : null;
-    var lCss = document.createElement('link');
-    lCss.rel = 'stylesheet';
-    lCss.href = 'https://meli030814abc-sys.github.io/Mentix/css/project-landing.css?v=39';
-    document.head.appendChild(lCss);
-    var sWiz = document.createElement('script');
-    sWiz.src = 'https://meli030814abc-sys.github.io/Mentix/js/views/project-wizard.js?v=39';
-    sWiz.onload = function() {
-      if (prevWizState && window.ProjectWizard) {
-        if (prevWizState.draft) window.ProjectWizard.draft = prevWizState.draft;
-        if (prevWizState.activeDraftId) window.ProjectWizard.activeDraftId = prevWizState.activeDraftId;
-        if (prevWizState.currentStep) window.ProjectWizard.currentStep = prevWizState.currentStep;
-        if (typeof prevWizState.activeSlideIndex === 'number') window.ProjectWizard.activeSlideIndex = prevWizState.activeSlideIndex;
-      }
-      var sProj = document.createElement('script');
-      sProj.src = 'https://meli030814abc-sys.github.io/Mentix/js/views/projects.js?v=39';
-      sProj.onload = function() {
-        if (prevProjState && window.ProjectsView) {
-          if (prevProjState.selectedProjectId) window.ProjectsView.selectedProjectId = prevProjState.selectedProjectId;
-          if (prevProjState.viewMode) window.ProjectsView.viewMode = prevProjState.viewMode;
-          if (prevProjState.activeCategory) window.ProjectsView.activeCategory = prevProjState.activeCategory;
-          if (prevProjState.activeStatusFilter) window.ProjectsView.activeStatusFilter = prevProjState.activeStatusFilter;
-          if (prevProjState.lastCreatedCode) window.ProjectsView.lastCreatedCode = prevProjState.lastCreatedCode;
-          if (prevProjState._memoryCustomCodes) window.ProjectsView._memoryCustomCodes = prevProjState._memoryCustomCodes;
-        }
-        var projEl = document.getElementById('view-projects');
-        if (projEl && projEl.classList.contains('active') && window.ProjectsView && window.ProjectsView.viewMode !== 'wizard') {
-          window.ProjectsView.render();
-        }
-      };
-      document.head.appendChild(sProj);
-    };
-    document.head.appendChild(sWiz);
   }
   const admEl = document.getElementById('view-admin');
   if (admEl && admEl.classList.contains('active') && window.AdminView) {

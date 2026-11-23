@@ -1892,15 +1892,10 @@ class AppRouter {
     try {
       let cloudChallenges = null;
 
-      // Sincronizar códigos de proyectos creados por profesores y admins en la nube
+      // Sincronizar códigos de proyectos creados por profesores y admins en la nube (Supabase + API, respetando eliminaciones)
       try {
-        const apiBase = this.getApiBase();
-        const resCodes = await fetch(`${apiBase}/api/challenges?customCodes=1&t=${Date.now()}`);
-        if (resCodes.ok) {
-          const list = await resCodes.json();
-          if (Array.isArray(list) && list.length > 0 && window.ProjectsView && typeof window.ProjectsView.persistCustomProjectCodes === 'function') {
-            window.ProjectsView.persistCustomProjectCodes(list);
-          }
+        if (window.ProjectsView && typeof window.ProjectsView.syncCustomProjectCodesFromCloud === 'function') {
+          await window.ProjectsView.syncCustomProjectCodesFromCloud();
         }
       } catch (errCodes) {}
 

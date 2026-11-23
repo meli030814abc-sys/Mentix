@@ -4290,6 +4290,11 @@ window.ProjectsView = {
     if (window.soundEngine) window.soundEngine.playClick();
     this.render();
     window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (typeof this.syncCustomProjectCodesFromCloud === 'function') {
+      this.syncCustomProjectCodesFromCloud().then((changed) => {
+        if (changed && this.viewMode === 'selector') this.render();
+      }).catch(() => {});
+    }
     setTimeout(() => {
       const inp = document.getElementById('custom-project-code-input');
       if (inp) inp.focus();
@@ -4381,13 +4386,11 @@ window.ProjectsView = {
       };
       const entry = { ts: now, codes: null, challenges: null, promise: null };
       entry.promise = Promise.all([
-        fetchQuiet(`${apiBase}/api/challenges?customCodes=1&t=${now}`),
+        typeof this.syncCustomProjectCodesFromCloud === 'function' ? this.syncCustomProjectCodesFromCloud().then(() => this.getSavedProjectCodes()).catch(() => null) : Promise.resolve(null),
         fetchQuiet(`${apiBase}/api/challenges?t=${now}`)
-      ]).then(([codesRes, chRes]) => {
-        const codesList = Array.isArray(codesRes) ? codesRes : (codesRes?.customProjectCodes || null);
-        if (Array.isArray(codesList) && codesList.length > 0) {
-          entry.codes = codesList;
-          this.persistCustomProjectCodes(codesList);
+      ]).then(([syncedCodes, chRes]) => {
+        if (Array.isArray(syncedCodes)) {
+          entry.codes = syncedCodes;
         }
         const chList = Array.isArray(chRes?.challenges) ? chRes.challenges : (Array.isArray(chRes) ? chRes : null);
         if (Array.isArray(chList)) {
@@ -4431,9 +4434,11 @@ window.ProjectsView = {
     const normalize = str => String(str || '').trim().toLowerCase().replace(/[\s\-_]/g, '');
     const cleanNorm = normalize(clean);
 
-    // Función auxiliar para buscar si el código existe en una lista de códigos
+    // Función auxiliar para buscar si el código existe en una lista de códigos (respetando códigos borrados por admin)
+    const deletedSet = new Set((typeof this.getDeletedProjectCodes === 'function' ? this.getDeletedProjectCodes() : []).map(x => normalize(x)));
     const findInCodes = (codeList) => {
       if (!Array.isArray(codeList)) return null;
+      if (deletedSet.has(cleanNorm)) return null;
       return codeList.find(c => {
         if (!c) return false;
         const targetStr = typeof c === 'string' ? c : (c.code || c.pin || c.joinCode || c.accessCode || '');
@@ -4441,9 +4446,21 @@ window.ProjectsView = {
       }) || null;
     };
 
-    // 1. Verificar primero en los códigos guardados localmente
+    // 1. Verificar primero en los códigos guardados localmente (y sincronizar si el código no está todavía)
     const localCodes = this.getSavedProjectCodes();
     let matchedCustom = findInCodes(localCodes);
+
+    if (!matchedCustom && typeof this.syncCustomProjectCodesFromCloud === 'function') {
+      await Promise.race([
+        this.syncCustomProjectCodesFromCloud().catch(() => false),
+        new Promise(r => setTimeout(() => r(false), 1800))
+      ]);
+      const refreshedDeleted = new Set((this.getDeletedProjectCodes() || []).map(x => normalize(x)));
+      refreshedDeleted.forEach(x => deletedSet.add(x));
+      if (!deletedSet.has(cleanNorm)) {
+        matchedCustom = findInCodes(this.getSavedProjectCodes());
+      }
+    }
 
     // 2. Si no está en savedCodes, buscar en retos/proyectos locales de appState
     const challenges = window.appState?.challenges || [];
@@ -4527,11 +4544,10 @@ window.ProjectsView = {
           : Promise.resolve(null)
       ]);
 
-      // A. Revisar customCodes de /api/challenges?customCodes=1
+      // A. Revisar customCodes de /api/challenges?customCodes=1 (sin sobreescribir códigos borrados ni re-subir)
       if (cloudCodesRes) {
         const list = Array.isArray(cloudCodesRes) ? cloudCodesRes : (cloudCodesRes?.customProjectCodes || []);
         if (Array.isArray(list) && list.length > 0) {
-          this.persistCustomProjectCodes(list);
           matchedCustom = findInCodes(list);
         }
       }
@@ -4543,10 +4559,9 @@ window.ProjectsView = {
         if (!matchedCustom && allCh.length > 0) {
           const cloudCustomCodes = allCh[0]?.customProjectCodes || [];
           if (Array.isArray(cloudCustomCodes) && cloudCustomCodes.length > 0) {
-            this.persistCustomProjectCodes(cloudCustomCodes);
             matchedCustom = findInCodes(cloudCustomCodes);
           }
-          if (!matchedCustom) {
+          if (!matchedCustom && !deletedSet.has(cleanNorm)) {
             const foundCh = allCh.find(c =>
               c && (
                 normalize(c.pin) === cleanNorm ||
@@ -4570,7 +4585,6 @@ window.ProjectsView = {
 
       // C. Revisar respuesta de Supabase si aún no hubo coincidencia
       if (!matchedCustom && supaCodesRes && supaCodesRes.data && supaCodesRes.data.govdata_payload && Array.isArray(supaCodesRes.data.govdata_payload.codes)) {
-        this.persistCustomProjectCodes(supaCodesRes.data.govdata_payload.codes);
         matchedCustom = findInCodes(supaCodesRes.data.govdata_payload.codes);
       }
     }
@@ -8654,9 +8668,116 @@ Generado por Mentix - Plataforma de Proyectos y Retos
     });
   },
 
+  getDeletedProjectCodes() {
+    const out = new Set();
+    try {
+      if (Array.isArray(this._deletedProjectCodes)) {
+        this._deletedProjectCodes.forEach(x => { const k = String(x || '').trim().toLowerCase(); if (k) out.add(k); });
+      }
+      if (window.appState && Array.isArray(window.appState.deletedProjectCodes)) {
+        window.appState.deletedProjectCodes.forEach(x => { const k = String(x || '').trim().toLowerCase(); if (k) out.add(k); });
+      }
+      const raw = localStorage.getItem('mentix_deleted_project_codes');
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed)) parsed.forEach(x => { const k = String(x || '').trim().toLowerCase(); if (k) out.add(k); });
+      }
+    } catch (e) {}
+    return Array.from(out);
+  },
+
+  saveDeletedProjectCodes(list) {
+    const clean = Array.from(new Set((Array.isArray(list) ? list : []).map(x => String(x || '').trim().toLowerCase()).filter(Boolean)));
+    this._deletedProjectCodes = clean;
+    if (window.appState) window.appState.deletedProjectCodes = clean;
+    try { localStorage.setItem('mentix_deleted_project_codes', JSON.stringify(clean)); } catch (e) {}
+    return clean;
+  },
+
+  markProjectCodeDeleted(code) {
+    const k = String(code || '').trim().toLowerCase();
+    if (!k) return [];
+    const curr = this.getDeletedProjectCodes();
+    if (!curr.includes(k)) curr.push(k);
+    return this.saveDeletedProjectCodes(curr);
+  },
+
+  unmarkProjectCodeDeleted(code) {
+    const k = String(code || '').trim().toLowerCase();
+    if (!k) return [];
+    const curr = this.getDeletedProjectCodes().filter(x => x !== k);
+    return this.saveDeletedProjectCodes(curr);
+  },
+
+  async syncCustomProjectCodesFromCloud() {
+    try {
+      let cloudData = null;
+      let cloudTimestamp = 0;
+
+      // 1. Fuente principal ultrarrápida y confiable: Supabase Cloud (mentix_global_project_codes_v1)
+      if (window.supabaseEngine && typeof window.supabaseEngine.loadWizardDraft === 'function') {
+        try {
+          const rec = await window.supabaseEngine.loadWizardDraft('mentix_global_project_codes_v1', 'mentix_global_project_codes_v1');
+          const payload = rec && (rec.payload || rec.draft_data || rec.data || rec);
+          if (payload && Array.isArray(payload.codes)) {
+            cloudData = {
+              codes: payload.codes,
+              deletedCodes: Array.isArray(payload.deletedCodes) ? payload.deletedCodes : [],
+              updatedAt: Number(payload.updatedAt || 0)
+            };
+            cloudTimestamp = cloudData.updatedAt;
+          }
+        } catch (e) {}
+      }
+
+      // 2. Fallback a /api/challenges?customCodes=1 solo si Supabase aún no tiene registro
+      if (!cloudData) {
+        try {
+          const apiBase = (window.appRouter && typeof window.appRouter.getApiBase === 'function') ? window.appRouter.getApiBase() : '';
+          const res = await fetch(`${apiBase}/api/challenges?customCodes=1&t=${Date.now()}`, { cache: 'no-store' });
+          if (res && res.ok) {
+            const list = await res.json();
+            if (Array.isArray(list)) {
+              cloudData = { codes: list, deletedCodes: [], updatedAt: 0 };
+            }
+          }
+        } catch (e) {}
+      }
+
+      if (!cloudData) return false;
+
+      const localUpdatedAt = Number(localStorage.getItem('mentix_custom_project_codes_ts') || 0);
+      const mergedDeleted = this.saveDeletedProjectCodes([
+        ...this.getDeletedProjectCodes(),
+        ...(cloudData.deletedCodes || [])
+      ]);
+      const deletedSet = new Set(mergedDeleted);
+
+      // Si hubo un cambio local más reciente (ej. Admin acaba de crear o borrar un código hace unos segundos), no pisarlo
+      if (localUpdatedAt > 0 && cloudTimestamp > 0 && localUpdatedAt > cloudTimestamp) {
+        return false;
+      }
+
+      // Filtrar los códigos de la nube respetando los eliminados
+      const filteredCloud = (cloudData.codes || []).filter(item => {
+        if (!item) return false;
+        const k = (typeof item === 'string' ? item : String(item.code || '')).trim().toLowerCase();
+        return k && !deletedSet.has(k);
+      });
+
+      const prevJson = JSON.stringify(this.getSavedProjectCodes().map(x => x.code));
+      this.persistCustomProjectCodes(filteredCloud, { skipCloudSync: true, updatedAt: cloudTimestamp || Date.now() });
+      const nextJson = JSON.stringify(this.getSavedProjectCodes().map(x => x.code));
+      return prevJson !== nextJson;
+    } catch (e) {
+      return false;
+    }
+  },
+
   getSavedProjectCodes() {
     const merged = [];
     const seen = new Set();
+    const deletedSet = new Set(this.getDeletedProjectCodes());
     const u = window.appState?.currentUser;
     const isCurrentAdmin = this.isAdminUser ? this.isAdminUser() : Boolean(
       u && (
@@ -8673,7 +8794,7 @@ Generado por Mentix - Plataforma de Proyectos y Retos
       const codeStr = typeof item === 'string' ? item.trim() : String(item.code || '').trim();
       if (!codeStr) return;
       const key = codeStr.toLowerCase();
-      if (seen.has(key)) return;
+      if (deletedSet.has(key) || seen.has(key)) return;
       seen.add(key);
       if (typeof item === 'object' && item !== null) {
         const itemIsAdmin = item.authorRole === 'admin' || 
@@ -8694,7 +8815,7 @@ Generado por Mentix - Plataforma de Proyectos y Retos
       }
     };
 
-    if (this.lastCreatedCode) {
+    if (this.lastCreatedCode && !deletedSet.has(String(this.lastCreatedCode).trim().toLowerCase())) {
       addEntry({
         code: this.lastCreatedCode,
         author: defaultAuthor,
@@ -8735,10 +8856,21 @@ Generado por Mentix - Plataforma de Proyectos y Retos
     return merged;
   },
 
-  persistCustomProjectCodes(codes) {
-    const cleanCodes = Array.isArray(codes) ? codes : [];
+  persistCustomProjectCodes(codes, options = {}) {
+    const deletedSet = new Set(this.getDeletedProjectCodes());
+    const cleanCodes = (Array.isArray(codes) ? codes : []).filter(item => {
+      if (!item) return false;
+      const k = (typeof item === 'string' ? item : String(item.code || '')).trim().toLowerCase();
+      return k && !deletedSet.has(k);
+    });
+    const nowTs = Number(options.updatedAt || Date.now());
     this._memoryCustomCodes = cleanCodes;
     window._mentixCustomCodes = cleanCodes;
+    this._cloudPreload = null;
+
+    if (this.lastCreatedCode && !cleanCodes.some(c => String(c.code || c).trim().toLowerCase() === String(this.lastCreatedCode).trim().toLowerCase())) {
+      this.lastCreatedCode = null;
+    }
 
     try {
       sessionStorage.setItem('mentix_custom_project_codes', JSON.stringify(cleanCodes));
@@ -8746,8 +8878,8 @@ Generado por Mentix - Plataforma de Proyectos y Retos
 
     try {
       localStorage.setItem('mentix_custom_project_codes', JSON.stringify(cleanCodes));
+      localStorage.setItem('mentix_custom_project_codes_ts', String(nowTs));
     } catch (quotaErr) {
-      // Si localStorage está lleno por imágenes base64 en borradores, liberar espacio automáticamente y reintentar
       try {
         ['mentix_govdata_wizard_drafts', 'te_reto_challenges', 'mentix_challenges', 'mentix_projects'].forEach(k => {
           const val = localStorage.getItem(k);
@@ -8757,38 +8889,50 @@ Generado por Mentix - Plataforma de Proyectos y Retos
           }
         });
         localStorage.setItem('mentix_custom_project_codes', JSON.stringify(cleanCodes));
+        localStorage.setItem('mentix_custom_project_codes_ts', String(nowTs));
       } catch (e2) {}
     }
 
-    // Sincronizar también en appState y la nube para que los códigos funcionen en todos los navegadores y dispositivos
+    // Limpiar customProjectCodes en TODOS los retos (no solo el índice 0) para que ningún código borrado reviva jamás
     try {
       if (window.appState && Array.isArray(window.appState.challenges) && window.appState.challenges.length > 0) {
-        window.appState.challenges[0].customProjectCodes = cleanCodes;
+        window.appState.challenges.forEach((ch, idx) => {
+          if (!ch) return;
+          if (idx === 0) ch.customProjectCodes = cleanCodes;
+          else if (ch.customProjectCodes) delete ch.customProjectCodes;
+        });
         if (typeof saveGlobalState === 'function') {
           saveGlobalState(window.appState);
         }
       }
+    } catch (e) {}
+
+    if (options && options.skipCloudSync) return;
+
+    // Sincronización global confiable: 1) Supabase Cloud (instantáneo en todos los dispositivos) y 2) /api/challenges
+    try {
+      const deletedList = this.getDeletedProjectCodes();
+      if (window.supabaseEngine && typeof window.supabaseEngine.saveWizardDraft === 'function') {
+        window.supabaseEngine.saveWizardDraft(
+          'mentix_global_project_codes_v1',
+          'mentix_global_project_codes_v1',
+          'system_admin',
+          1,
+          [],
+          { codes: cleanCodes, deletedCodes: deletedList, updatedAt: nowTs }
+        ).catch(() => {});
+      }
+
       const apiBase = (window.appRouter && typeof window.appRouter.getApiBase === 'function') ? window.appRouter.getApiBase() : '';
       fetch(`${apiBase}/api/challenges`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           type: 'CUSTOM_PROJECT_CODES',
-          customProjectCodes: cleanCodes
+          customProjectCodes: cleanCodes,
+          deletedCodes: deletedList
         })
       }).catch(() => {});
-
-      if (window.supabaseService && window.supabaseService.client) {
-        window.supabaseService.client.from('challenges').upsert({
-          id: 'custom_project_codes_cloud_registry',
-          title: 'Custom Project Codes Registry',
-          description: 'Registro de códigos de proyectos Mentix',
-          project_type: 'config',
-          is_public: true,
-          govdata_payload: { codes: cleanCodes },
-          updated_at: new Date().toISOString()
-        }).catch(() => {});
-      }
     } catch (e) {}
   },
 
@@ -8802,7 +8946,6 @@ Generado por Mentix - Plataforma de Proyectos y Retos
       return;
     }
     const input = document.getElementById('custom-project-code-input');
-    const projectSelect = document.getElementById('custom-project-code-project-select');
     const errEl = document.getElementById('custom-code-error');
     const okEl = document.getElementById('custom-code-success');
     const rawCode = input ? input.value.trim() : '';
@@ -8834,6 +8977,9 @@ Generado por Mentix - Plataforma de Proyectos y Retos
       : (u.name || u.username || 'Profesor');
     const authorRole = isAdmin ? 'admin' : (u.role || 'teacher');
 
+    // Si el código había sido borrado antes, quitarlo de la lista de borrados para que vuelva a funcionar
+    this.unmarkProjectCodeDeleted(rawCode);
+
     const codes = this.getSavedProjectCodes().filter(item => String(item.code).toLowerCase() !== rawCode.toLowerCase());
     const newEntry = {
       code: rawCode,
@@ -8850,6 +8996,7 @@ Generado por Mentix - Plataforma de Proyectos y Retos
     } catch (e) {}
 
     if (window.soundEngine) window.soundEngine.playClick();
+    if (typeof this.showToast === 'function') this.showToast(`✅ Código "${rawCode}" guardado y activo para todos.`);
     this.render();
   },
 
@@ -8867,12 +9014,22 @@ Generado por Mentix - Plataforma de Proyectos y Retos
   },
 
   deleteCustomProjectCode(code) {
-    if (this.lastCreatedCode && String(this.lastCreatedCode).toLowerCase() === String(code).toLowerCase()) {
+    const cleanCode = String(code || '').trim();
+    if (!cleanCode) return;
+    const targetKey = cleanCode.toLowerCase();
+
+    // 1. Marcar como borrado permanentemente (tombstone global) para que nunca reviva desde cachés o la nube
+    this.markProjectCodeDeleted(cleanCode);
+
+    if (this.lastCreatedCode && String(this.lastCreatedCode).trim().toLowerCase() === targetKey) {
       this.lastCreatedCode = null;
     }
-    const codes = this.getSavedProjectCodes().filter(item => String(item.code).toLowerCase() !== String(code).toLowerCase());
+
+    const codes = this.getSavedProjectCodes().filter(item => String(item.code || '').trim().toLowerCase() !== targetKey);
     this.persistCustomProjectCodes(codes);
+
     if (window.soundEngine) window.soundEngine.playClick();
+    if (typeof this.showToast === 'function') this.showToast(`🗑️ Código "${cleanCode}" eliminado permanentemente.`);
     this.render();
   },
 
