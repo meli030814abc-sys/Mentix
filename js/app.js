@@ -1285,6 +1285,7 @@ class AppRouter {
     localStorage.setItem('te_reto_session', '1');
     this.closeModal('auth-modal');
     this.updateNavbar();
+    this.syncChallengesWithCloud(true);
     if (message) alert(message);
   }
 
@@ -1994,7 +1995,18 @@ class AppRouter {
         console.warn('No se pudo conectar a /api/challenges:', errApi);
       }
 
-      // 2. Fallback a archivo estático data/challenges.json
+      // 2. Fallback directo a la rama de base de datos global mentix-data en GitHub y luego a data/challenges.json local
+      if (!cloudChallenges) {
+        try {
+          const resRawGh = await fetch(`https://raw.githubusercontent.com/meli030814abc-sys/Mentix/mentix-data/data/challenges.json?t=${Date.now()}`, { cache: 'no-store' });
+          if (resRawGh.ok) {
+            const jsonRawGh = await resRawGh.json();
+            if (Array.isArray(jsonRawGh) && jsonRawGh.length > 0) {
+              cloudChallenges = jsonRawGh;
+            }
+          }
+        } catch(e) {}
+      }
       if (!cloudChallenges) {
         try {
           const resStatic = await fetch(`data/challenges.json?t=${Date.now()}`, { cache: 'no-store' });
@@ -2007,7 +2019,12 @@ class AppRouter {
         } catch(e) {}
       }
 
-      // Retos eliminados: quitarlos de la nube y de este dispositivo
+      // Retos eliminados: quitarlos de la nube y de este dispositivo (sin ocultar nunca proyectos autorizados vigentes en la nube)
+      const cloudApprovedIds = new Set(
+        (Array.isArray(cloudChallenges) ? cloudChallenges : [])
+          .filter(c => c && c.id && c.approvalStatus === 'approved' && !c.rejectionReason)
+          .map(c => String(c.id))
+      );
       let deletedIds = [];
       try {
         const resDel = await fetch(`${this.getApiBase()}/api/challenges?deleted=1&t=${Date.now()}`, { cache: 'no-store' });
@@ -2018,8 +2035,12 @@ class AppRouter {
       } catch (errDel) {}
       try {
         const own = JSON.parse(localStorage.getItem('te_reto_deleted_ids') || '[]');
-        if (Array.isArray(own)) deletedIds = Array.from(new Set([...deletedIds, ...own]));
+        if (Array.isArray(own)) {
+          const cleanOwn = own.filter(id => !cloudApprovedIds.has(String(id)));
+          deletedIds = Array.from(new Set([...deletedIds, ...cleanOwn]));
+        }
       } catch (e) {}
+      deletedIds = deletedIds.filter(id => !cloudApprovedIds.has(String(id)));
       if (deletedIds.length > 0) {
         const gone = new Set(deletedIds.map(id => String(id)));
         // Persistir globalmente la lista de eliminados en localStorage para que ninguna vista los resucite
@@ -2287,10 +2308,41 @@ class AppRouter {
         const beforeSig = sigOf(local);
         const afterSig = sigOf(merged);
 
-        if (beforeSig !== afterSig) {
-          window.appState.challenges = merged;
-          saveGlobalState(window.appState);
+        window.appState.challenges = merged;
+        saveGlobalState(window.appState);
 
+        // Si en este navegador hay proyectos autorizados por Admin que aún no figuran como 'approved' en la nube, subirlos automáticamente
+        const cloudLookup = new Map((cloudChallenges || []).map(c => [String(c?.id || ''), c]));
+        const unsyncedApproved = merged.filter(p => {
+          if (!p || !p.id || p.projectType === 'quiz' || p.approvalStatus !== 'approved' || p.rejectionReason) return false;
+          const inCloud = cloudLookup.get(String(p.id));
+          return !inCloud || inCloud.approvalStatus !== 'approved' || inCloud.isPublic !== true;
+        });
+        if (unsyncedApproved.length > 0 && !this._pushingUnsyncedApproved) {
+          this._pushingUnsyncedApproved = true;
+          (async () => {
+            try {
+              for (const ap of unsyncedApproved) {
+                const resPush = await this.pushChallengeToCloud(ap);
+                if (resPush && resPush.ok && window.realtimeEngine && typeof window.realtimeEngine.publishProjectAuthSync === 'function') {
+                  window.realtimeEngine.publishProjectAuthSync(ap.id, 'approved', ap.title, {
+                    isPublic: true,
+                    authorizedAt: ap.authorizedAt,
+                    authorizedBy: ap.authorizedBy,
+                    updatedAt: ap.updatedAt
+                  });
+                }
+              }
+            } catch (e) {} finally {
+              this._pushingUnsyncedApproved = false;
+            }
+          })();
+        }
+
+        const shouldRenderNow = !this._initialCloudRenderDone || force === true || beforeSig !== afterSig;
+        this._initialCloudRenderDone = true;
+
+        if (shouldRenderNow) {
           if (this.currentView === 'home' && window.HomeView) {
             window.HomeView.render();
           } else if (this.currentView === 'projects' && window.ProjectsView && window.ProjectsView.viewMode !== 'wizard') {

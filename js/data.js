@@ -485,6 +485,21 @@ function sanitizeProjectSlides(rawSlides, projectTitle = '') {
   return rawSlides.map((s, idx) => {
     if (!s || typeof s !== 'object') return s;
 
+    // Si es una lámina copiada/importada 1:1 (PowerPoint, PDF o imagen completa), NO mover ni aplicar formato de Mentix
+    if (s.isFullImage || s.isImported || s.layout === 'full') {
+      return {
+        ...s,
+        title: cleanFn(s.title || `Diapositiva ${idx + 1}`).trim(),
+        subtitle: '',
+        content: '',
+        bullets: [],
+        layout: 'full',
+        isFullImage: true,
+        isImported: true,
+        media: s.media || s.imageUrl || s.bgImage || ''
+      };
+    }
+
     let title = cleanFn(s.title || `Diapositiva ${idx + 1}`).trim();
     let subtitle = cleanFn(s.subtitle || '').trim();
     let content = cleanFn(s.content || '').trim();
@@ -1118,11 +1133,16 @@ function loadInitialState() {
                 if (exIdx >= 0) {
                   const prev = challenges[exIdx];
                   const keepApproved = prev.approvalStatus === 'approved' || up.approvalStatus === 'approved';
+                  const isGenericTitle = (t) => !t || /^nuevo proyecto(\s+govdata)?$|^proyecto govdata$/i.test(String(t).trim());
+                  const bestTitle = (!isGenericTitle(prev.title) && isGenericTitle(up.title))
+                    ? prev.title
+                    : ((!isGenericTitle(up.title) && isGenericTitle(prev.title)) ? up.title : (prev.title || up.title));
                   const merged = (typeof window.mergeProjectPreservingImages === 'function')
                     ? window.mergeProjectPreservingImages(prev, up)
                     : { ...prev, ...up };
                   challenges[exIdx] = {
                     ...merged,
+                    title: bestTitle || merged.title,
                     slides: pickLongerArr(up.slides, prev.slides, up.govdata?.slides, prev.govdata?.slides, merged.slides),
                     resources: pickLongerArr(up.resources, prev.resources, up.govdata?.resources, prev.govdata?.resources, merged.resources),
                     externalLinks: pickLongerArr(up.externalLinks, prev.externalLinks, up.govdata?.externalLinks, prev.govdata?.externalLinks, merged.externalLinks),
@@ -1134,6 +1154,8 @@ function loadInitialState() {
                     publicationStatus: keepApproved ? 'published' : (up.publicationStatus || prev.publicationStatus),
                     status: keepApproved ? 'completed' : (up.status || prev.status),
                     isPublic: keepApproved ? true : (up.isPublic ?? prev.isPublic),
+                    accessMode: keepApproved ? 'public' : (up.accessMode || prev.accessMode),
+                    visibility: keepApproved ? 'public' : (up.visibility || prev.visibility),
                     authorizedAt: prev.authorizedAt || up.authorizedAt,
                     authorizedBy: prev.authorizedBy || up.authorizedBy,
                     rejectionReason: keepApproved ? '' : (up.rejectionReason || prev.rejectionReason || '')

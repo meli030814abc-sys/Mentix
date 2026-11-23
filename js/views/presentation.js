@@ -416,24 +416,26 @@ window.PresentationView = {
     const currentSlide = slides[this.currentSlideIndex];
     const progressPct = ((this.currentSlideIndex + 1) / slides.length) * 100;
 
-    // Determinar si es una Lámina en Pantalla Completa, Video Explicativo o Diapositiva Dividida
+    // Determinar si es una Lámina en Pantalla Completa (copiada 1:1 sin formato Mentix), Video Explicativo o Diapositiva Dividida
     const isVideoMode = currentSlide.layout === 'video' || Boolean(currentSlide.videoUrl && currentSlide.layout !== 'split' && currentSlide.layout !== 'full');
     const isImportedOrFull = Boolean(
-      (currentSlide.layout === 'full' && !isVideoMode) ||
-      currentSlide.isImported ||
-      p.isImported ||
-      currentSlide.isFullImage ||
-      (currentSlide.media && currentSlide.media.startsWith('data:image/'))
+      !isVideoMode && (
+        currentSlide.layout === 'full' ||
+        currentSlide.isImported ||
+        p.isImported ||
+        currentSlide.isFullImage ||
+        (currentSlide.media && !currentSlide.content && (!Array.isArray(currentSlide.bullets) || currentSlide.bullets.length === 0))
+      )
     );
 
-    const isSplitMode = currentSlide.layout === 'split' || isVideoMode || (!isImportedOrFull && (
+    const isSplitMode = !isImportedOrFull && (currentSlide.layout === 'split' || isVideoMode || (
       (currentSlide.content && currentSlide.content.trim()) ||
       (currentSlide.bullets && currentSlide.bullets.length > 0) ||
       (currentSlide.subtitle && currentSlide.subtitle.trim())
     ));
 
-    const isPureVisualSlide = Boolean(currentSlide.media && !isSplitMode && !isVideoMode && currentSlide.layout === 'full');
-    const slideBg = currentSlide.bgColor || 'linear-gradient(135deg, rgba(20, 15, 38, 0.96), rgba(10, 12, 24, 0.98))';
+    const isPureVisualSlide = Boolean(currentSlide.media && (isImportedOrFull || (!isSplitMode && !isVideoMode)));
+    const slideBg = isPureVisualSlide ? '#1e293b' : (currentSlide.bgColor || 'linear-gradient(135deg, rgba(20, 15, 38, 0.96), rgba(10, 12, 24, 0.98))');
 
     // Si el canvas ya existe en pantalla, actualizar in-place sin destruir el nodo DOM.
     // Esto es fundamental: evita que el navegador salga de Pantalla Completa al pasar de diapositiva.
@@ -521,18 +523,18 @@ window.PresentationView = {
 
     return `
       ${isPureVisualSlide ? `
-        <!-- Diapositiva Visual en Toda la Pantalla (Lámina de PDF/Canva completa) -->
+        <!-- Diapositiva Copiada 1:1 en Toda la Pantalla (PowerPoint / PDF / Imagen sin formato Mentix) -->
         <div 
           class="full-slide-img-container" 
           onclick="window.PresentationView.handleSlideCanvasClick(event)"
-          style="flex: 1; width: 100%; min-height: 520px; display: flex; align-items: center; justify-content: center; background: #000000; position: relative; overflow: hidden; cursor: pointer;"
+          style="flex: 1; width: 100%; min-height: 540px; display: flex; align-items: center; justify-content: center; background: #1e293b; position: relative; overflow: hidden; cursor: pointer; padding: 0;"
           title="Haz clic a la derecha para avanzar, o a la izquierda para retroceder"
         >
           <img 
             src="${currentSlide.media}" 
             alt="${this.escapeHtml(title || 'Diapositiva ' + (this.currentSlideIndex + 1))}" 
             class="full-slide-img"
-            style="width: 100%; height: 100%; max-height: calc(100vh - 210px); min-height: 500px; object-fit: contain; display: block; margin: 0 auto;"
+            style="width: 100%; height: 100%; max-height: calc(100vh - 200px); min-height: 520px; object-fit: contain; display: block; margin: 0 auto; background: #ffffff;"
           />
         </div>
       ` : `
@@ -665,20 +667,27 @@ window.PresentationView = {
   },
 
   renderThumbnailsHtml(slides) {
-    return slides.map((s, idx) => `
+    return slides.map((s, idx) => {
+      const isVisual = Boolean(s.media && (s.isFullImage || s.isImported || s.layout === 'full'));
+      return `
       <div 
         onclick="window.PresentationView.goToSlide(${idx})"
-        style="flex: 0 0 150px; height: 90px; border-radius: 10px; cursor: pointer; padding: 0.6rem; display: flex; flex-direction: column; justify-content: space-between; transition: var(--transition-bounce); ${idx === this.currentSlideIndex ? 'border: 2px solid var(--neon-cyan); background: rgba(0, 245, 212, 0.15);' : 'border: 1px solid var(--border-color); background: rgba(0,0,0,0.3);'}"
+        style="flex: 0 0 154px; height: 92px; border-radius: 10px; cursor: pointer; padding: ${isVisual ? '0' : '0.6rem'}; position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between; transition: var(--transition-bounce); ${idx === this.currentSlideIndex ? 'border: 2.5px solid #ea580c; box-shadow: 0 0 14px rgba(234, 88, 12, 0.45); background: #ffffff;' : 'border: 1.5px solid var(--border-color); background: rgba(0,0,0,0.3);'}"
       >
-        <div style="font-size: 0.75rem; font-weight: 800; color: ${idx === this.currentSlideIndex ? 'var(--neon-cyan)' : 'var(--text-muted)'}; display: flex; justify-content: space-between; align-items: center;">
-          <span>#${idx + 1}</span>
-          ${(s.layout === 'video' || s.videoUrl) ? '<span title="Tiene Video Explicativo">🎬</span>' : (s.media ? '<span title="Tiene Imagen">🖼️</span>' : '')}
-        </div>
-        <div style="font-size: 0.8rem; font-weight: 700; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-          ${this.escapeHtml(s.title || 'Diapositiva ' + (idx + 1))}
-        </div>
+        ${isVisual ? `
+          <img src="${s.media}" alt="Diapositiva ${idx + 1}" style="width: 100%; height: 100%; object-fit: contain; background: #ffffff; display: block;" />
+          <span style="position: absolute; top: 4px; left: 4px; background: rgba(15, 23, 42, 0.82); color: #ffffff; font-size: 0.68rem; font-weight: 900; padding: 1px 6px; border-radius: 6px;">${idx + 1}</span>
+        ` : `
+          <div style="font-size: 0.75rem; font-weight: 800; color: ${idx === this.currentSlideIndex ? 'var(--neon-cyan)' : 'var(--text-muted)'}; display: flex; justify-content: space-between; align-items: center;">
+            <span>#${idx + 1}</span>
+            ${(s.layout === 'video' || s.videoUrl) ? '<span title="Tiene Video Explicativo">🎬</span>' : (s.media ? '<span title="Tiene Imagen">🖼️</span>' : '')}
+          </div>
+          <div style="font-size: 0.8rem; font-weight: 700; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+            ${this.escapeHtml(s.title || 'Diapositiva ' + (idx + 1))}
+          </div>
+        `}
       </div>
-    `).join('');
+    `;}).join('');
   },
 
   renderEditor(container) {
@@ -2000,21 +2009,21 @@ window.PresentationView = {
       return;
     }
 
-    // 3. Presentaciones PowerPoint (.pptx)
+    // 3. Presentaciones PowerPoint (.pptx) — Copia 1:1 idéntica al original sin formato de Mentix
     if (ext === 'pptx') {
       const reader = new FileReader();
       reader.onload = async (e) => {
-        if (filename) filename.textContent = 'Extrayendo diapositivas de PowerPoint...';
-        const slides = await this.extractSlidesFromPPTX(e.target.result);
+        if (filename) filename.textContent = 'Copiando diapositivas de PowerPoint idénticas al original...';
+        const slides = await this.extractSlidesFromPPTX(e.target.result, (cur, tot) => {
+          if (filename) filename.textContent = `Copiando diapositiva ${cur} de ${tot} (idéntica al PowerPoint original)...`;
+        });
         if (slides && slides.length > 0) {
           this.pendingParsedSlides = slides;
-          this.pendingPresentationTitle = baseName;
-          if (textarea) textarea.value = slides.map((s, i) => `## Diapositiva ${i+1}: ${s.title}${s.videoUrl ? '  [🎬 VIDEO]' : (s.isFullImage ? '  [🖼️ IMAGEN]' : '')}\n${(s.bullets || []).map(b => '- ' + b).join('\n')}`).join('\n\n---\n\n');
-          const vCount = slides.filter(s => s.videoUrl).length;
-          const warn = (this.pptxImportWarnings && this.pptxImportWarnings.length) ? ' ⚠️ ' + this.pptxImportWarnings.join(' ') : '';
-          if (filename) filename.textContent = `✅ ¡PowerPoint procesado! Se encontraron ${slides.length} diapositivas${vCount ? ` (${vCount} con video)` : ''}. Haz clic en "Procesar e Importar".${warn}`;
+          this.pendingPresentationTitle = this.pendingPresentationTitle || baseName;
+          if (textarea) textarea.value = `// ✅ ${slides.length} diapositivas de PowerPoint copiadas idénticas al original.\n// Se mostrarán tal cual están (sin mover nada ni aplicar formato de Mentix), solo con Anterior y Siguiente.`;
+          if (filename) filename.textContent = `✅ ¡PowerPoint listo! ${slides.length} diapositivas copiadas idénticas al original. Haz clic en "Procesar e Importar".`;
         } else {
-          if (filename) filename.textContent = `⚠️ No se pudieron descomprimir las diapositivas de PowerPoint. Puedes pegar el texto en el recuadro.`;
+          if (filename) filename.textContent = `⚠️ No se pudieron leer las diapositivas de PowerPoint.`;
         }
       };
       reader.readAsArrayBuffer(file);
@@ -2030,8 +2039,37 @@ window.PresentationView = {
     reader.readAsText(file, 'UTF-8');
   },
 
-  async extractSlidesFromPPTX(arrayBuffer) {
+  async extractSlidesFromPPTX(arrayBuffer, onProgress = null) {
     this.pptxImportWarnings = [];
+    // 0) Renderizador fiel 1:1 (copia cada diapositiva tal como está en PowerPoint sin formato Mentix)
+    if (window.PptxFaithful && typeof window.PptxFaithful.renderDeck === 'function') {
+      try {
+        const rendered = await window.PptxFaithful.renderDeck(arrayBuffer, {
+          maxSide: 1600,
+          onProgress: typeof onProgress === 'function' ? onProgress : undefined
+        });
+        if (rendered && Array.isArray(rendered.slides) && rendered.slides.length > 0) {
+          if (rendered.deckTitle && !this.pendingPresentationTitle) {
+            this.pendingPresentationTitle = rendered.deckTitle;
+          }
+          return rendered.slides.map((s, idx) => ({
+            id: 'slide_' + Date.now() + '_' + idx,
+            title: s.title || `Diapositiva ${idx + 1}`,
+            subtitle: '',
+            content: '',
+            bullets: [],
+            media: s.dataUrl,
+            layout: 'full',
+            isImported: true,
+            isFullImage: true,
+            bgColor: '#ffffff',
+            teacherNotes: s.notes || ''
+          }));
+        }
+      } catch (faithfulErr) {
+        console.warn('PptxFaithful fallback a extractor XML:', faithfulErr);
+      }
+    }
     try {
       const bytes = new Uint8Array(arrayBuffer);
       const dv = new DataView(arrayBuffer);
@@ -2646,6 +2684,30 @@ Espacio para evaluar comprensión y debatir ideas principales con el grupo.
       this.currentProject.slides = importedSlides;
     } else {
       this.currentProject.slides.push(...importedSlides);
+    }
+
+    // Subir imágenes de las láminas a la BD / repositorio de Mentix en segundo plano para que todos las vean
+    if (window.ProjectsView && typeof window.ProjectsView.uploadImageToMentixCloud === 'function') {
+      const pid = this.currentProject.id || 'pres_' + Date.now();
+      (async () => {
+        let changedAny = false;
+        for (let i = 0; i < importedSlides.length; i++) {
+          const sl = importedSlides[i];
+          if (sl && typeof sl.media === 'string' && sl.media.startsWith('data:image/')) {
+            const url = await window.ProjectsView.uploadImageToMentixCloud(sl.media, pid, 'slide_' + (i + 1));
+            if (url && !url.startsWith('data:image/')) {
+              sl.media = url;
+              changedAny = true;
+            }
+          }
+        }
+        if (changedAny && typeof saveGlobalState === 'function') {
+          saveGlobalState(window.appState);
+          if (window.appRouter && typeof window.appRouter.pushChallengeToCloud === 'function') {
+            window.appRouter.pushChallengeToCloud(this.currentProject).catch(() => {});
+          }
+        }
+      })();
     }
 
     this.currentSlideIndex = 0;

@@ -2531,14 +2531,20 @@ window.ProjectsView = {
               if (exIdx >= 0) {
                 const prev = window.appState.challenges[exIdx];
                 const keepApproved = prev.approvalStatus === 'approved' || formatted.approvalStatus === 'approved';
+                const isGenericT = (t) => !t || /^nuevo proyecto(\s+govdata)?$|^proyecto govdata$/i.test(String(t).trim());
+                const bestTitle = (!isGenericT(prev.title) && isGenericT(wd.title))
+                  ? prev.title
+                  : ((!isGenericT(wd.title) && isGenericT(prev.title)) ? wd.title : (prev.title || wd.title));
                 window.appState.challenges[exIdx] = {
                   ...formatted,
                   ...prev,
-                  title: wd.title || prev.title,
+                  title: bestTitle || prev.title || wd.title,
                   approvalStatus: keepApproved ? 'approved' : (prev.approvalStatus || formatted.approvalStatus),
                   publicationStatus: keepApproved ? 'published' : (prev.publicationStatus || formatted.publicationStatus),
                   status: keepApproved ? 'completed' : (prev.status || formatted.status),
                   isPublic: keepApproved ? true : (prev.isPublic ?? formatted.isPublic),
+                  accessMode: keepApproved ? 'public' : (prev.accessMode || formatted.accessMode),
+                  visibility: keepApproved ? 'public' : (prev.visibility || formatted.visibility),
                   authorizedAt: prev.authorizedAt || wd.authorizedAt,
                   authorizedBy: prev.authorizedBy || wd.authorizedBy,
                   rejectionReason: keepApproved ? '' : (prev.rejectionReason || '')
@@ -2688,25 +2694,18 @@ window.ProjectsView = {
     // Los proyectos pendientes de autorización o en revisión solo son visibles para el Administrador (para validarlos) o para su respectivo autor.
     const isGuestUser = this.isUserGuest();
     const allUserProjects = rawProjects.filter(c => {
-      const isApproved = c.approvalStatus === 'approved';
+      const isApproved = c.approvalStatus === 'approved' && !c.rejectionReason;
+      // Si el proyecto fue autorizado por el Administrador, es visible para TODA la comunidad de Mentix sin excepción
+      if (isApproved) return true;
+
       const isAuthor = (window.appRouter && window.appRouter.isChallengeOwner(c)) ||
         ((c.author || '').toLowerCase().trim() === (u?.name || '').toLowerCase().trim()) ||
         (c.authorId && c.authorId === u?.id);
       const isAcceptedMember = !isGuestUser && window.ProjectHub && typeof window.ProjectHub.canView === 'function' && window.ProjectHub.canView(c);
 
-      if (!isApproved) {
-        // Si no cuenta con autorización, solo el administrador, profesor, autor o miembro aceptado pueden verlo
-        if (isAdmin || isTeacherOrAdmin || isAuthor || isAcceptedMember) return true;
-        return false;
-      }
-
-      // Si está autorizado por el administrador, verificar si fue marcado expresamente como privado
-      const isPrivate = c.isPublic === false || c.accessMode === 'private';
-      if (isPrivate) {
-        if (isAdmin || isTeacherOrAdmin || isAuthor || isAcceptedMember) return true;
-        return false;
-      }
-      return true;
+      // Si no cuenta con autorización, solo el administrador, profesor, autor o miembro aceptado pueden verlo
+      if (isAdmin || isTeacherOrAdmin || isAuthor || isAcceptedMember) return true;
+      return false;
     });
 
     // Proyectos directos desde la base de datos
@@ -9305,9 +9304,20 @@ Generado por Mentix - Plataforma de Proyectos y Retos
 
     const curIdx = Math.max(0, Math.min(slides.length - 1, index));
     const s = slides[curIdx];
-    const previewHtml = (window.ProjectWizard && typeof window.ProjectWizard.renderSlidePreviewInner === 'function')
-      ? window.ProjectWizard.renderSlidePreviewInner(s)
-      : `<div style="padding:3rem; color:#fff;"><h2>${this.escapeHtml(s.title || '')}</h2><p>${this.escapeHtml(s.content || '')}</p></div>`;
+    const sImg = s.media || s.imageUrl || s.bgImage || '';
+    const isFaithfulSlide = Boolean(
+      s.isFullImage ||
+      s.isImported ||
+      s.layout === 'full' ||
+      (sImg && !s.content && (!Array.isArray(s.bullets) || s.bullets.length === 0))
+    );
+    const previewHtml = isFaithfulSlide
+      ? `<div style="width:100%; height:100%; min-height:76vh; background:#e2e8f0; display:flex; align-items:center; justify-content:center; padding:0.75rem; box-sizing:border-box;">
+           <img src="${this.escapeHtml(sImg)}" alt="Diapositiva ${curIdx + 1}" style="max-width:100%; max-height:80vh; width:auto; height:auto; object-fit:contain; display:block; margin:0 auto; background:#ffffff; box-shadow:0 10px 35px rgba(0,0,0,0.28);" />
+         </div>`
+      : ((window.ProjectWizard && typeof window.ProjectWizard.renderSlidePreviewInner === 'function')
+          ? window.ProjectWizard.renderSlidePreviewInner(s)
+          : `<div style="padding:3rem; color:#fff;"><h2>${this.escapeHtml(s.title || '')}</h2><p>${this.escapeHtml(s.content || '')}</p></div>`);
 
     document.body.style.overflow = 'hidden';
     modal.style.cssText = 'position: fixed !important; inset: 0 !important; width: 100vw !important; height: 100vh !important; margin: 0 !important; padding: 0 !important; background: #040914 !important; z-index: 2147483647 !important; display: flex !important; flex-direction: column !important;';

@@ -3532,14 +3532,16 @@ collectCurrentStepInputs() {
 
   renderStepSlides() {
     this.initDefaultSlidesIfEmpty();
+    this.ensureWizardPasteListener();
     const slides = this.draft.slides || [];
     const activeIdx = Math.max(0, Math.min(slides.length - 1, this.activeSlideIndex || 0));
     this.activeSlideIndex = activeIdx;
     const currentSlide = slides[activeIdx] || { title: '', subtitle: '', content: '', bullets: [], layout: 'split', media: '', notes: '' };
-    const curLayout = currentSlide.layout || 'split';
+    const isFaithfulSlide = Boolean(currentSlide.isFullImage || currentSlide.isImported || currentSlide.layout === 'full');
+    const curLayout = isFaithfulSlide ? 'full' : (currentSlide.layout || 'split');
     const curThemeId = currentSlide.themeId || this.draft.designConfig?.themeId || 'cosmos';
     const activeTheme = this.SLIDE_THEMES.find(t => t.id === curThemeId) || this.SLIDE_THEMES[0];
-    const curBg = currentSlide.bgColor || activeTheme.bg;
+    const curBg = isFaithfulSlide ? '#ffffff' : (currentSlide.bgColor || activeTheme.bg);
 
     return `
       <!-- Cabecera y Herramientas Rápidas de Diapositivas -->
@@ -3547,7 +3549,7 @@ collectCurrentStepInputs() {
         <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 1rem; ${slides.length > 0 ? 'margin-bottom: 1.2rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 1rem;' : ''}">
           <div>
             <div style="font-size: 0.82rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; color: #00f5d4; margin-bottom: 0.25rem;">
-              📊 Paso 11 del Asistente · Presentaciones y Diapositivas Interactivas
+              📊 Paso 11 del Asistente · Presentaciones y Diapositivas
             </div>
             <h3 style="margin: 0; font-size: 1.25rem; font-weight: 900; color: #ffffff; display: flex; align-items: center; gap: 0.5rem;">
               <span>Diapositivas del Proyecto</span>
@@ -3556,36 +3558,46 @@ collectCurrentStepInputs() {
               </span>
             </h3>
             <p style="margin: 0.35rem 0 0; font-size: 0.86rem; color: #cbd5e1;">
-              Sube tu presentación desde PowerPoint (.pptx), PDF o imágenes, o créala directamente desde Mentix (sin inventar láminas automáticas).
+              Sube cualquier presentación (.pptx, .pdf o imágenes) o pega tus diapositivas con <strong>Ctrl+V</strong>: quedan <strong>idénticas al original</strong> sin mover nada ni aplicar formato de Mentix (solo Anterior y Siguiente).
             </p>
           </div>
 
-          <!-- Botones de Acción Global: Solo Subir o Crear desde Mentix -->
+          <!-- Botones de Acción Global: Subir, Pegar (Ctrl+V) o Crear -->
           <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center;">
             <input 
               type="file" 
               id="gdn-wizard-slide-file-input" 
+              multiple
               accept=".pptx,.pdf,.json,.txt,.md,image/*" 
               style="display: none;" 
-              onchange="if(this.files && this.files[0]) window.ProjectWizard.handleWizardSlideUpload(this.files[0])" 
+              onchange="if(this.files && this.files.length) window.ProjectWizard.handleWizardSlideFiles(this.files)" 
             />
             <button 
               type="button" 
               class="btn btn-outline" 
-              style="border-color: #7c3aed; color: #c4b5fd; font-weight: 800; font-size: 0.85rem; padding: 0.55rem 1rem; display: inline-flex; align-items: center; gap: 0.45rem;"
+              style="border-color: #00f5d4; background: rgba(0, 245, 212, 0.14); color: #00f5d4; font-weight: 900; font-size: 0.85rem; padding: 0.55rem 1rem; display: inline-flex; align-items: center; gap: 0.45rem;"
               onclick="document.getElementById('gdn-wizard-slide-file-input').click()"
-              title="Subir diapositivas desde PowerPoint (.pptx), documentos PDF (.pdf), Mentix (.json) o imágenes"
+              title="Subir PowerPoint (.pptx), PDF (.pdf) o imágenes tal cual están"
             >
               <span>📥</span> Subir Presentación (.pptx, .pdf, imágenes)
+            </button>
+            <button 
+              type="button" 
+              class="btn btn-outline" 
+              style="border-color: #f59e0b; background: rgba(245, 158, 11, 0.14); color: #fde68a; font-weight: 800; font-size: 0.85rem; padding: 0.55rem 0.95rem; display: inline-flex; align-items: center; gap: 0.4rem;"
+              onclick="window.ProjectWizard.pasteWizardSlideFromClipboard()"
+              title="Pegar diapositiva copiada desde PowerPoint o Canva (también puedes presionar Ctrl+V)"
+            >
+              <span>📋</span> Pegar Diapositiva (Ctrl+V)
             </button>
             <button 
               type="button" 
               class="btn btn-cyan" 
               style="font-weight: 900; font-size: 0.85rem; padding: 0.55rem 1.05rem; background: linear-gradient(135deg, #10b981, #059669); border: none; color: #fff;"
               onclick="window.ProjectWizard.addWizardSlide()"
-              title="Crear una diapositiva desde Mentix"
+              title="Crear una diapositiva manual en Mentix"
             >
-              <span>➕</span> Crear Diapositiva en Mentix
+              <span>➕</span> Crear Diapositiva
             </button>
           </div>
         </div>
@@ -3594,19 +3606,27 @@ collectCurrentStepInputs() {
           <div style="margin-top: 1.25rem; padding: 2.5rem 1.5rem; text-align: center; background: rgba(15, 23, 42, 0.75); border: 2px dashed rgba(0, 245, 212, 0.35); border-radius: 16px;">
             <div style="font-size: 2.8rem; margin-bottom: 0.65rem;">📽️</div>
             <h4 style="margin: 0 0 0.45rem; font-size: 1.18rem; font-weight: 900; color: #ffffff;">
-              Aún no has subido ni creado ninguna presentación
+              Coloca aquí tu presentación tal cual está
             </h4>
-            <p style="margin: 0 auto 1.35rem; max-width: 560px; font-size: 0.9rem; color: #cbd5e1; line-height: 1.55;">
-              El asistente no inventa diapositivas automáticamente. Elige si deseas <strong>subir tu archivo de presentación</strong> o <strong>crearla paso a paso desde Mentix</strong>:
+            <p style="margin: 0 auto 1.35rem; max-width: 600px; font-size: 0.9rem; color: #cbd5e1; line-height: 1.55;">
+              Sube tu archivo <strong>PowerPoint (.pptx)</strong>, <strong>PDF (.pdf)</strong> o imágenes, o copia una diapositiva en PowerPoint y presiona <strong>Ctrl+V</strong>. Mentix la copia y pega idéntica sin mover nada ni cambiarle el formato:
             </p>
             <div style="display: flex; justify-content: center; gap: 0.85rem; flex-wrap: wrap;">
               <button 
                 type="button" 
                 class="btn btn-outline" 
-                style="border: 2px solid #7c3aed; background: rgba(124, 58, 237, 0.15); color: #ffffff; font-weight: 900; font-size: 0.92rem; padding: 0.75rem 1.35rem; border-radius: 12px; display: inline-flex; align-items: center; gap: 0.5rem; cursor: pointer;"
+                style="border: 2px solid #00f5d4; background: rgba(0, 245, 212, 0.16); color: #ffffff; font-weight: 900; font-size: 0.92rem; padding: 0.75rem 1.35rem; border-radius: 12px; display: inline-flex; align-items: center; gap: 0.5rem; cursor: pointer;"
                 onclick="document.getElementById('gdn-wizard-slide-file-input').click()"
               >
-                <span>📥</span> Subir Presentación (.pptx, .pdf)
+                <span>📥</span> Subir Presentación (.pptx, .pdf, imágenes)
+              </button>
+              <button 
+                type="button" 
+                class="btn btn-outline" 
+                style="border: 2px solid #f59e0b; background: rgba(245, 158, 11, 0.16); color: #fde68a; font-weight: 900; font-size: 0.92rem; padding: 0.75rem 1.35rem; border-radius: 12px; display: inline-flex; align-items: center; gap: 0.5rem; cursor: pointer;"
+                onclick="window.ProjectWizard.pasteWizardSlideFromClipboard()"
+              >
+                <span>📋</span> Pegar Diapositiva (Ctrl+V)
               </button>
               <button 
                 type="button" 
@@ -3614,18 +3634,18 @@ collectCurrentStepInputs() {
                 style="font-weight: 900; font-size: 0.92rem; padding: 0.75rem 1.35rem; border-radius: 12px; background: linear-gradient(135deg, #10b981, #059669); border: none; color: #fff; display: inline-flex; align-items: center; gap: 0.5rem; cursor: pointer;"
                 onclick="window.ProjectWizard.addWizardSlide()"
               >
-                <span>➕</span> Crear Presentación desde Mentix
+                <span>➕</span> Crear Diapositiva Manual
               </button>
             </div>
           </div>
         ` : `
         <!-- Tira Horizontal de Diapositivas (Navegación Rápida) -->
-        <div style="margin-bottom: 0.75rem;">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+        <div style="margin-bottom: 0.4rem;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; flex-wrap: wrap; gap: 0.5rem;">
             <span style="font-size: 0.82rem; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.05em;">
-              Láminas de la Presentación (Haz clic para seleccionar y editar):
+              Láminas de la Presentación (${activeIdx + 1} de ${slides.length}):
             </span>
-            <div style="display: flex; gap: 0.4rem;">
+            <div style="display: flex; gap: 0.4rem; flex-wrap: wrap;">
               <button 
                 type="button" 
                 class="btn btn-outline" 
@@ -3667,58 +3687,77 @@ collectCurrentStepInputs() {
             </div>
           </div>
 
-          <div style="display: flex; gap: 0.65rem; overflow-x: auto; padding: 0.5rem 0.2rem 0.85rem; scrollbar-width: thin;" id="gdn-slides-thumbnails-strip">
+          <div style="display: flex; gap: 0.65rem; overflow-x: auto; padding: 0.5rem 0.2rem 0.65rem; scrollbar-width: thin;" id="gdn-slides-thumbnails-strip">
             ${this.renderWizardSlideThumbnailsHtml(slides, activeIdx)}
           </div>
         </div>
-
-        <!-- Selector Rápido de Temas Visuales (15 Temas) -->
-        <details style="background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 0.65rem 0.9rem; margin-top: 0.5rem;">
-          <summary style="cursor: pointer; font-size: 0.85rem; font-weight: 800; color: #cbd5e1; display: flex; align-items: center; justify-content: space-between;">
-            <span style="display: flex; align-items: center; gap: 0.45rem;">
-              <span>🎨</span> <span>Cambiar Estilo Visual / Tema de la Diapositiva (Tema actual: <strong style="color: #00f5d4;">${activeTheme.name}</strong>)</span>
-            </span>
-            <span style="font-size: 0.75rem; color: #94a3b8;">Ver los 15 diseños ▾</span>
-          </summary>
-          <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 0.6rem; margin-top: 0.85rem; max-height: 250px; overflow-y: auto;">
-            ${this.SLIDE_THEMES.map(t => `
-              <div 
-                onclick="window.ProjectWizard.applyWizardSlideTheme('${t.id}', false)"
-                style="background: ${t.bg}; border: 1.5px solid ${t.id === curThemeId ? '#00f5d4' : 'rgba(255,255,255,0.15)'}; border-radius: 10px; padding: 0.65rem; cursor: pointer; transition: transform 0.2s ease, box-shadow 0.2s ease; ${t.id === curThemeId ? 'box-shadow: 0 0 12px rgba(0,245,212,0.35);' : ''}"
-                onmouseenter="this.style.transform='translateY(-2px)'"
-                onmouseleave="this.style.transform='none'"
-                title="Aplicar tema ${t.name}"
-              >
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.3rem;">
-                  <span style="font-size: 1rem;">${t.icon}</span>
-                  <span style="font-size: 0.78rem; font-weight: 800; color: ${t.titleColor}; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
-                    ${t.name}
-                  </span>
-                </div>
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.4rem; padding-top: 0.35rem; border-top: 1px solid rgba(255,255,255,0.1);">
-                  <div style="display: flex; gap: 0.25rem;">
-                    <span style="width: 10px; height: 10px; border-radius: 50%; background: ${t.titleColor}; display: inline-block;"></span>
-                    <span style="width: 10px; height: 10px; border-radius: 50%; background: ${t.subtitleColor}; display: inline-block;"></span>
-                    <span style="width: 10px; height: 10px; border-radius: 50%; background: ${t.contentColor}; display: inline-block;"></span>
-                  </div>
-                  <button 
-                    type="button" 
-                    class="btn btn-outline" 
-                    style="font-size: 0.68rem; padding: 0.15rem 0.45rem; border-color: rgba(255,255,255,0.3); color: #fff;"
-                    onclick="event.stopPropagation(); window.ProjectWizard.applyWizardSlideTheme('${t.id}', true)"
-                    title="Aplicar a todas las láminas"
-                  >
-                    A todas
-                  </button>
-                </div>
-              </div>
-            `).join('')}
-          </div>
-        </details>
         `}
       </div>
 
-      ${slides.length > 0 ? `
+      ${slides.length > 0 && isFaithfulSlide ? `
+        <!-- VISOR FIEL 1:1 ESTILO POWERPOINT (Idéntico al original, sin formato Mentix, solo Anterior y Siguiente) -->
+        <div class="gdn-card" style="padding: 1.15rem; background: #1e293b; border: 2px solid rgba(0, 245, 212, 0.35); border-radius: 18px; box-shadow: 0 15px 40px rgba(0,0,0,0.55);">
+          <div style="display: grid; grid-template-columns: 185px 1fr; gap: 1.15rem; align-items: stretch;">
+            <!-- Columna izquierda: Tira vertical de miniaturas estilo PowerPoint -->
+            <div style="max-height: 560px; overflow-y: auto; padding-right: 0.45rem; display: flex; flex-direction: column; gap: 0.65rem; border-right: 1px solid rgba(255,255,255,0.12);">
+              ${slides.map((s, idx) => `
+                <div 
+                  onclick="window.ProjectWizard.selectWizardSlide(${idx})"
+                  style="display: flex; align-items: flex-start; gap: 0.45rem; cursor: pointer; padding: 0.25rem; border-radius: 8px; background: ${idx === activeIdx ? 'rgba(234, 88, 12, 0.16)' : 'transparent'};"
+                >
+                  <span style="font-size: 0.75rem; font-weight: 800; color: ${idx === activeIdx ? '#fb923c' : '#94a3b8'}; min-width: 16px; padding-top: 2px;">${idx + 1}</span>
+                  <div style="flex: 1; aspect-ratio: 16 / 9; border-radius: 6px; overflow: hidden; border: ${idx === activeIdx ? '2.5px solid #ea580c' : '1.5px solid rgba(255,255,255,0.2)'}; background: #ffffff; box-shadow: 0 2px 8px rgba(0,0,0,0.25);">
+                    ${s.media ? `<img src="${this.escapeHtml(s.media)}" alt="Lámina ${idx + 1}" style="width: 100%; height: 100%; object-fit: contain; display: block; background: #ffffff;" />` : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:0.7rem;color:#334155;">#${idx + 1}</div>`}
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+
+            <!-- Columna derecha: Diapositiva 1:1 intacta + Anterior / Siguiente -->
+            <div style="display: flex; flex-direction: column; justify-content: space-between; background: #e2e8f0; border-radius: 14px; overflow: hidden; border: 1px solid rgba(255,255,255,0.2);">
+              <div 
+                id="gdn-slide-live-preview-box"
+                onclick="window.ProjectWizard.selectWizardSlide(${activeIdx < slides.length - 1 ? activeIdx + 1 : 0})"
+                title="Haz clic para avanzar a la siguiente diapositiva"
+                style="flex: 1; min-height: 490px; background: #e2e8f0; display: flex; align-items: center; justify-content: center; padding: 0.75rem; cursor: pointer;"
+              >
+                <img 
+                  src="${this.escapeHtml(currentSlide.media || '')}" 
+                  alt="Diapositiva ${activeIdx + 1}" 
+                  style="max-width: 100%; max-height: 540px; width: auto; height: auto; object-fit: contain; display: block; margin: 0 auto; background: #ffffff; box-shadow: 0 8px 28px rgba(0,0,0,0.22);" 
+                />
+              </div>
+
+              <!-- Barra Inferior: Solo Anterior y Siguiente -->
+              <div style="background: #0f172a; padding: 0.75rem 1.25rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap;">
+                <div style="display: flex; align-items: center; gap: 0.65rem;">
+                  <button 
+                    type="button" 
+                    class="btn btn-outline" 
+                    style="padding: 0.48rem 1.1rem; font-weight: 800; font-size: 0.88rem; color: #fff; border-color: rgba(255,255,255,0.28);" 
+                    onclick="window.ProjectWizard.selectWizardSlide(${Math.max(0, activeIdx - 1)})"
+                    ${activeIdx === 0 ? 'disabled style="opacity:0.35; cursor:not-allowed; padding: 0.48rem 1.1rem;"' : ''}
+                  >
+                    ◀ Anterior
+                  </button>
+                  <button 
+                    type="button" 
+                    class="btn btn-cyan" 
+                    style="padding: 0.48rem 1.25rem; font-weight: 900; font-size: 0.88rem; background: linear-gradient(135deg, #0284c7, #2563eb); color: #fff; border: none;" 
+                    onclick="window.ProjectWizard.selectWizardSlide(${activeIdx < slides.length - 1 ? activeIdx + 1 : 0})"
+                  >
+                    ${activeIdx === slides.length - 1 ? 'Reiniciar ↺' : 'Siguiente ▶'}
+                  </button>
+                </div>
+
+                <div style="font-size: 0.9rem; font-weight: 800; color: #f8fafc;">
+                  Diapositiva <span style="color: #00f5d4;">${activeIdx + 1}</span> de ${slides.length}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      ` : (slides.length > 0 ? `
       <!-- Zona de Edición en Dos Columnas: Formulario a la Izquierda y Vista Previa en Vivo a la Derecha -->
       <div style="display: grid; grid-template-columns: minmax(360px, 1.1fr) minmax(360px, 1.2fr); gap: 1.5rem; align-items: start;">
         
@@ -4209,7 +4248,7 @@ collectCurrentStepInputs() {
         </div>
 
       </div>
-      ` : ''}
+      ` : '')}
     `;
   },
 
@@ -4217,31 +4256,39 @@ collectCurrentStepInputs() {
     if (!Array.isArray(slides) || slides.length === 0) return '';
     return slides.map((s, idx) => {
       const isActive = idx === activeIdx;
+      const isVisual = Boolean(s.media && (s.isFullImage || s.isImported || s.layout === 'full'));
       const t = this.SLIDE_THEMES.find(th => th.id === (s.themeId || 'cosmos')) || this.SLIDE_THEMES[0];
-      const bg = s.bgColor || t.bg;
+      const bg = isVisual ? '#ffffff' : (s.bgColor || t.bg);
       const title = s.title || `Lámina #${idx + 1}`;
       const layoutIcon = s.layout === 'full' ? '🖥️' : (s.layout === 'video' ? '🎬' : (s.layout === 'center' ? '🎯' : '📝'));
 
       return `
         <div 
           onclick="window.ProjectWizard.selectWizardSlide(${idx})"
-          style="min-width: 140px; max-width: 160px; height: 95px; border-radius: 10px; cursor: pointer; padding: 0.55rem; background: ${bg}; border: ${isActive ? '2.5px solid #00f5d4' : '1px solid rgba(255,255,255,0.18)'}; box-shadow: ${isActive ? '0 0 15px rgba(0,245,212,0.45)' : '0 4px 10px rgba(0,0,0,0.3)'}; transition: transform 0.2s ease, border-color 0.2s ease; display: flex; flex-direction: column; justify-content: space-between; flex-shrink: 0;"
+          style="min-width: 148px; max-width: 165px; height: 95px; border-radius: 10px; cursor: pointer; padding: ${isVisual ? '0' : '0.55rem'}; position: relative; overflow: hidden; background: ${bg}; border: ${isActive ? '2.5px solid #ea580c' : '1px solid rgba(255,255,255,0.22)'}; box-shadow: ${isActive ? '0 0 15px rgba(234,88,12,0.5)' : '0 4px 10px rgba(0,0,0,0.3)'}; transition: transform 0.2s ease, border-color 0.2s ease; display: flex; flex-direction: column; justify-content: space-between; flex-shrink: 0;"
           onmouseenter="this.style.transform='scale(1.03)'"
           onmouseleave="this.style.transform='scale(1)'"
-          title="Ver y editar lámina #${idx + 1}: ${this.escapeHtml(title)}"
+          title="Lámina #${idx + 1}"
         >
-          <div style="display: flex; justify-content: space-between; align-items: center;">
-            <span style="font-size: 0.72rem; font-weight: 900; color: #00f5d4; background: rgba(0,0,0,0.5); padding: 0.1rem 0.35rem; border-radius: 4px;">
-              #${idx + 1}
+          ${isVisual ? `
+            <img src="${this.escapeHtml(s.media)}" alt="Lámina ${idx + 1}" style="width: 100%; height: 100%; object-fit: contain; display: block; background: #ffffff;" />
+            <span style="position: absolute; top: 4px; left: 4px; font-size: 0.7rem; font-weight: 900; color: #ffffff; background: rgba(15, 23, 42, 0.85); padding: 1px 6px; border-radius: 5px;">
+              ${idx + 1}
             </span>
-            <span style="font-size: 0.72rem;">${layoutIcon}</span>
-          </div>
-          <div style="font-size: 0.76rem; font-weight: 800; color: #ffffff; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; line-height: 1.25;">
-            ${this.escapeHtml(title)}
-          </div>
-          <div style="font-size: 0.68rem; color: rgba(255,255,255,0.7); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
-            ${(s.bullets && s.bullets.length) ? `${s.bullets.length} puntos` : (s.subtitle ? this.escapeHtml(s.subtitle) : 'Texto')}
-          </div>
+          ` : `
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span style="font-size: 0.72rem; font-weight: 900; color: #00f5d4; background: rgba(0,0,0,0.5); padding: 0.1rem 0.35rem; border-radius: 4px;">
+                #${idx + 1}
+              </span>
+              <span style="font-size: 0.72rem;">${layoutIcon}</span>
+            </div>
+            <div style="font-size: 0.76rem; font-weight: 800; color: #ffffff; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; line-height: 1.25;">
+              ${this.escapeHtml(title)}
+            </div>
+            <div style="font-size: 0.68rem; color: rgba(255,255,255,0.7); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+              ${(s.bullets && s.bullets.length) ? `${s.bullets.length} puntos` : (s.subtitle ? this.escapeHtml(s.subtitle) : 'Texto')}
+            </div>
+          `}
         </div>
       `;
     }).join('') + `
@@ -4288,31 +4335,28 @@ collectCurrentStepInputs() {
       ? (s.bulletEmoji || '✦')
       : (s.bulletStyle || s.bulletIcon || '✦');
 
-    if (curLayout === 'full') {
+    const isFaithful = Boolean(
+      curLayout === 'full' ||
+      s.isFullImage ||
+      s.isImported ||
+      (media && !content && bullets.length === 0)
+    );
+
+    if (isFaithful) {
       return `
-        <div style="width: 100%; height: 100%; min-height: 420px; background: ${curBg}; display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; padding: 1.5rem; box-sizing: border-box; text-align: center;">
+        <div style="width: 100%; height: 100%; min-height: 440px; background: #e2e8f0; display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; padding: 0; box-sizing: border-box; text-align: center;">
           ${media ? `
             <img 
               src="${this.escapeHtml(media)}" 
               alt="${this.escapeHtml(title)}" 
-              style="max-width: 100%; max-height: 380px; object-fit: contain; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.6);" 
+              style="width: 100%; height: 100%; max-height: 78vh; object-fit: contain; display: block; margin: 0 auto; background: #ffffff;" 
               onerror="this.style.display='none'"
             />
           ` : `
-            <div style="max-width: 90%;">
-              <h2 style="font-size: clamp(1.4rem, 2.8vw, 2.2rem); font-weight: 900; color: ${titleColor}; font-family: ${titleFont}; margin: 0 0 0.75rem; text-shadow: 0 2px 10px rgba(0,0,0,0.6);">
+            <div style="max-width: 90%; padding: 2rem;">
+              <h2 style="font-size: clamp(1.4rem, 2.8vw, 2.2rem); font-weight: 900; color: ${titleColor}; font-family: ${titleFont}; margin: 0 0 0.75rem;">
                 ${this.escapeHtml(title)}
               </h2>
-              ${subtitle ? `
-                <div style="display: inline-flex; align-items: center; gap: 0.45rem; padding: 0.28rem 0.85rem; border-radius: 999px; background: rgba(0, 245, 212, 0.12); border: 1px solid rgba(0, 245, 212, 0.35); color: ${subtitleColor || '#00f5d4'}; font-family: ${subtitleFont}; font-size: 0.82rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 0.85rem;">
-                  <span>✦</span> ${this.escapeHtml(subtitle)}
-                </div>
-              ` : ''}
-              ${content ? `
-                <p style="font-size: 0.95rem; color: ${contentColor}; font-family: ${contentFont}; line-height: 1.6; margin: 0 auto; max-width: 650px;">
-                  ${this.escapeHtml(content)}
-                </p>
-              ` : ''}
             </div>
           `}
         </div>
@@ -4695,6 +4739,121 @@ collectCurrentStepInputs() {
     }
   },
 
+  ensureWizardPasteListener() {
+    if (this._wizardPasteListenerAttached) return;
+    this._wizardPasteListenerAttached = true;
+    window.addEventListener('paste', async (e) => {
+      if (!window.ProjectsView || window.ProjectsView.viewMode !== 'wizard' || this.currentStep !== 11) return;
+      const tag = (e.target && e.target.tagName) ? e.target.tagName.toLowerCase() : '';
+      if (tag === 'input' || tag === 'textarea') return;
+      const items = (e.clipboardData && e.clipboardData.items) ? Array.from(e.clipboardData.items) : [];
+      const imgItems = items.filter(it => it && it.type && it.type.startsWith('image/'));
+      if (imgItems.length === 0) return;
+      e.preventDefault();
+      const files = imgItems.map(it => it.getAsFile()).filter(Boolean);
+      if (files.length > 0) {
+        await this.handleWizardSlideFiles(files);
+      }
+    });
+  },
+
+  async pasteWizardSlideFromClipboard() {
+    try {
+      if (navigator.clipboard && typeof navigator.clipboard.read === 'function') {
+        const clipItems = await navigator.clipboard.read();
+        const files = [];
+        for (const item of clipItems) {
+          const imgType = (item.types || []).find(t => t.startsWith('image/'));
+          if (imgType) {
+            const blob = await item.getType(imgType);
+            if (blob) {
+              files.push(new File([blob], `diapositiva_${Date.now()}.png`, { type: imgType }));
+            }
+          }
+        }
+        if (files.length > 0) {
+          await this.handleWizardSlideFiles(files);
+          return;
+        }
+      }
+      alert('📋 Copia primero una diapositiva o imagen en PowerPoint / Canva (Ctrl+C) y luego presiona Ctrl+V aquí en el Paso 11.');
+    } catch (e) {
+      alert('📋 Presiona directamente Ctrl+V en tu teclado después de copiar la diapositiva en PowerPoint o Canva.');
+    }
+  },
+
+  async _uploadWizardSlidesToCloud(slidesArr) {
+    if (!Array.isArray(slidesArr) || slidesArr.length === 0) return;
+    if (!window.ProjectsView || typeof window.ProjectsView.uploadImageToMentixCloud !== 'function') return;
+    const pid = (this.draft && this.draft.id) ? this.draft.id : ('proj_' + Date.now());
+    let updatedAny = false;
+    for (let i = 0; i < slidesArr.length; i++) {
+      const sl = slidesArr[i];
+      if (sl && typeof sl.media === 'string' && sl.media.startsWith('data:image/')) {
+        try {
+          const cloudUrl = await window.ProjectsView.uploadImageToMentixCloud(sl.media, pid, 'slide_' + (i + 1));
+          if (cloudUrl && !cloudUrl.startsWith('data:image/')) {
+            sl.media = cloudUrl;
+            sl.imageUrl = cloudUrl;
+            updatedAny = true;
+          }
+        } catch (e) {}
+      }
+    }
+    if (updatedAny) {
+      this.saveDraftToStorage(true, true);
+      if (window.ProjectsView && window.ProjectsView.viewMode === 'wizard') {
+        window.ProjectsView.render();
+      }
+    }
+  },
+
+  async handleWizardSlideFiles(fileList) {
+    if (!fileList || fileList.length === 0) return;
+    const files = Array.from(fileList);
+    if (files.length === 1 && !files[0].type?.startsWith('image/')) {
+      return this.handleWizardSlideUpload(files[0]);
+    }
+    const imgFiles = files.filter(f => f && ((f.type && f.type.startsWith('image/')) || /\.(png|jpe?g|webp|gif|bmp|svg)$/i.test(f.name || '')));
+    if (imgFiles.length > 0) {
+      this.collectCurrentStepInputs();
+      if (!Array.isArray(this.draft.slides)) this.draft.slides = [];
+      // Si solo había una diapositiva vacía por defecto sin imagen ni contenido, reemplazarla
+      if (this.draft.slides.length === 1 && !this.draft.slides[0].media && !this.draft.slides[0].content && (!this.draft.slides[0].bullets || this.draft.slides[0].bullets.length === 0)) {
+        this.draft.slides = [];
+      }
+      const added = [];
+      for (let i = 0; i < imgFiles.length; i++) {
+        const f = imgFiles[i];
+        const baseName = (f.name || `Diapositiva ${this.draft.slides.length + 1}`).replace(/\.[^/.]+$/, '');
+        const dataUrl = await this.compressImageFile(f, 1600, 0.86);
+        const sl = {
+          id: 'slide_' + Date.now() + '_' + i + '_' + Math.random().toString(36).slice(2, 5),
+          title: baseName || `Diapositiva ${this.draft.slides.length + 1}`,
+          subtitle: '',
+          content: '',
+          bullets: [],
+          layout: 'full',
+          isFullImage: true,
+          isImported: true,
+          media: dataUrl,
+          imageUrl: dataUrl,
+          notes: '',
+          bgColor: '#ffffff',
+          themeId: 'cosmos'
+        };
+        this.draft.slides.push(sl);
+        added.push(sl);
+      }
+      this.activeSlideIndex = Math.max(0, this.draft.slides.length - added.length);
+      this.saveDraftToStorage(true, true);
+      if (window.ProjectsView) window.ProjectsView.render();
+      this._uploadWizardSlidesToCloud(added);
+      return;
+    }
+    return this.handleWizardSlideUpload(files[0]);
+  },
+
   async handleWizardSlideUpload(file) {
     if (!file) return;
     this.collectCurrentStepInputs();
@@ -4716,13 +4875,15 @@ collectCurrentStepInputs() {
           this.draft.slides = imported.map((s, idx) => ({
             id: s.id || ('slide_' + Date.now() + '_' + idx),
             title: s.title || `Diapositiva ${idx + 1}`,
-            subtitle: s.subtitle || '',
-            content: s.content || '',
-            bullets: Array.isArray(s.bullets) ? s.bullets : [],
-            layout: s.layout || 'split',
+            subtitle: s.isFullImage || s.layout === 'full' ? '' : (s.subtitle || ''),
+            content: s.isFullImage || s.layout === 'full' ? '' : (s.content || ''),
+            bullets: s.isFullImage || s.layout === 'full' ? [] : (Array.isArray(s.bullets) ? s.bullets : []),
+            layout: s.layout || 'full',
+            isFullImage: Boolean(s.isFullImage || s.layout === 'full'),
+            isImported: Boolean(s.isImported || s.isFullImage || s.layout === 'full'),
             media: s.media || s.imageUrl || '',
             notes: s.notes || '',
-            bgColor: s.bgColor || '#0b091a',
+            bgColor: s.bgColor || '#ffffff',
             themeId: s.themeId || 'cosmos'
           }));
           this.activeSlideIndex = 0;
@@ -4736,7 +4897,7 @@ collectCurrentStepInputs() {
       }
     }
 
-    // 2. Archivo PDF (.pdf)
+    // 2. Archivo PDF (.pdf) — Copia 1:1 en pantalla completa sin formato de Mentix
     if (ext === 'pdf') {
       if (window.PresentationView && typeof window.PresentationView.extractSlidesFromPDF === 'function') {
         try {
@@ -4745,20 +4906,24 @@ collectCurrentStepInputs() {
           if (extracted && extracted.length > 0) {
             this.draft.slides = extracted.map((s, idx) => ({
               id: s.id || ('slide_' + Date.now() + '_' + idx),
-              title: s.title || `Página ${idx + 1}`,
+              title: s.title || `Diapositiva ${idx + 1}`,
               subtitle: '',
               content: '',
               bullets: [],
               layout: 'full',
+              isFullImage: true,
+              isImported: true,
               media: s.media || '',
+              imageUrl: s.media || '',
               notes: '',
-              bgColor: '#000000',
+              bgColor: '#ffffff',
               themeId: 'cosmos'
             }));
             this.activeSlideIndex = 0;
             this.saveDraftToStorage(true, true);
-            alert(`✅ ¡Documento PDF procesado! Se generaron ${extracted.length} diapositivas de alta definición en pantalla completa.`);
             if (window.ProjectsView) window.ProjectsView.render();
+            this._uploadWizardSlidesToCloud(this.draft.slides);
+            alert(`✅ ¡Presentación PDF copiada idéntica al original (${extracted.length} diapositivas)!`);
             return;
           }
         } catch (pdfErr) {
@@ -4767,62 +4932,68 @@ collectCurrentStepInputs() {
       }
     }
 
-    // 3. Presentación PowerPoint (.pptx)
+    // 3. Presentación PowerPoint (.pptx) — Copia 1:1 idéntica al original sin mover nada ni aplicar formato de Mentix
     if (ext === 'pptx') {
-      if (window.PresentationView && typeof window.PresentationView.extractSlidesFromPPTX === 'function') {
-        try {
-          const buffer = await file.arrayBuffer();
-          const extracted = await window.PresentationView.extractSlidesFromPPTX(buffer);
-          if (extracted && extracted.length > 0) {
-            this.draft.slides = extracted.map((s, idx) => ({
-              id: s.id || ('slide_' + Date.now() + '_' + idx),
-              title: window.fixMojibake ? window.fixMojibake(s.title || `Diapositiva ${idx + 1}`) : (s.title || `Diapositiva ${idx + 1}`),
-              subtitle: window.fixMojibake ? window.fixMojibake(s.subtitle || '') : (s.subtitle || ''),
-              content: window.fixMojibake ? window.fixMojibake(s.content || '') : (s.content || ''),
-              bullets: Array.isArray(s.bullets) ? s.bullets.map(b => window.fixMojibake ? window.fixMojibake(b) : b) : [],
-              layout: s.videoUrl ? 'video' : (s.isFullImage ? 'full' : 'split'),
-              media: s.videoUrl || s.media || '',
+      try {
+        const buffer = await file.arrayBuffer();
+        let extracted = null;
+        if (window.PptxFaithful && typeof window.PptxFaithful.renderDeck === 'function') {
+          const deck = await window.PptxFaithful.renderDeck(buffer, { maxSide: 1600 });
+          if (deck && Array.isArray(deck.slides) && deck.slides.length > 0) {
+            extracted = deck.slides.map((s, idx) => ({
+              id: 'slide_' + Date.now() + '_' + idx,
+              title: s.title || `Diapositiva ${idx + 1}`,
+              subtitle: '',
+              content: '',
+              bullets: [],
+              layout: 'full',
+              isFullImage: true,
+              isImported: true,
+              media: s.dataUrl,
+              imageUrl: s.dataUrl,
               notes: s.notes || '',
-              bgColor: '#090e1a',
+              bgColor: '#ffffff',
               themeId: 'cosmos'
             }));
-            if (window.PresentationView && window.PresentationView.pendingPresentationTitle) {
-              if (!this.draft.title || this.draft.title.startsWith('Mi ') || !this.draft.title.trim()) {
-                this.draft.title = window.PresentationView.pendingPresentationTitle;
-              }
-            }
-            this.activeSlideIndex = 0;
-            this.saveDraftToStorage(true, true);
-            alert(`✅ ¡PowerPoint procesado con éxito! Se importaron ${extracted.length} diapositivas.`);
-            if (window.ProjectsView) window.ProjectsView.render();
-            return;
           }
-        } catch (pptxErr) {
-          console.warn('Error extracting PPTX slides:', pptxErr);
         }
+        if ((!extracted || extracted.length === 0) && window.PresentationView && typeof window.PresentationView.extractSlidesFromPPTX === 'function') {
+          const rawExt = await window.PresentationView.extractSlidesFromPPTX(buffer);
+          if (rawExt && rawExt.length > 0) {
+            extracted = rawExt.map((s, idx) => ({
+              id: s.id || ('slide_' + Date.now() + '_' + idx),
+              title: s.title || `Diapositiva ${idx + 1}`,
+              subtitle: '',
+              content: '',
+              bullets: [],
+              layout: 'full',
+              isFullImage: true,
+              isImported: true,
+              media: s.media || '',
+              imageUrl: s.media || '',
+              notes: s.notes || s.teacherNotes || '',
+              bgColor: '#ffffff',
+              themeId: 'cosmos'
+            }));
+          }
+        }
+        if (extracted && extracted.length > 0) {
+          this.draft.slides = extracted;
+          this.activeSlideIndex = 0;
+          this.saveDraftToStorage(true, true);
+          if (window.ProjectsView) window.ProjectsView.render();
+          this._uploadWizardSlidesToCloud(this.draft.slides);
+          alert(`✅ ¡Presentación PowerPoint copiada idéntica al original (${extracted.length} diapositivas)!`);
+          return;
+        }
+      } catch (pptxErr) {
+        console.warn('Error extracting PPTX slides:', pptxErr);
       }
     }
 
-    // 4. Imagen directa (.png, .jpg, .webp, etc.)
+    // 4. Imagen directa (.png, .jpg, .webp, etc.) — Copia 1:1 en pantalla completa
     if (file.type && file.type.startsWith('image/')) {
-      const dataUrl = await this.compressImageFile(file, 960, 0.72);
-      if (!Array.isArray(this.draft.slides)) this.draft.slides = [];
-      this.draft.slides.push({
-        id: 'slide_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
-        title: baseName,
-        subtitle: '',
-        content: '',
-        bullets: [],
-        layout: 'full',
-        media: dataUrl,
-        notes: '',
-        bgColor: '#000000',
-        themeId: 'cosmos'
-      });
-      this.activeSlideIndex = this.draft.slides.length - 1;
-      this.saveDraftToStorage(true, true);
-      alert(`✅ Imagen agregada como nueva diapositiva en pantalla completa.`);
-      if (window.ProjectsView) window.ProjectsView.render();
+      await this.handleWizardSlideFiles([file]);
       return;
     }
 
