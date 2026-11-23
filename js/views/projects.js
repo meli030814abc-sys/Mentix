@@ -2323,9 +2323,9 @@ window.ProjectsView = {
               const exIdx = window.appState.challenges.findIndex(c => c && c.id === wd.id);
               const formatted = {
                 id: wd.id,
-                title: wd.title || wd.landingConfig?.publicName || 'Proyecto GovData',
-                subtitle: wd.subtitle || 'Proyecto GovData Nexus',
-                description: wd.shortDescription || wd.description || wd.fullDescription || 'Proyecto documentado con el Asistente Inteligente GovData Nexus.',
+                title: (wd.title && !/^nuevo proyecto govdata$|^proyecto govdata$/i.test(wd.title.trim())) ? wd.title : (wd.landingConfig?.publicName || 'Nuevo Proyecto'),
+                subtitle: (wd.subtitle && !/^proyecto govdata nexus$/i.test(wd.subtitle.trim())) ? wd.subtitle : 'Proyecto Educativo Mentix',
+                description: (wd.shortDescription || wd.description || wd.fullDescription || 'Proyecto en construcción con el Asistente Inteligente de Mentix.').replace(/Asistente Inteligente GovData Nexus/gi, 'Asistente Inteligente de Mentix'),
                 projectType: wd.projectType || 'presentation',
                 isGovDataProject: true,
                 category: wd.category || 'tecnologia',
@@ -2333,7 +2333,8 @@ window.ProjectsView = {
                 author: wd.author || wd.teamLead || 'Docente / Estudiante',
                 authorRole: wd.authorRole || 'student',
                 status: wd.status || (wd.publicationStatus === 'published' ? 'completed' : 'in_progress'),
-                publicationStatus: wd.publicationStatus || 'pending_approval',
+                publicationStatus: wd.publicationStatus || 'draft',
+                submittedForApproval: Boolean(wd.submittedForApproval || wd.publicationStatus === 'published'),
                 approvalStatus: wd.approvalStatus || 'pending',
                 isPublic: wd.isPublic === true,
                 image: wd.mainImage || wd.thumbnailImage || wd.banner || 'assets/projects_ui/card_data_gov.png',
@@ -3021,28 +3022,39 @@ window.ProjectsView = {
     const isAuthor = !isGuest && (window.appRouter ? window.appRouter.isChallengeOwner(c) : false);
     const isApproved = c.approvalStatus === 'approved' && !c.rejectionReason;
     const isRejected = c.approvalStatus === 'rejected';
-    const isExplicitCompleted =
-      c.status === 'completed' ||
-      c.status === 'review' ||
-      c.stage === 'completed' ||
-      c.publicationStatus === 'completed' ||
+    const rawTitleTrim = String(c.title || '').trim();
+    const rawTitleNorm = rawTitleTrim.toLowerCase();
+    const isDefaultUntitled = !rawTitleNorm || rawTitleNorm === 'nuevo proyecto govdata' || rawTitleNorm === 'nuevo proyecto' || rawTitleNorm === 'proyecto govdata';
+    const displayTitle = isDefaultUntitled ? 'Nuevo Proyecto' : rawTitleTrim;
+    const maxSteps = Math.max(
+      Array.isArray(c.completedSteps) ? c.completedSteps.length : 0,
+      Array.isArray(c.govdata?.completedSteps) ? c.govdata.completedSteps.length : 0
+    );
+    const maxProg = Math.max(
+      Number(c.progress || 0),
+      Number(c.calculatedProgress || 0),
+      Number(c.govdata?.progress || 0)
+    );
+    const isExplicitCompleted = Boolean(
+      isApproved ||
+      c.submittedForApproval === true ||
+      c.govdata?.submittedForApproval === true ||
       c.publicationStatus === 'published' ||
-      c.publicationStatus === 'pending_approval' ||
-      Number(c.progress) >= 100 ||
-      Number(c.calculatedProgress) >= 100 ||
-      (Array.isArray(c.completedSteps) && c.completedSteps.length >= 16) ||
-      Boolean(c.completedAt || c.publishedAt || c.approvedAt || c.authorizedAt) ||
-      Boolean(c.govdata && (
-        c.govdata.publicationStatus === 'published' ||
-        c.govdata.publicationStatus === 'completed' ||
-        c.govdata.publicationStatus === 'pending_approval' ||
-        c.govdata.status === 'completed' ||
-        c.govdata.status === 'review' ||
-        Number(c.govdata.progress) >= 100 ||
-        (Array.isArray(c.govdata.completedSteps) && c.govdata.completedSteps.length >= 16) ||
-        c.govdata.completedAt
-      ));
-    const isDraft = !isExplicitCompleted && (c.status === 'in_progress' || c.publicationStatus === 'draft' || c.stage === 'in_progress');
+      c.govdata?.publicationStatus === 'published' ||
+      c.approvedAt ||
+      c.authorizedAt ||
+      c.publishedAt ||
+      maxSteps >= 16 ||
+      maxProg >= 100 ||
+      (!isDefaultUntitled && (
+        c.status === 'completed' ||
+        c.stage === 'completed' ||
+        c.publicationStatus === 'completed' ||
+        c.completedAt ||
+        c.govdata?.completedAt
+      ))
+    );
+    const isDraft = !isExplicitCompleted;
     const isInProgress = Boolean(isDraft && !isApproved);
     const userRole = String(currentUser?.role || '').trim().toLowerCase();
     const isTeacher = !isAdmin && (userRole === 'teacher' || userRole === 'profesor' || userRole === 'docente');
@@ -3201,7 +3213,10 @@ window.ProjectsView = {
     const dateStr = c.date || (c.createdAt ? new Date(c.createdAt).toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' }) : '12 Abr 2025');
     const studentsCount = (c.students !== undefined && c.students !== null) ? c.students : (c.playsCount || 0);
     const ratingStr = c.rating || '5.0';
-    const desc = c.description || 'Proyecto académico de aprendizaje colaborativo.';
+    const rawDescStr = String(c.description || '').trim();
+    const desc = (!rawDescStr || /Asistente Inteligente GovData Nexus/i.test(rawDescStr))
+      ? (isInProgress ? 'Proyecto en construcción con el Asistente Inteligente de Mentix.' : 'Proyecto documentado con el Asistente Inteligente de Mentix.')
+      : rawDescStr;
 
     const btnLeftStyle = primaryIsBlue
       ? 'background: #0047cc; color: #ffffff; border: none; box-shadow: 0 2px 8px rgba(0, 71, 204, 0.25);'
@@ -3283,7 +3298,7 @@ window.ProjectsView = {
         <!-- Card Body -->
         <div class="saas-card-body" style="padding: 1.05rem 1.15rem 1.15rem; display: flex; flex-direction: column; flex: 1;">
           <h3 class="saas-card-title" style="font-size: 0.98rem; font-weight: 800; color: #0f172a; margin: 0 0 0.4rem; line-height: 1.35; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
-            ${this.escapeHtml(c.title)}
+            ${this.escapeHtml(displayTitle)}
           </h3>
 
           <p class="saas-card-desc" style="font-size: 0.81rem; color: #475569; margin: 0 0 0.85rem; line-height: 1.42; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis; max-height: 2.85em; flex: 1;">

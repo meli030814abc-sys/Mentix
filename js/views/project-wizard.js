@@ -513,7 +513,7 @@ window.ProjectWizard = {
     // Sincronizar inmediatamente con window.appState.challenges y el almacenamiento global para que aparezca en Admin y en Proyectos
     let syncedRecord = null;
     try {
-      syncedRecord = this.syncProjectRecordToAppState(this.draft.publicationStatus || 'pending_approval');
+      syncedRecord = this.syncProjectRecordToAppState(this.draft.publicationStatus || 'draft');
       if (typeof saveGlobalState === 'function') {
         saveGlobalState(window.appState);
       }
@@ -6861,7 +6861,7 @@ collectCurrentStepInputs() {
     const pubStatus = statusOverride || d.publicationStatus || 'draft';
     d.publicationStatus = pubStatus;
 
-    const finalTitle = (d.title || d.landingConfig?.publicName || 'Nuevo Proyecto GovData').trim();
+    const finalTitle = (d.title || d.landingConfig?.publicName || 'Nuevo Proyecto').trim();
     const finalSlug = d.landingConfig?.slug || this.slugify(finalTitle);
     d.landingConfig.slug = finalSlug;
 
@@ -6878,8 +6878,8 @@ collectCurrentStepInputs() {
       id: d.id,
       slug: finalSlug,
       title: finalTitle,
-      subtitle: d.subtitle || 'Proyecto GovData Nexus',
-      description: d.shortDescription || d.fullDescription || 'Proyecto documentado con el Asistente Inteligente GovData Nexus.',
+      subtitle: d.subtitle || 'Proyecto Educativo Mentix',
+      description: d.shortDescription || d.fullDescription || 'Proyecto en construcción con el Asistente Inteligente de Mentix.',
       shortDescription: d.shortDescription || d.description || '',
       fullDescription: d.fullDescription || '',
       category: d.category || 'tecnologia',
@@ -6900,10 +6900,11 @@ collectCurrentStepInputs() {
       preparationStatus: d.preparationStatus || 'en_desarrollo',
       publicationStatus: pubStatus,
       approvalStatus: approvalStatus,
+      submittedForApproval: Boolean(d.submittedForApproval || existingRec.submittedForApproval || pubStatus === 'published'),
       authorizedAt: authorizedAt,
       authorizedBy: authorizedBy,
-      status: (pubStatus === 'published' || pubStatus === 'pending_approval' || pubStatus === 'completed' || Number(d.progress) >= 100 || (Array.isArray(d.completedSteps) && d.completedSteps.length >= 16)) ? 'completed' : 'in_progress',
-      completedAt: (pubStatus === 'published' || pubStatus === 'pending_approval' || pubStatus === 'completed') ? (d.completedAt || existingRec.completedAt || new Date().toISOString()) : (d.completedAt || existingRec.completedAt || undefined),
+      status: (pubStatus === 'published' || pubStatus === 'completed' || (pubStatus === 'pending_approval' && Boolean(d.submittedForApproval || existingRec.submittedForApproval || Number(d.progress) >= 100 || (Array.isArray(d.completedSteps) && d.completedSteps.length >= 16)))) ? 'completed' : 'in_progress',
+      completedAt: (pubStatus === 'published' || pubStatus === 'completed' || Boolean(d.submittedForApproval || existingRec.submittedForApproval)) ? (d.completedAt || existingRec.completedAt || new Date().toISOString()) : (d.completedAt || existingRec.completedAt || undefined),
       isPublic: pubStatus === 'published' && approvalStatus === 'approved',
       startDate: d.startDate || '',
       endDate: d.endDate || '',
@@ -7038,6 +7039,7 @@ collectCurrentStepInputs() {
 
     const canPub = forcePublish;
     const targetStatus = canPub ? 'published' : 'pending_approval';
+    this.draft.submittedForApproval = true;
     this.draft.completedSteps = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16];
     this.draft.currentStep = 16;
     this.draft.progress = 100;
