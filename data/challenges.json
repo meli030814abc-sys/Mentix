@@ -46,8 +46,8 @@
       9,
       10
     ],
-    "progress": 73,
-    "calculatedProgress": 73,
+    "progress": 68,
+    "calculatedProgress": 68,
     "valueProp": {
       "problemSolved": "G",
       "howItWorks": "G",
@@ -311,9 +311,9 @@
         "collaborators": "V"
       },
       "createdAt": "2026-11-23T04:35:12.300Z",
-      "updatedAt": "2026-11-23T04:57:08.248Z",
-      "progress": 73,
-      "calculatedProgress": 73
+      "updatedAt": "2026-11-23T04:57:09.496Z",
+      "progress": 68,
+      "calculatedProgress": 68
     },
     "author": "JHFK",
     "authorId": "user_1795407757752",
@@ -325,7 +325,7 @@
     "authorAvatar": "🦊",
     "authorRole": "Líder del Proyecto",
     "createdAt": "2026-11-23T04:35:12.300Z",
-    "updatedAt": "2026-11-23T04:57:08.213Z",
+    "updatedAt": "2026-11-23T04:57:09.542Z",
     "hub": {
       "joinRequests": [],
       "members": [
