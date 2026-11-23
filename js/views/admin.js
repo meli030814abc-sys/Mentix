@@ -1405,38 +1405,95 @@ window.AdminView = {
           </div>
 
           <div class="roles-v2-hero-visual" aria-hidden="true">
-            <svg viewBox="0 0 210 120" width="195" height="112" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <svg viewBox="0 0 230 132" width="215" height="124" fill="none" xmlns="http://www.w3.org/2000/svg">
               <defs>
-                <linearGradient id="rv2Lap" x1="40" y1="20" x2="120" y2="95" gradientUnits="userSpaceOnUse">
-                  <stop stop-color="#6366f1"/><stop offset="1" stop-color="#3b82f6"/>
+                <filter id="rv3Sh" x="-20%" y="-20%" width="150%" height="150%">
+                  <feDropShadow dx="0" dy="8" stdDeviation="6" flood-color="#4338ca" flood-opacity="0.28"/>
+                </filter>
+                <filter id="rv3Soft" x="-20%" y="-20%" width="140%" height="140%">
+                  <feDropShadow dx="0" dy="4" stdDeviation="3.5" flood-color="#1e1b4b" flood-opacity="0.24"/>
+                </filter>
+                <linearGradient id="rv3LapScreen" x1="56" y1="22" x2="132" y2="96" gradientUnits="userSpaceOnUse">
+                  <stop stop-color="#818cf8"/><stop offset="0.55" stop-color="#4f46e5"/><stop offset="1" stop-color="#2563eb"/>
                 </linearGradient>
-                <linearGradient id="rv2Shield" x1="115" y1="16" x2="175" y2="105" gradientUnits="userSpaceOnUse">
-                  <stop stop-color="#a855f7"/><stop offset="1" stop-color="#6366f1"/>
+                <linearGradient id="rv3LapDeck" x1="42" y1="92" x2="152" y2="112" gradientUnits="userSpaceOnUse">
+                  <stop stop-color="#ffffff"/><stop offset="0.6" stop-color="#e0e7ff"/><stop offset="1" stop-color="#a5b4fc"/>
                 </linearGradient>
-                <linearGradient id="rv2Base" x1="35" y1="95" x2="135" y2="108" gradientUnits="userSpaceOnUse">
-                  <stop stop-color="#e0e7ff"/><stop offset="1" stop-color="#c7d2fe"/>
+                <linearGradient id="rv3ShieldFace" x1="122" y1="14" x2="196" y2="112" gradientUnits="userSpaceOnUse">
+                  <stop stop-color="#c084fc"/><stop offset="0.48" stop-color="#8b5cf6"/><stop offset="1" stop-color="#4f46e5"/>
+                </linearGradient>
+                <linearGradient id="rv3ShieldSide" x1="126" y1="20" x2="200" y2="116" gradientUnits="userSpaceOnUse">
+                  <stop stop-color="#6d28d9"/><stop offset="1" stop-color="#312e81"/>
+                </linearGradient>
+                <linearGradient id="rv3Glass" x1="124" y1="18" x2="176" y2="74" gradientUnits="userSpaceOnUse">
+                  <stop stop-color="#ffffff" stop-opacity="0.65"/><stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+                </linearGradient>
+                <linearGradient id="rv3Card1" x1="6" y1="36" x2="34" y2="70" gradientUnits="userSpaceOnUse">
+                  <stop stop-color="#7dd3fc"/><stop offset="1" stop-color="#2563eb"/>
+                </linearGradient>
+                <linearGradient id="rv3Card2" x1="38" y1="8" x2="66" y2="40" gradientUnits="userSpaceOnUse">
+                  <stop stop-color="#d8b4fe"/><stop offset="1" stop-color="#7c3aed"/>
+                </linearGradient>
+                <linearGradient id="rv3Card3" x1="28" y1="70" x2="54" y2="98" gradientUnits="userSpaceOnUse">
+                  <stop stop-color="#a5b4fc"/><stop offset="1" stop-color="#4f46e5"/>
                 </linearGradient>
               </defs>
-              <!-- Tarjetas flotantes de usuarios -->
-              <rect x="8" y="34" width="24" height="28" rx="6" fill="#60a5fa" opacity="0.9"/>
-              <circle cx="20" cy="44" r="4" fill="#fff"/><path d="M13 56c1-4 13-4 14 0" fill="#fff"/>
-              <rect x="40" y="10" width="24" height="26" rx="6" fill="#a78bfa" opacity="0.9"/>
-              <circle cx="52" cy="19" r="4" fill="#fff"/><path d="M45 31c1-4 13-4 14 0" fill="#fff"/>
-              <rect x="32" y="64" width="22" height="24" rx="6" fill="#818cf8" opacity="0.85"/>
-              <circle cx="43" cy="73" r="3.5" fill="#fff"/><path d="M37 83c1-3.5 11-3.5 12 0" fill="#fff"/>
-              <!-- Laptop -->
-              <path d="M56 88 L128 88 L142 106 L44 106 Z" fill="url(#rv2Base)" stroke="#a5b4fc" stroke-width="1.5"/>
-              <rect x="60" y="24" width="70" height="62" rx="9" transform="skewY(-6) translate(0, 8)" fill="#1e1b4b"/>
-              <rect x="64" y="28" width="62" height="53" rx="6" transform="skewY(-6) translate(0, 8)" fill="url(#rv2Lap)"/>
-              <circle cx="95" cy="46" r="8" fill="#fff" opacity="0.92"/>
-              <path d="M81 66c2-9 26-9 28 0" fill="#fff" opacity="0.92"/>
-              <!-- Escudo 3D con check -->
-              <path d="M148 16 L184 28 V58 C184 82 167 98 148 106 C129 98 112 82 112 58 V28 Z" fill="url(#rv2Shield)" stroke="#f5f3ff" stroke-width="3"/>
-              <path d="M148 24 L176 34 V57 C176 76 163 89 148 96 C133 89 120 76 120 57 V34 Z" fill="#ffffff" opacity="0.16"/>
-              <path d="M135 58 L144 67 L162 47" stroke="#ffffff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
-              <!-- Engranaje decorativo -->
-              <circle cx="174" cy="98" r="9" fill="#4f46e5" stroke="#c7d2fe" stroke-width="2.5"/>
-              <circle cx="174" cy="98" r="3.5" fill="#eef2ff"/>
+              <!-- Sombra de contacto en el suelo -->
+              <ellipse cx="122" cy="116" rx="76" ry="10" fill="#4338ca" opacity="0.16"/>
+              <!-- Tarjetas 3D flotantes con extrusión -->
+              <g filter="url(#rv3Soft)">
+                <rect x="9" y="40" width="26" height="30" rx="7" fill="#1d4ed8"/>
+                <rect x="6" y="36" width="26" height="30" rx="7" fill="url(#rv3Card1)" stroke="#e0f2fe" stroke-width="1.2"/>
+                <circle cx="19" cy="46" r="4.3" fill="#ffffff"/>
+                <path d="M12 59c1.2-4.6 12.8-4.6 14 0" fill="#ffffff"/>
+              </g>
+              <g filter="url(#rv3Soft)">
+                <rect x="41" y="12" width="26" height="28" rx="7" fill="#5b21b6"/>
+                <rect x="38" y="8" width="26" height="28" rx="7" fill="url(#rv3Card2)" stroke="#f5f3ff" stroke-width="1.2"/>
+                <circle cx="51" cy="18" r="4.3" fill="#ffffff"/>
+                <path d="M44 30c1.2-4.4 12.8-4.4 14 0" fill="#ffffff"/>
+              </g>
+              <g filter="url(#rv3Soft)">
+                <rect x="31" y="73" width="24" height="26" rx="6.5" fill="#3730a3"/>
+                <rect x="28" y="70" width="24" height="26" rx="6.5" fill="url(#rv3Card3)" stroke="#e0e7ff" stroke-width="1.2"/>
+                <circle cx="40" cy="79" r="3.8" fill="#ffffff"/>
+                <path d="M34 90c1-3.8 11-3.8 12 0" fill="#ffffff"/>
+              </g>
+              <!-- Laptop 3D Isométrica con grosor -->
+              <g filter="url(#rv3Sh)">
+                <path d="M46 108 L148 108 L144 114 L50 114 Z" fill="#6366f1"/>
+                <path d="M58 91 L136 91 L148 108 L46 108 Z" fill="url(#rv3LapDeck)" stroke="#ffffff" stroke-width="1.4"/>
+                <path d="M74 96 L124 96 L129 103 L70 103 Z" fill="#c7d2fe" opacity="0.75"/>
+                <!-- Tapa trasera 3D -->
+                <rect x="64" y="25" width="76" height="66" rx="10" transform="skewY(-5) translate(0, 8)" fill="#312e81"/>
+                <rect x="60" y="23" width="76" height="66" rx="10" transform="skewY(-5) translate(0, 8)" fill="#1e1b4b" stroke="#818cf8" stroke-width="1.4"/>
+                <rect x="65" y="28" width="66" height="55" rx="7" transform="skewY(-5) translate(0, 8)" fill="url(#rv3LapScreen)"/>
+                <!-- Brillo diagonal pantalla -->
+                <path d="M67 30 L108 26 L86 80 L67 82 Z" fill="#ffffff" opacity="0.14"/>
+                <!-- Silueta de usuarios 3D dentro de la pantalla -->
+                <circle cx="98" cy="48" r="8.5" fill="#ffffff"/>
+                <path d="M82 69c2.2-10 29.8-10 32 0" fill="#ffffff"/>
+                <circle cx="81" cy="52" r="5" fill="#e0e7ff" opacity="0.8"/>
+                <circle cx="115" cy="52" r="5" fill="#e0e7ff" opacity="0.8"/>
+              </g>
+              <!-- Escudo 3D Extruido con Check Flotante -->
+              <g filter="url(#rv3Sh)">
+                <!-- Borde lateral 3D extruido -->
+                <path d="M164 17 L202 30 V62 C202 88 184 105 164 114 C144 105 126 88 126 62 V30 Z" fill="url(#rv3ShieldSide)"/>
+                <!-- Cara frontal 3D -->
+                <path d="M158 14 L196 27 V59 C196 85 178 102 158 111 C138 102 120 85 120 59 V27 Z" fill="url(#rv3ShieldFace)" stroke="#f5f3ff" stroke-width="2.5"/>
+                <!-- Brillo cristalino superior -->
+                <path d="M158 20 L189 31 V56 C189 65 186 73 182 80 C166 64 148 52 127 46 V31 Z" fill="url(#rv3Glass)"/>
+                <!-- Check 3D con sombra -->
+                <path d="M144 61 L154 71 L174 49" stroke="#312e81" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" opacity="0.35" transform="translate(0, 3)"/>
+                <path d="M144 61 L154 71 L174 49" stroke="#ffffff" stroke-width="7.2" stroke-linecap="round" stroke-linejoin="round"/>
+              </g>
+              <!-- Engranaje 3D Esculpido -->
+              <g filter="url(#rv3Soft)" transform="translate(186, 102)">
+                <circle cx="2" cy="2" r="12" fill="#312e81"/>
+                <circle cx="0" cy="0" r="12" fill="#6366f1" stroke="#c7d2fe" stroke-width="2.2"/>
+                <circle cx="0" cy="0" r="4.5" fill="#eef2ff"/>
+              </g>
             </svg>
           </div>
 
@@ -1454,10 +1511,18 @@ window.AdminView = {
           <div class="roles-v2-role-card card-purple">
             <div class="roles-v2-card-head">
               <div class="roles-v2-card-icon-box icon-purple" aria-hidden="true">
-                <svg viewBox="0 0 48 48" width="44" height="44" fill="none">
-                  <defs><linearGradient id="icPurp" x1="8" y1="6" x2="40" y2="44" gradientUnits="userSpaceOnUse"><stop stop-color="#a855f7"/><stop offset="1" stop-color="#6366f1"/></linearGradient></defs>
-                  <path d="M24 4L40 10V23C40 34 32.5 41 24 44C15.5 41 8 34 8 23V10L24 4Z" fill="url(#icPurp)"/>
-                  <path d="M15 28L17 17L24 22L31 17L33 28H15Z" fill="#facc15" stroke="#fef08a" stroke-width="1.2" stroke-linejoin="round"/>
+                <svg viewBox="0 0 56 56" width="48" height="48" fill="none">
+                  <defs>
+                    <linearGradient id="ic3PurpSide" x1="12" y1="8" x2="48" y2="50" gradientUnits="userSpaceOnUse"><stop stop-color="#6d28d9"/><stop offset="1" stop-color="#312e81"/></linearGradient>
+                    <linearGradient id="ic3PurpFace" x1="8" y1="5" x2="44" y2="48" gradientUnits="userSpaceOnUse"><stop stop-color="#c084fc"/><stop offset="0.5" stop-color="#8b5cf6"/><stop offset="1" stop-color="#4f46e5"/></linearGradient>
+                    <linearGradient id="ic3Gold" x1="16" y1="18" x2="38" y2="35" gradientUnits="userSpaceOnUse"><stop stop-color="#fef08a"/><stop offset="0.5" stop-color="#facc15"/><stop offset="1" stop-color="#d97706"/></linearGradient>
+                  </defs>
+                  <path d="M30 6L47 12.5V26.5C47 38.5 39 46.5 30 50C21 46.5 13 38.5 13 26.5V12.5L30 6Z" fill="url(#ic3PurpSide)"/>
+                  <path d="M27 4L44 10.5V24.5C44 36.5 36 44.5 27 48C18 44.5 10 36.5 10 24.5V10.5L27 4Z" fill="url(#ic3PurpFace)" stroke="#f5f3ff" stroke-width="1.6"/>
+                  <path d="M27 7L41 12.5V23C32 21 20 19 13 23V12.5L27 7Z" fill="#ffffff" opacity="0.24"/>
+                  <path d="M17 34L19 21.5L27 27L35 21.5L37 34H17Z" fill="#78350f" opacity="0.35" transform="translate(1, 2)"/>
+                  <path d="M17 33L19 20.5L27 26L35 20.5L37 33H17Z" fill="url(#ic3Gold)" stroke="#fef9c3" stroke-width="1.2" stroke-linejoin="round"/>
+                  <circle cx="19" cy="19.5" r="1.8" fill="#fef08a"/><circle cx="27" cy="24.5" r="2" fill="#ffffff"/><circle cx="35" cy="19.5" r="1.8" fill="#fef08a"/>
                 </svg>
               </div>
               <div class="roles-v2-card-title-wrap">
@@ -1479,12 +1544,19 @@ window.AdminView = {
           <div class="roles-v2-role-card card-blue">
             <div class="roles-v2-card-head">
               <div class="roles-v2-card-icon-box icon-blue" aria-hidden="true">
-                <svg viewBox="0 0 48 48" width="44" height="44" fill="none">
-                  <defs><linearGradient id="icBlue" x1="6" y1="10" x2="42" y2="38" gradientUnits="userSpaceOnUse"><stop stop-color="#38bdf8"/><stop offset="1" stop-color="#2563eb"/></linearGradient></defs>
-                  <path d="M24 9L4 19L24 29L44 19L24 9Z" fill="url(#icBlue)"/>
-                  <path d="M12 23.5V33C12 36.5 17.5 39 24 39C30.5 39 36 36.5 36 33V23.5L24 29.5L12 23.5Z" fill="#1d4ed8"/>
-                  <path d="M40 21V32" stroke="#38bdf8" stroke-width="2.6" stroke-linecap="round"/>
-                  <circle cx="40" cy="33.5" r="2.2" fill="#60a5fa"/>
+                <svg viewBox="0 0 56 56" width="48" height="48" fill="none">
+                  <defs>
+                    <linearGradient id="ic3CapTop" x1="8" y1="10" x2="48" y2="30" gradientUnits="userSpaceOnUse"><stop stop-color="#7dd3fc"/><stop offset="0.55" stop-color="#3b82f6"/><stop offset="1" stop-color="#1d4ed8"/></linearGradient>
+                    <linearGradient id="ic3CapBase" x1="14" y1="26" x2="42" y2="44" gradientUnits="userSpaceOnUse"><stop stop-color="#2563eb"/><stop offset="1" stop-color="#1e3a8a"/></linearGradient>
+                  </defs>
+                  <ellipse cx="28" cy="46" rx="15" ry="3.5" fill="#1d4ed8" opacity="0.18"/>
+                  <path d="M14 27V37.5C14 41.5 20.5 44.5 28 44.5C35.5 44.5 42 41.5 42 37.5V27L28 34L14 27Z" fill="url(#ic3CapBase)"/>
+                  <path d="M28 11L5 22L28 33L51 22L28 11Z" fill="#1e40af" transform="translate(0, 2.5)"/>
+                  <path d="M28 9L5 20L28 31L51 20L28 9Z" fill="url(#ic3CapTop)" stroke="#e0f2fe" stroke-width="1.3" stroke-linejoin="round"/>
+                  <path d="M28 11L11 19.5L28 24L45 19.5L28 11Z" fill="#ffffff" opacity="0.22"/>
+                  <circle cx="28" cy="20" r="2.5" fill="#fef08a"/>
+                  <path d="M28 20L45 24V36" stroke="#38bdf8" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+                  <ellipse cx="45" cy="38.5" rx="3" ry="4" fill="#60a5fa" stroke="#e0f2fe" stroke-width="1"/>
                 </svg>
               </div>
               <div class="roles-v2-card-title-wrap">
@@ -1506,12 +1578,20 @@ window.AdminView = {
           <div class="roles-v2-role-card card-green">
             <div class="roles-v2-card-head">
               <div class="roles-v2-card-icon-box icon-green" aria-hidden="true">
-                <svg viewBox="0 0 48 48" width="44" height="44" fill="none">
-                  <defs><linearGradient id="icGrn" x1="8" y1="8" x2="40" y2="42" gradientUnits="userSpaceOnUse"><stop stop-color="#34d399"/><stop offset="1" stop-color="#059669"/></linearGradient></defs>
-                  <circle cx="24" cy="15" r="7" fill="url(#icGrn)"/>
-                  <path d="M12 31C12 25.5 17 23 24 23C31 23 36 25.5 36 31" fill="url(#icGrn)"/>
-                  <rect x="13" y="29" width="22" height="12" rx="3" fill="#e2e8f0" stroke="#94a3b8" stroke-width="1.5"/>
-                  <circle cx="24" cy="35" r="2" fill="#10b981"/>
+                <svg viewBox="0 0 56 56" width="48" height="48" fill="none">
+                  <defs>
+                    <radialGradient id="ic3Head" cx="35%" cy="30%" r="70%"><stop stop-color="#6ee7b7"/><stop offset="0.55" stop-color="#10b981"/><stop offset="1" stop-color="#047857"/></radialGradient>
+                    <linearGradient id="ic3Body" x1="14" y1="24" x2="42" y2="38" gradientUnits="userSpaceOnUse"><stop stop-color="#34d399"/><stop offset="1" stop-color="#059669"/></linearGradient>
+                    <linearGradient id="ic3Lap" x1="12" y1="30" x2="44" y2="47" gradientUnits="userSpaceOnUse"><stop stop-color="#ffffff"/><stop offset="0.6" stop-color="#e2e8f0"/><stop offset="1" stop-color="#94a3b8"/></linearGradient>
+                  </defs>
+                  <ellipse cx="28" cy="49" rx="16" ry="3.2" fill="#047857" opacity="0.18"/>
+                  <circle cx="28" cy="16" r="8.2" fill="url(#ic3Head)"/>
+                  <ellipse cx="25" cy="13" rx="2.5" ry="1.5" fill="#ffffff" opacity="0.45" transform="rotate(-25 25 13)"/>
+                  <path d="M13 35C13 27.5 19.5 25 28 25C36.5 25 43 27.5 43 35" fill="url(#ic3Body)"/>
+                  <rect x="14" y="33" width="28" height="15" rx="3.5" fill="#64748b"/>
+                  <rect x="13" y="31" width="28" height="15" rx="3.5" fill="url(#ic3Lap)" stroke="#ffffff" stroke-width="1.3"/>
+                  <circle cx="27" cy="38.5" r="2.6" fill="#10b981"/>
+                  <path d="M10 46H44L41 48.5H13L10 46Z" fill="#cbd5e1"/>
                 </svg>
               </div>
               <div class="roles-v2-card-title-wrap">
