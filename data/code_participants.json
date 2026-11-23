@@ -1,0 +1,80 @@
+{
+  "804263": [
+    {
+      "code": "804263",
+      "normCode": "804263",
+      "userKey": "mentilona",
+      "userId": "user_1792184134006",
+      "username": "Mentilona",
+      "name": "Melisa",
+      "email": "gatitaxd6f79@gmail.com",
+      "role": "admin",
+      "joinedAt": "2026-11-23T03:09:15.937Z",
+      "updatedAt": "2026-11-23T03:42:11.724Z",
+      "projectId": "govdata_code_mentilona_804263",
+      "projectTitle": "Nuevo Proyecto",
+      "projectDescription": "Proyecto en construcción con el Asistente Inteligente de Mentix.",
+      "currentStep": 1,
+      "completedStepsCount": 0,
+      "progress": 45,
+      "status": "in_progress",
+      "approvalStatus": "pending",
+      "publicationStatus": "draft",
+      "slidesCount": 0,
+      "resourcesCount": 0,
+      "snapshot": {
+        "id": "govdata_code_mentilona_804263",
+        "title": "Nuevo Proyecto",
+        "subtitle": "Proyecto Educativo Mentix",
+        "description": "Proyecto en construcción con el Asistente Inteligente de Mentix.",
+        "author": "Melisa",
+        "authorEmail": "gatitaxd6f79@gmail.com",
+        "joinCode": "804263",
+        "accessCode": "804263",
+        "projectType": "presentation",
+        "isGovDataProject": true,
+        "status": "in_progress",
+        "publicationStatus": "draft",
+        "approvalStatus": "pending",
+        "currentStep": 1,
+        "completedSteps": [],
+        "progress": 45,
+        "banner": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
+        "problemStatement": "",
+        "mainObjective": "",
+        "benefits": "",
+        "targetAudience": "",
+        "slidesCount": 0,
+        "resourcesCount": 0,
+        "landingConfig": {
+          "publicName": "Nuevo Proyecto",
+          "slug": "nuevo-proyecto",
+          "landingTitle": "Nuevo Proyecto",
+          "publicDescription": "Proyecto en construcción con el Asistente Inteligente de Mentix.",
+          "visibleCategory": "Tecnología & Programación",
+          "tags": [
+            "Gobierno de Datos",
+            "IA"
+          ],
+          "ctaText": "Unirse / Colaborar",
+          "ctaUrl": "#plp-sec-contacto",
+          "displayOrder": 1,
+          "featuredVideoPublic": true
+        },
+        "valueProp": {
+          "problemSolved": "",
+          "howItWorks": "",
+          "forWhom": "",
+          "differentiator": "",
+          "keyFeatures": [],
+          "resultsAndBenefits": "",
+          "prerequisites": "",
+          "visitorAction": "Unirse / Colaborar",
+          "commercialPitch": "",
+          "faqs": []
+        },
+        "updatedAt": "2026-11-23T03:42:11.724Z"
+      }
+    }
+  ]
+}
