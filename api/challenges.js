@@ -18,8 +18,8 @@ function ghHeaders() {
   return h;
 }
 
-async function readCustomProjectCodes() {
-  if (Array.isArray(inMemoryCodes) && inMemoryCodes.length > 0) {
+async function readCustomProjectCodes(forceGitHub = false) {
+  if (!forceGitHub && !GITHUB_TOKEN && Array.isArray(inMemoryCodes)) {
     return { codes: inMemoryCodes, sha: null };
   }
   try {
@@ -34,6 +34,9 @@ async function readCustomProjectCodes() {
       }
     }
   } catch (e) {}
+  if (Array.isArray(inMemoryCodes)) {
+    return { codes: inMemoryCodes, sha: null };
+  }
   try {
     const fs = await import('fs');
     const path = await import('path');
@@ -54,7 +57,7 @@ async function saveCustomProjectCodes(newCodes) {
   inMemoryCodes = cleanList;
   if (!GITHUB_TOKEN) return false;
   for (let attempt = 0; attempt < 3; attempt++) {
-    const { sha } = await readCustomProjectCodes();
+    const { sha } = await readCustomProjectCodes(true);
     const payload = {
       message: `chore(data): sincronizar codigos de proyectos [skip ci]`,
       content: Buffer.from(JSON.stringify(cleanList, null, 2), 'utf8').toString('base64'),
@@ -142,7 +145,7 @@ export default async function handler(req, res) {
 
   // 1. GET: Consultar todos los retos y proyectos compartidos en la nube
   if (req.method === 'GET' && req.query && (req.query.customCodes || req.query.codes)) {
-    const { codes } = await readCustomProjectCodes();
+    const { codes } = await readCustomProjectCodes(true);
     res.setHeader('Cache-Control', 'no-store');
     return res.status(200).json(codes);
   }
@@ -306,7 +309,11 @@ export default async function handler(req, res) {
           } catch (err) {}
           if (!Array.isArray(currentChallenges)) currentChallenges = [];
           if (currentChallenges.length > 0) {
-            currentChallenges[0].customProjectCodes = newCodes;
+            currentChallenges.forEach((ch, idx) => {
+              if (!ch) return;
+              if (idx === 0) ch.customProjectCodes = newCodes;
+              else if (ch.customProjectCodes) delete ch.customProjectCodes;
+            });
           }
           if (GITHUB_TOKEN) {
             const updatedBuffer = Buffer.from(JSON.stringify(currentChallenges, null, 2), 'utf8').toString('base64');
