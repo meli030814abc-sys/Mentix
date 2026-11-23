@@ -4883,3 +4883,173 @@
   background: linear-gradient(180deg, #111c33 0%, #0b1324 100%);
   box-shadow: 0 8px 0 #020617, 0 20px 40px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
+
+/* ==========================================================================
+   ÍCONOS, MUÑECOS Y ESCENA 100% 3D (MICROSOFT FLUENT 3D — V165)
+   ========================================================================== */
+.rv3d-ico,
+.rv3d-chk {
+  display: inline-block;
+  vertical-align: middle;
+  object-fit: contain;
+  flex-shrink: 0;
+  filter: drop-shadow(0 3px 4px rgba(15, 23, 42, 0.22));
+}
+
+.rv3d-th {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+}
+
+.rv3d-avatar-img {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+  display: block;
+  filter: drop-shadow(0 3px 4px rgba(15, 23, 42, 0.22));
+}
+
+.roles-v2-avatar {
+  width: 38px;
+  height: 38px;
+  padding: 2px;
+}
+
+.roles-v2-panel-ico {
+  width: 44px;
+  height: 44px;
+}
+
+.cap-ico {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+}
+
+.roles-v2-act-btn {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+}
+
+/* Medallones 3D en las 3 tarjetas de roles (muñeco/escudo 3D + insignia 3D flotante) */
+.rv3d-medallion {
+  position: relative;
+  width: 62px !important;
+  height: 62px !important;
+  overflow: visible !important;
+}
+
+.rv3d-med-main {
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+  filter: drop-shadow(0 6px 8px rgba(15, 23, 42, 0.24));
+  transition: transform 0.22s ease;
+}
+
+.rv3d-med-badge {
+  position: absolute;
+  right: -6px;
+  bottom: -6px;
+  width: 26px;
+  height: 26px;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 6px rgba(15, 23, 42, 0.3));
+  transition: transform 0.22s ease;
+}
+
+.roles-v2-role-card:hover .rv3d-med-main {
+  transform: translateY(-3px) scale(1.08);
+}
+
+.roles-v2-role-card:hover .rv3d-med-badge {
+  transform: translateY(-4px) rotate(8deg) scale(1.12);
+}
+
+/* Escena Hero 3D (muñecos + laptop + escudo + corona + engranaje) */
+.rv3d-hero-stage {
+  position: relative;
+  width: 225px;
+  height: 118px;
+  transform-style: preserve-3d;
+}
+
+.rv3d-hero-stage img {
+  position: absolute;
+  object-fit: contain;
+  pointer-events: none;
+}
+
+.rv3d-hero-laptop {
+  width: 106px;
+  height: 106px;
+  left: 38px;
+  top: 10px;
+  z-index: 2;
+  filter: drop-shadow(0 12px 14px rgba(59, 130, 246, 0.32));
+}
+
+.rv3d-hero-shield {
+  width: 82px;
+  height: 82px;
+  right: 18px;
+  top: 16px;
+  z-index: 4;
+  filter: drop-shadow(0 12px 16px rgba(124, 58, 237, 0.38));
+}
+
+.rv3d-hero-crown {
+  width: 38px;
+  height: 38px;
+  right: 38px;
+  top: 0px;
+  z-index: 5;
+  transform: rotate(10deg);
+  filter: drop-shadow(0 6px 8px rgba(217, 119, 6, 0.35));
+}
+
+.rv3d-hero-gear {
+  width: 36px;
+  height: 36px;
+  right: 6px;
+  bottom: 4px;
+  z-index: 5;
+  filter: drop-shadow(0 6px 8px rgba(79, 70, 229, 0.3));
+}
+
+.rv3d-hero-char {
+  width: 48px;
+  height: 48px;
+  z-index: 3;
+  filter: drop-shadow(0 8px 10px rgba(15, 23, 42, 0.26));
+}
+
+.rv3d-char-a {
+  left: 0px;
+  top: 6px;
+  transform: rotate(-8deg);
+}
+
+.rv3d-char-b {
+  left: 4px;
+  bottom: 4px;
+  transform: rotate(6deg);
+}
+
+/* Celdas de la Matriz de Permisos 3D con efecto relieve en cada fila */
+.roles-v2-matrix-table tbody tr {
+  transition: transform 0.16s ease, box-shadow 0.16s ease;
+}
+
+.roles-v2-matrix-table tbody tr:hover {
+  transform: translateY(-1px) scale(1.005);
+}
+
+.roles-v2-search .search-ico {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}

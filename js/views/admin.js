@@ -1384,13 +1384,58 @@ window.AdminView = {
 
     const blockedCount = rawUsers.filter(u => u.isBlocked === true).length;
 
+    // Helper para renderizar íconos y muñecos 3D reales (Microsoft Fluent 3D) en todo el módulo Comunidad
+    const F3D = 'https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets';
+    const ico3d = (path, alt = '', size = 20, cls = 'rv3d-ico') =>
+      `<img src="${F3D}/${path}" alt="${alt}" width="${size}" height="${size}" class="${cls}" loading="lazy" decoding="async" />`;
+
+    const avatarTo3D = (rawAv) => {
+      const s = String(rawAv || '').trim();
+      if (/^(https?:|data:|assets\/)/i.test(s)) {
+        return `<img src="${s}" alt="Avatar" class="rv3d-avatar-img" />`;
+      }
+      const map = {
+        '🦊': 'Fox/3D/fox_3d.png',
+        '🐱': 'Cat%20face/3D/cat_face_3d.png',
+        '🐶': 'Dog%20face/3D/dog_face_3d.png',
+        '🐼': 'Panda/3D/panda_3d.png',
+        '🦁': 'Lion/3D/lion_3d.png',
+        '🐨': 'Koala/3D/koala_3d.png',
+        '🐯': 'Tiger%20face/3D/tiger_face_3d.png',
+        '🐸': 'Frog/3D/frog_3d.png',
+        '🐻': 'Bear/3D/bear_3d.png',
+        '🐰': 'Rabbit%20face/3D/rabbit_face_3d.png',
+        '🦄': 'Unicorn/3D/unicorn_3d.png',
+        '🦉': 'Owl/3D/owl_3d.png',
+        '🐺': 'Wolf/3D/wolf_3d.png',
+        '🐧': 'Penguin/3D/penguin_3d.png',
+        '🤖': 'Robot/3D/robot_3d.png',
+        '👨‍🏫': 'Teacher/Default/3D/teacher_3d_default.png',
+        '👩‍🏫': 'Teacher/Default/3D/teacher_3d_default.png',
+        '🎓': 'Graduation%20cap/3D/graduation_cap_3d.png',
+        '👩‍💻': 'Technologist/Default/3D/technologist_3d_default.png',
+        '👨‍💻': 'Technologist/Default/3D/technologist_3d_default.png',
+        '🧑‍💻': 'Technologist/Default/3D/technologist_3d_default.png',
+        '🛡️': 'Shield/3D/shield_3d.png',
+        '👤': 'Bust%20in%20silhouette/3D/bust_in_silhouette_3d.png'
+      };
+      const matched = map[s] || 'Fox/3D/fox_3d.png';
+      return `<img src="${F3D}/${matched}" alt="${s || 'Avatar'}" class="rv3d-avatar-img" loading="lazy" decoding="async" />`;
+    };
+
+    const chk3d = ico3d('Check%20mark%20button/3D/check_mark_button_3d.png', 'Sí', 18, 'rv3d-chk');
+    const no3d = ico3d('Cross%20mark/3D/cross_mark_3d.png', 'No', 16, 'rv3d-ico');
+    const dl3d = ico3d('Down%20arrow/3D/down_arrow_3d.png', 'Descarga', 16, 'rv3d-ico');
+    const chart3d = ico3d('Bar%20chart/3D/bar_chart_3d.png', 'Reporte', 16, 'rv3d-ico');
+    const userPill3d = ico3d('Bust%20in%20silhouette/3D/bust_in_silhouette_3d.png', 'Cuentas', 15, 'rv3d-ico');
+
     return `
       <div class="roles-v2-shell">
-        <!-- Hero Banner Institucional -->
+        <!-- Hero Banner Institucional 100% 3D -->
         <div class="roles-v2-hero">
           <div class="roles-v2-hero-left">
             <div class="roles-v2-breadcrumb">
-              <span>🏠</span>
+              ${ico3d('House/3D/house_3d.png', 'Inicio', 18)}
               <span>Inicio</span>
               <span class="sep">/</span>
               <span class="current">Configuración de Roles &amp; Permisos</span>
@@ -1405,96 +1450,14 @@ window.AdminView = {
           </div>
 
           <div class="roles-v2-hero-visual" aria-hidden="true">
-            <svg viewBox="0 0 230 132" width="215" height="124" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <defs>
-                <filter id="rv3Sh" x="-20%" y="-20%" width="150%" height="150%">
-                  <feDropShadow dx="0" dy="8" stdDeviation="6" flood-color="#4338ca" flood-opacity="0.28"/>
-                </filter>
-                <filter id="rv3Soft" x="-20%" y="-20%" width="140%" height="140%">
-                  <feDropShadow dx="0" dy="4" stdDeviation="3.5" flood-color="#1e1b4b" flood-opacity="0.24"/>
-                </filter>
-                <linearGradient id="rv3LapScreen" x1="56" y1="22" x2="132" y2="96" gradientUnits="userSpaceOnUse">
-                  <stop stop-color="#818cf8"/><stop offset="0.55" stop-color="#4f46e5"/><stop offset="1" stop-color="#2563eb"/>
-                </linearGradient>
-                <linearGradient id="rv3LapDeck" x1="42" y1="92" x2="152" y2="112" gradientUnits="userSpaceOnUse">
-                  <stop stop-color="#ffffff"/><stop offset="0.6" stop-color="#e0e7ff"/><stop offset="1" stop-color="#a5b4fc"/>
-                </linearGradient>
-                <linearGradient id="rv3ShieldFace" x1="122" y1="14" x2="196" y2="112" gradientUnits="userSpaceOnUse">
-                  <stop stop-color="#c084fc"/><stop offset="0.48" stop-color="#8b5cf6"/><stop offset="1" stop-color="#4f46e5"/>
-                </linearGradient>
-                <linearGradient id="rv3ShieldSide" x1="126" y1="20" x2="200" y2="116" gradientUnits="userSpaceOnUse">
-                  <stop stop-color="#6d28d9"/><stop offset="1" stop-color="#312e81"/>
-                </linearGradient>
-                <linearGradient id="rv3Glass" x1="124" y1="18" x2="176" y2="74" gradientUnits="userSpaceOnUse">
-                  <stop stop-color="#ffffff" stop-opacity="0.65"/><stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
-                </linearGradient>
-                <linearGradient id="rv3Card1" x1="6" y1="36" x2="34" y2="70" gradientUnits="userSpaceOnUse">
-                  <stop stop-color="#7dd3fc"/><stop offset="1" stop-color="#2563eb"/>
-                </linearGradient>
-                <linearGradient id="rv3Card2" x1="38" y1="8" x2="66" y2="40" gradientUnits="userSpaceOnUse">
-                  <stop stop-color="#d8b4fe"/><stop offset="1" stop-color="#7c3aed"/>
-                </linearGradient>
-                <linearGradient id="rv3Card3" x1="28" y1="70" x2="54" y2="98" gradientUnits="userSpaceOnUse">
-                  <stop stop-color="#a5b4fc"/><stop offset="1" stop-color="#4f46e5"/>
-                </linearGradient>
-              </defs>
-              <!-- Sombra de contacto en el suelo -->
-              <ellipse cx="122" cy="116" rx="76" ry="10" fill="#4338ca" opacity="0.16"/>
-              <!-- Tarjetas 3D flotantes con extrusión -->
-              <g filter="url(#rv3Soft)">
-                <rect x="9" y="40" width="26" height="30" rx="7" fill="#1d4ed8"/>
-                <rect x="6" y="36" width="26" height="30" rx="7" fill="url(#rv3Card1)" stroke="#e0f2fe" stroke-width="1.2"/>
-                <circle cx="19" cy="46" r="4.3" fill="#ffffff"/>
-                <path d="M12 59c1.2-4.6 12.8-4.6 14 0" fill="#ffffff"/>
-              </g>
-              <g filter="url(#rv3Soft)">
-                <rect x="41" y="12" width="26" height="28" rx="7" fill="#5b21b6"/>
-                <rect x="38" y="8" width="26" height="28" rx="7" fill="url(#rv3Card2)" stroke="#f5f3ff" stroke-width="1.2"/>
-                <circle cx="51" cy="18" r="4.3" fill="#ffffff"/>
-                <path d="M44 30c1.2-4.4 12.8-4.4 14 0" fill="#ffffff"/>
-              </g>
-              <g filter="url(#rv3Soft)">
-                <rect x="31" y="73" width="24" height="26" rx="6.5" fill="#3730a3"/>
-                <rect x="28" y="70" width="24" height="26" rx="6.5" fill="url(#rv3Card3)" stroke="#e0e7ff" stroke-width="1.2"/>
-                <circle cx="40" cy="79" r="3.8" fill="#ffffff"/>
-                <path d="M34 90c1-3.8 11-3.8 12 0" fill="#ffffff"/>
-              </g>
-              <!-- Laptop 3D Isométrica con grosor -->
-              <g filter="url(#rv3Sh)">
-                <path d="M46 108 L148 108 L144 114 L50 114 Z" fill="#6366f1"/>
-                <path d="M58 91 L136 91 L148 108 L46 108 Z" fill="url(#rv3LapDeck)" stroke="#ffffff" stroke-width="1.4"/>
-                <path d="M74 96 L124 96 L129 103 L70 103 Z" fill="#c7d2fe" opacity="0.75"/>
-                <!-- Tapa trasera 3D -->
-                <rect x="64" y="25" width="76" height="66" rx="10" transform="skewY(-5) translate(0, 8)" fill="#312e81"/>
-                <rect x="60" y="23" width="76" height="66" rx="10" transform="skewY(-5) translate(0, 8)" fill="#1e1b4b" stroke="#818cf8" stroke-width="1.4"/>
-                <rect x="65" y="28" width="66" height="55" rx="7" transform="skewY(-5) translate(0, 8)" fill="url(#rv3LapScreen)"/>
-                <!-- Brillo diagonal pantalla -->
-                <path d="M67 30 L108 26 L86 80 L67 82 Z" fill="#ffffff" opacity="0.14"/>
-                <!-- Silueta de usuarios 3D dentro de la pantalla -->
-                <circle cx="98" cy="48" r="8.5" fill="#ffffff"/>
-                <path d="M82 69c2.2-10 29.8-10 32 0" fill="#ffffff"/>
-                <circle cx="81" cy="52" r="5" fill="#e0e7ff" opacity="0.8"/>
-                <circle cx="115" cy="52" r="5" fill="#e0e7ff" opacity="0.8"/>
-              </g>
-              <!-- Escudo 3D Extruido con Check Flotante -->
-              <g filter="url(#rv3Sh)">
-                <!-- Borde lateral 3D extruido -->
-                <path d="M164 17 L202 30 V62 C202 88 184 105 164 114 C144 105 126 88 126 62 V30 Z" fill="url(#rv3ShieldSide)"/>
-                <!-- Cara frontal 3D -->
-                <path d="M158 14 L196 27 V59 C196 85 178 102 158 111 C138 102 120 85 120 59 V27 Z" fill="url(#rv3ShieldFace)" stroke="#f5f3ff" stroke-width="2.5"/>
-                <!-- Brillo cristalino superior -->
-                <path d="M158 20 L189 31 V56 C189 65 186 73 182 80 C166 64 148 52 127 46 V31 Z" fill="url(#rv3Glass)"/>
-                <!-- Check 3D con sombra -->
-                <path d="M144 61 L154 71 L174 49" stroke="#312e81" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" opacity="0.35" transform="translate(0, 3)"/>
-                <path d="M144 61 L154 71 L174 49" stroke="#ffffff" stroke-width="7.2" stroke-linecap="round" stroke-linejoin="round"/>
-              </g>
-              <!-- Engranaje 3D Esculpido -->
-              <g filter="url(#rv3Soft)" transform="translate(186, 102)">
-                <circle cx="2" cy="2" r="12" fill="#312e81"/>
-                <circle cx="0" cy="0" r="12" fill="#6366f1" stroke="#c7d2fe" stroke-width="2.2"/>
-                <circle cx="0" cy="0" r="4.5" fill="#eef2ff"/>
-              </g>
-            </svg>
+            <div class="rv3d-hero-stage">
+              <img src="${F3D}/Student/Default/3D/student_3d_default.png" alt="" class="rv3d-hero-char rv3d-char-a" />
+              <img src="${F3D}/Teacher/Default/3D/teacher_3d_default.png" alt="" class="rv3d-hero-char rv3d-char-b" />
+              <img src="${F3D}/Laptop/3D/laptop_3d.png" alt="" class="rv3d-hero-laptop" />
+              <img src="${F3D}/Shield/3D/shield_3d.png" alt="" class="rv3d-hero-shield" />
+              <img src="${F3D}/Crown/3D/crown_3d.png" alt="" class="rv3d-hero-crown" />
+              <img src="${F3D}/Gear/3D/gear_3d.png" alt="" class="rv3d-hero-gear" />
+            </div>
           </div>
 
           <div class="roles-v2-hero-cta">
@@ -1505,124 +1468,88 @@ window.AdminView = {
           </div>
         </div>
 
-        <!-- 3 Tarjetas de Resumen de Roles -->
+        <!-- 3 Tarjetas de Resumen de Roles 100% 3D -->
         <div class="roles-v2-cards-grid">
           <!-- Super Administrador -->
           <div class="roles-v2-role-card card-purple">
             <div class="roles-v2-card-head">
-              <div class="roles-v2-card-icon-box icon-purple" aria-hidden="true">
-                <svg viewBox="0 0 56 56" width="48" height="48" fill="none">
-                  <defs>
-                    <linearGradient id="ic3PurpSide" x1="12" y1="8" x2="48" y2="50" gradientUnits="userSpaceOnUse"><stop stop-color="#6d28d9"/><stop offset="1" stop-color="#312e81"/></linearGradient>
-                    <linearGradient id="ic3PurpFace" x1="8" y1="5" x2="44" y2="48" gradientUnits="userSpaceOnUse"><stop stop-color="#c084fc"/><stop offset="0.5" stop-color="#8b5cf6"/><stop offset="1" stop-color="#4f46e5"/></linearGradient>
-                    <linearGradient id="ic3Gold" x1="16" y1="18" x2="38" y2="35" gradientUnits="userSpaceOnUse"><stop stop-color="#fef08a"/><stop offset="0.5" stop-color="#facc15"/><stop offset="1" stop-color="#d97706"/></linearGradient>
-                  </defs>
-                  <path d="M30 6L47 12.5V26.5C47 38.5 39 46.5 30 50C21 46.5 13 38.5 13 26.5V12.5L30 6Z" fill="url(#ic3PurpSide)"/>
-                  <path d="M27 4L44 10.5V24.5C44 36.5 36 44.5 27 48C18 44.5 10 36.5 10 24.5V10.5L27 4Z" fill="url(#ic3PurpFace)" stroke="#f5f3ff" stroke-width="1.6"/>
-                  <path d="M27 7L41 12.5V23C32 21 20 19 13 23V12.5L27 7Z" fill="#ffffff" opacity="0.24"/>
-                  <path d="M17 34L19 21.5L27 27L35 21.5L37 34H17Z" fill="#78350f" opacity="0.35" transform="translate(1, 2)"/>
-                  <path d="M17 33L19 20.5L27 26L35 20.5L37 33H17Z" fill="url(#ic3Gold)" stroke="#fef9c3" stroke-width="1.2" stroke-linejoin="round"/>
-                  <circle cx="19" cy="19.5" r="1.8" fill="#fef08a"/><circle cx="27" cy="24.5" r="2" fill="#ffffff"/><circle cx="35" cy="19.5" r="1.8" fill="#fef08a"/>
-                </svg>
+              <div class="roles-v2-card-icon-box icon-purple rv3d-medallion" aria-hidden="true">
+                <img src="${F3D}/Shield/3D/shield_3d.png" alt="Super Administrador" class="rv3d-med-main" />
+                <img src="${F3D}/Crown/3D/crown_3d.png" alt="" class="rv3d-med-badge" />
               </div>
               <div class="roles-v2-card-title-wrap">
                 <div class="roles-v2-card-title-row">
                   <h3>Super Administrador</h3>
-                  <span class="roles-v2-count-pill pill-purple">👤 ${adminCount} Cuentas</span>
+                  <span class="roles-v2-count-pill pill-purple">${userPill3d} ${adminCount} Cuentas</span>
                 </div>
                 <p>Control total del backend, personalización del robot y banners, gestión de usuarios, recursos y auditoría completa.</p>
               </div>
             </div>
             <ul class="roles-v2-caps">
-              <li><span class="chk-box">✓</span> Acceso exclusivo al panel administrativo</li>
-              <li><span class="chk-box">✓</span> Cambio de banner de robot &amp; colores</li>
-              <li><span class="chk-box">✓</span> Moderación y eliminación global</li>
+              <li>${chk3d} <span>Acceso exclusivo al panel administrativo</span></li>
+              <li>${chk3d} <span>Cambio de banner de robot &amp; colores</span></li>
+              <li>${chk3d} <span>Moderación y eliminación global</span></li>
             </ul>
           </div>
 
           <!-- Docente / Mentor -->
           <div class="roles-v2-role-card card-blue">
             <div class="roles-v2-card-head">
-              <div class="roles-v2-card-icon-box icon-blue" aria-hidden="true">
-                <svg viewBox="0 0 56 56" width="48" height="48" fill="none">
-                  <defs>
-                    <linearGradient id="ic3CapTop" x1="8" y1="10" x2="48" y2="30" gradientUnits="userSpaceOnUse"><stop stop-color="#7dd3fc"/><stop offset="0.55" stop-color="#3b82f6"/><stop offset="1" stop-color="#1d4ed8"/></linearGradient>
-                    <linearGradient id="ic3CapBase" x1="14" y1="26" x2="42" y2="44" gradientUnits="userSpaceOnUse"><stop stop-color="#2563eb"/><stop offset="1" stop-color="#1e3a8a"/></linearGradient>
-                  </defs>
-                  <ellipse cx="28" cy="46" rx="15" ry="3.5" fill="#1d4ed8" opacity="0.18"/>
-                  <path d="M14 27V37.5C14 41.5 20.5 44.5 28 44.5C35.5 44.5 42 41.5 42 37.5V27L28 34L14 27Z" fill="url(#ic3CapBase)"/>
-                  <path d="M28 11L5 22L28 33L51 22L28 11Z" fill="#1e40af" transform="translate(0, 2.5)"/>
-                  <path d="M28 9L5 20L28 31L51 20L28 9Z" fill="url(#ic3CapTop)" stroke="#e0f2fe" stroke-width="1.3" stroke-linejoin="round"/>
-                  <path d="M28 11L11 19.5L28 24L45 19.5L28 11Z" fill="#ffffff" opacity="0.22"/>
-                  <circle cx="28" cy="20" r="2.5" fill="#fef08a"/>
-                  <path d="M28 20L45 24V36" stroke="#38bdf8" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
-                  <ellipse cx="45" cy="38.5" rx="3" ry="4" fill="#60a5fa" stroke="#e0f2fe" stroke-width="1"/>
-                </svg>
+              <div class="roles-v2-card-icon-box icon-blue rv3d-medallion" aria-hidden="true">
+                <img src="${F3D}/Teacher/Default/3D/teacher_3d_default.png" alt="Docente" class="rv3d-med-main" />
+                <img src="${F3D}/Graduation%20cap/3D/graduation_cap_3d.png" alt="" class="rv3d-med-badge" />
               </div>
               <div class="roles-v2-card-title-wrap">
                 <div class="roles-v2-card-title-row">
                   <h3>Docente / Mentor</h3>
-                  <span class="roles-v2-count-pill pill-blue">👤 ${teacherCount} Cuentas</span>
+                  <span class="roles-v2-count-pill pill-blue">${userPill3d} ${teacherCount} Cuentas</span>
                 </div>
                 <p>Creación y asignación de retos académicos, revisión de proyectos de estudiantes y evaluación con rúbricas oficiales.</p>
               </div>
             </div>
             <ul class="roles-v2-caps">
-              <li><span class="chk-box">✓</span> Gestión de proyectos y retos de curso</li>
-              <li><span class="chk-box">✓</span> Rúbricas y retroalimentación didáctica</li>
-              <li><span class="chk-box">✓</span> Visualización de analítica de alumnos</li>
+              <li>${chk3d} <span>Gestión de proyectos y retos de curso</span></li>
+              <li>${chk3d} <span>Rúbricas y retroalimentación didáctica</span></li>
+              <li>${chk3d} <span>Visualización de analítica de alumnos</span></li>
             </ul>
           </div>
 
           <!-- Estudiante Creador -->
           <div class="roles-v2-role-card card-green">
             <div class="roles-v2-card-head">
-              <div class="roles-v2-card-icon-box icon-green" aria-hidden="true">
-                <svg viewBox="0 0 56 56" width="48" height="48" fill="none">
-                  <defs>
-                    <radialGradient id="ic3Head" cx="35%" cy="30%" r="70%"><stop stop-color="#6ee7b7"/><stop offset="0.55" stop-color="#10b981"/><stop offset="1" stop-color="#047857"/></radialGradient>
-                    <linearGradient id="ic3Body" x1="14" y1="24" x2="42" y2="38" gradientUnits="userSpaceOnUse"><stop stop-color="#34d399"/><stop offset="1" stop-color="#059669"/></linearGradient>
-                    <linearGradient id="ic3Lap" x1="12" y1="30" x2="44" y2="47" gradientUnits="userSpaceOnUse"><stop stop-color="#ffffff"/><stop offset="0.6" stop-color="#e2e8f0"/><stop offset="1" stop-color="#94a3b8"/></linearGradient>
-                  </defs>
-                  <ellipse cx="28" cy="49" rx="16" ry="3.2" fill="#047857" opacity="0.18"/>
-                  <circle cx="28" cy="16" r="8.2" fill="url(#ic3Head)"/>
-                  <ellipse cx="25" cy="13" rx="2.5" ry="1.5" fill="#ffffff" opacity="0.45" transform="rotate(-25 25 13)"/>
-                  <path d="M13 35C13 27.5 19.5 25 28 25C36.5 25 43 27.5 43 35" fill="url(#ic3Body)"/>
-                  <rect x="14" y="33" width="28" height="15" rx="3.5" fill="#64748b"/>
-                  <rect x="13" y="31" width="28" height="15" rx="3.5" fill="url(#ic3Lap)" stroke="#ffffff" stroke-width="1.3"/>
-                  <circle cx="27" cy="38.5" r="2.6" fill="#10b981"/>
-                  <path d="M10 46H44L41 48.5H13L10 46Z" fill="#cbd5e1"/>
-                </svg>
+              <div class="roles-v2-card-icon-box icon-green rv3d-medallion" aria-hidden="true">
+                <img src="${F3D}/Student/Default/3D/student_3d_default.png" alt="Estudiante" class="rv3d-med-main" />
+                <img src="${F3D}/Laptop/3D/laptop_3d.png" alt="" class="rv3d-med-badge" />
               </div>
               <div class="roles-v2-card-title-wrap">
                 <div class="roles-v2-card-title-row">
                   <h3>Estudiante Creador</h3>
-                  <span class="roles-v2-count-pill pill-green">👤 ${studentCount} Cuentas</span>
+                  <span class="roles-v2-count-pill pill-green">${userPill3d} ${studentCount} Cuentas</span>
                 </div>
                 <p>Creación de proyectos multimedia interactivos (públicos y privados), diapositivas, videos y documentos con IA.</p>
               </div>
             </div>
             <ul class="roles-v2-caps">
-              <li><span class="chk-box">✓</span> Creación de proyectos en 4 formatos</li>
-              <li><span class="chk-box">✓</span> Publicación y Landing Pages públicas</li>
-              <li><span class="chk-box">✓</span> Participación en desafíos y XP</li>
+              <li>${chk3d} <span>Creación de proyectos en 4 formatos</span></li>
+              <li>${chk3d} <span>Publicación y Landing Pages públicas</span></li>
+              <li>${chk3d} <span>Participación en desafíos y XP</span></li>
             </ul>
           </div>
         </div>
 
-        <!-- Panel Inferior en 2 Columnas: Matriz de Permisos (izq) + Usuarios de la Plataforma (der) -->
+        <!-- Panel Inferior en 2 Columnas 100% 3D -->
         <div class="roles-v2-bottom-grid">
-          <!-- Izquierda: Matriz de Permisos por Rol -->
+          <!-- Izquierda: Matriz de Permisos por Rol 3D -->
           <div class="roles-v2-panel">
             <div class="roles-v2-panel-header">
               <div class="roles-v2-panel-title-group">
-                <div class="roles-v2-panel-ico ico-purple">📚</div>
+                <div class="roles-v2-panel-ico ico-purple">${ico3d('Books/3D/books_3d.png', 'Permisos', 28)}</div>
                 <div>
                   <h3>Matriz de Permisos por Rol</h3>
                   <p>Capacidades autorizadas en cada módulo de Mentix según el tipo de cuenta autenticada.</p>
                 </div>
               </div>
-              <span class="roles-v2-sec-badge">🛡️ POLÍTICAS DE SEGURIDAD ACTIVAS</span>
+              <span class="roles-v2-sec-badge">${ico3d('Shield/3D/shield_3d.png', 'Seguridad', 16)} POLÍTICAS DE SEGURIDAD ACTIVAS</span>
             </div>
 
             <div class="roles-v2-table-scroll">
@@ -1630,113 +1557,113 @@ window.AdminView = {
                 <thead>
                   <tr>
                     <th>Capacidad / Módulo</th>
-                    <th class="col-center">🎓 Estudiante</th>
-                    <th class="col-center">👨‍🏫 Docente</th>
-                    <th class="col-center">🛡️ Administrador</th>
+                    <th class="col-center"><span class="rv3d-th">${ico3d('Graduation%20cap/3D/graduation_cap_3d.png', 'Estudiante', 18)} Estudiante</span></th>
+                    <th class="col-center"><span class="rv3d-th">${ico3d('Teacher/Default/3D/teacher_3d_default.png', 'Docente', 18)} Docente</span></th>
+                    <th class="col-center"><span class="rv3d-th">${ico3d('Shield/3D/shield_3d.png', 'Admin', 18)} Administrador</span></th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr>
                     <td>
                       <div class="roles-v2-cap-cell">
-                        <span class="cap-ico cap-amber">📁</span>
+                        <span class="cap-ico cap-amber">${ico3d('File%20folder/3D/file_folder_3d.png', '', 22)}</span>
                         <div>
                           <strong>Crear proyectos interactivos</strong>
                           <small>(Públicos / Privados)</small>
                         </div>
                       </div>
                     </td>
-                    <td class="col-center"><span class="rv2-pill rv2-yes">✔ Sí</span></td>
-                    <td class="col-center"><span class="rv2-pill rv2-yes">✔ Sí</span></td>
-                    <td class="col-center"><span class="rv2-pill rv2-yes">✔ Sí</span></td>
+                    <td class="col-center"><span class="rv2-pill rv2-yes">${chk3d} Sí</span></td>
+                    <td class="col-center"><span class="rv2-pill rv2-yes">${chk3d} Sí</span></td>
+                    <td class="col-center"><span class="rv2-pill rv2-yes">${chk3d} Sí</span></td>
                   </tr>
                   <tr>
                     <td>
                       <div class="roles-v2-cap-cell">
-                        <span class="cap-ico cap-indigo">▶️</span>
+                        <span class="cap-ico cap-indigo">${ico3d('Play%20button/3D/play_button_3d.png', '', 22)}</span>
                         <div>
                           <strong>Editor de Diapositivas, Videos y Documentos</strong>
                         </div>
                       </div>
                     </td>
-                    <td class="col-center"><span class="rv2-pill rv2-yes">✔ Sí</span></td>
-                    <td class="col-center"><span class="rv2-pill rv2-yes">✔ Sí</span></td>
-                    <td class="col-center"><span class="rv2-pill rv2-yes">✔ Sí</span></td>
+                    <td class="col-center"><span class="rv2-pill rv2-yes">${chk3d} Sí</span></td>
+                    <td class="col-center"><span class="rv2-pill rv2-yes">${chk3d} Sí</span></td>
+                    <td class="col-center"><span class="rv2-pill rv2-yes">${chk3d} Sí</span></td>
                   </tr>
                   <tr>
                     <td>
                       <div class="roles-v2-cap-cell">
-                        <span class="cap-ico cap-sky">🖼️</span>
+                        <span class="cap-ico cap-sky">${ico3d('Framed%20picture/3D/framed_picture_3d.png', '', 22)}</span>
                         <div>
                           <strong>Modificar Banner de Robot de Proyectos y Temas de Diseño</strong>
                         </div>
                       </div>
                     </td>
-                    <td class="col-center"><span class="rv2-pill rv2-no">✖ No</span></td>
-                    <td class="col-center"><span class="rv2-pill rv2-no">✖ No</span></td>
-                    <td class="col-center"><span class="rv2-pill rv2-yes">✔ Exclusivo</span></td>
+                    <td class="col-center"><span class="rv2-pill rv2-no">${no3d} No</span></td>
+                    <td class="col-center"><span class="rv2-pill rv2-no">${no3d} No</span></td>
+                    <td class="col-center"><span class="rv2-pill rv2-yes">${chk3d} Exclusivo</span></td>
                   </tr>
                   <tr>
                     <td>
                       <div class="roles-v2-cap-cell">
-                        <span class="cap-ico cap-purple">📖</span>
+                        <span class="cap-ico cap-purple">${ico3d('Open%20book/3D/open_book_3d.png', '', 22)}</span>
                         <div>
                           <strong>Gestionar Biblioteca de Recursos y Plantillas</strong>
                         </div>
                       </div>
                     </td>
-                    <td class="col-center"><span class="rv2-pill rv2-info">⬇ Solo Descarga</span></td>
-                    <td class="col-center"><span class="rv2-pill rv2-yes">✔ Crear Guías</span></td>
-                    <td class="col-center"><span class="rv2-pill rv2-yes">✔ Control Total</span></td>
+                    <td class="col-center"><span class="rv2-pill rv2-info">${dl3d} Solo Descarga</span></td>
+                    <td class="col-center"><span class="rv2-pill rv2-yes">${chk3d} Crear Guías</span></td>
+                    <td class="col-center"><span class="rv2-pill rv2-yes">${chk3d} Control Total</span></td>
                   </tr>
                   <tr>
                     <td>
                       <div class="roles-v2-cap-cell">
-                        <span class="cap-ico cap-blue">👥</span>
+                        <span class="cap-ico cap-blue">${ico3d('Busts%20in%20silhouette/3D/busts_in_silhouette_3d.png', '', 22)}</span>
                         <div>
                           <strong>Asignar Roles, Suspender Cuentas y Crear Administradores</strong>
                         </div>
                       </div>
                     </td>
-                    <td class="col-center"><span class="rv2-pill rv2-no">✖ No</span></td>
-                    <td class="col-center"><span class="rv2-pill rv2-no">✖ No</span></td>
-                    <td class="col-center"><span class="rv2-pill rv2-yes">✔ Exclusivo</span></td>
+                    <td class="col-center"><span class="rv2-pill rv2-no">${no3d} No</span></td>
+                    <td class="col-center"><span class="rv2-pill rv2-no">${no3d} No</span></td>
+                    <td class="col-center"><span class="rv2-pill rv2-yes">${chk3d} Exclusivo</span></td>
                   </tr>
                   <tr>
                     <td>
                       <div class="roles-v2-cap-cell">
-                        <span class="cap-ico cap-cyan">📊</span>
+                        <span class="cap-ico cap-cyan">${ico3d('Bar%20chart/3D/bar_chart_3d.png', '', 22)}</span>
                         <div>
                           <strong>Exportar Reportes Globales y Registros de Auditoría</strong>
                         </div>
                       </div>
                     </td>
-                    <td class="col-center"><span class="rv2-pill rv2-no">✖ No</span></td>
-                    <td class="col-center"><span class="rv2-pill rv2-info">📊 Reporte Curso</span></td>
-                    <td class="col-center"><span class="rv2-pill rv2-yes">✔ Exclusivo</span></td>
+                    <td class="col-center"><span class="rv2-pill rv2-no">${no3d} No</span></td>
+                    <td class="col-center"><span class="rv2-pill rv2-info">${chart3d} Reporte Curso</span></td>
+                    <td class="col-center"><span class="rv2-pill rv2-yes">${chk3d} Exclusivo</span></td>
                   </tr>
                 </tbody>
               </table>
             </div>
           </div>
 
-          <!-- Derecha: Usuarios de la Plataforma -->
+          <!-- Derecha: Usuarios de la Plataforma 3D -->
           <div class="roles-v2-panel">
             <div class="roles-v2-panel-header">
               <div class="roles-v2-panel-title-group">
-                <div class="roles-v2-panel-ico ico-blue">👥</div>
+                <div class="roles-v2-panel-ico ico-blue">${ico3d('Busts%20in%20silhouette/3D/busts_in_silhouette_3d.png', 'Usuarios', 28)}</div>
                 <div>
                   <h3>Usuarios de la Plataforma</h3>
                   <p>Gestiona, consulta y administra las cuentas registradas.</p>
                 </div>
               </div>
-              <span class="roles-v2-total-badge">👥 Total: ${rawUsers.length} usuarios</span>
+              <span class="roles-v2-total-badge">${ico3d('Busts%20in%20silhouette/3D/busts_in_silhouette_3d.png', '', 16)} Total: ${rawUsers.length} usuarios</span>
             </div>
 
             <!-- Buscador + Filtros integrados -->
             <div class="roles-v2-users-toolbar">
               <div class="roles-v2-search">
-                <span class="search-ico">🔍</span>
+                <span class="search-ico">${ico3d('Magnifying%20glass%20tilted%20left/3D/magnifying_glass_tilted_left_3d.png', 'Buscar', 17)}</span>
                 <input type="text" placeholder="Buscar usuario por nombre o correo electrónico..." value="${this.userFilter.search}" oninput="window.AdminView.setUserSearch(this.value)">
               </div>
               <div class="roles-v2-filter-pills">
@@ -1748,7 +1675,7 @@ window.AdminView = {
               </div>
             </div>
 
-            <!-- Tabla de Usuarios -->
+            <!-- Tabla de Usuarios 3D -->
             <div class="roles-v2-table-scroll">
               <table class="roles-v2-users-table">
                 <thead>
@@ -1770,7 +1697,7 @@ window.AdminView = {
                       <tr>
                         <td>
                           <div class="roles-v2-user-cell">
-                            <div class="roles-v2-avatar">${u.avatar || '🦊'}</div>
+                            <div class="roles-v2-avatar">${avatarTo3D(u.avatar)}</div>
                             <div class="roles-v2-user-meta">
                               <strong>${u.name}</strong>
                               <span>@${handleTxt}</span>
@@ -1793,7 +1720,7 @@ window.AdminView = {
                         </td>
                         <td>
                           <div class="roles-v2-xp">
-                            <span class="star">⭐</span>
+                            ${ico3d('Star/3D/star_3d.png', 'Nivel', 17)}
                             <strong>Nvl ${u.level || 1}</strong>
                             <small>(${u.xp || 0} XP)</small>
                           </div>
@@ -1801,10 +1728,10 @@ window.AdminView = {
                         <td style="text-align: right;">
                           <div class="roles-v2-actions">
                             <button type="button" class="roles-v2-act-btn ${isBlocked ? 'act-unlock' : 'act-lock'}" title="${isBlocked ? 'Desbloquear acceso' : 'Bloquear cuenta'}" onclick="window.AdminView.toggleUserBlock('${u.id}')">
-                              ${isBlocked ? '🔓' : '🔒'}
+                              ${isBlocked ? ico3d('Unlocked/3D/unlocked_3d.png', 'Desbloquear', 18) : ico3d('Locked/3D/locked_3d.png', 'Bloquear', 18)}
                             </button>
                             <button type="button" class="roles-v2-act-btn act-del" title="Eliminar cuenta" onclick="window.AdminView.deleteUser('${u.id}')">
-                              🗑️
+                              ${ico3d('Wastebasket/3D/wastebasket_3d.png', 'Eliminar', 18)}
                             </button>
                           </div>
                         </td>
