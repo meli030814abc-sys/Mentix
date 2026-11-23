@@ -5,8 +5,8 @@
     "title": "Nuevo Proyecto",
     "subtitle": "Proyecto Educativo Mentix",
     "description": "Proyecto en construcción con el Asistente Inteligente de Mentix.",
-    "shortDescription": "",
-    "fullDescription": "",
+    "shortDescription": "Proyecto en construcción con el Asistente Inteligente de Mentix.",
+    "fullDescription": "Proyecto en construcción con el Asistente Inteligente de Mentix.",
     "category": "tecnologia",
     "categoryName": "Tecnología & Programación",
     "projectType": "presentation",
@@ -33,10 +33,13 @@
     "isPublic": false,
     "startDate": "2026-11-23",
     "endDate": "",
-    "currentStep": 1,
-    "completedSteps": [],
-    "progress": 40,
-    "calculatedProgress": 40,
+    "currentStep": 3,
+    "completedSteps": [
+      1,
+      2
+    ],
+    "progress": 50,
+    "calculatedProgress": 50,
     "valueProp": {
       "problemSolved": "",
       "howItWorks": "",
@@ -68,19 +71,19 @@
       "fileName": "",
       "title": "",
       "description": "",
+      "thumbnailUrl": "",
       "isPublic": true,
-      "verified": false,
-      "thumbnailUrl": ""
+      "verified": false
     },
     "resources": [],
     "visualAssets": [],
     "slides": [],
     "externalLinks": [],
     "landingConfig": {
-      "publicName": "",
+      "publicName": "Nuevo Proyecto",
       "slug": "nuevo-proyecto",
-      "landingTitle": "",
-      "publicDescription": "",
+      "landingTitle": "Nuevo Proyecto",
+      "publicDescription": "Proyecto en construcción con el Asistente Inteligente de Mentix.",
       "visibleCategory": "Tecnología & Programación",
       "tags": [
         "Gobierno de Datos",
@@ -104,9 +107,7 @@
     "authorsConfig": {
       "authorsList": "JHFK",
       "authorsEmails": "HGFH@HNGFH",
-      "authorsRole": "Líder del Proyecto",
-      "authorsInstitution": "",
-      "collaborators": ""
+      "authorsRole": "Líder del Proyecto"
     },
     "tags": [
       "Gobierno de Datos",
@@ -115,10 +116,10 @@
     "displayOrder": 1,
     "govdata": {
       "id": "govdata_code_hhgfj_804263",
-      "title": "",
-      "subtitle": "",
-      "shortDescription": "",
-      "fullDescription": "",
+      "title": "Nuevo Proyecto",
+      "subtitle": "Proyecto Educativo Mentix",
+      "shortDescription": "Proyecto en construcción con el Asistente Inteligente de Mentix.",
+      "fullDescription": "Proyecto en construcción con el Asistente Inteligente de Mentix.",
       "category": "tecnologia",
       "categoryName": "Tecnología & Programación",
       "projectSubtype": "Gobierno de Datos e IA",
@@ -148,18 +149,19 @@
         "fileName": "",
         "title": "",
         "description": "",
+        "thumbnailUrl": "",
         "isPublic": true,
         "verified": false
       },
-      "mainImage": "",
-      "thumbnailImage": "",
+      "mainImage": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
+      "thumbnailImage": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
       "useDefaultImage": true,
       "externalLinks": [],
       "landingConfig": {
-        "publicName": "",
+        "publicName": "Nuevo Proyecto",
         "slug": "nuevo-proyecto",
-        "landingTitle": "",
-        "publicDescription": "",
+        "landingTitle": "Nuevo Proyecto",
+        "publicDescription": "Proyecto en construcción con el Asistente Inteligente de Mentix.",
         "visibleCategory": "Tecnología & Programación",
         "tags": [
           "Gobierno de Datos",
@@ -171,8 +173,11 @@
         "featuredVideoPublic": true
       },
       "publicationStatus": "draft",
-      "completedSteps": [],
-      "currentStep": 1,
+      "completedSteps": [
+        1,
+        2
+      ],
+      "currentStep": 3,
       "author": "JHFK",
       "authorId": "user_1795407757752",
       "ownerId": "user_1795407757752",
@@ -188,20 +193,17 @@
         "titleColor": "#ffffff",
         "textColor": "#cbd5e1",
         "accentColor": "#00f5d4",
-        "bannerStyle": "gradient-cosmos",
-        "bannerUrl": ""
+        "bannerStyle": "gradient-cosmos"
       },
       "authorsConfig": {
         "authorsList": "JHFK",
         "authorsEmails": "HGFH@HNGFH",
-        "authorsRole": "Líder del Proyecto",
-        "authorsInstitution": "",
-        "collaborators": ""
+        "authorsRole": "Líder del Proyecto"
       },
       "createdAt": "2026-11-23T04:35:12.300Z",
-      "updatedAt": "2026-11-23T04:35:32.879Z",
-      "progress": 40,
-      "calculatedProgress": 40
+      "updatedAt": "2026-11-23T04:51:32.319Z",
+      "progress": 50,
+      "calculatedProgress": 50
     },
     "author": "JHFK",
     "authorId": "user_1795407757752",
@@ -213,7 +215,7 @@
     "authorAvatar": "🦊",
     "authorRole": "student",
     "createdAt": "2026-11-23T04:35:12.300Z",
-    "updatedAt": "2026-11-23T04:35:32.849Z"
+    "updatedAt": "2026-11-23T04:51:32.411Z"
   },
   {
     "id": "proj_pres_1791658288964",
