@@ -1464,43 +1464,190 @@ collectCurrentStepInputs() {
   },
 
   // =========================================================================
-  // PASO 3: CATEGORÍA Y PÚBLICO OBJETIVO
+  // PASO 3: CATEGORÍA Y PÚBLICO OBJETIVO (Elegir y agregar categoría y tipo)
   // =========================================================================
+  getAvailableProjectTypes() {
+    const baseTypes = [
+      'Gobierno de Datos e IA',
+      'Analítica Predictiva y BI',
+      'Automatización y Transformación Digital',
+      'Plataforma Educativa / EdTech',
+      'Investigación Aplicada',
+      'Repositorio Normativo y Técnico',
+      'Simulador / Laboratorio Interactivo'
+    ];
+    let customTypes = [];
+    try {
+      const saved = JSON.parse(localStorage.getItem('mentix_custom_project_types') || '[]');
+      if (Array.isArray(saved)) customTypes = saved.map(x => String(x || '').trim()).filter(Boolean);
+    } catch (e) {}
+    const current = String(this.draft?.projectSubtype || '').trim();
+    const seen = new Set();
+    const merged = [];
+    [...baseTypes, ...customTypes, ...(current ? [current] : [])].forEach(t => {
+      const k = t.toLowerCase();
+      if (!t || seen.has(k)) return;
+      seen.add(k);
+      merged.push(t);
+    });
+    return merged;
+  },
+
+  toggleAddWizardCategoryBox() {
+    const box = document.getElementById('gdn-add-category-inline');
+    if (!box) return;
+    const isHidden = box.style.display === 'none' || !box.style.display;
+    box.style.display = isHidden ? 'flex' : 'none';
+    if (isHidden) {
+      const inp = document.getElementById('gdn-new-category-name');
+      if (inp) setTimeout(() => inp.focus(), 40);
+    }
+  },
+
+  async addCustomWizardCategory() {
+    const nameInp = document.getElementById('gdn-new-category-name');
+    const iconInp = document.getElementById('gdn-new-category-icon');
+    const rawName = (nameInp ? nameInp.value : '').trim();
+    if (!rawName) {
+      alert('⚠️ Escribe el nombre de la nueva categoría.');
+      if (nameInp) nameInp.focus();
+      return;
+    }
+    const icon = (iconInp && iconInp.value.trim()) ? iconInp.value.trim() : '✨';
+    const cleanId = rawName.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '') || ('cat_' + Date.now());
+    const u = window.appState?.currentUser || {};
+    const newCat = {
+      id: cleanId,
+      name: rawName,
+      icon,
+      color: '#0284c7',
+      count: 0,
+      authorId: u.id || '',
+      authorName: u.name || u.username || 'Usuario',
+      authorEmail: u.email || ''
+    };
+
+    if (!window.appState) window.appState = { categories: [] };
+    if (!Array.isArray(window.appState.categories)) window.appState.categories = [];
+    const exIdx = window.appState.categories.findIndex(c => c && (String(c.id).toLowerCase() === cleanId || String(c.name || '').trim().toLowerCase() === rawName.toLowerCase()));
+    if (exIdx >= 0) {
+      this.draft.category = window.appState.categories[exIdx].id;
+      this.draft.categoryName = window.appState.categories[exIdx].name;
+    } else {
+      window.appState.categories.push(newCat);
+      this.draft.category = newCat.id;
+      this.draft.categoryName = newCat.name;
+      if (typeof saveGlobalState === 'function') {
+        try { saveGlobalState(window.appState); } catch (e) {}
+      }
+      try {
+        const apiBase = (window.appRouter && typeof window.appRouter.getApiBase === 'function') ? window.appRouter.getApiBase() : '';
+        fetch(`${apiBase}/api/categories`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ category: newCat })
+        }).catch(() => {});
+      } catch (e) {}
+    }
+
+    this.collectCurrentStepInputs();
+    this.draft.category = exIdx >= 0 ? window.appState.categories[exIdx].id : newCat.id;
+    this.draft.categoryName = exIdx >= 0 ? window.appState.categories[exIdx].name : newCat.name;
+    await this.saveDraftToStorage(true, true);
+    if (window.ProjectsView && typeof window.ProjectsView.showToast === 'function') {
+      window.ProjectsView.showToast(`✅ Categoría "${rawName}" agregada y seleccionada.`);
+    }
+    if (window.ProjectsView) window.ProjectsView.render();
+  },
+
+  toggleAddWizardSubtypeBox() {
+    const box = document.getElementById('gdn-add-subtype-inline');
+    if (!box) return;
+    const isHidden = box.style.display === 'none' || !box.style.display;
+    box.style.display = isHidden ? 'flex' : 'none';
+    if (isHidden) {
+      const inp = document.getElementById('gdn-new-subtype-name');
+      if (inp) setTimeout(() => inp.focus(), 40);
+    }
+  },
+
+  async addCustomWizardSubtype() {
+    const inp = document.getElementById('gdn-new-subtype-name');
+    const rawType = (inp ? inp.value : '').trim();
+    if (!rawType) {
+      alert('⚠️ Escribe el nombre del nuevo tipo de proyecto.');
+      if (inp) inp.focus();
+      return;
+    }
+    let customTypes = [];
+    try {
+      const saved = JSON.parse(localStorage.getItem('mentix_custom_project_types') || '[]');
+      if (Array.isArray(saved)) customTypes = saved;
+    } catch (e) {}
+    if (!customTypes.some(t => String(t).trim().toLowerCase() === rawType.toLowerCase())) {
+      customTypes.push(rawType);
+      try { localStorage.setItem('mentix_custom_project_types', JSON.stringify(customTypes)); } catch (e) {}
+    }
+    this.collectCurrentStepInputs();
+    this.draft.projectSubtype = rawType;
+    await this.saveDraftToStorage(true, true);
+    if (window.ProjectsView && typeof window.ProjectsView.showToast === 'function') {
+      window.ProjectsView.showToast(`✅ Tipo de proyecto "${rawType}" agregado y seleccionado.`);
+    }
+    if (window.ProjectsView) window.ProjectsView.render();
+  },
+
   renderStep3Classification() {
     const d = this.draft;
     const categories = (window.appState?.categories || []).filter(c => c && c.id && !['fhjr', 'kj'].includes(String(c.id).toLowerCase()));
+    const projectTypes = this.getAvailableProjectTypes();
     return `
       <div class="gdn-card">
         <h3 style="margin: 0 0 0.35rem; font-size: 1.15rem; color: var(--gdn-text); font-weight: 800;">3. Categoría y público objetivo</h3>
         <p class="gdn-help" style="margin-bottom: 1.35rem; font-size: 0.88rem;">
-          Selecciona la temática del proyecto y a quiénes va dirigido.
+          Elige una categoría y tipo de proyecto existentes, o agrega los tuyos propios al instante.
         </p>
 
         <div class="gdn-field-grid" style="margin-bottom: 1.25rem;">
           <div class="gdn-field">
-            <label class="gdn-label" for="gdn-category">Categoría del proyecto <span style="color:#10b981;">*</span></label>
-            <select id="gdn-category" class="gdn-select">
+            <label class="gdn-label" for="gdn-category" style="display:flex; align-items:center; justify-content:space-between; gap:0.5rem;">
+              <span>Categoría del proyecto <span style="color:#10b981;">*</span></span>
+              <button type="button" onclick="window.ProjectWizard.toggleAddWizardCategoryBox()" style="background:#ecfdf5; border:1px solid #6ee7b7; color:#047857; border-radius:8px; padding:0.2rem 0.6rem; font-size:0.75rem; font-weight:800; cursor:pointer;">
+                + Agregar categoría
+              </button>
+            </label>
+            <select id="gdn-category" class="gdn-select" onchange="window.ProjectWizard.triggerFieldAutoSave()">
               ${categories.map(cat => `
                 <option value="${this.escapeHtml(cat.id)}" ${d.category === cat.id ? 'selected' : ''}>
                   ${cat.icon || '📁'} ${this.escapeHtml(cat.name)}
                 </option>
               `).join('')}
             </select>
+            <div id="gdn-add-category-inline" style="display:none; gap:0.45rem; margin-top:0.55rem; align-items:center; flex-wrap:wrap; background:#f8fafc; border:1.5px solid #cbd5e1; padding:0.55rem; border-radius:12px;">
+              <input type="text" id="gdn-new-category-icon" value="✨" maxlength="4" title="Emoji" style="width:48px; text-align:center; padding:0.48rem; border-radius:8px; border:1.5px solid #cbd5e1; background:#ffffff; color:#0f172a; font-size:1rem;" />
+              <input type="text" id="gdn-new-category-name" placeholder="Nombre de la nueva categoría..." onkeydown="if(event.key==='Enter'){event.preventDefault(); window.ProjectWizard.addCustomWizardCategory();}" style="flex:1; min-width:150px; padding:0.48rem 0.75rem; border-radius:8px; border:1.5px solid #cbd5e1; background:#ffffff; color:#0f172a; font-size:0.86rem; font-weight:600;" />
+              <button type="button" onclick="window.ProjectWizard.addCustomWizardCategory()" style="background:#10b981; color:#ffffff; border:none; border-radius:8px; padding:0.5rem 0.85rem; font-size:0.8rem; font-weight:800; cursor:pointer;">
+                Guardar
+              </button>
+            </div>
           </div>
 
           <div class="gdn-field">
-            <label class="gdn-label" for="gdn-subtype">Tipo de proyecto <span style="color:#10b981;">*</span></label>
-            <select id="gdn-subtype" class="gdn-select">
-              ${[
-                'Gobierno de Datos e IA',
-                'Analítica Predictiva y BI',
-                'Automatización y Transformación Digital',
-                'Plataforma Educativa / EdTech',
-                'Investigación Aplicada',
-                'Repositorio Normativo y Técnico',
-                'Simulador / Laboratorio Interactivo'
-              ].map(t => `<option value="${this.escapeHtml(t)}" ${d.projectSubtype === t ? 'selected' : ''}>${this.escapeHtml(t)}</option>`).join('')}
+            <label class="gdn-label" for="gdn-subtype" style="display:flex; align-items:center; justify-content:space-between; gap:0.5rem;">
+              <span>Tipo de proyecto <span style="color:#10b981;">*</span></span>
+              <button type="button" onclick="window.ProjectWizard.toggleAddWizardSubtypeBox()" style="background:#eff6ff; border:1px solid #93c5fd; color:#1d4ed8; border-radius:8px; padding:0.2rem 0.6rem; font-size:0.75rem; font-weight:800; cursor:pointer;">
+                + Agregar tipo
+              </button>
+            </label>
+            <select id="gdn-subtype" class="gdn-select" onchange="window.ProjectWizard.triggerFieldAutoSave()">
+              ${projectTypes.map(t => `<option value="${this.escapeHtml(t)}" ${d.projectSubtype === t ? 'selected' : ''}>${this.escapeHtml(t)}</option>`).join('')}
             </select>
+            <div id="gdn-add-subtype-inline" style="display:none; gap:0.45rem; margin-top:0.55rem; align-items:center; flex-wrap:wrap; background:#f8fafc; border:1.5px solid #cbd5e1; padding:0.55rem; border-radius:12px;">
+              <input type="text" id="gdn-new-subtype-name" placeholder="Ej: Robótica Escolar, Podcast, App Móvil..." onkeydown="if(event.key==='Enter'){event.preventDefault(); window.ProjectWizard.addCustomWizardSubtype();}" style="flex:1; min-width:160px; padding:0.48rem 0.75rem; border-radius:8px; border:1.5px solid #cbd5e1; background:#ffffff; color:#0f172a; font-size:0.86rem; font-weight:600;" />
+              <button type="button" onclick="window.ProjectWizard.addCustomWizardSubtype()" style="background:#2563eb; color:#ffffff; border:none; border-radius:8px; padding:0.5rem 0.85rem; font-size:0.8rem; font-weight:800; cursor:pointer;">
+                Guardar
+              </button>
+            </div>
           </div>
         </div>
 
@@ -2934,15 +3081,7 @@ collectCurrentStepInputs() {
           <div class="gdn-field">
             <label class="gdn-label" for="gdn-subtype">Tipo de proyecto <span style="color:#10b981;">*</span></label>
             <select id="gdn-subtype" class="gdn-select">
-              ${[
-                'Gobierno de Datos e IA',
-                'Analítica Predictiva y BI',
-                'Automatización y Transformación Digital',
-                'Plataforma Educativa / EdTech',
-                'Investigación Aplicada',
-                'Repositorio Normativo y Técnico',
-                'Simulador / Laboratorio Interactivo'
-              ].map(t => `<option value="${this.escapeHtml(t)}" ${d.projectSubtype === t ? 'selected' : ''}>${this.escapeHtml(t)}</option>`).join('')}
+              ${this.getAvailableProjectTypes().map(t => `<option value="${this.escapeHtml(t)}" ${d.projectSubtype === t ? 'selected' : ''}>${this.escapeHtml(t)}</option>`).join('')}
             </select>
           </div>
 

@@ -9039,10 +9039,7 @@ Generado por Mentix - Plataforma de Proyectos y Retos
         <span class="inno-eyebrow" style="font-size:0.78rem; text-transform:uppercase; letter-spacing:0.05em; font-weight:800; color:#10b981; margin-bottom:0.5rem; display:inline-block;">${docBadge}</span>
         <h2 style="margin:0.25rem 0 1.25rem; color:${titleColor}; font-size:1.4rem; font-weight:800;">${this.escapeHtml(title)}</h2>
         ${detailHtml}
-        <div style="margin-top:1.5rem; display:flex; gap:0.75rem; flex-wrap:wrap;">
-          <button class="inno-btn-cyan" onclick="window.ProjectsView.downloadLandingDoc('${this.escapeHtml(title.replace(/\s+/g, '_').slice(0, 40))}.txt'); window.ProjectsView.closeLandingLightbox();">
-            ⬇ Descargar Resumen
-          </button>
+        <div style="margin-top:1.5rem; display:flex; gap:0.75rem; flex-wrap:wrap; justify-content:flex-end;">
           <button class="inno-btn-ghost" style="color:${titleColor}; border-color:${titleColor};" onclick="window.ProjectsView.closeLandingLightbox()">
             Cerrar
           </button>
