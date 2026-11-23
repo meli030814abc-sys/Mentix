@@ -283,19 +283,29 @@ window.ProjectsView = {
   },
 
   getHeroBannerStyle() {
-    const def = { fit: 'cover', posX: 50, posY: 50, zoom: 100 };
+    const def = { fit: 'cover', offsetX: 0, offsetY: 0, zoom: 100 };
     try {
+      let src = null;
       if (window.appState && window.appState.projectsHeroBannerStyle && typeof window.appState.projectsHeroBannerStyle === 'object') {
-        return { ...def, ...window.appState.projectsHeroBannerStyle };
-      }
-      if (window.appState && Array.isArray(window.appState.challenges)) {
+        src = window.appState.projectsHeroBannerStyle;
+      } else if (window.appState && Array.isArray(window.appState.challenges)) {
         const withStyle = window.appState.challenges.find(c => c && c._globalHeroBannerStyle && typeof c._globalHeroBannerStyle === 'object');
-        if (withStyle) return { ...def, ...withStyle._globalHeroBannerStyle };
+        if (withStyle) src = withStyle._globalHeroBannerStyle;
       }
-      const raw = localStorage.getItem('mentix_projects_hero_banner_style');
-      if (raw) {
-        const parsed = JSON.parse(raw);
-        if (parsed && typeof parsed === 'object') return { ...def, ...parsed };
+      if (!src) {
+        const raw = localStorage.getItem('mentix_projects_hero_banner_style');
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (parsed && typeof parsed === 'object') src = parsed;
+        }
+      }
+      if (src) {
+        return {
+          fit: src.fit === 'contain' ? 'contain' : 'cover',
+          offsetX: Math.max(-80, Math.min(80, Number(src.offsetX ?? 0) || 0)),
+          offsetY: Math.max(-80, Math.min(80, Number(src.offsetY ?? 0) || 0)),
+          zoom: Math.max(50, Math.min(220, Number(src.zoom ?? 100) || 100))
+        };
       }
     } catch (e) {}
     return def;
@@ -304,36 +314,38 @@ window.ProjectsView = {
   buildHeroBannerImgCss(st) {
     const s = st || this.getHeroBannerStyle();
     const fit = s.fit === 'contain' ? 'contain' : 'cover';
-    const posX = Math.max(0, Math.min(100, Number(s.posX ?? 50)));
-    const posY = Math.max(0, Math.min(100, Number(s.posY ?? 50)));
-    const zoom = Math.max(100, Math.min(180, Number(s.zoom ?? 100)));
-    const scaleCss = zoom > 100 ? `scale(${(zoom / 100).toFixed(2)}) translateZ(0)` : 'translateZ(0)';
-    return `position: absolute; inset: 0; width: 100%; height: 100%; display: block; object-fit: ${fit}; object-position: ${posX}% ${posY}%; transform: ${scaleCss}; transform-origin: ${posX}% ${posY}%; filter: brightness(1.08) contrast(1.05) saturate(1.1); image-rendering: -webkit-optimize-contrast; image-rendering: high-quality; backface-visibility: hidden; user-select: none; -webkit-user-drag: none;`;
+    const ox = Math.max(-80, Math.min(80, Number(s.offsetX ?? 0) || 0));
+    const oy = Math.max(-80, Math.min(80, Number(s.offsetY ?? 0) || 0));
+    const zoom = Math.max(50, Math.min(220, Number(s.zoom ?? 100) || 100));
+    const tf = `translate(${ox}%, ${oy}%) scale(${(zoom / 100).toFixed(2)})`;
+    return `position: absolute; inset: 0; width: 100%; height: 100%; display: block; object-fit: ${fit}; object-position: center center; transform: ${tf}; transform-origin: center center; filter: brightness(1.08) contrast(1.05) saturate(1.1); image-rendering: -webkit-optimize-contrast; image-rendering: high-quality; backface-visibility: hidden; user-select: none; -webkit-user-drag: none; transition: none;`;
   },
 
   applyHeroBannerStyleToDom(st) {
     const s = st || this.getHeroBannerStyle();
     const fit = s.fit === 'contain' ? 'contain' : 'cover';
-    const posX = Math.max(0, Math.min(100, Number(s.posX ?? 50)));
-    const posY = Math.max(0, Math.min(100, Number(s.posY ?? 50)));
-    const zoom = Math.max(100, Math.min(180, Number(s.zoom ?? 100)));
+    const ox = Math.max(-80, Math.min(80, Number(s.offsetX ?? 0) || 0));
+    const oy = Math.max(-80, Math.min(80, Number(s.offsetY ?? 0) || 0));
+    const zoom = Math.max(50, Math.min(220, Number(s.zoom ?? 100) || 100));
+    const tf = `translate(${ox}%, ${oy}%) scale(${(zoom / 100).toFixed(2)})`;
     const ids = ['mentix-projects-hero-banner-img', 'mentix-admin-projects-hero-banner-img', 'admin-banner-preview-img'];
     ids.forEach(id => {
       const img = document.getElementById(id);
       if (!img) return;
-      img.style.objectFit = fit;
-      img.style.objectPosition = `${posX}% ${posY}%`;
-      img.style.transformOrigin = `${posX}% ${posY}%`;
-      img.style.transform = zoom > 100 ? `scale(${(zoom / 100).toFixed(2)}) translateZ(0)` : 'translateZ(0)';
+      img.style.setProperty('object-fit', fit, 'important');
+      img.style.setProperty('object-position', 'center center', 'important');
+      img.style.setProperty('transform-origin', 'center center', 'important');
+      img.style.setProperty('transform', tf, 'important');
     });
   },
 
   setHeroBannerStyle(styleObj) {
+    if (!this.isAdminUser()) return null;
     const clean = {
       fit: styleObj && styleObj.fit === 'contain' ? 'contain' : 'cover',
-      posX: Math.max(0, Math.min(100, Math.round(Number(styleObj?.posX ?? 50)))),
-      posY: Math.max(0, Math.min(100, Math.round(Number(styleObj?.posY ?? 50)))),
-      zoom: Math.max(100, Math.min(180, Math.round(Number(styleObj?.zoom ?? 100))))
+      offsetX: Math.max(-80, Math.min(80, Math.round((Number(styleObj?.offsetX ?? 0) || 0) * 10) / 10)),
+      offsetY: Math.max(-80, Math.min(80, Math.round((Number(styleObj?.offsetY ?? 0) || 0) * 10) / 10)),
+      zoom: Math.max(50, Math.min(220, Math.round(Number(styleObj?.zoom ?? 100) || 100)))
     };
     try { localStorage.setItem('mentix_projects_hero_banner_style', JSON.stringify(clean)); } catch (e) {}
     if (!window.appState) window.appState = {};
@@ -358,7 +370,7 @@ window.ProjectsView = {
 
   openHeroBannerRepositionMode(targetImgId = 'mentix-projects-hero-banner-img') {
     if (!this.isAdminUser()) {
-      alert('🔒 Solo los administradores pueden encuadrar el banner principal.');
+      alert('🔒 Permiso exclusivo: Solo los administradores pueden encuadrar el banner principal.');
       return;
     }
     const img = document.getElementById(targetImgId) || document.getElementById('mentix-projects-hero-banner-img') || document.getElementById('mentix-admin-projects-hero-banner-img');
@@ -366,11 +378,9 @@ window.ProjectsView = {
     const wrapper = img.closest('.saas-hero-banner-wrapper');
     if (!wrapper) return;
 
-    // Si ya está activo, salir limpiamente
     const existingBar = wrapper.querySelector('.mentix-banner-reposition-overlay');
     if (existingBar) {
       existingBar.remove();
-      wrapper.style.cursor = '';
       return;
     }
 
@@ -384,7 +394,7 @@ window.ProjectsView = {
 
     const overlay = document.createElement('div');
     overlay.className = 'mentix-banner-reposition-overlay';
-    overlay.style.cssText = 'position:absolute; inset:0; z-index:30; cursor:grab; display:flex; flex-direction:column; justify-content:space-between; padding:0.75rem 1rem; background:rgba(15,23,42,0.12); border:3px dashed #38bdf8; border-radius:20px; box-sizing:border-box; user-select:none; touch-action:none;';
+    overlay.style.cssText = 'position:absolute; inset:0; z-index:40; cursor:grab; display:flex; flex-direction:column; justify-content:space-between; padding:0.65rem 0.9rem; background:rgba(15,23,42,0.08); border:3px dashed #38bdf8; border-radius:20px; box-sizing:border-box; user-select:none; touch-action:none;';
 
     const updateUI = () => {
       this.applyHeroBannerStyleToDom(live);
@@ -399,36 +409,38 @@ window.ProjectsView = {
       const zoomSlider = overlay.querySelector('#mentix-banner-zoom-slider');
       const zoomLabel = overlay.querySelector('#mentix-banner-zoom-val');
       if (zoomSlider) zoomSlider.value = String(live.zoom);
-      if (zoomLabel) zoomLabel.textContent = `${live.zoom}%`;
+      if (zoomLabel) zoomLabel.textContent = `${Math.round(live.zoom)}%`;
       const posLabel = overlay.querySelector('#mentix-banner-pos-val');
-      if (posLabel) posLabel.textContent = `X:${Math.round(live.posX)}% · Y:${Math.round(live.posY)}%`;
+      if (posLabel) posLabel.textContent = `X:${Math.round(live.offsetX)}% · Y:${Math.round(live.offsetY)}%`;
     };
 
     overlay.innerHTML = `
       <div style="display:flex; justify-content:center; pointer-events:none;">
-        <div style="background:rgba(255,255,255,0.96); color:#0f172a; padding:0.35rem 0.9rem; border-radius:999px; font-size:0.8rem; font-weight:800; box-shadow:0 4px 14px rgba(15,23,42,0.22); border:1.5px solid #38bdf8; display:inline-flex; align-items:center; gap:0.45rem;">
+        <div style="background:rgba(255,255,255,0.97); color:#0f172a; padding:0.32rem 0.9rem; border-radius:999px; font-size:0.79rem; font-weight:800; box-shadow:0 4px 14px rgba(15,23,42,0.25); border:1.5px solid #38bdf8; display:inline-flex; align-items:center; gap:0.45rem;">
           <span>✋</span>
-          <span>Arrastra el fondo con el mouse o dedo para encuadrarlo</span>
-          <span id="mentix-banner-pos-val" style="color:#0284c7; font-weight:900;">X:${live.posX}% · Y:${live.posY}%</span>
+          <span>Arrastra el fondo libremente con el mouse o dedo</span>
+          <span id="mentix-banner-pos-val" style="color:#0284c7; font-weight:900;">X:${Math.round(live.offsetX)}% · Y:${Math.round(live.offsetY)}%</span>
         </div>
       </div>
 
-      <div class="mentix-reposition-toolbar" style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:0.5rem; background:rgba(255,255,255,0.97); padding:0.5rem 0.75rem; border-radius:14px; box-shadow:0 8px 25px rgba(15,23,42,0.28); border:1.5px solid #cbd5e1; cursor:default;">
-        <div style="display:flex; align-items:center; gap:0.4rem; flex-wrap:wrap;">
-          <button type="button" data-fit="contain" style="padding:0.38rem 0.75rem; border-radius:9px; border:1px solid #cbd5e1; font-size:0.78rem; font-weight:800; cursor:pointer;">🖼️ Ver completo</button>
-          <button type="button" data-fit="cover" style="padding:0.38rem 0.75rem; border-radius:9px; border:1px solid #cbd5e1; font-size:0.78rem; font-weight:800; cursor:pointer;">📐 Llenar ancho</button>
-          <button type="button" data-pos="top" title="Subir encuadre" style="padding:0.38rem 0.6rem; border-radius:9px; border:1px solid #cbd5e1; background:#f8fafc; color:#0f172a; font-size:0.78rem; font-weight:800; cursor:pointer;">⬆️</button>
-          <button type="button" data-pos="center" title="Centrar" style="padding:0.38rem 0.65rem; border-radius:9px; border:1px solid #cbd5e1; background:#f8fafc; color:#0f172a; font-size:0.78rem; font-weight:800; cursor:pointer;">🎯 Centro</button>
-          <button type="button" data-pos="bottom" title="Bajar encuadre" style="padding:0.38rem 0.6rem; border-radius:9px; border:1px solid #cbd5e1; background:#f8fafc; color:#0f172a; font-size:0.78rem; font-weight:800; cursor:pointer;">⬇️</button>
-          <label style="display:inline-flex; align-items:center; gap:0.35rem; font-size:0.76rem; font-weight:800; color:#334155; margin-left:0.25rem;">
+      <div class="mentix-reposition-toolbar" style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:0.45rem; background:rgba(255,255,255,0.98); padding:0.48rem 0.72rem; border-radius:14px; box-shadow:0 8px 26px rgba(15,23,42,0.3); border:1.5px solid #cbd5e1; cursor:default;">
+        <div style="display:flex; align-items:center; gap:0.35rem; flex-wrap:wrap;">
+          <button type="button" data-fit="contain" style="padding:0.35rem 0.7rem; border-radius:9px; border:1px solid #cbd5e1; font-size:0.77rem; font-weight:800; cursor:pointer;">🖼️ Ver completo</button>
+          <button type="button" data-fit="cover" style="padding:0.35rem 0.7rem; border-radius:9px; border:1px solid #cbd5e1; font-size:0.77rem; font-weight:800; cursor:pointer;">📐 Llenar ancho</button>
+          <button type="button" data-nudge="up" title="Subir imagen" style="padding:0.34rem 0.52rem; border-radius:8px; border:1px solid #cbd5e1; background:#f8fafc; color:#0f172a; font-size:0.76rem; font-weight:800; cursor:pointer;">⬆️</button>
+          <button type="button" data-nudge="down" title="Bajar imagen" style="padding:0.34rem 0.52rem; border-radius:8px; border:1px solid #cbd5e1; background:#f8fafc; color:#0f172a; font-size:0.76rem; font-weight:800; cursor:pointer;">⬇️</button>
+          <button type="button" data-nudge="left" title="Mover izquierda" style="padding:0.34rem 0.52rem; border-radius:8px; border:1px solid #cbd5e1; background:#f8fafc; color:#0f172a; font-size:0.76rem; font-weight:800; cursor:pointer;">⬅️</button>
+          <button type="button" data-nudge="right" title="Mover derecha" style="padding:0.34rem 0.52rem; border-radius:8px; border:1px solid #cbd5e1; background:#f8fafc; color:#0f172a; font-size:0.76rem; font-weight:800; cursor:pointer;">➡️</button>
+          <button type="button" data-nudge="center" title="Restablecer al centro" style="padding:0.34rem 0.62rem; border-radius:8px; border:1px solid #cbd5e1; background:#f8fafc; color:#0f172a; font-size:0.76rem; font-weight:800; cursor:pointer;">🎯 Centro</button>
+          <label style="display:inline-flex; align-items:center; gap:0.3rem; font-size:0.75rem; font-weight:800; color:#334155; margin-left:0.2rem;">
             <span>🔍</span>
-            <input id="mentix-banner-zoom-slider" type="range" min="100" max="160" step="2" value="${live.zoom}" style="width:76px; accent-color:#0284c7; cursor:pointer;" />
-            <span id="mentix-banner-zoom-val" style="min-width:34px; color:#0284c7;">${live.zoom}%</span>
+            <input id="mentix-banner-zoom-slider" type="range" min="50" max="220" step="2" value="${live.zoom}" style="width:76px; accent-color:#0284c7; cursor:pointer;" />
+            <span id="mentix-banner-zoom-val" style="min-width:36px; color:#0284c7;">${Math.round(live.zoom)}%</span>
           </label>
         </div>
-        <div style="display:flex; align-items:center; gap:0.45rem;">
-          <button type="button" data-action="cancel" style="padding:0.4rem 0.85rem; border-radius:9px; border:1.5px solid #cbd5e1; background:#ffffff; color:#475569; font-size:0.78rem; font-weight:800; cursor:pointer;">Cancelar</button>
-          <button type="button" data-action="save" style="padding:0.42rem 1rem; border-radius:9px; border:none; background:linear-gradient(135deg,#0284c7 0%,#2563eb 100%); color:#ffffff; font-size:0.8rem; font-weight:900; cursor:pointer; box-shadow:0 3px 10px rgba(37,99,235,0.35);">✅ Guardar encuadre</button>
+        <div style="display:flex; align-items:center; gap:0.42rem;">
+          <button type="button" data-action="cancel" style="padding:0.38rem 0.8rem; border-radius:9px; border:1.5px solid #cbd5e1; background:#ffffff; color:#475569; font-size:0.77rem; font-weight:800; cursor:pointer;">Cancelar</button>
+          <button type="button" data-action="save" style="padding:0.4rem 0.95rem; border-radius:9px; border:none; background:linear-gradient(135deg,#0284c7 0%,#2563eb 100%); color:#ffffff; font-size:0.79rem; font-weight:900; cursor:pointer; box-shadow:0 3px 10px rgba(37,99,235,0.35);">✅ Guardar encuadre</button>
         </div>
       </div>
     `;
@@ -438,64 +450,60 @@ window.ProjectsView = {
       overlay.remove();
       if (actionRow) actionRow.style.visibility = '';
       if (topBtnRow) topBtnRow.style.visibility = '';
-      window.removeEventListener('mousemove', onMove);
-      window.removeEventListener('mouseup', onUp);
-      window.removeEventListener('touchmove', onMove);
-      window.removeEventListener('touchend', onUp);
     };
 
     let dragging = false;
     let startX = 0;
     let startY = 0;
-    let startPosX = live.posX;
-    let startPosY = live.posY;
+    let startOx = live.offsetX;
+    let startOy = live.offsetY;
 
-    const getPoint = (ev) => {
-      if (ev.touches && ev.touches[0]) return { x: ev.touches[0].clientX, y: ev.touches[0].clientY };
-      return { x: ev.clientX, y: ev.clientY };
-    };
-
-    const onDown = (ev) => {
+    overlay.addEventListener('pointerdown', (ev) => {
       if (ev.target.closest('.mentix-reposition-toolbar')) return;
       dragging = true;
       overlay.style.cursor = 'grabbing';
-      const p = getPoint(ev);
-      startX = p.x;
-      startY = p.y;
-      startPosX = live.posX;
-      startPosY = live.posY;
+      try { overlay.setPointerCapture(ev.pointerId); } catch (e) {}
+      startX = ev.clientX;
+      startY = ev.clientY;
+      startOx = live.offsetX;
+      startOy = live.offsetY;
       ev.preventDefault();
-    };
+    });
 
-    const onMove = (ev) => {
+    overlay.addEventListener('pointermove', (ev) => {
       if (!dragging) return;
-      const p = getPoint(ev);
       const rect = wrapper.getBoundingClientRect();
-      const dxPct = ((p.x - startX) / Math.max(120, rect.width)) * 100;
-      const dyPct = ((p.y - startY) / Math.max(80, rect.height)) * 100;
-      live.posX = Math.max(0, Math.min(100, startPosX - dxPct));
-      live.posY = Math.max(0, Math.min(100, startPosY - dyPct));
+      const dxPct = ((ev.clientX - startX) / Math.max(120, rect.width)) * 100;
+      const dyPct = ((ev.clientY - startY) / Math.max(80, rect.height)) * 100;
+      live.offsetX = Math.max(-80, Math.min(80, startOx + dxPct));
+      live.offsetY = Math.max(-80, Math.min(80, startOy + dyPct));
       updateUI();
-    };
+    });
 
-    const onUp = () => {
+    const endDrag = (ev) => {
       if (!dragging) return;
       dragging = false;
       overlay.style.cursor = 'grab';
+      try { overlay.releasePointerCapture(ev.pointerId); } catch (e) {}
     };
+    overlay.addEventListener('pointerup', endDrag);
+    overlay.addEventListener('pointercancel', endDrag);
 
-    overlay.addEventListener('mousedown', onDown);
-    overlay.addEventListener('touchstart', onDown, { passive: false });
-    window.addEventListener('mousemove', onMove);
-    window.addEventListener('mouseup', onUp);
-    window.addEventListener('touchmove', onMove, { passive: false });
-    window.addEventListener('touchend', onUp);
+    overlay.addEventListener('wheel', (ev) => {
+      if (ev.target.closest('.mentix-reposition-toolbar')) return;
+      ev.preventDefault();
+      const delta = ev.deltaY < 0 ? 6 : -6;
+      live.zoom = Math.max(50, Math.min(220, live.zoom + delta));
+      updateUI();
+    }, { passive: false });
 
-    overlay.querySelector('[data-fit="contain"]').addEventListener('click', () => { live.fit = 'contain'; live.zoom = 100; live.posX = 50; live.posY = 50; updateUI(); });
+    overlay.querySelector('[data-fit="contain"]').addEventListener('click', () => { live.fit = 'contain'; live.offsetX = 0; live.offsetY = 0; live.zoom = 100; updateUI(); });
     overlay.querySelector('[data-fit="cover"]').addEventListener('click', () => { live.fit = 'cover'; updateUI(); });
-    overlay.querySelector('[data-pos="top"]').addEventListener('click', () => { live.posY = 0; updateUI(); });
-    overlay.querySelector('[data-pos="center"]').addEventListener('click', () => { live.posX = 50; live.posY = 50; live.zoom = 100; updateUI(); });
-    overlay.querySelector('[data-pos="bottom"]').addEventListener('click', () => { live.posY = 100; updateUI(); });
+    overlay.querySelector('[data-nudge="up"]').addEventListener('click', () => { live.offsetY = Math.max(-80, live.offsetY - 5); updateUI(); });
+    overlay.querySelector('[data-nudge="down"]').addEventListener('click', () => { live.offsetY = Math.min(80, live.offsetY + 5); updateUI(); });
+    overlay.querySelector('[data-nudge="left"]').addEventListener('click', () => { live.offsetX = Math.max(-80, live.offsetX - 5); updateUI(); });
+    overlay.querySelector('[data-nudge="right"]').addEventListener('click', () => { live.offsetX = Math.min(80, live.offsetX + 5); updateUI(); });
+    overlay.querySelector('[data-nudge="center"]').addEventListener('click', () => { live.offsetX = 0; live.offsetY = 0; live.zoom = 100; updateUI(); });
     overlay.querySelector('#mentix-banner-zoom-slider').addEventListener('input', (e) => { live.zoom = Number(e.target.value) || 100; updateUI(); });
     overlay.querySelector('[data-action="cancel"]').addEventListener('click', () => cleanup(true));
     overlay.querySelector('[data-action="save"]').addEventListener('click', () => {
