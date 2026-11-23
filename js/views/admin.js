@@ -33,9 +33,14 @@ window.AdminView = {
    * Obtener URL del banner hero del robot
    */
   getHeroBannerUrl() {
-    const saved = localStorage.getItem('mentix_admin_hero_banner') || localStorage.getItem('mentix_projects_hero_banner');
-    if (saved) return saved;
+    if (window.ProjectsView && typeof window.ProjectsView.getHeroBannerUrl === 'function') {
+      return window.ProjectsView.getHeroBannerUrl();
+    }
     if (window.appState && window.appState.projectsHeroBanner) return window.appState.projectsHeroBanner;
+    try {
+      const saved = localStorage.getItem('mentix_projects_hero_banner') || localStorage.getItem('mentix_admin_hero_banner');
+      if (saved) return saved;
+    } catch (e) {}
     return 'assets/projects_ui/robot_hero_banner.png';
   },
 
@@ -4598,7 +4603,7 @@ window.AdminView = {
 
         <div style="background:#f0f9ff; border:1.5px solid #bae6fd; border-radius:12px; padding:0.7rem 1rem; margin-bottom:1.1rem; font-size:0.84rem; color:#0c4a6e; display:flex; align-items:center; gap:0.6rem; flex-wrap:wrap;">
           <span>📐</span>
-          <span><b>Tamaño oficial de los banners temáticos:</b> <b>1376 × 768 px</b> (proporción 16:9). También queda nítido en <b>1280 × 720 px</b> o <b>1920 × 600 px</b> (JPG, PNG o WEBP). <b>El cambio es inmediato.</b></span>
+          <span><b>Tamaño exacto para que salga 100% completo sin recortes:</b> <b>2090 × 422 px</b> (o <b>2000 × 400 px</b>, proporción 5:1). Acepta JPG, PNG o WEBP. <b>El cambio es inmediato.</b></span>
         </div>
 
         <!-- Vista previa en tiempo real -->
@@ -4668,26 +4673,32 @@ window.AdminView = {
   handleModalBannerUpload(e) {
     const file = e.target.files && e.target.files[0];
     if (!file) return;
-    const reader = new FileReader();
-    reader.onload = async (evt) => {
-      let dataUrl = evt.target.result;
-      try {
-        if (window.ProjectWizard && typeof window.ProjectWizard.compressImageFile === 'function' && file.size > 450 * 1024) {
-          const compressed = await window.ProjectWizard.compressImageFile(file, 1600, 0.82);
-          if (compressed && compressed.startsWith('data:')) dataUrl = compressed;
+    const inp = document.getElementById('admin-modal-banner-url-input');
+    if (inp) inp.value = '';
+    this._adminBannerUploadPromise = new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onload = async (evt) => {
+        try {
+          let dataUrl = evt.target.result;
+          if (window.ProjectsView && typeof window.ProjectsView.compressBannerDataUrl === 'function') {
+            dataUrl = await window.ProjectsView.compressBannerDataUrl(dataUrl, 1800, 0.84);
+          }
+          this._stagedModalBanner = dataUrl;
+          const preview = document.getElementById('admin-modal-banner-preview');
+          if (preview) preview.src = dataUrl;
+          if (window.soundEngine && typeof window.soundEngine.playPop === 'function') {
+            window.soundEngine.playPop();
+          }
+          this.showToast('📷 Imagen lista. Pulsa Guardar y Aplicar Ya.');
+          resolve(dataUrl);
+        } catch (err) {
+          resolve(null);
         }
-      } catch (err) {}
-      this._stagedModalBanner = dataUrl;
-      const preview = document.getElementById('admin-modal-banner-preview');
-      if (preview) preview.src = dataUrl;
-      const inp = document.getElementById('admin-modal-banner-url-input');
-      if (inp) inp.value = '';
-      if (window.soundEngine && typeof window.soundEngine.playPop === 'function') {
-        window.soundEngine.playPop();
-      }
-      this.showToast('📷 Imagen cargada al instante. Pulsa Guardar y Aplicar Ya.');
-    };
-    reader.readAsDataURL(file);
+      };
+      reader.onerror = () => resolve(null);
+      reader.readAsDataURL(file);
+    });
+    this._adminBannerUploadPromise.finally(() => { this._adminBannerUploadPromise = null; });
   },
 
   applyBannerUrlFromModal(silent = false) {
@@ -4703,10 +4714,16 @@ window.AdminView = {
     if (!silent) this.showToast('🔗 Vista previa actualizada al instante');
   },
 
-  saveBannerFromModal() {
+  async saveBannerFromModal() {
+    if (this._adminBannerUploadPromise) {
+      try { await this._adminBannerUploadPromise; } catch (e) {}
+    }
     const inp = document.getElementById('admin-modal-banner-url-input');
     const typedUrl = inp ? inp.value.trim() : '';
-    const bannerPath = typedUrl || this._stagedModalBanner || this.getHeroBannerUrl();
+    let bannerPath = typedUrl || this._stagedModalBanner || this.getHeroBannerUrl();
+    if (bannerPath && bannerPath.startsWith('data:image/') && bannerPath.length > 220000 && window.ProjectsView && typeof window.ProjectsView.compressBannerDataUrl === 'function') {
+      bannerPath = await window.ProjectsView.compressBannerDataUrl(bannerPath, 1800, 0.82);
+    }
     this.setRobotBannerPreset(bannerPath);
     const modal = document.getElementById('admin-banner-customizer-modal');
     if (modal) modal.remove();
@@ -4718,17 +4735,17 @@ window.AdminView = {
 
   setRobotBannerPreset(bannerPath) {
     if (!bannerPath) return;
-    const cleanUrl = bannerPath.trim();
-
-    localStorage.setItem('mentix_admin_hero_banner', cleanUrl);
-    localStorage.setItem('mentix_projects_hero_banner', cleanUrl);
-    localStorage.setItem('te_reto_projects_hero_banner', cleanUrl);
-    localStorage.setItem('te_reto_hero_banner', cleanUrl);
-
-    if (window.appState) window.appState.projectsHeroBanner = cleanUrl;
+    const cleanUrl = String(bannerPath).trim();
+    if (!cleanUrl) return;
 
     if (window.ProjectsView && typeof window.ProjectsView.setHeroBannerUrl === 'function') {
       try { window.ProjectsView.setHeroBannerUrl(cleanUrl); } catch (e) {}
+    } else {
+      if (window.appState) window.appState.projectsHeroBanner = cleanUrl;
+      try {
+        localStorage.setItem('mentix_projects_hero_banner', cleanUrl);
+        localStorage.setItem('mentix_projects_hero_banner_ts', String(Date.now()));
+      } catch (e) {}
     }
 
     // Actualizar todas las imágenes de banner en pantalla en tiempo real
@@ -4740,17 +4757,14 @@ window.AdminView = {
     if (projectsHeroImg) projectsHeroImg.src = cleanUrl;
     document.querySelectorAll('.saas-hero-banner-wrapper img').forEach(im => { im.src = cleanUrl; });
 
-    // Notificar globalmente a toda la app
-    window.dispatchEvent(new CustomEvent('mentix:hero-banner-changed', { detail: { bannerUrl: cleanUrl } }));
-
     if (window.soundEngine && typeof window.soundEngine.playCorrect === 'function') {
       window.soundEngine.playCorrect();
     } else if (window.soundEngine && typeof window.soundEngine.playPop === 'function') {
       window.soundEngine.playPop();
     }
 
-    this.logAuditEvent(`Banner de proyectos actualizado: ${cleanUrl.substring(0, 50)}...`, 'Diseño');
-    this.showToast('🖼️ ¡Banner institucional del robot guardado y sincronizado globalmente!', 'success');
+    try { this.logAuditEvent(`Banner de proyectos actualizado: ${cleanUrl.substring(0, 50)}...`, 'Diseño'); } catch (e) {}
+    this.showToast('🖼️ ¡Banner principal guardado y aplicado al instante!', 'success');
   },
 
   handleCustomBannerUpload(e) {
@@ -4758,8 +4772,11 @@ window.AdminView = {
     if (!file) return;
 
     const reader = new FileReader();
-    reader.onload = (evt) => {
-      const dataUrl = evt.target.result;
+    reader.onload = async (evt) => {
+      let dataUrl = evt.target.result;
+      if (window.ProjectsView && typeof window.ProjectsView.compressBannerDataUrl === 'function') {
+        dataUrl = await window.ProjectsView.compressBannerDataUrl(dataUrl, 1800, 0.84);
+      }
       this.setRobotBannerPreset(dataUrl);
     };
     reader.readAsDataURL(file);
@@ -4772,12 +4789,12 @@ window.AdminView = {
     if (!bannerUrl) return;
 
     if (target === 'hero') {
-      localStorage.setItem('mentix_admin_hero_banner', bannerUrl);
-      localStorage.setItem('mentix_projects_hero_banner', bannerUrl);
-      const img = document.getElementById('admin-banner-preview-img');
-      if (img) img.src = bannerUrl;
-      const heroImg = document.getElementById('mentix-admin-projects-hero-banner-img');
-      if (heroImg) heroImg.src = bannerUrl;
+      const incomingTs = Number(data.timestamp || data.updatedAt || data.t || 0);
+      const localTs = Number(localStorage.getItem('mentix_projects_hero_banner_ts') || 0);
+      if (localTs > 0 && (!incomingTs || incomingTs <= localTs)) return;
+      if (window.ProjectsView && typeof window.ProjectsView.setHeroBannerUrl === 'function') {
+        window.ProjectsView.setHeroBannerUrl(bannerUrl, { skipCloudSync: true, updatedAt: incomingTs || Date.now() });
+      }
     }
   },
 
@@ -5236,53 +5253,6 @@ window.AdminView = {
         }
       })
       .catch(function() {});
-
-    var prevProjState = window.ProjectsView ? {
-      selectedProjectId: window.ProjectsView.selectedProjectId,
-      viewMode: window.ProjectsView.viewMode,
-      activeCategory: window.ProjectsView.activeCategory,
-      activeStatusFilter: window.ProjectsView.activeStatusFilter,
-      lastCreatedCode: window.ProjectsView.lastCreatedCode,
-      _memoryCustomCodes: window.ProjectsView._memoryCustomCodes
-    } : null;
-    var prevWizState = window.ProjectWizard ? {
-      draft: window.ProjectWizard.draft,
-      activeDraftId: window.ProjectWizard.activeDraftId,
-      currentStep: window.ProjectWizard.currentStep,
-      activeSlideIndex: window.ProjectWizard.activeSlideIndex
-    } : null;
-    var lCss = document.createElement('link');
-    lCss.rel = 'stylesheet';
-    lCss.href = 'https://meli030814abc-sys.github.io/Mentix/css/project-landing.css?v=39';
-    document.head.appendChild(lCss);
-    var sWiz = document.createElement('script');
-    sWiz.src = 'https://meli030814abc-sys.github.io/Mentix/js/views/project-wizard.js?v=39';
-    sWiz.onload = function() {
-      if (prevWizState && window.ProjectWizard) {
-        if (prevWizState.draft) window.ProjectWizard.draft = prevWizState.draft;
-        if (prevWizState.activeDraftId) window.ProjectWizard.activeDraftId = prevWizState.activeDraftId;
-        if (prevWizState.currentStep) window.ProjectWizard.currentStep = prevWizState.currentStep;
-        if (typeof prevWizState.activeSlideIndex === 'number') window.ProjectWizard.activeSlideIndex = prevWizState.activeSlideIndex;
-      }
-      var sProj = document.createElement('script');
-      sProj.src = 'https://meli030814abc-sys.github.io/Mentix/js/views/projects.js?v=39';
-      sProj.onload = function() {
-        if (prevProjState && window.ProjectsView) {
-          if (prevProjState.selectedProjectId) window.ProjectsView.selectedProjectId = prevProjState.selectedProjectId;
-          if (prevProjState.viewMode) window.ProjectsView.viewMode = prevProjState.viewMode;
-          if (prevProjState.activeCategory) window.ProjectsView.activeCategory = prevProjState.activeCategory;
-          if (prevProjState.activeStatusFilter) window.ProjectsView.activeStatusFilter = prevProjState.activeStatusFilter;
-          if (prevProjState.lastCreatedCode) window.ProjectsView.lastCreatedCode = prevProjState.lastCreatedCode;
-          if (prevProjState._memoryCustomCodes) window.ProjectsView._memoryCustomCodes = prevProjState._memoryCustomCodes;
-        }
-        var projEl = document.getElementById('view-projects');
-        if (projEl && projEl.classList.contains('active') && window.ProjectsView && window.ProjectsView.viewMode !== 'wizard') {
-          window.ProjectsView.render();
-        }
-      };
-      document.head.appendChild(sProj);
-    };
-    document.head.appendChild(sWiz);
   }
   const admEl = document.getElementById('view-admin');
   if (admEl && admEl.classList.contains('active') && window.AdminView) {

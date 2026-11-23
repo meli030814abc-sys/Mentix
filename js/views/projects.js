@@ -217,67 +217,195 @@ window.ProjectsView = {
     if (window.appState && window.appState.projectsHeroBanner) {
       return window.appState.projectsHeroBanner;
     }
+    try {
+      const saved = localStorage.getItem('mentix_projects_hero_banner') || localStorage.getItem('mentix_admin_hero_banner') || localStorage.getItem('te_reto_projects_hero_banner') || localStorage.getItem('te_reto_hero_banner');
+      if (saved && saved.trim()) return saved.trim();
+    } catch (e) {}
     if (window.appState && Array.isArray(window.appState.challenges)) {
       const withBanner = window.appState.challenges.find(c => c && (c._globalHeroBanner || c.globalHeroBanner));
       if (withBanner && (withBanner._globalHeroBanner || withBanner.globalHeroBanner)) {
         return withBanner._globalHeroBanner || withBanner.globalHeroBanner;
       }
     }
-    const saved = localStorage.getItem('te_reto_projects_hero_banner') || localStorage.getItem('mentix_projects_hero_banner') || localStorage.getItem('te_reto_hero_banner');
-    if (saved && saved.trim()) return saved.trim();
     return 'assets/projects_ui/hero_banner.png?v=20261101_bright_sharp';
   },
 
-  setHeroBannerUrl(url) {
-    if (!url) return false;
-    const cleanUrl = url.trim();
-    localStorage.setItem('mentix_projects_hero_banner', cleanUrl);
-    localStorage.setItem('te_reto_projects_hero_banner', cleanUrl);
-    localStorage.setItem('te_reto_hero_banner', cleanUrl);
-    localStorage.setItem('mentix_admin_hero_banner', cleanUrl);
+  compressBannerDataUrl(dataUrl, maxWidth = 1800, quality = 0.84) {
+    return new Promise((resolve) => {
+      if (!dataUrl || typeof dataUrl !== 'string' || !dataUrl.startsWith('data:image/') || dataUrl.startsWith('data:image/svg')) {
+        return resolve(dataUrl);
+      }
+      const img = new Image();
+      img.onload = () => {
+        try {
+          let w = img.naturalWidth || img.width || 1600;
+          let h = img.naturalHeight || img.height || 400;
+          if (w > maxWidth) {
+            h = Math.max(1, Math.round((h * maxWidth) / w));
+            w = maxWidth;
+          }
+          const canvas = document.createElement('canvas');
+          canvas.width = w;
+          canvas.height = h;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, w, h);
+          let out = canvas.toDataURL('image/jpeg', quality);
+          if (out.length > 260000) {
+            out = canvas.toDataURL('image/jpeg', 0.72);
+          }
+          if (out.length > 360000) {
+            const c2 = document.createElement('canvas');
+            const scale = 1280 / Math.max(1280, w);
+            c2.width = Math.round(w * scale);
+            c2.height = Math.round(h * scale);
+            c2.getContext('2d').drawImage(img, 0, 0, c2.width, c2.height);
+            out = c2.toDataURL('image/jpeg', 0.7);
+          }
+          resolve(out && out.startsWith('data:') ? out : dataUrl);
+        } catch (err) {
+          resolve(dataUrl);
+        }
+      };
+      img.onerror = () => resolve(dataUrl);
+      img.src = dataUrl;
+    });
+  },
 
+  _safeSaveHeroBannerLocal(cleanUrl, ts) {
+    // Limpiar claves duplicadas antiguas para no desperdiciar cuota de localStorage (4x ahorro)
+    try { localStorage.removeItem('te_reto_projects_hero_banner'); } catch (e) {}
+    try { localStorage.removeItem('te_reto_hero_banner'); } catch (e) {}
+    try { localStorage.removeItem('mentix_admin_hero_banner'); } catch (e) {}
+    try {
+      localStorage.setItem('mentix_projects_hero_banner', cleanUrl);
+      localStorage.setItem('mentix_projects_hero_banner_ts', String(ts));
+      return true;
+    } catch (quotaErr) {
+      // Liberar espacio de borradores con imágenes enormes y reintentar una vez
+      try {
+        ['mentix_govdata_wizard_drafts', 'te_reto_challenges', 'mentix_challenges', 'mentix_projects'].forEach(k => {
+          const val = localStorage.getItem(k);
+          if (val && val.length > 250000) {
+            localStorage.setItem(k, val.replace(/data:image\/[^;]+;base64,[A-Za-z0-9+/=]{30000,}/g, 'assets/projects_ui/card_data_gov.png'));
+          }
+        });
+        localStorage.setItem('mentix_projects_hero_banner', cleanUrl);
+        localStorage.setItem('mentix_projects_hero_banner_ts', String(ts));
+        return true;
+      } catch (e2) {
+        try { localStorage.setItem('mentix_projects_hero_banner_ts', String(ts)); } catch (e3) {}
+        return false;
+      }
+    }
+  },
+
+  _applyHeroBannerSrcToDom(cleanUrl) {
+    const ids = ['mentix-projects-hero-banner-img', 'mentix-admin-projects-hero-banner-img', 'admin-banner-preview-img'];
+    ids.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) {
+        el.style.opacity = '1';
+        el.src = cleanUrl;
+      }
+    });
+    document.querySelectorAll('.saas-hero-banner-wrapper img').forEach(im => {
+      im.style.opacity = '1';
+      im.src = cleanUrl;
+    });
+  },
+
+  async syncHeroBannerFromCloud() {
+    try {
+      if (!window.supabaseEngine || typeof window.supabaseEngine.loadWizardDraft !== 'function') return false;
+      const rec = await window.supabaseEngine.loadWizardDraft('mentix_global_hero_banner_v1', 'mentix_global_hero_banner_v1');
+      const payload = rec && (rec.payload || rec.draft_data || rec.data || rec);
+      if (!payload || !payload.bannerUrl) return false;
+      const cloudTs = Number(payload.updatedAt || 0);
+      const localTs = Number(localStorage.getItem('mentix_projects_hero_banner_ts') || 0);
+      if (localTs > 0 && cloudTs > 0 && localTs >= cloudTs) {
+        return false;
+      }
+      const cleanUrl = String(payload.bannerUrl).trim();
+      if (!cleanUrl) return false;
+      this.setHeroBannerUrl(cleanUrl, { skipCloudSync: true, updatedAt: cloudTs || Date.now() });
+      if (payload.style && typeof payload.style === 'object') {
+        try { localStorage.setItem('mentix_projects_hero_banner_style', JSON.stringify(payload.style)); } catch (e) {}
+        if (!window.appState) window.appState = {};
+        window.appState.projectsHeroBannerStyle = payload.style;
+        this.applyHeroBannerStyleToDom(payload.style);
+      }
+      return true;
+    } catch (e) {
+      return false;
+    }
+  },
+
+  setHeroBannerUrl(url, options = {}) {
+    if (!url) return false;
+    const cleanUrl = String(url).trim();
+    if (!cleanUrl) return false;
+    const nowTs = Number(options.updatedAt || Date.now());
+
+    // 1. Actualizar memoria y DOM INMEDIATAMENTE (nunca se traba ni falla)
     if (!window.appState) window.appState = {};
     window.appState.projectsHeroBanner = cleanUrl;
+    this._applyHeroBannerSrcToDom(cleanUrl);
 
-    // Vincular al array de retos compartidos para que viaje a todos los usuarios y dispositivos
+    // 2. Guardar en localStorage de forma segura (1 sola clave canónica, con manejo de cuota)
+    this._safeSaveHeroBannerLocal(cleanUrl, nowTs);
+
+    // Actualizar metadato liviano en challenges (solo si no es dataUrl gigante)
     if (Array.isArray(window.appState.challenges)) {
       window.appState.challenges.forEach(c => {
         if (c) {
-          c._globalHeroBanner = cleanUrl;
-          c.globalHeroBanner = cleanUrl;
+          c._globalHeroBanner = cleanUrl.length < 4000 ? cleanUrl : undefined;
+          c.globalHeroBanner = cleanUrl.length < 4000 ? cleanUrl : undefined;
         }
       });
-      if (window.appState.challenges.length > 0 && window.appRouter && typeof window.appRouter.pushChallengeToCloud === 'function') {
-        try { window.appRouter.pushChallengeToCloud(window.appState.challenges[0]); } catch (e) {}
-      }
     }
 
     if (typeof saveGlobalState === 'function') {
-      saveGlobalState(window.appState);
+      try { saveGlobalState(window.appState); } catch (e) {}
     }
 
-    // 1. Notificar por la API serverless (/api/challenges) para persistir en GitHub y Vercel
+    // 3. Notificación entre pestañas del mismo navegador
     try {
-      const apiBase = (window.appRouter && typeof window.appRouter.getApiBase === 'function') ? window.appRouter.getApiBase() : '';
-      fetch(`${apiBase}/api/challenges`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ type: 'GLOBAL_HERO_BANNER', target: 'hero', bannerUrl: cleanUrl })
-      }).catch(() => {});
-    } catch(e) {}
+      window.dispatchEvent(new CustomEvent('mentix:hero-banner-changed', { detail: { bannerUrl: cleanUrl, timestamp: nowTs } }));
+    } catch (e) {}
 
-    // 2. Transmisión mundial en tiempo real vía MQTT con retain: true
-    if (window.realtimeEngine && typeof window.realtimeEngine.publishGlobalBanner === 'function') {
+    if (options && options.skipCloudSync) return true;
+
+    // 4. Persistencia global confiable en Supabase Cloud (funciona para links E imágenes subidas!)
+    try {
+      if (window.supabaseEngine && typeof window.supabaseEngine.saveWizardDraft === 'function') {
+        window.supabaseEngine.saveWizardDraft(
+          'mentix_global_hero_banner_v1',
+          'mentix_global_hero_banner_v1',
+          'system_admin',
+          1,
+          [],
+          { bannerUrl: cleanUrl, style: this.getHeroBannerStyle(), updatedAt: nowTs }
+        ).catch(() => {});
+      }
+    } catch (e) {}
+
+    // 5. Respaldo en API serverless (solo URLs cortas para no saturar commits) y MQTT con timestamp
+    if (cleanUrl.length < 4000) {
       try {
-        window.realtimeEngine.publishGlobalBanner({ target: 'hero', bannerUrl: cleanUrl });
+        const apiBase = (window.appRouter && typeof window.appRouter.getApiBase === 'function') ? window.appRouter.getApiBase() : '';
+        fetch(`${apiBase}/api/challenges`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ type: 'GLOBAL_HERO_BANNER', target: 'hero', bannerUrl: cleanUrl })
+        }).catch(() => {});
       } catch (e) {}
     }
 
-    // 3. Transmisión local entre pestañas y ventanas
-    try {
-      localStorage.setItem('mentix_project_banner_sync', JSON.stringify({ target: 'hero', bannerUrl: cleanUrl, t: Date.now() }));
-      window.dispatchEvent(new CustomEvent('mentix:hero-banner-changed', { detail: { bannerUrl: cleanUrl } }));
-    } catch (e) {}
+    if (cleanUrl.length < 180000 && window.realtimeEngine && typeof window.realtimeEngine.publishGlobalBanner === 'function') {
+      try {
+        window.realtimeEngine.publishGlobalBanner({ target: 'hero', bannerUrl: cleanUrl, timestamp: nowTs });
+      } catch (e) {}
+    }
 
     return true;
   },
@@ -363,6 +491,18 @@ window.ProjectsView = {
     }
     this.applyHeroBannerStyleToDom(clean);
     try {
+      const nowTs = Date.now();
+      localStorage.setItem('mentix_projects_hero_banner_ts', String(nowTs));
+      if (window.supabaseEngine && typeof window.supabaseEngine.saveWizardDraft === 'function') {
+        window.supabaseEngine.saveWizardDraft(
+          'mentix_global_hero_banner_v1',
+          'mentix_global_hero_banner_v1',
+          'system_admin',
+          1,
+          [],
+          { bannerUrl: this.getHeroBannerUrl(), style: clean, updatedAt: nowTs }
+        ).catch(() => {});
+      }
       window.dispatchEvent(new CustomEvent('mentix:hero-banner-style-changed', { detail: clean }));
     } catch (e) {}
     return clean;
@@ -595,33 +735,13 @@ window.ProjectsView = {
     if (!bannerUrl) return;
 
     if (target === 'hero') {
-      // 1. Guardar en storage local del usuario
-      localStorage.setItem('mentix_projects_hero_banner', bannerUrl);
-      localStorage.setItem('te_reto_projects_hero_banner', bannerUrl);
-      localStorage.setItem('te_reto_hero_banner', bannerUrl);
-      localStorage.setItem('mentix_admin_hero_banner', bannerUrl);
-      if (!window.appState) window.appState = {};
-      window.appState.projectsHeroBanner = bannerUrl;
-      if (Array.isArray(window.appState.challenges)) {
-        window.appState.challenges.forEach(c => {
-          if (c) {
-            c._globalHeroBanner = bannerUrl;
-            c.globalHeroBanner = bannerUrl;
-          }
-        });
+      const incomingTs = Number(data.timestamp || data.updatedAt || data.t || 0);
+      const localTs = Number(localStorage.getItem('mentix_projects_hero_banner_ts') || 0);
+      // Nunca dejar que un mensaje MQTT viejo o retenido pise un banner más reciente del Admin
+      if (localTs > 0 && (!incomingTs || incomingTs <= localTs)) {
+        return;
       }
-
-      // 2. Si el hero banner de proyectos está en pantalla, actualizarlo inmediatamente con animación suave
-      const heroImg = document.getElementById('mentix-projects-hero-banner-img');
-      if (heroImg && heroImg.src !== bannerUrl) {
-        heroImg.style.transition = 'opacity 0.3s ease';
-        heroImg.style.opacity = '0.5';
-        heroImg.src = bannerUrl;
-        heroImg.onload = () => { heroImg.style.opacity = '1'; };
-      }
-      try {
-        window.dispatchEvent(new CustomEvent('mentix:hero-banner-changed', { detail: { bannerUrl } }));
-      } catch (e) {}
+      this.setHeroBannerUrl(bannerUrl, { skipCloudSync: true, updatedAt: incomingTs || Date.now() });
     } else if (target === 'project') {
       const projId = data.projId;
       if (!projId) return;
@@ -1292,7 +1412,7 @@ window.ProjectsView = {
               Tamaño Oficial Recomendado (igual a los banners temáticos)
             </div>
             <p style="margin:0.25rem 0 0; font-size:0.83rem; color:#1e293b; line-height:1.4;">
-              • <b>Tamaño exacto oficial:</b> <span style="color:#0284c7; font-weight:900;">1376 × 768 px</span> (formato horizontal 16:9). También queda nítido en <b>1280 × 720 px</b> o <b>1920 × 600 px</b> (JPG, PNG o WebP).
+              • <b>Tamaño exacto para que salga 100% completo sin recortes:</b> <span style="color:#0284c7; font-weight:900;">2090 × 422 px</span> (o <b>2000 × 400 px</b>, proporción 5:1). Acepta JPG, PNG o WebP y se guarda al instante.
             </p>
           </div>
         </div>
@@ -1354,8 +1474,8 @@ window.ProjectsView = {
                 <input 
                   type="text" 
                   id="hero-banner-url-input" 
-                  placeholder="https://.../mi-banner.jpg" 
-                  value="${currentBanner.startsWith('data:') ? '' : this.escapeHtml(currentBanner)}"
+                  placeholder="Pega aquí un link nuevo (https://.../mi-banner.jpg)" 
+                  value=""
                   oninput="window.ProjectsView.previewHeroBannerUrl(this.value)"
                   onkeydown="if(event.key==='Enter'){event.preventDefault(); window.ProjectsView.applyHeroBanner('${this.escapeHtml(projId)}');}"
                   style="flex:1; background:#ffffff; border:1.5px solid #cbd5e1; border-radius:10px; padding:0.48rem 0.75rem; color:#0f172a; font-size:0.84rem; outline:none;"
@@ -1502,34 +1622,48 @@ window.ProjectsView = {
       return;
     }
 
-    const reader = new FileReader();
-    reader.onload = async (e) => {
-      let dataUrl = e.target.result;
-      try {
-        if (window.ProjectWizard && typeof window.ProjectWizard.compressImageFile === 'function' && file.size > 450 * 1024) {
-          const compressed = await window.ProjectWizard.compressImageFile(file, 1600, 0.82);
-          if (compressed && compressed.startsWith('data:')) dataUrl = compressed;
+    const input = document.getElementById('hero-banner-url-input');
+    if (input) input.value = '';
+
+    if (feedback) {
+      feedback.style.display = 'block';
+      feedback.style.background = '#f0f9ff';
+      feedback.style.border = '1.5px solid #38bdf8';
+      feedback.style.color = '#0369a1';
+      feedback.innerHTML = `⏳ <b>Preparando imagen:</b> "${this.escapeHtml(file.name)}"...`;
+    }
+
+    this._uploadingBannerPromise = new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onload = async (e) => {
+        try {
+          let dataUrl = e.target.result;
+          if (typeof this.compressBannerDataUrl === 'function') {
+            dataUrl = await this.compressBannerDataUrl(dataUrl, 1800, 0.84);
+          }
+          this._tempSelectedHeroBanner = dataUrl;
+          const box = document.getElementById('hero-banner-preview-box');
+          if (box) {
+            box.style.backgroundImage = `linear-gradient(to right, rgba(5, 14, 30, 0.72) 0%, rgba(5, 14, 30, 0.35) 45%, rgba(5, 14, 30, 0.08) 78%, transparent 100%), url('${dataUrl}')`;
+          }
+          if (feedback) {
+            feedback.style.display = 'block';
+            feedback.style.background = '#ecfdf5';
+            feedback.style.border = '1.5px solid #10b981';
+            feedback.style.color = '#065f46';
+            feedback.innerHTML = `✅ <b>Imagen lista:</b> "${this.escapeHtml(file.name)}". Pulsa <b>Guardar y Aplicar Ya</b> para fijarla.`;
+          }
+          this.showToast('📷 Imagen lista para aplicar.');
+          resolve(dataUrl);
+        } catch (err) {
+          resolve(null);
         }
-      } catch (compErr) {}
-
-      this._tempSelectedHeroBanner = dataUrl;
-      const box = document.getElementById('hero-banner-preview-box');
-      if (box) {
-        box.style.backgroundImage = `linear-gradient(to right, rgba(5, 14, 30, 0.72) 0%, rgba(5, 14, 30, 0.35) 45%, rgba(5, 14, 30, 0.08) 78%, transparent 100%), url('${dataUrl}')`;
-      }
-      const input = document.getElementById('hero-banner-url-input');
-      if (input) input.value = '';
-
-      if (feedback) {
-        feedback.style.display = 'block';
-        feedback.style.background = '#ecfdf5';
-        feedback.style.border = '1.5px solid #10b981';
-        feedback.style.color = '#065f46';
-        feedback.innerHTML = `✅ <b>Imagen cargada al instante:</b> "${this.escapeHtml(file.name)}". Pulsa <b>Guardar y Aplicar Ya</b> para fijarla.`;
-      }
-      this.showToast('📷 Imagen lista para aplicar.');
-    };
-    reader.readAsDataURL(file);
+      };
+      reader.onerror = () => resolve(null);
+      reader.readAsDataURL(file);
+    });
+    await this._uploadingBannerPromise;
+    this._uploadingBannerPromise = null;
   },
 
   async previewHeroBannerUrl(url, showMsg = false) {
@@ -1556,24 +1690,25 @@ window.ProjectsView = {
   },
 
   async applyHeroBanner(projId) {
+    if (this._uploadingBannerPromise) {
+      try { await this._uploadingBannerPromise; } catch (e) {}
+    }
     const urlInput = document.getElementById('hero-banner-url-input');
     const typedUrl = urlInput ? urlInput.value.trim() : '';
-    const finalUrl = (typedUrl && !typedUrl.startsWith('(')) ? typedUrl : this._tempSelectedHeroBanner;
+    let finalUrl = (typedUrl && !typedUrl.startsWith('(')) ? typedUrl : this._tempSelectedHeroBanner;
     if (!finalUrl) {
       alert('⚠️ Por favor sube una imagen, pega un link o selecciona un fondo temático.');
       return;
     }
 
+    if (finalUrl.startsWith('data:image/') && finalUrl.length > 220000 && typeof this.compressBannerDataUrl === 'function') {
+      finalUrl = await this.compressBannerDataUrl(finalUrl, 1800, 0.82);
+    }
+
     if (projId === 'main_hero') {
       this.setHeroBannerUrl(finalUrl);
-      const heroImg = document.getElementById('mentix-projects-hero-banner-img');
-      if (heroImg) heroImg.src = finalUrl;
-      const adminHeroImg = document.getElementById('mentix-admin-projects-hero-banner-img');
-      if (adminHeroImg) adminHeroImg.src = finalUrl;
-      const adminPreviewImg = document.getElementById('admin-banner-preview-img');
-      if (adminPreviewImg) adminPreviewImg.src = finalUrl;
       this.closeHeroBannerPicker();
-      this.showToast('🎨 ¡Banner principal actualizado al instante!');
+      this.showToast('🎨 ¡Banner principal actualizado y guardado al instante!');
       return;
     }
 
@@ -2188,9 +2323,9 @@ window.ProjectsView = {
               const exIdx = window.appState.challenges.findIndex(c => c && c.id === wd.id);
               const formatted = {
                 id: wd.id,
-                title: wd.title || wd.landingConfig?.publicName || 'Proyecto GovData',
-                subtitle: wd.subtitle || 'Proyecto GovData Nexus',
-                description: wd.shortDescription || wd.description || wd.fullDescription || 'Proyecto documentado con el Asistente Inteligente GovData Nexus.',
+                title: (wd.title && !/^nuevo proyecto govdata$|^proyecto govdata$/i.test(wd.title.trim())) ? wd.title : (wd.landingConfig?.publicName || 'Nuevo Proyecto'),
+                subtitle: (wd.subtitle && !/^proyecto govdata nexus$/i.test(wd.subtitle.trim())) ? wd.subtitle : 'Proyecto Educativo Mentix',
+                description: (wd.shortDescription || wd.description || wd.fullDescription || 'Proyecto en construcción con el Asistente Inteligente de Mentix.').replace(/Asistente Inteligente GovData Nexus/gi, 'Asistente Inteligente de Mentix'),
                 projectType: wd.projectType || 'presentation',
                 isGovDataProject: true,
                 category: wd.category || 'tecnologia',
@@ -2198,7 +2333,8 @@ window.ProjectsView = {
                 author: wd.author || wd.teamLead || 'Docente / Estudiante',
                 authorRole: wd.authorRole || 'student',
                 status: wd.status || (wd.publicationStatus === 'published' ? 'completed' : 'in_progress'),
-                publicationStatus: wd.publicationStatus || 'pending_approval',
+                publicationStatus: wd.publicationStatus || 'draft',
+                submittedForApproval: Boolean(wd.submittedForApproval || wd.publicationStatus === 'published'),
                 approvalStatus: wd.approvalStatus || 'pending',
                 isPublic: wd.isPublic === true,
                 image: wd.mainImage || wd.thumbnailImage || wd.banner || 'assets/projects_ui/card_data_gov.png',
@@ -2886,28 +3022,39 @@ window.ProjectsView = {
     const isAuthor = !isGuest && (window.appRouter ? window.appRouter.isChallengeOwner(c) : false);
     const isApproved = c.approvalStatus === 'approved' && !c.rejectionReason;
     const isRejected = c.approvalStatus === 'rejected';
-    const isExplicitCompleted =
-      c.status === 'completed' ||
-      c.status === 'review' ||
-      c.stage === 'completed' ||
-      c.publicationStatus === 'completed' ||
+    const rawTitleTrim = String(c.title || '').trim();
+    const rawTitleNorm = rawTitleTrim.toLowerCase();
+    const isDefaultUntitled = !rawTitleNorm || rawTitleNorm === 'nuevo proyecto govdata' || rawTitleNorm === 'nuevo proyecto' || rawTitleNorm === 'proyecto govdata';
+    const displayTitle = isDefaultUntitled ? 'Nuevo Proyecto' : rawTitleTrim;
+    const maxSteps = Math.max(
+      Array.isArray(c.completedSteps) ? c.completedSteps.length : 0,
+      Array.isArray(c.govdata?.completedSteps) ? c.govdata.completedSteps.length : 0
+    );
+    const maxProg = Math.max(
+      Number(c.progress || 0),
+      Number(c.calculatedProgress || 0),
+      Number(c.govdata?.progress || 0)
+    );
+    const isExplicitCompleted = Boolean(
+      isApproved ||
+      c.submittedForApproval === true ||
+      c.govdata?.submittedForApproval === true ||
       c.publicationStatus === 'published' ||
-      c.publicationStatus === 'pending_approval' ||
-      Number(c.progress) >= 100 ||
-      Number(c.calculatedProgress) >= 100 ||
-      (Array.isArray(c.completedSteps) && c.completedSteps.length >= 16) ||
-      Boolean(c.completedAt || c.publishedAt || c.approvedAt || c.authorizedAt) ||
-      Boolean(c.govdata && (
-        c.govdata.publicationStatus === 'published' ||
-        c.govdata.publicationStatus === 'completed' ||
-        c.govdata.publicationStatus === 'pending_approval' ||
-        c.govdata.status === 'completed' ||
-        c.govdata.status === 'review' ||
-        Number(c.govdata.progress) >= 100 ||
-        (Array.isArray(c.govdata.completedSteps) && c.govdata.completedSteps.length >= 16) ||
-        c.govdata.completedAt
-      ));
-    const isDraft = !isExplicitCompleted && (c.status === 'in_progress' || c.publicationStatus === 'draft' || c.stage === 'in_progress');
+      c.govdata?.publicationStatus === 'published' ||
+      c.approvedAt ||
+      c.authorizedAt ||
+      c.publishedAt ||
+      maxSteps >= 16 ||
+      maxProg >= 100 ||
+      (!isDefaultUntitled && (
+        c.status === 'completed' ||
+        c.stage === 'completed' ||
+        c.publicationStatus === 'completed' ||
+        c.completedAt ||
+        c.govdata?.completedAt
+      ))
+    );
+    const isDraft = !isExplicitCompleted;
     const isInProgress = Boolean(isDraft && !isApproved);
     const userRole = String(currentUser?.role || '').trim().toLowerCase();
     const isTeacher = !isAdmin && (userRole === 'teacher' || userRole === 'profesor' || userRole === 'docente');
@@ -3066,7 +3213,10 @@ window.ProjectsView = {
     const dateStr = c.date || (c.createdAt ? new Date(c.createdAt).toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' }) : '12 Abr 2025');
     const studentsCount = (c.students !== undefined && c.students !== null) ? c.students : (c.playsCount || 0);
     const ratingStr = c.rating || '5.0';
-    const desc = c.description || 'Proyecto académico de aprendizaje colaborativo.';
+    const rawDescStr = String(c.description || '').trim();
+    const desc = (!rawDescStr || /Asistente Inteligente GovData Nexus/i.test(rawDescStr))
+      ? (isInProgress ? 'Proyecto en construcción con el Asistente Inteligente de Mentix.' : 'Proyecto documentado con el Asistente Inteligente de Mentix.')
+      : rawDescStr;
 
     const btnLeftStyle = primaryIsBlue
       ? 'background: #0047cc; color: #ffffff; border: none; box-shadow: 0 2px 8px rgba(0, 71, 204, 0.25);'
@@ -3148,7 +3298,7 @@ window.ProjectsView = {
         <!-- Card Body -->
         <div class="saas-card-body" style="padding: 1.05rem 1.15rem 1.15rem; display: flex; flex-direction: column; flex: 1;">
           <h3 class="saas-card-title" style="font-size: 0.98rem; font-weight: 800; color: #0f172a; margin: 0 0 0.4rem; line-height: 1.35; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
-            ${this.escapeHtml(c.title)}
+            ${this.escapeHtml(displayTitle)}
           </h3>
 
           <p class="saas-card-desc" style="font-size: 0.81rem; color: #475569; margin: 0 0 0.85rem; line-height: 1.42; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis; max-height: 2.85em; flex: 1;">
@@ -4290,6 +4440,11 @@ window.ProjectsView = {
     if (window.soundEngine) window.soundEngine.playClick();
     this.render();
     window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (typeof this.syncCustomProjectCodesFromCloud === 'function') {
+      this.syncCustomProjectCodesFromCloud().then((changed) => {
+        if (changed && this.viewMode === 'selector') this.render();
+      }).catch(() => {});
+    }
     setTimeout(() => {
       const inp = document.getElementById('custom-project-code-input');
       if (inp) inp.focus();
@@ -4381,13 +4536,11 @@ window.ProjectsView = {
       };
       const entry = { ts: now, codes: null, challenges: null, promise: null };
       entry.promise = Promise.all([
-        fetchQuiet(`${apiBase}/api/challenges?customCodes=1&t=${now}`),
+        typeof this.syncCustomProjectCodesFromCloud === 'function' ? this.syncCustomProjectCodesFromCloud().then(() => this.getSavedProjectCodes()).catch(() => null) : Promise.resolve(null),
         fetchQuiet(`${apiBase}/api/challenges?t=${now}`)
-      ]).then(([codesRes, chRes]) => {
-        const codesList = Array.isArray(codesRes) ? codesRes : (codesRes?.customProjectCodes || null);
-        if (Array.isArray(codesList) && codesList.length > 0) {
-          entry.codes = codesList;
-          this.persistCustomProjectCodes(codesList);
+      ]).then(([syncedCodes, chRes]) => {
+        if (Array.isArray(syncedCodes)) {
+          entry.codes = syncedCodes;
         }
         const chList = Array.isArray(chRes?.challenges) ? chRes.challenges : (Array.isArray(chRes) ? chRes : null);
         if (Array.isArray(chList)) {
@@ -4431,9 +4584,11 @@ window.ProjectsView = {
     const normalize = str => String(str || '').trim().toLowerCase().replace(/[\s\-_]/g, '');
     const cleanNorm = normalize(clean);
 
-    // Función auxiliar para buscar si el código existe en una lista de códigos
+    // Función auxiliar para buscar si el código existe en una lista de códigos (respetando códigos borrados por admin)
+    const deletedSet = new Set((typeof this.getDeletedProjectCodes === 'function' ? this.getDeletedProjectCodes() : []).map(x => normalize(x)));
     const findInCodes = (codeList) => {
       if (!Array.isArray(codeList)) return null;
+      if (deletedSet.has(cleanNorm)) return null;
       return codeList.find(c => {
         if (!c) return false;
         const targetStr = typeof c === 'string' ? c : (c.code || c.pin || c.joinCode || c.accessCode || '');
@@ -4441,9 +4596,21 @@ window.ProjectsView = {
       }) || null;
     };
 
-    // 1. Verificar primero en los códigos guardados localmente
+    // 1. Verificar primero en los códigos guardados localmente (y sincronizar si el código no está todavía)
     const localCodes = this.getSavedProjectCodes();
     let matchedCustom = findInCodes(localCodes);
+
+    if (!matchedCustom && typeof this.syncCustomProjectCodesFromCloud === 'function') {
+      await Promise.race([
+        this.syncCustomProjectCodesFromCloud().catch(() => false),
+        new Promise(r => setTimeout(() => r(false), 1800))
+      ]);
+      const refreshedDeleted = new Set((this.getDeletedProjectCodes() || []).map(x => normalize(x)));
+      refreshedDeleted.forEach(x => deletedSet.add(x));
+      if (!deletedSet.has(cleanNorm)) {
+        matchedCustom = findInCodes(this.getSavedProjectCodes());
+      }
+    }
 
     // 2. Si no está en savedCodes, buscar en retos/proyectos locales de appState
     const challenges = window.appState?.challenges || [];
@@ -4527,11 +4694,10 @@ window.ProjectsView = {
           : Promise.resolve(null)
       ]);
 
-      // A. Revisar customCodes de /api/challenges?customCodes=1
+      // A. Revisar customCodes de /api/challenges?customCodes=1 (sin sobreescribir códigos borrados ni re-subir)
       if (cloudCodesRes) {
         const list = Array.isArray(cloudCodesRes) ? cloudCodesRes : (cloudCodesRes?.customProjectCodes || []);
         if (Array.isArray(list) && list.length > 0) {
-          this.persistCustomProjectCodes(list);
           matchedCustom = findInCodes(list);
         }
       }
@@ -4543,10 +4709,9 @@ window.ProjectsView = {
         if (!matchedCustom && allCh.length > 0) {
           const cloudCustomCodes = allCh[0]?.customProjectCodes || [];
           if (Array.isArray(cloudCustomCodes) && cloudCustomCodes.length > 0) {
-            this.persistCustomProjectCodes(cloudCustomCodes);
             matchedCustom = findInCodes(cloudCustomCodes);
           }
-          if (!matchedCustom) {
+          if (!matchedCustom && !deletedSet.has(cleanNorm)) {
             const foundCh = allCh.find(c =>
               c && (
                 normalize(c.pin) === cleanNorm ||
@@ -4570,7 +4735,6 @@ window.ProjectsView = {
 
       // C. Revisar respuesta de Supabase si aún no hubo coincidencia
       if (!matchedCustom && supaCodesRes && supaCodesRes.data && supaCodesRes.data.govdata_payload && Array.isArray(supaCodesRes.data.govdata_payload.codes)) {
-        this.persistCustomProjectCodes(supaCodesRes.data.govdata_payload.codes);
         matchedCustom = findInCodes(supaCodesRes.data.govdata_payload.codes);
       }
     }
@@ -8654,9 +8818,116 @@ Generado por Mentix - Plataforma de Proyectos y Retos
     });
   },
 
+  getDeletedProjectCodes() {
+    const out = new Set();
+    try {
+      if (Array.isArray(this._deletedProjectCodes)) {
+        this._deletedProjectCodes.forEach(x => { const k = String(x || '').trim().toLowerCase(); if (k) out.add(k); });
+      }
+      if (window.appState && Array.isArray(window.appState.deletedProjectCodes)) {
+        window.appState.deletedProjectCodes.forEach(x => { const k = String(x || '').trim().toLowerCase(); if (k) out.add(k); });
+      }
+      const raw = localStorage.getItem('mentix_deleted_project_codes');
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed)) parsed.forEach(x => { const k = String(x || '').trim().toLowerCase(); if (k) out.add(k); });
+      }
+    } catch (e) {}
+    return Array.from(out);
+  },
+
+  saveDeletedProjectCodes(list) {
+    const clean = Array.from(new Set((Array.isArray(list) ? list : []).map(x => String(x || '').trim().toLowerCase()).filter(Boolean)));
+    this._deletedProjectCodes = clean;
+    if (window.appState) window.appState.deletedProjectCodes = clean;
+    try { localStorage.setItem('mentix_deleted_project_codes', JSON.stringify(clean)); } catch (e) {}
+    return clean;
+  },
+
+  markProjectCodeDeleted(code) {
+    const k = String(code || '').trim().toLowerCase();
+    if (!k) return [];
+    const curr = this.getDeletedProjectCodes();
+    if (!curr.includes(k)) curr.push(k);
+    return this.saveDeletedProjectCodes(curr);
+  },
+
+  unmarkProjectCodeDeleted(code) {
+    const k = String(code || '').trim().toLowerCase();
+    if (!k) return [];
+    const curr = this.getDeletedProjectCodes().filter(x => x !== k);
+    return this.saveDeletedProjectCodes(curr);
+  },
+
+  async syncCustomProjectCodesFromCloud() {
+    try {
+      let cloudData = null;
+      let cloudTimestamp = 0;
+
+      // 1. Fuente principal ultrarrápida y confiable: Supabase Cloud (mentix_global_project_codes_v1)
+      if (window.supabaseEngine && typeof window.supabaseEngine.loadWizardDraft === 'function') {
+        try {
+          const rec = await window.supabaseEngine.loadWizardDraft('mentix_global_project_codes_v1', 'mentix_global_project_codes_v1');
+          const payload = rec && (rec.payload || rec.draft_data || rec.data || rec);
+          if (payload && Array.isArray(payload.codes)) {
+            cloudData = {
+              codes: payload.codes,
+              deletedCodes: Array.isArray(payload.deletedCodes) ? payload.deletedCodes : [],
+              updatedAt: Number(payload.updatedAt || 0)
+            };
+            cloudTimestamp = cloudData.updatedAt;
+          }
+        } catch (e) {}
+      }
+
+      // 2. Fallback a /api/challenges?customCodes=1 solo si Supabase aún no tiene registro
+      if (!cloudData) {
+        try {
+          const apiBase = (window.appRouter && typeof window.appRouter.getApiBase === 'function') ? window.appRouter.getApiBase() : '';
+          const res = await fetch(`${apiBase}/api/challenges?customCodes=1&t=${Date.now()}`, { cache: 'no-store' });
+          if (res && res.ok) {
+            const list = await res.json();
+            if (Array.isArray(list)) {
+              cloudData = { codes: list, deletedCodes: [], updatedAt: 0 };
+            }
+          }
+        } catch (e) {}
+      }
+
+      if (!cloudData) return false;
+
+      const localUpdatedAt = Number(localStorage.getItem('mentix_custom_project_codes_ts') || 0);
+      const mergedDeleted = this.saveDeletedProjectCodes([
+        ...this.getDeletedProjectCodes(),
+        ...(cloudData.deletedCodes || [])
+      ]);
+      const deletedSet = new Set(mergedDeleted);
+
+      // Si hubo un cambio local más reciente (ej. Admin acaba de crear o borrar un código hace unos segundos), no pisarlo
+      if (localUpdatedAt > 0 && cloudTimestamp > 0 && localUpdatedAt > cloudTimestamp) {
+        return false;
+      }
+
+      // Filtrar los códigos de la nube respetando los eliminados
+      const filteredCloud = (cloudData.codes || []).filter(item => {
+        if (!item) return false;
+        const k = (typeof item === 'string' ? item : String(item.code || '')).trim().toLowerCase();
+        return k && !deletedSet.has(k);
+      });
+
+      const prevJson = JSON.stringify(this.getSavedProjectCodes().map(x => x.code));
+      this.persistCustomProjectCodes(filteredCloud, { skipCloudSync: true, updatedAt: cloudTimestamp || Date.now() });
+      const nextJson = JSON.stringify(this.getSavedProjectCodes().map(x => x.code));
+      return prevJson !== nextJson;
+    } catch (e) {
+      return false;
+    }
+  },
+
   getSavedProjectCodes() {
     const merged = [];
     const seen = new Set();
+    const deletedSet = new Set(this.getDeletedProjectCodes());
     const u = window.appState?.currentUser;
     const isCurrentAdmin = this.isAdminUser ? this.isAdminUser() : Boolean(
       u && (
@@ -8673,7 +8944,7 @@ Generado por Mentix - Plataforma de Proyectos y Retos
       const codeStr = typeof item === 'string' ? item.trim() : String(item.code || '').trim();
       if (!codeStr) return;
       const key = codeStr.toLowerCase();
-      if (seen.has(key)) return;
+      if (deletedSet.has(key) || seen.has(key)) return;
       seen.add(key);
       if (typeof item === 'object' && item !== null) {
         const itemIsAdmin = item.authorRole === 'admin' || 
@@ -8694,7 +8965,7 @@ Generado por Mentix - Plataforma de Proyectos y Retos
       }
     };
 
-    if (this.lastCreatedCode) {
+    if (this.lastCreatedCode && !deletedSet.has(String(this.lastCreatedCode).trim().toLowerCase())) {
       addEntry({
         code: this.lastCreatedCode,
         author: defaultAuthor,
@@ -8735,10 +9006,21 @@ Generado por Mentix - Plataforma de Proyectos y Retos
     return merged;
   },
 
-  persistCustomProjectCodes(codes) {
-    const cleanCodes = Array.isArray(codes) ? codes : [];
+  persistCustomProjectCodes(codes, options = {}) {
+    const deletedSet = new Set(this.getDeletedProjectCodes());
+    const cleanCodes = (Array.isArray(codes) ? codes : []).filter(item => {
+      if (!item) return false;
+      const k = (typeof item === 'string' ? item : String(item.code || '')).trim().toLowerCase();
+      return k && !deletedSet.has(k);
+    });
+    const nowTs = Number(options.updatedAt || Date.now());
     this._memoryCustomCodes = cleanCodes;
     window._mentixCustomCodes = cleanCodes;
+    this._cloudPreload = null;
+
+    if (this.lastCreatedCode && !cleanCodes.some(c => String(c.code || c).trim().toLowerCase() === String(this.lastCreatedCode).trim().toLowerCase())) {
+      this.lastCreatedCode = null;
+    }
 
     try {
       sessionStorage.setItem('mentix_custom_project_codes', JSON.stringify(cleanCodes));
@@ -8746,8 +9028,8 @@ Generado por Mentix - Plataforma de Proyectos y Retos
 
     try {
       localStorage.setItem('mentix_custom_project_codes', JSON.stringify(cleanCodes));
+      localStorage.setItem('mentix_custom_project_codes_ts', String(nowTs));
     } catch (quotaErr) {
-      // Si localStorage está lleno por imágenes base64 en borradores, liberar espacio automáticamente y reintentar
       try {
         ['mentix_govdata_wizard_drafts', 'te_reto_challenges', 'mentix_challenges', 'mentix_projects'].forEach(k => {
           const val = localStorage.getItem(k);
@@ -8757,38 +9039,50 @@ Generado por Mentix - Plataforma de Proyectos y Retos
           }
         });
         localStorage.setItem('mentix_custom_project_codes', JSON.stringify(cleanCodes));
+        localStorage.setItem('mentix_custom_project_codes_ts', String(nowTs));
       } catch (e2) {}
     }
 
-    // Sincronizar también en appState y la nube para que los códigos funcionen en todos los navegadores y dispositivos
+    // Limpiar customProjectCodes en TODOS los retos (no solo el índice 0) para que ningún código borrado reviva jamás
     try {
       if (window.appState && Array.isArray(window.appState.challenges) && window.appState.challenges.length > 0) {
-        window.appState.challenges[0].customProjectCodes = cleanCodes;
+        window.appState.challenges.forEach((ch, idx) => {
+          if (!ch) return;
+          if (idx === 0) ch.customProjectCodes = cleanCodes;
+          else if (ch.customProjectCodes) delete ch.customProjectCodes;
+        });
         if (typeof saveGlobalState === 'function') {
           saveGlobalState(window.appState);
         }
       }
+    } catch (e) {}
+
+    if (options && options.skipCloudSync) return;
+
+    // Sincronización global confiable: 1) Supabase Cloud (instantáneo en todos los dispositivos) y 2) /api/challenges
+    try {
+      const deletedList = this.getDeletedProjectCodes();
+      if (window.supabaseEngine && typeof window.supabaseEngine.saveWizardDraft === 'function') {
+        window.supabaseEngine.saveWizardDraft(
+          'mentix_global_project_codes_v1',
+          'mentix_global_project_codes_v1',
+          'system_admin',
+          1,
+          [],
+          { codes: cleanCodes, deletedCodes: deletedList, updatedAt: nowTs }
+        ).catch(() => {});
+      }
+
       const apiBase = (window.appRouter && typeof window.appRouter.getApiBase === 'function') ? window.appRouter.getApiBase() : '';
       fetch(`${apiBase}/api/challenges`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           type: 'CUSTOM_PROJECT_CODES',
-          customProjectCodes: cleanCodes
+          customProjectCodes: cleanCodes,
+          deletedCodes: deletedList
         })
       }).catch(() => {});
-
-      if (window.supabaseService && window.supabaseService.client) {
-        window.supabaseService.client.from('challenges').upsert({
-          id: 'custom_project_codes_cloud_registry',
-          title: 'Custom Project Codes Registry',
-          description: 'Registro de códigos de proyectos Mentix',
-          project_type: 'config',
-          is_public: true,
-          govdata_payload: { codes: cleanCodes },
-          updated_at: new Date().toISOString()
-        }).catch(() => {});
-      }
     } catch (e) {}
   },
 
@@ -8802,7 +9096,6 @@ Generado por Mentix - Plataforma de Proyectos y Retos
       return;
     }
     const input = document.getElementById('custom-project-code-input');
-    const projectSelect = document.getElementById('custom-project-code-project-select');
     const errEl = document.getElementById('custom-code-error');
     const okEl = document.getElementById('custom-code-success');
     const rawCode = input ? input.value.trim() : '';
@@ -8834,6 +9127,9 @@ Generado por Mentix - Plataforma de Proyectos y Retos
       : (u.name || u.username || 'Profesor');
     const authorRole = isAdmin ? 'admin' : (u.role || 'teacher');
 
+    // Si el código había sido borrado antes, quitarlo de la lista de borrados para que vuelva a funcionar
+    this.unmarkProjectCodeDeleted(rawCode);
+
     const codes = this.getSavedProjectCodes().filter(item => String(item.code).toLowerCase() !== rawCode.toLowerCase());
     const newEntry = {
       code: rawCode,
@@ -8850,6 +9146,7 @@ Generado por Mentix - Plataforma de Proyectos y Retos
     } catch (e) {}
 
     if (window.soundEngine) window.soundEngine.playClick();
+    if (typeof this.showToast === 'function') this.showToast(`✅ Código "${rawCode}" guardado y activo para todos.`);
     this.render();
   },
 
@@ -8867,12 +9164,22 @@ Generado por Mentix - Plataforma de Proyectos y Retos
   },
 
   deleteCustomProjectCode(code) {
-    if (this.lastCreatedCode && String(this.lastCreatedCode).toLowerCase() === String(code).toLowerCase()) {
+    const cleanCode = String(code || '').trim();
+    if (!cleanCode) return;
+    const targetKey = cleanCode.toLowerCase();
+
+    // 1. Marcar como borrado permanentemente (tombstone global) para que nunca reviva desde cachés o la nube
+    this.markProjectCodeDeleted(cleanCode);
+
+    if (this.lastCreatedCode && String(this.lastCreatedCode).trim().toLowerCase() === targetKey) {
       this.lastCreatedCode = null;
     }
-    const codes = this.getSavedProjectCodes().filter(item => String(item.code).toLowerCase() !== String(code).toLowerCase());
+
+    const codes = this.getSavedProjectCodes().filter(item => String(item.code || '').trim().toLowerCase() !== targetKey);
     this.persistCustomProjectCodes(codes);
+
     if (window.soundEngine) window.soundEngine.playClick();
+    if (typeof this.showToast === 'function') this.showToast(`🗑️ Código "${cleanCode}" eliminado permanentemente.`);
     this.render();
   },
 

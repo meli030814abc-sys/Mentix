@@ -1892,15 +1892,10 @@ class AppRouter {
     try {
       let cloudChallenges = null;
 
-      // Sincronizar códigos de proyectos creados por profesores y admins en la nube
+      // Sincronizar códigos de proyectos creados por profesores y admins en la nube (Supabase + API, respetando eliminaciones)
       try {
-        const apiBase = this.getApiBase();
-        const resCodes = await fetch(`${apiBase}/api/challenges?customCodes=1&t=${Date.now()}`);
-        if (resCodes.ok) {
-          const list = await resCodes.json();
-          if (Array.isArray(list) && list.length > 0 && window.ProjectsView && typeof window.ProjectsView.persistCustomProjectCodes === 'function') {
-            window.ProjectsView.persistCustomProjectCodes(list);
-          }
+        if (window.ProjectsView && typeof window.ProjectsView.syncCustomProjectCodesFromCloud === 'function') {
+          await window.ProjectsView.syncCustomProjectCodesFromCloud();
         }
       } catch (errCodes) {}
 
@@ -2009,16 +2004,9 @@ class AppRouter {
           cloudChallenges = window.deepCleanMojibake(cloudChallenges);
         }
 
-        // Sincronizar Banner Principal Global si fue actualizado por un Administrador
-        const globalHero = cloudChallenges.find(x => x && x._globalHeroBanner)?._globalHeroBanner;
-        if (globalHero) {
-          try {
-            if (window.appState) window.appState.projectsHeroBanner = globalHero;
-            localStorage.setItem('mentix_projects_hero_banner', globalHero);
-            localStorage.setItem('mentix_admin_hero_banner', globalHero);
-            const heroImg = document.getElementById('mentix-projects-hero-banner-img');
-            if (heroImg && heroImg.src !== globalHero) heroImg.src = globalHero;
-          } catch (e) {}
+        // Sincronizar Banner Principal Global desde Supabase respetando timestamps (nunca pisa un banner más reciente del Admin)
+        if (window.ProjectsView && typeof window.ProjectsView.syncHeroBannerFromCloud === 'function') {
+          window.ProjectsView.syncHeroBannerFromCloud().catch(() => {});
         }
 
         const local = Array.isArray(window.appState.challenges) ? window.appState.challenges : [];
