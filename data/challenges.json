@@ -35,8 +35,8 @@
     "endDate": "",
     "currentStep": 1,
     "completedSteps": [],
-    "progress": 30,
-    "calculatedProgress": 30,
+    "progress": 40,
+    "calculatedProgress": 40,
     "valueProp": {
       "problemSolved": "",
       "howItWorks": "",
@@ -199,9 +199,9 @@
         "collaborators": ""
       },
       "createdAt": "2026-11-23T04:35:12.300Z",
-      "updatedAt": "2026-11-23T04:35:32.793Z",
-      "progress": 30,
-      "calculatedProgress": 30
+      "updatedAt": "2026-11-23T04:35:32.879Z",
+      "progress": 40,
+      "calculatedProgress": 40
     },
     "author": "JHFK",
     "authorId": "user_1795407757752",
@@ -213,7 +213,7 @@
     "authorAvatar": "🦊",
     "authorRole": "student",
     "createdAt": "2026-11-23T04:35:12.300Z",
-    "updatedAt": "2026-11-23T04:35:32.770Z"
+    "updatedAt": "2026-11-23T04:35:32.849Z"
   },
   {
     "id": "proj_pres_1791658288964",
