@@ -28,5 +28,20 @@
     "isBlocked": false,
     "lastLoginAt": "2026-11-23T16:19:05.106Z",
     "createdAt": "2026-11-23T16:19:05.106Z"
+  },
+  {
+    "id": "user_1791496180841",
+    "name": "Eimy",
+    "username": "Cañon",
+    "email": "gatitaxd679@gmail.com",
+    "avatar": "🦊",
+    "role": "student",
+    "xp": 100,
+    "level": 1,
+    "levelName": "Principiante",
+    "institution": "Comunidad MENTIX",
+    "isBlocked": false,
+    "lastLoginAt": "2026-11-23T16:19:09.441Z",
+    "createdAt": "2026-11-23T16:19:09.441Z"
   }
 ]
