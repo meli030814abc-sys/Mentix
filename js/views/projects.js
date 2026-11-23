@@ -896,8 +896,18 @@ window.ProjectsView = {
       const projId = data.projId;
       if (!projId) return;
 
+      // Ignorar mensajes (p. ej. retenidos por MQTT) más antiguos que el último cambio local de banner de este proyecto
+      const incomingProjTs = Number(data.timestamp || 0);
+      let localProjTs = 0;
+      try { localProjTs = Number(localStorage.getItem('mentix_hero_banner_ts_' + projId) || 0); } catch (e) {}
+      if (incomingProjTs && incomingProjTs <= localProjTs) return;
+
       // 1. Guardar en storage local
-      try { localStorage.setItem('mentix_hero_banner_' + projId, bannerUrl); } catch (e) {}
+      try {
+        localStorage.setItem('mentix_hero_banner_' + projId, bannerUrl);
+        localStorage.setItem('mentix_hero_banner_explicit_' + projId, '1');
+        if (incomingProjTs) localStorage.setItem('mentix_hero_banner_ts_' + projId, String(incomingProjTs));
+      } catch (e) {}
 
       // 2. Actualizar en window.appState.challenges
       if (window.appState && Array.isArray(window.appState.challenges)) {
@@ -1389,6 +1399,11 @@ window.ProjectsView = {
 
     // 1. Priorizar el banner recién aplicado localmente o la imagen personalizada del proyecto
     const saved = projId ? localStorage.getItem('mentix_hero_banner_' + projId) : null;
+    // Si el administrador eligió explícitamente un banner, ese SIEMPRE manda (aunque recargue la página o llegue una copia vieja de la nube)
+    const explicitSaved = projId ? localStorage.getItem('mentix_hero_banner_explicit_' + projId) === '1' : false;
+    if (explicitSaved && saved && saved.trim()) {
+      return normalizeImg(saved);
+    }
     if (saved && saved.trim() && !isGenericDef(saved)) {
       return normalizeImg(saved);
     }
@@ -1434,8 +1449,19 @@ window.ProjectsView = {
     if (window.ProjectWizard && typeof window.ProjectWizard.normalizeImageUrl === 'function') {
       cleanUrl = window.ProjectWizard.normalizeImageUrl(cleanUrl);
     }
+    const bannerChangeTs = Date.now();
     if (projId) {
-      try { localStorage.setItem('mentix_hero_banner_' + projId, cleanUrl); } catch (e) {}
+      try {
+        localStorage.setItem('mentix_hero_banner_ts_' + projId, String(bannerChangeTs));
+        localStorage.setItem('mentix_hero_banner_explicit_' + projId, '1');
+        localStorage.setItem('mentix_hero_banner_' + projId, cleanUrl);
+      } catch (e) {
+        // Cuota llena (imagen grande): liberar la clave y reintentar sin duplicados antiguos
+        try {
+          localStorage.removeItem('mentix_hero_banner_' + projId);
+          localStorage.setItem('mentix_hero_banner_' + projId, cleanUrl);
+        } catch (e2) {}
+      }
     }
     let proj = null;
     if (window.appState && Array.isArray(window.appState.challenges)) {
@@ -1527,7 +1553,7 @@ window.ProjectsView = {
     // Publicación mundial en tiempo real por MQTT Backbone
     if (window.realtimeEngine && typeof window.realtimeEngine.publishGlobalBanner === 'function') {
       try {
-        window.realtimeEngine.publishGlobalBanner({ target: 'project', projId, bannerUrl: cleanUrl });
+        window.realtimeEngine.publishGlobalBanner({ target: 'project', projId, bannerUrl: cleanUrl, timestamp: bannerChangeTs });
       } catch (e) {}
     }
 

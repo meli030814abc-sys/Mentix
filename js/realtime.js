@@ -593,6 +593,8 @@ class RealtimeEngine {
       try {
         // Limpiar el tópico antiguo retenido (evita que vuelva a salir un banner viejo como Matrix)
         c.publish('mentix/global/banners', '', { qos: 0, retain: true });
+        // Si el mensaje es grande no se retiene; limpiar el retenido anterior para que no reaplique un banner viejo al recargar
+        if (isLargePayload) c.publish('mentix/global/banners_v2', '', { qos: 0, retain: true });
         c.publish('mentix/global/banners_v2', payload, { qos: 0, retain: !isLargePayload });
       } catch(e) {}
     };
