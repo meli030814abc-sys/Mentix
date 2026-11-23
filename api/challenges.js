@@ -542,7 +542,7 @@ export default async function handler(req, res) {
 
         let persisted = false;
         if (GITHUB_TOKEN) {
-          for (let attempt = 0; attempt < 2; attempt++) {
+          for (let attempt = 0; attempt < 5; attempt++) {
             try {
               const ghPut = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/contents/${filePath}`, {
                 method: 'PUT',
@@ -555,7 +555,7 @@ export default async function handler(req, res) {
               });
               if (ghPut.ok) { persisted = true; break; }
             } catch (e) {}
-            await new Promise(r => setTimeout(r, 400));
+            await new Promise(r => setTimeout(r, 600 + attempt * 500));
           }
         }
 
@@ -885,6 +885,27 @@ export default async function handler(req, res) {
           }
           if ((!Array.isArray(mergedProj.resources) || mergedProj.resources.length === 0) && Array.isArray(prev.resources) && prev.resources.length > 0) {
             mergedProj.resources = prev.resources;
+          } else if (Array.isArray(mergedProj.resources) && Array.isArray(prev.resources) && prev.resources.length > 0) {
+            // Preservar cualquier URL https:// válida del servidor si el cliente envió url vacía
+            const prevById = new Map();
+            const prevByName = new Map();
+            prev.resources.forEach(pr => {
+              if (!pr || !pr.url) return;
+              if (pr.id) prevById.set(String(pr.id), pr.url);
+              const fn = String(pr.fileName || pr.name || '').toLowerCase().trim();
+              if (fn && /^https?:\/\//i.test(pr.url)) prevByName.set(fn, pr.url);
+            });
+            mergedProj.resources = mergedProj.resources.map(nr => {
+              if (!nr) return nr;
+              const cur = String(nr.url || '').trim();
+              if (!cur || cur.startsWith('blob:')) {
+                const byId = nr.id ? prevById.get(String(nr.id)) : '';
+                const byNm = prevByName.get(String(nr.fileName || nr.name || '').toLowerCase().trim()) || '';
+                const recovered = byId || byNm;
+                if (recovered) return { ...nr, url: recovered };
+              }
+              return nr;
+            });
           }
           if (prev.designConfig || challenge.designConfig) {
             mergedProj.designConfig = { ...(prev.designConfig || {}), ...(challenge.designConfig || {}) };

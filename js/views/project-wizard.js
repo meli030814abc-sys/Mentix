@@ -5914,8 +5914,12 @@ collectCurrentStepInputs() {
         });
       }
 
-      this.draft.resources.push({
-        id: resId,
+      const existingBrokenIdx = this.draft.resources.findIndex(r =>
+        r && (!r.url || r.url.startsWith('blob:')) &&
+        String(r.fileName || r.name || '').toLowerCase().trim() === String(file.name || '').toLowerCase().trim()
+      );
+      const newResObj = {
+        id: existingBrokenIdx >= 0 ? (this.draft.resources[existingBrokenIdx].id || resId) : resId,
         name: file.name.replace(/\.[^/.]+$/, '').replace(/[_-]+/g, ' '),
         fileName: file.name,
         description: `Recurso oficial en formato ${ext} (${this.formatBytes(file.size)}).`,
@@ -5926,11 +5930,16 @@ collectCurrentStepInputs() {
         sizeLabel: this.formatBytes(file.size),
         category: category,
         visibility: 'public',
-        order: this.draft.resources.length + 1,
+        order: existingBrokenIdx >= 0 ? (this.draft.resources[existingBrokenIdx].order || existingBrokenIdx + 1) : (this.draft.resources.length + 1),
         status: 'verified',
         extractedText: textPreview,
         uploadedAt: new Date().toISOString()
-      });
+      };
+      if (existingBrokenIdx >= 0) {
+        this.draft.resources[existingBrokenIdx] = { ...this.draft.resources[existingBrokenIdx], ...newResObj };
+      } else {
+        this.draft.resources.push(newResObj);
+      }
     }
 
     this.saveDraftToStorage(true);

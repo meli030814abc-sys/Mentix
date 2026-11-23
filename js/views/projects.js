@@ -325,32 +325,33 @@ window.ProjectsView = {
     const trimmed = dataUrl.trim();
     if (!trimmed.startsWith('data:')) return trimmed;
     if (trimmed.length > 5600000) return trimmed;
-    try {
-      const apiBase = (window.appRouter && typeof window.appRouter.getApiBase === 'function') ? window.appRouter.getApiBase() : '';
-      const ctrl = typeof AbortController !== 'undefined' ? new AbortController() : null;
-      const tid = ctrl ? setTimeout(() => ctrl.abort(), 22000) : null;
-      const r = await fetch(`${apiBase}/api/challenges`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          type: 'UPLOAD_PROJECT_FILE',
-          projectId: String(projectId || 'general'),
-          fileName: String(fileName || 'documento.pdf'),
-          dataUrl: trimmed
-        }),
-        signal: ctrl ? ctrl.signal : undefined
-      });
-      if (tid) clearTimeout(tid);
-      if (r && r.ok) {
-        const res = await r.json();
-        if (res && res.success && res.url) {
-          return String(res.url).trim();
+    const apiBase = (window.appRouter && typeof window.appRouter.getApiBase === 'function') ? window.appRouter.getApiBase() : '';
+    for (let attempt = 0; attempt < 3; attempt++) {
+      try {
+        const ctrl = typeof AbortController !== 'undefined' ? new AbortController() : null;
+        const tid = ctrl ? setTimeout(() => ctrl.abort(), 24000) : null;
+        const r = await fetch(`${apiBase}/api/challenges`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            type: 'UPLOAD_PROJECT_FILE',
+            projectId: String(projectId || 'general'),
+            fileName: String(fileName || 'documento.pdf'),
+            dataUrl: trimmed
+          }),
+          signal: ctrl ? ctrl.signal : undefined
+        });
+        if (tid) clearTimeout(tid);
+        if (r && r.ok) {
+          const res = await r.json();
+          if (res && res.success && res.url) {
+            return String(res.url).trim();
+          }
         }
-      }
-      return trimmed;
-    } catch (e) {
-      return trimmed;
+      } catch (e) {}
+      if (attempt < 2) await new Promise(res => setTimeout(res, 900 * (attempt + 1)));
     }
+    return trimmed;
   },
 
   _safeSaveHeroBannerLocal(cleanUrl, ts) {
@@ -8852,6 +8853,20 @@ window.ProjectsView = {
       }
     }
 
+    // Auto-recuperación desde otro recurso hermano con el mismo nombre dentro del proyecto (si el anterior quedó sin URL)
+    if ((!rawUrl || rawUrl.startsWith('blob:')) && selected && Array.isArray(selected.resources)) {
+      const cleanName = String(res.fileName || res.name || '').toLowerCase().replace(/\s*\(\d+\)\s*/g, '').replace(/\.[^/.]+$/, '').trim();
+      const sibling = selected.resources.find(r => {
+        if (!r || !r.url || r.url.startsWith('blob:')) return false;
+        const rName = String(r.fileName || r.name || '').toLowerCase().replace(/\s*\(\d+\)\s*/g, '').replace(/\.[^/.]+$/, '').trim();
+        return cleanName && rName === cleanName && (/^https?:\/\//i.test(r.url) || r.url.startsWith('data:'));
+      });
+      if (sibling && sibling.url) {
+        rawUrl = sibling.url.trim();
+        res.url = rawUrl;
+      }
+    }
+
     // Auto-recuperación de recursos conocidos o PDFs de la carpeta assets
     if (!rawUrl || rawUrl.startsWith('blob:')) {
       const KNOWN_DOC_MAP = {
@@ -8948,21 +8963,43 @@ window.ProjectsView = {
         </div>
       `;
     } else if (isPdf && (blobUrl || rawUrl)) {
-      // 2. Archivo PDF real: Visor nativo con herramientas del navegador
+      // 2. Archivo PDF real: Visor nativo con barra de acceso directo + carga Blob para compatibilidad total
+      const pdfSrc = blobUrl || rawUrl;
       contentHtml = `
         <div style="flex:1; width:100%; height:calc(100vh - 66px); background:#0f172a; position:relative; display:flex; flex-direction:column;">
+          <div style="height:42px; background:#061122; border-bottom:1px solid rgba(255,255,255,0.1); display:flex; align-items:center; justify-content:space-between; padding:0 1.25rem; font-size:0.82rem; flex-shrink:0;">
+            <span style="color:#cbd5e1; font-weight:700;">📄 Visor PDF Permanente Mentix</span>
+            <div style="display:flex; align-items:center; gap:0.55rem;">
+              <a href="${this.escapeHtml(pdfSrc)}" target="_blank" rel="noopener noreferrer" style="display:inline-flex; align-items:center; gap:0.35rem; background:rgba(0,245,212,0.16); border:1px solid #00f5d4; color:#00f5d4; border-radius:999px; padding:0.22rem 0.8rem; font-size:0.78rem; font-weight:800; text-decoration:none;">
+                <span>↗</span> <span>Abrir en pestaña nueva</span>
+              </a>
+              <a href="${this.escapeHtml(pdfSrc)}" download="${this.escapeHtml(name)}" style="display:inline-flex; align-items:center; gap:0.35rem; background:rgba(59,130,246,0.2); border:1px solid #60a5fa; color:#93c5fd; border-radius:999px; padding:0.22rem 0.8rem; font-size:0.78rem; font-weight:800; text-decoration:none;">
+                <span>⬇</span> <span>Descargar</span>
+              </a>
+            </div>
+          </div>
           <iframe 
-            src="${blobUrl || rawUrl}#toolbar=1&navpanes=1&zoom=page-fit" 
+            id="mentix-pdf-viewer-frame"
+            src="${this.escapeHtml(pdfSrc)}#toolbar=1&navpanes=1&zoom=page-fit" 
             type="application/pdf"
             style="width:100%; height:100%; flex:1; border:none; background:#ffffff; display:block;"
             title="${this.escapeHtml(name)}"
           >
-            <object data="${blobUrl || rawUrl}" type="application/pdf" style="width:100%; height:100%;">
-              <embed src="${blobUrl || rawUrl}" type="application/pdf" style="width:100%; height:100%;" />
+            <object data="${this.escapeHtml(pdfSrc)}" type="application/pdf" style="width:100%; height:100%;">
+              <embed src="${this.escapeHtml(pdfSrc)}" type="application/pdf" style="width:100%; height:100%;" />
             </object>
           </iframe>
         </div>
       `;
+      if (/^https?:\/\//i.test(rawUrl)) {
+        fetch(rawUrl).then(r => r.ok ? r.blob() : null).then(blob => {
+          if (!blob) return;
+          const bUrl = URL.createObjectURL(new Blob([blob], { type: 'application/pdf' }));
+          this._currentResourceBlobUrl = bUrl;
+          const fr = document.getElementById('mentix-pdf-viewer-frame');
+          if (fr) fr.src = bUrl + '#toolbar=1&navpanes=1&zoom=page-fit';
+        }).catch(() => {});
+      }
     } else if (isImage && (blobUrl || rawUrl)) {
       // 3. Imagen real
       contentHtml = `
