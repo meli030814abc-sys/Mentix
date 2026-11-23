@@ -92,7 +92,7 @@
       "email": "gatitaxd6f79@gmail.com",
       "role": "admin",
       "joinedAt": "2026-11-23T04:35:10.065Z",
-      "updatedAt": "2026-11-23T21:10:15.551Z",
+      "updatedAt": "2026-11-23T21:10:18.010Z",
       "projectId": "govdata_code_mentilona_804263",
       "projectTitle": "🌊 ¡El 95 % del océano sigue siendo un misterio! 😱 ¿Qué se esconde en las profundidades?",
       "projectDescription": "116456.1103249872313216",
@@ -101,7 +101,7 @@
       "progress": 100,
       "status": "submitted",
       "approvalStatus": "pending",
-      "publicationStatus": "draft",
+      "publicationStatus": "pending_approval",
       "slidesCount": 8,
       "resourcesCount": 3,
       "snapshot": {
@@ -116,7 +116,7 @@
         "projectType": "presentation",
         "isGovDataProject": true,
         "status": "completed",
-        "publicationStatus": "draft",
+        "publicationStatus": "pending_approval",
         "approvalStatus": "pending",
         "currentStep": 16,
         "completedSteps": [
@@ -174,7 +174,7 @@
           "commercialPitch": "12123322",
           "faqs": []
         },
-        "updatedAt": "2026-11-23T21:10:15.551Z"
+        "updatedAt": "2026-11-23T21:10:18.010Z"
       }
     },
     {
