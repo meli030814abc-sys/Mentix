@@ -2129,13 +2129,20 @@ window.AdminView = {
     const rIco = (path, alt = '', size = 20, cls = 'rv3d-ico') =>
       `<img src="${F3D}/${path}" alt="${alt}" width="${size}" height="${size}" class="${cls}" loading="lazy" decoding="async" />`;
 
-    // Helper SVG para Anillo Circular Radial (%) 3D
+    // Helper SVG para Anillo Circular Radial (%) 3D EXTRUIDO REAL
     const renderCircularGauge = (pct, color1, color2, label, subtext, iconPath, pillText, gradKey, themeCls) => {
-      const radius = 42;
-      const circumference = 2 * Math.PI * radius; // ~263.89
+      const radius = 40;
+      const circumference = 2 * Math.PI * radius; // ~251.33
       const arcLen = (Math.min(100, Math.max(0, pct)) / 100) * circumference;
       const strokeDashoffset = circumference - arcLen;
       const gradId = `gGrad_${gradKey}`;
+      const domeId = `gDome_${gradKey}`;
+
+      const extrudeArcs = [5, 4, 3, 2, 1].map(dy => `
+        <circle cx="55" cy="${55 + dy}" r="${radius}" fill="none" stroke="${color2}" stroke-width="11"
+          stroke-dasharray="${circumference}" stroke-dashoffset="${strokeDashoffset}"
+          stroke-linecap="round" transform="rotate(-90 55 ${55 + dy})" opacity="${dy === 5 ? 0.55 : 0.85}" />
+      `).join('');
 
       return `
         <div class="rep3d-gauge-card ${themeCls}">
@@ -2145,22 +2152,43 @@ window.AdminView = {
           </div>
 
           <div class="rep3d-gauge-svg-wrap">
-            <svg viewBox="0 0 110 110" width="128" height="128" class="round-gauge-svg" style="display:block; margin:0 auto; overflow:visible;">
+            <svg viewBox="0 0 110 116" width="132" height="136" class="round-gauge-svg" style="display:block; margin:0 auto; overflow:visible;">
               <defs>
                 <linearGradient id="${gradId}" x1="0%" y1="0%" x2="100%" y2="100%">
                   <stop offset="0%" stop-color="${color1}" />
                   <stop offset="100%" stop-color="${color2}" />
                 </linearGradient>
-                <filter id="gSh_${gradKey}" x="-20%" y="-20%" width="140%" height="140%">
-                  <feDropShadow dx="0" dy="4" stdDeviation="3.5" flood-color="${color2}" flood-opacity="0.35"/>
+                <radialGradient id="${domeId}" cx="35%" cy="28%" r="72%">
+                  <stop offset="0%" stop-color="#ffffff" />
+                  <stop offset="70%" stop-color="#f1f5f9" />
+                  <stop offset="100%" stop-color="#dbe4f0" />
+                </radialGradient>
+                <filter id="gSh_${gradKey}" x="-25%" y="-25%" width="150%" height="150%">
+                  <feDropShadow dx="0" dy="6" stdDeviation="4" flood-color="${color2}" flood-opacity="0.32"/>
                 </filter>
               </defs>
-              <circle cx="55" cy="55" r="${radius}" fill="none" stroke="rgba(148,163,184,0.22)" stroke-width="10" />
-              <circle cx="55" cy="55" r="${radius}" fill="none" stroke="url(#${gradId})" stroke-width="10"
-                stroke-dasharray="${circumference}" stroke-dashoffset="${strokeDashoffset}"
-                stroke-linecap="round" transform="rotate(-90 55 55)" filter="url(#gSh_${gradKey})" class="round-gauge-arc" />
-              <text x="55" y="53" text-anchor="middle" font-size="21" font-weight="900" class="rep3d-pct-num">${pct}%</text>
-              <text x="55" y="68" text-anchor="middle" font-size="8.2" font-weight="800" fill="${color2}" letter-spacing="0.06em">COMPLETADO</text>
+              <!-- Sombra de contacto 3D en el suelo -->
+              <ellipse cx="55" cy="108" rx="34" ry="5.5" fill="${color2}" opacity="0.20" />
+              <!-- Pista circular 3D extruida -->
+              <circle cx="55" cy="60" r="${radius}" fill="none" stroke="#cbd5e1" stroke-width="11.5" opacity="0.7" />
+              <circle cx="55" cy="55" r="${radius}" fill="none" stroke="#e2e8f0" stroke-width="11" />
+              <!-- Extrusión 3D real del arco de progreso -->
+              <g filter="url(#gSh_${gradKey})">
+                ${extrudeArcs}
+                <!-- Cara superior brillante del tubo 3D -->
+                <circle cx="55" cy="55" r="${radius}" fill="none" stroke="url(#${gradId})" stroke-width="11"
+                  stroke-dasharray="${circumference}" stroke-dashoffset="${strokeDashoffset}"
+                  stroke-linecap="round" transform="rotate(-90 55 55)" class="round-gauge-arc" />
+                <!-- Brillo especular superior -->
+                <circle cx="55" cy="53.5" r="${radius}" fill="none" stroke="rgba(255,255,255,0.48)" stroke-width="3.2"
+                  stroke-dasharray="${circumference}" stroke-dashoffset="${strokeDashoffset}"
+                  stroke-linecap="round" transform="rotate(-90 55 53.5)" />
+              </g>
+              <!-- Domo central 3D elevado -->
+              <circle cx="55" cy="58" r="29" fill="#94a3b8" opacity="0.22" />
+              <circle cx="55" cy="55" r="29" fill="url(#${domeId})" stroke="#ffffff" stroke-width="2" class="rep3d-dome-coin" />
+              <text x="55" y="54" text-anchor="middle" font-size="19.5" font-weight="900" class="rep3d-pct-num">${pct}%</text>
+              <text x="55" y="67" text-anchor="middle" font-size="7.4" font-weight="900" fill="${color2}" letter-spacing="0.06em">COMPLETADO</text>
             </svg>
           </div>
 
@@ -2172,49 +2200,77 @@ window.AdminView = {
       `;
     };
 
-    // Helper SVG para Donut Multicapa (%) 3D
+    // Helper SVG para Donut Multicapa (%) 3D CILÍNDRICO ISOMÉTRICO REAL
     const renderMultiSegmentDonut = (items, centerLabel, centerSub) => {
-      const radius = 58;
-      const circumference = 2 * Math.PI * radius; // ~364.42
-      let accumulatedPct = 0;
+      const radius = 56;
+      const circumference = 2 * Math.PI * radius; // ~351.86
 
-      const slices = items.map(item => {
-        const arcLen = (item.pct / 100) * circumference;
-        const gapLen = circumference - arcLen;
-        const strokeDasharray = `${arcLen} ${gapLen}`;
-        const strokeDashoffset = -((accumulatedPct / 100) * circumference);
-        accumulatedPct += item.pct;
+      const buildSliceLayer = (cy, useSideColor) => {
+        let acc = 0;
+        return items.map(item => {
+          const arcLen = (item.pct / 100) * circumference;
+          const gapLen = circumference - arcLen;
+          const strokeDasharray = `${arcLen} ${gapLen}`;
+          const strokeDashoffset = -((acc / 100) * circumference);
+          acc += item.pct;
+          return `
+            <circle cx="95" cy="${cy}" r="${radius}" fill="none" stroke="${useSideColor ? (item.sideColor || item.color) : item.color}" stroke-width="22"
+              stroke-dasharray="${strokeDasharray}" stroke-dashoffset="${strokeDashoffset}"
+              stroke-linecap="butt" transform="rotate(-90 95 ${cy})" class="round-donut-slice">
+              <title>${item.label}: ${item.pct}% (${item.count} proyectos)</title>
+            </circle>
+          `;
+        }).join('');
+      };
 
-        return `
-          <circle cx="85" cy="85" r="${radius}" fill="none" stroke="${item.color}" stroke-width="18"
-            stroke-dasharray="${strokeDasharray}" stroke-dashoffset="${strokeDashoffset}"
-            stroke-linecap="butt" transform="rotate(-90 85 85)" class="round-donut-slice">
-            <title>${item.label}: ${item.pct}% (${item.count} proyectos)</title>
-          </circle>
-        `;
-      }).join('');
+      // 11 capas de extrusión 3D para crear las paredes cilíndricas reales del donut
+      const wallLayers = [16, 14.5, 13, 11.5, 10, 8.5, 7, 5.5, 4, 2.5, 1].map(dy => buildSliceLayer(88 + dy, true)).join('');
+      const topLayer = buildSliceLayer(88, false);
 
       return `
         <div class="rep3d-donut-block">
           <div class="rep3d-donut-holder">
-            <svg viewBox="0 0 170 170" width="174" height="174" class="round-donut-svg" style="display:block; overflow:visible;">
-              <circle cx="85" cy="85" r="${radius}" fill="none" stroke="rgba(148,163,184,0.18)" stroke-width="18" />
-              ${slices}
-              <circle cx="85" cy="85" r="44" class="rep3d-donut-core" stroke-width="2" />
-              <text x="85" y="81" text-anchor="middle" font-size="20" font-weight="900" class="rep3d-donut-center-val">${centerLabel}</text>
-              <text x="85" y="97" text-anchor="middle" font-size="9" font-weight="800" class="rep3d-donut-center-sub" letter-spacing="0.05em">${centerSub}</text>
+            <svg viewBox="0 0 190 178" width="196" height="184" class="round-donut-svg" style="display:block; overflow:visible;">
+              <defs>
+                <radialGradient id="dCore3D" cx="35%" cy="28%" r="72%">
+                  <stop offset="0%" stop-color="#ffffff" />
+                  <stop offset="72%" stop-color="#f1f5f9" />
+                  <stop offset="100%" stop-color="#cbd5e1" />
+                </radialGradient>
+                <linearGradient id="dGloss3D" x1="0%" y1="0%" x2="0%" y2="100%">
+                  <stop offset="0%" stop-color="#ffffff" stop-opacity="0.58" />
+                  <stop offset="45%" stop-color="#ffffff" stop-opacity="0.06" />
+                  <stop offset="100%" stop-color="#0f172a" stop-opacity="0.18" />
+                </linearGradient>
+              </defs>
+              <!-- Sombra elíptica 3D proyectada debajo del cilindro -->
+              <ellipse cx="95" cy="146" rx="70" ry="18" fill="#0f172a" opacity="0.16" />
+              <!-- Cilindro 3D inclinado en perspectiva isométrica -->
+              <g transform="translate(0, 14) scale(1, 0.74)">
+                ${wallLayers}
+                ${topLayer}
+                <!-- Brillo especular sobre la cara superior del donut 3D -->
+                <circle cx="95" cy="88" r="${radius}" fill="none" stroke="url(#dGloss3D)" stroke-width="22" pointer-events="none" />
+                <circle cx="95" cy="88" r="${radius + 10.5}" fill="none" stroke="rgba(255,255,255,0.55)" stroke-width="1.5" pointer-events="none" />
+                <!-- Orificio central 3D con profundidad -->
+                <circle cx="95" cy="95" r="43" fill="#0f172a" opacity="0.12" />
+                <circle cx="95" cy="88" r="42" fill="url(#dCore3D)" stroke="#ffffff" stroke-width="2.5" class="rep3d-donut-core" />
+              </g>
+              <!-- Medallón de texto central nítido y recto -->
+              <text x="95" y="77" text-anchor="middle" font-size="22" font-weight="900" class="rep3d-donut-center-val">${centerLabel}</text>
+              <text x="95" y="92" text-anchor="middle" font-size="8.8" font-weight="900" class="rep3d-donut-center-sub" letter-spacing="0.06em">${centerSub}</text>
             </svg>
           </div>
 
           <div class="rep3d-donut-legend">
             ${items.map(item => `
               <div class="rep3d-legend-item">
-                <div class="rep3d-legend-dot" style="background: ${item.color}; box-shadow: 0 3px 8px ${item.color}66;"></div>
+                <div class="rep3d-legend-dot" style="background: radial-gradient(circle at 30% 30%, #ffffff 0%, ${item.color} 45%, ${item.sideColor || item.color} 100%); box-shadow: 0 4px 8px ${item.color}66;"></div>
                 <div class="rep3d-legend-text">
                   <span class="name">${item.label}</span>
                   <span class="count">${item.count} proyectos registrados</span>
                 </div>
-                <span class="rep3d-legend-pct" style="border-color: ${item.color}; color: ${item.color};">
+                <span class="rep3d-legend-pct" style="border-color: ${item.color}; color: ${item.sideColor || item.color}; box-shadow: 0 3px 0 ${item.color}44;">
                   ${item.pct}%
                 </span>
               </div>
@@ -2224,54 +2280,74 @@ window.AdminView = {
       `;
     };
 
-    // Datos para Donut de Fases
+    // Datos para Donut 3D de Fases (con color lateral oscuro para la extrusión 3D)
     const phaseDonutItems = [
-      { label: 'Fase 1: Planteamiento del Problema', pct: p1Pct, count: phase1Count, color: '#06b6d4' },
-      { label: 'Fase 2: Investigación & Métodos', pct: p2Pct, count: phase2Count, color: '#3b82f6' },
-      { label: 'Fase 3: Prototipado & Validación', pct: p3Pct, count: phase3Count, color: '#8b5cf6' },
-      { label: 'Fase 4: Entrega Multimedia & Evaluación', pct: p4Pct, count: phase4Count, color: '#10b981' }
+      { label: 'Fase 1: Planteamiento del Problema', pct: p1Pct, count: phase1Count, color: '#22d3ee', sideColor: '#0e7490' },
+      { label: 'Fase 2: Investigación & Métodos', pct: p2Pct, count: phase2Count, color: '#60a5fa', sideColor: '#1d4ed8' },
+      { label: 'Fase 3: Prototipado & Validación', pct: p3Pct, count: phase3Count, color: '#c084fc', sideColor: '#6d28d9' },
+      { label: 'Fase 4: Entrega Multimedia & Evaluación', pct: p4Pct, count: phase4Count, color: '#34d399', sideColor: '#047857' }
     ];
 
-    // Datos para Donut de Categorías Temáticas
+    // Datos para Donut 3D de Categorías Temáticas
     const categoryDonutItems = [
-      { label: 'Tecnología & Inteligencia Artificial', pct: 38, count: Math.round(totalProj * 0.38), color: '#06b6d4' },
-      { label: 'Sostenibilidad & Medio Ambiente', pct: 28, count: Math.round(totalProj * 0.28), color: '#3b82f6' },
-      { label: 'Ciencias & Salud Comunitaria', pct: 20, count: Math.round(totalProj * 0.20), color: '#ec4899' },
-      { label: 'Innovación Social & Humanidades', pct: 14, count: Math.max(1, totalProj - Math.round(totalProj * 0.38) - Math.round(totalProj * 0.28) - Math.round(totalProj * 0.20)), color: '#f59e0b' }
+      { label: 'Tecnología & Inteligencia Artificial', pct: 38, count: Math.round(totalProj * 0.38), color: '#22d3ee', sideColor: '#0e7490' },
+      { label: 'Sostenibilidad & Medio Ambiente', pct: 28, count: Math.round(totalProj * 0.28), color: '#60a5fa', sideColor: '#1d4ed8' },
+      { label: 'Ciencias & Salud Comunitaria', pct: 20, count: Math.round(totalProj * 0.20), color: '#f472b6', sideColor: '#be185d' },
+      { label: 'Innovación Social & Humanidades', pct: 14, count: Math.max(1, totalProj - Math.round(totalProj * 0.38) - Math.round(totalProj * 0.28) - Math.round(totalProj * 0.20)), color: '#fbbf24', sideColor: '#b45309' }
     ];
 
-    // Gráficas Redondas Semanales (%) 3D
+    // Gráficas Redondas Semanales (%) 3D EXTRUIDAS REALES
     const weeklyCircles = stats.weeks.map((w, idx) => {
-      const radius = 34;
-      const circ = 2 * Math.PI * radius; // ~213.63
+      const radius = 33;
+      const circ = 2 * Math.PI * radius; // ~207.35
       const arc = (Math.min(100, Math.max(0, w.completionRate)) / 100) * circ;
       const offset = circ - arc;
 
-      const color1 = w.completionRate >= 80 ? '#34d399' : (w.completionRate >= 50 ? '#06b6d4' : '#fbbf24');
-      const color2 = w.completionRate >= 80 ? '#059669' : (w.completionRate >= 50 ? '#0284c7' : '#d97706');
+      const color1 = w.completionRate >= 80 ? '#34d399' : (w.completionRate >= 50 ? '#38bdf8' : '#fbbf24');
+      const color2 = w.completionRate >= 80 ? '#047857' : (w.completionRate >= 50 ? '#0369a1' : '#b45309');
+      const dialToneCls = w.isCurrent ? 'is-current' : (w.completionRate >= 80 ? 'dial-green' : (w.completionRate >= 50 ? 'dial-blue' : 'dial-amber'));
       const dialGradId = `dialGrad_${idx}`;
+      const dialDomeId = `dialDome_${idx}`;
+      const dialExtrude = [4, 3, 2, 1].map(dy => `
+        <circle cx="45" cy="${45 + dy}" r="${radius}" fill="none" stroke="${color2}" stroke-width="9"
+          stroke-dasharray="${circ}" stroke-dashoffset="${offset}"
+          stroke-linecap="round" transform="rotate(-90 45 ${45 + dy})" opacity="${dy === 4 ? 0.55 : 0.85}" />
+      `).join('');
 
       return `
-        <div class="rep3d-dial-card ${w.isCurrent ? 'is-current' : ''}">
+        <div class="rep3d-dial-card ${dialToneCls}">
           <div class="rep3d-dial-head">
             <span class="rep3d-dial-week">${w.shortLabel}</span>
             ${w.isCurrent ? '<span class="rep3d-dial-badge-cur">Esta Semana</span>' : `<span class="rep3d-dial-date">${w.dateRange.split('-')[0].trim()}</span>`}
           </div>
 
           <div class="rep3d-dial-svg">
-            <svg viewBox="0 0 90 90" width="90" height="90" class="dial-mini-svg" style="display:block; margin:0 auto; overflow:visible;">
+            <svg viewBox="0 0 90 96" width="96" height="100" class="dial-mini-svg" style="display:block; margin:0 auto; overflow:visible;">
               <defs>
                 <linearGradient id="${dialGradId}" x1="0%" y1="0%" x2="100%" y2="100%">
                   <stop offset="0%" stop-color="${color1}" />
                   <stop offset="100%" stop-color="${color2}" />
                 </linearGradient>
+                <radialGradient id="${dialDomeId}" cx="35%" cy="28%" r="72%">
+                  <stop offset="0%" stop-color="#ffffff" />
+                  <stop offset="72%" stop-color="#f1f5f9" />
+                  <stop offset="100%" stop-color="#dbe4f0" />
+                </radialGradient>
               </defs>
-              <circle cx="45" cy="45" r="${radius}" fill="none" stroke="rgba(148,163,184,0.22)" stroke-width="8" />
-              <circle cx="45" cy="45" r="${radius}" fill="none" stroke="url(#${dialGradId})" stroke-width="8"
+              <ellipse cx="45" cy="90" rx="28" ry="4.2" fill="${color2}" opacity="0.20" />
+              <circle cx="45" cy="49" r="${radius}" fill="none" stroke="#cbd5e1" stroke-width="9.5" opacity="0.7" />
+              <circle cx="45" cy="45" r="${radius}" fill="none" stroke="#e2e8f0" stroke-width="9" />
+              ${dialExtrude}
+              <circle cx="45" cy="45" r="${radius}" fill="none" stroke="url(#${dialGradId})" stroke-width="9"
                 stroke-dasharray="${circ}" stroke-dashoffset="${offset}"
                 stroke-linecap="round" transform="rotate(-90 45 45)" class="dial-progress-arc" />
-              <text x="45" y="48" text-anchor="middle" font-size="16" font-weight="900" class="rep3d-pct-num">${w.completionRate}%</text>
-              <text x="45" y="61" text-anchor="middle" font-size="7.5" font-weight="800" fill="${color2}">AVANCE</text>
+              <circle cx="45" cy="43.8" r="${radius}" fill="none" stroke="rgba(255,255,255,0.48)" stroke-width="2.6"
+                stroke-dasharray="${circ}" stroke-dashoffset="${offset}"
+                stroke-linecap="round" transform="rotate(-90 45 43.8)" />
+              <circle cx="45" cy="47.5" r="24" fill="#94a3b8" opacity="0.20" />
+              <circle cx="45" cy="45" r="24" fill="url(#${dialDomeId})" stroke="#ffffff" stroke-width="1.6" class="rep3d-dome-coin" />
+              <text x="45" y="46" text-anchor="middle" font-size="15.5" font-weight="900" class="rep3d-pct-num">${w.completionRate}%</text>
+              <text x="45" y="57.5" text-anchor="middle" font-size="6.8" font-weight="900" fill="${color2}">AVANCE</text>
             </svg>
           </div>
 

@@ -5415,7 +5415,30 @@
 .rep3d-dial-card.is-current {
   border-color: #6366f1;
   background: linear-gradient(180deg, #ffffff 0%, #eef2ff 100%);
-  box-shadow: 0 5px 0 #818cf8, 0 12px 24px rgba(99, 102, 241, 0.18), inset 0 1.5px 0 #ffffff;
+  box-shadow: 0 7px 0 #6366f1, 0 16px 28px rgba(99, 102, 241, 0.22), inset 0 2px 0 #ffffff;
+}
+
+.rep3d-dial-card.dial-green {
+  border-color: #86efac;
+  background: linear-gradient(180deg, #ffffff 0%, #f0fdf4 100%);
+  box-shadow: 0 6px 0 #4ade80, 0 14px 24px rgba(16, 185, 129, 0.14), inset 0 2px 0 #ffffff;
+}
+
+.rep3d-dial-card.dial-blue {
+  border-color: #93c5fd;
+  background: linear-gradient(180deg, #ffffff 0%, #f0f9ff 100%);
+  box-shadow: 0 6px 0 #60a5fa, 0 14px 24px rgba(59, 130, 246, 0.14), inset 0 2px 0 #ffffff;
+}
+
+.rep3d-dial-card.dial-amber {
+  border-color: #fcd34d;
+  background: linear-gradient(180deg, #ffffff 0%, #fffbeb 100%);
+  box-shadow: 0 6px 0 #fbbf24, 0 14px 24px rgba(245, 158, 11, 0.14), inset 0 2px 0 #ffffff;
+}
+
+.mentix-admin-layout:not(.theme-light) .rep3d-dome-coin {
+  fill: #111c33 !important;
+  stroke: rgba(148, 163, 184, 0.3) !important;
 }
 
 .rep3d-dial-head {
