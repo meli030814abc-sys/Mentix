@@ -1462,7 +1462,9 @@
         "media": "",
         "notes": "",
         "bgColor": "#0b091a",
-        "themeId": "cosmos"
+        "themeId": "cosmos",
+        "imageUrl": "",
+        "bgImage": ""
       }
     ],
     "externalLinks": [],
@@ -1521,7 +1523,8 @@
       "titleColor": "#ffffff",
       "textColor": "#cbd5e1",
       "accentColor": "#00f5d4",
-      "bannerStyle": "gradient-cosmos"
+      "bannerStyle": "gradient-cosmos",
+      "bannerUrl": ""
     },
     "authorsConfig": {
       "authorsList": "Melisa",
@@ -1668,7 +1671,7 @@
         "collaborators": "personas"
       },
       "createdAt": "2026-11-23T03:09:16.957Z",
-      "updatedAt": "2026-11-23T03:46:51.335Z",
+      "updatedAt": "2026-11-23T03:47:00.600Z",
       "progress": 83,
       "calculatedProgress": 83
     },
@@ -1682,7 +1685,7 @@
     "authorAvatar": "🐯",
     "authorRole": "Líder del Proyecto",
     "createdAt": "2026-11-23T03:09:16.957Z",
-    "updatedAt": "2026-11-23T03:46:51.513Z",
+    "updatedAt": "2026-11-23T03:47:00.604Z",
     "image": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
     "rejectionReason": "",
     "tag": "⏳ Pendiente de Autorización",
