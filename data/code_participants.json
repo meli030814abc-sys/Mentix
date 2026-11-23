@@ -10,12 +10,12 @@
       "email": "gatitaxd6f79@gmail.com",
       "role": "admin",
       "joinedAt": "2026-11-23T04:35:10.065Z",
-      "updatedAt": "2026-11-23T05:04:15.360Z",
+      "updatedAt": "2026-11-23T05:04:18.400Z",
       "projectId": "govdata_code_nocturno_804263",
       "projectTitle": "Nuevo Proyecto",
       "projectDescription": "Iniciativa integral que aborda \"Marino\" mediante metodologías activas de aprendizaje, diseño de prototipos e investigación aplicada para generar impacto positivo.",
-      "currentStep": 3,
-      "completedStepsCount": 2,
+      "currentStep": 5,
+      "completedStepsCount": 4,
       "progress": 90,
       "status": "in_progress",
       "approvalStatus": "pending",
@@ -36,10 +36,12 @@
         "status": "in_progress",
         "publicationStatus": "draft",
         "approvalStatus": "pending",
-        "currentStep": 3,
+        "currentStep": 5,
         "completedSteps": [
           1,
-          2
+          2,
+          3,
+          4
         ],
         "progress": 90,
         "banner": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
@@ -54,7 +56,7 @@
           "slug": "proyecto-marino",
           "landingTitle": "Proyecto Marino",
           "publicDescription": "Iniciativa integral que aborda \"Marino\" mediante metodologías activas de aprendizaje, diseño de prototipos e investigación aplicada para generar impacto positivo.",
-          "visibleCategory": "Tecnología & Programación",
+          "visibleCategory": "Administración Pública",
           "tags": [
             "Gobierno de Datos",
             "IA"
@@ -94,7 +96,7 @@
             }
           ]
         },
-        "updatedAt": "2026-11-23T05:04:15.360Z"
+        "updatedAt": "2026-11-23T05:04:18.400Z"
       }
     },
     {
