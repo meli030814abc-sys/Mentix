@@ -1407,8 +1407,8 @@
       8,
       9
     ],
-    "progress": 68,
-    "calculatedProgress": 68,
+    "progress": 73,
+    "calculatedProgress": 73,
     "valueProp": {
       "problemSolved": "hgjjhl",
       "howItWorks": "khgk",
@@ -1437,10 +1437,10 @@
       "commercialPitch": "2321324351010115.0.",
       "faqs": []
     },
-    "videoUrl": "",
+    "videoUrl": "https://www.youtube.com/results?search_query=misterios+del+oceano+documental+en+espa%C3%B1ol&utm_source=chatgpt.com",
     "videoConfig": {
       "sourceType": "url",
-      "url": "",
+      "url": "https://www.youtube.com/results?search_query=misterios+del+oceano+documental+en+espa%C3%B1ol&utm_source=chatgpt.com",
       "fileName": "",
       "title": "",
       "description": "",
@@ -1507,7 +1507,8 @@
       "titleColor": "#ffffff",
       "textColor": "#cbd5e1",
       "accentColor": "#00f5d4",
-      "bannerStyle": "gradient-cosmos"
+      "bannerStyle": "gradient-cosmos",
+      "bannerUrl": ""
     },
     "authorsConfig": {
       "authorsList": "Melisa",
@@ -1554,7 +1555,7 @@
       },
       "videoConfig": {
         "sourceType": "url",
-        "url": "",
+        "url": "https://www.youtube.com/results?search_query=misterios+del+oceano+documental+en+espa%C3%B1ol&utm_source=chatgpt.com",
         "fileName": "",
         "title": "",
         "description": "",
@@ -1653,9 +1654,9 @@
         "collaborators": "personas"
       },
       "createdAt": "2026-11-23T03:09:16.957Z",
-      "updatedAt": "2026-11-23T03:46:04.545Z",
-      "progress": 68,
-      "calculatedProgress": 68
+      "updatedAt": "2026-11-23T03:46:20.111Z",
+      "progress": 73,
+      "calculatedProgress": 73
     },
     "author": "Melisa",
     "authorId": "user_1792184134006",
@@ -1667,7 +1668,7 @@
     "authorAvatar": "🐯",
     "authorRole": "Líder del Proyecto",
     "createdAt": "2026-11-23T03:09:16.957Z",
-    "updatedAt": "2026-11-23T03:46:04.642Z",
+    "updatedAt": "2026-11-23T03:46:20.137Z",
     "image": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
     "rejectionReason": "",
     "tag": "⏳ Pendiente de Autorización",
