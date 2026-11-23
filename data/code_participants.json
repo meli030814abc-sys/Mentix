@@ -10,16 +10,16 @@
       "email": "gatitaxd6f79@gmail.com",
       "role": "admin",
       "joinedAt": "2026-11-23T03:09:15.937Z",
-      "updatedAt": "2026-11-23T03:49:18.237Z",
+      "updatedAt": "2026-11-23T03:50:18.751Z",
       "projectId": "govdata_code_mentilona_804263",
       "projectTitle": "🌊 ¡El 95 % del océano sigue siendo un misterio! 😱 ¿Qué se esconde en las profundidades?",
       "projectDescription": "Bajo la superficie del mar existe un universo extraordinario lleno de criaturas sorprendentes, ecosistemas desconocidos y fenómenos que la ciencia continúa investigando.\n\n🐙 Animales capaces de producir su propia luz.\n\n🌋 Volcanes submarinos y fuentes hidrotermales.\n\n🦈 Criaturas adaptadas a presiones extremas.\n\n🔎 Nuevas especies que siguen siendo descubiertas.\n\nEn este contenido exploraremos algunos de los secretos más fascinantes del océano y descubriremos por qué su exploración representa uno de los mayores desafíos científicos de nuestro tiempo.\n\n💬 Y tú, ¿qué crees que todavía se esconde en las profundidades del océano?\n\n👇 ¡Déjanos tu opinión en los comentarios y comparte este contenido con alguien que ame los misterios!\n\n#MisteriosDelOceano #Ciencia #Curiosidades #Descubrimientos #Naturaleza #Tecnologia #SabiasQue #Exploracion #Misterios #ContenidoEducativo",
       "currentStep": 16,
       "completedStepsCount": 16,
       "progress": 100,
-      "status": "submitted",
+      "status": "in_progress",
       "approvalStatus": "pending",
-      "publicationStatus": "pending_approval",
+      "publicationStatus": "draft",
       "slidesCount": 1,
       "resourcesCount": 4,
       "snapshot": {
@@ -33,8 +33,8 @@
         "accessCode": "804263",
         "projectType": "presentation",
         "isGovDataProject": true,
-        "status": "completed",
-        "publicationStatus": "pending_approval",
+        "status": "in_progress",
+        "publicationStatus": "draft",
         "approvalStatus": "pending",
         "currentStep": 16,
         "completedSteps": [
@@ -86,13 +86,13 @@
           "keyFeatures": [
             "khkg"
           ],
-          "resultsAndBenefits": "",
+          "resultsAndBenefits": "hki",
           "prerequisites": "",
           "visitorAction": "Unirse / Colaborar",
           "commercialPitch": "2321324351010115.0.",
           "faqs": []
         },
-        "updatedAt": "2026-11-23T03:49:18.237Z"
+        "updatedAt": "2026-11-23T03:50:18.751Z"
       }
     }
   ]
