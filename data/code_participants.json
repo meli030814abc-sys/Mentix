@@ -4,31 +4,31 @@
       "code": "804263",
       "normCode": "804263",
       "userKey": "mentilona",
-      "userId": "user_1792189908636",
+      "userId": "user_1792184134006",
       "username": "Mentilona",
       "name": "Melisa",
-      "email": "gatitaxd679@gmail.com",
-      "role": "student",
+      "email": "gatitaxd6f79@gmail.com",
+      "role": "admin",
       "joinedAt": "2026-11-23T04:35:10.065Z",
-      "updatedAt": "2026-11-23T05:03:58.861Z",
-      "projectId": "govdata_code_hhgfj_804263",
+      "updatedAt": "2026-11-23T05:04:14.118Z",
+      "projectId": "govdata_code_nocturno_804263",
       "projectTitle": "Nuevo Proyecto",
-      "projectDescription": "Proyecto en construcción con el Asistente Inteligente de Mentix.",
-      "currentStep": 13,
-      "completedStepsCount": 12,
-      "progress": 75,
+      "projectDescription": "Iniciativa integral que aborda \"Marino\" mediante metodologías activas de aprendizaje, diseño de prototipos e investigación aplicada para generar impacto positivo.",
+      "currentStep": 2,
+      "completedStepsCount": 1,
+      "progress": 90,
       "status": "in_progress",
       "approvalStatus": "pending",
       "publicationStatus": "draft",
-      "slidesCount": 8,
-      "resourcesCount": 2,
+      "slidesCount": 3,
+      "resourcesCount": 0,
       "snapshot": {
-        "id": "govdata_code_hhgfj_804263",
+        "id": "govdata_code_nocturno_804263",
         "title": "Nuevo Proyecto",
         "subtitle": "Proyecto Educativo Mentix",
-        "description": "Proyecto en construcción con el Asistente Inteligente de Mentix.",
-        "author": "JHFK",
-        "authorEmail": "HGFH@HNGFH",
+        "description": "Iniciativa integral que aborda \"Marino\" mediante metodologías activas de aprendizaje, diseño de prototipos e investigación aplicada para generar impacto positivo.",
+        "author": "Carlos Canon",
+        "authorEmail": "vivianacastanedam@gmail.com",
         "joinCode": "804263",
         "accessCode": "804263",
         "projectType": "presentation",
@@ -36,34 +36,23 @@
         "status": "in_progress",
         "publicationStatus": "draft",
         "approvalStatus": "pending",
-        "currentStep": 13,
+        "currentStep": 2,
         "completedSteps": [
-          1,
-          2,
-          3,
-          4,
-          5,
-          6,
-          7,
-          8,
-          9,
-          10,
-          11,
-          12
+          1
         ],
-        "progress": 75,
+        "progress": 90,
         "banner": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
-        "problemStatement": "G",
-        "mainObjective": "G",
-        "benefits": "G",
-        "targetAudience": "L",
-        "slidesCount": 8,
-        "resourcesCount": 2,
+        "problemStatement": "Falta de herramientas accesibles, metodologías prácticas y conciencia comunitaria para abordar con éxito los retos de marino.",
+        "mainObjective": "Diseñar e implementar una propuesta innovadora y funcional que promueva el conocimiento y aporte soluciones prácticas a marino.",
+        "benefits": "Fomenta habilidades del siglo XXI (creatividad, trabajo en equipo y resolución de problemas), ofrece soluciones replicables y genera conciencia en la comunidad.",
+        "targetAudience": "Estudiantes, docentes, familias y comunidades interesadas en marino y la innovación social.",
+        "slidesCount": 3,
+        "resourcesCount": 0,
         "landingConfig": {
-          "publicName": "Nuevo Proyecto",
-          "slug": "nuevo-proyecto",
-          "landingTitle": "Nuevo Proyecto",
-          "publicDescription": "Proyecto en construcción con el Asistente Inteligente de Mentix.",
+          "publicName": "Proyecto Marino",
+          "slug": "proyecto-marino",
+          "landingTitle": "Proyecto Marino",
+          "publicDescription": "Iniciativa integral que aborda \"Marino\" mediante metodologías activas de aprendizaje, diseño de prototipos e investigación aplicada para generar impacto positivo.",
           "visibleCategory": "Tecnología & Programación",
           "tags": [
             "Gobierno de Datos",
@@ -75,20 +64,36 @@
           "featuredVideoPublic": true
         },
         "valueProp": {
-          "problemSolved": "G",
-          "howItWorks": "G",
-          "forWhom": "L",
-          "differentiator": "G",
+          "problemSolved": "Dificultad de acceso a recursos e iniciativas prácticas enfocadas en marino.",
+          "howItWorks": "Centraliza la investigación, recursos interactivos y resultados del proyecto en una plataforma abierta y colaborativa.",
+          "forWhom": "Estudiantes, docentes, familias y comunidades interesadas en marino y la innovación social.",
+          "differentiator": "Metodología basada en evidencias, enfoque centrado en la comunidad y facilidad de adopción escolar.",
           "keyFeatures": [
-            "G"
+            "Diagnóstico contextualizado sobre Marino",
+            "Prototipo interactivo y aplicable",
+            "Recursos educativos y guías abiertas",
+            "Indicadores de impacto y evaluación comunitaria"
           ],
-          "resultsAndBenefits": "G",
+          "resultsAndBenefits": "Fomenta habilidades del siglo XXI (creatividad, trabajo en equipo y resolución de problemas), ofrece soluciones replicables y genera conciencia en la comunidad.",
           "prerequisites": "",
-          "visitorAction": "Unirse / Colaborar",
-          "commercialPitch": "G",
-          "faqs": []
+          "visitorAction": "Explorar la propuesta y colaborar",
+          "commercialPitch": "Transformando Marino en acciones y soluciones concretas",
+          "faqs": [
+            {
+              "question": "¿Cuál es el propósito principal de este proyecto sobre Marino?",
+              "answer": "Desarrollar soluciones viables y educativas que respondan a los retos de marino, involucrando activamente a la comunidad."
+            },
+            {
+              "question": "¿Quiénes pueden beneficiarse de los resultados?",
+              "answer": "Toda la comunidad escolar, docentes de diferentes áreas y personas interesadas en aplicar metodologías sobre marino."
+            },
+            {
+              "question": "¿Cómo se puede colaborar o hacer seguimiento?",
+              "answer": "A través de los canales de contacto de los autores y explorando las etapas documentadas en la Ruta del Proyecto."
+            }
+          ]
         },
-        "updatedAt": "2026-11-23T05:03:58.861Z"
+        "updatedAt": "2026-11-23T05:04:14.118Z"
       }
     },
     {
