@@ -726,213 +726,303 @@ window.AdminView = {
     const totalUsers = users.length;
     const adminUsers = users.filter(u => u.role === 'admin').length;
 
-    // Donut chart math
+    // Donut 3D cilíndrico isométrico de estados
+    const F3D = 'https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets';
+    const dIco = (path, alt = '', size = 20) =>
+      `<img src="${F3D}/${path}" alt="${alt}" width="${size}" height="${size}" class="rv3d-ico" loading="lazy" decoding="async" />`;
+
     const pCompletedPct = totalProjects > 0 ? Math.round((completedProjects / totalProjects) * 100) : 0;
     const pActivePct = totalProjects > 0 ? Math.round((activeProjects / totalProjects) * 100) : 0;
-    const pPendingPct = totalProjects > 0 ? (100 - pCompletedPct - pActivePct) : 0;
+    const pPendingPct = totalProjects > 0 ? Math.max(0, 100 - pCompletedPct - pActivePct) : 0;
+
+    const dashSlices = [
+      { label: 'Activos', pct: pActivePct, count: activeProjects, color: '#38bdf8', sideColor: '#0369a1' },
+      { label: 'Completados', pct: pCompletedPct, count: completedProjects, color: '#34d399', sideColor: '#047857' },
+      { label: 'Pendientes', pct: pPendingPct, count: pendingProjects, color: '#fbbf24', sideColor: '#b45309' }
+    ];
+    const dRadius = 56;
+    const dCirc = 2 * Math.PI * dRadius;
+    const buildDashLayer = (cy, useSide) => {
+      if (totalProjects === 0) {
+        return `<circle cx="95" cy="${cy}" r="${dRadius}" fill="none" stroke="${useSide ? '#94a3b8' : '#cbd5e1'}" stroke-width="22" />`;
+      }
+      let acc = 0;
+      return dashSlices.filter(s => s.pct > 0).map(s => {
+        const arcLen = (s.pct / 100) * dCirc;
+        const gapLen = dCirc - arcLen;
+        const dashArr = `${arcLen} ${gapLen}`;
+        const dashOff = -((acc / 100) * dCirc);
+        acc += s.pct;
+        return `<circle cx="95" cy="${cy}" r="${dRadius}" fill="none" stroke="${useSide ? s.sideColor : s.color}" stroke-width="22" stroke-dasharray="${dashArr}" stroke-dashoffset="${dashOff}" stroke-linecap="butt" transform="rotate(-90 95 ${cy})"><title>${s.label}: ${s.pct}% (${s.count})</title></circle>`;
+      }).join('');
+    };
+    const dashWallLayers = [16, 14.5, 13, 11.5, 10, 8.5, 7, 5.5, 4, 2.5, 1].map(dy => buildDashLayer(88 + dy, true)).join('');
+    const dashTopLayer = buildDashLayer(88, false);
 
     return `
-      <!-- Breadcrumbs -->
-      <div class="admin-breadcrumbs">
-        <span>Inicio</span>
-        <span class="sep">/</span>
-        <span class="active">Dashboard Ejecutivo</span>
-      </div>
-
-      <!-- Header de la sección -->
-      <div class="admin-section-header">
-        <div>
-          <h2>Panel Ejecutivo & Monitoreo Global</h2>
-          <p>Supervisión en tiempo real de proyectos estudiantiles, interacción académica y salud del sistema.</p>
-        </div>
-        <div class="admin-header-actions">
-          <button class="btn btn-outline" onclick="window.AdminView.exportFullDatabase()">
-            <span>💾</span> Backup JSON
-          </button>
-          <button class="btn btn-cyan" onclick="window.AdminView.switchTab('projects')">
-            <span>🚀</span> Gestionar Proyectos
-          </button>
-        </div>
-      </div>
-
-      <!-- PRIMERA SECCIÓN: 6 TARJETAS DE INDICADORES (KPIS) -->
-      <div class="admin-kpi-grid">
-        <div class="admin-kpi-card kpi-blue">
-          <div class="kpi-icon-wrap">🚀</div>
-          <div class="kpi-content">
-            <span class="kpi-label">TOTAL PROYECTOS</span>
-            <div class="kpi-val">${totalProjects}</div>
-            <div class="kpi-subtext positive">↑ +14% respecto al mes anterior</div>
-          </div>
-        </div>
-
-        <div class="admin-kpi-card kpi-cyan">
-          <div class="kpi-icon-wrap">⚡</div>
-          <div class="kpi-content">
-            <span class="kpi-label">PROYECTOS ACTIVOS</span>
-            <div class="kpi-val">${activeProjects}</div>
-            <div class="kpi-subtext">En desarrollo por estudiantes</div>
-          </div>
-        </div>
-
-        <div class="admin-kpi-card kpi-emerald">
-          <div class="kpi-icon-wrap">🏆</div>
-          <div class="kpi-content">
-            <span class="kpi-label">COMPLETADOS</span>
-            <div class="kpi-val">${completedProjects}</div>
-            <div class="kpi-subtext positive">Tasa de finalización alta</div>
-          </div>
-        </div>
-
-        <div class="admin-kpi-card kpi-gold">
-          <div class="kpi-icon-wrap">⏳</div>
-          <div class="kpi-content">
-            <span class="kpi-label">PENDIENTES / REVISIÓN</span>
-            <div class="kpi-val">${pendingProjects}</div>
-            <div class="kpi-subtext">Requieren evaluación</div>
-          </div>
-        </div>
-
-        <div class="admin-kpi-card kpi-purple">
-          <div class="kpi-icon-wrap">👥</div>
-          <div class="kpi-content">
-            <span class="kpi-label">USUARIOS REGISTRADOS</span>
-            <div class="kpi-val">${totalUsers}</div>
-            <div class="kpi-subtext positive">↑ 8 nuevos esta semana</div>
-          </div>
-        </div>
-
-        <div class="admin-kpi-card kpi-navy">
-          <div class="kpi-icon-wrap">🛡️</div>
-          <div class="kpi-content">
-            <span class="kpi-label">ADMINISTRADORES</span>
-            <div class="kpi-val">${adminUsers}</div>
-            <div class="kpi-subtext">Equipo docente y de control</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- SEGUNDA SECCIÓN: ANALÍTICA VISUAL (GRÁFICOS SVG MODERNOS) -->
-      <div class="admin-charts-grid">
-        <!-- Gráfico de Donut de Estados -->
-        <div class="admin-card">
-          <div class="admin-card-header">
-            <div>
-              <h3>Distribución de Proyectos por Estado</h3>
-              <p>Proporción de retos completados, en curso y pendientes.</p>
+      <div class="dash3d-shell">
+        <!-- Hero Ejecutivo 100% 3D -->
+        <div class="dash3d-hero">
+          <div class="dash3d-hero-left">
+            <div class="roles-v2-breadcrumb">
+              ${dIco('House/3D/house_3d.png', 'Inicio', 18)}
+              <span>Inicio</span>
+              <span class="sep">/</span>
+              <span class="current">Dashboard Ejecutivo</span>
             </div>
-            <span class="badge-tag">En vivo</span>
+            <h2 class="roles-v2-title">
+              Panel Ejecutivo &amp; <span class="roles-v2-title-accent">Monitoreo Global</span>
+            </h2>
+            <p class="roles-v2-subtitle">
+              Supervisión en tiempo real de proyectos estudiantiles, interacción académica y salud del sistema.
+            </p>
+            <div class="roles-v2-accent-bar"></div>
           </div>
-          <div class="admin-donut-wrapper">
-            <svg viewBox="0 0 36 36" class="admin-donut-svg">
-              <path class="admin-donut-ring" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
-              <!-- Segmento 1: Activos (Cyan) -->
-              <path class="admin-donut-segment donut-seg-cyan" stroke-dasharray="${pActivePct}, 100" stroke-dashoffset="0" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
-              <!-- Segmento 2: Completados (Emerald) -->
-              <path class="admin-donut-segment donut-seg-emerald" stroke-dasharray="${pCompletedPct}, 100" stroke-dashoffset="-${pActivePct}" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
-              <!-- Segmento 3: Pendientes (Gold) -->
-              <path class="admin-donut-segment donut-seg-gold" stroke-dasharray="${pPendingPct}, 100" stroke-dashoffset="-${pActivePct + pCompletedPct}" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
-            </svg>
-            <div class="admin-donut-center-text">
-              <span class="donut-num">${totalProjects}</span>
-              <span class="donut-sub">Total</span>
+
+          <div class="dash3d-hero-visual" aria-hidden="true">
+            <div class="dash3d-hero-stage">
+              <img src="${F3D}/Bar%20chart/3D/bar_chart_3d.png" alt="" class="dash3d-h-chart" />
+              <img src="${F3D}/Rocket/3D/rocket_3d.png" alt="" class="dash3d-h-rocket" />
+              <img src="${F3D}/Shield/3D/shield_3d.png" alt="" class="dash3d-h-shield" />
+              <img src="${F3D}/Trophy/3D/trophy_3d.png" alt="" class="dash3d-h-trophy" />
             </div>
           </div>
-          <div class="admin-donut-legend">
-            <div class="legend-item"><span class="dot cyan"></span> Activos (${pActivePct}%)</div>
-            <div class="legend-item"><span class="dot emerald"></span> Completados (${pCompletedPct}%)</div>
-            <div class="legend-item"><span class="dot gold"></span> Pendientes (${pPendingPct}%)</div>
+
+          <div class="dash3d-hero-actions">
+            <button type="button" class="proj3d-gloss-btn gloss-white" onclick="window.AdminView.exportFullDatabase()">
+              ${dIco('Inbox%20tray/3D/inbox_tray_3d.png', 'Backup', 18)}
+              <span>Backup JSON</span>
+            </button>
+            <button type="button" class="proj3d-gloss-btn gloss-cyan" onclick="window.AdminView.switchTab('projects')">
+              ${dIco('Rocket/3D/rocket_3d.png', 'Proyectos', 18)}
+              <span>Gestionar Proyectos</span>
+            </button>
           </div>
         </div>
 
-        <!-- Gráfico de Distribución por Categorías -->
-        <div class="admin-card">
-          <div class="admin-card-header">
-            <div>
-              <h3>Participación por Categoría</h3>
-              <p>Demanda académica en áreas del conocimiento.</p>
+        <!-- PRIMERA SECCIÓN: 6 TARJETAS DE INDICADORES 3D (KPIS) -->
+        <div class="dash3d-kpi-grid">
+          <div class="dash3d-kpi-card dk-blue">
+            <div class="dash3d-kpi-top">
+              <span class="dash3d-kpi-med">${dIco('Rocket/3D/rocket_3d.png', '', 30)}</span>
+              <span class="dash3d-kpi-val">${totalProjects}</span>
             </div>
-            <button class="btn btn-sm btn-outline" onclick="window.AdminView.switchTab('categories')">Ver Todas</button>
+            <span class="dash3d-kpi-label">TOTAL PROYECTOS</span>
+            <div class="dash3d-kpi-sub sub-pos">↑ +14% respecto al mes anterior</div>
           </div>
-          <div class="admin-category-bars">
-            ${categories.slice(0, 5).map(cat => {
-              const count = projects.filter(p => p.category === cat.id || p.category === cat.name).length;
-              const pct = totalProjects > 0 ? Math.round((count / totalProjects) * 100) : 0;
-              return `
-                <div class="cat-bar-item">
-                  <div class="cat-bar-info">
-                    <span class="cat-name">${cat.icon || '🏷️'} ${cat.name}</span>
-                    <span class="cat-count"><b>${count}</b> proyectos (${pct}%)</span>
-                  </div>
-                  <div class="cat-bar-track">
-                    <div class="cat-bar-fill" style="width: ${Math.max(pct, 6)}%; background: ${cat.color || '#00f5d4'};"></div>
-                  </div>
+
+          <div class="dash3d-kpi-card dk-cyan">
+            <div class="dash3d-kpi-top">
+              <span class="dash3d-kpi-med">${dIco('High%20voltage/3D/high_voltage_3d.png', '', 30)}</span>
+              <span class="dash3d-kpi-val">${activeProjects}</span>
+            </div>
+            <span class="dash3d-kpi-label">PROYECTOS ACTIVOS</span>
+            <div class="dash3d-kpi-sub">En desarrollo por estudiantes</div>
+          </div>
+
+          <div class="dash3d-kpi-card dk-green">
+            <div class="dash3d-kpi-top">
+              <span class="dash3d-kpi-med">${dIco('Trophy/3D/trophy_3d.png', '', 30)}</span>
+              <span class="dash3d-kpi-val">${completedProjects}</span>
+            </div>
+            <span class="dash3d-kpi-label">COMPLETADOS</span>
+            <div class="dash3d-kpi-sub sub-pos">Tasa de finalización alta</div>
+          </div>
+
+          <div class="dash3d-kpi-card dk-amber">
+            <div class="dash3d-kpi-top">
+              <span class="dash3d-kpi-med">${dIco('Hourglass%20not%20done/3D/hourglass_not_done_3d.png', '', 30)}</span>
+              <span class="dash3d-kpi-val">${pendingProjects}</span>
+            </div>
+            <span class="dash3d-kpi-label">PENDIENTES / REVISIÓN</span>
+            <div class="dash3d-kpi-sub">Requieren evaluación</div>
+          </div>
+
+          <div class="dash3d-kpi-card dk-purple">
+            <div class="dash3d-kpi-top">
+              <span class="dash3d-kpi-med">${dIco('Busts%20in%20silhouette/3D/busts_in_silhouette_3d.png', '', 30)}</span>
+              <span class="dash3d-kpi-val">${totalUsers}</span>
+            </div>
+            <span class="dash3d-kpi-label">USUARIOS REGISTRADOS</span>
+            <div class="dash3d-kpi-sub sub-pos">↑ 8 nuevos esta semana</div>
+          </div>
+
+          <div class="dash3d-kpi-card dk-indigo">
+            <div class="dash3d-kpi-top">
+              <span class="dash3d-kpi-med">${dIco('Shield/3D/shield_3d.png', '', 30)}</span>
+              <span class="dash3d-kpi-val">${adminUsers}</span>
+            </div>
+            <span class="dash3d-kpi-label">ADMINISTRADORES</span>
+            <div class="dash3d-kpi-sub">Equipo docente y de control</div>
+          </div>
+        </div>
+
+        <!-- SEGUNDA SECCIÓN: ANALÍTICA VISUAL 100% 3D -->
+        <div class="dash3d-charts-grid">
+          <!-- Gráfico de Donut 3D Extruido de Estados -->
+          <div class="roles-v2-panel">
+            <div class="roles-v2-panel-header">
+              <div class="roles-v2-panel-title-group">
+                <div class="roles-v2-panel-ico ico-purple">${dIco('Bullseye/3D/bullseye_3d.png', '', 28)}</div>
+                <div>
+                  <h3>Distribución de Proyectos por Estado</h3>
+                  <p>Proporción de retos completados, en curso y pendientes.</p>
                 </div>
-              `;
-            }).join('')}
-          </div>
-        </div>
-      </div>
-
-      <!-- TERCERA SECCIÓN: ACTIVIDAD RECIENTE Y ACCESOS RÁPIDOS -->
-      <div class="admin-dashboard-split">
-        <!-- Línea de Tiempo de Actividad Reciente -->
-        <div class="admin-card">
-          <div class="admin-card-header">
-            <div>
-              <h3>Actividad Reciente del Sistema</h3>
-              <p>Eventos de proyectos, usuarios y moderación en vivo.</p>
-            </div>
-            <button class="btn btn-sm btn-outline" onclick="window.AdminView.switchTab('audit')">Registro Completo</button>
-          </div>
-          <div class="admin-timeline">
-            ${this.getRecentActivityItems().slice(0, 5).map(item => `
-              <div class="timeline-row">
-                <div class="timeline-dot ${item.type}"></div>
-                <div class="timeline-content">
-                  <div class="timeline-title">${item.title}</div>
-                  <div class="timeline-meta">${item.actor} • <span class="time">${item.time}</span></div>
-                </div>
-                <span class="badge-tag tag-${item.type}">${item.badge}</span>
               </div>
-            `).join('')}
+              <span class="rep3d-live-pill"><span class="rep3d-live-dot"></span> EN VIVO</span>
+            </div>
+
+            <div class="rep3d-donut-block">
+              <div class="rep3d-donut-holder">
+                <svg viewBox="0 0 190 178" width="196" height="184" style="display:block; overflow:visible;">
+                  <defs>
+                    <radialGradient id="dashCore3D" cx="35%" cy="28%" r="72%">
+                      <stop offset="0%" stop-color="#ffffff" />
+                      <stop offset="72%" stop-color="#f1f5f9" />
+                      <stop offset="100%" stop-color="#cbd5e1" />
+                    </radialGradient>
+                    <linearGradient id="dashGloss3D" x1="0%" y1="0%" x2="0%" y2="100%">
+                      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.58" />
+                      <stop offset="45%" stop-color="#ffffff" stop-opacity="0.06" />
+                      <stop offset="100%" stop-color="#0f172a" stop-opacity="0.18" />
+                    </linearGradient>
+                  </defs>
+                  <ellipse cx="95" cy="146" rx="70" ry="18" fill="#0f172a" opacity="0.16" />
+                  <g transform="translate(0, 14) scale(1, 0.74)">
+                    ${dashWallLayers}
+                    ${dashTopLayer}
+                    <circle cx="95" cy="88" r="${dRadius}" fill="none" stroke="url(#dashGloss3D)" stroke-width="22" pointer-events="none" />
+                    <circle cx="95" cy="95" r="43" fill="#0f172a" opacity="0.12" />
+                    <circle cx="95" cy="88" r="42" fill="url(#dashCore3D)" stroke="#ffffff" stroke-width="2.5" class="rep3d-donut-core" />
+                  </g>
+                  <text x="95" y="77" text-anchor="middle" font-size="24" font-weight="900" class="rep3d-donut-center-val">${totalProjects}</text>
+                  <text x="95" y="92" text-anchor="middle" font-size="9" font-weight="900" class="rep3d-donut-center-sub" letter-spacing="0.06em">TOTAL</text>
+                </svg>
+              </div>
+
+              <div class="rep3d-donut-legend">
+                ${dashSlices.map(s => `
+                  <div class="rep3d-legend-item">
+                    <div class="rep3d-legend-dot" style="background: radial-gradient(circle at 30% 30%, #ffffff 0%, ${s.color} 45%, ${s.sideColor} 100%); box-shadow: 0 4px 8px ${s.color}66;"></div>
+                    <div class="rep3d-legend-text">
+                      <span class="name">${s.label}</span>
+                      <span class="count">${s.count} proyectos</span>
+                    </div>
+                    <span class="rep3d-legend-pct" style="border-color: ${s.color}; color: ${s.sideColor}; box-shadow: 0 3px 0 ${s.color}44;">
+                      ${s.pct}%
+                    </span>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+          </div>
+
+          <!-- Gráfico de Distribución por Categorías 3D -->
+          <div class="roles-v2-panel">
+            <div class="roles-v2-panel-header">
+              <div class="roles-v2-panel-title-group">
+                <div class="roles-v2-panel-ico ico-blue">${dIco('Bar%20chart/3D/bar_chart_3d.png', '', 28)}</div>
+                <div>
+                  <h3>Participación por Categoría</h3>
+                  <p>Demanda académica en áreas del conocimiento.</p>
+                </div>
+              </div>
+              <button type="button" class="rep3d-btn-sm" onclick="window.AdminView.switchTab('categories')">Ver Todas</button>
+            </div>
+            <div class="dash3d-cat-bars">
+              ${categories.slice(0, 5).map((cat, idx) => {
+                const count = projects.filter(p => p.category === cat.id || p.category === cat.name).length;
+                const pct = totalProjects > 0 ? Math.round((count / totalProjects) * 100) : 0;
+                const palette = [
+                  ['#38bdf8', '#0284c7'],
+                  ['#a855f7', '#6d28d9'],
+                  ['#34d399', '#059669'],
+                  ['#fbbf24', '#d97706'],
+                  ['#f472b6', '#be185d']
+                ];
+                const [c1, c2] = palette[idx % palette.length];
+                return `
+                  <div class="dash3d-cat-item">
+                    <div class="dash3d-cat-head">
+                      <span class="dash3d-cat-name">${cat.icon || '🏷️'} ${cat.name}</span>
+                      <span class="dash3d-cat-pill" style="color:${c2}; border-color:${c1};"><b>${count}</b> proyectos (${pct}%)</span>
+                    </div>
+                    <div class="dash3d-bar-track">
+                      <div class="dash3d-bar-fill" style="width: ${Math.max(pct, 6)}%; background: linear-gradient(180deg, ${c1} 0%, ${c2} 100%); box-shadow: 0 3px 0 ${c2}aa, inset 0 2px 0 rgba(255,255,255,0.45);"></div>
+                    </div>
+                  </div>
+                `;
+              }).join('')}
+            </div>
           </div>
         </div>
 
-        <!-- Accesos Rápidos Ejecutivos -->
-        <div class="admin-card">
-          <div class="admin-card-header">
-            <div>
-              <h3>Accesos Rápidos</h3>
-              <p>Operaciones frecuentes de la administración.</p>
+        <!-- TERCERA SECCIÓN: ACTIVIDAD RECIENTE Y ACCESOS RÁPIDOS 3D -->
+        <div class="dash3d-charts-grid">
+          <!-- Línea de Tiempo 3D de Actividad Reciente -->
+          <div class="roles-v2-panel">
+            <div class="roles-v2-panel-header">
+              <div class="roles-v2-panel-title-group">
+                <div class="roles-v2-panel-ico ico-purple">${dIco('Clipboard/3D/clipboard_3d.png', '', 28)}</div>
+                <div>
+                  <h3>Actividad Reciente del Sistema</h3>
+                  <p>Eventos de proyectos, usuarios y moderación en vivo.</p>
+                </div>
+              </div>
+              <button type="button" class="rep3d-btn-sm" onclick="window.AdminView.switchTab('audit')">Registro Completo</button>
+            </div>
+            <div class="dash3d-timeline">
+              ${this.getRecentActivityItems().slice(0, 5).map(item => `
+                <div class="dash3d-tl-row">
+                  <div class="dash3d-tl-dot tl-${item.type || 'info'}"></div>
+                  <div class="dash3d-tl-content">
+                    <div class="dash3d-tl-title">${item.title}</div>
+                    <div class="dash3d-tl-meta">${item.actor} • <span>${item.time}</span></div>
+                  </div>
+                  <span class="rv2-pill rv2-info">${item.badge}</span>
+                </div>
+              `).join('')}
             </div>
           </div>
-          <div class="admin-quick-actions-grid">
-            <button class="quick-action-tile" onclick="window.AdminView.switchTab('reports')">
-              <span class="tile-icon">📊</span>
-              <span class="tile-title">Gráficas & Reportes (%)</span>
-              <span class="tile-desc">Métricas circulares y semanales</span>
-            </button>
-            <button class="quick-action-tile" onclick="window.AdminView.switchTab('projects')">
-              <span class="tile-icon">🚀</span>
-              <span class="tile-title">Moderar Proyectos</span>
-              <span class="tile-desc">Aprobar, editar o destacar</span>
-            </button>
-            <button class="quick-action-tile" onclick="window.AdminView.openCreateUserModal()">
-              <span class="tile-icon">👤</span>
-              <span class="tile-title">Crear Administrador</span>
-              <span class="tile-desc">Asignar nuevo rol docente</span>
-            </button>
-            <button class="quick-action-tile" onclick="window.AdminView.exportProjectsCSV()">
-              <span class="tile-icon">📥</span>
-              <span class="tile-title">Exportar Datos CSV</span>
-              <span class="tile-desc">Descargar reporte completo</span>
-            </button>
-            <button class="quick-action-tile" onclick="window.AdminView.switchTab('settings')">
-              <span class="tile-icon">🤖</span>
-              <span class="tile-title">Banner de Proyectos</span>
-              <span class="tile-desc">Personalizar portada y robot</span>
-            </button>
+
+          <!-- Accesos Rápidos Ejecutivos 3D -->
+          <div class="roles-v2-panel">
+            <div class="roles-v2-panel-header">
+              <div class="roles-v2-panel-title-group">
+                <div class="roles-v2-panel-ico ico-blue">${dIco('High%20voltage/3D/high_voltage_3d.png', '', 28)}</div>
+                <div>
+                  <h3>Accesos Rápidos</h3>
+                  <p>Operaciones frecuentes de la administración.</p>
+                </div>
+              </div>
+            </div>
+            <div class="dash3d-quick-grid">
+              <button type="button" class="dash3d-quick-tile qt-blue" onclick="window.AdminView.switchTab('reports')">
+                <span class="qt-ico">${dIco('Bar%20chart/3D/bar_chart_3d.png', '', 32)}</span>
+                <span class="qt-title">Gráficas &amp; Reportes (%)</span>
+                <span class="qt-desc">Métricas circulares y semanales</span>
+              </button>
+              <button type="button" class="dash3d-quick-tile qt-cyan" onclick="window.AdminView.switchTab('projects')">
+                <span class="qt-ico">${dIco('Rocket/3D/rocket_3d.png', '', 32)}</span>
+                <span class="qt-title">Moderar Proyectos</span>
+                <span class="qt-desc">Aprobar, editar o destacar</span>
+              </button>
+              <button type="button" class="dash3d-quick-tile qt-purple" onclick="window.AdminView.openCreateUserModal()">
+                <span class="qt-ico">${dIco('Teacher/Default/3D/teacher_3d_default.png', '', 32)}</span>
+                <span class="qt-title">Crear Administrador</span>
+                <span class="qt-desc">Asignar nuevo rol docente</span>
+              </button>
+              <button type="button" class="dash3d-quick-tile qt-green" onclick="window.AdminView.exportProjectsCSV()">
+                <span class="qt-ico">${dIco('Inbox%20tray/3D/inbox_tray_3d.png', '', 32)}</span>
+                <span class="qt-title">Exportar Datos CSV</span>
+                <span class="qt-desc">Descargar reporte completo</span>
+              </button>
+              <button type="button" class="dash3d-quick-tile qt-amber" onclick="window.AdminView.switchTab('settings')">
+                <span class="qt-ico">${dIco('Robot/3D/robot_3d.png', '', 32)}</span>
+                <span class="qt-title">Banner de Proyectos</span>
+                <span class="qt-desc">Personalizar portada y robot</span>
+              </button>
+            </div>
           </div>
         </div>
       </div>
