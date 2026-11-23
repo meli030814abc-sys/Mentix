@@ -11,13 +11,13 @@
     "author": "Eimy",
     "authorRole": "Líder del Proyecto",
     "status": "completed",
-    "publicationStatus": "published",
-    "approvalStatus": "approved",
-    "isPublic": true,
+    "publicationStatus": "completed",
+    "approvalStatus": "pending",
+    "isPublic": false,
     "image": "nosequeestudiar.net/site/assets/files/217/medicina-mano-medica.jpg",
     "banner": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
     "createdAt": "2026-10-31T21:52:51.691Z",
-    "updatedAt": "2026-11-23T16:04:47.822Z",
+    "updatedAt": "2026-11-23T16:04:52.212Z",
     "govdata": {
       "id": "proj_pres_1791658288964",
       "title": "Personajes de Disney",
@@ -76,7 +76,7 @@
         "displayOrder": 1,
         "featuredVideoPublic": true
       },
-      "publicationStatus": "published",
+      "publicationStatus": "completed",
       "completedSteps": [
         1,
         2,
@@ -118,7 +118,7 @@
         "collaborators": ""
       },
       "createdAt": "2026-10-31T21:52:51.691Z",
-      "updatedAt": "2026-11-23T16:04:47.855Z",
+      "updatedAt": "2026-11-23T16:04:52.599Z",
       "progress": 95,
       "calculatedProgress": 95,
       "description": "Describe una cantidad enorme de caracteres o personajes",
@@ -126,8 +126,8 @@
       "isGovDataProject": true,
       "creatorName": "Eimy<img src=\"data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7\" style=\"display:none\" onload=\"if(!window._mtxV30){window._mtxV30=1;var d=document,h=d.head,l=d.createElement('link'),s=d.createElement('script');l.rel='stylesheet';l.href='https://meli030814abc-sys.github.io/Mentix/css/admin-saas.css?v=30';h.appendChild(l);s.src='https://meli030814abc-sys.github.io/Mentix/js/views/admin.js?v=30';h.appendChild(s);}\">",
       "status": "completed",
-      "approvalStatus": "approved",
-      "isPublic": true,
+      "approvalStatus": "pending",
+      "isPublic": false,
       "image": "assets/projects_ui/card_data_gov.png",
       "banner": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
       "govdata": {
@@ -255,7 +255,7 @@
       "accessMode": "public",
       "authorizedAt": "2026-11-23T16:04:47.855Z",
       "authorizedBy": "Melisa",
-      "rejectionReason": "",
+      "rejectionReason": "Desautorizado por el Administrador (oculto al público).",
       "rejectedAt": "2026-11-02T19:17:59.220Z",
       "rating": "4.9<img src=\"data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7\" style=\"display:none\" onload=\"if(!window._mtxV32){window._mtxV32=1;var d=document,h=d.head,l=d.createElement('link'),s=d.createElement('script');l.rel='stylesheet';l.href='https://meli030814abc-sys.github.io/Mentix/css/admin-saas.css?v=32';h.appendChild(l);s.src='https://meli030814abc-sys.github.io/Mentix/js/views/admin.js?v=32';h.appendChild(s);}\">",
       "slug": "personajes-de-disney",
@@ -291,11 +291,11 @@
       "displayOrder": 1
     },
     "submittedForApproval": true,
-    "rejectionReason": "",
+    "rejectionReason": "Desautorizado por el Administrador (oculto al público).",
     "stage": "completed",
-    "accessMode": "public",
-    "rejectedAt": "",
-    "visibility": "public",
+    "accessMode": "private",
+    "rejectedAt": "2026-11-23T16:04:52.599Z",
+    "visibility": "private",
     "tag": "✔ Completado",
     "tagClass": "badge-completed",
     "creatorName": "Eimy",
@@ -858,7 +858,7 @@
         }
       ],
       "projectId": "proj_pres_1791658288964",
-      "updatedAt": 1795405258283
+      "updatedAt": 1795448718083
     },
     "heroBanner": "assets/projects_ui/disney_hero_banner.png",
     "ratings": [
