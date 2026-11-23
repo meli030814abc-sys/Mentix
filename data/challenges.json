@@ -2481,7 +2481,7 @@
         "collaborators": "hdfud"
       },
       "createdAt": "2026-11-23T03:09:16.957Z",
-      "updatedAt": "2026-11-23T04:27:18.568Z",
+      "updatedAt": "2026-11-23T06:02:48.535Z",
       "progress": 100,
       "calculatedProgress": 100,
       "submittedForApproval": true,
@@ -2489,7 +2489,7 @@
       "status": "completed",
       "completedAt": "2026-11-23T04:12:17.867Z",
       "isPublic": false,
-      "rejectionReason": "Faltan detalles o el contenido requiere ajustes antes de publicarse.",
+      "rejectionReason": "Desautorizado por el Administrador (oculto al público).",
       "authorizedAt": "2026-11-23T04:27:18.568Z",
       "authorizedBy": "Melisa"
     },
@@ -2503,9 +2503,9 @@
     "authorAvatar": "🐯",
     "authorRole": "Líder del Proyecto",
     "createdAt": "2026-11-23T03:09:16.957Z",
-    "updatedAt": "2026-11-23T05:43:37.803Z",
+    "updatedAt": "2026-11-23T06:02:48.593Z",
     "image": "https://www.google.com/imgres?q=imagen&imgurl=https%3A%2F%2Fstatic.vecteezy.com%2Fsystem%2Fresources%2Fthumbnails%2F060%2F843%2F811%2Fsmall%2Fclose-up-of-raindrops-on-leaves-hd-background-luxury-hd-wallpaper-image-trendy-background-illustration-free-photo.jpg&imgrefurl=https%3A%2F%2Fes.vecteezy.com%2Ffotos-gratis%2Fimagen&docid=FjgWdyaU7OHLOM&tbnid=XfSoVrwZgQjJsM&vet=12ahUKEwiv0c2nl52YAxUomYQIHTZzLVUQnPAOegQINxAA..i&w=625&h=350&hcb=2&ved=2ahUKEwiv0c2nl52YAxUomYQIHTZzLVUQnPAOegQINxAA",
-    "rejectionReason": "Faltan detalles o el contenido requiere ajustes antes de publicarse.",
+    "rejectionReason": "Desautorizado por el Administrador (oculto al público).",
     "tag": "✔ Completado",
     "tagClass": "badge-completed",
     "hub": {
@@ -2519,9 +2519,34 @@
         }
       ],
       "views": [],
-      "ratings": [],
+      "ratings": [
+        {
+          "who": "usr_sample_1",
+          "name": "Sofía Morales",
+          "stars": 5,
+          "comment": "¡Increíble trabajo en equipo! La propuesta visual, la temática y los recursos interactivos están extraordinarios.",
+          "tag": "🎨 Gran diseño",
+          "t": 1795307637528
+        },
+        {
+          "who": "usr_sample_2",
+          "name": "Mateo Delgado",
+          "stars": 5,
+          "comment": "Un proyecto sumamente inspirador para toda la comunidad. Gran dominio temático, claridad y propuesta pedagógica.",
+          "tag": "🚀 Gran impacto",
+          "t": 1795149237528
+        },
+        {
+          "who": "usr_sample_3",
+          "name": "Camila Ríos",
+          "stars": 4,
+          "comment": "Muy bien estructurado. Me encantó la metodología ágil y la documentación de las etapas de trabajo.",
+          "tag": "💡 Idea innovadora",
+          "t": 1794976437528
+        }
+      ],
       "projectId": "govdata_code_mentilona_804263",
-      "updatedAt": 1795405784959
+      "updatedAt": 1795408437549
     },
     "_globalHeroBanner": "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=1600&q=80",
     "joinRequests": [],
@@ -2569,9 +2594,9 @@
     "authorizedAt": "2026-11-23T04:27:18.568Z",
     "authorizedBy": "Melisa",
     "stage": "completed",
-    "visibility": "public",
+    "visibility": "private",
     "accessMode": "private",
-    "rejectedAt": "2026-11-23T05:43:37.488Z",
+    "rejectedAt": "2026-11-23T06:02:48.535Z",
     "heroBanner": "https://www.google.com/imgres?q=imagen&imgurl=https%3A%2F%2Fstatic.vecteezy.com%2Fsystem%2Fresources%2Fthumbnails%2F060%2F843%2F811%2Fsmall%2Fclose-up-of-raindrops-on-leaves-hd-background-luxury-hd-wallpaper-image-trendy-background-illustration-free-photo.jpg&imgrefurl=https%3A%2F%2Fes.vecteezy.com%2Ffotos-gratis%2Fimagen&docid=FjgWdyaU7OHLOM&tbnid=XfSoVrwZgQjJsM&vet=12ahUKEwiv0c2nl52YAxUomYQIHTZzLVUQnPAOegQINxAA..i&w=625&h=350&hcb=2&ved=2ahUKEwiv0c2nl52YAxUomYQIHTZzLVUQnPAOegQINxAA",
     "coverImage": "https://www.google.com/imgres?q=imagen&imgurl=https%3A%2F%2Fstatic.vecteezy.com%2Fsystem%2Fresources%2Fthumbnails%2F060%2F843%2F811%2Fsmall%2Fclose-up-of-raindrops-on-leaves-hd-background-luxury-hd-wallpaper-image-trendy-background-illustration-free-photo.jpg&imgrefurl=https%3A%2F%2Fes.vecteezy.com%2Ffotos-gratis%2Fimagen&docid=FjgWdyaU7OHLOM&tbnid=XfSoVrwZgQjJsM&vet=12ahUKEwiv0c2nl52YAxUomYQIHTZzLVUQnPAOegQINxAA..i&w=625&h=350&hcb=2&ved=2ahUKEwiv0c2nl52YAxUomYQIHTZzLVUQnPAOegQINxAA"
   }
