@@ -1372,8 +1372,8 @@
     "description": "116456.1103249872313216",
     "shortDescription": "116456.1103249872313216",
     "fullDescription": "hgjkh bvjr<hbv jrgbv dskj v hvkjrdnvfk nvhrnvv ñl ujiri",
-    "category": "tecnologia",
-    "categoryName": "Tecnología & Programación",
+    "category": "admin",
+    "categoryName": "Administración Pública",
     "projectType": "presentation",
     "isGovDataProject": true,
     "projectSubtype": "Gobierno de Datos e IA",
@@ -1382,7 +1382,7 @@
     "mainImage": "https://www.google.com/imgres?q=imagen&imgurl=https%3A%2F%2Fstatic.vecteezy.com%2Fsystem%2Fresources%2Fthumbnails%2F060%2F843%2F811%2Fsmall%2Fclose-up-of-raindrops-on-leaves-hd-background-luxury-hd-wallpaper-image-trendy-background-illustration-free-photo.jpg&imgrefurl=https%3A%2F%2Fes.vecteezy.com%2Ffotos-gratis%2Fimagen&docid=FjgWdyaU7OHLOM&tbnid=XfSoVrwZgQjJsM&vet=12ahUKEwiv0c2nl52YAxUomYQIHTZzLVUQnPAOegQINxAA..i&w=625&h=350&hcb=2&ved=2ahUKEwiv0c2nl52YAxUomYQIHTZzLVUQnPAOegQINxAA",
     "thumbnailImage": "https://www.google.com/imgres?q=imagen&imgurl=https%3A%2F%2Fstatic.vecteezy.com%2Fsystem%2Fresources%2Fthumbnails%2F060%2F843%2F811%2Fsmall%2Fclose-up-of-raindrops-on-leaves-hd-background-luxury-hd-wallpaper-image-trendy-background-illustration-free-photo.jpg&imgrefurl=https%3A%2F%2Fes.vecteezy.com%2Ffotos-gratis%2Fimagen&docid=FjgWdyaU7OHLOM&tbnid=XfSoVrwZgQjJsM&vet=12ahUKEwiv0c2nl52YAxUomYQIHTZzLVUQnPAOegQINxAA..i&w=625&h=350&hcb=2&ved=2ahUKEwiv0c2nl52YAxUomYQIHTZzLVUQnPAOegQINxAA",
     "useDefaultImage": true,
-    "targetAudience": "",
+    "targetAudience": "5l6514",
     "problemStatement": "",
     "mainObjective": "",
     "benefits": "",
@@ -1395,7 +1395,7 @@
     "isPublic": true,
     "startDate": "2026-11-23",
     "endDate": "",
-    "currentStep": 3,
+    "currentStep": 4,
     "completedSteps": [
       1,
       2,
@@ -1650,7 +1650,7 @@
       "slug": "nuevo-proyecto",
       "landingTitle": "🌊 ¡El 95 % del océano sigue siendo un misterio! 😱 ¿Qué se esconde en las profundidades?",
       "publicDescription": "Proyecto en construcción con el Asistente Inteligente de Mentix.",
-      "visibleCategory": "Tecnología & Programación",
+      "visibleCategory": "Administración Pública",
       "tags": [
         "Gobierno de Datos",
         "IA"
@@ -1686,10 +1686,10 @@
       "subtitle": "Proyecto Educativo Mentix",
       "shortDescription": "116456.1103249872313216",
       "fullDescription": "hgjkh bvjr<hbv jrgbv dskj v hvkjrdnvfk nvhrnvv ñl ujiri",
-      "category": "tecnologia",
-      "categoryName": "Tecnología & Programación",
+      "category": "admin",
+      "categoryName": "Administración Pública",
       "projectSubtype": "Gobierno de Datos e IA",
-      "targetAudience": "",
+      "targetAudience": "5l6514",
       "problemStatement": "",
       "mainObjective": "",
       "benefits": "",
@@ -1728,7 +1728,7 @@
         "slug": "nuevo-proyecto",
         "landingTitle": "🌊 ¡El 95 % del océano sigue siendo un misterio! 😱 ¿Qué se esconde en las profundidades?",
         "publicDescription": "Proyecto en construcción con el Asistente Inteligente de Mentix.",
-        "visibleCategory": "Tecnología & Programación",
+        "visibleCategory": "Administración Pública",
         "tags": [
           "Gobierno de Datos",
           "IA"
@@ -1757,7 +1757,7 @@
         15,
         16
       ],
-      "currentStep": 3,
+      "currentStep": 4,
       "author": "Melisa",
       "authorId": "user_1792184134006",
       "ownerId": "user_1792184134006",
@@ -1782,7 +1782,7 @@
         "authorsRole": "Líder del Proyecto"
       },
       "createdAt": "2026-11-23T03:09:16.957Z",
-      "updatedAt": "2026-11-23T04:10:02.767Z",
+      "updatedAt": "2026-11-23T04:10:06.183Z",
       "progress": 100,
       "calculatedProgress": 100
     },
@@ -1796,7 +1796,7 @@
     "authorAvatar": "🐯",
     "authorRole": "admin",
     "createdAt": "2026-11-23T03:09:16.957Z",
-    "updatedAt": "2026-11-23T04:10:02.988Z",
+    "updatedAt": "2026-11-23T04:10:06.284Z",
     "image": "https://www.google.com/imgres?q=imagen&imgurl=https%3A%2F%2Fstatic.vecteezy.com%2Fsystem%2Fresources%2Fthumbnails%2F060%2F843%2F811%2Fsmall%2Fclose-up-of-raindrops-on-leaves-hd-background-luxury-hd-wallpaper-image-trendy-background-illustration-free-photo.jpg&imgrefurl=https%3A%2F%2Fes.vecteezy.com%2Ffotos-gratis%2Fimagen&docid=FjgWdyaU7OHLOM&tbnid=XfSoVrwZgQjJsM&vet=12ahUKEwiv0c2nl52YAxUomYQIHTZzLVUQnPAOegQINxAA..i&w=625&h=350&hcb=2&ved=2ahUKEwiv0c2nl52YAxUomYQIHTZzLVUQnPAOegQINxAA",
     "rejectionReason": "",
     "tag": "✔ Completado",
