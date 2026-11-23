@@ -17,7 +17,7 @@
     "image": "https://images.unsplash.com/photo-1519501025264-65ba15a82390?w=1600&q=80",
     "banner": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
     "createdAt": "2026-11-23T02:28:37.794Z",
-    "updatedAt": "2026-11-23T02:52:21.049Z",
+    "updatedAt": "2026-11-23T02:52:21.087Z",
     "govdata": {
       "id": "govdata_code_mentilona_583194",
       "title": "",
@@ -105,7 +105,7 @@
         "authorsRole": "Líder del Proyecto"
       },
       "createdAt": "2026-11-23T02:28:37.794Z",
-      "updatedAt": "2026-11-23T02:52:20.896Z",
+      "updatedAt": "2026-11-23T02:52:21.062Z",
       "progress": 40,
       "calculatedProgress": 40
     },
@@ -238,7 +238,28 @@
     },
     "heroBanner": "https://images.unsplash.com/photo-1519501025264-65ba15a82390?w=1600&q=80",
     "coverImage": "https://images.unsplash.com/photo-1519501025264-65ba15a82390?w=1600&q=80",
-    "submittedForApproval": false
+    "submittedForApproval": false,
+    "members": [
+      {
+        "name": "Melisa",
+        "email": "melisa@mentix.edu",
+        "role": "owner",
+        "leader": true
+      },
+      {
+        "name": "Elena Morales",
+        "email": "elena.morales@mentix.edu",
+        "role": "collaborator"
+      },
+      {
+        "name": "David Soto",
+        "email": "david.soto@mentix.edu",
+        "role": "viewer"
+      }
+    ],
+    "joinRequests": [],
+    "tag": "⏳ Pendiente de Autorización",
+    "tagClass": "badge-review"
   },
   {
     "id": "proj_pres_1791658288964",
