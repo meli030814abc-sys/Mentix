@@ -1,8 +1,8 @@
 [
   {
     "id": "govdata_code_mentilona_583194",
-    "title": "Nuevo Proyecto GovData",
-    "subtitle": "Proyecto GovData Nexus",
+    "title": "Nuevo Proyecto",
+    "subtitle": "Proyecto Educativo Mentix",
     "description": "Proyecto documentado con el Asistente Inteligente GovData Nexus.",
     "projectType": "presentation",
     "isGovDataProject": true,
@@ -11,19 +11,19 @@
     "author": "Melisa",
     "authorRole": "admin",
     "status": "in_progress",
-    "publicationStatus": "pending_approval",
+    "publicationStatus": "draft",
     "approvalStatus": "pending",
     "isPublic": false,
     "image": "https://images.unsplash.com/photo-1519501025264-65ba15a82390?w=1600&q=80",
-    "banner": "https://images.unsplash.com/photo-1519501025264-65ba15a82390?w=1600&q=80",
+    "banner": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
     "createdAt": "2026-11-23T02:28:37.794Z",
-    "updatedAt": "2026-11-23T02:30:38.876Z",
+    "updatedAt": "2026-11-23T02:52:20.943Z",
     "govdata": {
       "id": "govdata_code_mentilona_583194",
       "title": "",
       "subtitle": "",
-      "shortDescription": "",
-      "fullDescription": "",
+      "shortDescription": "Proyecto documentado con el Asistente Inteligente GovData Nexus.",
+      "fullDescription": "Proyecto documentado con el Asistente Inteligente GovData Nexus.",
       "category": "tecnologia",
       "categoryName": "Tecnología & Programación",
       "projectSubtype": "Gobierno de Datos e IA",
@@ -53,18 +53,19 @@
         "fileName": "",
         "title": "",
         "description": "",
+        "thumbnailUrl": "",
         "isPublic": true,
         "verified": false
       },
-      "mainImage": "",
-      "thumbnailImage": "",
+      "mainImage": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
+      "thumbnailImage": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
       "useDefaultImage": true,
       "externalLinks": [],
       "landingConfig": {
         "publicName": "",
         "slug": "nuevo-proyecto-govdata",
         "landingTitle": "",
-        "publicDescription": "",
+        "publicDescription": "Proyecto documentado con el Asistente Inteligente GovData Nexus.",
         "visibleCategory": "Tecnología & Programación",
         "tags": [
           "Gobierno de Datos",
@@ -76,7 +77,9 @@
         "featuredVideoPublic": true
       },
       "publicationStatus": "draft",
-      "completedSteps": [],
+      "completedSteps": [
+        1
+      ],
       "currentStep": 1,
       "author": "Melisa",
       "authorId": "user_1792184134006",
@@ -94,28 +97,24 @@
         "textColor": "#cbd5e1",
         "accentColor": "#00f5d4",
         "bannerStyle": "gradient-cosmos",
-        "bannerUrl": ""
+        "bannerUrl": "https://images.unsplash.com/photo-1519501025264-65ba15a82390?w=1600&q=80"
       },
       "authorsConfig": {
         "authorsList": "Melisa",
         "authorsEmails": "gatitaxd6f79@gmail.com",
-        "authorsRole": "Líder del Proyecto",
-        "authorsInstitution": "",
-        "collaborators": ""
+        "authorsRole": "Líder del Proyecto"
       },
       "createdAt": "2026-11-23T02:28:37.794Z",
-      "updatedAt": "2026-11-23T02:28:40.657Z",
-      "progress": 30,
-      "calculatedProgress": 30,
-      "heroBanner": "https://images.unsplash.com/photo-1519501025264-65ba15a82390?w=1600&q=80",
-      "banner": "https://images.unsplash.com/photo-1519501025264-65ba15a82390?w=1600&q=80"
+      "updatedAt": "2026-11-23T02:52:20.896Z",
+      "progress": 40,
+      "calculatedProgress": 40
     },
     "slug": "nuevo-proyecto-govdata",
-    "shortDescription": "",
-    "fullDescription": "",
+    "shortDescription": "Proyecto documentado con el Asistente Inteligente GovData Nexus.",
+    "fullDescription": "Proyecto documentado con el Asistente Inteligente GovData Nexus.",
     "projectSubtype": "Gobierno de Datos e IA",
     "difficulty": "Medio",
-    "mainImage": "https://images.unsplash.com/photo-1519501025264-65ba15a82390?w=1600&q=80",
+    "mainImage": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
     "thumbnailImage": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
     "useDefaultImage": true,
     "targetAudience": "",
@@ -127,9 +126,11 @@
     "startDate": "2026-11-23",
     "endDate": "",
     "currentStep": 1,
-    "completedSteps": [],
-    "progress": 30,
-    "calculatedProgress": 30,
+    "completedSteps": [
+      1
+    ],
+    "progress": 40,
+    "calculatedProgress": 40,
     "valueProp": {
       "problemSolved": "",
       "howItWorks": "",
@@ -161,9 +162,9 @@
       "fileName": "",
       "title": "",
       "description": "",
+      "thumbnailUrl": "",
       "isPublic": true,
-      "verified": false,
-      "thumbnailUrl": ""
+      "verified": false
     },
     "resources": [],
     "visualAssets": [],
@@ -173,7 +174,7 @@
       "publicName": "",
       "slug": "nuevo-proyecto-govdata",
       "landingTitle": "",
-      "publicDescription": "",
+      "publicDescription": "Proyecto documentado con el Asistente Inteligente GovData Nexus.",
       "visibleCategory": "Tecnología & Programación",
       "tags": [
         "Gobierno de Datos",
@@ -182,8 +183,7 @@
       "ctaText": "Unirse / Colaborar",
       "ctaUrl": "#plp-sec-contacto",
       "displayOrder": 1,
-      "featuredVideoPublic": true,
-      "heroBanner": "https://images.unsplash.com/photo-1519501025264-65ba15a82390?w=1600&q=80"
+      "featuredVideoPublic": true
     },
     "projectRoadmap": [],
     "designConfig": {
@@ -198,9 +198,7 @@
     "authorsConfig": {
       "authorsList": "Melisa",
       "authorsEmails": "gatitaxd6f79@gmail.com",
-      "authorsRole": "Líder del Proyecto",
-      "authorsInstitution": "",
-      "collaborators": ""
+      "authorsRole": "Líder del Proyecto"
     },
     "tags": [
       "Gobierno de Datos",
@@ -239,7 +237,29 @@
       "ratings": []
     },
     "heroBanner": "https://images.unsplash.com/photo-1519501025264-65ba15a82390?w=1600&q=80",
-    "coverImage": "https://images.unsplash.com/photo-1519501025264-65ba15a82390?w=1600&q=80"
+    "coverImage": "https://images.unsplash.com/photo-1519501025264-65ba15a82390?w=1600&q=80",
+    "submittedForApproval": false,
+    "members": [
+      {
+        "name": "Melisa",
+        "email": "melisa@mentix.edu",
+        "role": "owner",
+        "leader": true
+      },
+      {
+        "name": "Elena Morales",
+        "email": "elena.morales@mentix.edu",
+        "role": "collaborator"
+      },
+      {
+        "name": "David Soto",
+        "email": "david.soto@mentix.edu",
+        "role": "viewer"
+      }
+    ],
+    "joinRequests": [],
+    "tag": "⏳ Pendiente de Autorización",
+    "tagClass": "badge-review"
   },
   {
     "id": "proj_pres_1791658288964",
