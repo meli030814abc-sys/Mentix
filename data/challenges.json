@@ -33,22 +33,23 @@
     "isPublic": false,
     "startDate": "2026-11-23",
     "endDate": "",
-    "currentStep": 7,
+    "currentStep": 8,
     "completedSteps": [
       1,
       2,
       3,
       4,
       5,
-      6
+      6,
+      7
     ],
     "progress": 58,
     "calculatedProgress": 58,
     "valueProp": {
       "problemSolved": "G",
-      "howItWorks": "",
+      "howItWorks": "G",
       "forWhom": "L",
-      "differentiator": "",
+      "differentiator": "G",
       "keyFeatures": [
         "G"
       ],
@@ -60,9 +61,9 @@
     },
     "valueProposition": {
       "problemSolved": "G",
-      "howItWorks": "",
+      "howItWorks": "G",
       "forWhom": "L",
-      "differentiator": "",
+      "differentiator": "G",
       "keyFeatures": [
         "G"
       ],
@@ -176,9 +177,9 @@
       "endDate": "",
       "valueProp": {
         "problemSolved": "G",
-        "howItWorks": "",
+        "howItWorks": "G",
         "forWhom": "L",
-        "differentiator": "",
+        "differentiator": "G",
         "keyFeatures": [
           "G"
         ],
@@ -258,9 +259,10 @@
         3,
         4,
         5,
-        6
+        6,
+        7
       ],
-      "currentStep": 7,
+      "currentStep": 8,
       "author": "JHFK",
       "authorId": "user_1795407757752",
       "ownerId": "user_1795407757752",
@@ -286,7 +288,7 @@
         "collaborators": "V"
       },
       "createdAt": "2026-11-23T04:35:12.300Z",
-      "updatedAt": "2026-11-23T04:51:52.428Z",
+      "updatedAt": "2026-11-23T04:51:54.709Z",
       "progress": 58,
       "calculatedProgress": 58
     },
@@ -300,49 +302,7 @@
     "authorAvatar": "🦊",
     "authorRole": "Líder del Proyecto",
     "createdAt": "2026-11-23T04:35:12.300Z",
-    "updatedAt": "2026-11-23T04:51:52.420Z",
-    "hub": {
-      "joinRequests": [],
-      "members": [
-        {
-          "name": "JHFK",
-          "email": "HGFH@HNGFH",
-          "role": "owner",
-          "leader": true
-        }
-      ],
-      "views": [],
-      "ratings": []
-    },
-    "customProjectCodes": [
-      {
-        "code": "804263",
-        "author": "Melisa",
-        "authorRole": "admin",
-        "createdAt": "22/11/2026, 9:27:35 p.m."
-      },
-      {
-        "code": "371850",
-        "author": "Melisa",
-        "authorRole": "admin",
-        "createdAt": "22/11/2026, 9:27:35 p.m."
-      },
-      {
-        "code": "926407",
-        "author": "Melisa",
-        "authorRole": "admin",
-        "createdAt": "22/11/2026, 9:23:09 p.m."
-      },
-      {
-        "code": "583194",
-        "author": "Melisa",
-        "authorRole": "admin",
-        "createdAt": "22/11/2026, 9:22:51 p.m."
-      }
-    ],
-    "tag": "⏳ Pendiente de Autorización",
-    "tagClass": "badge-review",
-    "rejectionReason": ""
+    "updatedAt": "2026-11-23T04:51:54.836Z"
   },
   {
     "id": "proj_pres_1791658288964",
