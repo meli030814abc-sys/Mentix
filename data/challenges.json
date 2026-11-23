@@ -21,9 +21,9 @@
     "thumbnailImage": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
     "useDefaultImage": true,
     "targetAudience": "L",
-    "problemStatement": "",
-    "mainObjective": "",
-    "benefits": "",
+    "problemStatement": "G",
+    "mainObjective": "G",
+    "benefits": "G",
     "teamLead": "JHFK",
     "preparationStatus": "en_desarrollo",
     "publicationStatus": "draft",
@@ -33,20 +33,21 @@
     "isPublic": false,
     "startDate": "2026-11-23",
     "endDate": "",
-    "currentStep": 6,
+    "currentStep": 7,
     "completedSteps": [
       1,
       2,
       3,
       4,
-      5
+      5,
+      6
     ],
-    "progress": 50,
-    "calculatedProgress": 50,
+    "progress": 58,
+    "calculatedProgress": 58,
     "valueProp": {
-      "problemSolved": "",
+      "problemSolved": "G",
       "howItWorks": "",
-      "forWhom": "",
+      "forWhom": "L",
       "differentiator": "",
       "keyFeatures": [],
       "resultsAndBenefits": "",
@@ -56,9 +57,9 @@
       "faqs": []
     },
     "valueProposition": {
-      "problemSolved": "",
+      "problemSolved": "G",
       "howItWorks": "",
-      "forWhom": "",
+      "forWhom": "L",
       "differentiator": "",
       "keyFeatures": [],
       "resultsAndBenefits": "",
@@ -162,17 +163,17 @@
       "categoryName": "Tecnología & Programación",
       "projectSubtype": "Gobierno de Datos e IA",
       "targetAudience": "L",
-      "problemStatement": "",
-      "mainObjective": "",
-      "benefits": "",
+      "problemStatement": "G",
+      "mainObjective": "G",
+      "benefits": "G",
       "teamLead": "JHFK",
       "preparationStatus": "en_desarrollo",
       "startDate": "2026-11-23",
       "endDate": "",
       "valueProp": {
-        "problemSolved": "",
+        "problemSolved": "G",
         "howItWorks": "",
-        "forWhom": "",
+        "forWhom": "L",
         "differentiator": "",
         "keyFeatures": [],
         "resultsAndBenefits": "",
@@ -250,9 +251,10 @@
         2,
         3,
         4,
-        5
+        5,
+        6
       ],
-      "currentStep": 6,
+      "currentStep": 7,
       "author": "JHFK",
       "authorId": "user_1795407757752",
       "ownerId": "user_1795407757752",
@@ -278,9 +280,9 @@
         "collaborators": "V"
       },
       "createdAt": "2026-11-23T04:35:12.300Z",
-      "updatedAt": "2026-11-23T04:51:46.815Z",
-      "progress": 50,
-      "calculatedProgress": 50
+      "updatedAt": "2026-11-23T04:51:50.790Z",
+      "progress": 58,
+      "calculatedProgress": 58
     },
     "author": "JHFK",
     "authorId": "user_1795407757752",
@@ -292,7 +294,49 @@
     "authorAvatar": "🦊",
     "authorRole": "Líder del Proyecto",
     "createdAt": "2026-11-23T04:35:12.300Z",
-    "updatedAt": "2026-11-23T04:51:46.890Z"
+    "updatedAt": "2026-11-23T04:51:50.882Z",
+    "hub": {
+      "joinRequests": [],
+      "members": [
+        {
+          "name": "JHFK",
+          "email": "HGFH@HNGFH",
+          "role": "owner",
+          "leader": true
+        }
+      ],
+      "views": [],
+      "ratings": []
+    },
+    "customProjectCodes": [
+      {
+        "code": "804263",
+        "author": "Melisa",
+        "authorRole": "admin",
+        "createdAt": "22/11/2026, 9:27:35 p.m."
+      },
+      {
+        "code": "371850",
+        "author": "Melisa",
+        "authorRole": "admin",
+        "createdAt": "22/11/2026, 9:27:35 p.m."
+      },
+      {
+        "code": "926407",
+        "author": "Melisa",
+        "authorRole": "admin",
+        "createdAt": "22/11/2026, 9:23:09 p.m."
+      },
+      {
+        "code": "583194",
+        "author": "Melisa",
+        "authorRole": "admin",
+        "createdAt": "22/11/2026, 9:22:51 p.m."
+      }
+    ],
+    "tag": "⏳ Pendiente de Autorización",
+    "tagClass": "badge-review",
+    "rejectionReason": ""
   },
   {
     "id": "proj_pres_1791658288964",
