@@ -473,8 +473,7 @@
     ],
     "tag": "⏳ Pendiente de Autorización",
     "tagClass": "badge-review",
-    "rejectionReason": "",
-    "_globalHeroBanner": "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=1600&q=80"
+    "rejectionReason": ""
   },
   {
     "id": "proj_pres_1791658288964",
@@ -1586,8 +1585,7 @@
         "imageUrl": "",
         "notes": "",
         "bgColor": "#ffffff",
-        "themeId": "cosmos",
-        "bgImage": ""
+        "themeId": "cosmos"
       },
       {
         "id": "slide_1795410670421_1",
@@ -1598,12 +1596,11 @@
         "layout": "full",
         "isFullImage": true,
         "isImported": true,
-        "media": "",
-        "imageUrl": "",
+        "media": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fgovdata_code_nocturno_804263%2F1795410673958_gybx_slide_2.jpg",
+        "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fgovdata_code_nocturno_804263%2F1795410673958_gybx_slide_2.jpg",
         "notes": "",
         "bgColor": "#ffffff",
-        "themeId": "cosmos",
-        "bgImage": ""
+        "themeId": "cosmos"
       },
       {
         "id": "slide_1795410670421_2",
@@ -1614,12 +1611,11 @@
         "layout": "full",
         "isFullImage": true,
         "isImported": true,
-        "media": "",
-        "imageUrl": "",
+        "media": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fgovdata_code_nocturno_804263%2F1795410675146_3e7o_slide_3.jpg",
+        "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fgovdata_code_nocturno_804263%2F1795410675146_3e7o_slide_3.jpg",
         "notes": "",
         "bgColor": "#ffffff",
-        "themeId": "cosmos",
-        "bgImage": ""
+        "themeId": "cosmos"
       },
       {
         "id": "slide_1795410670421_3",
@@ -1634,8 +1630,7 @@
         "imageUrl": "",
         "notes": "",
         "bgColor": "#ffffff",
-        "themeId": "cosmos",
-        "bgImage": ""
+        "themeId": "cosmos"
       },
       {
         "id": "slide_1795410670421_4",
@@ -1650,8 +1645,7 @@
         "imageUrl": "",
         "notes": "",
         "bgColor": "#ffffff",
-        "themeId": "cosmos",
-        "bgImage": ""
+        "themeId": "cosmos"
       },
       {
         "id": "slide_1795410670421_5",
@@ -1666,8 +1660,7 @@
         "imageUrl": "",
         "notes": "",
         "bgColor": "#ffffff",
-        "themeId": "cosmos",
-        "bgImage": ""
+        "themeId": "cosmos"
       },
       {
         "id": "slide_1795410670421_6",
@@ -1682,8 +1675,7 @@
         "imageUrl": "",
         "notes": "",
         "bgColor": "#ffffff",
-        "themeId": "cosmos",
-        "bgImage": ""
+        "themeId": "cosmos"
       },
       {
         "id": "slide_1795410670421_7",
@@ -1698,8 +1690,7 @@
         "imageUrl": "",
         "notes": "",
         "bgColor": "#ffffff",
-        "themeId": "cosmos",
-        "bgImage": ""
+        "themeId": "cosmos"
       }
     ],
     "externalLinks": [],
@@ -1914,7 +1905,7 @@
         "collaborators": "jk"
       },
       "createdAt": "2026-11-23T03:21:39.599Z",
-      "updatedAt": "2026-11-23T05:11:10.421Z",
+      "updatedAt": "2026-11-23T05:11:18.919Z",
       "progress": 95,
       "calculatedProgress": 95
     },
@@ -1928,7 +1919,7 @@
     "authorAvatar": "👨‍🏫",
     "authorRole": "Líder del Proyecto",
     "createdAt": "2026-11-23T03:21:39.599Z",
-    "updatedAt": "2026-11-23T05:11:10.503Z",
+    "updatedAt": "2026-11-23T05:11:19.253Z",
     "image": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
     "tag": "⏳ Pendiente de Autorización",
     "tagClass": "badge-review",
@@ -1957,13 +1948,7 @@
     "joinRequests": [],
     "_globalHeroBanner": "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=1600&q=80",
     "heroBanner": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
-    "coverImage": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
-    "_globalHeroBannerStyle": {
-      "fit": "cover",
-      "offsetX": 5,
-      "offsetY": 0,
-      "zoom": 134
-    }
+    "coverImage": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80"
   },
   {
     "id": "govdata_code_mentilona_804263",
