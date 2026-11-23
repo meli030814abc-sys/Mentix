@@ -1242,7 +1242,7 @@
     "isPublic": false,
     "startDate": "2026-11-23",
     "endDate": "2026-11-11",
-    "currentStep": 14,
+    "currentStep": 15,
     "completedSteps": [
       1,
       2,
@@ -1703,7 +1703,7 @@
         15,
         16
       ],
-      "currentStep": 14,
+      "currentStep": 15,
       "author": "Melisa",
       "authorId": "user_1792184134006",
       "ownerId": "user_1792184134006",
@@ -1730,7 +1730,7 @@
         "collaborators": "hdfud"
       },
       "createdAt": "2026-11-23T03:09:16.957Z",
-      "updatedAt": "2026-11-23T21:10:06.594Z",
+      "updatedAt": "2026-11-23T21:10:13.202Z",
       "progress": 100,
       "calculatedProgress": 100,
       "heroBanner": "https://static.vecteezy.com/system/resources/thumbnails/060/843/811/small/close-up-of-raindrops-on-leaves-hd-background-luxury-hd-wallpaper-image-trendy-background-illustration-free-photo.jpg",
@@ -1748,7 +1748,7 @@
     "authorAvatar": "🐯",
     "authorRole": "Líder del Proyecto",
     "createdAt": "2026-11-23T03:09:16.957Z",
-    "updatedAt": "2026-11-23T21:10:06.731Z",
+    "updatedAt": "2026-11-23T21:10:13.536Z",
     "image": "https://static.vecteezy.com/system/resources/thumbnails/060/843/811/small/close-up-of-raindrops-on-leaves-hd-background-luxury-hd-wallpaper-image-trendy-background-illustration-free-photo.jpg",
     "rejectionReason": "Desautorizado por el Administrador (oculto al público).",
     "tag": "✔ Completado",
