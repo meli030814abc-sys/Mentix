@@ -33,12 +33,13 @@
     "isPublic": false,
     "startDate": "2026-11-23",
     "endDate": "",
-    "currentStep": 5,
+    "currentStep": 6,
     "completedSteps": [
       1,
       2,
       3,
-      4
+      4,
+      5
     ],
     "progress": 50,
     "calculatedProgress": 50,
@@ -248,9 +249,10 @@
         1,
         2,
         3,
-        4
+        4,
+        5
       ],
-      "currentStep": 5,
+      "currentStep": 6,
       "author": "JHFK",
       "authorId": "user_1795407757752",
       "ownerId": "user_1795407757752",
@@ -276,7 +278,7 @@
         "collaborators": "V"
       },
       "createdAt": "2026-11-23T04:35:12.300Z",
-      "updatedAt": "2026-11-23T04:51:46.288Z",
+      "updatedAt": "2026-11-23T04:51:46.815Z",
       "progress": 50,
       "calculatedProgress": 50
     },
@@ -290,7 +292,7 @@
     "authorAvatar": "🦊",
     "authorRole": "Líder del Proyecto",
     "createdAt": "2026-11-23T04:35:12.300Z",
-    "updatedAt": "2026-11-23T04:51:46.393Z"
+    "updatedAt": "2026-11-23T04:51:46.890Z"
   },
   {
     "id": "proj_pres_1791658288964",
