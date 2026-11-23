@@ -110,5 +110,21 @@
     "lastLoginAt": "2026-11-23T20:20:15.393Z",
     "pwd": "2c202f0114f478fee01140e39aaf8408570260b9e5a2c34db3b137c74125297c",
     "createdAt": "2026-11-23T17:12:17.547Z"
+  },
+  {
+    "id": "user_1793449738905",
+    "name": "Carlos Canon",
+    "username": "Nocturno",
+    "email": "vivianacastanedam@gmail.com",
+    "avatar": "👨‍🏫",
+    "role": "admin",
+    "xp": 2450,
+    "level": 3,
+    "levelName": "Competidor",
+    "institution": "Comunidad MENTIX",
+    "isBlocked": false,
+    "lastLoginAt": "2026-11-23T20:55:29.314Z",
+    "pwd": "cd716a4f506e0826d82baa7d103c425043c877903912246baa11ac777c346c88",
+    "createdAt": "2026-11-23T20:55:29.314Z"
   }
 ]
