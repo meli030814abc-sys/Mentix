@@ -10,12 +10,12 @@
       "email": "gatitaxd679@gmail.com",
       "role": "student",
       "joinedAt": "2026-11-23T04:35:10.065Z",
-      "updatedAt": "2026-11-23T04:51:32.408Z",
+      "updatedAt": "2026-11-23T04:51:39.589Z",
       "projectId": "govdata_code_hhgfj_804263",
       "projectTitle": "Nuevo Proyecto",
       "projectDescription": "Proyecto en construcción con el Asistente Inteligente de Mentix.",
-      "currentStep": 3,
-      "completedStepsCount": 2,
+      "currentStep": 4,
+      "completedStepsCount": 3,
       "progress": 50,
       "status": "in_progress",
       "approvalStatus": "pending",
@@ -36,17 +36,18 @@
         "status": "in_progress",
         "publicationStatus": "draft",
         "approvalStatus": "pending",
-        "currentStep": 3,
+        "currentStep": 4,
         "completedSteps": [
           1,
-          2
+          2,
+          3
         ],
         "progress": 50,
         "banner": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
         "problemStatement": "",
         "mainObjective": "",
         "benefits": "",
-        "targetAudience": "",
+        "targetAudience": "L",
         "slidesCount": 0,
         "resourcesCount": 0,
         "landingConfig": {
@@ -76,7 +77,7 @@
           "commercialPitch": "",
           "faqs": []
         },
-        "updatedAt": "2026-11-23T04:51:32.408Z"
+        "updatedAt": "2026-11-23T04:51:39.589Z"
       }
     },
     {
