@@ -978,17 +978,19 @@ window.AdminView = {
           style="position: absolute; inset: 0; width: 100%; height: 100%; display: block; object-fit: cover; object-position: center; filter: brightness(1.08) contrast(1.05); image-rendering: high-quality;" 
         />
 
-        <!-- BOTÓN FLOTANTE EXCLUSIVO DE ADMINISTRADOR PARA CAMBIAR BANNER -->
+        <!-- BOTÓN FLOTANTE EXCLUSIVO DE ADMINISTRADOR PARA CAMBIAR BANNER (ALTA VISIBILIDAD) -->
         <div style="position: absolute; top: 1rem; right: 1.25rem; z-index: 10;">
           <button 
             type="button" 
             onclick="window.AdminView.openBannerCustomizerModal()" 
-            title="Cambiar Banner de Proyectos y Banner de Robot (Exclusivo Administrador)"
-            style="display: inline-flex; align-items: center; gap: 0.5rem; background: rgba(7, 23, 57, 0.92); backdrop-filter: blur(10px); color: #00f5d4; border: 2px solid #00f5d4; border-radius: 9999px; padding: 0.45rem 1.15rem; font-size: 0.84rem; font-weight: 900; cursor: pointer; box-shadow: 0 0 20px rgba(0, 245, 212, 0.45); transition: all 0.25s ease;"
+            title="Cambiar Banner Principal de Proyectos (Exclusivo Administrador)"
+            style="display: inline-flex; align-items: center; gap: 0.55rem; background: rgba(255, 255, 255, 0.96); backdrop-filter: blur(10px); color: #0f172a; border: 2px solid #0284c7; border-radius: 9999px; padding: 0.52rem 1.25rem; font-size: 0.88rem; font-weight: 900; cursor: pointer; box-shadow: 0 6px 22px rgba(15, 23, 42, 0.34), 0 0 0 3px rgba(255, 255, 255, 0.35); transition: all 0.2s ease;"
+            onmouseenter="this.style.transform='scale(1.05)'; this.style.background='#f0f9ff';"
+            onmouseleave="this.style.transform='scale(1)'; this.style.background='rgba(255, 255, 255, 0.96)';"
           >
-            <span style="font-size: 1.1rem;">🤖</span>
-            <span>Cambiar Banner (Modo Administrador)</span>
-            <span style="background: #00f5d4; color: #071739; padding: 0.1rem 0.4rem; border-radius: 999px; font-size: 0.7rem; font-weight: 900;">ADMIN</span>
+            <span style="font-size: 1.15rem;">🎨</span>
+            <span>Cambiar Banner</span>
+            <span style="background: linear-gradient(135deg, #0284c7 0%, #2563eb 100%); color: #ffffff; padding: 0.14rem 0.55rem; border-radius: 999px; font-size: 0.72rem; font-weight: 900;">ADMIN</span>
           </button>
         </div>
 
@@ -3892,19 +3894,21 @@ window.AdminView = {
     const note = prompt('Ingresa el motivo de cancelación o corrección que debe realizar el autor:', reason || 'Faltan detalles o el contenido requiere ajustes antes de publicarse.');
     if (note === null) return;
 
-    p.approvalStatus = 'rejected';
-    p.publicationStatus = 'draft';
-    p.status = 'in_progress';
-    p.stage = 'in_progress';
+    // Mantener el proyecto como COMPLETADO (solo oculto/pendiente de autorización, nunca volverlo "En Proceso")
+    const wasDraft = (p.status === 'in_progress' || p.publicationStatus === 'draft') && p.approvalStatus !== 'approved';
+    p.approvalStatus = 'pending';
+    p.publicationStatus = wasDraft ? 'draft' : 'completed';
+    p.status = wasDraft ? 'in_progress' : 'completed';
+    p.stage = wasDraft ? 'in_progress' : 'completed';
     p.isPublic = false;
     p.accessMode = 'private';
     p.rejectionReason = note;
     p.rejectedAt = new Date().toISOString();
 
     if (p.govdata && typeof p.govdata === 'object') {
-      p.govdata.approvalStatus = 'rejected';
-      p.govdata.publicationStatus = 'draft';
-      p.govdata.status = 'in_progress';
+      p.govdata.approvalStatus = 'pending';
+      p.govdata.publicationStatus = wasDraft ? 'draft' : 'completed';
+      p.govdata.status = wasDraft ? 'in_progress' : 'completed';
       p.govdata.isPublic = false;
       p.govdata.rejectionReason = note;
     }
@@ -4567,67 +4571,69 @@ window.AdminView = {
     const modal = document.createElement('div');
     modal.id = 'admin-banner-customizer-modal';
     modal.className = 'custom-modal';
-    modal.style.cssText = 'position:fixed; inset:0; z-index:100080; background:rgba(3,8,22,0.88); backdrop-filter:blur(16px); display:flex; align-items:center; justify-content:center; padding:1.25rem;';
+    modal.style.cssText = 'position:fixed; inset:0; z-index:100080; background:rgba(15,23,42,0.55); backdrop-filter:blur(8px); display:flex; align-items:center; justify-content:center; padding:1.15rem;';
 
     modal.innerHTML = `
-      <div class="glass-panel" style="max-width: 680px; width: 100%; max-height: 90vh; overflow-y: auto; background: linear-gradient(145deg, rgba(12, 32, 64, 0.96) 0%, rgba(7, 21, 43, 0.99) 100%); border: 2px solid rgba(0, 245, 212, 0.4); border-radius: 24px; padding: 2rem; box-shadow: 0 25px 70px rgba(0,0,0,0.8), 0 0 35px rgba(0, 245, 212, 0.2); color: #ffffff;">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.25rem;">
+      <div style="max-width: 720px; width: 100%; max-height: 92vh; overflow-y: auto; background: #ffffff; border: 1.5px solid #cbd5e1; border-radius: 22px; padding: 1.75rem; box-shadow: 0 25px 70px rgba(15,23,42,0.28); color: #0f172a; font-family: 'Outfit','Inter',sans-serif;">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:1rem; margin-bottom:1.1rem; border-bottom:1.5px solid #e2e8f0; padding-bottom:0.9rem;">
           <div>
-            <span class="badge-tag" style="background:rgba(0,245,212,0.15); border:1px solid #00f5d4; color:#00f5d4; font-weight:800; font-size:0.75rem;">CONFIGURACIÓN EXCLUSIVA ADMIN</span>
-            <h2 style="font-size:1.6rem; font-weight:900; margin:0.35rem 0 0; color:#ffffff; text-shadow:0 0 14px rgba(0,245,212,0.4);">
-              🖼️ Personalizar Banner de Proyectos &amp; Robot
+            <span style="display:inline-block; background:#e0f2fe; border:1px solid #7dd3fc; color:#0369a1; font-weight:800; font-size:0.72rem; padding:0.2rem 0.65rem; border-radius:999px; letter-spacing:0.04em;">CONFIGURACIÓN EXCLUSIVA ADMIN</span>
+            <h2 style="font-size:1.45rem; font-weight:900; margin:0.4rem 0 0; color:#0f172a;">
+              🎨 Cambiar Banner Principal de Proyectos
             </h2>
           </div>
-          <button type="button" class="btn btn-outline" style="border-radius:50%; width:38px; height:38px; padding:0; display:grid; place-items:center; font-size:1.1rem; color:#ffffff;" onclick="document.getElementById('admin-banner-customizer-modal').remove()">✕</button>
+          <button type="button" style="border-radius:50%; width:38px; height:38px; padding:0; display:grid; place-items:center; font-size:1.1rem; background:#f1f5f9; border:1.5px solid #cbd5e1; color:#334155; cursor:pointer; font-weight:900;" onclick="document.getElementById('admin-banner-customizer-modal').remove()">✕</button>
         </div>
 
-        <p style="color:#cbd5e1; font-size:0.92rem; margin-bottom:1.5rem; line-height:1.5;">
-          Selecciona una portada institucional predefinida, sube tu propia imagen desde tu computadora o pega un enlace web. El banner se sincronizará en tiempo real en todo Mentix.
-        </p>
+        <div style="background:#f0f9ff; border:1.5px solid #bae6fd; border-radius:12px; padding:0.7rem 1rem; margin-bottom:1.1rem; font-size:0.84rem; color:#0c4a6e; display:flex; align-items:center; gap:0.6rem; flex-wrap:wrap;">
+          <span>📐</span>
+          <span><b>Tamaño oficial de los banners temáticos:</b> <b>1376 × 768 px</b> (proporción 16:9). También queda nítido en <b>1280 × 720 px</b> o <b>1920 × 600 px</b> (JPG, PNG o WEBP). <b>El cambio es inmediato.</b></span>
+        </div>
 
         <!-- Vista previa en tiempo real -->
-        <div style="margin-bottom:1.5rem;">
-          <label style="display:block; font-size:0.85rem; font-weight:800; color:#00f5d4; margin-bottom:0.45rem; text-transform:uppercase; letter-spacing:0.04em;">VISTA PREVIA ACTUAL:</label>
-          <div style="width:100%; aspect-ratio:2090/422; max-height:180px; border-radius:16px; overflow:hidden; border:2px solid rgba(56,189,248,0.4); box-shadow:0 8px 25px rgba(0,0,0,0.5); background:#071739;">
+        <div style="margin-bottom:1.15rem;">
+          <label style="display:block; font-size:0.78rem; font-weight:800; color:#475569; margin-bottom:0.4rem; text-transform:uppercase; letter-spacing:0.04em;">Vista previa en vivo:</label>
+          <div style="width:100%; aspect-ratio:2090/422; max-height:175px; border-radius:14px; overflow:hidden; border:1.5px solid #cbd5e1; box-shadow:0 6px 18px rgba(15,23,42,0.12); background:#0f172a;">
             <img id="admin-modal-banner-preview" src="${currentBanner}" style="width:100%; height:100%; object-fit:cover; display:block;" alt="Vista previa banner" />
           </div>
         </div>
 
+        <!-- Subir archivo o ingresar URL -->
+        <div style="background:#f8fafc; border:1.5px dashed #94a3b8; border-radius:14px; padding:1.05rem; margin-bottom:1.15rem;">
+          <label style="display:block; font-size:0.84rem; font-weight:800; color:#0f172a; margin-bottom:0.45rem;">📁 Subir imagen desde tu computador o celular (cambio inmediato):</label>
+          <input type="file" accept="image/*" id="admin-modal-banner-file" style="display:block; width:100%; font-size:0.85rem; color:#334155; background:#ffffff; padding:0.45rem; border-radius:10px; border:1px solid #cbd5e1;" onchange="window.AdminView.handleModalBannerUpload(event)" />
+
+          <label style="display:block; font-size:0.84rem; font-weight:800; color:#0f172a; margin:0.9rem 0 0.4rem;">🔗 O pega un link directo de imagen (https://...):</label>
+          <div style="display:flex; align-items:center; gap:0.65rem;">
+            <input type="text" id="admin-modal-banner-url-input" placeholder="https://ejemplo.com/mi-banner.jpg" oninput="window.AdminView.applyBannerUrlFromModal(true)" style="flex:1; padding:0.62rem 0.95rem; border-radius:10px; background:#ffffff; border:1.5px solid #cbd5e1; color:#0f172a; font-weight:600; outline:none;" />
+            <button type="button" style="padding:0.62rem 1rem; font-size:0.84rem; font-weight:800; border-radius:10px; background:#0284c7; color:#ffffff; border:none; cursor:pointer;" onclick="window.AdminView.applyBannerUrlFromModal(false)">Probar Link</button>
+          </div>
+        </div>
+
         <!-- Opciones Predefinidas -->
-        <div style="margin-bottom:1.5rem;">
-          <label style="display:block; font-size:0.85rem; font-weight:800; color:#cbd5e1; margin-bottom:0.65rem;">BANNERS INSTITUCIONALES PREDEFINIDOS:</label>
-          <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:0.75rem;">
+        <div style="margin-bottom:1.25rem;">
+          <label style="display:block; font-size:0.82rem; font-weight:800; color:#334155; margin-bottom:0.55rem;">⭐ Banners Temáticos Oficiales Mentix (1376 × 768 px):</label>
+          <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:0.65rem;">
             ${presets.map(p => `
-              <button type="button" class="btn btn-outline" style="display:flex; align-items:center; justify-content:flex-start; gap:0.65rem; padding:0.75rem 1rem; border-radius:14px; text-align:left; background:rgba(255,255,255,0.05); border:1.5px solid rgba(255,255,255,0.12); color:#ffffff; font-weight:700;" onclick="window.AdminView.selectBannerInModal('${p.path}')">
-                <span style="font-size:1.3rem;">🖼️</span>
+              <button type="button" style="display:flex; align-items:center; justify-content:flex-start; gap:0.65rem; padding:0.68rem 0.9rem; border-radius:12px; text-align:left; background:#f8fafc; border:1.5px solid #e2e8f0; color:#0f172a; font-weight:700; cursor:pointer; transition:all 0.15s ease;" onmouseenter="this.style.borderColor='#0284c7'; this.style.background='#f0f9ff';" onmouseleave="this.style.borderColor='#e2e8f0'; this.style.background='#f8fafc';" onclick="window.AdminView.selectBannerInModal('${p.path}')">
+                <img src="${p.path}" alt="${p.name}" style="width:52px; height:32px; object-fit:cover; border-radius:6px; border:1px solid #cbd5e1; flex-shrink:0;" />
                 <div>
-                  <div style="font-weight:800; font-size:0.88rem; color:#ffffff;">${p.name}</div>
-                  <div style="font-size:0.75rem; color:#94a3b8;">${p.desc}</div>
+                  <div style="font-weight:800; font-size:0.85rem; color:#0f172a;">${p.name}</div>
+                  <div style="font-size:0.74rem; color:#64748b;">${p.desc}</div>
                 </div>
               </button>
             `).join('')}
           </div>
         </div>
 
-        <!-- Subir archivo o ingresar URL -->
-        <div style="background:rgba(0,0,0,0.35); border:1.5px dashed rgba(56,189,248,0.35); border-radius:16px; padding:1.25rem; margin-bottom:1.5rem;">
-          <label style="display:block; font-size:0.85rem; font-weight:800; color:#38bdf8; margin-bottom:0.5rem;">SUBIR IMAGEN DESDE TU DISPOSITIVO:</label>
-          <input type="file" accept="image/*" id="admin-modal-banner-file" style="display:block; width:100%; font-size:0.85rem; color:#cbd5e1;" onchange="window.AdminView.handleModalBannerUpload(event)" />
-
-          <div style="display:flex; align-items:center; gap:0.75rem; margin-top:1rem;">
-            <input type="text" id="admin-modal-banner-url-input" placeholder="O pega una URL de imagen (https://...)" style="flex:1; padding:0.65rem 1rem; border-radius:10px; background:#08162d; border:1.5px solid rgba(56,189,248,0.3); color:#ffffff; font-weight:600; outline:none;" />
-            <button type="button" class="btn btn-cyan" style="padding:0.65rem 1rem; font-size:0.85rem;" onclick="window.AdminView.applyBannerUrlFromModal()">Cargar URL</button>
-          </div>
-        </div>
-
-        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.75rem; border-top:1px solid rgba(255,255,255,0.1); padding-top:1.25rem;">
-          <button type="button" class="btn btn-outline" onclick="window.AdminView.switchTab('settings'); document.getElementById('admin-banner-customizer-modal').remove();">
-            ⚙️ Ir a Ajustes Completos
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.75rem; border-top:1.5px solid #e2e8f0; padding-top:1rem;">
+          <button type="button" style="padding:0.58rem 1rem; border-radius:10px; background:#f1f5f9; border:1.5px solid #cbd5e1; color:#334155; font-weight:700; cursor:pointer;" onclick="window.AdminView.switchTab('settings'); document.getElementById('admin-banner-customizer-modal').remove();">
+            ⚙️ Ajustes Avanzados
           </button>
           <div style="display:flex; gap:0.65rem;">
-            <button type="button" class="btn btn-outline" onclick="document.getElementById('admin-banner-customizer-modal').remove()">Cancelar</button>
-            <button type="button" class="btn btn-primary" onclick="window.AdminView.saveBannerFromModal()" style="font-weight:900;">
-              💾 Guardar y Aplicar en Todo Mentix
+            <button type="button" style="padding:0.58rem 1.1rem; border-radius:10px; background:#ffffff; border:1.5px solid #cbd5e1; color:#475569; font-weight:700; cursor:pointer;" onclick="document.getElementById('admin-banner-customizer-modal').remove()">Cancelar</button>
+            <button type="button" onclick="window.AdminView.saveBannerFromModal()" style="padding:0.62rem 1.35rem; border-radius:10px; background:linear-gradient(135deg, #0284c7 0%, #2563eb 100%); color:#ffffff; border:none; font-weight:900; cursor:pointer; box-shadow:0 4px 14px rgba(37,99,235,0.35);">
+              ✅ Guardar y Aplicar Ya
             </button>
           </div>
         </div>
@@ -4641,6 +4647,8 @@ window.AdminView = {
     this._stagedModalBanner = path;
     const preview = document.getElementById('admin-modal-banner-preview');
     if (preview) preview.src = path;
+    const inp = document.getElementById('admin-modal-banner-url-input');
+    if (inp) inp.value = '';
     if (window.soundEngine && typeof window.soundEngine.playPop === 'function') {
       window.soundEngine.playPop();
     }
@@ -4650,33 +4658,44 @@ window.AdminView = {
     const file = e.target.files && e.target.files[0];
     if (!file) return;
     const reader = new FileReader();
-    reader.onload = (evt) => {
-      const dataUrl = evt.target.result;
+    reader.onload = async (evt) => {
+      let dataUrl = evt.target.result;
+      try {
+        if (window.ProjectWizard && typeof window.ProjectWizard.compressImageFile === 'function' && file.size > 450 * 1024) {
+          const compressed = await window.ProjectWizard.compressImageFile(file, 1600, 0.82);
+          if (compressed && compressed.startsWith('data:')) dataUrl = compressed;
+        }
+      } catch (err) {}
       this._stagedModalBanner = dataUrl;
       const preview = document.getElementById('admin-modal-banner-preview');
       if (preview) preview.src = dataUrl;
+      const inp = document.getElementById('admin-modal-banner-url-input');
+      if (inp) inp.value = '';
       if (window.soundEngine && typeof window.soundEngine.playPop === 'function') {
         window.soundEngine.playPop();
       }
+      this.showToast('📷 Imagen cargada al instante. Pulsa Guardar y Aplicar Ya.');
     };
     reader.readAsDataURL(file);
   },
 
-  applyBannerUrlFromModal() {
+  applyBannerUrlFromModal(silent = false) {
     const inp = document.getElementById('admin-modal-banner-url-input');
     const url = inp ? inp.value.trim() : '';
     if (!url) {
-      this.showToast('⚠️ Ingresa una URL válida', 'warning');
+      if (!silent) this.showToast('⚠️ Ingresa una URL válida', 'warning');
       return;
     }
     this._stagedModalBanner = url;
     const preview = document.getElementById('admin-modal-banner-preview');
     if (preview) preview.src = url;
-    this.showToast('Vista previa cargada');
+    if (!silent) this.showToast('🔗 Vista previa actualizada al instante');
   },
 
   saveBannerFromModal() {
-    const bannerPath = this._stagedModalBanner || this.getHeroBannerUrl();
+    const inp = document.getElementById('admin-modal-banner-url-input');
+    const typedUrl = inp ? inp.value.trim() : '';
+    const bannerPath = typedUrl || this._stagedModalBanner || this.getHeroBannerUrl();
     this.setRobotBannerPreset(bannerPath);
     const modal = document.getElementById('admin-banner-customizer-modal');
     if (modal) modal.remove();
