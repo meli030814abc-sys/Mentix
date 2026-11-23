@@ -1234,7 +1234,7 @@
     "mainObjective": "fjhl",
     "benefits": "hfhkjl",
     "teamLead": "Melisa",
-    "preparationStatus": "completado",
+    "preparationStatus": "idea",
     "publicationStatus": "completed",
     "approvalStatus": "pending",
     "submittedForApproval": true,
@@ -1242,7 +1242,7 @@
     "isPublic": false,
     "startDate": "2026-11-23",
     "endDate": "2026-11-11",
-    "currentStep": 7,
+    "currentStep": 10,
     "completedSteps": [
       1,
       2,
@@ -1591,7 +1591,7 @@
       "mainObjective": "fjhl",
       "benefits": "hfhkjl",
       "teamLead": "Melisa",
-      "preparationStatus": "completado",
+      "preparationStatus": "idea",
       "startDate": "2026-11-23",
       "endDate": "2026-11-11",
       "valueProp": {
@@ -1703,7 +1703,7 @@
         15,
         16
       ],
-      "currentStep": 7,
+      "currentStep": 10,
       "author": "Melisa",
       "authorId": "user_1792184134006",
       "ownerId": "user_1792184134006",
@@ -1730,7 +1730,7 @@
         "collaborators": "hdfud"
       },
       "createdAt": "2026-11-23T03:09:16.957Z",
-      "updatedAt": "2026-11-23T21:07:05.658Z",
+      "updatedAt": "2026-11-23T21:07:08.890Z",
       "progress": 100,
       "calculatedProgress": 100
     },
@@ -1744,7 +1744,7 @@
     "authorAvatar": "🐯",
     "authorRole": "Líder del Proyecto",
     "createdAt": "2026-11-23T03:09:16.957Z",
-    "updatedAt": "2026-11-23T21:07:05.018Z",
+    "updatedAt": "2026-11-23T21:07:08.371Z",
     "image": "https://static.vecteezy.com/system/resources/thumbnails/060/843/811/small/close-up-of-raindrops-on-leaves-hd-background-luxury-hd-wallpaper-image-trendy-background-illustration-free-photo.jpg",
     "rejectionReason": "Desautorizado por el Administrador (oculto al público).",
     "tag": "✔ Completado",
