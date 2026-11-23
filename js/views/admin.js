@@ -2737,6 +2737,37 @@ window.AdminView = {
       { id: 'blue', hex: '#3b82f6', dark: '#1d4ed8', label: 'Azul Real' }
     ];
 
+    const fontList = [
+      { id: 'Outfit', label: 'Outfit', desc: 'Moderna Oficial Mentix' },
+      { id: 'Poppins', label: 'Poppins', desc: 'Geométrica Elegante' },
+      { id: 'Inter', label: 'Inter', desc: 'Corporativa Limpia' },
+      { id: 'Montserrat', label: 'Montserrat', desc: 'Titulares de Impacto' },
+      { id: 'Fredoka', label: 'Fredoka', desc: 'Educativa Amigable' },
+      { id: 'Orbitron', label: 'Orbitron', desc: 'Futurista Tech' }
+    ];
+
+    const fontSizeList = [
+      { id: 'compact', label: 'Compacto', sub: '92%' },
+      { id: 'normal', label: 'Normal', sub: '100%' },
+      { id: 'large', label: 'Grande', sub: '108%' },
+      { id: 'xlarge', label: 'Extra Grande', sub: '116%' }
+    ];
+
+    const colorFields = [
+      { key: 'bgPrimary', label: 'Fondo Principal', desc: 'Color base de toda la plataforma', def: '#040d1a' },
+      { key: 'cardBg', label: 'Fondo de Tarjetas', desc: 'Paneles, retos y contenedores', def: '#0f172a' },
+      { key: 'navbarBg', label: 'Barra Superior (Navbar)', desc: 'Menú principal de navegación', def: '#0b1120' },
+      { key: 'headingColor', label: 'Color de Títulos', desc: 'Encabezados H1, H2, H3', def: '#f8fafc' },
+      { key: 'textPrimary', label: 'Color de Letras (Texto)', desc: 'Párrafos y lectura general', def: '#e2e8f0' },
+      { key: 'textSecondary', label: 'Letras Secundarias', desc: 'Subtítulos y etiquetas', def: '#94a3b8' },
+      { key: 'btnPrimary', label: 'Botones Primarios', desc: 'Acciones principales y CTAs', def: '#4f46e5' },
+      { key: 'customAccentHex', label: 'Acento Neón / Bordes', desc: 'Brillos, enlaces y énfasis', def: '#00f5d4' }
+    ];
+
+    const defaultProjectBanner = s.defaultProjectBanner || localStorage.getItem('mentix_default_project_banner') || 'assets/projects_ui/card_data_gov.png';
+    const homeBanner = s.homeBanner || localStorage.getItem('mentix_home_banner') || 'assets/student_create_bg.jpg';
+    const brandLogoUrl = s.brandLogoUrl || localStorage.getItem('mentix_brand_logo_url') || '';
+
     return `
       <div class="cfg3d-shell">
         <!-- Hero 3D de Configuración -->
@@ -2746,13 +2777,13 @@ window.AdminView = {
               ${cIco('House/3D/house_3d.png', 'Inicio', 18)}
               <span>Inicio</span>
               <span class="sep">/</span>
-              <span class="current">Ajustes del Diseño &amp; Personalización</span>
+              <span class="current">Ajustes del Diseño &amp; Personalización Total</span>
             </div>
             <h2 class="roles-v2-title">
-              Ajustes del <span class="roles-v2-title-accent">Diseño &amp; Personalización</span>
+              Personalización Total de <span class="roles-v2-title-accent">Todo Mentix</span>
             </h2>
             <p class="roles-v2-subtitle">
-              Personaliza el banner del robot de proyectos, temas cromáticos, colores de acento neón y la landing page pública de Mentix.
+              Controla al detalle cada color, tipografía, tamaño de letras, banners, logo institucional, imágenes y la landing page pública de toda la plataforma.
             </p>
             <div class="roles-v2-accent-bar"></div>
           </div>
@@ -2764,44 +2795,253 @@ window.AdminView = {
             </button>
             <button type="button" class="proj3d-gloss-btn gloss-indigo" onclick="window.AdminView.saveDesignSettings()">
               ${cIco('Check%20mark%20button/3D/check_mark_button_3d.png', '', 18)}
-              <span>Guardar y Aplicar Cambios</span>
+              <span>Guardar y Aplicar Globalmente</span>
             </button>
           </div>
         </div>
 
-        <!-- Cuadrícula 3D de Configuración (2 columnas arriba) -->
+        <!-- Cuadrícula 3D de Configuración -->
         <div class="cfg3d-grid">
-          <!-- Tarjeta 1: Banner Hero del Robot para Proyectos -->
+
+          <!-- SECCIÓN 1: PALETA DE COLORES COMPLETA DE TODO MENTIX -->
           <div class="roles-v2-panel cfg3d-card-wide">
             <div class="roles-v2-panel-header">
               <div class="roles-v2-panel-title-group">
-                <div class="roles-v2-panel-ico ico-blue">${cIco('Robot/3D/robot_3d.png', 'Robot', 28)}</div>
+                <div class="roles-v2-panel-ico ico-purple">${cIco('Artist%20palette/3D/artist_palette_3d.png', 'Colores', 28)}</div>
                 <div>
-                  <h3>Banner del Robot de Proyectos (Modo Administrador)</h3>
-                  <p>Esta imagen se proyecta como fondo superior en la sección pública de proyectos.</p>
+                  <h3>Colores Completos de Todo Mentix</h3>
+                  <p>Personaliza cada color de la plataforma (fondo, tarjetas, barra superior, títulos, letras y botones) o elige una paleta rápida 3D.</p>
+                </div>
+              </div>
+              <div class="cfg3d-palette-presets">
+                <button type="button" class="proj3d-gloss-btn gloss-cyan" onclick="window.AdminView.applyColorPalettePreset('mentix_official')">
+                  <span>Mentix Oficial</span>
+                </button>
+                <button type="button" class="proj3d-gloss-btn gloss-white" onclick="window.AdminView.applyColorPalettePreset('academic_light')">
+                  <span>Claro Académico</span>
+                </button>
+                <button type="button" class="proj3d-gloss-btn gloss-indigo" onclick="window.AdminView.applyColorPalettePreset('cyber_purple')">
+                  <span>Cyber Violeta</span>
+                </button>
+                <button type="button" class="proj3d-gloss-btn gloss-green" onclick="window.AdminView.applyColorPalettePreset('emerald_tech')">
+                  <span>Esmeralda Tech</span>
+                </button>
+              </div>
+            </div>
+
+            <div class="cfg3d-colors-grid">
+              ${colorFields.map(cf => {
+                const val = s[cf.key] || cf.def;
+                return `
+                  <label class="cfg3d-color-card">
+                    <span class="cfg3d-color-top">
+                      <span class="cfg3d-color-swatch-wrap">
+                        <input type="color" value="${val}" onchange="window.AdminView.updateDesignColor('${cf.key}', this.value)" oninput="window.AdminView.updateDesignColor('${cf.key}', this.value, true)" />
+                        <span class="cfg3d-color-orb" style="background:${val};"></span>
+                      </span>
+                      <span class="cfg3d-color-hex" id="cfg-hex-${cf.key}">${String(val).toUpperCase()}</span>
+                    </span>
+                    <span class="cfg3d-color-label">${cf.label}</span>
+                    <span class="cfg3d-color-desc">${cf.desc}</span>
+                  </label>
+                `;
+              }).join('')}
+            </div>
+          </div>
+
+          <!-- SECCIÓN 2: TIPOGRAFÍA, LETRAS Y TAMAÑOS DE TODO MENTIX -->
+          <div class="roles-v2-panel cfg3d-card-wide">
+            <div class="roles-v2-panel-header">
+              <div class="roles-v2-panel-title-group">
+                <div class="roles-v2-panel-ico ico-blue">${cIco('Input%20latin%20letters/3D/input_latin_letters_3d.png', 'Letras', 28)}</div>
+                <div>
+                  <h3>Tipografía, Fuentes y Tamaño de Letras</h3>
+                  <p>Cambia el tipo de letra, escala de lectura y estilo de encabezados en todo Mentix al instante.</p>
+                </div>
+              </div>
+              <span class="roles-v2-total-badge">Fuente activa: ${s.fontFamily || 'Outfit'}</span>
+            </div>
+
+            <div class="cfg3d-typo-grid">
+              <div>
+                <div class="cfg3d-mini-label">Tipo de Letra Global (Familia Tipográfica)</div>
+                <div class="cfg3d-fonts-grid">
+                  ${fontList.map(f => {
+                    const isAct = (s.fontFamily || 'Outfit') === f.id;
+                    return `
+                      <button type="button" class="cfg3d-font-btn ${isAct ? 'is-active' : ''}" onclick="window.AdminView.selectFontFamily('${f.id}')">
+                        <span class="cfg3d-font-sample" style="font-family:'${f.id}', sans-serif;">Aa Bb</span>
+                        <span class="cfg3d-font-name" style="font-family:'${f.id}', sans-serif;">${f.label}</span>
+                        <span class="cfg3d-font-desc">${f.desc}</span>
+                        ${isAct ? '<span class="cfg3d-accent-chk">✓</span>' : ''}
+                      </button>
+                    `;
+                  }).join('')}
+                </div>
+              </div>
+
+              <div class="cfg3d-typo-right">
+                <div>
+                  <div class="cfg3d-mini-label">Tamaño Global de Letras</div>
+                  <div class="cfg3d-size-grid">
+                    ${fontSizeList.map(sz => {
+                      const isAct = (s.fontSize || 'normal') === sz.id;
+                      return `
+                        <button type="button" class="cfg3d-size-btn ${isAct ? 'is-active' : ''}" onclick="window.AdminView.selectFontSize('${sz.id}')">
+                          <span class="cfg3d-size-lbl">${sz.label}</span>
+                          <span class="cfg3d-size-sub">${sz.sub}</span>
+                        </button>
+                      `;
+                    }).join('')}
+                  </div>
+                </div>
+
+                <div>
+                  <div class="cfg3d-mini-label">Estilo de Títulos y Encabezados</div>
+                  <div class="cfg3d-size-grid">
+                    <button type="button" class="cfg3d-size-btn ${(s.headingStyle || 'bold') === 'normal' ? 'is-active' : ''}" onclick="window.AdminView.selectHeadingStyle('normal')">
+                      <span class="cfg3d-size-lbl">Normal</span>
+                      <span class="cfg3d-size-sub">Peso 600</span>
+                    </button>
+                    <button type="button" class="cfg3d-size-btn ${(s.headingStyle || 'bold') === 'bold' ? 'is-active' : ''}" onclick="window.AdminView.selectHeadingStyle('bold')">
+                      <span class="cfg3d-size-lbl">Negrita</span>
+                      <span class="cfg3d-size-sub">Peso 800</span>
+                    </button>
+                    <button type="button" class="cfg3d-size-btn ${(s.headingStyle || 'bold') === 'extrabold' ? 'is-active' : ''}" onclick="window.AdminView.selectHeadingStyle('extrabold')">
+                      <span class="cfg3d-size-lbl">Impacto</span>
+                      <span class="cfg3d-size-sub">Peso 900</span>
+                    </button>
+                    <button type="button" class="cfg3d-size-btn ${(s.headingStyle || 'bold') === 'uppercase' ? 'is-active' : ''}" onclick="window.AdminView.selectHeadingStyle('uppercase')">
+                      <span class="cfg3d-size-lbl">MAYÚS</span>
+                      <span class="cfg3d-size-sub">Institucional</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- SECCIÓN 3: TODOS LOS BANNERS E IMÁGENES DE MENTIX -->
+          <div class="roles-v2-panel cfg3d-card-wide">
+            <div class="roles-v2-panel-header">
+              <div class="roles-v2-panel-title-group">
+                <div class="roles-v2-panel-ico ico-blue">${cIco('Framed%20picture/3D/framed_picture_3d.png', 'Banners', 28)}</div>
+                <div>
+                  <h3>Todos los Banners, Portadas e Imágenes de Mentix</h3>
+                  <p>Cambia el banner principal de Proyectos, la portada por defecto de tarjetas, el banner de Inicio y el logo institucional.</p>
                 </div>
               </div>
               <span class="roles-v2-total-badge">${cIco('Shield/3D/shield_3d.png', '', 15)} Exclusivo Admin</span>
             </div>
 
-            <div class="cfg3d-banner-preview">
-              <img src="${heroBanner}" id="admin-banner-preview-img" alt="Banner de Proyectos">
-            </div>
+            <div class="cfg3d-media-grid">
+              <!-- Media 1: Banner Principal de Proyectos (Robot) -->
+              <div class="cfg3d-media-card">
+                <div class="cfg3d-media-head">
+                  <strong>1. Banner Principal de Proyectos (Hero)</strong>
+                  <span>Encabezado principal en el catálogo de proyectos</span>
+                </div>
+                <div class="cfg3d-banner-preview cfg3d-media-preview">
+                  <img src="${heroBanner}" id="admin-banner-preview-img" alt="Banner de Proyectos">
+                </div>
+                <div class="cfg3d-banner-controls">
+                  <button type="button" class="proj3d-gloss-btn gloss-cyan" onclick="window.AdminView.setRobotBannerPreset('assets/projects_ui/robot_hero_banner.png')">
+                    ${cIco('Robot/3D/robot_3d.png', '', 16)}
+                    <span>Robot Cyber</span>
+                  </button>
+                  <button type="button" class="proj3d-gloss-btn gloss-indigo" onclick="window.AdminView.setRobotBannerPreset('assets/student_create_bg.jpg')">
+                    ${cIco('Rocket/3D/rocket_3d.png', '', 16)}
+                    <span>Futurista</span>
+                  </button>
+                  <label for="admin-banner-file-input" class="proj3d-gloss-btn gloss-green" style="margin:0;">
+                    ${cIco('Framed%20picture/3D/framed_picture_3d.png', '', 16)}
+                    <span>Subir Imagen</span>
+                  </label>
+                  <input type="file" id="admin-banner-file-input" accept="image/*" style="display:none;" onchange="window.AdminView.handleCustomBannerUpload(event)">
+                  <button type="button" class="proj3d-gloss-btn gloss-white" onclick="window.AdminView.promptCustomMediaUrl('heroBanner', 'Banner Principal de Proyectos')">
+                    <span>Pegar Link</span>
+                  </button>
+                </div>
+              </div>
 
-            <div class="cfg3d-banner-controls">
-              <button type="button" class="proj3d-gloss-btn gloss-cyan" onclick="window.AdminView.setRobotBannerPreset('assets/projects_ui/robot_hero_banner.png')">
-                ${cIco('Robot/3D/robot_3d.png', '', 18)}
-                <span>Robot Cyber Educador</span>
-              </button>
-              <button type="button" class="proj3d-gloss-btn gloss-indigo" onclick="window.AdminView.setRobotBannerPreset('assets/student_create_bg.jpg')">
-                ${cIco('Rocket/3D/rocket_3d.png', '', 18)}
-                <span>Espacio Futurista</span>
-              </button>
-              <label for="admin-banner-file-input" class="proj3d-gloss-btn gloss-green" style="margin:0;">
-                ${cIco('Framed%20picture/3D/framed_picture_3d.png', '', 18)}
-                <span>Subir Imagen Personalizada</span>
-              </label>
-              <input type="file" id="admin-banner-file-input" accept="image/*" style="display:none;" onchange="window.AdminView.handleCustomBannerUpload(event)">
+              <!-- Media 2: Banner por defecto de tarjetas y landings de proyectos -->
+              <div class="cfg3d-media-card">
+                <div class="cfg3d-media-head">
+                  <strong>2. Banner por Defecto de Proyectos</strong>
+                  <span>Imagen base para tarjetas y landings sin foto propia</span>
+                </div>
+                <div class="cfg3d-banner-preview cfg3d-media-preview">
+                  <img src="${defaultProjectBanner}" id="admin-default-proj-banner-preview" alt="Banner por defecto de proyectos">
+                </div>
+                <div class="cfg3d-banner-controls">
+                  <button type="button" class="proj3d-gloss-btn gloss-cyan" onclick="window.AdminView.setCustomMediaAsset('defaultProjectBanner', 'assets/projects_ui/card_data_gov.png')">
+                    <span>Oficial Mentix</span>
+                  </button>
+                  <button type="button" class="proj3d-gloss-btn gloss-indigo" onclick="window.AdminView.setCustomMediaAsset('defaultProjectBanner', 'assets/projects_ui/robot_hero_banner.png')">
+                    <span>Robot Hero</span>
+                  </button>
+                  <label for="admin-default-proj-file" class="proj3d-gloss-btn gloss-green" style="margin:0;">
+                    ${cIco('Framed%20picture/3D/framed_picture_3d.png', '', 16)}
+                    <span>Subir Imagen</span>
+                  </label>
+                  <input type="file" id="admin-default-proj-file" accept="image/*" style="display:none;" onchange="window.AdminView.handleCustomMediaUpload(event, 'defaultProjectBanner')">
+                  <button type="button" class="proj3d-gloss-btn gloss-white" onclick="window.AdminView.promptCustomMediaUrl('defaultProjectBanner', 'Banner por Defecto de Proyectos')">
+                    <span>Pegar Link</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Media 3: Banner / Portada de Inicio (Home) -->
+              <div class="cfg3d-media-card">
+                <div class="cfg3d-media-head">
+                  <strong>3. Banner / Fondo de Inicio (Home)</strong>
+                  <span>Portada visual de bienvenida en la pantalla inicial</span>
+                </div>
+                <div class="cfg3d-banner-preview cfg3d-media-preview">
+                  <img src="${homeBanner}" id="admin-home-banner-preview" alt="Banner de Inicio">
+                </div>
+                <div class="cfg3d-banner-controls">
+                  <button type="button" class="proj3d-gloss-btn gloss-indigo" onclick="window.AdminView.setCustomMediaAsset('homeBanner', 'assets/student_create_bg.jpg')">
+                    <span>Espacio Tech</span>
+                  </button>
+                  <button type="button" class="proj3d-gloss-btn gloss-cyan" onclick="window.AdminView.setCustomMediaAsset('homeBanner', 'assets/projects_ui/robot_hero_banner.png')">
+                    <span>Robot Cyber</span>
+                  </button>
+                  <label for="admin-home-banner-file" class="proj3d-gloss-btn gloss-green" style="margin:0;">
+                    ${cIco('Framed%20picture/3D/framed_picture_3d.png', '', 16)}
+                    <span>Subir Imagen</span>
+                  </label>
+                  <input type="file" id="admin-home-banner-file" accept="image/*" style="display:none;" onchange="window.AdminView.handleCustomMediaUpload(event, 'homeBanner')">
+                  <button type="button" class="proj3d-gloss-btn gloss-white" onclick="window.AdminView.promptCustomMediaUrl('homeBanner', 'Banner de Inicio')">
+                    <span>Pegar Link</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Media 4: Logo / Ícono Institucional de Mentix -->
+              <div class="cfg3d-media-card">
+                <div class="cfg3d-media-head">
+                  <strong>4. Logo / Ícono Institucional</strong>
+                  <span>Escudo o logotipo personalizado para la barra superior</span>
+                </div>
+                <div class="cfg3d-logo-preview-box">
+                  ${brandLogoUrl
+                    ? `<img src="${brandLogoUrl}" id="admin-brand-logo-preview" alt="Logo Mentix" />`
+                    : `<div class="cfg3d-logo-placeholder">${cIco('Graduation%20cap/3D/graduation_cap_3d.png', 'Logo', 44)}<span>Logo Mentix Predeterminado</span></div>`
+                  }
+                </div>
+                <div class="cfg3d-banner-controls">
+                  <label for="admin-brand-logo-file" class="proj3d-gloss-btn gloss-green" style="margin:0;">
+                    ${cIco('Framed%20picture/3D/framed_picture_3d.png', '', 16)}
+                    <span>Subir Logo</span>
+                  </label>
+                  <input type="file" id="admin-brand-logo-file" accept="image/*" style="display:none;" onchange="window.AdminView.handleCustomMediaUpload(event, 'brandLogoUrl')">
+                  <button type="button" class="proj3d-gloss-btn gloss-white" onclick="window.AdminView.promptCustomMediaUrl('brandLogoUrl', 'Logo Institucional')">
+                    <span>Pegar Link</span>
+                  </button>
+                  ${brandLogoUrl ? `<button type="button" class="proj3d-gloss-btn gloss-pink" onclick="window.AdminView.setCustomMediaAsset('brandLogoUrl', '')"><span>Quitar Logo</span></button>` : ''}
+                </div>
+              </div>
             </div>
           </div>
 
@@ -5460,19 +5700,56 @@ window.AdminView = {
   },
 
   getSavedDesign() {
+    const defaults = {
+      bgTheme: 'ocean',
+      accentColor: 'cyan',
+      timerColor: 'yellow',
+      fontFamily: 'Outfit',
+      fontSize: 'normal',
+      headingStyle: 'bold',
+      contrast: 'normal',
+      bgPrimary: '',
+      cardBg: '',
+      navbarBg: '',
+      headingColor: '',
+      textPrimary: '',
+      textSecondary: '',
+      btnPrimary: '',
+      customAccentHex: '',
+      defaultProjectBanner: '',
+      homeBanner: '',
+      brandLogoUrl: ''
+    };
     try {
       const s = localStorage.getItem('mentix_admin_design');
-      return s ? JSON.parse(s) : { bgTheme: 'ocean', accentColor: 'cyan', timerColor: 'yellow', fontSize: 'normal', contrast: 'normal' };
+      return s ? { ...defaults, ...JSON.parse(s) } : defaults;
     } catch(e) {
-      return { bgTheme: 'ocean', accentColor: 'cyan', timerColor: 'yellow', fontSize: 'normal', contrast: 'normal' };
+      return defaults;
+    }
+  },
+
+  _persistDesign(s) {
+    try { localStorage.setItem('mentix_admin_design', JSON.stringify(s)); } catch (e) {}
+    if (s.defaultProjectBanner) {
+      try { localStorage.setItem('mentix_default_project_banner', s.defaultProjectBanner); } catch (e) {}
+    }
+    if (s.homeBanner) {
+      try { localStorage.setItem('mentix_home_banner', s.homeBanner); } catch (e) {}
+    }
+    if (s.brandLogoUrl !== undefined) {
+      try { localStorage.setItem('mentix_brand_logo_url', s.brandLogoUrl || ''); } catch (e) {}
+    }
+    this.applyDesign(s);
+    if (window.MentixRealtime && typeof window.MentixRealtime.publishGlobalDesign === 'function') {
+      try { window.MentixRealtime.publishGlobalDesign(s); } catch (e) {}
     }
   },
 
   selectTheme(themeId) {
     const s = this.getSavedDesign();
     s.bgTheme = themeId;
-    localStorage.setItem('mentix_admin_design', JSON.stringify(s));
-    this.applyDesign(s);
+    s.bgPrimary = '';
+    this._persistDesign(s);
     this.renderActiveTab();
     this.showToast(`Tema visual cambiado a "${themeId}"`, 'info');
   },
@@ -5480,20 +5757,139 @@ window.AdminView = {
   selectAccent(accentId) {
     const s = this.getSavedDesign();
     s.accentColor = accentId;
-    localStorage.setItem('mentix_admin_design', JSON.stringify(s));
-    this.applyDesign(s);
+    const map = { cyan: '#00f5d4', magenta: '#f72585', gold: '#ffb703', emerald: '#10b981', purple: '#a855f7', blue: '#3b82f6' };
+    s.customAccentHex = map[accentId] || s.customAccentHex;
+    this._persistDesign(s);
     this.renderActiveTab();
     this.showToast(`Color de acento cambiado a "${accentId}"`, 'info');
   },
 
+  updateDesignColor(key, hexValue, liveOnly = false) {
+    if (!key || !hexValue) return;
+    const s = this.getSavedDesign();
+    s[key] = String(hexValue).trim();
+    const hexEl = document.getElementById(`cfg-hex-${key}`);
+    if (hexEl) hexEl.textContent = s[key].toUpperCase();
+    try { localStorage.setItem('mentix_admin_design', JSON.stringify(s)); } catch (e) {}
+    this.applyDesign(s);
+    if (!liveOnly) {
+      this._persistDesign(s);
+      this.showToast('🎨 Color actualizado en todo Mentix', 'success');
+    }
+  },
+
+  applyColorPalettePreset(presetId) {
+    const presets = {
+      mentix_official: {
+        bgTheme: 'ocean', accentColor: 'cyan',
+        bgPrimary: '#040d1a', cardBg: '#0f172a', navbarBg: '#0b1120',
+        headingColor: '#f8fafc', textPrimary: '#e2e8f0', textSecondary: '#94a3b8',
+        btnPrimary: '#4f46e5', customAccentHex: '#00f5d4'
+      },
+      academic_light: {
+        bgTheme: 'light', accentColor: 'blue',
+        bgPrimary: '#f1f5f9', cardBg: '#ffffff', navbarBg: '#ffffff',
+        headingColor: '#0f172a', textPrimary: '#1e293b', textSecondary: '#64748b',
+        btnPrimary: '#2563eb', customAccentHex: '#3b82f6'
+      },
+      cyber_purple: {
+        bgTheme: 'cyber', accentColor: 'purple',
+        bgPrimary: '#0b061d', cardBg: '#160d33', navbarBg: '#100826',
+        headingColor: '#f5f3ff', textPrimary: '#ddd6fe', textSecondary: '#a78bfa',
+        btnPrimary: '#7c3aed', customAccentHex: '#a855f7'
+      },
+      emerald_tech: {
+        bgTheme: 'matrix', accentColor: 'emerald',
+        bgPrimary: '#021a13', cardBg: '#062c22', navbarBg: '#031f17',
+        headingColor: '#ecfdf5', textPrimary: '#d1fae5', textSecondary: '#6ee7b7',
+        btnPrimary: '#059669', customAccentHex: '#10b981'
+      }
+    };
+    const p = presets[presetId];
+    if (!p) return;
+    const s = { ...this.getSavedDesign(), ...p };
+    this._persistDesign(s);
+    this.renderActiveTab();
+    this.showToast('🎨 Paleta completa aplicada en todo Mentix', 'success');
+  },
+
+  selectFontFamily(fontName) {
+    const s = this.getSavedDesign();
+    s.fontFamily = fontName || 'Outfit';
+    this._persistDesign(s);
+    this.renderActiveTab();
+    this.showToast(`🔤 Tipografía cambiada a "${s.fontFamily}"`, 'info');
+  },
+
+  selectFontSize(sizeId) {
+    const s = this.getSavedDesign();
+    s.fontSize = sizeId || 'normal';
+    this._persistDesign(s);
+    this.renderActiveTab();
+    this.showToast('🔎 Tamaño de letras actualizado', 'info');
+  },
+
+  selectHeadingStyle(styleId) {
+    const s = this.getSavedDesign();
+    s.headingStyle = styleId || 'bold';
+    this._persistDesign(s);
+    this.renderActiveTab();
+    this.showToast('✨ Estilo de títulos actualizado', 'info');
+  },
+
+  setCustomMediaAsset(assetKey, url) {
+    const clean = String(url || '').trim();
+    if (assetKey === 'heroBanner') {
+      this.setRobotBannerPreset(clean);
+      return;
+    }
+    const s = this.getSavedDesign();
+    s[assetKey] = clean;
+    this._persistDesign(s);
+    this.renderActiveTab();
+    this.showToast('🖼️ Imagen actualizada y aplicada globalmente', 'success');
+  },
+
+  handleCustomMediaUpload(event, assetKey) {
+    const file = event && event.target && event.target.files && event.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = async (evt) => {
+      let dataUrl = evt.target.result;
+      if (window.ProjectsView && typeof window.ProjectsView.compressBannerDataUrl === 'function') {
+        const maxW = assetKey === 'brandLogoUrl' ? 512 : 1500;
+        dataUrl = await window.ProjectsView.compressBannerDataUrl(dataUrl, maxW, 0.82);
+      }
+      if (window.ProjectsView && typeof window.ProjectsView.uploadImageToMentixCloud === 'function') {
+        dataUrl = await window.ProjectsView.uploadImageToMentixCloud(dataUrl, 'global_design', assetKey);
+      }
+      this.setCustomMediaAsset(assetKey, dataUrl);
+    };
+    reader.readAsDataURL(file);
+  },
+
+  promptCustomMediaUrl(assetKey, label) {
+    const url = prompt(`Pega el enlace directo (https://...) para ${label || 'esta imagen'}:`, 'https://');
+    if (!url || !/^https?:\/\//i.test(url.trim())) return;
+    this.setCustomMediaAsset(assetKey, url.trim());
+  },
+
   saveDesignSettings() {
-    this.showToast('Configuraciones guardadas y aplicadas globalmente', 'success');
+    const s = this.getSavedDesign();
+    this._persistDesign(s);
+    this.showToast('✅ Toda la configuración visual se guardó y aplicó globalmente', 'success');
   },
 
   resetDesignDefaults() {
-    if (!confirm('¿Deseas restablecer los colores y banners a sus valores predeterminados?')) return;
+    if (!confirm('¿Deseas restablecer TODOS los colores, letras, banners e imágenes a sus valores predeterminados?')) return;
     localStorage.removeItem('mentix_admin_design');
     localStorage.removeItem('mentix_admin_hero_banner');
+    localStorage.removeItem('mentix_default_project_banner');
+    localStorage.removeItem('mentix_home_banner');
+    localStorage.removeItem('mentix_brand_logo_url');
+    const st = document.getElementById('mentix-global-design-override');
+    if (st) st.remove();
+    document.documentElement.style.fontSize = '';
     this.applyGlobalDesignSettings();
     this.renderActiveTab();
     this.showToast('Diseño restablecido a valores por defecto', 'info');
@@ -5502,8 +5898,10 @@ window.AdminView = {
   applyDesign(s) {
     if (!s) return;
     try {
-      // Temas de fondo
-      if (s.bgTheme === 'cyber') {
+      // 1. Temas de fondo o color de fondo personalizado
+      if (s.bgPrimary) {
+        document.body.style.background = s.bgPrimary;
+      } else if (s.bgTheme === 'cyber') {
         document.body.style.background = 'radial-gradient(circle at 15% 15%, rgba(0, 245, 212, 0.12) 0%, transparent 45%), radial-gradient(circle at 85% 85%, rgba(247, 37, 133, 0.12) 0%, transparent 45%), #070913';
       } else if (s.bgTheme === 'matrix') {
         document.body.style.background = 'radial-gradient(circle at 50% 20%, rgba(6, 214, 160, 0.15) 0%, transparent 60%), #040d09';
@@ -5517,7 +5915,7 @@ window.AdminView = {
         document.body.style.background = '';
       }
 
-      // Colores de acento
+      // 2. Colores de acento
       const colors = {
         cyan: '#00f5d4',
         magenta: '#f72585',
@@ -5526,9 +5924,71 @@ window.AdminView = {
         purple: '#a855f7',
         blue: '#3b82f6'
       };
-      if (s.accentColor && colors[s.accentColor]) {
-        document.documentElement.style.setProperty('--neon-cyan', colors[s.accentColor]);
-        document.documentElement.style.setProperty('--border-glow', colors[s.accentColor] + '55');
+      const accentHex = s.customAccentHex || (s.accentColor && colors[s.accentColor]) || '#00f5d4';
+      document.documentElement.style.setProperty('--neon-cyan', accentHex);
+      document.documentElement.style.setProperty('--border-glow', accentHex + '55');
+      if (s.btnPrimary) document.documentElement.style.setProperty('--mentix-btn-primary', s.btnPrimary);
+
+      // 3. Cargar Google Font dinámica si es distinta a Outfit
+      if (s.fontFamily && s.fontFamily !== 'Outfit') {
+        const fid = 'mentix-gfont-' + s.fontFamily.toLowerCase().replace(/\s+/g, '-');
+        if (!document.getElementById(fid)) {
+          const lk = document.createElement('link');
+          lk.id = fid;
+          lk.rel = 'stylesheet';
+          lk.href = `https://fonts.googleapis.com/css2?family=${encodeURIComponent(s.fontFamily)}:wght@400;600;700;800;900&display=swap`;
+          document.head.appendChild(lk);
+        }
+      }
+
+      // 4. Escala global de tamaño de letras
+      const scaleMap = { compact: '14.7px', normal: '', large: '17.2px', xlarge: '18.5px' };
+      document.documentElement.style.fontSize = scaleMap[s.fontSize] || '';
+
+      // 5. Hoja de estilos global dinámica (aplicada a toda la plataforma Mentix)
+      let st = document.getElementById('mentix-global-design-override');
+      if (!st) {
+        st = document.createElement('style');
+        st.id = 'mentix-global-design-override';
+        document.head.appendChild(st);
+      }
+      const cssRules = [];
+      if (s.fontFamily) {
+        cssRules.push(`body, button, input, select, textarea { font-family: '${s.fontFamily}', 'Outfit', sans-serif; }`);
+      }
+      if (s.headingStyle === 'normal') {
+        cssRules.push(`h1, h2, h3, .section-title { font-weight: 600; text-transform: none; }`);
+      } else if (s.headingStyle === 'extrabold') {
+        cssRules.push(`h1, h2, h3, .section-title { font-weight: 900; }`);
+      } else if (s.headingStyle === 'uppercase') {
+        cssRules.push(`h1, h2, h3, .section-title { font-weight: 800; text-transform: uppercase; letter-spacing: 0.04em; }`);
+      }
+      if (s.navbarBg) {
+        cssRules.push(`.navbar, .top-nav, header.main-header, #main-navbar { background: ${s.navbarBg} !important; }`);
+      }
+      if (s.cardBg) {
+        cssRules.push(`.card, .glass-card, .project-card, .challenge-card, .proj-card-modern { background-color: ${s.cardBg}; }`);
+      }
+      if (s.headingColor) {
+        cssRules.push(`body:not(.admin-light-override) h1, body:not(.admin-light-override) h2, body:not(.admin-light-override) h3 { --mentix-heading-custom: ${s.headingColor}; }`);
+        cssRules.push(`.hero-title, .home-title, .project-title, .card-title { color: ${s.headingColor}; }`);
+      }
+      if (s.textPrimary) {
+        cssRules.push(`:root { --text-primary: ${s.textPrimary}; }`);
+      }
+      if (s.textSecondary) {
+        cssRules.push(`:root { --text-secondary: ${s.textSecondary}; }`);
+      }
+      if (s.btnPrimary) {
+        cssRules.push(`.btn-primary, .cta-primary-btn { background: ${s.btnPrimary} !important; border-color: ${s.btnPrimary} !important; }`);
+      }
+      st.textContent = cssRules.join('\n');
+
+      // 6. Logo institucional personalizado en la barra superior si existe
+      if (s.brandLogoUrl) {
+        document.querySelectorAll('.navbar-logo img, .brand-logo img, .mentix-logo-img').forEach(im => {
+          im.src = s.brandLogoUrl;
+        });
       }
     } catch(e) {}
   },

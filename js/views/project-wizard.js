@@ -5863,18 +5863,46 @@ collectCurrentStepInputs() {
         if (up && up.url) fileUrl = up.url;
       }
 
-      // Leer el archivo como Data URL (hasta 3.5 MB) para que persista fielmente y se visualice tal como se sube
+      // Leer el archivo como Data URL (hasta 4.2 MB) para que persista fielmente y se visualice tal como se sube
+      let rawDataUrl = '';
       if (!fileUrl && file.type && file.type.startsWith('image/')) {
         fileUrl = await this.compressImageFile(file, 1440, 0.78);
-      } else if (!fileUrl && file.size <= 3.5 * 1024 * 1024) {
+        rawDataUrl = fileUrl;
+      } else if (!fileUrl && file.size <= 4.2 * 1024 * 1024) {
         fileUrl = await new Promise((resolve) => {
           const reader = new FileReader();
           reader.onload = () => resolve(reader.result || '');
           reader.onerror = () => resolve('');
           reader.readAsDataURL(file);
         });
+        rawDataUrl = fileUrl;
       } else if (!fileUrl) {
         fileUrl = URL.createObjectURL(file);
+      }
+
+      const resId = 'res_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6);
+      const resIndex = this.draft.resources.length;
+
+      // Respaldo inmediato en IndexedDB (MentixImageVault) para que el PDF/documento NUNCA desaparezca
+      if (rawDataUrl && rawDataUrl.startsWith('data:') && window.MentixImageVault && this.draft && this.draft.id) {
+        try {
+          window.MentixImageVault.set(`${this.draft.id}__res_${resIndex}_url`, rawDataUrl);
+          window.MentixImageVault.set(`${this.draft.id}__res_id_${resId}_url`, rawDataUrl);
+          window.MentixImageVault.set(`${this.draft.id}__res_fn_${String(file.name).toLowerCase().slice(0, 60)}_url`, rawDataUrl);
+        } catch (err) {}
+      }
+
+      // Subir a Mentix Cloud (/api/challenges?file=...) para URL permanente liviana en todos los dispositivos
+      if (rawDataUrl && rawDataUrl.startsWith('data:') && window.ProjectsView) {
+        try {
+          if (rawDataUrl.startsWith('data:image/') && typeof window.ProjectsView.uploadImageToMentixCloud === 'function') {
+            const upUrl = await window.ProjectsView.uploadImageToMentixCloud(rawDataUrl, this.draft.id || 'general', `res_${resIndex}`);
+            if (upUrl && /^https?:\/\//i.test(upUrl)) fileUrl = upUrl;
+          } else if (typeof window.ProjectsView.uploadFileToMentixCloud === 'function') {
+            const upUrl = await window.ProjectsView.uploadFileToMentixCloud(rawDataUrl, this.draft.id || 'general', file.name);
+            if (upUrl && /^https?:\/\//i.test(upUrl)) fileUrl = upUrl;
+          }
+        } catch (err) {}
       }
 
       if (/\.(txt|csv|md)$/i.test(file.name) && file.size <= 512 * 1024) {
@@ -5887,7 +5915,7 @@ collectCurrentStepInputs() {
       }
 
       this.draft.resources.push({
-        id: 'res_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
+        id: resId,
         name: file.name.replace(/\.[^/.]+$/, '').replace(/[_-]+/g, ' '),
         fileName: file.name,
         description: `Recurso oficial en formato ${ext} (${this.formatBytes(file.size)}).`,

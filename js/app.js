@@ -2594,6 +2594,10 @@ class AppRouter {
               if (Array.isArray(existing.resources) && (!Array.isArray(c.resources) || existing.resources.length > c.resources.length)) {
                 mergedItem.resources = existing.resources;
               }
+              // Restaurar cualquier PDF/documento/imagen desde la bóveda IndexedDB si la nube trajo url vacía
+              if (window.MentixImageVault && typeof window.MentixImageVault.restoreProjectImages === 'function') {
+                window.MentixImageVault.restoreProjectImages(mergedItem);
+              }
               if (Array.isArray(existing.externalLinks) && (!Array.isArray(c.externalLinks) || existing.externalLinks.length > c.externalLinks.length)) {
                 mergedItem.externalLinks = existing.externalLinks;
               }

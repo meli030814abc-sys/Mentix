@@ -314,6 +314,45 @@ window.ProjectsView = {
     }
   },
 
+  /**
+   * Sube cualquier documento (PDF, Word, Excel, PPT, TXT, CSV, ZIP) como Data URL a Mentix Cloud
+   * (/api/challenges -> data/uploads/<projectId>/...) y devuelve su URL permanente.
+   * Si el archivo excede 4MB o el backend aún no soporta UPLOAD_PROJECT_FILE, retorna el dataUrl intacto
+   * (ya respaldado en IndexedDB MentixImageVault) para que nunca se pierda.
+   */
+  async uploadFileToMentixCloud(dataUrl, projectId = 'general', fileName = 'documento.pdf') {
+    if (!dataUrl || typeof dataUrl !== 'string') return '';
+    const trimmed = dataUrl.trim();
+    if (!trimmed.startsWith('data:')) return trimmed;
+    if (trimmed.length > 5600000) return trimmed;
+    try {
+      const apiBase = (window.appRouter && typeof window.appRouter.getApiBase === 'function') ? window.appRouter.getApiBase() : '';
+      const ctrl = typeof AbortController !== 'undefined' ? new AbortController() : null;
+      const tid = ctrl ? setTimeout(() => ctrl.abort(), 22000) : null;
+      const r = await fetch(`${apiBase}/api/challenges`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type: 'UPLOAD_PROJECT_FILE',
+          projectId: String(projectId || 'general'),
+          fileName: String(fileName || 'documento.pdf'),
+          dataUrl: trimmed
+        }),
+        signal: ctrl ? ctrl.signal : undefined
+      });
+      if (tid) clearTimeout(tid);
+      if (r && r.ok) {
+        const res = await r.json();
+        if (res && res.success && res.url) {
+          return String(res.url).trim();
+        }
+      }
+      return trimmed;
+    } catch (e) {
+      return trimmed;
+    }
+  },
+
   _safeSaveHeroBannerLocal(cleanUrl, ts) {
     // Limpiar claves duplicadas antiguas para no desperdiciar cuota de localStorage (4x ahorro)
     try { localStorage.removeItem('te_reto_projects_hero_banner'); } catch (e) {}
@@ -8686,36 +8725,66 @@ window.ProjectsView = {
     if (!file) return;
     const blobUrl = URL.createObjectURL(file);
     const reader = new FileReader();
-    reader.onload = (e) => {
+    reader.onload = async (e) => {
       const dataUrl = e.target?.result || '';
       const projId = projectId || this.selectedProjectId;
       let selected = this.getMergedProjectRecord(projId);
+      let finalUrl = dataUrl || blobUrl;
+      const ext = file.name.split('.').pop()?.toUpperCase() || 'PDF';
+      const sizeLabel = (file.size / 1024).toFixed(1) + ' KB';
+
+      // 1. Respaldar inmediatamente en MentixImageVault (IndexedDB) para que JAMÁS se borre
+      if (dataUrl && window.MentixImageVault && projId) {
+        try {
+          if (resIdOrName) window.MentixImageVault.set(`${projId}__res_id_${resIdOrName}_url`, dataUrl);
+          window.MentixImageVault.set(`${projId}__res_fn_${String(file.name).toLowerCase().slice(0, 60)}_url`, dataUrl);
+        } catch (err) {}
+      }
+
+      // 2. Intentar subir permanentemente a Mentix Cloud (/api/challenges?file=...)
+      if (dataUrl && typeof this.uploadFileToMentixCloud === 'function') {
+        try {
+          const uploaded = await this.uploadFileToMentixCloud(dataUrl, projId || 'general', file.name);
+          if (uploaded && /^https?:\/\//i.test(uploaded)) {
+            finalUrl = uploaded;
+          }
+        } catch (err) {}
+      }
+
       if (selected && Array.isArray(selected.resources)) {
         const targetClean = String(resIdOrName || '').toLowerCase().replace(/\.[^/.]+$/, '');
-        const res = selected.resources.find(r => 
+        const resIdx = selected.resources.findIndex(r => 
           (r.id && r.id === resIdOrName) || 
           String(r.name || '').toLowerCase().replace(/\.[^/.]+$/, '') === targetClean ||
           String(r.fileName || '').toLowerCase().replace(/\.[^/.]+$/, '') === targetClean
         );
+        const res = resIdx >= 0 ? selected.resources[resIdx] : null;
         if (res) {
-          res.url = dataUrl || blobUrl;
+          res.url = finalUrl;
           res.fileName = file.name;
           res.name = file.name.replace(/\.[^/.]+$/, '');
-          res.format = file.name.split('.').pop()?.toUpperCase() || 'PDF';
+          res.format = ext;
           res.sizeBytes = file.size;
-          res.sizeLabel = (file.size / 1024).toFixed(1) + ' KB';
+          res.sizeLabel = sizeLabel;
+          if (dataUrl && window.MentixImageVault && projId) {
+            try {
+              window.MentixImageVault.set(`${projId}__res_${resIdx}_url`, dataUrl);
+              if (res.id) window.MentixImageVault.set(`${projId}__res_id_${res.id}_url`, dataUrl);
+            } catch (err) {}
+          }
           this.saveMergedProjectRecord(selected);
         }
       }
-      this.showToast('✅ ¡Archivo cargado con éxito!');
+      this.showToast('✅ ¡Archivo guardado permanentemente!');
       this.openResourceViewer({
+        id: resIdOrName,
         name: file.name,
         fileName: file.name,
         title: file.name,
-        url: blobUrl,
-        format: file.name.split('.').pop()?.toUpperCase() || 'PDF',
+        url: finalUrl.startsWith('http') ? finalUrl : blobUrl,
+        format: ext,
         sizeBytes: file.size,
-        sizeLabel: (file.size / 1024).toFixed(1) + ' KB'
+        sizeLabel: sizeLabel
       }, selected);
     };
     reader.readAsDataURL(file);
@@ -8765,6 +8834,22 @@ window.ProjectsView = {
     const name = res.fileName || res.name || res.title || 'Documento Oficial';
     let rawUrl = (res.url || res.fileUrl || res.data || '').trim();
 
+    // Auto-recuperación prioritaria desde MentixImageVault (IndexedDB) si la URL se perdió o es un blob expirado
+    if ((!rawUrl || rawUrl.startsWith('blob:')) && window.MentixImageVault && selected && selected.id) {
+      const pid = selected.id;
+      let vaulted = '';
+      if (res.id) vaulted = window.MentixImageVault.get(`${pid}__res_id_${res.id}_url`) || '';
+      if (!vaulted && res.fileName) vaulted = window.MentixImageVault.get(`${pid}__res_fn_${String(res.fileName).toLowerCase().slice(0, 60)}_url`) || '';
+      if (!vaulted && Array.isArray(selected.resources)) {
+        const idxMatch = selected.resources.findIndex(r => r === res || (r.id && r.id === res.id) || (r.fileName && r.fileName === res.fileName) || (r.name && r.name === res.name));
+        if (idxMatch >= 0) vaulted = window.MentixImageVault.get(`${pid}__res_${idxMatch}_url`) || '';
+      }
+      if (vaulted && vaulted.startsWith('data:')) {
+        rawUrl = vaulted;
+        res.url = vaulted;
+      }
+    }
+
     // Auto-recuperación de recursos conocidos o PDFs de la carpeta assets
     if (!rawUrl || rawUrl.startsWith('blob:')) {
       const KNOWN_DOC_MAP = {
@@ -8813,7 +8898,7 @@ window.ProjectsView = {
 
     let contentHtml = '';
 
-    if (isUrl) {
+    if (isUrl && !isPdf && !isImage) {
       // 1. Enlaces Web, Formularios de Google, Google Docs, Sitios Web (Visualización interactiva en la página)
       let embedUrl = rawUrl;
       if (isGoogleForm) {

@@ -6903,3 +6903,316 @@
   .cfg3d-themes-grid,
   .cfg3d-accents-grid { grid-template-columns: 1fr; }
 }
+
+/* ==========================================================================
+   CONFIGURACIÓN DETALLADA DE TODO MENTIX (COLORES, LETRAS, BANNERS, IMÁGENES) - V174
+   ========================================================================== */
+.cfg3d-palette-presets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.cfg3d-colors-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.85rem;
+}
+
+.cfg3d-color-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding: 0.85rem 0.95rem;
+  border-radius: 18px;
+  background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+  border: 2px solid #e2e8f0;
+  box-shadow: 0 5px 0 #cbd5e1, 0 10px 20px rgba(15, 23, 42, 0.06);
+  cursor: pointer;
+  transition: transform 0.14s ease, box-shadow 0.14s ease, border-color 0.14s ease;
+}
+
+.cfg3d-color-card:hover {
+  transform: translateY(-2px);
+  border-color: #6366f1;
+  box-shadow: 0 7px 0 #a5b4fc, 0 14px 24px rgba(79, 70, 229, 0.15);
+}
+
+.cfg3d-color-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.15rem;
+}
+
+.cfg3d-color-swatch-wrap {
+  position: relative;
+  width: 38px;
+  height: 38px;
+  flex-shrink: 0;
+}
+
+.cfg3d-color-swatch-wrap input[type="color"] {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+  z-index: 2;
+}
+
+.cfg3d-color-orb {
+  display: block;
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  border: 2.5px solid #ffffff;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.25), inset 0 2px 4px rgba(255, 255, 255, 0.45);
+}
+
+.cfg3d-color-hex {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.76rem;
+  font-weight: 800;
+  color: #334155;
+  background: #e2e8f0;
+  padding: 0.2rem 0.5rem;
+  border-radius: 8px;
+}
+
+.cfg3d-color-label {
+  font-size: 0.88rem;
+  font-weight: 900;
+  color: #0f172a;
+}
+
+.cfg3d-color-desc {
+  font-size: 0.74rem;
+  color: #64748b;
+  line-height: 1.3;
+}
+
+/* Tipografía y Tamaños */
+.cfg3d-typo-grid {
+  display: grid;
+  grid-template-columns: 1.35fr 1fr;
+  gap: 1.25rem;
+}
+
+.cfg3d-typo-right {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.cfg3d-mini-label {
+  font-size: 0.78rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #475569;
+  margin-bottom: 0.55rem;
+}
+
+.cfg3d-fonts-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.7rem;
+}
+
+.cfg3d-font-btn {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.2rem;
+  padding: 0.78rem 0.85rem;
+  border-radius: 16px;
+  background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+  border: 2px solid #e2e8f0;
+  box-shadow: 0 5px 0 #cbd5e1;
+  cursor: pointer;
+  text-align: left;
+  transition: transform 0.14s ease, box-shadow 0.14s ease, border-color 0.14s ease;
+}
+
+.cfg3d-font-btn:hover {
+  transform: translateY(-2px);
+  border-color: #6366f1;
+}
+
+.cfg3d-font-btn.is-active {
+  background: linear-gradient(180deg, #eef2ff 0%, #e0e7ff 100%);
+  border-color: #4f46e5;
+  box-shadow: 0 5px 0 #4338ca;
+}
+
+.cfg3d-font-sample {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: #4f46e5;
+  line-height: 1.1;
+}
+
+.cfg3d-font-name {
+  font-size: 0.88rem;
+  font-weight: 900;
+  color: #0f172a;
+}
+
+.cfg3d-font-desc {
+  font-size: 0.72rem;
+  color: #64748b;
+}
+
+.cfg3d-size-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.65rem;
+}
+
+.cfg3d-size-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.15rem;
+  padding: 0.7rem 0.8rem;
+  border-radius: 14px;
+  background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+  border: 2px solid #e2e8f0;
+  box-shadow: 0 4px 0 #cbd5e1;
+  cursor: pointer;
+  transition: transform 0.14s ease, border-color 0.14s ease;
+}
+
+.cfg3d-size-btn:hover {
+  transform: translateY(-2px);
+  border-color: #6366f1;
+}
+
+.cfg3d-size-btn.is-active {
+  background: linear-gradient(180deg, #4f46e5 0%, #4338ca 100%);
+  border-color: #3730a3;
+  box-shadow: 0 4px 0 #312e81;
+}
+
+.cfg3d-size-lbl {
+  font-size: 0.86rem;
+  font-weight: 900;
+  color: #0f172a;
+}
+
+.cfg3d-size-sub {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #64748b;
+}
+
+.cfg3d-size-btn.is-active .cfg3d-size-lbl,
+.cfg3d-size-btn.is-active .cfg3d-size-sub {
+  color: #ffffff;
+}
+
+/* Galería de Banners e Imágenes */
+.cfg3d-media-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.1rem;
+}
+
+.cfg3d-media-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1rem 1.05rem;
+  border-radius: 20px;
+  background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+  border: 2px solid #e2e8f0;
+  box-shadow: 0 6px 0 #cbd5e1, 0 12px 24px rgba(15, 23, 42, 0.06);
+}
+
+.cfg3d-media-head {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.cfg3d-media-head strong {
+  font-size: 0.94rem;
+  font-weight: 900;
+  color: #0f172a;
+}
+
+.cfg3d-media-head span {
+  font-size: 0.77rem;
+  color: #64748b;
+}
+
+.cfg3d-media-preview {
+  height: 138px;
+  min-height: 138px;
+}
+
+.cfg3d-logo-preview-box {
+  height: 138px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+  border: 2px solid #cbd5e1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  overflow: hidden;
+}
+
+.cfg3d-logo-preview-box img {
+  max-height: 96px;
+  max-width: 85%;
+  object-fit: contain;
+}
+
+.cfg3d-logo-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.45rem;
+  color: #cbd5e1;
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+/* Modo Oscuro para las nuevas secciones de Configuración */
+.mentix-admin-layout:not(.theme-light) .cfg3d-color-card,
+.mentix-admin-layout:not(.theme-light) .cfg3d-font-btn,
+.mentix-admin-layout:not(.theme-light) .cfg3d-size-btn:not(.is-active),
+.mentix-admin-layout:not(.theme-light) .cfg3d-media-card {
+  background: linear-gradient(180deg, #111c33 0%, #0b1324 100%);
+  border-color: rgba(148, 163, 184, 0.25);
+  box-shadow: 0 5px 0 #020617;
+}
+.mentix-admin-layout:not(.theme-light) .cfg3d-color-label,
+.mentix-admin-layout:not(.theme-light) .cfg3d-font-name,
+.mentix-admin-layout:not(.theme-light) .cfg3d-size-lbl,
+.mentix-admin-layout:not(.theme-light) .cfg3d-media-head strong { color: #f8fafc; }
+.mentix-admin-layout:not(.theme-light) .cfg3d-color-desc,
+.mentix-admin-layout:not(.theme-light) .cfg3d-font-desc,
+.mentix-admin-layout:not(.theme-light) .cfg3d-size-sub,
+.mentix-admin-layout:not(.theme-light) .cfg3d-mini-label,
+.mentix-admin-layout:not(.theme-light) .cfg3d-media-head span { color: #cbd5e1; }
+.mentix-admin-layout:not(.theme-light) .cfg3d-color-hex {
+  background: #1e293b;
+  color: #e2e8f0;
+}
+
+@media (max-width: 1180px) {
+  .cfg3d-colors-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .cfg3d-typo-grid,
+  .cfg3d-media-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 640px) {
+  .cfg3d-colors-grid,
+  .cfg3d-fonts-grid { grid-template-columns: 1fr; }
+}

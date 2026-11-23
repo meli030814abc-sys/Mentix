@@ -690,8 +690,13 @@ window.sanitizeProjectSlides = sanitizeProjectSlides;
       const id = proj.id;
       if (!id) return;
 
+      const isVaultData = (val) => typeof val === 'string' && (
+        val.startsWith('data:image/') ||
+        val.startsWith('data:application/') ||
+        val.startsWith('data:text/')
+      );
       const saveIfData = (prop, val) => {
-        if (typeof val === 'string' && val.startsWith('data:image/')) {
+        if (isVaultData(val)) {
           this.set(`${id}__${prop}`, val);
         }
       };
@@ -701,6 +706,8 @@ window.sanitizeProjectSlides = sanitizeProjectSlides;
       saveIfData('banner', proj.banner);
       saveIfData('image', proj.image);
       saveIfData('entityLogo', proj.entityLogo);
+      saveIfData('documentUrl', proj.documentUrl);
+      saveIfData('fileUrl', proj.fileUrl);
       if (proj.designConfig) saveIfData('designBanner', proj.designConfig.bannerUrl);
       if (proj.videoConfig) saveIfData('videoThumb', proj.videoConfig.thumbnailUrl);
 
@@ -717,6 +724,8 @@ window.sanitizeProjectSlides = sanitizeProjectSlides;
           if (!r) return;
           saveIfData(`res_${idx}_thumb`, r.thumbnailUrl);
           saveIfData(`res_${idx}_url`, r.url);
+          if (r.id) saveIfData(`res_id_${r.id}_url`, r.url);
+          if (r.fileName) saveIfData(`res_fn_${String(r.fileName).toLowerCase().slice(0, 60)}_url`, r.url);
         });
       }
       if (Array.isArray(proj.externalLinks)) {
@@ -745,16 +754,23 @@ window.sanitizeProjectSlides = sanitizeProjectSlides;
       const id = proj.id;
       if (!id) return proj;
 
+      const isVaultData = (val) => typeof val === 'string' && (
+        val.startsWith('data:image/') ||
+        val.startsWith('data:application/') ||
+        val.startsWith('data:text/')
+      );
       const pickRestored = (prop, currentVal) => {
-        if (typeof currentVal === 'string' && currentVal.startsWith('data:image/')) return currentVal;
+        if (typeof currentVal === 'string' && (isVaultData(currentVal) || /^https?:\/\//i.test(currentVal))) return currentVal;
         const vaulted = this.get(`${id}__${prop}`);
-        return (vaulted && vaulted.startsWith('data:image/')) ? vaulted : (currentVal || '');
+        return isVaultData(vaulted) ? vaulted : (currentVal || '');
       };
 
       proj.mainImage = pickRestored('mainImage', proj.mainImage);
       proj.thumbnailImage = pickRestored('thumbnailImage', proj.thumbnailImage);
       proj.banner = pickRestored('banner', proj.banner) || proj.mainImage;
       proj.image = pickRestored('image', proj.image) || proj.mainImage;
+      if (proj.documentUrl !== undefined) proj.documentUrl = pickRestored('documentUrl', proj.documentUrl);
+      if (proj.fileUrl !== undefined) proj.fileUrl = pickRestored('fileUrl', proj.fileUrl);
       if (proj.entityLogo !== undefined) {
         proj.entityLogo = pickRestored('entityLogo', proj.entityLogo);
       }
@@ -776,7 +792,14 @@ window.sanitizeProjectSlides = sanitizeProjectSlides;
         proj.resources.forEach((r, idx) => {
           if (!r) return;
           r.thumbnailUrl = pickRestored(`res_${idx}_thumb`, r.thumbnailUrl);
-          r.url = pickRestored(`res_${idx}_url`, r.url);
+          let restoredUrl = pickRestored(`res_${idx}_url`, r.url);
+          if ((!restoredUrl || restoredUrl.startsWith('blob:')) && r.id) {
+            restoredUrl = pickRestored(`res_id_${r.id}_url`, '');
+          }
+          if ((!restoredUrl || restoredUrl.startsWith('blob:')) && r.fileName) {
+            restoredUrl = pickRestored(`res_fn_${String(r.fileName).toLowerCase().slice(0, 60)}_url`, '');
+          }
+          if (restoredUrl) r.url = restoredUrl;
         });
       }
       if (Array.isArray(proj.externalLinks)) {
@@ -925,22 +948,48 @@ window.mergeProjectPreservingImages = function(existing, incoming) {
   const exRes = Array.isArray(existing.resources) ? existing.resources : [];
   const inRes = Array.isArray(incoming.resources) ? incoming.resources : [];
   if (exRes.length > 0 || inRes.length > 0) {
-    const targetLen = Math.max(exRes.length, inRes.length);
+    const isGoodResUrl = (u) => typeof u === 'string' && u.trim().length > 0 && !u.trim().startsWith('blob:') && (
+      /^https?:\/\//i.test(u.trim()) || u.trim().startsWith('data:') || u.trim().startsWith('assets/')
+    );
+    const pickResourceUrl = (uA, uB) => {
+      const a = typeof uA === 'string' ? uA.trim() : '';
+      const b = typeof uB === 'string' ? uB.trim() : '';
+      if (/^https?:\/\//i.test(b)) return b;
+      if (/^https?:\/\//i.test(a)) return a;
+      if (b.startsWith('data:')) return b;
+      if (a.startsWith('data:')) return a;
+      if (isGoodResUrl(b)) return b;
+      if (isGoodResUrl(a)) return a;
+      return b || a || '';
+    };
+    const resKey = (r, idx) => (r && r.id) ? `id:${r.id}` : (r && (r.fileName || r.name) ? `nm:${String(r.fileName || r.name).toLowerCase()}` : `idx:${idx}`);
+    const exMap = new Map();
+    exRes.forEach((r, idx) => { if (r) exMap.set(resKey(r, idx), r); });
+    const seenKeys = new Set();
     const resultRes = [];
-    for (let i = 0; i < targetLen; i++) {
-      const rA = exRes[i];
-      const rB = inRes[i];
-      if (rA && rB) {
+    inRes.forEach((rB, idx) => {
+      if (!rB) return;
+      const k = resKey(rB, idx);
+      const rA = exMap.get(k) || exRes[idx];
+      seenKeys.add(k);
+      if (rA) {
         resultRes.push({
           ...rA,
           ...rB,
           thumbnailUrl: pickImage(rA.thumbnailUrl, rB.thumbnailUrl),
-          url: (rB.url && rB.url.startsWith('data:')) ? rB.url : (rA.url && rA.url.startsWith('data:') ? rA.url : (rB.url || rA.url || ''))
+          url: pickResourceUrl(rA.url, rB.url)
         });
       } else {
-        resultRes.push(rB || rA);
+        resultRes.push(rB);
       }
-    }
+    });
+    exRes.forEach((rA, idx) => {
+      if (!rA) return;
+      const k = resKey(rA, idx);
+      if (!seenKeys.has(k)) {
+        resultRes.push(rA);
+      }
+    });
     merged.resources = resultRes;
   }
 

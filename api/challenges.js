@@ -255,6 +255,67 @@ export default async function handler(req, res) {
     return res.status(404).json({ error: 'Imagen no encontrada' });
   }
 
+  // 0c. GET ?file=data/uploads/... : Servir PDF o documento guardado permanentemente en el repositorio/BD (rama mentix-data)
+  if (req.method === 'GET' && req.query && req.query.file) {
+    const rawPath = String(req.query.file || '').trim().replace(/^\/+/, '');
+    if (!rawPath.startsWith('data/uploads/') || rawPath.includes('..') || !/^data\/uploads\/[a-zA-Z0-9_\-\/\.]+$/.test(rawPath)) {
+      return res.status(400).json({ error: 'Ruta de archivo inválida' });
+    }
+    const ext = rawPath.split('.').pop().toLowerCase();
+    const mimeMap = {
+      pdf: 'application/pdf',
+      doc: 'application/msword',
+      docx: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      xls: 'application/vnd.ms-excel',
+      xlsx: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      ppt: 'application/vnd.ms-powerpoint',
+      pptx: 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+      txt: 'text/plain; charset=utf-8',
+      csv: 'text/csv; charset=utf-8',
+      md: 'text/markdown; charset=utf-8',
+      zip: 'application/zip',
+      jpg: 'image/jpeg', jpeg: 'image/jpeg', png: 'image/png', webp: 'image/webp', gif: 'image/gif'
+    };
+    const contentType = mimeMap[ext] || 'application/octet-stream';
+    const fileName = rawPath.split('/').pop() || `documento.${ext || 'pdf'}`;
+
+    if (inMemoryImages.has(rawPath)) {
+      res.setHeader('Content-Type', contentType);
+      res.setHeader('Content-Disposition', `inline; filename="${fileName}"`);
+      res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+      return res.status(200).send(inMemoryImages.get(rawPath));
+    }
+
+    try {
+      const r = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/contents/${rawPath}?ref=${DATA_BRANCH}`, {
+        headers: ghHeaders(),
+        cache: 'no-store'
+      });
+      if (r.ok) {
+        const d = await r.json();
+        let buf = null;
+        if (d.content) {
+          buf = Buffer.from(d.content.replace(/\s+/g, ''), 'base64');
+        } else if (d.download_url) {
+          const rawRes = await fetch(d.download_url, { headers: ghHeaders(), cache: 'no-store' });
+          if (rawRes.ok) buf = Buffer.from(await rawRes.arrayBuffer());
+        }
+        if (buf && buf.length > 0) {
+          if (inMemoryImages.size > 40) {
+            const firstKey = inMemoryImages.keys().next().value;
+            inMemoryImages.delete(firstKey);
+          }
+          inMemoryImages.set(rawPath, buf);
+          res.setHeader('Content-Type', contentType);
+          res.setHeader('Content-Disposition', `inline; filename="${fileName}"`);
+          res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+          return res.status(200).send(buf);
+        }
+      }
+    } catch (e) {}
+    return res.status(404).json({ error: 'Archivo no encontrado' });
+  }
+
   // 1. GET: Consultar banner global, hubs, participantes de códigos, códigos o retos
   if (req.method === 'GET' && req.query && (req.query.heroBanner || req.query.banner)) {
     const { data } = await readGitHubJsonFile(HERO_BANNER_PATH, inMemoryHeroBanner);
@@ -430,6 +491,81 @@ export default async function handler(req, res) {
           }
           inMemoryImages.set(filePath, buf);
           const publicUrl = `https://mentixs.vercel.app/api/challenges?img=${encodeURIComponent(filePath)}`;
+          return res.status(200).json({ success: true, persisted: true, path: filePath, url: publicUrl });
+        }
+        return res.status(200).json({ success: false, persisted: false });
+      }
+
+      // A0b. Subida y almacenamiento permanente de documentos (PDF, Word, Excel, PPT, TXT, CSV, ZIP) en la BD (data/uploads/<projectId>/...)
+      if (body && body.type === 'UPLOAD_PROJECT_FILE' && body.dataUrl) {
+        const dataUrl = String(body.dataUrl || '').trim();
+        const m = dataUrl.match(/^data:([a-zA-Z0-9.+\-\/]+);base64,([A-Za-z0-9+/=\s]+)$/i);
+        if (!m) {
+          return res.status(400).json({ error: 'Formato de archivo no válido (se requiere data:...;base64,...)' });
+        }
+        const mime = m[1].toLowerCase();
+        const b64Clean = m[2].replace(/\s+/g, '');
+        const rawFileName = String(body.fileName || 'documento.pdf').trim();
+        const extFromName = (rawFileName.split('.').pop() || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+        const mimeToExt = {
+          'application/pdf': 'pdf',
+          'application/msword': 'doc',
+          'application/vnd.openxmlformats-officedocument.wordprocessingml.document': 'docx',
+          'application/vnd.ms-excel': 'xls',
+          'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': 'xlsx',
+          'application/vnd.ms-powerpoint': 'ppt',
+          'application/vnd.openxmlformats-officedocument.presentationml.presentation': 'pptx',
+          'text/plain': 'txt',
+          'text/csv': 'csv',
+          'text/markdown': 'md',
+          'application/zip': 'zip',
+          'application/x-zip-compressed': 'zip',
+          'image/jpeg': 'jpg',
+          'image/png': 'png',
+          'image/webp': 'webp',
+          'image/gif': 'gif'
+        };
+        const allowedExts = new Set(['pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'txt', 'csv', 'md', 'zip', 'jpg', 'jpeg', 'png', 'webp', 'gif']);
+        let ext = mimeToExt[mime] || extFromName || 'pdf';
+        if (ext === 'jpeg') ext = 'jpg';
+        if (!allowedExts.has(ext)) {
+          return res.status(400).json({ error: 'Extensión de documento no permitida' });
+        }
+        const safeProj = String(body.projectId || 'general').replace(/[^a-zA-Z0-9_\-]/g, '_').slice(0, 64) || 'general';
+        const baseName = rawFileName.replace(/\.[^/.]+$/, '').replace(/[^a-zA-Z0-9_\-]/g, '_').slice(0, 40) || 'doc';
+        const filePath = `data/uploads/${safeProj}/${Date.now()}_${Math.random().toString(36).slice(2, 6)}_${baseName}.${ext}`;
+
+        const buf = Buffer.from(b64Clean, 'base64');
+        if (buf.length > 4200000) {
+          return res.status(413).json({ error: 'Archivo demasiado grande para subida directa (máx 4.2 MB)' });
+        }
+
+        let persisted = false;
+        if (GITHUB_TOKEN) {
+          for (let attempt = 0; attempt < 2; attempt++) {
+            try {
+              const ghPut = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/contents/${filePath}`, {
+                method: 'PUT',
+                headers: { ...ghHeaders(), 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  message: `chore(docs): subir documento ${safeProj}/${baseName}.${ext} [skip ci]`,
+                  content: b64Clean,
+                  branch: DATA_BRANCH
+                })
+              });
+              if (ghPut.ok) { persisted = true; break; }
+            } catch (e) {}
+            await new Promise(r => setTimeout(r, 400));
+          }
+        }
+
+        if (persisted) {
+          if (inMemoryImages.size > 40) {
+            const firstKey = inMemoryImages.keys().next().value;
+            inMemoryImages.delete(firstKey);
+          }
+          inMemoryImages.set(filePath, buf);
+          const publicUrl = `https://mentixs.vercel.app/api/challenges?file=${encodeURIComponent(filePath)}`;
           return res.status(200).json({ success: true, persisted: true, path: filePath, url: publicUrl });
         }
         return res.status(200).json({ success: false, persisted: false });
