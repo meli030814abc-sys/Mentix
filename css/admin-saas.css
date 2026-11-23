@@ -6608,3 +6608,298 @@
   color: #f8fafc !important;
   border-color: rgba(148, 163, 184, 0.3) !important;
 }
+
+/* ==========================================================================
+   MÓDULO CONFIGURACIÓN — 100% 3D CON BOTONES VISUALES DE TEMA Y ACENTO (V173)
+   ========================================================================== */
+.cfg3d-shell {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  font-family: 'Outfit', 'Inter', system-ui, sans-serif;
+}
+
+.cfg3d-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.25rem;
+  align-items: start;
+}
+
+.cfg3d-card-wide {
+  grid-column: 1 / -1;
+}
+
+.cfg3d-right-col {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.cfg3d-banner-preview {
+  width: 100%;
+  max-height: 225px;
+  aspect-ratio: 2090 / 422;
+  border-radius: 18px;
+  overflow: hidden;
+  border: 2px solid #bfdbfe;
+  box-shadow: 0 6px 0 #93c5fd, 0 14px 28px rgba(15, 23, 42, 0.14);
+  background: #071739;
+  margin-bottom: 1rem;
+}
+
+.cfg3d-banner-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.cfg3d-banner-controls,
+.cfg3d-db-actions,
+.cfg3d-lp-footer {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.cfg3d-lp-footer {
+  justify-content: flex-end;
+  padding-top: 0.25rem;
+}
+
+/* Grid 2x3 de Botones 3D de Temas */
+.cfg3d-themes-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.85rem;
+}
+
+.cfg3d-theme-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.35rem;
+  padding: 0.65rem;
+  border-radius: 18px;
+  border: 2px solid #e2e8f0;
+  background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+  text-align: left;
+  cursor: pointer;
+  box-shadow: 0 5px 0 #cbd5e1, 0 10px 18px rgba(15, 23, 42, 0.06), inset 0 1.5px 0 #ffffff;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+}
+
+.cfg3d-theme-btn:hover {
+  transform: translateY(-3px);
+  border-color: #93c5fd;
+  box-shadow: 0 7px 0 #93c5fd, 0 14px 24px rgba(59, 130, 246, 0.16);
+}
+
+.cfg3d-theme-btn:active {
+  transform: translateY(2.5px);
+  box-shadow: 0 2px 0 #cbd5e1;
+}
+
+.cfg3d-theme-btn.is-active {
+  border-color: #6366f1;
+  background: linear-gradient(180deg, #ffffff 0%, #eef2ff 100%);
+  box-shadow: 0 6px 0 #6366f1, 0 16px 28px rgba(99, 102, 241, 0.24), inset 0 1.5px 0 #ffffff;
+}
+
+.cfg3d-theme-swatch {
+  position: relative;
+  width: 100%;
+  height: 54px;
+  border-radius: 12px;
+  border: 1.5px solid;
+  display: block;
+  box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.28);
+}
+
+.cfg3d-active-tag {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  background: #22c55e;
+  color: #ffffff;
+  font-size: 0.65rem;
+  font-weight: 900;
+  padding: 0.16rem 0.5rem;
+  border-radius: 999px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+}
+
+.cfg3d-theme-name {
+  font-size: 0.88rem;
+  font-weight: 900;
+  color: #0f172a;
+}
+
+.cfg3d-theme-desc {
+  font-size: 0.74rem;
+  font-weight: 600;
+  color: #64748b;
+}
+
+/* Grid de Botones 3D de Colores de Acento */
+.cfg3d-accents-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.cfg3d-accent-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.62rem 0.85rem;
+  border-radius: 999px;
+  border: 2px solid #e2e8f0;
+  background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+  cursor: pointer;
+  box-shadow: 0 4px 0 #cbd5e1, inset 0 1.5px 0 #ffffff;
+  transition: transform 0.14s ease, box-shadow 0.14s ease, border-color 0.14s ease;
+}
+
+.cfg3d-accent-btn:hover {
+  transform: translateY(-2px);
+  border-color: var(--ac-hex);
+  box-shadow: 0 6px 0 var(--ac-dark);
+}
+
+.cfg3d-accent-btn:active {
+  transform: translateY(2px);
+  box-shadow: 0 1.5px 0 var(--ac-dark);
+}
+
+.cfg3d-accent-btn.is-active {
+  border-color: var(--ac-hex);
+  background: linear-gradient(180deg, #ffffff 0%, #f0f9ff 100%);
+  box-shadow: 0 5px 0 var(--ac-dark), 0 10px 20px rgba(15, 23, 42, 0.14);
+}
+
+.cfg3d-accent-orb {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  border: 1.5px solid rgba(255, 255, 255, 0.85);
+}
+
+.cfg3d-accent-label {
+  font-size: 0.82rem;
+  font-weight: 800;
+  color: #0f172a;
+  flex: 1;
+  text-align: left;
+}
+
+.cfg3d-accent-chk {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #22c55e;
+  color: #ffffff;
+  font-size: 0.72rem;
+  font-weight: 900;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Secciones del Módulo Landing */
+.cfg3d-lp-sections {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+}
+
+.cfg3d-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.9rem;
+}
+
+.cfg3d-form-grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.9rem;
+}
+
+.cfg3d-form-grid-4 {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.9rem;
+}
+
+.cfg3d-full-row {
+  grid-column: 1 / -1;
+}
+
+.modal3d-field textarea {
+  width: 100% !important;
+  padding: 0.65rem 0.9rem !important;
+  border-radius: 12px !important;
+  border: 1.5px solid #cbd5e1 !important;
+  background: #f8fafc !important;
+  color: #0f172a !important;
+  font-size: 0.88rem !important;
+  font-weight: 600 !important;
+  box-sizing: border-box !important;
+  resize: vertical;
+  font-family: inherit;
+}
+
+.cfg3d-subbox {
+  border-radius: 16px;
+  padding: 0.95rem 1.05rem;
+  border: 1.5px solid #e2e8f0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.cfg3d-subbox.box-amber { background: #fffbeb; border-color: #fcd34d; }
+.cfg3d-subbox.box-cyan { background: #ecfeff; border-color: #67e8f9; }
+.cfg3d-subbox.box-purple { background: #faf5ff; border-color: #d8b4fe; }
+.cfg3d-subbox.box-green { background: #f0fdf4; border-color: #86efac; }
+
+.cfg3d-subbox-title {
+  font-size: 0.88rem;
+  font-weight: 900;
+  color: #0f172a;
+}
+
+/* Modo Oscuro limpio para Configuración 3D */
+.mentix-admin-layout:not(.theme-light) .cfg3d-theme-btn,
+.mentix-admin-layout:not(.theme-light) .cfg3d-accent-btn {
+  background: linear-gradient(180deg, #111c33 0%, #0b1324 100%);
+  border-color: rgba(148, 163, 184, 0.25);
+  box-shadow: 0 5px 0 #020617;
+}
+.mentix-admin-layout:not(.theme-light) .cfg3d-theme-name,
+.mentix-admin-layout:not(.theme-light) .cfg3d-accent-label,
+.mentix-admin-layout:not(.theme-light) .cfg3d-subbox-title { color: #f8fafc; }
+.mentix-admin-layout:not(.theme-light) .cfg3d-theme-desc { color: #cbd5e1; }
+.mentix-admin-layout:not(.theme-light) .cfg3d-subbox {
+  background: #111c33;
+  border-color: rgba(148, 163, 184, 0.25);
+}
+.mentix-admin-layout:not(.theme-light) .modal3d-field textarea {
+  background: #1e293b !important;
+  color: #f8fafc !important;
+  border-color: rgba(148, 163, 184, 0.3) !important;
+}
+
+@media (max-width: 1080px) {
+  .cfg3d-grid,
+  .cfg3d-form-grid,
+  .cfg3d-form-grid-3,
+  .cfg3d-form-grid-4 { grid-template-columns: 1fr; }
+}
+@media (max-width: 640px) {
+  .cfg3d-themes-grid,
+  .cfg3d-accents-grid { grid-template-columns: 1fr; }
+}

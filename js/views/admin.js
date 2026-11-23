@@ -2715,282 +2715,340 @@ window.AdminView = {
     const heroBanner = localStorage.getItem('mentix_admin_hero_banner') || localStorage.getItem('mentix_projects_hero_banner') || 'assets/projects_ui/robot_hero_banner.png';
     const s = this.getSavedDesign();
     const lpCfg = this.getLandingConfig();
+    const F3D = 'https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets';
+    const cIco = (path, alt = '', size = 20) =>
+      `<img src="${F3D}/${path}" alt="${alt}" width="${size}" height="${size}" class="rv3d-ico" loading="lazy" decoding="async" />`;
+
+    const themeList = [
+      { id: 'cyber', name: 'Cyber Neon', desc: 'Espacio oscuro con neón', sw: 'linear-gradient(135deg, #0b1120 0%, #1e1b4b 60%, #00f5d4 100%)', border: '#38bdf8' },
+      { id: 'matrix', name: 'Matrix Emerald', desc: 'Verde cibernético', sw: 'linear-gradient(135deg, #022c22 0%, #065f46 65%, #34d399 100%)', border: '#34d399' },
+      { id: 'ocean', name: 'Deep Ocean', desc: 'Azul náutico moderno', sw: 'linear-gradient(135deg, #082f49 0%, #0369a1 65%, #38bdf8 100%)', border: '#60a5fa' },
+      { id: 'sunset', name: 'Neon Sunset', desc: 'Púrpura y dorado', sw: 'linear-gradient(135deg, #2e1065 0%, #7c3aed 55%, #fbbf24 100%)', border: '#c084fc' },
+      { id: 'amoled', name: 'Amoled Black', desc: 'Negro puro 100%', sw: 'linear-gradient(135deg, #000000 0%, #111827 75%, #475569 100%)', border: '#64748b' },
+      { id: 'light', name: 'Académico Claro', desc: 'Blanco y gris suave', sw: 'linear-gradient(135deg, #ffffff 0%, #eff6ff 60%, #c7d2fe 100%)', border: '#818cf8' }
+    ];
+
+    const accentList = [
+      { id: 'cyan', hex: '#00f5d4', dark: '#0d9488', label: 'Cyan Eléctrico' },
+      { id: 'magenta', hex: '#f72585', dark: '#be185d', label: 'Magenta Neón' },
+      { id: 'gold', hex: '#ffb703', dark: '#d97706', label: 'Oro Solar' },
+      { id: 'emerald', hex: '#10b981', dark: '#047857', label: 'Esmeralda' },
+      { id: 'purple', hex: '#a855f7', dark: '#6d28d9', label: 'Violeta Digital' },
+      { id: 'blue', hex: '#3b82f6', dark: '#1d4ed8', label: 'Azul Real' }
+    ];
 
     return `
-      <!-- Breadcrumbs -->
-      <div class="admin-breadcrumbs">
-        <span>Inicio</span>
-        <span class="sep">/</span>
-        <span class="active">Ajustes del Diseño & Personalización</span>
-      </div>
-
-      <!-- Header -->
-      <div class="admin-section-header">
-        <div>
-          <h2>Ajustes del Diseño & Personalización Visual (Exclusivo Administrador)</h2>
-          <p>Personaliza el banner del robot de proyectos, temas cromáticos, estilos visuales y colores de acento neón de Mentix.</p>
-        </div>
-        <div class="admin-header-actions">
-          <button class="btn btn-outline" onclick="window.AdminView.resetDesignDefaults()">
-            <span>🔄</span> Restablecer Todo
-          </button>
-          <button class="btn btn-cyan" onclick="window.AdminView.saveDesignSettings()">
-            <span>💾</span> Guardar y Aplicar Cambios
-          </button>
-        </div>
-      </div>
-
-      <!-- Cuadrícula de Configuración -->
-      <div class="admin-settings-grid">
-        
-        <!-- Tarjeta 1: Banner Hero del Robot para Proyectos -->
-        <div class="admin-card settings-card">
-          <div class="admin-card-header">
-            <div>
-              <h3>🤖 Banner del Robot de Proyectos (Modo Administrador)</h3>
-              <p>Esta imagen se proyecta como fondo superior en la sección pública de proyectos.</p>
+      <div class="cfg3d-shell">
+        <!-- Hero 3D de Configuración -->
+        <div class="dash3d-hero">
+          <div class="dash3d-hero-left">
+            <div class="roles-v2-breadcrumb">
+              ${cIco('House/3D/house_3d.png', 'Inicio', 18)}
+              <span>Inicio</span>
+              <span class="sep">/</span>
+              <span class="current">Ajustes del Diseño &amp; Personalización</span>
             </div>
-            <span class="badge-tag tag-cyan">Exclusivo Admin</span>
-          </div>
-          
-          <div class="admin-banner-preview-box">
-            <img src="${heroBanner}" id="admin-banner-preview-img" alt="Banner de Proyectos">
-          </div>
-
-          <div style="margin-top: 1rem; display: flex; flex-direction: column; gap: 0.75rem;">
-            <label style="font-size: 0.85rem; font-weight: 700; color: var(--text-secondary);">Seleccionar Imagen Predefinida del Robot:</label>
-            <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
-              <button class="btn btn-sm btn-outline" onclick="window.AdminView.setRobotBannerPreset('assets/projects_ui/robot_hero_banner.png')">
-                🤖 Robot Cyber Educador
-              </button>
-              <button class="btn btn-sm btn-outline" onclick="window.AdminView.setRobotBannerPreset('assets/student_create_bg.jpg')">
-                🌌 Espacio Futurista
-              </button>
-            </div>
-
-            <label style="font-size: 0.85rem; font-weight: 700; color: var(--text-secondary); margin-top: 0.5rem;">O Subir Imagen Personalizada (Archivo):</label>
-            <input type="file" id="admin-banner-file-input" accept="image/*" class="admin-file-input" onchange="window.AdminView.handleCustomBannerUpload(event)">
-          </div>
-        </div>
-
-        <!-- Tarjeta 2: Temas de Fondo de la Plataforma -->
-        <div class="admin-card settings-card">
-          <div class="admin-card-header">
-            <div>
-              <h3>🎨 Temas de Fondo & Estética Global</h3>
-              <p>Cambia el ambiente cromático de toda la plataforma educativa.</p>
-            </div>
+            <h2 class="roles-v2-title">
+              Ajustes del <span class="roles-v2-title-accent">Diseño &amp; Personalización</span>
+            </h2>
+            <p class="roles-v2-subtitle">
+              Personaliza el banner del robot de proyectos, temas cromáticos, colores de acento neón y la landing page pública de Mentix.
+            </p>
+            <div class="roles-v2-accent-bar"></div>
           </div>
 
-          <div class="theme-options-grid">
-            ${[
-              { id: 'cyber', name: 'Cyber Neon', desc: 'Espacio oscuro con neón' },
-              { id: 'matrix', name: 'Matrix Emerald', desc: 'Verde cibernético' },
-              { id: 'ocean', name: 'Deep Ocean', desc: 'Azul náutico moderno' },
-              { id: 'sunset', name: 'Neon Sunset', desc: 'Púrpura y dorado' },
-              { id: 'amoled', name: 'Amoled Black', desc: 'Negro puro 100%' },
-              { id: 'light', name: 'Académico Claro', desc: 'Blanco y gris suave' }
-            ].map(t => `
-              <div class="theme-option-card ${s.bgTheme === t.id ? 'active' : ''}" onclick="window.AdminView.selectTheme('${t.id}')">
-                <div class="theme-option-title">${t.name}</div>
-                <div class="theme-option-sub">${t.desc}</div>
-              </div>
-            `).join('')}
-          </div>
-        </div>
-
-        <!-- Tarjeta 3: Color de Acento Neón -->
-        <div class="admin-card settings-card">
-          <div class="admin-card-header">
-            <div>
-              <h3>⚡ Color de Acento Neón</h3>
-              <p>Color principal de botones, bordes luminosos e indicadores.</p>
-            </div>
-          </div>
-
-          <div class="accent-colors-row">
-            ${[
-              { id: 'cyan', hex: '#00f5d4', label: 'Cyan Eléctrico' },
-              { id: 'magenta', hex: '#f72585', label: 'Magenta Neón' },
-              { id: 'gold', hex: '#ffb703', label: 'Oro Solar' },
-              { id: 'emerald', hex: '#06d6a0', label: 'Esmeralda' },
-              { id: 'purple', hex: '#a855f7', label: 'Violeta Digital' },
-              { id: 'blue', hex: '#3b82f6', label: 'Azul Real' }
-            ].map(a => `
-              <button class="accent-btn ${s.accentColor === a.id ? 'active' : ''}" style="background: ${a.hex};" title="${a.label}" onclick="window.AdminView.selectAccent('${a.id}')"></button>
-            `).join('')}
-          </div>
-        </div>
-
-        <!-- Tarjeta 4: Respaldo y Restauración de Base de Datos -->
-        <div class="admin-card settings-card">
-          <div class="admin-card-header">
-            <div>
-              <h3>💾 Seguridad & Base de Datos</h3>
-              <p>Exporta o importa copias de seguridad de usuarios y proyectos.</p>
-            </div>
-          </div>
-
-          <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
-            <button class="btn btn-outline" onclick="window.AdminView.exportFullDatabase()">
-              <span>💾</span> Exportar Base Completa JSON
+          <div class="dash3d-hero-actions">
+            <button type="button" class="proj3d-gloss-btn gloss-white" onclick="window.AdminView.resetDesignDefaults()">
+              ${cIco('Counterclockwise%20arrows%20button/3D/counterclockwise_arrows_button_3d.png', '', 18)}
+              <span>Restablecer Todo</span>
             </button>
-            <button class="btn btn-danger" onclick="window.AdminView.resetFactoryData()">
-              <span>⚠️</span> Restaurar Valores de Fábrica
+            <button type="button" class="proj3d-gloss-btn gloss-indigo" onclick="window.AdminView.saveDesignSettings()">
+              ${cIco('Check%20mark%20button/3D/check_mark_button_3d.png', '', 18)}
+              <span>Guardar y Aplicar Cambios</span>
             </button>
           </div>
         </div>
 
-        <!-- Tarjeta 5: Parametrización & Configuración de la Landing Page de Proyectos -->
-        <div class="admin-card settings-card" style="grid-column: 1 / -1; border: 2px solid rgba(0, 245, 212, 0.45); box-shadow: 0 10px 35px rgba(0, 0, 0, 0.35), 0 0 25px rgba(0, 245, 212, 0.15);">
-          <div class="admin-card-header" style="border-bottom: 1px solid rgba(255, 255, 255, 0.1); padding-bottom: 1.25rem;">
-            <div>
-              <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.35rem;">
-                <span style="font-size: 1.6rem;">🚀</span>
-                <h3 style="font-size: 1.35rem; font-weight: 900; color: #ffffff; margin: 0;">Parametrización & Personalización de la Landing Page</h3>
+        <!-- Cuadrícula 3D de Configuración (2 columnas arriba) -->
+        <div class="cfg3d-grid">
+          <!-- Tarjeta 1: Banner Hero del Robot para Proyectos -->
+          <div class="roles-v2-panel cfg3d-card-wide">
+            <div class="roles-v2-panel-header">
+              <div class="roles-v2-panel-title-group">
+                <div class="roles-v2-panel-ico ico-blue">${cIco('Robot/3D/robot_3d.png', 'Robot', 28)}</div>
+                <div>
+                  <h3>Banner del Robot de Proyectos (Modo Administrador)</h3>
+                  <p>Esta imagen se proyecta como fondo superior en la sección pública de proyectos.</p>
+                </div>
               </div>
-              <p style="color: #94a3b8; margin: 0; font-size: 0.92rem;">Controla cada uno de los textos, apartados, métricas base, modales traslúcidos y botones de la landing page pública.</p>
+              <span class="roles-v2-total-badge">${cIco('Shield/3D/shield_3d.png', '', 15)} Exclusivo Admin</span>
             </div>
-            <span class="badge-tag tag-cyan" style="font-size: 0.85rem; padding: 0.4rem 0.9rem;">⭐ Módulo Landing</span>
+
+            <div class="cfg3d-banner-preview">
+              <img src="${heroBanner}" id="admin-banner-preview-img" alt="Banner de Proyectos">
+            </div>
+
+            <div class="cfg3d-banner-controls">
+              <button type="button" class="proj3d-gloss-btn gloss-cyan" onclick="window.AdminView.setRobotBannerPreset('assets/projects_ui/robot_hero_banner.png')">
+                ${cIco('Robot/3D/robot_3d.png', '', 18)}
+                <span>Robot Cyber Educador</span>
+              </button>
+              <button type="button" class="proj3d-gloss-btn gloss-indigo" onclick="window.AdminView.setRobotBannerPreset('assets/student_create_bg.jpg')">
+                ${cIco('Rocket/3D/rocket_3d.png', '', 18)}
+                <span>Espacio Futurista</span>
+              </button>
+              <label for="admin-banner-file-input" class="proj3d-gloss-btn gloss-green" style="margin:0;">
+                ${cIco('Framed%20picture/3D/framed_picture_3d.png', '', 18)}
+                <span>Subir Imagen Personalizada</span>
+              </label>
+              <input type="file" id="admin-banner-file-input" accept="image/*" style="display:none;" onchange="window.AdminView.handleCustomBannerUpload(event)">
+            </div>
           </div>
 
-          <div style="display: flex; flex-direction: column; gap: 1.75rem; padding-top: 1.5rem;">
-            
-            <!-- Grupo 1: Hero & Encabezado -->
-            <div style="background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 16px; padding: 1.35rem;">
-              <h4 style="color: #00f5d4; font-size: 1.05rem; font-weight: 800; margin: 0 0 1rem; display: flex; align-items: center; gap: 0.5rem;">
-                <span>🌟</span> 1. Encabezado & Hero Principal
-              </h4>
-              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem;">
+          <!-- Tarjeta 2: Temas de Fondo (BOTONES 3D CON VISTA PREVIA DE COLOR) -->
+          <div class="roles-v2-panel">
+            <div class="roles-v2-panel-header">
+              <div class="roles-v2-panel-title-group">
+                <div class="roles-v2-panel-ico ico-purple">${cIco('Artist%20palette/3D/artist_palette_3d.png', 'Temas', 28)}</div>
                 <div>
-                  <label style="display: block; font-size: 0.82rem; font-weight: 700; color: #cbd5e1; margin-bottom: 0.35rem;">Nombre Institucional / Marca:</label>
-                  <input type="text" id="admin-lp-brand-title" value="${this.escapeHtml(lpCfg.brandTitle)}" style="width: 100%; padding: 0.65rem 0.95rem; background: rgba(15, 23, 42, 0.8); border: 1.5px solid rgba(255, 255, 255, 0.15); border-radius: 10px; color: #ffffff; font-size: 0.92rem;">
-                </div>
-                <div>
-                  <label style="display: block; font-size: 0.82rem; font-weight: 700; color: #cbd5e1; margin-bottom: 0.35rem;">Titular Destacado del Hero:</label>
-                  <input type="text" id="admin-lp-hero-title" value="${this.escapeHtml(lpCfg.heroTitle)}" style="width: 100%; padding: 0.65rem 0.95rem; background: rgba(15, 23, 42, 0.8); border: 1.5px solid rgba(255, 255, 255, 0.15); border-radius: 10px; color: #ffffff; font-size: 0.92rem;">
-                </div>
-                <div style="grid-column: 1 / -1;">
-                  <label style="display: block; font-size: 0.82rem; font-weight: 700; color: #cbd5e1; margin-bottom: 0.35rem;">Subtítulo / Mensaje Central:</label>
-                  <textarea id="admin-lp-hero-sub" rows="2" style="width: 100%; padding: 0.65rem 0.95rem; background: rgba(15, 23, 42, 0.8); border: 1.5px solid rgba(255, 255, 255, 0.15); border-radius: 10px; color: #ffffff; font-size: 0.92rem; resize: vertical;">${this.escapeHtml(lpCfg.heroSub)}</textarea>
-                </div>
-                <div>
-                  <label style="display: block; font-size: 0.82rem; font-weight: 700; color: #cbd5e1; margin-bottom: 0.35rem;">Texto Botón Principal:</label>
-                  <input type="text" id="admin-lp-btn-explore" value="${this.escapeHtml(lpCfg.btnExplore)}" style="width: 100%; padding: 0.65rem 0.95rem; background: rgba(15, 23, 42, 0.8); border: 1.5px solid rgba(255, 255, 255, 0.15); border-radius: 10px; color: #ffffff; font-size: 0.92rem;">
-                </div>
-                <div>
-                  <label style="display: block; font-size: 0.82rem; font-weight: 700; color: #cbd5e1; margin-bottom: 0.35rem;">Texto Botón Recursos:</label>
-                  <input type="text" id="admin-lp-btn-resources" value="${this.escapeHtml(lpCfg.btnResources)}" style="width: 100%; padding: 0.65rem 0.95rem; background: rgba(15, 23, 42, 0.8); border: 1.5px solid rgba(255, 255, 255, 0.15); border-radius: 10px; color: #ffffff; font-size: 0.92rem;">
+                  <h3>Temas de Fondo &amp; Estética Global</h3>
+                  <p>Elige con un clic el ambiente cromático de toda la plataforma.</p>
                 </div>
               </div>
             </div>
 
-            <!-- Grupo 2: Métricas & KPIs Base -->
-            <div style="background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 16px; padding: 1.35rem;">
-              <h4 style="color: #00f5d4; font-size: 1.05rem; font-weight: 800; margin: 0 0 1rem; display: flex; align-items: center; gap: 0.5rem;">
-                <span>📊</span> 2. Métricas y Avance General
-              </h4>
-              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
-                <div>
-                  <label style="display: block; font-size: 0.82rem; font-weight: 700; color: #cbd5e1; margin-bottom: 0.35rem;">% Avance Predeterminado:</label>
-                  <input type="number" min="0" max="100" id="admin-lp-kpi-progress" value="${lpCfg.kpiProgress}" style="width: 100%; padding: 0.65rem 0.95rem; background: rgba(15, 23, 42, 0.8); border: 1.5px solid rgba(255, 255, 255, 0.15); border-radius: 10px; color: #ffffff; font-size: 0.92rem;">
+            <div class="cfg3d-themes-grid">
+              ${themeList.map(t => {
+                const isAct = s.bgTheme === t.id;
+                return `
+                  <button type="button" class="cfg3d-theme-btn ${isAct ? 'is-active' : ''}" onclick="window.AdminView.selectTheme('${t.id}')">
+                    <span class="cfg3d-theme-swatch" style="background:${t.sw}; border-color:${t.border};">
+                      ${isAct ? `<span class="cfg3d-active-tag">✓ ACTIVO</span>` : ''}
+                    </span>
+                    <span class="cfg3d-theme-name">${t.name}</span>
+                    <span class="cfg3d-theme-desc">${t.desc}</span>
+                  </button>
+                `;
+              }).join('')}
+            </div>
+          </div>
+
+          <!-- Tarjeta 3: Color de Acento Neón (BOTONES 3D GLOSSY DE COLOR) + Seguridad -->
+          <div class="cfg3d-right-col">
+            <div class="roles-v2-panel">
+              <div class="roles-v2-panel-header">
+                <div class="roles-v2-panel-title-group">
+                  <div class="roles-v2-panel-ico ico-blue">${cIco('High%20voltage/3D/high_voltage_3d.png', 'Acento', 28)}</div>
+                  <div>
+                    <h3>Color de Acento Neón</h3>
+                    <p>Color principal de botones, bordes luminosos e indicadores.</p>
+                  </div>
                 </div>
-                <div>
-                  <label style="display: block; font-size: 0.82rem; font-weight: 700; color: #cbd5e1; margin-bottom: 0.35rem;">Total Actividades:</label>
-                  <input type="number" min="0" id="admin-lp-kpi-activities" value="${lpCfg.kpiActivities}" style="width: 100%; padding: 0.65rem 0.95rem; background: rgba(15, 23, 42, 0.8); border: 1.5px solid rgba(255, 255, 255, 0.15); border-radius: 10px; color: #ffffff; font-size: 0.92rem;">
-                </div>
-                <div>
-                  <label style="display: block; font-size: 0.82rem; font-weight: 700; color: #cbd5e1; margin-bottom: 0.35rem;">Total Entregables:</label>
-                  <input type="number" min="0" id="admin-lp-kpi-deliverables" value="${lpCfg.kpiDeliverables}" style="width: 100%; padding: 0.65rem 0.95rem; background: rgba(15, 23, 42, 0.8); border: 1.5px solid rgba(255, 255, 255, 0.15); border-radius: 10px; color: #ffffff; font-size: 0.92rem;">
-                </div>
-                <div>
-                  <label style="display: block; font-size: 0.82rem; font-weight: 700; color: #cbd5e1; margin-bottom: 0.35rem;">Participantes Base:</label>
-                  <input type="number" min="0" id="admin-lp-kpi-participants" value="${lpCfg.kpiParticipants}" style="width: 100%; padding: 0.65rem 0.95rem; background: rgba(15, 23, 42, 0.8); border: 1.5px solid rgba(255, 255, 255, 0.15); border-radius: 10px; color: #ffffff; font-size: 0.92rem;">
-                </div>
+              </div>
+
+              <div class="cfg3d-accents-grid">
+                ${accentList.map(a => {
+                  const isAct = s.accentColor === a.id;
+                  return `
+                    <button type="button" class="cfg3d-accent-btn ${isAct ? 'is-active' : ''}" style="--ac-hex:${a.hex}; --ac-dark:${a.dark};" title="${a.label}" onclick="window.AdminView.selectAccent('${a.id}')">
+                      <span class="cfg3d-accent-orb" style="background: radial-gradient(circle at 30% 30%, #ffffff 0%, ${a.hex} 48%, ${a.dark} 100%); box-shadow: 0 4px 12px ${a.hex}88;"></span>
+                      <span class="cfg3d-accent-label">${a.label}</span>
+                      ${isAct ? '<span class="cfg3d-accent-chk">✓</span>' : ''}
+                    </button>
+                  `;
+                }).join('')}
               </div>
             </div>
 
-            <!-- Grupo 3: Apartados "¿Por qué este proyecto?" & Contenido de Modales Traslúcidos -->
-            <div style="background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 16px; padding: 1.35rem;">
-              <h4 style="color: #00f5d4; font-size: 1.05rem; font-weight: 800; margin: 0 0 1rem; display: flex; align-items: center; gap: 0.5rem;">
-                <span>🎯</span> 3. Apartados de Análisis & Modales Traslúcidos
-              </h4>
-              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.25rem;">
-                <!-- 1. Problema -->
-                <div style="background: rgba(249, 115, 22, 0.08); border: 1px solid rgba(249, 115, 22, 0.3); border-radius: 12px; padding: 1.15rem;">
-                  <div style="color: #fb923c; font-weight: 800; font-size: 0.95rem; margin-bottom: 0.6rem;">⚠️ Problema u Oportunidad</div>
-                  <label style="display: block; font-size: 0.78rem; font-weight: 700; color: #cbd5e1; margin-bottom: 0.25rem;">Resumen en Tarjeta:</label>
-                  <input type="text" id="admin-lp-problem-desc" value="${this.escapeHtml(lpCfg.problemDesc)}" style="width: 100%; padding: 0.55rem 0.85rem; background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 8px; color: #ffffff; font-size: 0.88rem; margin-bottom: 0.6rem;">
-                  <label style="display: block; font-size: 0.78rem; font-weight: 700; color: #cbd5e1; margin-bottom: 0.25rem;">Detalle Extenso en Modal Traslúcido:</label>
-                  <textarea id="admin-lp-problem-modal" rows="3" style="width: 100%; padding: 0.55rem 0.85rem; background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 8px; color: #ffffff; font-size: 0.88rem; resize: vertical;">${this.escapeHtml(lpCfg.problemModal)}</textarea>
-                </div>
-
-                <!-- 2. Objetivo -->
-                <div style="background: rgba(0, 245, 212, 0.08); border: 1px solid rgba(0, 245, 212, 0.3); border-radius: 12px; padding: 1.15rem;">
-                  <div style="color: #00f5d4; font-weight: 800; font-size: 0.95rem; margin-bottom: 0.6rem;">🎯 Objetivo Principal</div>
-                  <label style="display: block; font-size: 0.78rem; font-weight: 700; color: #cbd5e1; margin-bottom: 0.25rem;">Resumen en Tarjeta:</label>
-                  <input type="text" id="admin-lp-goal-desc" value="${this.escapeHtml(lpCfg.goalDesc)}" style="width: 100%; padding: 0.55rem 0.85rem; background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 8px; color: #ffffff; font-size: 0.88rem; margin-bottom: 0.6rem;">
-                  <label style="display: block; font-size: 0.78rem; font-weight: 700; color: #cbd5e1; margin-bottom: 0.25rem;">Detalle Extenso en Modal Traslúcido:</label>
-                  <textarea id="admin-lp-goal-modal" rows="3" style="width: 100%; padding: 0.55rem 0.85rem; background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 8px; color: #ffffff; font-size: 0.88rem; resize: vertical;">${this.escapeHtml(lpCfg.goalModal)}</textarea>
-                </div>
-
-                <!-- 3. Metodología -->
-                <div style="background: rgba(168, 85, 247, 0.08); border: 1px solid rgba(168, 85, 247, 0.3); border-radius: 12px; padding: 1.15rem;">
-                  <div style="color: #c084fc; font-weight: 800; font-size: 0.95rem; margin-bottom: 0.6rem;">⚙️ Metodología de Trabajo</div>
-                  <label style="display: block; font-size: 0.78rem; font-weight: 700; color: #cbd5e1; margin-bottom: 0.25rem;">Resumen en Tarjeta:</label>
-                  <input type="text" id="admin-lp-method-desc" value="${this.escapeHtml(lpCfg.methodDesc)}" style="width: 100%; padding: 0.55rem 0.85rem; background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 8px; color: #ffffff; font-size: 0.88rem; margin-bottom: 0.6rem;">
-                  <label style="display: block; font-size: 0.78rem; font-weight: 700; color: #cbd5e1; margin-bottom: 0.25rem;">Detalle Extenso en Modal Traslúcido:</label>
-                  <textarea id="admin-lp-method-modal" rows="3" style="width: 100%; padding: 0.55rem 0.85rem; background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 8px; color: #ffffff; font-size: 0.88rem; resize: vertical;">${this.escapeHtml(lpCfg.methodModal)}</textarea>
-                </div>
-
-                <!-- 4. Impacto -->
-                <div style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 12px; padding: 1.15rem;">
-                  <div style="color: #34d399; font-weight: 800; font-size: 0.95rem; margin-bottom: 0.6rem;">🚀 Impacto Esperado</div>
-                  <label style="display: block; font-size: 0.78rem; font-weight: 700; color: #cbd5e1; margin-bottom: 0.25rem;">Resumen en Tarjeta:</label>
-                  <input type="text" id="admin-lp-impact-desc" value="${this.escapeHtml(lpCfg.impactDesc)}" style="width: 100%; padding: 0.55rem 0.85rem; background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 8px; color: #ffffff; font-size: 0.88rem; margin-bottom: 0.6rem;">
-                  <label style="display: block; font-size: 0.78rem; font-weight: 700; color: #cbd5e1; margin-bottom: 0.25rem;">Detalle Extenso en Modal Traslúcido:</label>
-                  <textarea id="admin-lp-impact-modal" rows="3" style="width: 100%; padding: 0.55rem 0.85rem; background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 8px; color: #ffffff; font-size: 0.88rem; resize: vertical;">${this.escapeHtml(lpCfg.impactModal)}</textarea>
+            <!-- Tarjeta 4: Seguridad & Base de Datos -->
+            <div class="roles-v2-panel">
+              <div class="roles-v2-panel-header">
+                <div class="roles-v2-panel-title-group">
+                  <div class="roles-v2-panel-ico ico-purple">${cIco('Shield/3D/shield_3d.png', 'Seguridad', 28)}</div>
+                  <div>
+                    <h3>Seguridad &amp; Base de Datos</h3>
+                    <p>Exporta respaldos o restaura los valores iniciales.</p>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <!-- Grupo 4: Banner Inferior CTA -->
-            <div style="background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 16px; padding: 1.35rem;">
-              <h4 style="color: #00f5d4; font-size: 1.05rem; font-weight: 800; margin: 0 0 1rem; display: flex; align-items: center; gap: 0.5rem;">
-                <span>📢</span> 4. Llamado a la Acción Inferior (CTA)
-              </h4>
-              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1rem;">
-                <div>
-                  <label style="display: block; font-size: 0.82rem; font-weight: 700; color: #cbd5e1; margin-bottom: 0.35rem;">Titular del Banner:</label>
-                  <input type="text" id="admin-lp-cta-title" value="${this.escapeHtml(lpCfg.ctaTitle)}" style="width: 100%; padding: 0.65rem 0.95rem; background: rgba(15, 23, 42, 0.8); border: 1.5px solid rgba(255, 255, 255, 0.15); border-radius: 10px; color: #ffffff; font-size: 0.92rem;">
-                </div>
-                <div>
-                  <label style="display: block; font-size: 0.82rem; font-weight: 700; color: #cbd5e1; margin-bottom: 0.35rem;">Subtítulo de Acompañamiento:</label>
-                  <input type="text" id="admin-lp-cta-sub" value="${this.escapeHtml(lpCfg.ctaSub)}" style="width: 100%; padding: 0.65rem 0.95rem; background: rgba(15, 23, 42, 0.8); border: 1.5px solid rgba(255, 255, 255, 0.15); border-radius: 10px; color: #ffffff; font-size: 0.92rem;">
-                </div>
-                <div>
-                  <label style="display: block; font-size: 0.82rem; font-weight: 700; color: #cbd5e1; margin-bottom: 0.35rem;">Texto del Botón:</label>
-                  <input type="text" id="admin-lp-cta-btn" value="${this.escapeHtml(lpCfg.ctaBtn)}" style="width: 100%; padding: 0.65rem 0.95rem; background: rgba(15, 23, 42, 0.8); border: 1.5px solid rgba(255, 255, 255, 0.15); border-radius: 10px; color: #ffffff; font-size: 0.92rem;">
-                </div>
+              <div class="cfg3d-db-actions">
+                <button type="button" class="proj3d-gloss-btn gloss-cyan" onclick="window.AdminView.exportFullDatabase()">
+                  ${cIco('Inbox%20tray/3D/inbox_tray_3d.png', '', 18)}
+                  <span>Exportar Base Completa JSON</span>
+                </button>
+                <button type="button" class="proj3d-gloss-btn gloss-pink" onclick="window.AdminView.resetFactoryData()">
+                  ${cIco('Wastebasket/3D/wastebasket_3d.png', '', 18)}
+                  <span>Restaurar Valores de Fábrica</span>
+                </button>
               </div>
             </div>
+          </div>
 
-            <!-- Botones de Acción del Módulo Landing -->
-            <div style="display: flex; gap: 1rem; flex-wrap: wrap; justify-content: flex-end; padding-top: 0.5rem;">
-              <button type="button" class="btn btn-outline" onclick="window.AdminView.resetLandingPageSettings()">
-                <span>🔄</span> Restablecer Parámetros Originales
-              </button>
-              <button type="button" class="btn btn-outline" onclick="window.open('proyecto-landing.html', '_blank')">
-                <span>👁️</span> Previsualizar Landing en Vivo
-              </button>
-              <button type="button" class="btn btn-cyan" onclick="window.AdminView.saveLandingPageSettings()" style="font-weight: 900; box-shadow: 0 4px 18px rgba(0, 245, 212, 0.45);">
-                <span>💾</span> Guardar Parámetros de Landing Page
-              </button>
+          <!-- Tarjeta 5: Parametrización & Configuración de la Landing Page de Proyectos -->
+          <div class="roles-v2-panel cfg3d-card-wide">
+            <div class="roles-v2-panel-header">
+              <div class="roles-v2-panel-title-group">
+                <div class="roles-v2-panel-ico ico-blue">${cIco('Rocket/3D/rocket_3d.png', 'Landing', 28)}</div>
+                <div>
+                  <h3>Parametrización &amp; Personalización de la Landing Page</h3>
+                  <p>Controla los textos, apartados, métricas base, modales traslúcidos y botones de la landing page pública.</p>
+                </div>
+              </div>
+              <span class="roles-v2-total-badge">${cIco('Star/3D/star_3d.png', '', 15)} Módulo Landing</span>
             </div>
 
+            <div class="cfg3d-lp-sections">
+              <!-- Grupo 1: Hero & Encabezado -->
+              <div class="modal3d-section">
+                <div class="modal3d-sec-title">
+                  <span class="modal3d-step-badge">1</span>
+                  <span>Encabezado &amp; Hero Principal</span>
+                </div>
+                <div class="cfg3d-form-grid">
+                  <div class="modal3d-field">
+                    <label for="admin-lp-brand-title">Nombre Institucional / Marca:</label>
+                    <input type="text" id="admin-lp-brand-title" value="${this.escapeHtml(lpCfg.brandTitle)}">
+                  </div>
+                  <div class="modal3d-field">
+                    <label for="admin-lp-hero-title">Titular Destacado del Hero:</label>
+                    <input type="text" id="admin-lp-hero-title" value="${this.escapeHtml(lpCfg.heroTitle)}">
+                  </div>
+                  <div class="modal3d-field cfg3d-full-row">
+                    <label for="admin-lp-hero-sub">Subtítulo / Mensaje Central:</label>
+                    <textarea id="admin-lp-hero-sub" rows="2">${this.escapeHtml(lpCfg.heroSub)}</textarea>
+                  </div>
+                  <div class="modal3d-field">
+                    <label for="admin-lp-btn-explore">Texto Botón Principal:</label>
+                    <input type="text" id="admin-lp-btn-explore" value="${this.escapeHtml(lpCfg.btnExplore)}">
+                  </div>
+                  <div class="modal3d-field">
+                    <label for="admin-lp-btn-resources">Texto Botón Recursos:</label>
+                    <input type="text" id="admin-lp-btn-resources" value="${this.escapeHtml(lpCfg.btnResources)}">
+                  </div>
+                </div>
+              </div>
+
+              <!-- Grupo 2: Métricas & KPIs Base -->
+              <div class="modal3d-section">
+                <div class="modal3d-sec-title">
+                  <span class="modal3d-step-badge">2</span>
+                  <span>Métricas y Avance General</span>
+                </div>
+                <div class="cfg3d-form-grid-4">
+                  <div class="modal3d-field">
+                    <label for="admin-lp-kpi-progress">% Avance Predeterminado:</label>
+                    <input type="number" min="0" max="100" id="admin-lp-kpi-progress" value="${lpCfg.kpiProgress}">
+                  </div>
+                  <div class="modal3d-field">
+                    <label for="admin-lp-kpi-activities">Total Actividades:</label>
+                    <input type="number" min="0" id="admin-lp-kpi-activities" value="${lpCfg.kpiActivities}">
+                  </div>
+                  <div class="modal3d-field">
+                    <label for="admin-lp-kpi-deliverables">Total Entregables:</label>
+                    <input type="number" min="0" id="admin-lp-kpi-deliverables" value="${lpCfg.kpiDeliverables}">
+                  </div>
+                  <div class="modal3d-field">
+                    <label for="admin-lp-kpi-participants">Participantes Base:</label>
+                    <input type="number" min="0" id="admin-lp-kpi-participants" value="${lpCfg.kpiParticipants}">
+                  </div>
+                </div>
+              </div>
+
+              <!-- Grupo 3: Apartados de Análisis -->
+              <div class="modal3d-section">
+                <div class="modal3d-sec-title">
+                  <span class="modal3d-step-badge">3</span>
+                  <span>Apartados de Análisis &amp; Modales Traslúcidos</span>
+                </div>
+                <div class="cfg3d-form-grid">
+                  <div class="cfg3d-subbox box-amber">
+                    <div class="cfg3d-subbox-title">⚠️ Problema u Oportunidad</div>
+                    <div class="modal3d-field">
+                      <label>Resumen en Tarjeta:</label>
+                      <input type="text" id="admin-lp-problem-desc" value="${this.escapeHtml(lpCfg.problemDesc)}">
+                    </div>
+                    <div class="modal3d-field">
+                      <label>Detalle Extenso en Modal Traslúcido:</label>
+                      <textarea id="admin-lp-problem-modal" rows="3">${this.escapeHtml(lpCfg.problemModal)}</textarea>
+                    </div>
+                  </div>
+                  <div class="cfg3d-subbox box-cyan">
+                    <div class="cfg3d-subbox-title">🎯 Objetivo Principal</div>
+                    <div class="modal3d-field">
+                      <label>Resumen en Tarjeta:</label>
+                      <input type="text" id="admin-lp-goal-desc" value="${this.escapeHtml(lpCfg.goalDesc)}">
+                    </div>
+                    <div class="modal3d-field">
+                      <label>Detalle Extenso en Modal Traslúcido:</label>
+                      <textarea id="admin-lp-goal-modal" rows="3">${this.escapeHtml(lpCfg.goalModal)}</textarea>
+                    </div>
+                  </div>
+                  <div class="cfg3d-subbox box-purple">
+                    <div class="cfg3d-subbox-title">⚙️ Metodología de Trabajo</div>
+                    <div class="modal3d-field">
+                      <label>Resumen en Tarjeta:</label>
+                      <input type="text" id="admin-lp-method-desc" value="${this.escapeHtml(lpCfg.methodDesc)}">
+                    </div>
+                    <div class="modal3d-field">
+                      <label>Detalle Extenso en Modal Traslúcido:</label>
+                      <textarea id="admin-lp-method-modal" rows="3">${this.escapeHtml(lpCfg.methodModal)}</textarea>
+                    </div>
+                  </div>
+                  <div class="cfg3d-subbox box-green">
+                    <div class="cfg3d-subbox-title">🚀 Impacto Esperado</div>
+                    <div class="modal3d-field">
+                      <label>Resumen en Tarjeta:</label>
+                      <input type="text" id="admin-lp-impact-desc" value="${this.escapeHtml(lpCfg.impactDesc)}">
+                    </div>
+                    <div class="modal3d-field">
+                      <label>Detalle Extenso en Modal Traslúcido:</label>
+                      <textarea id="admin-lp-impact-modal" rows="3">${this.escapeHtml(lpCfg.impactModal)}</textarea>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Grupo 4: Banner Inferior CTA -->
+              <div class="modal3d-section">
+                <div class="modal3d-sec-title">
+                  <span class="modal3d-step-badge">4</span>
+                  <span>Llamado a la Acción Inferior (CTA)</span>
+                </div>
+                <div class="cfg3d-form-grid-3">
+                  <div class="modal3d-field">
+                    <label for="admin-lp-cta-title">Titular del Banner:</label>
+                    <input type="text" id="admin-lp-cta-title" value="${this.escapeHtml(lpCfg.ctaTitle)}">
+                  </div>
+                  <div class="modal3d-field">
+                    <label for="admin-lp-cta-sub">Subtítulo de Acompañamiento:</label>
+                    <input type="text" id="admin-lp-cta-sub" value="${this.escapeHtml(lpCfg.ctaSub)}">
+                  </div>
+                  <div class="modal3d-field">
+                    <label for="admin-lp-cta-btn">Texto del Botón:</label>
+                    <input type="text" id="admin-lp-cta-btn" value="${this.escapeHtml(lpCfg.ctaBtn)}">
+                  </div>
+                </div>
+              </div>
+
+              <!-- Botones de Acción 3D del Módulo Landing -->
+              <div class="cfg3d-lp-footer">
+                <button type="button" class="proj3d-gloss-btn gloss-white" onclick="window.AdminView.resetLandingPageSettings()">
+                  ${cIco('Counterclockwise%20arrows%20button/3D/counterclockwise_arrows_button_3d.png', '', 18)}
+                  <span>Restablecer Parámetros Originales</span>
+                </button>
+                <button type="button" class="proj3d-gloss-btn gloss-cyan" onclick="window.open('proyecto-landing.html', '_blank')">
+                  ${cIco('Eye/3D/eye_3d.png', '', 18)}
+                  <span>Previsualizar Landing en Vivo</span>
+                </button>
+                <button type="button" class="proj3d-gloss-btn gloss-green" onclick="window.AdminView.saveLandingPageSettings()">
+                  ${cIco('Check%20mark%20button/3D/check_mark_button_3d.png', '', 18)}
+                  <span>Guardar Parámetros de Landing Page</span>
+                </button>
+              </div>
+            </div>
           </div>
         </div>
-
       </div>
     `;
   },
