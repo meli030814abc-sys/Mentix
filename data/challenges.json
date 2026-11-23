@@ -17,7 +17,7 @@
     "image": "https://images.unsplash.com/photo-1519501025264-65ba15a82390?w=1600&q=80",
     "banner": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
     "createdAt": "2026-11-23T02:28:37.794Z",
-    "updatedAt": "2026-11-23T02:53:38.376Z",
+    "updatedAt": "2026-11-23T02:53:40.177Z",
     "govdata": {
       "id": "govdata_code_mentilona_583194",
       "title": "Nuevo Proyecto",
@@ -105,7 +105,7 @@
         "authorsRole": "Líder del Proyecto"
       },
       "createdAt": "2026-11-23T02:28:37.794Z",
-      "updatedAt": "2026-11-23T02:53:38.253Z",
+      "updatedAt": "2026-11-23T02:53:40.148Z",
       "progress": 50,
       "calculatedProgress": 50
     },
