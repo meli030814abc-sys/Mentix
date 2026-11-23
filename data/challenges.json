@@ -131,8 +131,8 @@
         "layout": "full",
         "isFullImage": true,
         "isImported": true,
-        "media": "",
-        "imageUrl": "",
+        "media": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fgovdata_code_hhgfj_804263%2F1795409571958_6rva_slide_3.jpg",
+        "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fgovdata_code_hhgfj_804263%2F1795409571958_6rva_slide_3.jpg",
         "notes": "",
         "bgColor": "#ffffff",
         "themeId": "cosmos",
@@ -423,7 +423,7 @@
         "collaborators": "V"
       },
       "createdAt": "2026-11-23T04:35:12.300Z",
-      "updatedAt": "2026-11-23T04:52:52.007Z",
+      "updatedAt": "2026-11-23T04:52:57.079Z",
       "progress": 73,
       "calculatedProgress": 73
     },
@@ -437,7 +437,7 @@
     "authorAvatar": "🦊",
     "authorRole": "Líder del Proyecto",
     "createdAt": "2026-11-23T04:35:12.300Z",
-    "updatedAt": "2026-11-23T04:52:52.055Z",
+    "updatedAt": "2026-11-23T04:52:57.099Z",
     "hub": {
       "joinRequests": [],
       "members": [
