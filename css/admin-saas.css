@@ -4636,3 +4636,250 @@
     display: none;
   }
 }
+
+/* ==========================================================================
+   COMUNIDAD / ROLES & PERMISOS — ACABADO 3D TÁCTIL Y ELEVACIÓN REAL (V163)
+   ========================================================================== */
+@keyframes rv2Float3D {
+  0%, 100% { transform: translateY(0px) rotateY(-4deg) rotateX(2deg); }
+  50% { transform: translateY(-7px) rotateY(4deg) rotateX(-2deg); }
+}
+
+.roles-v2-shell,
+.roles-v2-cards-grid,
+.roles-v2-bottom-grid {
+  perspective: 1400px;
+}
+
+/* Hero 3D con bisel y profundidad */
+.roles-v2-hero {
+  border-radius: 24px;
+  border: 2px solid #dbe4ff;
+  box-shadow:
+    0 7px 0 #c7d2fe,
+    0 20px 42px rgba(79, 70, 229, 0.16),
+    inset 0 2px 0 rgba(255, 255, 255, 0.96);
+  transform-style: preserve-3d;
+}
+
+.roles-v2-hero-visual {
+  animation: rv2Float3D 4.8s ease-in-out infinite;
+  filter: drop-shadow(0 16px 22px rgba(79, 70, 229, 0.26));
+}
+
+/* Botón principal 3D presionable */
+.roles-v2-btn-create {
+  border: 1.5px solid rgba(255, 255, 255, 0.35);
+  box-shadow:
+    0 6px 0 #3730a3,
+    0 14px 28px rgba(79, 70, 229, 0.38),
+    inset 0 2px 1px rgba(255, 255, 255, 0.45);
+  transition: transform 0.14s ease, box-shadow 0.14s ease;
+}
+
+.roles-v2-btn-create:hover {
+  transform: translateY(-3px);
+  box-shadow:
+    0 8px 0 #3730a3,
+    0 18px 34px rgba(79, 70, 229, 0.48),
+    inset 0 2px 1px rgba(255, 255, 255, 0.5);
+}
+
+.roles-v2-btn-create:active {
+  transform: translateY(4px);
+  box-shadow:
+    0 2px 0 #3730a3,
+    0 6px 14px rgba(79, 70, 229, 0.32),
+    inset 0 1px 0 rgba(255, 255, 255, 0.35);
+}
+
+/* Tarjetas de Roles 3D con base extruida por color e inclinación al hover */
+.roles-v2-role-card {
+  border-radius: 22px;
+  border-width: 2px;
+  transform-style: preserve-3d;
+  transition: transform 0.22s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.22s ease;
+}
+
+.roles-v2-role-card.card-purple {
+  background: linear-gradient(180deg, #ffffff 0%, #faf5ff 100%);
+  border-color: #d8b4fe;
+  box-shadow:
+    0 7px 0 #c084fc,
+    0 18px 34px rgba(139, 92, 246, 0.18),
+    inset 0 2px 0 #ffffff;
+}
+
+.roles-v2-role-card.card-blue {
+  background: linear-gradient(180deg, #ffffff 0%, #f0f9ff 100%);
+  border-color: #93c5fd;
+  box-shadow:
+    0 7px 0 #60a5fa,
+    0 18px 34px rgba(59, 130, 246, 0.18),
+    inset 0 2px 0 #ffffff;
+}
+
+.roles-v2-role-card.card-green {
+  background: linear-gradient(180deg, #ffffff 0%, #f0fdf4 100%);
+  border-color: #86efac;
+  box-shadow:
+    0 7px 0 #4ade80,
+    0 18px 34px rgba(16, 185, 129, 0.18),
+    inset 0 2px 0 #ffffff;
+}
+
+.roles-v2-role-card:hover {
+  transform: translateY(-6px) rotateX(3deg) rotateY(-1.5deg);
+}
+
+.roles-v2-role-card.card-purple:hover {
+  box-shadow:
+    0 11px 0 #a855f7,
+    0 26px 46px rgba(139, 92, 246, 0.28),
+    inset 0 2px 0 #ffffff;
+}
+
+.roles-v2-role-card.card-blue:hover {
+  box-shadow:
+    0 11px 0 #3b82f6,
+    0 26px 46px rgba(59, 130, 246, 0.28),
+    inset 0 2px 0 #ffffff;
+}
+
+.roles-v2-role-card.card-green:hover {
+  box-shadow:
+    0 11px 0 #22c55e,
+    0 26px 46px rgba(16, 185, 129, 0.28),
+    inset 0 2px 0 #ffffff;
+}
+
+.roles-v2-card-icon-box {
+  border-radius: 16px;
+  border: 1.5px solid rgba(255, 255, 255, 0.85);
+  box-shadow:
+    0 5px 0 rgba(15, 23, 42, 0.08),
+    0 10px 18px rgba(15, 23, 42, 0.12),
+    inset 0 2px 2px rgba(255, 255, 255, 0.9);
+  transition: transform 0.22s ease;
+}
+
+.roles-v2-role-card:hover .roles-v2-card-icon-box {
+  transform: translateZ(14px) scale(1.07) rotate(-3deg);
+}
+
+.roles-v2-count-pill {
+  box-shadow: 0 3px 0 rgba(15, 23, 42, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.85);
+}
+
+.roles-v2-caps .chk-box {
+  box-shadow: 0 2.5px 0 #15803d, inset 0 1px 0 rgba(255, 255, 255, 0.45);
+}
+
+/* Paneles Inferiores 3D (Matriz de Permisos y Usuarios de la Plataforma) */
+.roles-v2-panel {
+  border-radius: 22px;
+  border: 2px solid #e2e8f0;
+  background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+  box-shadow:
+    0 8px 0 #cbd5e1,
+    0 20px 40px rgba(15, 23, 42, 0.10),
+    inset 0 2px 0 #ffffff;
+}
+
+.roles-v2-panel-ico {
+  box-shadow:
+    0 4px 0 rgba(15, 23, 42, 0.10),
+    inset 0 2px 1px rgba(255, 255, 255, 0.85);
+}
+
+.roles-v2-sec-badge,
+.roles-v2-total-badge {
+  box-shadow: 0 3px 0 rgba(15, 23, 42, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.85);
+}
+
+/* Píldoras de estado y filtros 3D presionables */
+.rv2-pill {
+  box-shadow: 0 2.5px 0 rgba(15, 23, 42, 0.09), inset 0 1px 0 rgba(255, 255, 255, 0.75);
+}
+
+.cap-ico {
+  box-shadow: 0 3px 0 rgba(15, 23, 42, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.85);
+}
+
+.roles-v2-fpill {
+  box-shadow: 0 3px 0 #cbd5e1, inset 0 1px 0 #ffffff;
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+
+.roles-v2-fpill:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 0 #a5b4fc, inset 0 1px 0 #ffffff;
+}
+
+.roles-v2-fpill:active {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 #cbd5e1;
+}
+
+.roles-v2-fpill.active {
+  box-shadow: 0 4px 0 #4338ca, 0 8px 18px rgba(99, 102, 241, 0.34), inset 0 1.5px 0 rgba(255, 255, 255, 0.35);
+}
+
+.roles-v2-fpill.active:active {
+  transform: translateY(2px);
+  box-shadow: 0 1.5px 0 #4338ca;
+}
+
+/* Avatar 3D, selector de rol 3D y botones de acción 3D */
+.roles-v2-avatar {
+  background: linear-gradient(145deg, #ffffff 0%, #e2e8f0 100%);
+  box-shadow: 0 4px 0 #cbd5e1, 0 6px 12px rgba(15, 23, 42, 0.10), inset 0 2px 1px #ffffff;
+}
+
+.roles-v2-role-select {
+  box-shadow: 0 3px 0 #cbd5e1, inset 0 1px 0 #ffffff !important;
+}
+
+.roles-v2-act-btn {
+  box-shadow: 0 3px 0 #cbd5e1, inset 0 1px 0 rgba(255, 255, 255, 0.85);
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+
+.roles-v2-act-btn:hover {
+  transform: translateY(-2px) scale(1.06);
+  box-shadow: 0 5px 0 #94a3b8;
+}
+
+.roles-v2-act-btn:active {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 #cbd5e1;
+}
+
+.roles-v2-act-btn.act-del {
+  box-shadow: 0 3px 0 #fda4af, inset 0 1px 0 rgba(255, 255, 255, 0.85);
+}
+
+.roles-v2-act-btn.act-unlock {
+  box-shadow: 0 3px 0 #4ade80, inset 0 1px 0 rgba(255, 255, 255, 0.85);
+}
+
+/* Biseles 3D limpios en Modo Oscuro */
+.mentix-admin-layout:not(.theme-light) .roles-v2-hero {
+  box-shadow: 0 7px 0 #312e81, 0 22px 44px rgba(0, 0, 0, 0.48), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+.mentix-admin-layout:not(.theme-light) .roles-v2-role-card.card-purple {
+  background: linear-gradient(180deg, #1e1b4b 0%, #0f172a 100%);
+  box-shadow: 0 7px 0 #6d28d9, 0 18px 34px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+.mentix-admin-layout:not(.theme-light) .roles-v2-role-card.card-blue {
+  background: linear-gradient(180deg, #0c2340 0%, #0f172a 100%);
+  box-shadow: 0 7px 0 #1d4ed8, 0 18px 34px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+.mentix-admin-layout:not(.theme-light) .roles-v2-role-card.card-green {
+  background: linear-gradient(180deg, #062c22 0%, #0f172a 100%);
+  box-shadow: 0 7px 0 #15803d, 0 18px 34px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+.mentix-admin-layout:not(.theme-light) .roles-v2-panel {
+  background: linear-gradient(180deg, #111c33 0%, #0b1324 100%);
+  box-shadow: 0 8px 0 #020617, 0 20px 40px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
