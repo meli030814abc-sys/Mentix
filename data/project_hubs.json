@@ -98,32 +98,7 @@
       }
     ],
     "joinRequests": [],
-    "ratings": [
-      {
-        "who": "usr_sample_1",
-        "name": "Sofía Morales",
-        "stars": 5,
-        "comment": "¡Increíble trabajo en equipo! La propuesta visual, la temática y los recursos interactivos están extraordinarios.",
-        "tag": "🎨 Gran diseño",
-        "t": 1795307637528
-      },
-      {
-        "who": "usr_sample_2",
-        "name": "Mateo Delgado",
-        "stars": 5,
-        "comment": "Un proyecto sumamente inspirador para toda la comunidad. Gran dominio temático, claridad y propuesta pedagógica.",
-        "tag": "🚀 Gran impacto",
-        "t": 1795149237528
-      },
-      {
-        "who": "usr_sample_3",
-        "name": "Camila Ríos",
-        "stars": 4,
-        "comment": "Muy bien estructurado. Me encantó la metodología ágil y la documentación de las etapas de trabajo.",
-        "tag": "💡 Idea innovadora",
-        "t": 1794976437528
-      }
-    ],
-    "updatedAt": 1795408437549
+    "ratings": [],
+    "updatedAt": 1795413877537
   }
 }
