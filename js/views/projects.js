@@ -2641,7 +2641,27 @@ window.ProjectsView = {
     const isAuthor = !isGuest && (window.appRouter ? window.appRouter.isChallengeOwner(c) : false);
     const isApproved = c.approvalStatus === 'approved' && !c.rejectionReason;
     const isRejected = c.approvalStatus === 'rejected';
-    const isExplicitCompleted = c.status === 'completed' || c.stage === 'completed' || c.publicationStatus === 'completed' || c.publicationStatus === 'published' || Boolean(c.completedAt || c.publishedAt || c.approvedAt || (c.govdata && (c.govdata.publicationStatus === 'published' || c.govdata.publicationStatus === 'completed' || c.govdata.completedAt)));
+    const isExplicitCompleted =
+      c.status === 'completed' ||
+      c.status === 'review' ||
+      c.stage === 'completed' ||
+      c.publicationStatus === 'completed' ||
+      c.publicationStatus === 'published' ||
+      c.publicationStatus === 'pending_approval' ||
+      Number(c.progress) >= 100 ||
+      Number(c.calculatedProgress) >= 100 ||
+      (Array.isArray(c.completedSteps) && c.completedSteps.length >= 16) ||
+      Boolean(c.completedAt || c.publishedAt || c.approvedAt || c.authorizedAt) ||
+      Boolean(c.govdata && (
+        c.govdata.publicationStatus === 'published' ||
+        c.govdata.publicationStatus === 'completed' ||
+        c.govdata.publicationStatus === 'pending_approval' ||
+        c.govdata.status === 'completed' ||
+        c.govdata.status === 'review' ||
+        Number(c.govdata.progress) >= 100 ||
+        (Array.isArray(c.govdata.completedSteps) && c.govdata.completedSteps.length >= 16) ||
+        c.govdata.completedAt
+      ));
     const isDraft = !isExplicitCompleted && (c.status === 'in_progress' || c.publicationStatus === 'draft' || c.stage === 'in_progress');
     const isInProgress = Boolean(isDraft && !isApproved);
     const userRole = String(currentUser?.role || '').trim().toLowerCase();
@@ -2665,13 +2685,13 @@ window.ProjectsView = {
       tagIcon = '✔';
       tagColor = 'background: #22c55e;';
     } else if (isExplicitCompleted) {
-      tag = 'Completado · Sin autorizar';
+      tag = 'Completado';
       tagIcon = '✔';
-      tagColor = 'background: #0d9488;';
+      tagColor = 'background: #22c55e;';
     } else if (isRejected) {
-      tag = 'Completado · Sin autorizar';
+      tag = 'Completado';
       tagIcon = '✔';
-      tagColor = 'background: #0d9488;';
+      tagColor = 'background: #22c55e;';
     } else if (isDraft) {
       tag = 'En Proceso';
       tagIcon = '⏱';
@@ -2682,9 +2702,9 @@ window.ProjectsView = {
       secondaryAction = `window.ProjectsView.openProjectLanding('${c.id}')`;
       if (!c.image && !c.banner) defaultBanner = 'assets/projects_ui/card_ai_society.png';
     } else {
-      tag = 'Completado · Sin autorizar';
+      tag = 'Completado';
       tagIcon = '✔';
-      tagColor = 'background: #0d9488;';
+      tagColor = 'background: #22c55e;';
     }
 
     if (c.id === 'proj_gov_data' || c.id === 'demo-gov-data') {
@@ -2753,9 +2773,9 @@ window.ProjectsView = {
         secondaryAction = `window.ProjectsView.openProjectLanding('${c.id}')`;
         primaryIsBlue = true;
       } else {
-        tag = 'Completado · Sin autorizar';
+        tag = 'Completado';
         tagIcon = '✔';
-        tagColor = 'background: #0d9488;';
+        tagColor = 'background: #22c55e;';
         primaryText = 'Ver Detalles →';
         primaryAction = `window.ProjectsView.openProjectLanding('${c.id}')`;
         secondaryText = 'Compartir <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-left:3px;"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>';
