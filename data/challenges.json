@@ -1462,8 +1462,7 @@
       "titleColor": "#ffffff",
       "textColor": "#cbd5e1",
       "accentColor": "#00f5d4",
-      "bannerStyle": "gradient-cosmos",
-      "bannerUrl": ""
+      "bannerStyle": "gradient-cosmos"
     },
     "authorsConfig": {
       "authorsList": "Melisa",
@@ -1561,7 +1560,7 @@
         "authorsRole": "Líder del Proyecto"
       },
       "createdAt": "2026-11-23T03:09:16.957Z",
-      "updatedAt": "2026-11-23T03:43:24.705Z",
+      "updatedAt": "2026-11-23T03:43:32.173Z",
       "progress": 50,
       "calculatedProgress": 50
     },
@@ -1575,7 +1574,7 @@
     "authorAvatar": "🐯",
     "authorRole": "admin",
     "createdAt": "2026-11-23T03:09:16.957Z",
-    "updatedAt": "2026-11-23T03:43:24.697Z",
+    "updatedAt": "2026-11-23T03:43:32.276Z",
     "image": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
     "rejectionReason": "",
     "tag": "⏳ Pendiente de Autorización",
