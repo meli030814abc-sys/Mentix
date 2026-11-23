@@ -147,7 +147,26 @@ window.ProjectHub = {
 
     if (options && options.skipCloudSync) return;
 
-    // Sincronización global en Supabase Cloud para que miembros aceptados y solicitudes se reflejen en todos los dispositivos
+    // Sincronización global en /api/challenges (persiste para todos los dispositivos y usuarios)
+    try {
+      if (id) {
+        const apiBase = (window.appRouter && typeof window.appRouter.getApiBase === 'function') ? window.appRouter.getApiBase() : '';
+        fetch(`${apiBase}/api/challenges`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            type: 'PROJECT_HUB_SYNC',
+            projectId: String(id),
+            members: Array.isArray(hub.members) ? hub.members : [],
+            joinRequests: Array.isArray(hub.joinRequests) ? hub.joinRequests : [],
+            ratings: Array.isArray(hub.ratings) ? hub.ratings.slice(-200) : [],
+            updatedAt: Date.now()
+          })
+        }).catch(() => {});
+      }
+    } catch (e) {}
+
+    // Respaldo en Supabase Cloud
     try {
       if (id && window.supabaseEngine && typeof window.supabaseEngine.saveWizardDraft === 'function') {
         const key = 'mentix_hub_sync_' + String(id);
@@ -336,8 +355,30 @@ window.ProjectHub = {
       const prevCanView = this.canView(localProj);
       let cloudHub = null;
 
-      // 1. Fuente principal ultrarrápida: Supabase Cloud (mentix_hub_sync_<id>)
-      if (window.supabaseEngine && typeof window.supabaseEngine.loadWizardDraft === 'function') {
+      // 1. Fuente principal mundial: /api/challenges?hubId=<id>
+      try {
+        const apiBase = (window.appRouter && typeof window.appRouter.getApiBase === 'function') ? window.appRouter.getApiBase() : '';
+        const ctrl = (typeof AbortController !== 'undefined') ? new AbortController() : null;
+        const tid = ctrl ? setTimeout(() => ctrl.abort(), 3000) : null;
+        const r = await fetch(`${apiBase}/api/challenges?hubId=${encodeURIComponent(String(projectId))}&t=${Date.now()}`, {
+          cache: 'no-store',
+          signal: ctrl ? ctrl.signal : undefined
+        });
+        if (tid) clearTimeout(tid);
+        if (r && r.ok) {
+          const payload = await r.json();
+          if (payload && (Array.isArray(payload.members) || Array.isArray(payload.joinRequests))) {
+            cloudHub = {
+              members: Array.isArray(payload.members) ? payload.members : [],
+              joinRequests: Array.isArray(payload.joinRequests) ? payload.joinRequests : [],
+              ratings: Array.isArray(payload.ratings) ? payload.ratings : []
+            };
+          }
+        }
+      } catch (e) {}
+
+      // 2. Respaldo desde Supabase Cloud (mentix_hub_sync_<id>)
+      if (!cloudHub && window.supabaseEngine && typeof window.supabaseEngine.loadWizardDraft === 'function') {
         try {
           const key = 'mentix_hub_sync_' + String(projectId);
           const rec = await window.supabaseEngine.loadWizardDraft(key, key);
@@ -352,7 +393,7 @@ window.ProjectHub = {
         } catch (e) {}
       }
 
-      // 2. Respaldo desde /api/challenges si Supabase aún no tiene hub para este proyecto
+      // 3. Respaldo desde /api/challenges completo
       if (!cloudHub) {
         const apiBase = (window.appRouter && typeof window.appRouter.getApiBase === 'function') ? window.appRouter.getApiBase() : '';
         const ctrl = (typeof AbortController !== 'undefined') ? new AbortController() : null;
@@ -407,10 +448,47 @@ window.ProjectHub = {
 
   async syncAllHubsFromCloud(projectsList) {
     const now = Date.now();
-    if (this._lastBulkHubSync && (now - this._lastBulkHubSync) < 15000) return;
+    if (this._lastBulkHubSync && (now - this._lastBulkHubSync) < 12000) return;
     this._lastBulkHubSync = now;
-    const list = Array.isArray(projectsList) ? projectsList.slice(0, 20) : [];
-    await Promise.all(list.map(p => (p && p.id) ? this.syncHubFromCloud(p.id).catch(() => false) : Promise.resolve(false)));
+    try {
+      const apiBase = (window.appRouter && typeof window.appRouter.getApiBase === 'function') ? window.appRouter.getApiBase() : '';
+      const ctrl = typeof AbortController !== 'undefined' ? new AbortController() : null;
+      const tid = ctrl ? setTimeout(() => ctrl.abort(), 3500) : null;
+      const r = await fetch(`${apiBase}/api/challenges?hubs=1&t=${Date.now()}`, {
+        cache: 'no-store',
+        signal: ctrl ? ctrl.signal : undefined
+      });
+      if (tid) clearTimeout(tid);
+      if (r && r.ok) {
+        const hubsMap = await r.json();
+        if (hubsMap && typeof hubsMap === 'object') {
+          let changedAccess = false;
+          const list = Array.isArray(projectsList) ? projectsList : (window.appState?.challenges || []);
+          list.forEach(p => {
+            if (!p || !p.id) return;
+            const cloudHub = hubsMap[String(p.id)];
+            if (!cloudHub) return;
+            const prevCanView = this.canView(p);
+            const prevRole = this.getRole(p);
+            const merged = { ...(p.hub || {}), ...cloudHub };
+            if (Array.isArray(cloudHub.members) && cloudHub.members.length > 0) merged.members = cloudHub.members;
+            if (Array.isArray(cloudHub.joinRequests)) merged.joinRequests = cloudHub.joinRequests;
+            if (Array.isArray(cloudHub.ratings) && cloudHub.ratings.length >= (p.hub?.ratings?.length || 0)) merged.ratings = cloudHub.ratings;
+            p.hub = merged;
+            p.members = merged.members || [];
+            p.joinRequests = merged.joinRequests || [];
+            this.saveHub(p.id, merged, { skipCloudSync: true });
+            if (this.canView(p) !== prevCanView || this.getRole(p) !== prevRole) {
+              changedAccess = true;
+            }
+          });
+          if (changedAccess && window.ProjectsView && typeof window.ProjectsView.render === 'function' && window.appRouter && window.appRouter.currentView === 'projects' && window.ProjectsView.viewMode === 'list') {
+            window.ProjectsView.render();
+          }
+          return;
+        }
+      }
+    } catch (e) {}
   },
   close(pushHistory = true) {
     const el = document.getElementById('phub-overlay');

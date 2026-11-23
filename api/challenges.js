@@ -12,10 +12,61 @@ let inMemoryDeleted = [];
 const CODES_PATH = 'data/custom_project_codes.json';
 let inMemoryCodes = null;
 
+const HERO_BANNER_PATH = 'data/hero_banner.json';
+let inMemoryHeroBanner = null;
+
+const HUBS_PATH = 'data/project_hubs.json';
+let inMemoryHubs = null;
+
+const CODE_PARTICIPANTS_PATH = 'data/code_participants.json';
+let inMemoryCodeParticipants = null;
+
 function ghHeaders() {
   const h = { 'Accept': 'application/vnd.github.v3+json', 'User-Agent': 'Mentix-App' };
   if (GITHUB_TOKEN) h['Authorization'] = `Bearer ${GITHUB_TOKEN}`;
   return h;
+}
+
+async function readGitHubJsonFile(filePath, fallbackVal) {
+  try {
+    const r = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/contents/${filePath}?ref=main`, { headers: ghHeaders(), cache: 'no-store' });
+    if (r.ok) {
+      const d = await r.json();
+      let str = '';
+      if (d.content) str = Buffer.from(d.content, 'base64').toString('utf8');
+      else if (d.download_url) {
+        const rawRes = await fetch(d.download_url, { cache: 'no-store' });
+        if (rawRes.ok) str = await rawRes.text();
+      }
+      if (str) {
+        return { data: JSON.parse(str), sha: d.sha };
+      }
+    }
+  } catch (e) {}
+  return { data: fallbackVal, sha: null };
+}
+
+async function writeGitHubJsonFile(filePath, dataObj, commitMessage) {
+  if (!GITHUB_TOKEN) return false;
+  for (let attempt = 0; attempt < 3; attempt++) {
+    const { sha } = await readGitHubJsonFile(filePath, null);
+    const payload = {
+      message: `${commitMessage} [skip ci]`,
+      content: Buffer.from(JSON.stringify(dataObj, null, 2), 'utf8').toString('base64'),
+      branch: 'main'
+    };
+    if (sha) payload.sha = sha;
+    try {
+      const r = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/contents/${filePath}`, {
+        method: 'PUT',
+        headers: { ...ghHeaders(), 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      if (r.ok) return true;
+    } catch (e) {}
+    await new Promise(r => setTimeout(r, 500));
+  }
+  return false;
 }
 
 async function readCustomProjectCodes(forceGitHub = false) {
@@ -143,7 +194,37 @@ export default async function handler(req, res) {
     return res.status(200).json(info);
   }
 
-  // 1. GET: Consultar todos los retos y proyectos compartidos en la nube
+  // 1. GET: Consultar banner global, hubs, participantes de códigos, códigos o retos
+  if (req.method === 'GET' && req.query && (req.query.heroBanner || req.query.banner)) {
+    const { data } = await readGitHubJsonFile(HERO_BANNER_PATH, inMemoryHeroBanner);
+    if (data && data.bannerUrl) inMemoryHeroBanner = data;
+    res.setHeader('Cache-Control', 'no-store');
+    return res.status(200).json(inMemoryHeroBanner || { bannerUrl: '', style: null, updatedAt: 0 });
+  }
+
+  if (req.method === 'GET' && req.query && (req.query.hubs || req.query.hubId)) {
+    const { data } = await readGitHubJsonFile(HUBS_PATH, inMemoryHubs || {});
+    if (data && typeof data === 'object') inMemoryHubs = data;
+    const hubsMap = inMemoryHubs || {};
+    res.setHeader('Cache-Control', 'no-store');
+    if (req.query.hubId) {
+      return res.status(200).json(hubsMap[String(req.query.hubId)] || null);
+    }
+    return res.status(200).json(hubsMap);
+  }
+
+  if (req.method === 'GET' && req.query && req.query.codeParticipants) {
+    const { data } = await readGitHubJsonFile(CODE_PARTICIPANTS_PATH, inMemoryCodeParticipants || {});
+    if (data && typeof data === 'object') inMemoryCodeParticipants = data;
+    const map = inMemoryCodeParticipants || {};
+    res.setHeader('Cache-Control', 'no-store');
+    if (req.query.code) {
+      const k = String(req.query.code).trim().toLowerCase().replace(/[\s\-_]/g, '');
+      return res.status(200).json(Array.isArray(map[k]) ? map[k] : []);
+    }
+    return res.status(200).json(map);
+  }
+
   if (req.method === 'GET' && req.query && (req.query.customCodes || req.query.codes)) {
     const { codes } = await readCustomProjectCodes(true);
     res.setHeader('Cache-Control', 'no-store');
@@ -230,55 +311,58 @@ export default async function handler(req, res) {
     try {
       const body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
 
-      // A. Soporte para actualización y persistencia mundial del banner principal (Hero de Proyectos)
-      if (body && (body.type === 'GLOBAL_HERO_BANNER' || body.target === 'hero') && body.bannerUrl) {
-        const cleanBanner = String(body.bannerUrl).trim();
-        let currentChallenges = [];
-        let currentSha = null;
-        const headers = { 'Accept': 'application/vnd.github.v3+json', 'User-Agent': 'Mentix-App' };
-        if (GITHUB_TOKEN) headers['Authorization'] = `Bearer ${GITHUB_TOKEN}`;
-        let savedInGitHub = false;
+      // A. Soporte para actualización y persistencia mundial del banner principal (Hero de Proyectos) + encuadre
+      if (body && (body.type === 'GLOBAL_HERO_BANNER' || body.target === 'hero') && (body.bannerUrl || body.style)) {
+        const { data: prevBanner } = await readGitHubJsonFile(HERO_BANNER_PATH, inMemoryHeroBanner || {});
+        const cleanBanner = body.bannerUrl ? String(body.bannerUrl).trim() : (prevBanner && prevBanner.bannerUrl ? String(prevBanner.bannerUrl).trim() : '');
+        const cleanStyle = (body.style && typeof body.style === 'object') ? body.style : (prevBanner && prevBanner.style ? prevBanner.style : null);
+        const nowTs = Number(body.updatedAt || Date.now());
+        const bannerPayload = {
+          bannerUrl: cleanBanner,
+          style: cleanStyle,
+          updatedAt: nowTs
+        };
+        inMemoryHeroBanner = bannerPayload;
+        const savedDedicated = await writeGitHubJsonFile(HERO_BANNER_PATH, bannerPayload, 'chore(data): actualizar banner principal global');
 
-        for (let attempt = 0; attempt < 3 && !savedInGitHub; attempt++) {
-          try {
-            const ghGet = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/contents/${FILE_PATH}?ref=main`, { headers, cache: 'no-store' });
-            if (ghGet.ok) {
-              const ghData = await ghGet.json();
-              currentSha = ghData.sha;
-              let contentStr = '';
-              if (ghData.content) contentStr = Buffer.from(ghData.content, 'base64').toString('utf8');
-              else if (ghData.download_url) {
-                const rawRes = await fetch(ghData.download_url, { cache: 'no-store' });
-                if (rawRes.ok) contentStr = await rawRes.text();
-              }
-              if (contentStr) currentChallenges = JSON.parse(contentStr);
-            }
-          } catch (err) {}
-          if (!Array.isArray(currentChallenges)) currentChallenges = [];
-          currentChallenges.forEach(c => {
-            if (c) c._globalHeroBanner = cleanBanner;
-          });
-          if (GITHUB_TOKEN) {
-            const updatedBuffer = Buffer.from(JSON.stringify(currentChallenges, null, 2), 'utf8').toString('base64');
-            const putPayload = {
-              message: `chore(data): actualizar banner principal global [skip ci]`,
-              content: updatedBuffer,
-              branch: 'main'
-            };
-            if (currentSha) putPayload.sha = currentSha;
-            const ghPut = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/contents/${FILE_PATH}`, {
-              method: 'PUT',
-              headers: { ...headers, 'Content-Type': 'application/json' },
-              body: JSON.stringify(putPayload)
-            });
-            if (ghPut.ok) { savedInGitHub = true; break; }
-            await new Promise(r => setTimeout(r, 600));
-          } else {
-            break;
-          }
+        // También reflejar en challenges.json solo si es URL corta (evita inflar challenges.json)
+        if (cleanBanner && cleanBanner.length < 4000 && Array.isArray(inMemoryChallenges)) {
+          inMemoryChallenges.forEach(c => { if (c) c._globalHeroBanner = cleanBanner; });
         }
-        inMemoryChallenges = currentChallenges;
-        return res.status(200).json({ success: true, target: 'hero', bannerUrl: cleanBanner, persisted: savedInGitHub });
+        return res.status(200).json({ success: true, target: 'hero', bannerUrl: cleanBanner, style: cleanStyle, updatedAt: nowTs, persisted: savedDedicated });
+      }
+
+      // A2. Sincronización global de miembros y solicitudes de ProjectHub (Detalles)
+      if (body && body.type === 'PROJECT_HUB_SYNC' && body.projectId) {
+        const pid = String(body.projectId).trim();
+        const { data: prevMap } = await readGitHubJsonFile(HUBS_PATH, inMemoryHubs || {});
+        const hubsMap = (prevMap && typeof prevMap === 'object') ? { ...prevMap } : {};
+        hubsMap[pid] = {
+          projectId: pid,
+          members: Array.isArray(body.members) ? body.members : [],
+          joinRequests: Array.isArray(body.joinRequests) ? body.joinRequests : [],
+          ratings: Array.isArray(body.ratings) ? body.ratings : [],
+          updatedAt: Number(body.updatedAt || Date.now())
+        };
+        inMemoryHubs = hubsMap;
+        const persisted = await writeGitHubJsonFile(HUBS_PATH, hubsMap, `chore(data): sincronizar miembros del proyecto ${pid}`);
+        return res.status(200).json({ success: true, persisted, hub: hubsMap[pid] });
+      }
+
+      // A3. Sincronización global de participantes y progreso en códigos de proyecto (📊 Detalles)
+      if (body && body.type === 'CODE_PARTICIPANTS_SYNC' && body.normCode && body.entry) {
+        const normCode = String(body.normCode).trim().toLowerCase().replace(/[\s\-_]/g, '');
+        const entry = body.entry;
+        const { data: prevMap } = await readGitHubJsonFile(CODE_PARTICIPANTS_PATH, inMemoryCodeParticipants || {});
+        const map = (prevMap && typeof prevMap === 'object') ? { ...prevMap } : {};
+        const list = Array.isArray(map[normCode]) ? [...map[normCode]] : [];
+        const idx = list.findIndex(x => x && (x.userKey === entry.userKey || (entry.projectId && x.projectId === entry.projectId)));
+        if (idx >= 0) list[idx] = { ...list[idx], ...entry, joinedAt: list[idx].joinedAt || entry.joinedAt };
+        else list.unshift(entry);
+        map[normCode] = list;
+        inMemoryCodeParticipants = map;
+        const persisted = await writeGitHubJsonFile(CODE_PARTICIPANTS_PATH, map, `chore(data): progreso codigo ${normCode}`);
+        return res.status(200).json({ success: true, persisted, participants: list });
       }
 
       // B. Soporte para sincronización y persistencia mundial de códigos de proyectos

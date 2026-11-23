@@ -383,50 +383,13 @@
           </div>
         </section>
 
-        <!-- Ruta del Proyecto -->
+        <!-- Ruta del Proyecto (Idéntica al Asistente de Proyectos) -->
         <section class="inno-roadmap-block" id="inno-sec-roadmap">
           <div class="inno-section-head">
             <h2 class="inno-section-title">Ruta del Proyecto</h2>
-            <p class="inno-section-sub">Seguimos un camino claro para alcanzar nuestros objetivos.</p>
+            <p class="inno-section-sub">Etapas, actividades y avance del proyecto.</p>
           </div>
-
-          <div class="inno-roadmap-track-wrap">
-            <div class="inno-roadmap-track-line"></div>
-            <div class="inno-roadmap-track-fill" style="width: 48%;"></div>
-
-            <div class="inno-roadmap-steps">
-              <div class="inno-road-step completed">
-                <div class="inno-road-badge">✓</div>
-                <div class="inno-road-name">Descubrimiento</div>
-                <div class="inno-road-sub">Analizar y entender</div>
-              </div>
-              <div class="inno-road-step completed">
-                <div class="inno-road-badge">✓</div>
-                <div class="inno-road-name">Planeación</div>
-                <div class="inno-road-sub">Definir el plan</div>
-              </div>
-              <div class="inno-road-step active">
-                <div class="inno-road-badge">▶</div>
-                <div class="inno-road-name active">Diseño</div>
-                <div class="inno-road-sub active">Diseñar la solución</div>
-              </div>
-              <div class="inno-road-step">
-                <div class="inno-road-badge">&lt;/&gt;</div>
-                <div class="inno-road-name">Desarrollo</div>
-                <div class="inno-road-sub">Construir y probar</div>
-              </div>
-              <div class="inno-road-step">
-                <div class="inno-road-badge">🚀</div>
-                <div class="inno-road-name">Implementación</div>
-                <div class="inno-road-sub">Poner en marcha</div>
-              </div>
-              <div class="inno-road-step">
-                <div class="inno-road-badge">🏁</div>
-                <div class="inno-road-name">Resultados</div>
-                <div class="inno-road-sub">Medir el impacto</div>
-              </div>
-            </div>
-          </div>
+          <div id="inno-wizard-roadmap-host"></div>
         </section>
 
       </div>
@@ -2307,6 +2270,114 @@
               </div>
             `;
           }
+        }
+
+        // Renderizar Ruta del Proyecto idéntica al Asistente de Proyectos
+        const wizardRoadHost = document.getElementById('inno-wizard-roadmap-host');
+        if (wizardRoadHost) {
+          const g = activeProject.govdata || {};
+          const getEm = (k, i) => {
+            const s = String(k || '').trim();
+            if (s && !/^[a-z0-9_\-]+$/i.test(s)) return s;
+            const low = s.toLowerCase();
+            if (low === 'clipboard') return '📋';
+            if (low === 'search') return '🔍';
+            if (low === 'code') return '💻';
+            if (low === 'rocket') return '🚀';
+            if (low === 'bulb') return '💡';
+            if (low === 'palette') return '🎨';
+            return ['📋', '🔍', '💻', '🚀', '✨', '🏁'][i] || '📋';
+          };
+          const escH = (str) => String(str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+          const rawRoad = (Array.isArray(activeProject.projectRoadmap) && activeProject.projectRoadmap.length > 0)
+            ? activeProject.projectRoadmap
+            : (Array.isArray(g.projectRoadmap) && g.projectRoadmap.length > 0 ? g.projectRoadmap : null);
+          let stages = [];
+          if (rawRoad) {
+            stages = rawRoad.map((st, i) => ({
+              title: st.title || `Etapa ${i + 1}`,
+              description: st.description || '',
+              progress: Number(st.progress ?? (st.status === 'completed' ? 100 : (st.status === 'active' ? 50 : 0))),
+              status: st.status || (Number(st.progress) >= 100 ? 'completed' : (Number(st.progress) > 0 ? 'active' : 'pending')),
+              emoji: st.emoji || getEm(st.icon, i)
+            }));
+          } else if (Array.isArray(activeProject.timeline) && activeProject.timeline.length > 0) {
+            stages = activeProject.timeline.map((st, i) => ({
+              title: st.title || `Fase ${i + 1}`,
+              description: st.description || st.date || 'Etapa del proyecto',
+              progress: st.completed ? 100 : (i === 1 ? 50 : 0),
+              status: st.completed ? 'completed' : (i === 1 ? 'active' : 'pending'),
+              emoji: st.emoji || getEm(st.icon, i)
+            }));
+          } else {
+            const isPub = activeProject.status === 'published' || activeProject.publicationStatus === 'published' || activeProject.isPublic;
+            const isApproved = activeProject.approvalStatus === 'approved';
+            stages = [
+              { title: 'Creación', description: 'Estructura del proyecto y definición de objetivos.', progress: 100, status: 'completed', emoji: '📋' },
+              { title: 'Contenido', description: 'Construcción de recursos y evidencias.', progress: 100, status: 'completed', emoji: '🔍' },
+              { title: 'Revisión', description: isApproved ? 'Proyecto revisado y aprobado.' : 'Validación académica y revisión.', progress: isApproved ? 100 : 50, status: isApproved ? 'completed' : 'active', emoji: '💻' },
+              { title: 'Publicación', description: isPub ? 'Disponible públicamente en Mentix.' : 'Preparación final para publicación.', progress: isPub ? 100 : 0, status: isPub ? 'completed' : 'pending', emoji: '🚀' }
+            ];
+          }
+          const total = stages.length;
+          const pts = stages.map((s, i) => ({ x: Math.round((1000 / Math.max(1, total)) * (i + 0.5)), y: 52 }));
+          let pathAll = '', pathAct = '', actUpTo = -1;
+          stages.forEach((s, i) => { if (s.status === 'completed' || s.status === 'active') actUpTo = i; });
+          for (let i = 0; i < pts.length - 1; i++) {
+            const p1 = pts[i], p2 = pts[i + 1], midX = (p1.x + p2.x) / 2, dipY = 74;
+            const seg = `C ${p1.x + (midX - p1.x) * 0.4} 52, ${p1.x + (midX - p1.x) * 0.6} ${dipY}, ${midX} ${dipY} C ${midX + (p2.x - midX) * 0.4} ${dipY}, ${midX + (p2.x - midX) * 0.6} 52, ${p2.x} 52`;
+            pathAll += (i === 0 ? `M ${p1.x} 52 ` : ' ') + seg;
+            if (i < actUpTo) pathAct += (pathAct === '' ? `M ${p1.x} 52 ` : ' ') + seg;
+          }
+          wizardRoadHost.innerHTML = `
+            <div style="position:relative;border-radius:22px;overflow:hidden;background:radial-gradient(circle at 10% 20%,#112154 0%,#0a1128 65%,#050a18 100%);border:1.5px solid rgba(0,245,212,0.28);box-shadow:0 12px 36px rgba(10,17,40,0.42);padding:2.15rem 1rem 1.8rem;">
+              <div style="position:absolute;inset:0;pointer-events:none;opacity:0.18;background-image:linear-gradient(rgba(0,245,212,0.15) 1px,transparent 1px),linear-gradient(90deg,rgba(0,245,212,0.15) 1px,transparent 1px);background-size:28px 28px;"></div>
+              <svg viewBox="0 0 1000 160" preserveAspectRatio="none" style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:1;">
+                <defs><linearGradient id="stRoadGrad" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#00f5d4"/><stop offset="50%" stop-color="#10b981"/><stop offset="100%" stop-color="#00f5d4"/></linearGradient></defs>
+                ${pathAll ? `<path d="${pathAll}" fill="none" stroke="rgba(255,255,255,0.22)" stroke-width="3" stroke-linecap="round"/>` : ''}
+                ${pathAct ? `<path d="${pathAct}" fill="none" stroke="url(#stRoadGrad)" stroke-width="4.5" stroke-linecap="round"/>` : ''}
+              </svg>
+              <div style="position:relative;z-index:2;display:flex;justify-content:space-around;align-items:flex-start;gap:0.5rem;overflow-x:auto;">
+                ${stages.map((s, i) => {
+                  const isC = s.status === 'completed', isA = s.status === 'active';
+                  const brd = isC ? '#10b981' : (isA ? '#00f5d4' : 'rgba(255,255,255,0.28)');
+                  const bg = isC ? 'radial-gradient(circle,rgba(16,185,129,0.4) 0%,rgba(9,27,33,0.95) 100%)' : (isA ? 'radial-gradient(circle,rgba(0,245,212,0.4) 0%,rgba(8,23,45,0.95) 100%)' : 'rgba(255,255,255,0.06)');
+                  const pBg = isC ? '#10b981' : (isA ? '#00b4d8' : 'rgba(255,255,255,0.12)');
+                  return `<div style="display:flex;flex-direction:column;align-items:center;text-align:center;min-width:108px;flex:1;">
+                    <div style="position:relative;width:56px;height:56px;border-radius:50%;border:3px solid ${brd};background:${bg};display:flex;align-items:center;justify-content:center;margin-bottom:0.75rem;">
+                      <span style="font-size:1.65rem;line-height:1;">${s.emoji}</span>
+                      ${isC ? `<div style="position:absolute;top:-3px;right:-3px;width:19px;height:19px;border-radius:50%;background:#10b981;color:#fff;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:900;border:2px solid #0a1128;">✓</div>` : ''}
+                    </div>
+                    <div style="font-size:0.9rem;font-weight:800;color:#fff;margin-bottom:0.35rem;">${i + 1}. ${escH(s.title)}</div>
+                    <div style="background:${pBg};color:${(isC || isA) ? '#fff' : '#94a3b8'};font-weight:900;font-size:0.75rem;padding:0.2rem 0.78rem;border-radius:9999px;">${s.progress || 0}%</div>
+                  </div>`;
+                }).join('')}
+              </div>
+            </div>
+            <div style="background:#ffffff;border:1.5px solid #e2e8f0;border-radius:22px;padding:1.45rem 1.55rem;box-shadow:0 6px 24px rgba(15,23,42,0.05);margin-top:1.25rem;">
+              <div style="display:flex;align-items:center;gap:0.6rem;margin-bottom:1.15rem;"><span style="font-size:1.25rem;">🗂️</span><h3 style="font-size:1.12rem;font-weight:900;color:#0f172a;margin:0;">Etapas del Proyecto (${stages.length})</h3></div>
+              <div style="display:flex;flex-direction:column;gap:0.85rem;">
+                ${stages.map((st, idx) => {
+                  const isC = st.status === 'completed', isA = st.status === 'active';
+                  const bar = isC ? '#10b981' : (isA ? '#00b4d8' : '#cbd5e1');
+                  const pillBg = isC ? '#ecfdf5' : (isA ? '#eff6ff' : '#f8fafc');
+                  const pillBrd = isC ? '#a7f3d0' : (isA ? '#bfdbfe' : '#e2e8f0');
+                  const pillCol = isC ? '#047857' : (isA ? '#1d4ed8' : '#64748b');
+                  const pillTxt = isC ? '✔ Completado' : (isA ? '▶ En Progreso' : '⏱ Pendiente');
+                  return `<div style="background:#fff;border:1.5px solid #e2e8f0;border-radius:16px;padding:1rem 1.2rem;display:flex;align-items:center;gap:1rem;flex-wrap:wrap;">
+                    <div style="width:26px;height:26px;border-radius:50%;background:${isC ? '#10b981' : (isA ? '#00b4d8' : '#fff')};border:${(isC || isA) ? 'none' : '2.5px solid #cbd5e1'};color:#fff;display:flex;align-items:center;justify-content:center;font-size:0.78rem;font-weight:900;">${isC ? '✔' : (isA ? '▶' : '')}</div>
+                    <div style="width:50px;height:50px;border-radius:14px;background:${isC ? '#d1fae5' : (isA ? '#e0e7ff' : '#f1f5f9')};border:1.5px solid ${isC ? '#6ee7b7' : (isA ? '#a5b4fc' : '#cbd5e1')};display:flex;align-items:center;justify-content:center;font-size:1.65rem;">${st.emoji}</div>
+                    <div style="flex:1;min-width:200px;">
+                      <div style="font-weight:900;font-size:1rem;color:#0f172a;margin-bottom:0.2rem;">${idx + 1}. ${escH(st.title)}</div>
+                      <div style="font-size:0.84rem;color:#64748b;margin-bottom:0.5rem;">${escH(st.description || 'Etapa del proyecto')}</div>
+                      <div style="display:flex;align-items:center;gap:0.75rem;"><div style="flex:1;height:8px;border-radius:9999px;background:#e2e8f0;overflow:hidden;"><div style="height:100%;width:${st.progress || 0}%;background:${bar};border-radius:9999px;"></div></div><span style="font-weight:900;font-size:0.84rem;color:#0f172a;">${st.progress || 0}%</span></div>
+                    </div>
+                    <span style="background:${pillBg};border:1px solid ${pillBrd};color:${pillCol};font-weight:800;font-size:0.78rem;padding:0.38rem 0.82rem;border-radius:9999px;">${pillTxt}</span>
+                  </div>`;
+                }).join('')}
+              </div>
+            </div>
+          `;
         }
 
         // Construir Cronograma Dinámico

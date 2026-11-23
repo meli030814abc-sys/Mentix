@@ -314,20 +314,63 @@ window.ProjectsView = {
     });
   },
 
-  async syncHeroBannerFromCloud() {
+  async syncHeroBannerFromCloud(force = false) {
+    const now = Date.now();
+    if (!force && this._lastHeroBannerCloudSync && (now - this._lastHeroBannerCloudSync) < 8000) return false;
+    this._lastHeroBannerCloudSync = now;
     try {
-      if (!window.supabaseEngine || typeof window.supabaseEngine.loadWizardDraft !== 'function') return false;
-      const rec = await window.supabaseEngine.loadWizardDraft('mentix_global_hero_banner_v1', 'mentix_global_hero_banner_v1');
-      const payload = rec && (rec.payload || rec.draft_data || rec.data || rec);
-      if (!payload || !payload.bannerUrl) return false;
+      let payload = null;
+      const apiBase = (window.appRouter && typeof window.appRouter.getApiBase === 'function') ? window.appRouter.getApiBase() : '';
+
+      // 1. Fuente principal mundial: /api/challenges?heroBanner=1 (persiste en GitHub para TODOS los usuarios y dispositivos)
+      try {
+        const ctrl = typeof AbortController !== 'undefined' ? new AbortController() : null;
+        const tid = ctrl ? setTimeout(() => ctrl.abort(), 3500) : null;
+        const r = await fetch(`${apiBase}/api/challenges?heroBanner=1&t=${Date.now()}`, {
+          cache: 'no-store',
+          signal: ctrl ? ctrl.signal : undefined
+        });
+        if (tid) clearTimeout(tid);
+        if (r && r.ok) {
+          const data = await r.json();
+          if (data && (data.bannerUrl || data.style)) payload = data;
+        }
+      } catch (e) {}
+
+      // 2. Respaldo estático (GitHub Pages): data/hero_banner.json
+      if (!payload) {
+        try {
+          const r2 = await fetch(`data/hero_banner.json?t=${Date.now()}`, { cache: 'no-store' });
+          if (r2 && r2.ok) {
+            const d2 = await r2.json();
+            if (d2 && (d2.bannerUrl || d2.style)) payload = d2;
+          }
+        } catch (e) {}
+      }
+
+      // 3. Respaldo Supabase Cloud
+      if (!payload && window.supabaseEngine && typeof window.supabaseEngine.loadWizardDraft === 'function') {
+        try {
+          const rec = await window.supabaseEngine.loadWizardDraft('mentix_global_hero_banner_v1', 'mentix_global_hero_banner_v1');
+          const p3 = rec && (rec.payload || rec.draft_data || rec.data || rec);
+          if (p3 && (p3.bannerUrl || p3.style)) payload = p3;
+        } catch (e) {}
+      }
+
+      if (!payload || (!payload.bannerUrl && !payload.style)) return false;
+
       const cloudTs = Number(payload.updatedAt || 0);
       const localTs = Number(localStorage.getItem('mentix_projects_hero_banner_ts') || 0);
       if (localTs > 0 && cloudTs > 0 && localTs >= cloudTs) {
         return false;
       }
-      const cleanUrl = String(payload.bannerUrl).trim();
-      if (!cleanUrl) return false;
-      this.setHeroBannerUrl(cleanUrl, { skipCloudSync: true, updatedAt: cloudTs || Date.now() });
+
+      if (payload.bannerUrl) {
+        const cleanUrl = String(payload.bannerUrl).trim();
+        if (cleanUrl) {
+          this.setHeroBannerUrl(cleanUrl, { skipCloudSync: true, updatedAt: cloudTs || Date.now() });
+        }
+      }
       if (payload.style && typeof payload.style === 'object') {
         try { localStorage.setItem('mentix_projects_hero_banner_style', JSON.stringify(payload.style)); } catch (e) {}
         if (!window.appState) window.appState = {};
@@ -375,7 +418,25 @@ window.ProjectsView = {
 
     if (options && options.skipCloudSync) return true;
 
-    // 4. Persistencia global confiable en Supabase Cloud (funciona para links E imágenes subidas!)
+    const currentStyle = this.getHeroBannerStyle();
+
+    // 4. Persistencia GLOBAL MUNDIAL en servidor (/api/challenges -> data/hero_banner.json) para URLs E imágenes subidas!
+    try {
+      const apiBase = (window.appRouter && typeof window.appRouter.getApiBase === 'function') ? window.appRouter.getApiBase() : '';
+      fetch(`${apiBase}/api/challenges`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type: 'GLOBAL_HERO_BANNER',
+          target: 'hero',
+          bannerUrl: cleanUrl,
+          style: currentStyle,
+          updatedAt: nowTs
+        })
+      }).catch(() => {});
+    } catch (e) {}
+
+    // 5. Respaldo en Supabase Cloud y MQTT en tiempo real
     try {
       if (window.supabaseEngine && typeof window.supabaseEngine.saveWizardDraft === 'function') {
         window.supabaseEngine.saveWizardDraft(
@@ -384,26 +445,14 @@ window.ProjectsView = {
           'system_admin',
           1,
           [],
-          { bannerUrl: cleanUrl, style: this.getHeroBannerStyle(), updatedAt: nowTs }
+          { bannerUrl: cleanUrl, style: currentStyle, updatedAt: nowTs }
         ).catch(() => {});
       }
     } catch (e) {}
 
-    // 5. Respaldo en API serverless (solo URLs cortas para no saturar commits) y MQTT con timestamp
-    if (cleanUrl.length < 4000) {
+    if (cleanUrl.length < 220000 && window.realtimeEngine && typeof window.realtimeEngine.publishGlobalBanner === 'function') {
       try {
-        const apiBase = (window.appRouter && typeof window.appRouter.getApiBase === 'function') ? window.appRouter.getApiBase() : '';
-        fetch(`${apiBase}/api/challenges`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ type: 'GLOBAL_HERO_BANNER', target: 'hero', bannerUrl: cleanUrl })
-        }).catch(() => {});
-      } catch (e) {}
-    }
-
-    if (cleanUrl.length < 180000 && window.realtimeEngine && typeof window.realtimeEngine.publishGlobalBanner === 'function') {
-      try {
-        window.realtimeEngine.publishGlobalBanner({ target: 'hero', bannerUrl: cleanUrl, timestamp: nowTs });
+        window.realtimeEngine.publishGlobalBanner({ target: 'hero', bannerUrl: cleanUrl, style: currentStyle, timestamp: nowTs });
       } catch (e) {}
     }
 
@@ -493,6 +542,18 @@ window.ProjectsView = {
     try {
       const nowTs = Date.now();
       localStorage.setItem('mentix_projects_hero_banner_ts', String(nowTs));
+      const apiBase = (window.appRouter && typeof window.appRouter.getApiBase === 'function') ? window.appRouter.getApiBase() : '';
+      fetch(`${apiBase}/api/challenges`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type: 'GLOBAL_HERO_BANNER',
+          target: 'hero',
+          bannerUrl: this.getHeroBannerUrl(),
+          style: clean,
+          updatedAt: nowTs
+        })
+      }).catch(() => {});
       if (window.supabaseEngine && typeof window.supabaseEngine.saveWizardDraft === 'function') {
         window.supabaseEngine.saveWizardDraft(
           'mentix_global_hero_banner_v1',
@@ -3011,7 +3072,8 @@ window.ProjectsView = {
       </div>
     `;
 
-    // Sincronizar miembros y solicitudes aceptadas desde la nube para desbloquear Detalles entre dispositivos
+    // Sincronizar banner principal global y miembros aceptados desde la nube para todos los dispositivos
+    this.syncHeroBannerFromCloud();
     if (!isGuestUser && window.ProjectHub && typeof window.ProjectHub.syncAllHubsFromCloud === 'function') {
       window.ProjectHub.syncAllHubsFromCloud(rawProjects);
     }
@@ -6513,6 +6575,201 @@ window.ProjectsView = {
     return this.buildThematicCoverSvg(chosenTheme, title, 'DOCUMENTO DEL PROYECTO');
   },
 
+  _getRoadmapStageEmoji(iconKey, index) {
+    const k = String(iconKey || '').trim();
+    if (k.length > 0 && !/^[a-z0-9_\-]+$/i.test(k)) return k;
+    const low = k.toLowerCase();
+    if (low === 'clipboard') return '📋';
+    if (low === 'search') return '🔍';
+    if (low === 'code') return '💻';
+    if (low === 'rocket') return '🚀';
+    if (low === 'bulb') return '💡';
+    if (low === 'palette') return '🎨';
+    return ['📋', '🔍', '💻', '🚀', '✨', '🏁'][index] || '📋';
+  },
+
+  renderWizardStyleRoadmap(selected, totalCardsCount = 0) {
+    const g = (selected && selected.govdata) || {};
+    let stages = [];
+    const customRoadmap = (Array.isArray(selected?.projectRoadmap) && selected.projectRoadmap.length > 0)
+      ? selected.projectRoadmap
+      : (Array.isArray(g.projectRoadmap) && g.projectRoadmap.length > 0 ? g.projectRoadmap : null);
+
+    if (customRoadmap) {
+      stages = customRoadmap.map((st, i) => ({
+        title: st.title || `Etapa ${i + 1}`,
+        description: st.description || '',
+        progress: Number(st.progress ?? (st.status === 'completed' ? 100 : (st.status === 'active' ? 50 : 0))),
+        status: st.status || (Number(st.progress) >= 100 ? 'completed' : (Number(st.progress) > 0 ? 'active' : 'pending')),
+        emoji: st.emoji || this._getRoadmapStageEmoji(st.icon, i),
+        icon: st.icon || ''
+      }));
+    } else if (Array.isArray(selected?.timeline) && selected.timeline.length > 0) {
+      stages = selected.timeline.map((st, i) => ({
+        title: st.title || `Fase ${i + 1}`,
+        description: st.description || st.date || 'Etapa del proyecto',
+        progress: st.completed ? 100 : (i === 1 ? 50 : 0),
+        status: st.completed ? 'completed' : (i === 1 ? 'active' : 'pending'),
+        emoji: st.emoji || this._getRoadmapStageEmoji(st.icon, i)
+      }));
+    } else {
+      const isPub = selected?.status === 'published' || selected?.publicationStatus === 'published' || selected?.isPublic;
+      const isApproved = selected?.approvalStatus === 'approved';
+      stages = [
+        { title: 'Creación', description: 'Estructura del proyecto y definición de objetivos.', progress: 100, status: 'completed', emoji: '📋' },
+        { title: 'Contenido', description: totalCardsCount > 0 ? `${totalCardsCount} recursos y evidencias listos.` : 'Construcción de recursos y contenidos.', progress: totalCardsCount > 0 ? 100 : 50, status: totalCardsCount > 0 ? 'completed' : 'active', emoji: '🔍' },
+        { title: 'Revisión', description: isApproved ? 'Proyecto revisado y aprobado.' : 'Validación académica y revisión de calidad.', progress: isApproved ? 100 : 50, status: isApproved ? 'completed' : 'active', emoji: '💻' },
+        { title: 'Publicación', description: isPub ? 'Disponible públicamente en Mentix.' : 'Preparación final para publicación.', progress: isPub ? 100 : 0, status: isPub ? 'completed' : 'pending', emoji: '🚀' }
+      ];
+    }
+
+    const total = stages.length;
+    const points = stages.map((s, i) => ({ x: Math.round((1000 / Math.max(1, total)) * (i + 0.5)), y: 52, stage: s, index: i }));
+    let wavyPathAll = '';
+    let wavyPathActive = '';
+    let activeUpTo = -1;
+    for (let i = 0; i < stages.length; i++) {
+      if (stages[i].status === 'completed' || stages[i].status === 'active') activeUpTo = i;
+    }
+    for (let i = 0; i < points.length - 1; i++) {
+      const p1 = points[i];
+      const p2 = points[i + 1];
+      const midX = (p1.x + p2.x) / 2;
+      const dipY = 74;
+      const seg = `C ${p1.x + (midX - p1.x) * 0.4} 52, ${p1.x + (midX - p1.x) * 0.6} ${dipY}, ${midX} ${dipY} C ${midX + (p2.x - midX) * 0.4} ${dipY}, ${midX + (p2.x - midX) * 0.6} 52, ${p2.x} 52`;
+      wavyPathAll += (i === 0 ? `M ${p1.x} 52 ` : ' ') + seg;
+      if (i < activeUpTo) {
+        wavyPathActive += (wavyPathActive === '' ? `M ${p1.x} 52 ` : ' ') + seg;
+      }
+    }
+
+    const uid = 'lpRoad' + String(selected?.id || '0').replace(/[^a-zA-Z0-9]/g, '').slice(-8);
+
+    return `
+      <!-- Hero Timeline Curva y Neón (Idéntico al Asistente de Proyectos) -->
+      <div style="position: relative; border-radius: 22px; overflow: hidden; background: radial-gradient(circle at 10% 20%, #112154 0%, #0a1128 65%, #050a18 100%); border: 1.5px solid rgba(0, 245, 212, 0.28); box-shadow: 0 12px 36px rgba(10, 17, 40, 0.42); padding: 2.15rem 1rem 1.8rem;">
+        <div style="position: absolute; inset: 0; pointer-events: none; opacity: 0.18; background-image: linear-gradient(rgba(0,245,212,0.15) 1px, transparent 1px), linear-gradient(90deg, rgba(0,245,212,0.15) 1px, transparent 1px); background-size: 28px 28px;"></div>
+        <div style="position: absolute; bottom: -30px; left: 10%; width: 40%; height: 80px; background: radial-gradient(ellipse, rgba(0,245,212,0.3) 0%, transparent 70%); pointer-events: none;"></div>
+        <div style="position: absolute; top: -30px; right: 10%; width: 40%; height: 80px; background: radial-gradient(ellipse, rgba(124,58,237,0.3) 0%, transparent 70%); pointer-events: none;"></div>
+
+        <svg viewBox="0 0 1000 160" preserveAspectRatio="none" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1;">
+          <defs>
+            <linearGradient id="${uid}Grad" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="#00f5d4" />
+              <stop offset="50%" stop-color="#10b981" />
+              <stop offset="100%" stop-color="#00f5d4" />
+            </linearGradient>
+            <filter id="${uid}Glow" x="-20%" y="-20%" width="140%" height="140%">
+              <feDropShadow dx="0" dy="0" stdDeviation="5" flood-color="#00f5d4" flood-opacity="0.9"/>
+            </filter>
+          </defs>
+          ${wavyPathAll ? `<path d="${wavyPathAll}" fill="none" stroke="rgba(255, 255, 255, 0.22)" stroke-width="3" stroke-linecap="round"/>` : ''}
+          ${wavyPathActive ? `<path d="${wavyPathActive}" fill="none" stroke="url(#${uid}Grad)" stroke-width="4.5" stroke-linecap="round" filter="url(#${uid}Glow)"/>` : ''}
+        </svg>
+
+        <div style="position: relative; z-index: 2; display: flex; justify-content: space-around; align-items: flex-start; gap: 0.5rem; flex-wrap: nowrap; overflow-x: auto; padding-bottom: 0.25rem;">
+          ${stages.map((s, i) => {
+            const isCompleted = s.status === 'completed';
+            const isActive = s.status === 'active';
+            const isPending = !isCompleted && !isActive;
+            const circleBorder = isCompleted ? '#10b981' : (isActive ? '#00f5d4' : 'rgba(255, 255, 255, 0.28)');
+            const circleBg = isCompleted
+              ? 'radial-gradient(circle, rgba(16, 185, 129, 0.4) 0%, rgba(9, 27, 33, 0.95) 100%)'
+              : (isActive ? 'radial-gradient(circle, rgba(0, 245, 212, 0.4) 0%, rgba(8, 23, 45, 0.95) 100%)' : 'rgba(255, 255, 255, 0.06)');
+            const circleGlow = isCompleted
+              ? 'box-shadow: 0 0 22px rgba(16, 185, 129, 0.65);'
+              : (isActive ? 'box-shadow: 0 0 22px rgba(0, 245, 212, 0.7);' : '');
+            const pillBg = isCompleted ? '#10b981' : (isActive ? '#00b4d8' : 'rgba(255, 255, 255, 0.12)');
+            const pillColor = isPending ? '#94a3b8' : '#ffffff';
+            const pillGlow = isCompleted
+              ? 'box-shadow: 0 0 10px rgba(16, 185, 129, 0.5);'
+              : (isActive ? 'box-shadow: 0 0 10px rgba(0, 180, 216, 0.5);' : '');
+            const em = s.emoji || this._getRoadmapStageEmoji(s.icon, i);
+
+            return `
+              <div style="display: flex; flex-direction: column; align-items: center; text-align: center; min-width: 108px; max-width: 155px; flex: 1;">
+                <div style="position: relative; width: 56px; height: 56px; border-radius: 50%; border: 3px solid ${circleBorder}; background: ${circleBg}; ${circleGlow} display: flex; align-items: center; justify-content: center; margin-bottom: 0.75rem;">
+                  <span style="font-size: 1.65rem; line-height: 1; filter: drop-shadow(0 2px 6px rgba(0,0,0,0.5));">${em}</span>
+                  ${isCompleted ? `
+                    <div style="position: absolute; top: -3px; right: -3px; width: 19px; height: 19px; border-radius: 50%; background: #10b981; color: #ffffff; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 900; border: 2px solid #0a1128; box-shadow: 0 0 8px rgba(16,185,129,0.9);">✓</div>
+                  ` : ''}
+                </div>
+                <div style="font-size: 0.9rem; font-weight: 800; color: #ffffff; line-height: 1.25; margin-bottom: 0.35rem; text-shadow: 0 2px 8px rgba(0,0,0,0.6);">
+                  ${i + 1}. ${this.escapeHtml(s.title)}
+                </div>
+                <div style="background: ${pillBg}; color: ${pillColor}; font-weight: 900; font-size: 0.75rem; padding: 0.2rem 0.78rem; border-radius: 9999px; ${pillGlow} letter-spacing: 0.4px;">
+                  ${s.progress || 0}%
+                </div>
+              </div>
+            `;
+          }).join('')}
+        </div>
+      </div>
+
+      <!-- Lista de Etapas del Proyecto (Idéntica al Asistente de Proyectos) -->
+      <div style="background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 22px; padding: 1.45rem 1.55rem; box-shadow: 0 6px 24px rgba(15, 23, 42, 0.05); margin-top: 1.25rem;">
+        <div style="display: flex; align-items: center; gap: 0.6rem; margin-bottom: 1.15rem;">
+          <span style="font-size: 1.25rem;">🗂️</span>
+          <h3 style="font-size: 1.12rem; font-weight: 900; color: #0f172a; margin: 0;">Etapas del Proyecto (${stages.length})</h3>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 0.85rem;">
+          ${stages.map((stage, index) => {
+            const isCompleted = stage.status === 'completed';
+            const isActive = stage.status === 'active';
+            const barColor = isCompleted ? '#10b981' : (isActive ? '#00b4d8' : '#cbd5e1');
+            const statusPillBg = isCompleted ? '#ecfdf5' : (isActive ? '#eff6ff' : '#f8fafc');
+            const statusPillBorder = isCompleted ? '#a7f3d0' : (isActive ? '#bfdbfe' : '#e2e8f0');
+            const statusPillColor = isCompleted ? '#047857' : (isActive ? '#1d4ed8' : '#64748b');
+            const statusPillLabel = isCompleted ? '✔ Completado' : (isActive ? '▶ En Progreso' : '⏱ Pendiente');
+            const em = stage.emoji || this._getRoadmapStageEmoji(stage.icon, index);
+            const squareBg = isCompleted
+              ? 'linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%)'
+              : (isActive ? 'linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%)' : 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)');
+            const squareBorder = isCompleted ? '#6ee7b7' : (isActive ? '#a5b4fc' : '#cbd5e1');
+
+            return `
+              <div style="background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 16px; padding: 1rem 1.2rem; box-shadow: 0 3px 12px rgba(0,0,0,0.03);">
+                <div style="display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
+                  <div style="flex-shrink: 0;">
+                    ${isActive ? `
+                      <div style="width: 26px; height: 26px; border-radius: 50%; background: #00b4d8; color: #ffffff; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; box-shadow: 0 0 10px rgba(0,180,216,0.45);">▶</div>
+                    ` : (isCompleted ? `
+                      <div style="width: 26px; height: 26px; border-radius: 50%; background: #10b981; color: #ffffff; display: flex; align-items: center; justify-content: center; font-size: 0.82rem; font-weight: 900; box-shadow: 0 0 10px rgba(16,185,129,0.45);">✔</div>
+                    ` : `
+                      <div style="width: 24px; height: 24px; border-radius: 50%; border: 2.5px solid #cbd5e1; background: #ffffff;"></div>
+                    `)}
+                  </div>
+                  <div style="width: 50px; height: 50px; border-radius: 14px; background: ${squareBg}; border: 1.5px solid ${squareBorder}; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                    <span style="font-size: 1.65rem; line-height: 1;">${em}</span>
+                  </div>
+                  <div style="flex: 1; min-width: 200px;">
+                    <div style="font-weight: 900; font-size: 1rem; color: #0f172a; margin-bottom: 0.2rem;">
+                      ${index + 1}. ${this.escapeHtml(stage.title)}
+                    </div>
+                    <div style="font-size: 0.84rem; color: #64748b; margin-bottom: 0.5rem; line-height: 1.4;">
+                      ${this.escapeHtml(stage.description || 'Etapa del proyecto')}
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 0.75rem;">
+                      <div style="flex: 1; height: 8px; border-radius: 9999px; background: #e2e8f0; overflow: hidden;">
+                        <div style="height: 100%; width: ${stage.progress || 0}%; background: ${barColor}; border-radius: 9999px;"></div>
+                      </div>
+                      <span style="font-weight: 900; font-size: 0.84rem; color: ${stage.progress > 0 ? '#0f172a' : '#94a3b8'}; min-width: 36px; text-align: right;">${stage.progress || 0}%</span>
+                    </div>
+                  </div>
+                  <div style="flex-shrink: 0;">
+                    <span style="background: ${statusPillBg}; border: 1px solid ${statusPillBorder}; color: ${statusPillColor}; font-weight: 800; font-size: 0.78rem; padding: 0.38rem 0.82rem; border-radius: 9999px; display: inline-flex; align-items: center; gap: 0.3rem; white-space: nowrap;">
+                      ${statusPillLabel}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            `;
+          }).join('')}
+        </div>
+      </div>
+    `;
+  },
+
   renderLandingPageView(container, allProjects = []) {
     this.currentSlideIndex = 0;
     const currentTheme = this.getLandingTheme();
@@ -7453,31 +7710,14 @@ window.ProjectsView = {
                 </div>
               </section>
 
-              <!-- Ruta del Proyecto -->
+              <!-- Ruta del Proyecto (Diseño idéntico al Asistente de Proyectos) -->
               <section class="inno-roadmap-block" id="inno-sec-roadmap">
                 <div class="inno-section-head">
                   <h2 class="inno-section-title">Ruta del Proyecto</h2>
-                  <p class="inno-section-sub">${hasCustomRoadmap ? 'Las etapas por las que pasó este proyecto.' : 'Seguimos un camino claro para alcanzar nuestros objetivos.'}</p>
+                  <p class="inno-section-sub">${hasCustomRoadmap ? 'Etapas, actividades y avance definidos en el Asistente de Proyectos.' : 'Seguimos un camino claro para alcanzar nuestros objetivos.'}</p>
                 </div>
 
-                ${(() => {
-                  // Extraer el fill pct del token si es ruta personalizada
-                  let fillPct = 48;
-                  let cleanHtml = timelineStepsHtml;
-                  const fillMatch = timelineStepsHtml.match(/^__ROADMAP_FILL_PCT_(\d+)__/);
-                  if (fillMatch) {
-                    fillPct = parseInt(fillMatch[1], 10);
-                    cleanHtml = timelineStepsHtml.replace(/^__ROADMAP_FILL_PCT_\d+__/, '');
-                  }
-                  return `
-                  <div class="inno-roadmap-track-wrap">
-                    <div class="inno-roadmap-track-line"></div>
-                    <div class="inno-roadmap-track-fill" style="width: ${fillPct}%;"></div>
-                    <div class="inno-roadmap-steps">
-                      ${cleanHtml}
-                    </div>
-                  </div>`;
-                })()}
+                ${this.renderWizardStyleRoadmap(selected, totalCardsCount)}
               </section>
 
             </div>
@@ -9346,7 +9586,25 @@ Generado por Mentix - Plataforma de Proyectos y Retos
     const updatedLocalList = mergeIntoMap(localMap);
     try { localStorage.setItem('mentix_code_participants_v1', JSON.stringify(localMap)); } catch (e) {}
 
-    // 2. Sincronizar en Supabase Cloud (combinando con otros estudiantes ya registrados en el mismo código!)
+    // 2. Sincronizar globalmente en /api/challenges (persiste para todos los docentes y dispositivos)
+    try {
+      const currentEntry = updatedLocalList.find(x => x && x.userKey === userKey) || updatedLocalList[0];
+      if (currentEntry) {
+        const apiBase = (window.appRouter && typeof window.appRouter.getApiBase === 'function') ? window.appRouter.getApiBase() : '';
+        fetch(`${apiBase}/api/challenges`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            type: 'CODE_PARTICIPANTS_SYNC',
+            normCode,
+            code: cleanCode,
+            entry: currentEntry
+          })
+        }).catch(() => {});
+      }
+    } catch (e) {}
+
+    // 3. Respaldo en Supabase Cloud
     try {
       if (window.supabaseEngine && typeof window.supabaseEngine.loadWizardDraft === 'function' && typeof window.supabaseEngine.saveWizardDraft === 'function') {
         const supaKey = 'mentix_code_participants_' + normCode;
@@ -9386,7 +9644,23 @@ Generado por Mentix - Plataforma de Proyectos y Retos
       if (Array.isArray(localMap[normCode])) localMap[normCode].forEach(ingestEntry);
     } catch (e) {}
 
-    // 2. Supabase Cloud registry (todos los estudiantes en cualquier dispositivo!)
+    // 2. Servidor global /api/challenges?codeParticipants=1 (todos los estudiantes en cualquier dispositivo!)
+    try {
+      const apiBase = (window.appRouter && typeof window.appRouter.getApiBase === 'function') ? window.appRouter.getApiBase() : '';
+      const ctrl = typeof AbortController !== 'undefined' ? new AbortController() : null;
+      const tid = ctrl ? setTimeout(() => ctrl.abort(), 3000) : null;
+      const r = await fetch(`${apiBase}/api/challenges?codeParticipants=1&code=${encodeURIComponent(normCode)}&t=${Date.now()}`, {
+        cache: 'no-store',
+        signal: ctrl ? ctrl.signal : undefined
+      });
+      if (tid) clearTimeout(tid);
+      if (r && r.ok) {
+        const arr = await r.json();
+        if (Array.isArray(arr)) arr.forEach(ingestEntry);
+      }
+    } catch (e) {}
+
+    // 3. Respaldo Supabase Cloud registry
     try {
       if (window.supabaseEngine && typeof window.supabaseEngine.loadWizardDraft === 'function') {
         const supaKey = 'mentix_code_participants_' + normCode;

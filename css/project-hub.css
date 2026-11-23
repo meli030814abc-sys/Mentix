@@ -3020,3 +3020,185 @@ body.projects-pure-white-theme #phub-fullpage-review:not(.theme-light) strong,
     width: 22px;
   }
 }
+
+/* ==========================================================================
+   PANTALLA "UNIRME AL PROYECTO" (#phub-fullpage-join) — MODO CLARO NÍTIDO
+   ========================================================================== */
+body #phub-fullpage-join,
+body.light-theme #phub-fullpage-join,
+body.projects-pure-white-theme #phub-fullpage-join {
+  background: #f1f5f9 !important;
+  color: #0f172a !important;
+}
+
+#phub-fullpage-join .phub-fp-bg {
+  filter: brightness(1.08) saturate(1.1) blur(10px) !important;
+  opacity: 0.22 !important;
+}
+
+#phub-fullpage-join .phub-fp-overlay {
+  background: linear-gradient(145deg, rgba(248, 250, 252, 0.93) 0%, rgba(239, 246, 255, 0.92) 55%, rgba(241, 245, 249, 0.96) 100%) !important;
+}
+
+#phub-fullpage-join .phub-fp-glow {
+  background:
+    radial-gradient(circle at 82% 85%, rgba(56, 189, 248, 0.14) 0%, transparent 50%),
+    radial-gradient(circle at 18% 15%, rgba(99, 102, 241, 0.1) 0%, transparent 45%) !important;
+}
+
+#phub-fullpage-join .phub-fp-header {
+  background: rgba(255, 255, 255, 0.92) !important;
+  border-bottom: 1.5px solid #e2e8f0 !important;
+  box-shadow: 0 2px 14px rgba(15, 23, 42, 0.05) !important;
+}
+
+#phub-fullpage-join .phub-fp-back-btn {
+  background: #f8fafc !important;
+  color: #0f172a !important;
+  border: 1.5px solid #cbd5e1 !important;
+}
+#phub-fullpage-join .phub-fp-back-btn:hover {
+  background: #eff6ff !important;
+  border-color: #2563eb !important;
+  color: #1d4ed8 !important;
+}
+
+#phub-fullpage-join .phub-fp-center-badge {
+  background: #eff6ff !important;
+  border: 1.5px solid #93c5fd !important;
+  color: #1d4ed8 !important;
+}
+#phub-fullpage-join .phub-fp-dot {
+  background: #2563eb !important;
+  box-shadow: 0 0 8px rgba(37, 99, 235, 0.5) !important;
+}
+
+#phub-fullpage-join .phub-fp-ghost-btn {
+  background: #eff6ff !important;
+  border: 1.5px solid #93c5fd !important;
+  color: #0369a1 !important;
+}
+#phub-fullpage-join .phub-fp-ghost-btn:hover {
+  background: #0284c7 !important;
+  border-color: #0284c7 !important;
+  color: #ffffff !important;
+}
+
+#phub-fullpage-join .phub-fp-close-x {
+  background: #f1f5f9 !important;
+  border: 1.5px solid #cbd5e1 !important;
+  color: #334155 !important;
+}
+#phub-fullpage-join .phub-fp-close-x:hover {
+  background: #ef4444 !important;
+  border-color: #ef4444 !important;
+  color: #ffffff !important;
+}
+
+#phub-fullpage-join .phub-fp-card {
+  background: #ffffff !important;
+  border: 1.5px solid #e2e8f0 !important;
+  box-shadow: 0 24px 64px rgba(15, 23, 42, 0.12), 0 4px 16px rgba(37, 99, 235, 0.06) !important;
+  color: #0f172a !important;
+}
+
+body #phub-fullpage-join h1,
+body #phub-fullpage-join h2,
+body #phub-fullpage-join h3,
+body.light-theme #phub-fullpage-join h1,
+body.projects-pure-white-theme #phub-fullpage-join h1,
+#phub-fullpage-join .phub-fp-title {
+  color: #0f172a !important;
+  text-shadow: none !important;
+}
+
+body #phub-fullpage-join p,
+body.light-theme #phub-fullpage-join p,
+body.projects-pure-white-theme #phub-fullpage-join p,
+#phub-fullpage-join .phub-fp-subtitle {
+  color: #475569 !important;
+}
+
+body #phub-fullpage-join .phub-fp-subtitle strong,
+body.light-theme #phub-fullpage-join .phub-fp-subtitle strong,
+body.projects-pure-white-theme #phub-fullpage-join .phub-fp-subtitle strong {
+  color: #0284c7 !important;
+}
+
+#phub-fullpage-join .phub-fp-callout {
+  background: #eff6ff !important;
+  border: 1.5px solid #bfdbfe !important;
+}
+body #phub-fullpage-join .phub-fp-callout .txt strong,
+body.light-theme #phub-fullpage-join .phub-fp-callout .txt strong,
+body.projects-pure-white-theme #phub-fullpage-join .phub-fp-callout .txt strong {
+  color: #1d4ed8 !important;
+}
+body #phub-fullpage-join .phub-fp-callout .txt p,
+body.light-theme #phub-fullpage-join .phub-fp-callout .txt p,
+body.projects-pure-white-theme #phub-fullpage-join .phub-fp-callout .txt p {
+  color: #334155 !important;
+}
+
+#phub-fullpage-join .phub-fp-tabs {
+  background: #f1f5f9 !important;
+  border: 1.5px solid #e2e8f0 !important;
+}
+#phub-fullpage-join .phub-fp-tab {
+  color: #475569 !important;
+}
+#phub-fullpage-join .phub-fp-tab:not(.active):hover {
+  color: #0f172a !important;
+  background: #e2e8f0 !important;
+}
+#phub-fullpage-join .phub-fp-tab.active {
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%) !important;
+  color: #ffffff !important;
+}
+
+body #phub-fullpage-join .phub-fp-label-txt,
+body.light-theme #phub-fullpage-join .phub-fp-label-txt,
+body.projects-pure-white-theme #phub-fullpage-join .phub-fp-label-txt {
+  color: #1e293b !important;
+}
+
+#phub-fullpage-join .phub-fp-input {
+  background: #ffffff !important;
+  border: 1.5px solid #cbd5e1 !important;
+  color: #0f172a !important;
+}
+#phub-fullpage-join .phub-fp-input::placeholder {
+  color: #94a3b8 !important;
+}
+#phub-fullpage-join .phub-fp-input:focus {
+  border-color: #2563eb !important;
+  background: #ffffff !important;
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.14) !important;
+}
+
+#phub-fullpage-join .phub-fp-security-note {
+  background: #fffbeb !important;
+  border: 1.5px dashed #f59e0b !important;
+  color: #92400e !important;
+}
+
+#phub-fullpage-join .phub-fp-footer-note {
+  color: #64748b !important;
+}
+
+#phub-fullpage-join .phub-fp-success-title {
+  color: #16a34a !important;
+}
+#phub-fullpage-join .phub-fp-success-msg {
+  color: #334155 !important;
+}
+#phub-fullpage-join .phub-fp-steps-box {
+  background: #f8fafc !important;
+  border: 1.5px solid #e2e8f0 !important;
+}
+#phub-fullpage-join .phub-fp-step-txt strong {
+  color: #0f172a !important;
+}
+#phub-fullpage-join .phub-fp-step-txt span {
+  color: #475569 !important;
+}

@@ -649,3 +649,4 @@ class SupabaseService {
 }
 
 window.supabaseService = new SupabaseService();
+window.supabaseEngine = window.supabaseService;

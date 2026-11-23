@@ -3719,3 +3719,185 @@
 .mentix-admin-layout.theme-light .admin-table tr:hover td {
   background: #f8fafc !important;
 }
+
+/* ==========================================================================
+   MODO CLARO INTEGRAL DEL PANEL ADMIN (Sidebar, Topbar, Roles, Matriz, Banner)
+   ========================================================================== */
+#view-admin.theme-light,
+#view-admin.theme-light .mentix-admin-layout,
+.mentix-admin-layout.theme-light {
+  background: #f4f7fb !important;
+  color: #0f172a !important;
+}
+
+#view-admin.theme-light .mentix-admin-main,
+.mentix-admin-layout.theme-light .mentix-admin-main,
+.mentix-admin-layout.theme-light .mentix-admin-content {
+  background: #f4f7fb !important;
+  color: #0f172a !important;
+}
+
+/* Sidebar lateral CLARO y elegante */
+.mentix-admin-layout.theme-light .mentix-admin-sidebar {
+  background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%) !important;
+  border-right: 1.5px solid #e2e8f0 !important;
+  box-shadow: 4px 0 24px rgba(15, 23, 42, 0.06) !important;
+}
+.mentix-admin-layout.theme-light .admin-sidebar-header {
+  border-bottom: 1.5px solid #e2e8f0 !important;
+}
+.mentix-admin-layout.theme-light .admin-brand-title {
+  color: #0f172a !important;
+  text-shadow: none !important;
+}
+.mentix-admin-layout.theme-light .admin-brand-title span {
+  color: #0284c7 !important;
+}
+.mentix-admin-layout.theme-light .admin-brand-slogan {
+  color: #64748b !important;
+}
+.mentix-admin-layout.theme-light .admin-sidebar-toggle-btn {
+  background: #f1f5f9 !important;
+  border: 1px solid #cbd5e1 !important;
+  color: #334155 !important;
+}
+.mentix-admin-layout.theme-light .admin-nav-item {
+  color: #334155 !important;
+  font-weight: 700 !important;
+}
+.mentix-admin-layout.theme-light .admin-nav-item:hover {
+  background: #eff6ff !important;
+  color: #1d4ed8 !important;
+}
+.mentix-admin-layout.theme-light .admin-nav-item.active {
+  background: linear-gradient(135deg, #0284c7 0%, #2563eb 100%) !important;
+  color: #ffffff !important;
+  box-shadow: 0 6px 16px rgba(37, 99, 235, 0.28) !important;
+}
+.mentix-admin-layout.theme-light .admin-nav-item.active .admin-nav-label,
+.mentix-admin-layout.theme-light .admin-nav-item.active .admin-nav-icon {
+  color: #ffffff !important;
+}
+.mentix-admin-layout.theme-light .admin-nav-badge {
+  background: #e0f2fe !important;
+  color: #0369a1 !important;
+  border: 1px solid #bae6fd !important;
+}
+.mentix-admin-layout.theme-light .admin-nav-item.active .admin-nav-badge {
+  background: rgba(255, 255, 255, 0.22) !important;
+  color: #ffffff !important;
+  border-color: rgba(255, 255, 255, 0.35) !important;
+}
+.mentix-admin-layout.theme-light .admin-support-card {
+  background: #f8fafc !important;
+  border: 1.5px solid #e2e8f0 !important;
+  color: #334155 !important;
+}
+.mentix-admin-layout.theme-light .admin-support-content h4 {
+  color: #0f172a !important;
+}
+.mentix-admin-layout.theme-light .admin-support-content p {
+  color: #64748b !important;
+}
+.mentix-admin-layout.theme-light .admin-support-btn {
+  background: #eff6ff !important;
+  color: #1d4ed8 !important;
+  border: 1px solid #bfdbfe !important;
+}
+
+/* Breadcrumbs, encabezados y etiquetas en Modo Claro */
+.mentix-admin-layout.theme-light .admin-breadcrumb,
+.mentix-admin-layout.theme-light .admin-breadcrumb span {
+  color: #64748b !important;
+}
+.mentix-admin-layout.theme-light .admin-breadcrumb .active {
+  color: #0284c7 !important;
+  font-weight: 800 !important;
+}
+.mentix-admin-layout.theme-light h1,
+.mentix-admin-layout.theme-light h2,
+.mentix-admin-layout.theme-light h3,
+.mentix-admin-layout.theme-light h4,
+.mentix-admin-layout.theme-light .admin-view-title,
+.mentix-admin-layout.theme-light .admin-section-header h2,
+.mentix-admin-layout.theme-light .admin-card-header h3 {
+  color: #0f172a !important;
+  text-shadow: none !important;
+}
+.mentix-admin-layout.theme-light .admin-card-header p,
+.mentix-admin-layout.theme-light .admin-section-header p {
+  color: #475569 !important;
+}
+
+/* Tarjetas de Roles & Matriz de Permisos en Modo Claro */
+.mentix-admin-layout.theme-light .admin-role-card {
+  background: #ffffff !important;
+  border: 1.5px solid #e2e8f0 !important;
+  box-shadow: 0 6px 20px rgba(15, 23, 42, 0.06) !important;
+  color: #0f172a !important;
+}
+.mentix-admin-layout.theme-light .admin-role-card p,
+.mentix-admin-layout.theme-light .role-caps-list li {
+  color: #334155 !important;
+}
+.mentix-admin-layout.theme-light .role-card-badge {
+  background: #e0f2fe !important;
+  color: #0369a1 !important;
+  border: 1px solid #bae6fd !important;
+}
+.mentix-admin-layout.theme-light .admin-card-header {
+  background: #ffffff !important;
+  border-bottom: 1.5px solid #e2e8f0 !important;
+}
+.mentix-admin-layout.theme-light .badge-tag.tag-cyan {
+  background: #e0f2fe !important;
+  color: #0369a1 !important;
+  border: 1px solid #7dd3fc !important;
+}
+.mentix-admin-layout.theme-light .admin-permissions-table {
+  background: #ffffff !important;
+  color: #0f172a !important;
+}
+.mentix-admin-layout.theme-light .admin-permissions-table th {
+  background: #f1f5f9 !important;
+  color: #0f172a !important;
+  border-bottom: 1.5px solid #cbd5e1 !important;
+}
+.mentix-admin-layout.theme-light .admin-permissions-table td {
+  background: #ffffff !important;
+  color: #1e293b !important;
+  border-bottom: 1px solid #e2e8f0 !important;
+}
+.mentix-admin-layout.theme-light .admin-permissions-table td strong {
+  color: #0f172a !important;
+}
+.mentix-admin-layout.theme-light .admin-permissions-table tr:hover td {
+  background: #f8fafc !important;
+}
+
+/* Inputs, tabs y popover de notificaciones en Modo Claro */
+.mentix-admin-layout.theme-light input,
+.mentix-admin-layout.theme-light select,
+.mentix-admin-layout.theme-light textarea {
+  background: #ffffff !important;
+  color: #0f172a !important;
+  border: 1.5px solid #cbd5e1 !important;
+}
+.mentix-admin-layout.theme-light .admin-tab,
+.mentix-admin-layout.theme-light .admin-filter-pill {
+  background: #ffffff !important;
+  color: #334155 !important;
+  border: 1.5px solid #cbd5e1 !important;
+}
+.mentix-admin-layout.theme-light .admin-tab.active,
+.mentix-admin-layout.theme-light .admin-filter-pill.active {
+  background: linear-gradient(135deg, #0284c7 0%, #2563eb 100%) !important;
+  color: #ffffff !important;
+  border-color: #2563eb !important;
+}
+.mentix-admin-layout.theme-light .admin-notif-popover {
+  background: #ffffff !important;
+  border: 1.5px solid #e2e8f0 !important;
+  color: #0f172a !important;
+  box-shadow: 0 16px 40px rgba(15, 23, 42, 0.14) !important;
+}

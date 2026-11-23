@@ -321,6 +321,11 @@ window.AdminView = {
     this.ensureResources();
     this.sidebarCollapsed = localStorage.getItem('mentix_admin_sidebar_collapsed') === 'true';
     const currentTheme = this.getTheme();
+    if (['teacher', 'evaluations', 'resources'].includes(this.activeTab)) {
+      this.activeTab = 'dashboard';
+    }
+    container.classList.toggle('theme-light', currentTheme === 'light');
+    container.classList.toggle('theme-dark', currentTheme !== 'light');
     this.initRealTimeUpdates();
 
     // Inyectar layout SaaS completo
@@ -365,7 +370,7 @@ window.AdminView = {
             </button>
           </div>
 
-          <!-- Navegación del Sidebar (Idéntico a la imagen) -->
+          <!-- Navegación del Sidebar (Solo Inicio, Mis Proyectos, Comunidad, Reportes y Configuración) -->
           <nav class="admin-sidebar-nav">
             <button class="admin-nav-item ${this.activeTab === 'dashboard' ? 'active' : ''}" onclick="window.AdminView.switchTab('dashboard')">
               <span class="admin-nav-icon">🏠</span>
@@ -375,19 +380,6 @@ window.AdminView = {
               <span class="admin-nav-icon">📁</span>
               <span class="admin-nav-label sidebar-hideable">Mis Proyectos</span>
               <span class="admin-nav-badge sidebar-hideable">${this.getRealProjects().length}</span>
-            </button>
-            <button class="admin-nav-item ${this.activeTab === 'teacher' ? 'active' : ''}" onclick="window.AdminView.switchTab('teacher')">
-              <span class="admin-nav-icon">📋</span>
-              <span class="admin-nav-label sidebar-hideable">Panel Docente</span>
-            </button>
-            <button class="admin-nav-item ${this.activeTab === 'evaluations' ? 'active' : ''}" onclick="window.AdminView.switchTab('evaluations')">
-              <span class="admin-nav-icon">📝</span>
-              <span class="admin-nav-label sidebar-hideable">Evaluaciones</span>
-            </button>
-            <button class="admin-nav-item ${this.activeTab === 'resources' ? 'active' : ''}" onclick="window.AdminView.switchTab('resources')">
-              <span class="admin-nav-icon">📂</span>
-              <span class="admin-nav-label sidebar-hideable">Recursos</span>
-              <span class="admin-nav-badge sidebar-hideable" id="admin-resources-count-badge">6</span>
             </button>
             <button class="admin-nav-item ${this.activeTab === 'community' || this.activeTab === 'roles' ? 'active' : ''}" onclick="window.AdminView.switchTab('community')">
               <span class="admin-nav-icon">👥</span>
@@ -4379,15 +4371,21 @@ window.AdminView = {
 
   getTheme() {
     try {
-      const saved = localStorage.getItem('mentix_admin_theme') || localStorage.getItem('te_reto_theme');
-      if (saved === 'light' || saved === 'dark') return saved;
+      const saved = localStorage.getItem('mentix_admin_theme');
+      if (saved === 'dark') return 'dark';
+      if (saved === 'light') return 'light';
     } catch (e) {}
-    return document.body.classList.contains('light-theme') ? 'light' : 'dark';
+    return 'light';
   },
 
   applyTheme(theme) {
+    const viewAdmin = document.getElementById('view-admin');
     const root = document.getElementById('mentix-admin-root');
     const isLight = theme === 'light';
+    if (viewAdmin) {
+      viewAdmin.classList.toggle('theme-light', isLight);
+      viewAdmin.classList.toggle('theme-dark', !isLight);
+    }
     if (root) {
       root.classList.toggle('theme-light', isLight);
       root.classList.toggle('theme-dark', !isLight);
