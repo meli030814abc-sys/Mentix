@@ -33,12 +33,10 @@
     "isPublic": false,
     "startDate": "2026-11-23",
     "endDate": "",
-    "currentStep": 5,
+    "currentStep": 3,
     "completedSteps": [
       1,
-      2,
-      3,
-      4
+      2
     ],
     "progress": 50,
     "calculatedProgress": 50,
@@ -96,40 +94,7 @@
       "displayOrder": 1,
       "featuredVideoPublic": true
     },
-    "projectRoadmap": [
-      {
-        "title": "Planeación",
-        "description": "Conformación del equipo y definición de objetivos.",
-        "progress": 40,
-        "status": "active",
-        "icon": "clipboard",
-        "emoji": "📋"
-      },
-      {
-        "title": "Investigación",
-        "description": "Recopilación de datos e información relevante.",
-        "progress": 100,
-        "status": "completed",
-        "icon": "search",
-        "emoji": "🔍"
-      },
-      {
-        "title": "Desarrollo",
-        "description": "Construcción de la solución y prototipos.",
-        "progress": 0,
-        "status": "pending",
-        "icon": "code",
-        "emoji": "💻"
-      },
-      {
-        "title": "Publicación",
-        "description": "Despliegue en la Landing Page y comunicación.",
-        "progress": 0,
-        "status": "pending",
-        "icon": "rocket",
-        "emoji": "🚀"
-      }
-    ],
+    "projectRoadmap": [],
     "designConfig": {
       "themeId": "cosmos",
       "fontFamily": "Montserrat",
@@ -192,40 +157,6 @@
       "thumbnailImage": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
       "useDefaultImage": true,
       "externalLinks": [],
-      "projectRoadmap": [
-        {
-          "title": "Planeación",
-          "description": "Conformación del equipo y definición de objetivos.",
-          "progress": 40,
-          "status": "active",
-          "icon": "clipboard",
-          "emoji": "📋"
-        },
-        {
-          "title": "Investigación",
-          "description": "Recopilación de datos e información relevante.",
-          "progress": 100,
-          "status": "completed",
-          "icon": "search",
-          "emoji": "🔍"
-        },
-        {
-          "title": "Desarrollo",
-          "description": "Construcción de la solución y prototipos.",
-          "progress": 0,
-          "status": "pending",
-          "icon": "code",
-          "emoji": "💻"
-        },
-        {
-          "title": "Publicación",
-          "description": "Despliegue en la Landing Page y comunicación.",
-          "progress": 0,
-          "status": "pending",
-          "icon": "rocket",
-          "emoji": "🚀"
-        }
-      ],
       "landingConfig": {
         "publicName": "Nuevo Proyecto",
         "slug": "nuevo-proyecto",
@@ -244,11 +175,9 @@
       "publicationStatus": "draft",
       "completedSteps": [
         1,
-        2,
-        3,
-        4
+        2
       ],
-      "currentStep": 5,
+      "currentStep": 3,
       "author": "JHFK",
       "authorId": "user_1795407757752",
       "ownerId": "user_1795407757752",
@@ -272,7 +201,7 @@
         "authorsRole": "Líder del Proyecto"
       },
       "createdAt": "2026-11-23T04:35:12.300Z",
-      "updatedAt": "2026-11-23T04:51:41.735Z",
+      "updatedAt": "2026-11-23T04:51:39.314Z",
       "progress": 50,
       "calculatedProgress": 50
     },
@@ -286,7 +215,51 @@
     "authorAvatar": "🦊",
     "authorRole": "student",
     "createdAt": "2026-11-23T04:35:12.300Z",
-    "updatedAt": "2026-11-23T04:51:41.839Z"
+    "updatedAt": "2026-11-23T04:51:39.448Z",
+    "hub": {
+      "joinRequests": [],
+      "members": [
+        {
+          "name": "JHFK",
+          "email": "HGFH@HNGFH",
+          "role": "owner",
+          "leader": true
+        }
+      ],
+      "views": [],
+      "ratings": []
+    },
+    "customProjectCodes": [
+      {
+        "code": "804263",
+        "author": "Melisa",
+        "authorRole": "admin",
+        "createdAt": "22/11/2026, 9:27:35 p.m."
+      },
+      {
+        "code": "371850",
+        "author": "Melisa",
+        "authorRole": "admin",
+        "createdAt": "22/11/2026, 9:27:35 p.m."
+      },
+      {
+        "code": "926407",
+        "author": "Melisa",
+        "authorRole": "admin",
+        "createdAt": "22/11/2026, 9:23:09 p.m."
+      },
+      {
+        "code": "583194",
+        "author": "Melisa",
+        "authorRole": "admin",
+        "createdAt": "22/11/2026, 9:22:51 p.m."
+      }
+    ],
+    "tag": "⏳ Pendiente de Autorización",
+    "tagClass": "badge-review",
+    "_globalHeroBanner": "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=1600&q=80",
+    "globalHeroBanner": "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=1600&q=80",
+    "rejectionReason": ""
   },
   {
     "id": "proj_pres_1791658288964",
