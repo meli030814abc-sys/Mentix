@@ -77,5 +77,20 @@
     "lastLoginAt": "2026-11-23T16:40:55.536Z",
     "pwd": "11bd4a89b2fae8cb7a4afa66cfc6b5141b0f9f4acb2ed66b0ab12fdaf9baa78e",
     "createdAt": "2026-11-23T16:23:20.888Z"
+  },
+  {
+    "id": "user_2",
+    "name": "Prof. Carlos Ruiz",
+    "username": "prof_carlos",
+    "email": "carlos.ruiz@colegio.edu",
+    "avatar": "👨‍🏫",
+    "role": "teacher",
+    "xp": 8400,
+    "level": 5,
+    "levelName": "Maestro",
+    "institution": "Colegio Bolivariano",
+    "isBlocked": false,
+    "lastLoginAt": "2026-11-23T16:48:45.240Z",
+    "createdAt": "2026-11-23T16:48:45.240Z"
   }
 ]
