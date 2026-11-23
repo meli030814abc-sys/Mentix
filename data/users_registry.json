@@ -126,5 +126,21 @@
     "lastLoginAt": "2026-11-23T20:59:11.118Z",
     "pwd": "cd716a4f506e0826d82baa7d103c425043c877903912246baa11ac777c346c88",
     "createdAt": "2026-11-23T20:55:29.314Z"
+  },
+  {
+    "id": "user_1793449675851",
+    "name": "Carlos Canon",
+    "username": "night",
+    "email": "carlitoscanon@gmail.com",
+    "avatar": "🦊",
+    "role": "student",
+    "xp": 100,
+    "level": 1,
+    "levelName": "Principiante",
+    "institution": "Comunidad MENTIX",
+    "isBlocked": false,
+    "lastLoginAt": "2026-11-23T20:59:24.615Z",
+    "pwd": "9eaa6e0155c77de0a9ba36e8e467706f0d45f7e0475fb826e443d9bdb2fc3635",
+    "createdAt": "2026-11-23T20:59:24.615Z"
   }
 ]
