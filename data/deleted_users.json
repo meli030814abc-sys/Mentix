@@ -8,5 +8,10 @@
     "id": "user_2",
     "email": "carlos.ruiz@colegio.edu",
     "deletedAt": "2026-11-23T17:02:22.995Z"
+  },
+  {
+    "id": "user_1",
+    "email": "mateo@te-reto.app",
+    "deletedAt": "2026-11-23T17:02:28.177Z"
   }
 ]
