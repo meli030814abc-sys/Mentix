@@ -3196,8 +3196,11 @@ window.ProjectsView = {
       </div>
     `;
 
-    // Sincronizar banner principal global y miembros aceptados desde la nube para todos los dispositivos
+    // Sincronizar banner principal global, proyectos autorizados y miembros aceptados desde la nube para todos los dispositivos
     this.syncHeroBannerFromCloud();
+    if (window.appRouter && typeof window.appRouter.syncChallengesWithCloud === 'function') {
+      window.appRouter.syncChallengesWithCloud();
+    }
     if (!isGuestUser && window.ProjectHub && typeof window.ProjectHub.syncAllHubsFromCloud === 'function') {
       window.ProjectHub.syncAllHubsFromCloud(rawProjects);
     }
@@ -3664,40 +3667,93 @@ window.ProjectsView = {
       } else {
         const note = prompt('Ingresa el motivo de desautorización (el proyecto seguirá Completado pero no será visible para todos):', 'Oculto temporalmente para revisión antes de hacerlo público.');
         if (note === null) return;
+        const nowIso = new Date().toISOString();
         p.approvalStatus = 'pending';
         p.publicationStatus = 'completed';
         p.status = 'completed';
         p.stage = 'completed';
         p.isPublic = false;
         p.accessMode = 'private';
+        p.visibility = 'private';
         p.rejectionReason = note;
-        p.rejectedAt = new Date().toISOString();
+        p.rejectedAt = nowIso;
+        p.updatedAt = nowIso;
         if (p.govdata && typeof p.govdata === 'object') {
           p.govdata.approvalStatus = 'pending';
           p.govdata.publicationStatus = 'completed';
           p.govdata.status = 'completed';
           p.govdata.isPublic = false;
+          p.govdata.rejectionReason = note;
         }
+        try {
+          const appMap = JSON.parse(localStorage.getItem('mentix_approved_projects_map') || '{}');
+          if (appMap && appMap[projectId]) {
+            delete appMap[projectId];
+            localStorage.setItem('mentix_approved_projects_map', JSON.stringify(appMap));
+          }
+        } catch(e) {}
         if (typeof saveGlobalState === 'function') saveGlobalState(window.appState);
+        if (window.appRouter && typeof window.appRouter.pushChallengeToCloud === 'function') {
+          Promise.resolve(window.appRouter.pushChallengeToCloud(p)).then(() => {
+            if (window.realtimeEngine && typeof window.realtimeEngine.publishProjectAuthSync === 'function') {
+              window.realtimeEngine.publishProjectAuthSync(p.id, p.approvalStatus, p.title, {
+                isPublic: false,
+                rejectedAt: p.rejectedAt,
+                rejectionReason: p.rejectionReason,
+                updatedAt: p.updatedAt
+              });
+            }
+          });
+        }
         if (this.showToast) this.showToast(`🔒 "${p.title}" desautorizado (sigue Completado, oculto al público).`, 'warning');
       }
     } else {
       if (window.AdminView && typeof window.AdminView.approveProject === 'function') {
         window.AdminView.approveProject(projectId);
       } else {
+        const nowIso = new Date().toISOString();
+        const adminName = (window.appState.currentUser?.name) || 'Administrador Mentix';
         p.approvalStatus = 'approved';
         p.publicationStatus = 'published';
         p.status = 'completed';
         p.stage = 'completed';
         p.isPublic = true;
         p.accessMode = 'public';
-        p.authorizedAt = new Date().toISOString();
-        p.authorizedBy = (window.appState.currentUser?.name) || 'Administrador Mentix';
+        p.visibility = 'public';
+        p.authorizedAt = nowIso;
+        p.authorizedBy = adminName;
         p.rejectionReason = '';
         p.rejectedAt = '';
+        p.updatedAt = nowIso;
+        if (p.govdata && typeof p.govdata === 'object') {
+          p.govdata.approvalStatus = 'approved';
+          p.govdata.publicationStatus = 'published';
+          p.govdata.status = 'completed';
+          p.govdata.isPublic = true;
+          p.govdata.rejectionReason = '';
+          p.govdata.authorizedAt = nowIso;
+          p.govdata.authorizedBy = adminName;
+        }
+        try {
+          const appMap = JSON.parse(localStorage.getItem('mentix_approved_projects_map') || '{}');
+          appMap[projectId] = { approvalStatus: 'approved', authorizedAt: nowIso, authorizedBy: adminName, updatedAt: nowIso };
+          localStorage.setItem('mentix_approved_projects_map', JSON.stringify(appMap));
+        } catch(e) {}
         this.currentFilterTab = 'all';
         this.searchQuery = '';
         if (typeof saveGlobalState === 'function') saveGlobalState(window.appState);
+        if (window.appRouter && typeof window.appRouter.pushChallengeToCloud === 'function') {
+          Promise.resolve(window.appRouter.pushChallengeToCloud(p)).then(() => {
+            if (window.realtimeEngine && typeof window.realtimeEngine.publishProjectAuthSync === 'function') {
+              window.realtimeEngine.publishProjectAuthSync(p.id, p.approvalStatus, p.title, {
+                isPublic: true,
+                authorizedAt: p.authorizedAt,
+                authorizedBy: p.authorizedBy,
+                updatedAt: p.updatedAt
+              });
+            }
+          });
+        }
         if (this.showToast) this.showToast(`✅ ¡Proyecto "${p.title}" autorizado y publicado con éxito!`, 'success');
       }
     }

@@ -7216,7 +7216,16 @@ collectCurrentStepInputs() {
     }
 
     if (window.appRouter && typeof window.appRouter.pushChallengeToCloud === 'function') {
-      window.appRouter.pushChallengeToCloud(rec).catch(() => {});
+      Promise.resolve(window.appRouter.pushChallengeToCloud(rec)).then(() => {
+        if (window.realtimeEngine && typeof window.realtimeEngine.publishProjectAuthSync === 'function') {
+          window.realtimeEngine.publishProjectAuthSync(rec.id, rec.approvalStatus, rec.title, {
+            isPublic: rec.isPublic,
+            authorizedAt: rec.authorizedAt,
+            authorizedBy: rec.authorizedBy,
+            updatedAt: rec.updatedAt
+          });
+        }
+      }).catch(() => {});
     }
 
     if (canPub) {

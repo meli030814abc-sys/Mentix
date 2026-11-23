@@ -3777,6 +3777,9 @@ window.AdminView = {
     const nowIso = new Date().toISOString();
     const adminName = (window.appState.currentUser?.name) || 'Administrador Mentix';
 
+    if (!p.title || !String(p.title).trim()) {
+      p.title = p.landingConfig?.publicName || 'Proyecto Mentix';
+    }
     p.approvalStatus = 'approved';
     p.publicationStatus = 'published';
     p.status = 'completed';
@@ -3857,27 +3860,44 @@ window.AdminView = {
   syncApprovedProjectsOnce() {
     if (this._approvedSyncDone || !this.isAdminUser()) return;
     this._approvedSyncDone = true;
-    (window.appState?.challenges || []).forEach(p => {
-      if (p && p.id && p.approvalStatus === 'approved' && p.authorizedAt) {
-        this.pushProjectToDatabase(p);
-      }
+    const approvedList = (window.appState?.challenges || []).filter(p => p && p.id && p.approvalStatus === 'approved' && p.authorizedAt);
+    approvedList.forEach((p, idx) => {
+      setTimeout(() => {
+        this.pushProjectToDatabase(p, false);
+      }, idx * 1400);
     });
   },
 
   /**
    * Publica/actualiza el estado de un proyecto en la base de datos (Supabase + API global)
    */
-  pushProjectToDatabase(p) {
+  pushProjectToDatabase(p, broadcastSync = true) {
     if (!p) return;
     try {
+      const notifyGlobalSync = () => {
+        if (!broadcastSync) return;
+        if (window.realtimeEngine && typeof window.realtimeEngine.publishProjectAuthSync === 'function') {
+          window.realtimeEngine.publishProjectAuthSync(p.id, p.approvalStatus, p.title, {
+            isPublic: p.isPublic,
+            authorizedAt: p.authorizedAt,
+            authorizedBy: p.authorizedBy,
+            rejectedAt: p.rejectedAt,
+            rejectionReason: p.rejectionReason,
+            updatedAt: p.updatedAt
+          });
+        }
+      };
       if (window.appRouter && typeof window.appRouter.pushChallengeToCloud === 'function') {
         Promise.resolve(window.appRouter.pushChallengeToCloud(p)).then(() => {
           if (p.approvalStatus === 'approved' && window.appRouter.lastCloudPersisted === false) {
-            alert('⚠️ El proyecto quedó autorizado SOLO en este navegador.\n\nEl servidor no pudo guardarlo en la base de datos compartida (falta un GITHUB_TOKEN válido en Vercel o una clave válida de Supabase), por eso estudiantes y docentes aún no lo ven.\n\nConfigura el token y vuelve a pulsar Autorizar.');
+            alert('⚠️ El proyecto quedó autorizado SOLO en este navegador.\n\nEl servidor no pudo guardarlo en la base de datos compartida (falta un GITHUB_TOKEN válido en Vercel), por eso estudiantes y docentes aún no lo ven.');
+          } else {
+            notifyGlobalSync();
           }
         });
       } else if (window.supabaseService && typeof window.supabaseService.saveChallengeToSupabase === 'function') {
         window.supabaseService.saveChallengeToSupabase(p);
+        notifyGlobalSync();
       }
     } catch (e) {
       console.warn('No se pudo sincronizar el proyecto con la base de datos:', e);
@@ -3912,6 +3932,7 @@ window.AdminView = {
     p.accessMode = 'private';
     p.rejectionReason = note;
     p.rejectedAt = new Date().toISOString();
+    p.updatedAt = new Date().toISOString();
 
     if (p.govdata && typeof p.govdata === 'object') {
       p.govdata.approvalStatus = 'pending';

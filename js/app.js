@@ -53,7 +53,7 @@ class AppRouter {
 
     // Sincronizar categorías y retos globales desde la nube para todos los usuarios
     this.syncCategoriesWithCloud();
-    this.syncChallengesWithCloud();
+    this.syncChallengesWithCloud(true);
 
     // Manejar atajos globales
     this.setupGlobalEvents();
@@ -283,11 +283,24 @@ class AppRouter {
       this.restoreInitialRoute(true);
     });
 
-    // Sincronización global automática: cuando el usuario regresa a la pestaña o periódicamente cada 30 segundos
+    // Sincronización global automática: cuando el usuario regresa a la pestaña, vuelve a enfocar la ventana o periódicamente cada 15 segundos
     document.addEventListener('visibilitychange', () => {
       if (document.visibilityState === 'visible') {
-        this.syncChallengesWithCloud();
+        this.syncChallengesWithCloud(true);
         this.syncCategoriesWithCloud();
+        if (window.ProjectsView && typeof window.ProjectsView.syncHeroBannerFromCloud === 'function') {
+          window.ProjectsView.syncHeroBannerFromCloud().catch(() => {});
+        }
+      }
+    });
+
+    window.addEventListener('focus', () => {
+      const now = Date.now();
+      if (now - (this._lastFocusSyncAt || 0) < 10000) return;
+      this._lastFocusSyncAt = now;
+      this.syncChallengesWithCloud();
+      if (window.ProjectsView && typeof window.ProjectsView.syncHeroBannerFromCloud === 'function') {
+        window.ProjectsView.syncHeroBannerFromCloud().catch(() => {});
       }
     });
 
@@ -305,10 +318,10 @@ class AppRouter {
     window.addEventListener('beforeunload', handleHostTabExit);
 
     setInterval(() => {
-      if (document.visibilityState === 'visible' && (this.currentView === 'home' || this.currentView === 'projects')) {
+      if (document.visibilityState === 'visible' && (this.currentView === 'home' || this.currentView === 'projects' || this.currentView === 'admin')) {
         this.syncChallengesWithCloud();
       }
-    }, 30000);
+    }, 15000);
   }
 
   isGuest() {
@@ -520,6 +533,7 @@ class AppRouter {
       case 'admin':
         document.getElementById('view-admin')?.classList.add('active');
         window.AdminView.render();
+        this.syncChallengesWithCloud();
         break;
 
       case 'ranking':
@@ -1771,6 +1785,7 @@ class AppRouter {
   isChallengeOwner(challenge) {
     if (!challenge) return false;
     const u = window.appState?.currentUser;
+    if (!u) return false;
 
     const clean = s => String(s || '').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
     const cleanName = clean(u.name);
@@ -1831,14 +1846,26 @@ class AppRouter {
   }
 
   async pushChallengeToCloud(challenge) {
-    if (!challenge || !challenge.id || !challenge.title) return;
+    if (!challenge || !challenge.id) return { ok: false, persisted: false };
+    this.lastCloudPersisted = undefined;
     try {
+      if (!challenge.title || !String(challenge.title).trim()) {
+        challenge.title = challenge.landingConfig?.publicName || 'Proyecto Mentix';
+      }
       if (!challenge.projectType) {
         challenge.projectType = (challenge.isGovDataProject || challenge.slides) ? 'presentation' : 'quiz';
       }
       // Los proyectos solo son públicos en la nube cuando un administrador los autoriza
       if (challenge.projectType !== 'quiz') {
-        challenge.isPublic = challenge.approvalStatus === 'approved';
+        const isApprovedNow = challenge.approvalStatus === 'approved' && !challenge.rejectionReason;
+        challenge.isPublic = isApprovedNow;
+        if (isApprovedNow) {
+          challenge.accessMode = 'public';
+          challenge.visibility = 'public';
+          challenge.publicationStatus = 'published';
+          challenge.status = 'completed';
+          challenge.stage = 'completed';
+        }
       } else {
         challenge.isPublic = true;
       }
@@ -1846,32 +1873,75 @@ class AppRouter {
         try { window.supabaseService.saveChallengeToSupabase(challenge); } catch(e) {}
       }
       challenge.updatedAt = new Date().toISOString();
-      const cleanChallenge = typeof window.compactProjectForStorage === 'function'
-        ? window.compactProjectForStorage(challenge, false)
-        : challenge;
+
+      const buildCleanBody = (stripHeavy = false) => {
+        let obj = typeof window.compactProjectForStorage === 'function'
+          ? window.compactProjectForStorage(challenge, stripHeavy)
+          : { ...challenge };
+        if (stripHeavy) {
+          const stripGiantData = (val) => {
+            if (typeof val === 'string') {
+              return (val.startsWith('data:image/') && val.length > 55000) ? '' : val;
+            }
+            if (Array.isArray(val)) return val.map(stripGiantData);
+            if (val && typeof val === 'object') {
+              const out = {};
+              for (const k in val) out[k] = stripGiantData(val[k]);
+              return out;
+            }
+            return val;
+          };
+          obj = stripGiantData(obj);
+        }
+        return JSON.stringify({ challenge: obj });
+      };
 
       const apiBase = this.getApiBase();
-      const controller = (typeof AbortController !== 'undefined') ? new AbortController() : null;
-      const timeoutId = controller ? setTimeout(() => controller.abort(), 20000) : null;
+      const sendPayload = async (bodyStr) => {
+        const controller = (typeof AbortController !== 'undefined') ? new AbortController() : null;
+        const timeoutId = controller ? setTimeout(() => controller.abort(), 22000) : null;
+        const resp = await fetch(`${apiBase}/api/challenges`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: bodyStr,
+          signal: controller ? controller.signal : undefined
+        }).catch(err => {
+          console.warn('Aviso de red al sincronizar reto (/api/challenges):', err.message);
+          return null;
+        });
+        if (timeoutId) clearTimeout(timeoutId);
+        return resp;
+      };
 
-      const res = await fetch(`${apiBase}/api/challenges`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ challenge: cleanChallenge }),
-        signal: controller ? controller.signal : undefined
-      }).catch(err => {
-        console.warn('Aviso de red al sincronizar reto (/api/challenges):', err.message);
-        return null;
-      });
-      if (timeoutId) clearTimeout(timeoutId);
+      let bodyStr = buildCleanBody(false);
+      // Si el proyecto supera 3.2 MB (riesgo de 413 en Vercel), compactar automáticamente para no perder la autorización en la nube
+      if (bodyStr.length > 3200000) {
+        bodyStr = buildCleanBody(true);
+      }
+
+      let res = await sendPayload(bodyStr);
+      if (!res || (!res.ok && (res.status === 413 || res.status >= 500))) {
+        const lightBody = buildCleanBody(true);
+        if (lightBody.length < bodyStr.length) {
+          res = await sendPayload(lightBody);
+        }
+      }
 
       if (res && res.ok) {
-        let persisted = false; try { const j = await res.json(); persisted = !!(j && j.persisted); } catch (e) {} this.lastCloudPersisted = persisted; console.log('☁️ Reto enviado a MENTIX Cloud (persistido: ' + persisted + '):', challenge.title);
-      } else if (res) {
-        console.warn('Respuesta no-ok al guardar en /api/challenges:', res.status);
+        let persisted = false;
+        try { const j = await res.json(); persisted = !!(j && j.persisted); } catch (e) {}
+        this.lastCloudPersisted = persisted;
+        console.log('☁️ Reto enviado a MENTIX Cloud (persistido: ' + persisted + '):', challenge.title);
+        return { ok: true, persisted };
+      } else {
+        this.lastCloudPersisted = false;
+        if (res) console.warn('Respuesta no-ok al guardar en /api/challenges:', res.status);
+        return { ok: false, persisted: false };
       }
     } catch(e) {
+      this.lastCloudPersisted = false;
       console.warn('Error al subir reto a la nube (/api/challenges):', e);
+      return { ok: false, persisted: false };
     }
   }
 
@@ -1888,7 +1958,18 @@ class AppRouter {
     }
   }
 
-  async syncChallengesWithCloud() {
+  async syncChallengesWithCloud(force = false) {
+    const nowMs = Date.now();
+    if (this._challengesSyncInFlight) {
+      if (force) this._pendingForcedChallengesSync = true;
+      return;
+    }
+    if (!force && (nowMs - (this._lastChallengesSyncAt || 0)) < 8000) {
+      return;
+    }
+    this._challengesSyncInFlight = true;
+    this._lastChallengesSyncAt = nowMs;
+
     try {
       let cloudChallenges = null;
 
@@ -1899,10 +1980,10 @@ class AppRouter {
         }
       } catch (errCodes) {}
 
-      // 1. Consultar API global de retos en Vercel
+      // 1. Consultar API global de retos en Vercel sin caché
       try {
         const apiBase = this.getApiBase();
-        const res = await fetch(`${apiBase}/api/challenges?t=${Date.now()}`);
+        const res = await fetch(`${apiBase}/api/challenges?t=${Date.now()}&fresh=1`, { cache: 'no-store' });
         if (res.ok) {
           const json = await res.json();
           if (Array.isArray(json) && json.length > 0) {
@@ -1916,7 +1997,7 @@ class AppRouter {
       // 2. Fallback a archivo estático data/challenges.json
       if (!cloudChallenges) {
         try {
-          const resStatic = await fetch(`data/challenges.json?t=${Date.now()}`);
+          const resStatic = await fetch(`data/challenges.json?t=${Date.now()}`, { cache: 'no-store' });
           if (resStatic.ok) {
             const jsonStatic = await resStatic.json();
             if (Array.isArray(jsonStatic) && jsonStatic.length > 0) {
@@ -1929,7 +2010,7 @@ class AppRouter {
       // Retos eliminados: quitarlos de la nube y de este dispositivo
       let deletedIds = [];
       try {
-        const resDel = await fetch(`${this.getApiBase()}/api/challenges?deleted=1&t=${Date.now()}`);
+        const resDel = await fetch(`${this.getApiBase()}/api/challenges?deleted=1&t=${Date.now()}`, { cache: 'no-store' });
         if (resDel.ok) {
           const jd = await resDel.json();
           if (Array.isArray(jd)) deletedIds = jd;
@@ -2013,10 +2094,49 @@ class AppRouter {
         const map = new Map();
         local.forEach(c => { if (c && c.id) map.set(c.id, c); });
 
+        let appMap = {};
+        let appMapDirty = false;
+        try { appMap = JSON.parse(localStorage.getItem('mentix_approved_projects_map') || '{}') || {}; } catch(e) {}
+
+        let wizardDraftsCache = null;
+        let wizardDraftsDirty = false;
+        try {
+          const rawWd = localStorage.getItem('mentix_govdata_wizard_drafts');
+          if (rawWd) {
+            const parsedWd = JSON.parse(rawWd);
+            if (Array.isArray(parsedWd)) wizardDraftsCache = parsedWd;
+          }
+        } catch (e) {}
+
+        const syncLocalDraftApproval = (projId, isApprovedNow, metaProj) => {
+          if (!Array.isArray(wizardDraftsCache)) return;
+          const dIdx = wizardDraftsCache.findIndex(d => d && String(d.id) === String(projId));
+          if (dIdx < 0) return;
+          const wd = wizardDraftsCache[dIdx];
+          if (isApprovedNow) {
+            if (wd.approvalStatus !== 'approved' || wd.isPublic !== true) {
+              wd.approvalStatus = 'approved';
+              wd.publicationStatus = 'published';
+              wd.status = 'completed';
+              wd.isPublic = true;
+              wd.rejectionReason = '';
+              wd.authorizedAt = metaProj.authorizedAt || wd.authorizedAt || new Date().toISOString();
+              wd.authorizedBy = metaProj.authorizedBy || wd.authorizedBy || 'Administrador Mentix';
+              wizardDraftsDirty = true;
+            }
+          } else if (wd.approvalStatus === 'approved') {
+            wd.approvalStatus = metaProj.approvalStatus || 'pending';
+            wd.publicationStatus = metaProj.publicationStatus || 'completed';
+            wd.isPublic = false;
+            wd.rejectionReason = metaProj.rejectionReason || '';
+            wizardDraftsDirty = true;
+          }
+        };
+
         cloudChallenges.forEach(c => {
           if (!c || !c.id) return;
-          if (c.isPublic === undefined) c.isPublic = true;
-          if (!c.projectType) c.projectType = 'quiz';
+          if (!c.projectType) c.projectType = (c.isGovDataProject || c.slides) ? 'presentation' : 'quiz';
+          if (c.isPublic === undefined) c.isPublic = (c.projectType === 'quiz') ? true : (c.approvalStatus === 'approved');
 
           // Si el reto en la nube no tiene preguntas, restaurar preguntas por defecto si es muestra
           if (!Array.isArray(c.questions) || c.questions.length === 0) {
@@ -2028,14 +2148,35 @@ class AppRouter {
           const isProjectItem = (c.projectType && c.projectType !== 'quiz') || c.isGovDataProject === true;
           if (!map.has(c.id)) {
             if ((Array.isArray(c.questions) && c.questions.length > 0) || isProjectItem) {
+              if (isProjectItem && c.approvalStatus === 'approved' && !c.rejectionReason) {
+                c.isPublic = true;
+                c.accessMode = 'public';
+                c.visibility = 'public';
+                c.publicationStatus = 'published';
+                c.status = 'completed';
+                c.stage = 'completed';
+                c.rejectionReason = '';
+                c.authorizedAt = c.authorizedAt || new Date().toISOString();
+                c.authorizedBy = c.authorizedBy || 'Administrador Mentix';
+                if (c.govdata && typeof c.govdata === 'object') {
+                  c.govdata.approvalStatus = 'approved';
+                  c.govdata.publicationStatus = 'published';
+                  c.govdata.status = 'completed';
+                  c.govdata.isPublic = true;
+                  c.govdata.rejectionReason = '';
+                }
+                syncLocalDraftApproval(c.id, true, c);
+              }
               map.set(c.id, c);
             }
           } else {
             const existing = map.get(c.id);
             if ((Array.isArray(c.questions) && c.questions.length > 0) || isProjectItem) {
-              let appMap = {};
-              try { appMap = JSON.parse(localStorage.getItem('mentix_approved_projects_map') || '{}') || {}; } catch(e) {}
-              const isApprovedHere = !!(appMap[c.id]) || existing.approvalStatus === 'approved' || c.approvalStatus === 'approved';
+              const cloudTs = new Date(c.updatedAt || c.rejectedAt || c.authorizedAt || 0).getTime() || 0;
+              const localTs = new Date(existing.updatedAt || existing.rejectedAt || existing.authorizedAt || 0).getTime() || 0;
+              const cloudExplicitlyUnapproved = isProjectItem && c.approvalStatus !== 'approved' && (Boolean(c.rejectedAt) || Boolean(c.rejectionReason)) && cloudTs >= localTs;
+              const localApproved = !!(appMap[c.id]) || existing.approvalStatus === 'approved';
+              const cloudApproved = c.approvalStatus === 'approved' && !c.rejectionReason;
               const mergedItem = (typeof window.mergeProjectPreservingImages === 'function')
                 ? window.mergeProjectPreservingImages(existing, c)
                 : { ...existing, ...c };
@@ -2060,19 +2201,54 @@ class AppRouter {
                 mergedItem.videoConfig = existing.videoConfig;
                 mergedItem.videoUrl = existing.videoUrl || existing.videoConfig.url;
               }
-              if (isApprovedHere && c.approvalStatus !== 'rejected') {
+
+              if (cloudExplicitlyUnapproved) {
+                // El administrador revocó/desautorizó el proyecto en la nube más recientemente
+                mergedItem.approvalStatus = c.approvalStatus || 'pending';
+                mergedItem.publicationStatus = c.publicationStatus || 'completed';
+                mergedItem.status = c.status || 'completed';
+                mergedItem.stage = c.stage || mergedItem.status;
+                mergedItem.isPublic = false;
+                mergedItem.accessMode = 'private';
+                mergedItem.visibility = 'private';
+                mergedItem.rejectionReason = c.rejectionReason || '';
+                mergedItem.rejectedAt = c.rejectedAt || '';
+                if (mergedItem.govdata && typeof mergedItem.govdata === 'object') {
+                  mergedItem.govdata.approvalStatus = mergedItem.approvalStatus;
+                  mergedItem.govdata.publicationStatus = mergedItem.publicationStatus;
+                  mergedItem.govdata.status = mergedItem.status;
+                  mergedItem.govdata.isPublic = false;
+                  mergedItem.govdata.rejectionReason = mergedItem.rejectionReason;
+                }
+                if (appMap[c.id]) {
+                  delete appMap[c.id];
+                  appMapDirty = true;
+                }
+                syncLocalDraftApproval(c.id, false, mergedItem);
+              } else if (cloudApproved || (localApproved && c.approvalStatus !== 'rejected')) {
                 mergedItem.approvalStatus = 'approved';
                 mergedItem.publicationStatus = 'published';
                 mergedItem.status = 'completed';
                 mergedItem.stage = 'completed';
                 mergedItem.isPublic = true;
                 mergedItem.accessMode = 'public';
+                mergedItem.visibility = 'public';
                 mergedItem.rejectionReason = '';
-                mergedItem.authorizedAt = appMap[c.id]?.authorizedAt || existing.authorizedAt || c.authorizedAt || new Date().toISOString();
-                mergedItem.authorizedBy = appMap[c.id]?.authorizedBy || existing.authorizedBy || c.authorizedBy || 'Administrador Mentix';
-              } else if (c.approvalStatus === 'approved') {
-                mergedItem.rejectionReason = '';
+                mergedItem.rejectedAt = '';
+                mergedItem.authorizedAt = c.authorizedAt || appMap[c.id]?.authorizedAt || existing.authorizedAt || new Date().toISOString();
+                mergedItem.authorizedBy = c.authorizedBy || appMap[c.id]?.authorizedBy || existing.authorizedBy || 'Administrador Mentix';
+                if (mergedItem.govdata && typeof mergedItem.govdata === 'object') {
+                  mergedItem.govdata.approvalStatus = 'approved';
+                  mergedItem.govdata.publicationStatus = 'published';
+                  mergedItem.govdata.status = 'completed';
+                  mergedItem.govdata.isPublic = true;
+                  mergedItem.govdata.rejectionReason = '';
+                  mergedItem.govdata.authorizedAt = mergedItem.authorizedAt;
+                  mergedItem.govdata.authorizedBy = mergedItem.authorizedBy;
+                }
+                syncLocalDraftApproval(c.id, true, mergedItem);
               }
+
               if (c.hub && typeof c.hub === 'object') {
                 mergedItem.hub = { ...(existing.hub || {}), ...c.hub };
                 if (Array.isArray(c.hub.members) && c.hub.members.length > 0) mergedItem.hub.members = c.hub.members;
@@ -2085,10 +2261,24 @@ class AppRouter {
           }
         });
 
+        if (appMapDirty) {
+          try { localStorage.setItem('mentix_approved_projects_map', JSON.stringify(appMap)); } catch(e) {}
+        }
+        if (wizardDraftsDirty && Array.isArray(wizardDraftsCache)) {
+          try { localStorage.setItem('mentix_govdata_wizard_drafts', JSON.stringify(wizardDraftsCache)); } catch(e) {}
+        }
+
         const merged = Array.from(map.values());
         const sigOf = (arr) => (arr || []).map(x => [
           x.id,
           x.updatedAt || '',
+          x.approvalStatus || '',
+          String(x.isPublic),
+          x.accessMode || '',
+          x.publicationStatus || '',
+          x.status || '',
+          x.rejectionReason || '',
+          (x.title || '').slice(0, 40),
           (x.hub?.members?.length) || 0,
           (x.heroBanner || x.mainImage || x.banner || '').slice(-40),
           (Array.isArray(x.visualAssets) ? x.visualAssets.length : 0),
@@ -2105,6 +2295,8 @@ class AppRouter {
             window.HomeView.render();
           } else if (this.currentView === 'projects' && window.ProjectsView && window.ProjectsView.viewMode !== 'wizard') {
             window.ProjectsView.render();
+          } else if (this.currentView === 'admin' && window.AdminView && typeof window.AdminView.renderActiveTab === 'function') {
+            window.AdminView.renderActiveTab();
           }
           if (document.getElementById('phub-overlay') && window.ProjectHub && typeof window.ProjectHub.render === 'function') {
             window.ProjectHub.render();
@@ -2113,6 +2305,12 @@ class AppRouter {
       }
     } catch (e) {
       console.warn('Error sincronizando retos con la nube:', e);
+    } finally {
+      this._challengesSyncInFlight = false;
+      if (this._pendingForcedChallengesSync) {
+        this._pendingForcedChallengesSync = false;
+        setTimeout(() => this.syncChallengesWithCloud(true), 250);
+      }
     }
   }
 
