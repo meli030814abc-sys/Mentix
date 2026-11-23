@@ -3,6 +3,7 @@ const GITHUB_REPO = 'meli030814abc-sys/Mentix';
 const TOKEN_FRAGMENTS = ['gho', '_SJI3t', 'NR6cjo', '7m2YrE', 'KDDKD', 'NE6zlj', 'W62TG6HW'];
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN || TOKEN_FRAGMENTS.join('');
 const FILE_PATH = 'data/categories.json';
+const DATA_BRANCH = 'mentix-data';
 
 const DEFAULT_CATEGORIES = [
   { id: 'matematicas', name: 'Matemáticas', icon: '🧮', color: '#ffb703', count: 18 },
@@ -52,7 +53,7 @@ export default async function handler(req, res) {
   // GET: Obtener todas las categorías públicas compartidas
   if (req.method === 'GET') {
     try {
-      const ghRes = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/contents/${FILE_PATH}?ref=main`, {
+      const ghRes = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/contents/${FILE_PATH}?ref=${DATA_BRANCH}`, {
         headers: {
           'Authorization': `Bearer ${GITHUB_TOKEN}`,
           'Accept': 'application/vnd.github.v3+json',
@@ -86,7 +87,7 @@ export default async function handler(req, res) {
       let currentSha = null;
 
       try {
-        const ghGet = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/contents/${FILE_PATH}?ref=main`, {
+        const ghGet = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/contents/${FILE_PATH}?ref=${DATA_BRANCH}`, {
           headers: {
             'Authorization': `Bearer ${GITHUB_TOKEN}`,
             'Accept': 'application/vnd.github.v3+json',
@@ -130,7 +131,7 @@ export default async function handler(req, res) {
       const putPayload = {
         message: `chore(data): guardar categoria global "${preparedCat.name}" [skip ci]`,
         content: updatedBuffer,
-        branch: 'main'
+        branch: DATA_BRANCH
       };
       if (currentSha) putPayload.sha = currentSha;
 
@@ -168,7 +169,7 @@ export default async function handler(req, res) {
       let currentCategories = [...DEFAULT_CATEGORIES];
       let currentSha = null;
 
-      const ghGet = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/contents/${FILE_PATH}?ref=main`, {
+      const ghGet = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/contents/${FILE_PATH}?ref=${DATA_BRANCH}`, {
         headers: {
           'Authorization': `Bearer ${GITHUB_TOKEN}`,
           'Accept': 'application/vnd.github.v3+json',
@@ -194,7 +195,7 @@ export default async function handler(req, res) {
       const putPayload = {
         message: `chore(data): eliminar categoria "${catId}" [skip ci]`,
         content: updatedBuffer,
-        branch: 'main'
+        branch: DATA_BRANCH
       };
       if (currentSha) putPayload.sha = currentSha;
 

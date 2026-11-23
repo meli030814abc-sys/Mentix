@@ -3,6 +3,7 @@ const GITHUB_REPO = 'meli030814abc-sys/Mentix';
 const TOKEN_FRAGMENTS = [];
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN || process.env.GH_TOKEN || '';
 const FILE_PATH = 'data/challenges.json';
+const DATA_BRANCH = 'mentix-data';
 
 let inMemoryChallenges = null;
 
@@ -29,7 +30,7 @@ function ghHeaders() {
 
 async function readGitHubJsonFile(filePath, fallbackVal) {
   try {
-    const r = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/contents/${filePath}?ref=main`, { headers: ghHeaders(), cache: 'no-store' });
+    const r = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/contents/${filePath}?ref=${DATA_BRANCH}`, { headers: ghHeaders(), cache: 'no-store' });
     if (r.ok) {
       const d = await r.json();
       let str = '';
@@ -53,7 +54,7 @@ async function writeGitHubJsonFile(filePath, dataObj, commitMessage) {
     const payload = {
       message: `${commitMessage} [skip ci]`,
       content: Buffer.from(JSON.stringify(dataObj, null, 2), 'utf8').toString('base64'),
-      branch: 'main'
+      branch: DATA_BRANCH
     };
     if (sha) payload.sha = sha;
     try {
@@ -74,7 +75,7 @@ async function readCustomProjectCodes(forceGitHub = false) {
     return { codes: inMemoryCodes, sha: null };
   }
   try {
-    const r = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/contents/${CODES_PATH}?ref=main`, { headers: ghHeaders(), cache: 'no-store' });
+    const r = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/contents/${CODES_PATH}?ref=${DATA_BRANCH}`, { headers: ghHeaders(), cache: 'no-store' });
     if (r.ok) {
       const d = await r.json();
       const str = Buffer.from(d.content, 'base64').toString('utf8');
@@ -112,7 +113,7 @@ async function saveCustomProjectCodes(newCodes) {
     const payload = {
       message: `chore(data): sincronizar codigos de proyectos [skip ci]`,
       content: Buffer.from(JSON.stringify(cleanList, null, 2), 'utf8').toString('base64'),
-      branch: 'main'
+      branch: DATA_BRANCH
     };
     if (sha) payload.sha = sha;
     try {
@@ -130,7 +131,7 @@ async function saveCustomProjectCodes(newCodes) {
 
 async function readDeletedIds() {
   try {
-    const r = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/contents/${DELETED_PATH}?ref=main`, { headers: ghHeaders(), cache: 'no-store' });
+    const r = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/contents/${DELETED_PATH}?ref=${DATA_BRANCH}`, { headers: ghHeaders(), cache: 'no-store' });
     if (r.ok) {
       const d = await r.json();
       const arr = JSON.parse(Buffer.from(d.content, 'base64').toString('utf8'));
@@ -151,7 +152,7 @@ async function addDeletedId(id) {
     const payload = {
       message: `chore(data): registrar reto eliminado "${id}" [skip ci]`,
       content: Buffer.from(JSON.stringify(next, null, 2), 'utf8').toString('base64'),
-      branch: 'main'
+      branch: DATA_BRANCH
     };
     if (sha) payload.sha = sha;
     try {
@@ -249,7 +250,7 @@ export default async function handler(req, res) {
         headers['Authorization'] = `Bearer ${GITHUB_TOKEN}`;
       }
 
-      const ghRes = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/contents/${FILE_PATH}?ref=main&t=${Date.now()}`, {
+      const ghRes = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/contents/${FILE_PATH}?ref=${DATA_BRANCH}&t=${Date.now()}`, {
         headers: { ...headers, 'Cache-Control': 'no-cache' },
         cache: 'no-store'
       });
@@ -378,7 +379,7 @@ export default async function handler(req, res) {
 
         for (let attempt = 0; attempt < 3 && !savedInGitHub; attempt++) {
           try {
-            const ghGet = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/contents/${FILE_PATH}?ref=main`, { headers, cache: 'no-store' });
+            const ghGet = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/contents/${FILE_PATH}?ref=${DATA_BRANCH}`, { headers, cache: 'no-store' });
             if (ghGet.ok) {
               const ghData = await ghGet.json();
               currentSha = ghData.sha;
@@ -404,7 +405,7 @@ export default async function handler(req, res) {
             const putPayload = {
               message: `chore(data): sincronizar codigos de proyectos [skip ci]`,
               content: updatedBuffer,
-              branch: 'main'
+              branch: DATA_BRANCH
             };
             if (currentSha) putPayload.sha = currentSha;
             const ghPut = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/contents/${FILE_PATH}`, {
@@ -477,7 +478,7 @@ export default async function handler(req, res) {
       // Reintentar hasta 3 veces para garantizar escritura concurrente sin fallos de SHA
       for (let attempt = 0; attempt < 3 && !savedInGitHub; attempt++) {
         try {
-          const ghGet = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/contents/${FILE_PATH}?ref=main`, {
+          const ghGet = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/contents/${FILE_PATH}?ref=${DATA_BRANCH}`, {
             headers,
             cache: 'no-store'
           });
@@ -516,7 +517,7 @@ export default async function handler(req, res) {
           const putPayload = {
             message: `chore(data): guardar reto "${challenge.title.slice(0, 40)}" [skip ci]`,
             content: updatedBuffer,
-            branch: 'main'
+            branch: DATA_BRANCH
           };
           if (currentSha) {
             putPayload.sha = currentSha;
@@ -580,7 +581,7 @@ export default async function handler(req, res) {
 
       for (let attempt = 0; attempt < 3; attempt++) {
         try {
-          const ghGet = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/contents/${FILE_PATH}?ref=main`, {
+          const ghGet = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/contents/${FILE_PATH}?ref=${DATA_BRANCH}`, {
             headers,
             cache: 'no-store'
           });
@@ -603,7 +604,7 @@ export default async function handler(req, res) {
             message: `chore(data): eliminar reto "${challengeId}" [skip ci]`,
             content: updatedBuffer,
             sha: currentSha,
-            branch: 'main'
+            branch: DATA_BRANCH
           };
 
           const ghPut = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/contents/${FILE_PATH}`, {
