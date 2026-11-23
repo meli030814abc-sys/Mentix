@@ -10,12 +10,12 @@
       "email": "gatitaxd6f79@gmail.com",
       "role": "admin",
       "joinedAt": "2026-11-23T04:35:10.065Z",
-      "updatedAt": "2026-11-23T05:04:20.852Z",
+      "updatedAt": "2026-11-23T05:04:24.130Z",
       "projectId": "govdata_code_nocturno_804263",
       "projectTitle": "Nuevo Proyecto",
       "projectDescription": "Iniciativa integral que aborda \"Marino\" mediante metodologías activas de aprendizaje, diseño de prototipos e investigación aplicada para generar impacto positivo.",
-      "currentStep": 5,
-      "completedStepsCount": 4,
+      "currentStep": 8,
+      "completedStepsCount": 7,
       "progress": 90,
       "status": "in_progress",
       "approvalStatus": "pending",
@@ -36,12 +36,15 @@
         "status": "in_progress",
         "publicationStatus": "draft",
         "approvalStatus": "pending",
-        "currentStep": 5,
+        "currentStep": 8,
         "completedSteps": [
           1,
           2,
           3,
-          4
+          4,
+          5,
+          6,
+          7
         ],
         "progress": 90,
         "banner": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
@@ -96,7 +99,7 @@
             }
           ]
         },
-        "updatedAt": "2026-11-23T05:04:20.852Z"
+        "updatedAt": "2026-11-23T05:04:24.130Z"
       }
     },
     {
