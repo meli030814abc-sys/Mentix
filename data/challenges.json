@@ -115,10 +115,7 @@
         "subtitle": "",
         "bullets": [],
         "layout": "full",
-        "bgColor": "#090e1a",
-        "media": "",
-        "imageUrl": "",
-        "bgImage": ""
+        "bgColor": "#090e1a"
       },
       {
         "title": "El Reto y la Oportunidad",
@@ -127,10 +124,7 @@
         "subtitle": "",
         "bullets": [],
         "layout": "full",
-        "bgColor": "#090e1a",
-        "media": "",
-        "imageUrl": "",
-        "bgImage": ""
+        "bgColor": "#090e1a"
       },
       {
         "title": "Nuestra Propuesta de Solución",
@@ -139,10 +133,7 @@
         "subtitle": "",
         "bullets": [],
         "layout": "full",
-        "bgColor": "#090e1a",
-        "media": "",
-        "imageUrl": "",
-        "bgImage": ""
+        "bgColor": "#090e1a"
       }
     ],
     "externalLinks": [],
@@ -197,8 +188,7 @@
       "titleColor": "#ffffff",
       "textColor": "#cbd5e1",
       "accentColor": "#00f5d4",
-      "bannerStyle": "gradient-cosmos",
-      "bannerUrl": ""
+      "bannerStyle": "gradient-cosmos"
     },
     "authorsConfig": {
       "authorsList": "Carlos Canon",
@@ -358,7 +348,7 @@
     "authorAvatar": "👨‍🏫",
     "authorRole": "admin",
     "createdAt": "2026-11-23T03:21:39.599Z",
-    "updatedAt": "2026-11-23T03:27:04.561Z",
+    "updatedAt": "2026-11-23T03:27:04.612Z",
     "image": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
     "tag": "⏳ Pendiente de Autorización",
     "tagClass": "badge-review",
