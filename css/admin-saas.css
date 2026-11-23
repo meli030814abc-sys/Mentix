@@ -6401,3 +6401,210 @@
   .dash3d-kpi-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .dash3d-hero-visual { display: none; }
 }
+
+/* ==========================================================================
+   MODAL 3D ORGANIZADO PARA CREAR ADMINISTRADOR / DOCENTE (V172)
+   ========================================================================== */
+.modal3d-overlay {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 999999 !important;
+  background: rgba(15, 23, 42, 0.56) !important;
+  backdrop-filter: blur(8px) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 1.25rem !important;
+}
+
+.modal3d-window {
+  width: 100% !important;
+  max-width: 540px !important;
+  background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%) !important;
+  border-radius: 26px !important;
+  border: 2px solid #dbe4ff !important;
+  box-shadow: 0 9px 0 #c7d2fe, 0 28px 65px rgba(15, 23, 42, 0.34), inset 0 2px 0 #ffffff !important;
+  overflow: hidden !important;
+  font-family: 'Outfit', 'Inter', system-ui, sans-serif !important;
+  color: #0f172a !important;
+}
+
+.modal3d-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.25rem 1.5rem;
+  background: linear-gradient(125deg, #f5f7ff 0%, #ede9fe 100%);
+  border-bottom: 1.5px solid #e0e7ff;
+}
+
+.modal3d-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.modal3d-icon-medallion {
+  width: 52px;
+  height: 52px;
+  border-radius: 16px;
+  background: linear-gradient(145deg, #ffffff 0%, #eef2ff 100%);
+  border: 1.5px solid #ffffff;
+  box-shadow: 0 4px 0 #c7d2fe, 0 8px 16px rgba(79, 70, 229, 0.16);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.modal3d-header h3 {
+  margin: 0 0 0.15rem;
+  font-size: 1.22rem;
+  font-weight: 900;
+  color: #0f172a;
+}
+
+.modal3d-sub {
+  display: block;
+  font-size: 0.82rem;
+  color: #475569;
+  font-weight: 600;
+}
+
+.modal3d-close-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
+  border: 1.5px solid #cbd5e1;
+  background: #ffffff;
+  color: #334155;
+  font-size: 1rem;
+  font-weight: 900;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 3px 0 #cbd5e1;
+  transition: transform 0.14s ease, background 0.14s ease;
+  flex-shrink: 0;
+}
+
+.modal3d-close-btn:hover {
+  transform: translateY(-1.5px);
+  background: #fee2e2;
+  color: #dc2626;
+  border-color: #fca5a5;
+}
+
+.modal3d-form {
+  padding: 1.35rem 1.5rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.05rem;
+}
+
+.modal3d-section {
+  background: #ffffff;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 18px;
+  padding: 1rem 1.15rem;
+  box-shadow: 0 4px 0 #e2e8f0, inset 0 1.5px 0 #ffffff;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.modal3d-sec-title {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  font-size: 0.9rem;
+  font-weight: 900;
+  color: #1e293b;
+  padding-bottom: 0.45rem;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.modal3d-step-badge {
+  width: 24px;
+  height: 24px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #6366f1, #7c3aed);
+  color: #ffffff;
+  font-size: 0.78rem;
+  font-weight: 900;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2.5px 0 #4338ca;
+}
+
+.modal3d-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.modal3d-field label {
+  font-size: 0.8rem;
+  font-weight: 800;
+  color: #334155;
+}
+
+.modal3d-field input,
+.modal3d-field select {
+  width: 100% !important;
+  padding: 0.65rem 0.9rem !important;
+  border-radius: 12px !important;
+  border: 1.5px solid #cbd5e1 !important;
+  background: #f8fafc !important;
+  color: #0f172a !important;
+  font-size: 0.88rem !important;
+  font-weight: 600 !important;
+  box-sizing: border-box !important;
+  outline: none !important;
+  transition: border-color 0.16s ease, box-shadow 0.16s ease, background 0.16s ease;
+}
+
+.modal3d-field input:focus,
+.modal3d-field select:focus {
+  border-color: #6366f1 !important;
+  background: #ffffff !important;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.18) !important;
+}
+
+.modal3d-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  padding-top: 0.35rem;
+}
+
+/* Modo Oscuro limpio para el Modal 3D */
+.mentix-admin-layout:not(.theme-light) .modal3d-window {
+  background: linear-gradient(180deg, #111c33 0%, #0b1324 100%) !important;
+  border-color: rgba(139, 92, 246, 0.38) !important;
+  box-shadow: 0 9px 0 #020617, 0 28px 65px rgba(0, 0, 0, 0.65) !important;
+  color: #f8fafc !important;
+}
+.mentix-admin-layout:not(.theme-light) .modal3d-header {
+  background: linear-gradient(125deg, #1e1b4b 0%, #2e1065 100%);
+  border-bottom-color: rgba(139, 92, 246, 0.25);
+}
+.mentix-admin-layout:not(.theme-light) .modal3d-header h3,
+.mentix-admin-layout:not(.theme-light) .modal3d-sec-title { color: #f8fafc; }
+.mentix-admin-layout:not(.theme-light) .modal3d-sub,
+.mentix-admin-layout:not(.theme-light) .modal3d-field label { color: #cbd5e1; }
+.mentix-admin-layout:not(.theme-light) .modal3d-section {
+  background: #0f172a;
+  border-color: rgba(148, 163, 184, 0.22);
+  box-shadow: 0 4px 0 #020617;
+}
+.mentix-admin-layout:not(.theme-light) .modal3d-field input,
+.mentix-admin-layout:not(.theme-light) .modal3d-field select {
+  background: #1e293b !important;
+  color: #f8fafc !important;
+  border-color: rgba(148, 163, 184, 0.3) !important;
+}

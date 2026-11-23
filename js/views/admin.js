@@ -3267,53 +3267,65 @@ window.AdminView = {
   openCreateUserModal() {
     const modalRoot = document.getElementById('admin-modal-root');
     if (!modalRoot) return;
+    const F3D = 'https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets';
 
     modalRoot.innerHTML = `
-      <div class="admin-modal-overlay" onclick="window.AdminView.handleModalBackdropClick(event)">
-        <div class="admin-modal-window modal-md">
-          <div class="admin-modal-header">
-            <div class="modal-title-wrap">
-              <span class="modal-icon">👤</span>
+      <div class="admin-modal-overlay modal3d-overlay" onclick="window.AdminView.handleModalBackdropClick(event)">
+        <div class="admin-modal-window modal-md modal3d-window">
+          <div class="modal3d-header">
+            <div class="modal3d-title-wrap">
+              <div class="modal3d-icon-medallion">
+                <img src="${F3D}/Teacher/Default/3D/teacher_3d_default.png" alt="Usuario" width="38" height="38" class="rv3d-ico" />
+              </div>
               <div>
                 <h3>Nuevo Usuario Administrativo</h3>
-                <span class="modal-sub">Asigna credenciales y permisos institucionales</span>
+                <span class="modal3d-sub">Asigna credenciales y permisos institucionales</span>
               </div>
             </div>
-            <button class="modal-close-btn" onclick="window.AdminView.closeModal()">✕</button>
+            <button type="button" class="modal3d-close-btn" onclick="window.AdminView.closeModal()" title="Cerrar">✕</button>
           </div>
 
-          <form onsubmit="window.AdminView.handleCreateUserSubmit(event)" class="admin-modal-form">
-            <div class="form-section">
-              <h4>1. Información Personal</h4>
-              <div class="form-row">
-                <label>Nombre Completo *</label>
+          <form onsubmit="window.AdminView.handleCreateUserSubmit(event)" class="modal3d-form">
+            <div class="modal3d-section">
+              <div class="modal3d-sec-title">
+                <span class="modal3d-step-badge">1</span>
+                <span>Información Personal</span>
+              </div>
+              <div class="modal3d-field">
+                <label for="new-user-name">Nombre Completo *</label>
                 <input type="text" id="new-user-name" required placeholder="Ej: Dra. Elena Ramírez">
               </div>
-              <div class="form-row">
-                <label>Correo Electrónico Institucional *</label>
+              <div class="modal3d-field">
+                <label for="new-user-email">Correo Electrónico Institucional *</label>
                 <input type="email" id="new-user-email" required placeholder="elena.ramirez@mentix.edu">
               </div>
             </div>
 
-            <div class="form-section">
-              <h4>2. Credenciales y Rol</h4>
-              <div class="form-row">
-                <label>Rol en el Sistema *</label>
+            <div class="modal3d-section">
+              <div class="modal3d-sec-title">
+                <span class="modal3d-step-badge">2</span>
+                <span>Credenciales y Rol</span>
+              </div>
+              <div class="modal3d-field">
+                <label for="new-user-role">Rol en el Sistema *</label>
                 <select id="new-user-role" required>
-                  <option value="admin">Administrador General (Acceso Total)</option>
-                  <option value="teacher">Docente Mentor (Moderación)</option>
-                  <option value="student">Estudiante</option>
+                  <option value="admin">🛡️ Administrador General (Acceso Total)</option>
+                  <option value="teacher">👨‍🏫 Docente Mentor (Moderación)</option>
+                  <option value="student">🎓 Estudiante</option>
                 </select>
               </div>
-              <div class="form-row">
-                <label>Contraseña Temporal *</label>
+              <div class="modal3d-field">
+                <label for="new-user-password">Contraseña Temporal *</label>
                 <input type="password" id="new-user-password" required placeholder="••••••••••••" value="Mentix2026!">
               </div>
             </div>
 
-            <div class="admin-modal-footer" style="padding: 1rem 0 0; margin-top: 1rem;">
-              <button type="button" class="btn btn-outline" onclick="window.AdminView.closeModal()">Cancelar</button>
-              <button type="submit" class="btn btn-cyan">Crear Usuario</button>
+            <div class="modal3d-footer">
+              <button type="button" class="proj3d-gloss-btn gloss-white" onclick="window.AdminView.closeModal()">Cancelar</button>
+              <button type="submit" class="proj3d-gloss-btn gloss-indigo">
+                <img src="${F3D}/Check%20mark%20button/3D/check_mark_button_3d.png" alt="" width="18" height="18" class="rv3d-ico" />
+                <span>Crear Usuario</span>
+              </button>
             </div>
           </form>
         </div>
