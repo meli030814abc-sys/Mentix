@@ -1852,7 +1852,7 @@ class AppRouter {
 
       const apiBase = this.getApiBase();
       const controller = (typeof AbortController !== 'undefined') ? new AbortController() : null;
-      const timeoutId = controller ? setTimeout(() => controller.abort(), 3500) : null;
+      const timeoutId = controller ? setTimeout(() => controller.abort(), 20000) : null;
 
       const res = await fetch(`${apiBase}/api/challenges`, {
         method: 'POST',
@@ -2086,8 +2086,16 @@ class AppRouter {
         });
 
         const merged = Array.from(map.values());
-        const beforeSig = (local || []).map(x => x.id + ':' + (x.updatedAt || '') + ':' + ((x.hub?.members?.length) || 0)).join('|');
-        const afterSig = (merged || []).map(x => x.id + ':' + (x.updatedAt || '') + ':' + ((x.hub?.members?.length) || 0)).join('|');
+        const sigOf = (arr) => (arr || []).map(x => [
+          x.id,
+          x.updatedAt || '',
+          (x.hub?.members?.length) || 0,
+          (x.heroBanner || x.mainImage || x.banner || '').slice(-40),
+          (Array.isArray(x.visualAssets) ? x.visualAssets.length : 0),
+          (Array.isArray(x.slides) ? x.slides.length : 0)
+        ].join(':')).join('|');
+        const beforeSig = sigOf(local);
+        const afterSig = sigOf(merged);
 
         if (beforeSig !== afterSig) {
           window.appState.challenges = merged;

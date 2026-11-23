@@ -271,6 +271,49 @@ window.ProjectsView = {
     });
   },
 
+  /**
+   * Sube cualquier imagen (data:image/...) a la BD / repositorio de Mentix (/api/challenges -> data/uploads/<projectId>/...)
+   * y devuelve su URL permanente y liviana para guardarla en el proyecto y que TODOS la vean al instante.
+   * Si está sin conexión, retorna el dataUrl comprimido como respaldo seguro.
+   */
+  async uploadImageToMentixCloud(dataUrl, projectId = 'general', slot = 'img') {
+    if (!dataUrl || typeof dataUrl !== 'string') return '';
+    const trimmed = dataUrl.trim();
+    if (!trimmed.startsWith('data:image/') || trimmed.startsWith('data:image/svg')) {
+      return trimmed;
+    }
+    try {
+      let payloadDataUrl = trimmed;
+      if (payloadDataUrl.length > 240000 && typeof this.compressBannerDataUrl === 'function') {
+        payloadDataUrl = await this.compressBannerDataUrl(payloadDataUrl, 1500, 0.78);
+      }
+      const apiBase = (window.appRouter && typeof window.appRouter.getApiBase === 'function') ? window.appRouter.getApiBase() : '';
+      const ctrl = typeof AbortController !== 'undefined' ? new AbortController() : null;
+      const tid = ctrl ? setTimeout(() => ctrl.abort(), 18000) : null;
+      const r = await fetch(`${apiBase}/api/challenges`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type: 'UPLOAD_PROJECT_IMAGE',
+          projectId: String(projectId || 'general'),
+          slot: String(slot || 'img'),
+          dataUrl: payloadDataUrl
+        }),
+        signal: ctrl ? ctrl.signal : undefined
+      });
+      if (tid) clearTimeout(tid);
+      if (r && r.ok) {
+        const res = await r.json();
+        if (res && res.success && res.url) {
+          return String(res.url).trim();
+        }
+      }
+      return payloadDataUrl;
+    } catch (e) {
+      return trimmed;
+    }
+  },
+
   _safeSaveHeroBannerLocal(cleanUrl, ts) {
     // Limpiar claves duplicadas antiguas para no desperdiciar cuota de localStorage (4x ahorro)
     try { localStorage.removeItem('te_reto_projects_hero_banner'); } catch (e) {}
@@ -1311,18 +1354,48 @@ window.ProjectsView = {
       proj = this.getMergedProjectRecord(projId);
       if (!proj) proj = (window.appState?.challenges || []).find(c => c && String(c.id) === String(projId));
     }
+    const isGenericDef = (u) => {
+      const s = String(u || '').trim();
+      return !s || s.includes('photo-1451187580459-43490279c0fa') || s.includes('card_data_gov.png') || s.includes('card_ai_society.png') || s.includes('hero_banner.png');
+    };
+    const normalizeImg = (u) => {
+      const s = String(u || '').trim();
+      if (!s) return '';
+      if (s.includes('photo-1518709268805-4e9042af9f23')) return 'assets/projects_ui/disney_hero_banner.png';
+      return s;
+    };
+
+    // 1. Priorizar la imagen real guardada dentro del proyecto (sincronizada en la BD para TODOS los usuarios)
+    if (proj) {
+      const candidates = [
+        proj.heroBanner,
+        proj.designConfig?.bannerUrl,
+        proj.landingConfig?.heroBanner,
+        proj.govdata?.heroBanner,
+        proj.govdata?.designConfig?.bannerUrl,
+        proj.mainImage,
+        proj.govdata?.mainImage,
+        proj.banner,
+        proj.coverImage,
+        proj.thumbnailImage,
+        proj.image,
+        (Array.isArray(proj.visualAssets) && proj.visualAssets[0] && proj.visualAssets[0].url) ? proj.visualAssets[0].url : ''
+      ];
+      const realCustom = candidates.find(u => typeof u === 'string' && !isGenericDef(u));
+      if (realCustom) return normalizeImg(realCustom);
+    }
+
+    // 2. Respaldo local (si el usuario acaba de cambiar el banner localmente antes de sincronizar)
     const saved = projId ? localStorage.getItem('mentix_hero_banner_' + projId) : null;
     if (saved && saved.trim()) {
-      if (saved.includes('photo-1518709268805-4e9042af9f23')) {
-        return 'assets/projects_ui/disney_hero_banner.png';
-      }
-      return saved.trim();
+      return normalizeImg(saved);
     }
+
+    // 3. Cualquier imagen por defecto definida en el proyecto
     if (proj) {
-      const b = proj.heroBanner || proj.landingConfig?.heroBanner || proj.govdata?.heroBanner || proj.designConfig?.bannerUrl || proj.banner || proj.coverImage || proj.mainImage;
-      if (b && typeof b === 'string' && b.trim()) {
-        if (b.includes('photo-1518709268805-4e9042af9f23')) return 'assets/projects_ui/disney_hero_banner.png';
-        return b.trim();
+      const fallbackProj = proj.heroBanner || proj.banner || proj.mainImage || proj.coverImage || proj.image;
+      if (fallbackProj && typeof fallbackProj === 'string' && fallbackProj.trim()) {
+        return normalizeImg(fallbackProj);
       }
     }
     return 'assets/projects_ui/hero_banner.png';
@@ -1808,14 +1881,19 @@ window.ProjectsView = {
       return;
     }
 
-    if (finalUrl.startsWith('data:image/') && finalUrl.length > 220000 && typeof this.compressBannerDataUrl === 'function') {
-      finalUrl = await this.compressBannerDataUrl(finalUrl, 1800, 0.82);
+    if (finalUrl.startsWith('data:image/')) {
+      if (typeof this.compressBannerDataUrl === 'function') {
+        finalUrl = await this.compressBannerDataUrl(finalUrl, 1500, 0.78);
+      }
+      // Subir la imagen real a la BD / repositorio del proyecto para que sea liviana, permanente y visible para TODOS!
+      this.showToast('☁️ Guardando imagen en la base de datos de Mentix...');
+      finalUrl = await this.uploadImageToMentixCloud(finalUrl, projId === 'main_hero' ? 'global_hero' : String(projId || 'project'), 'banner');
     }
 
     if (projId === 'main_hero') {
       this.setHeroBannerUrl(finalUrl);
       this.closeHeroBannerPicker();
-      this.showToast('🎨 ¡Banner principal actualizado y guardado al instante!');
+      this.showToast('🎨 ¡Banner principal guardado en la BD y visible para todos!');
       return;
     }
 
@@ -1827,7 +1905,7 @@ window.ProjectsView = {
     }
 
     this.closeHeroBannerPicker();
-    this.showToast('🎨 ¡Fondo del banner actualizado al instante!');
+    this.showToast('🎨 ¡Imagen del proyecto guardada en el proyecto y en la BD!');
   },
 
   resetHeroBanner(projId) {
@@ -3177,7 +3255,7 @@ window.ProjectsView = {
     const canContinueInProgress = isInProgress && (isAdmin || isStudent);
     const isPendingApproval = !isApproved;
     const projectType = c.projectType || c.project_type || 'presentation';
-    let defaultBanner = c.image || c.banner || c.coverImage || 'assets/projects_ui/card_data_gov.png';
+    let defaultBanner = c.heroBanner || c.designConfig?.bannerUrl || c.mainImage || c.thumbnailImage || c.image || c.banner || c.coverImage || (Array.isArray(c.visualAssets) && c.visualAssets[0]?.url) || 'assets/projects_ui/card_data_gov.png';
     let tag = 'Pendiente de Autorización';
     let tagIcon = '⏳';
     let tagColor = 'background: #d97706;';
@@ -3748,6 +3826,9 @@ window.ProjectsView = {
         reader.onerror = () => resolve('');
         reader.readAsDataURL(file);
       });
+    }
+    if (dataUrl && dataUrl.startsWith('data:image/') && typeof this.uploadImageToMentixCloud === 'function') {
+      dataUrl = await this.uploadImageToMentixCloud(dataUrl, 'student_proj_' + Date.now(), 'cover');
     }
     this.setStudentCreatePresetCover(dataUrl);
   },
@@ -6533,8 +6614,11 @@ window.ProjectsView = {
     if (customThumb && !customThumb.startsWith('preset:')) {
       return customThumb;
     }
-    if (item.url && typeof item.url === 'string' && item.url.startsWith('data:image/')) {
-      return item.url;
+    if (item.url && typeof item.url === 'string') {
+      const u = item.url.trim();
+      if (u.startsWith('data:image/') || u.includes('?img=data/uploads/') || /\.(png|jpe?g|webp|gif)(\?|$)/i.test(u)) {
+        return u;
+      }
     }
 
     const title = String(item.name || item.title || 'Recurso del Proyecto').trim();
@@ -6943,6 +7027,7 @@ window.ProjectsView = {
       return true;
     });
 
+    const mainCover = selected?.heroBanner || selected?.designConfig?.bannerUrl || selected?.mainImage || gp.mainImage || selected?.banner || '';
     const isPresProject = (selected?.projectType === 'presentation' || selected?.type === 'presentation' || selected?.isPresentation || selected?.category === 'presentacion');
     if (userSlides.length === 0 && isPresProject) {
       userSlides.push({
@@ -6953,7 +7038,17 @@ window.ProjectsView = {
         bgImage: mainCover || ''
       });
     }
-    const mainCover = selected?.mainImage || gp.mainImage || '';
+
+    // Colección segura en memoria para abrir imágenes en Lightbox por índice (evita strings gigantes inline en onclick)
+    this._landingLightboxImages = [];
+    const registerLightboxImg = (url, caption) => {
+      const cleanU = String(url || '').trim();
+      if (!cleanU) return -1;
+      const existingIdx = this._landingLightboxImages.findIndex(x => x.url === cleanU);
+      if (existingIdx >= 0) return existingIdx;
+      this._landingLightboxImages.push({ url: cleanU, caption: caption || 'Imagen del proyecto' });
+      return this._landingLightboxImages.length - 1;
+    };
 
     let cardsHtml = '';
     let totalCardsCount = 0;
@@ -7167,21 +7262,23 @@ window.ProjectsView = {
       const rawVDesc = vis.caption || vis.description || 'Activo visual oficial del proyecto.';
       const vDesc = this.truncateCardText(rawVDesc, 120);
       const vSearch = (vName + ' ' + rawVDesc + ' imagen galeria visual').toLowerCase();
+      const lbIdx = registerLightboxImg(vis.url, vName);
 
       cardsHtml += `
         <article class="inno-resource-card" data-category="img" data-plp-search="${this.escapeHtml(vSearch)}">
-          <div class="inno-card-thumb-wrap" style="background-image:url('${this.escapeHtml(vis.url)}'); background-size:cover; background-position:center; cursor:pointer;" onclick="window.ProjectsView.openLandingLightbox('${this.escapeHtml(vis.url)}', '${this.escapeHtml(vName)}')">
-            <span class="inno-card-tag" style="background:#0284c7;">🖼️ Imagen</span>
+          <div class="inno-card-thumb-wrap" style="position:relative; overflow:hidden; cursor:pointer; background:#0f172a;" onclick="window.ProjectsView.openLandingLightboxByIndex(${lbIdx})">
+            <img src="${this.escapeHtml(vis.url)}" alt="${this.escapeHtml(vName)}" loading="lazy" style="width:100%; height:100%; object-fit:cover; display:block;" onerror="this.onerror=null;this.src='assets/projects_ui/card_data_gov.png';" />
+            <span class="inno-card-tag" style="background:#0284c7; position:absolute; top:10px; left:10px; z-index:2;">🖼️ Imagen</span>
           </div>
           <div class="inno-card-body">
             <div>
               <h4 class="inno-card-title">${this.escapeHtml(vName)}</h4>
               <p class="inno-card-desc">${this.escapeHtml(vDesc)}</p>
-              <span class="inno-why-card-link" style="margin-top:0.5rem; cursor:pointer;" onclick="window.ProjectsView.openLandingLightbox('${this.escapeHtml(vis.url)}', '${this.escapeHtml(vName)}')">Saber más →</span>
+              <span class="inno-why-card-link" style="margin-top:0.5rem; cursor:pointer;" onclick="window.ProjectsView.openLandingLightboxByIndex(${lbIdx})">Ver imagen completa →</span>
             </div>
             <div class="inno-card-footer">
               <span>🖼️ Galería</span>
-              <button type="button" class="inno-card-action-btn inno-res-btn-action" onclick="window.ProjectsView.openLandingLightbox('${this.escapeHtml(vis.url)}', '${this.escapeHtml(vName)}')" title="Ver imagen">
+              <button type="button" class="inno-card-action-btn inno-res-btn-action" onclick="window.ProjectsView.openLandingLightboxByIndex(${lbIdx})" title="Ver imagen">
                 <span>👁️</span> Ver imagen
               </button>
             </div>
@@ -7189,6 +7286,57 @@ window.ProjectsView = {
         </article>
       `;
     });
+
+    // Construir Galería Visual Dedicada con TODAS las imágenes reales subidas al proyecto (galería, recursos de imagen y láminas)
+    const galleryItems = [];
+    const seenGalUrls = new Set();
+    const pushGalleryImg = (url, title, subtitle) => {
+      const cleanU = String(url || '').trim();
+      if (!cleanU || cleanU.includes('photo-1451187580459-43490279c0fa') || cleanU.includes('card_data_gov.png') || cleanU.includes('hero_banner.png')) return;
+      if (!(cleanU.startsWith('data:image/') || cleanU.includes('?img=data/uploads/') || /^https?:\/\//i.test(cleanU) || cleanU.startsWith('assets/'))) return;
+      if (seenGalUrls.has(cleanU)) return;
+      seenGalUrls.add(cleanU);
+      const lbIdx = registerLightboxImg(cleanU, title || 'Imagen del Proyecto');
+      galleryItems.push({ url: cleanU, title: title || 'Imagen del Proyecto', subtitle: subtitle || '', lbIdx });
+    };
+    userVisuals.forEach((v, i) => pushGalleryImg(v?.url, v?.title || `Imagen ${i + 1}`, v?.caption || 'Galería del proyecto'));
+    userResources.forEach((r, i) => {
+      if (!r || !r.url) return;
+      const u = String(r.url).trim();
+      if (r.type === 'image' || u.startsWith('data:image/') || u.includes('?img=data/uploads/') || /\.(png|jpe?g|webp|gif)(\?|$)/i.test(u)) {
+        pushGalleryImg(u, r.name || r.title || `Recurso Visual ${i + 1}`, r.description || 'Imagen adjunta');
+      }
+    });
+    userSlides.forEach((s, i) => {
+      if (!s) return;
+      const su = s.media || s.imageUrl || s.bgImage || '';
+      if (su) pushGalleryImg(su, s.title || `Lámina ${i + 1}`, 'Diapositiva del proyecto');
+    });
+
+    const projectGalleryHtml = galleryItems.length > 0 ? `
+      <div style="margin: 0 0 2rem; background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 20px; padding: 1.35rem 1.45rem; box-shadow: 0 6px 24px rgba(15, 23, 42, 0.05);">
+        <div style="display:flex; align-items:center; justify-content:space-between; gap:0.75rem; margin-bottom:1rem; flex-wrap:wrap;">
+          <div style="display:flex; align-items:center; gap:0.55rem;">
+            <span style="font-size:1.3rem;">🖼️</span>
+            <h3 style="margin:0; font-size:1.12rem; font-weight:900; color:#0f172a;">Galería Visual del Proyecto (${galleryItems.length})</h3>
+          </div>
+          <span style="font-size:0.78rem; font-weight:700; color:#64748b;">Haz clic en cualquier imagen para ampliarla</span>
+        </div>
+        <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 0.9rem;">
+          ${galleryItems.map(gItem => `
+            <div onclick="window.ProjectsView.openLandingLightboxByIndex(${gItem.lbIdx})" style="cursor:pointer; border-radius:14px; overflow:hidden; border:1.5px solid #e2e8f0; background:#f8fafc; transition:transform 0.2s ease, box-shadow 0.2s ease;" onmouseenter="this.style.transform='translateY(-3px)'; this.style.boxShadow='0 10px 24px rgba(15,23,42,0.12)';" onmouseleave="this.style.transform='none'; this.style.boxShadow='none';">
+              <div style="width:100%; height:150px; background:#0f172a; overflow:hidden;">
+                <img src="${this.escapeHtml(gItem.url)}" alt="${this.escapeHtml(gItem.title)}" loading="lazy" style="width:100%; height:100%; object-fit:cover; display:block;" onerror="this.onerror=null;this.src='assets/projects_ui/card_data_gov.png';" />
+              </div>
+              <div style="padding:0.65rem 0.8rem;">
+                <div style="font-size:0.84rem; font-weight:800; color:#0f172a; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${this.escapeHtml(gItem.title)}</div>
+                ${gItem.subtitle ? `<div style="font-size:0.74rem; color:#64748b; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-top:2px;">${this.escapeHtml(gItem.subtitle)}</div>` : ''}
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    ` : '';
 
     if (totalCardsCount === 0) {
       cardsHtml = `
@@ -7817,6 +7965,9 @@ window.ProjectsView = {
 
             <!-- Video Oficial Destacado (si existe, llena el ancho completamente) -->
             ${videoShowcaseHtml}
+
+            <!-- Galería Visual de Imágenes del Proyecto -->
+            ${projectGalleryHtml}
 
             <!-- Filtros de categoría -->
             <div class="inno-filter-pills">
@@ -8743,6 +8894,13 @@ Generado por Mentix - Plataforma de Proyectos y Retos
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
+  },
+
+  openLandingLightboxByIndex(idx) {
+    const list = Array.isArray(this._landingLightboxImages) ? this._landingLightboxImages : [];
+    const item = list[Number(idx)];
+    if (!item || !item.url) return;
+    this.openLandingLightbox(item.url, item.caption || 'Imagen del proyecto');
   },
 
   openLandingLightbox(imgUrl, caption) {

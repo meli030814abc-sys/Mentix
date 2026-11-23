@@ -388,34 +388,40 @@ window.ProjectWizard = {
     }, 600);
   },
 
-  compressImageFile(file, maxWidth = 960, quality = 0.72) {
-    return new Promise((resolve) => {
+  async compressImageFile(file, maxWidth = 1080, quality = 0.78) {
+    const localDataUrl = await new Promise((resolve) => {
       if (!file) return resolve('');
       const reader = new FileReader();
       reader.onerror = () => resolve('');
       reader.onload = (e) => {
         const rawDataUrl = e.target?.result || '';
-        if (!rawDataUrl || file.type === 'image/svg+xml' || rawDataUrl.length < 50000) {
+        if (!rawDataUrl || file.type === 'image/svg+xml') {
+          return resolve(rawDataUrl);
+        }
+        if (rawDataUrl.length < 45000) {
           return resolve(rawDataUrl);
         }
         const img = new Image();
         img.onerror = () => resolve(rawDataUrl);
         img.onload = () => {
           try {
-            let w = img.naturalWidth || img.width || 800;
+            let w = img.naturalWidth || img.width || 960;
             let h = img.naturalHeight || img.height || 600;
             if (w > maxWidth) {
-              h = Math.round((h * maxWidth) / w);
+              h = Math.max(1, Math.round((h * maxWidth) / w));
               w = maxWidth;
             }
             const canvas = document.createElement('canvas');
             canvas.width = w;
             canvas.height = h;
             const ctx = canvas.getContext('2d');
-            ctx.fillStyle = '#071124';
+            ctx.fillStyle = '#ffffff';
             ctx.fillRect(0, 0, w, h);
             ctx.drawImage(img, 0, 0, w, h);
-            const compressed = canvas.toDataURL('image/jpeg', quality);
+            let compressed = canvas.toDataURL('image/jpeg', quality);
+            if (compressed.length > 180000) {
+              compressed = canvas.toDataURL('image/jpeg', 0.68);
+            }
             resolve(compressed.length < rawDataUrl.length ? compressed : rawDataUrl);
           } catch (err) {
             resolve(rawDataUrl);
@@ -425,6 +431,16 @@ window.ProjectWizard = {
       };
       reader.readAsDataURL(file);
     });
+
+    // Subir automáticamente a la base de datos / carpeta del mismo proyecto en Mentix para que SIEMPRE se vea en todos los dispositivos
+    if (localDataUrl && localDataUrl.startsWith('data:image/') && !localDataUrl.startsWith('data:image/svg') && window.ProjectsView && typeof window.ProjectsView.uploadImageToMentixCloud === 'function') {
+      try {
+        const projId = (this.draft && this.draft.id) ? String(this.draft.id) : 'draft';
+        const cloudUrl = await window.ProjectsView.uploadImageToMentixCloud(localDataUrl, projId, 'asset');
+        if (cloudUrl) return cloudUrl;
+      } catch (e) {}
+    }
+    return localDataUrl;
   },
 
   async saveDraftToStorage(silent = true, skipCollect = false) {
@@ -1284,11 +1300,6 @@ collectCurrentStepInputs() {
 
               ${this.renderStepContent(this.currentStep)}
             </div>
-
-            <!-- Columna Lateral: Copiloto de IA Contextual + Resumen de Recursos -->
-            <aside class="gdn-ai-panel" aria-label="Asistente de Inteligencia Artificial">
-              ${this.renderAiSidebar()}
-            </aside>
 
           </div>
 
@@ -2511,24 +2522,22 @@ collectCurrentStepInputs() {
       return;
     }
 
-    const MIN_W = 1200;
-    const MIN_H = 400;
+    const MIN_W = 150;
+    const MIN_H = 80;
     if (check.width < MIN_W || check.height < MIN_H) {
       if (fileInp) fileInp.value = '';
-      alert(`🚫 ARCHIVO RECHAZADO: No se permiten miniaturas en el banner.\n\n` +
-            `• Medidas detectadas: ${check.width} × ${check.height} px\n` +
-            `• Mínimo obligatorio: 1200 × 400 px\n` +
-            `• Recomendado: 1920 × 600 px (panorámico HD)\n\n` +
-            `Por favor sube una imagen panorámica de alta calidad para garantizar nitidez.`);
+      alert(`⚠️ Imagen demasiado pequeña (${check.width} × ${check.height} px). Por favor selecciona una imagen más nítida.`);
       return;
     }
 
     this.collectCurrentStepInputs();
-    const dataUrl = await this.compressImageFile(file, 1920, 0.82);
+    const dataUrl = await this.compressImageFile(file, 1440, 0.78);
     if (!this.draft.designConfig) this.draft.designConfig = {};
     this.draft.designConfig.bannerUrl = dataUrl;
     this.draft.designConfig.bannerStyle = 'custom-url';
-    if (!this.draft.mainImage) {
+    this.draft.heroBanner = dataUrl;
+    this.draft.banner = dataUrl;
+    if (!this.draft.mainImage || this.draft.mainImage.includes('photo-1451187580459-43490279c0fa')) {
       this.draft.mainImage = dataUrl;
     }
     const inp = document.getElementById('gdn-design-banner-url');
@@ -6869,7 +6878,8 @@ collectCurrentStepInputs() {
     const finalSlug = d.landingConfig?.slug || this.slugify(finalTitle);
     d.landingConfig.slug = finalSlug;
 
-    const cover = d.mainImage || (d.useDefaultImage !== false ? this.defaultCoverImage : '');
+    const customBanner = d.designConfig?.bannerUrl || d.heroBanner || d.mainImage || d.banner || (Array.isArray(d.visualAssets) && d.visualAssets[0]?.url) || '';
+    const cover = customBanner || (d.useDefaultImage !== false ? this.defaultCoverImage : '');
     const slidesFromVisuals = (d.visualAssets || []).map((v, i) => ({
       id: v.id || ('slide_' + i),
       title: v.title || `Diapositiva ${i + 1}`,
@@ -6892,8 +6902,11 @@ collectCurrentStepInputs() {
       isGovDataProject: true,
       projectSubtype: d.projectSubtype || 'Gobierno de Datos e IA',
       difficulty: 'Medio',
+      heroBanner: customBanner || cover,
       banner: cover,
-      mainImage: cover,
+      image: cover,
+      coverImage: cover,
+      mainImage: d.mainImage || cover,
       thumbnailImage: d.thumbnailImage || cover,
       useDefaultImage: d.useDefaultImage !== false,
       targetAudience: d.targetAudience || '',

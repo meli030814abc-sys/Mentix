@@ -1796,7 +1796,7 @@ body[data-theme="dark"] .plp-lightbox-content {
 
 .gdn-wizard-body {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 350px;
+  grid-template-columns: minmax(0, 1fr);
   gap: 1.75rem;
   padding: 1.75rem;
   align-items: start;

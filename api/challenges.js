@@ -22,6 +22,8 @@ let inMemoryHubs = null;
 const CODE_PARTICIPANTS_PATH = 'data/code_participants.json';
 let inMemoryCodeParticipants = null;
 
+const inMemoryImages = new Map();
+
 function ghHeaders() {
   const h = { 'Accept': 'application/vnd.github.v3+json', 'User-Agent': 'Mentix-App' };
   if (GITHUB_TOKEN) h['Authorization'] = `Bearer ${GITHUB_TOKEN}`;
@@ -195,6 +197,51 @@ export default async function handler(req, res) {
     return res.status(200).json(info);
   }
 
+  // 0b. GET ?img=data/uploads/... : Servir imagen real guardada en el repositorio/BD (rama mentix-data)
+  if (req.method === 'GET' && req.query && req.query.img) {
+    const rawPath = String(req.query.img || '').trim().replace(/^\/+/, '');
+    if (!rawPath.startsWith('data/uploads/') || rawPath.includes('..') || !/^data\/uploads\/[a-zA-Z0-9_\-\/\.]+$/.test(rawPath)) {
+      return res.status(400).json({ error: 'Ruta de imagen inválida' });
+    }
+    const ext = rawPath.split('.').pop().toLowerCase();
+    const mimeMap = { jpg: 'image/jpeg', jpeg: 'image/jpeg', png: 'image/png', webp: 'image/webp', gif: 'image/gif', svg: 'image/svg+xml' };
+    const contentType = mimeMap[ext] || 'image/jpeg';
+
+    if (inMemoryImages.has(rawPath)) {
+      res.setHeader('Content-Type', contentType);
+      res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+      return res.status(200).send(inMemoryImages.get(rawPath));
+    }
+
+    try {
+      const r = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/contents/${rawPath}?ref=${DATA_BRANCH}`, {
+        headers: ghHeaders(),
+        cache: 'no-store'
+      });
+      if (r.ok) {
+        const d = await r.json();
+        let buf = null;
+        if (d.content) {
+          buf = Buffer.from(d.content.replace(/\s+/g, ''), 'base64');
+        } else if (d.download_url) {
+          const rawRes = await fetch(d.download_url, { headers: ghHeaders(), cache: 'no-store' });
+          if (rawRes.ok) buf = Buffer.from(await rawRes.arrayBuffer());
+        }
+        if (buf && buf.length > 0) {
+          if (inMemoryImages.size > 40) {
+            const firstKey = inMemoryImages.keys().next().value;
+            inMemoryImages.delete(firstKey);
+          }
+          inMemoryImages.set(rawPath, buf);
+          res.setHeader('Content-Type', contentType);
+          res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+          return res.status(200).send(buf);
+        }
+      }
+    } catch (e) {}
+    return res.status(404).json({ error: 'Imagen no encontrada' });
+  }
+
   // 1. GET: Consultar banner global, hubs, participantes de códigos, códigos o retos
   if (req.method === 'GET' && req.query && (req.query.heroBanner || req.query.banner)) {
     const { data } = await readGitHubJsonFile(HERO_BANNER_PATH, inMemoryHeroBanner);
@@ -311,6 +358,55 @@ export default async function handler(req, res) {
   if (req.method === 'POST') {
     try {
       const body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
+
+      // A0. Subida y almacenamiento permanente de imágenes dentro del mismo proyecto y BD (data/uploads/<projectId>/...)
+      if (body && body.type === 'UPLOAD_PROJECT_IMAGE' && body.dataUrl) {
+        const dataUrl = String(body.dataUrl || '').trim();
+        const m = dataUrl.match(/^data:(image\/(jpeg|jpg|png|webp|gif));base64,([A-Za-z0-9+/=\s]+)$/i);
+        if (!m) {
+          return res.status(400).json({ error: 'Formato de imagen no válido (se requiere data:image/...;base64,...)' });
+        }
+        const rawExt = m[2].toLowerCase() === 'jpeg' ? 'jpg' : m[2].toLowerCase();
+        const b64Clean = m[3].replace(/\s+/g, '');
+        const safeProj = String(body.projectId || 'general').replace(/[^a-zA-Z0-9_\-]/g, '_').slice(0, 64) || 'general';
+        const safeSlot = String(body.slot || 'img').replace(/[^a-zA-Z0-9_\-]/g, '_').slice(0, 32) || 'img';
+        const filePath = `data/uploads/${safeProj}/${Date.now()}_${Math.random().toString(36).slice(2, 6)}_${safeSlot}.${rawExt}`;
+
+        const buf = Buffer.from(b64Clean, 'base64');
+        if (buf.length > 3500000) {
+          return res.status(413).json({ error: 'Imagen demasiado grande (máx 3.5 MB)' });
+        }
+
+        let persisted = false;
+        if (GITHUB_TOKEN) {
+          for (let attempt = 0; attempt < 2; attempt++) {
+            try {
+              const ghPut = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/contents/${filePath}`, {
+                method: 'PUT',
+                headers: { ...ghHeaders(), 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  message: `chore(media): subir imagen ${safeProj}/${safeSlot} [skip ci]`,
+                  content: b64Clean,
+                  branch: DATA_BRANCH
+                })
+              });
+              if (ghPut.ok) { persisted = true; break; }
+            } catch (e) {}
+            await new Promise(r => setTimeout(r, 400));
+          }
+        }
+
+        if (persisted) {
+          if (inMemoryImages.size > 40) {
+            const firstKey = inMemoryImages.keys().next().value;
+            inMemoryImages.delete(firstKey);
+          }
+          inMemoryImages.set(filePath, buf);
+          const publicUrl = `https://mentixs.vercel.app/api/challenges?img=${encodeURIComponent(filePath)}`;
+          return res.status(200).json({ success: true, persisted: true, path: filePath, url: publicUrl });
+        }
+        return res.status(200).json({ success: false, persisted: false });
+      }
 
       // A. Soporte para actualización y persistencia mundial del banner principal (Hero de Proyectos) + encuadre
       if (body && (body.type === 'GLOBAL_HERO_BANNER' || body.target === 'hero') && (body.bannerUrl || body.style)) {
@@ -501,10 +597,38 @@ export default async function handler(req, res) {
           console.warn('No se pudo obtener SHA de GitHub:', err);
         }
 
-        // Fusionar o agregar nuevo reto
+        // Fusionar o agregar nuevo reto preservando siempre imágenes, galería, diapositivas y recursos del proyecto
         const existingIdx = currentChallenges.findIndex(c => c.id === challenge.id);
         if (existingIdx >= 0) {
-          currentChallenges[existingIdx] = { ...currentChallenges[existingIdx], ...challenge };
+          const prev = currentChallenges[existingIdx] || {};
+          const mergedProj = { ...prev, ...challenge };
+          const pickImg = (incoming, oldVal) => {
+            const a = typeof incoming === 'string' ? incoming.trim() : '';
+            const b = typeof oldVal === 'string' ? oldVal.trim() : '';
+            const isDef = (u) => !u || u.includes('photo-1451187580459-43490279c0fa') || u.includes('card_data_gov.png') || u.includes('hero_banner.png');
+            if (!isDef(a)) return a;
+            if (!isDef(b)) return b;
+            return a || b;
+          };
+          mergedProj.heroBanner = pickImg(challenge.heroBanner, prev.heroBanner);
+          mergedProj.banner = pickImg(challenge.banner, prev.banner);
+          mergedProj.mainImage = pickImg(challenge.mainImage, prev.mainImage);
+          mergedProj.thumbnailImage = pickImg(challenge.thumbnailImage, prev.thumbnailImage);
+          mergedProj.image = pickImg(challenge.image, prev.image);
+          if ((!Array.isArray(mergedProj.visualAssets) || mergedProj.visualAssets.length === 0) && Array.isArray(prev.visualAssets) && prev.visualAssets.length > 0) {
+            mergedProj.visualAssets = prev.visualAssets;
+          }
+          if ((!Array.isArray(mergedProj.slides) || mergedProj.slides.length === 0) && Array.isArray(prev.slides) && prev.slides.length > 0) {
+            mergedProj.slides = prev.slides;
+          }
+          if ((!Array.isArray(mergedProj.resources) || mergedProj.resources.length === 0) && Array.isArray(prev.resources) && prev.resources.length > 0) {
+            mergedProj.resources = prev.resources;
+          }
+          if (prev.designConfig || challenge.designConfig) {
+            mergedProj.designConfig = { ...(prev.designConfig || {}), ...(challenge.designConfig || {}) };
+            mergedProj.designConfig.bannerUrl = pickImg(challenge.designConfig?.bannerUrl, prev.designConfig?.bannerUrl);
+          }
+          currentChallenges[existingIdx] = mergedProj;
         } else {
           currentChallenges.unshift(challenge);
         }

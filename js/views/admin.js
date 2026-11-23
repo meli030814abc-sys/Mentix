@@ -4773,7 +4773,10 @@ window.AdminView = {
     reader.onload = async (evt) => {
       let dataUrl = evt.target.result;
       if (window.ProjectsView && typeof window.ProjectsView.compressBannerDataUrl === 'function') {
-        dataUrl = await window.ProjectsView.compressBannerDataUrl(dataUrl, 1800, 0.84);
+        dataUrl = await window.ProjectsView.compressBannerDataUrl(dataUrl, 1500, 0.78);
+      }
+      if (window.ProjectsView && typeof window.ProjectsView.uploadImageToMentixCloud === 'function') {
+        dataUrl = await window.ProjectsView.uploadImageToMentixCloud(dataUrl, 'global_hero', 'banner');
       }
       this.setRobotBannerPreset(dataUrl);
     };
