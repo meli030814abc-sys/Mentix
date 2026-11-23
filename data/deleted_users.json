@@ -3,5 +3,10 @@
     "id": "user_3",
     "email": "laura@te-reto.app",
     "deletedAt": "2026-11-23T17:02:05.739Z"
+  },
+  {
+    "id": "user_2",
+    "email": "carlos.ruiz@colegio.edu",
+    "deletedAt": "2026-11-23T17:02:16.833Z"
   }
 ]
