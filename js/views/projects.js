@@ -2734,7 +2734,12 @@ window.ProjectsView = {
     const isAuthor = !isGuest && (window.appRouter ? window.appRouter.isChallengeOwner(c) : false);
     const isApproved = c.approvalStatus === 'approved' && !c.rejectionReason;
     const isRejected = c.approvalStatus === 'rejected';
-    const isDraft = c.status === 'in_progress' || c.publicationStatus === 'draft';
+    const isDraft = c.status === 'in_progress' || c.publicationStatus === 'draft' || c.stage === 'in_progress';
+    const isInProgress = Boolean(isDraft && !isApproved);
+    const userRole = String(currentUser?.role || '').trim().toLowerCase();
+    const isTeacher = !isAdmin && (userRole === 'teacher' || userRole === 'profesor' || userRole === 'docente');
+    const isStudent = !isGuest && !isAdmin && !isTeacher;
+    const canContinueInProgress = isInProgress && (isAdmin || isStudent);
     const isPendingApproval = !isApproved;
     const projectType = c.projectType || c.project_type || 'presentation';
     let defaultBanner = c.image || c.banner || c.coverImage || 'assets/projects_ui/card_data_gov.png';
@@ -2876,8 +2881,10 @@ window.ProjectsView = {
     const shareAction = `window.ProjectsView.shareProject('${c.id}', '${this.escapeHtml(c.title || '')}')`;
     const joinAction = isGuest ? `window.ProjectsView.guestJoinBlocked()` : (window.ProjectHub ? `window.ProjectHub.openJoinForm('${c.id}')` : `window.ProjectsView.openProjectLanding('${c.id}')`);
 
-    // Clic en la tarjeta: Creadores y miembros van al Hub; visitantes, invitados y demás van a la Landing Page pública
-    const cardClickAction = canHubView ? hubAction : landingAction;
+    // Clic en la tarjeta: Si está en proceso, solo permite continuar en el asistente (Admin/Estudiantes); si está completado, abre Hub o Landing
+    const cardClickAction = isInProgress
+      ? (canContinueInProgress ? `window.ProjectsView.continueProjectProcess('${c.id}')` : `window.ProjectsView.showToast('⏳ Este proyecto aún está en proceso.')`)
+      : (canHubView ? hubAction : landingAction);
 
     const dateStr = c.date || (c.createdAt ? new Date(c.createdAt).toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' }) : '12 Abr 2025');
     const studentsCount = (c.students !== undefined && c.students !== null) ? c.students : (c.playsCount || 0);
@@ -2951,9 +2958,10 @@ window.ProjectsView = {
               </button>
             ` : ''}
             <button 
-              title="Opciones" 
-              onclick="event.stopPropagation(); window.ProjectsView.openProjectLanding('${c.id}')"
-              style="width: 30px; height: 30px; border-radius: 8px; background: rgba(255, 255, 255, 0.88); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; cursor: pointer; border: none; font-size: 1rem; color: #334155; font-weight: 900; line-height: 1; box-shadow: 0 2px 8px rgba(0,0,0,0.15);"
+              title="${isInProgress ? 'Deshabilitado mientras el proyecto está en proceso' : 'Opciones'}" 
+              ${isInProgress ? 'disabled' : ''}
+              onclick="event.stopPropagation(); ${isInProgress ? '' : `window.ProjectsView.openProjectLanding('${c.id}')`}"
+              style="width: 30px; height: 30px; border-radius: 8px; background: ${isInProgress ? 'rgba(226, 232, 240, 0.75)' : 'rgba(255, 255, 255, 0.88)'}; backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; cursor: ${isInProgress ? 'not-allowed' : 'pointer'}; opacity: ${isInProgress ? '0.55' : '1'}; border: none; font-size: 1rem; color: ${isInProgress ? '#94a3b8' : '#334155'}; font-weight: 900; line-height: 1; box-shadow: 0 2px 8px rgba(0,0,0,0.15);"
             >
               ···
             </button>
@@ -2977,19 +2985,22 @@ window.ProjectsView = {
             <span style="display: inline-flex; align-items: center; gap: 0.25rem; color: #eab308; cursor: pointer; transition: transform 0.15s ease;" onmouseenter="this.style.transform='scale(1.1)';" onmouseleave="this.style.transform='scale(1)';" onclick="event.stopPropagation(); window.ProjectsView.openReviewFullPage('${c.id}');" title="Ver comentarios y calificar este proyecto">⭐ ${ratingStr}</span>
           </div>
 
-          <!-- Action Buttons Row: Detalles (ventana Project Hub), Unirme (si aún no es miembro), Ver Landing Page, Autorizar (Admin) y Compartir -->
+          <!-- Action Buttons Row: En Proceso bloquea Detalles/Landing/Autorizar/Compartir y habilita Continuar el proceso (Admin y Estudiantes) -->
           <div class="saas-card-actions">
             ${canHubView ? `
               <button 
-                class="saas-card-btn-secondary"
-                onclick="event.stopPropagation(); ${hubAction}" 
-                title="Ver detalles, miembros, solicitudes y calificaciones del proyecto"
+                type="button"
+                class="saas-card-btn-secondary ${isInProgress ? 'saas-btn-disabled-gray' : ''}"
+                ${isInProgress ? 'disabled' : ''}
+                onclick="event.stopPropagation(); ${isInProgress ? '' : hubAction}" 
+                title="${isInProgress ? 'Detalles deshabilitado mientras el proyecto está en proceso' : 'Ver detalles, miembros, solicitudes y calificaciones del proyecto'}"
               >
                 <span>Detalles</span>
                 <span>→</span>
               </button>
-              ${(isAuthor || isAdmin) && cardPendingReqs.length > 0 ? `
+              ${!isInProgress && (isAuthor || isAdmin) && cardPendingReqs.length > 0 ? `
                 <button 
+                  type="button"
                   class="saas-card-btn-join"
                   style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%) !important; color: #ffffff !important; box-shadow: 0 4px 14px rgba(239, 68, 68, 0.45) !important;"
                   onclick="event.stopPropagation(); window.ProjectHub.open('${c.id}', 'users');" 
@@ -3000,8 +3011,9 @@ window.ProjectsView = {
                 </button>
               ` : ''}
             ` : ''}
-            ${!isMemberOrAuthor ? `
+            ${!isInProgress && !isMemberOrAuthor ? `
               <button 
+                type="button"
                 class="saas-card-btn-join"
                 onclick="event.stopPropagation(); ${joinAction}" 
                 title="Solicitar unirme a este proyecto"
@@ -3012,35 +3024,67 @@ window.ProjectsView = {
             ` : ''}
 
             <button 
-              class="saas-card-btn-landing"
-              onclick="event.stopPropagation(); ${landingAction}" 
-              title="Abrir Landing Page pública de este proyecto"
+              type="button"
+              class="saas-card-btn-landing ${isInProgress ? 'saas-btn-disabled-gray' : ''}"
+              ${isInProgress ? 'disabled' : ''}
+              onclick="event.stopPropagation(); ${isInProgress ? '' : landingAction}" 
+              title="${isInProgress ? 'Landing Page deshabilitada mientras el proyecto está en proceso' : 'Abrir Landing Page pública de este proyecto'}"
             >
               <span>🌐</span>
               <span>Ver Landing</span>
             </button>
 
             ${isAdmin ? `<button 
-              class="saas-card-btn-authorize ${isApproved ? 'approved' : ''}"
-              onclick="event.stopPropagation(); window.ProjectsView.toggleAuthorizeProject('${c.id}')"
-              title="${isApproved ? 'Proyecto ya autorizado (clic para revocar)' : 'Autorizar y publicar este proyecto'}"
+              type="button"
+              class="saas-card-btn-authorize ${isInProgress ? 'saas-btn-disabled-gray' : (isApproved ? 'approved' : '')}"
+              ${isInProgress ? 'disabled' : ''}
+              onclick="event.stopPropagation(); ${isInProgress ? '' : `window.ProjectsView.toggleAuthorizeProject('${c.id}')`}"
+              title="${isInProgress ? 'Solo se puede autorizar cuando el proyecto esté completado' : (isApproved ? 'Proyecto ya autorizado (clic para revocar)' : 'Autorizar y publicar este proyecto')}"
             >
               <span>${isApproved ? '✔' : '✅'}</span>
               <span>${isApproved ? 'Autorizado' : 'Autorizar'}</span>
             </button>` : ''}
 
             <button 
-              class="saas-card-btn-primary"
-              onclick="event.stopPropagation(); ${shareAction}" 
-              title="Compartir este proyecto"
+              type="button"
+              class="saas-card-btn-primary ${isInProgress ? 'saas-btn-disabled-gray' : ''}"
+              ${isInProgress ? 'disabled' : ''}
+              onclick="event.stopPropagation(); ${isInProgress ? '' : shareAction}" 
+              title="${isInProgress ? 'Compartir deshabilitado mientras el proyecto está en proceso' : 'Compartir este proyecto'}"
             >
               <span>Compartir</span>
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-left:2px;"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
             </button>
+
+            ${canContinueInProgress ? `
+              <button 
+                type="button"
+                class="saas-card-btn-continue-process"
+                onclick="event.stopPropagation(); window.ProjectsView.continueProjectProcess('${c.id}')"
+                title="Continuar en el Asistente de Proyectos exactamente hasta donde quedó guardado"
+              >
+                <span>🚀</span>
+                <span>Continuar el proceso</span>
+                <span>→</span>
+              </button>
+            ` : ''}
           </div>
         </div>
       </div>
     `;
+  },
+
+  /**
+   * Abre el Asistente de Proyectos (ProjectWizard) exactamente en el paso donde quedó guardado
+   */
+  continueProjectProcess(projectId) {
+    if (!projectId) return;
+    if (window.ProjectWizard && typeof window.ProjectWizard.openWizard === 'function') {
+      // startStep = null restaura automáticamente el último paso guardado (currentStep) y todos los campos/avances
+      window.ProjectWizard.openWizard(projectId, null, true);
+    } else if (this.showToast) {
+      this.showToast('⚠️ El Asistente de Proyectos no está disponible en este momento.', 'warning');
+    }
   },
 
   /**

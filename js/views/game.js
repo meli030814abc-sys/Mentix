@@ -871,7 +871,8 @@ window.GameView = {
                     id="btn-case-submit"
                     onclick="window.GameView.onSubmitCaseAnswer()"
                   >
-                    <span>Enviar Respuestas</span>
+                    <span>✅</span>
+                    <span>Enviar Respuesta</span>
                   </button>
                   <button
                     type="button"
@@ -880,6 +881,7 @@ window.GameView = {
                     onclick="window.GameView.onNextCaseQuestion()"
                   >
                     <span>Siguiente</span>
+                    <span>➡️</span>
                   </button>
                 ` : `
                   <button
