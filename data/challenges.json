@@ -746,22 +746,10 @@
     "accessCode": "245801",
     "customProjectCodes": [
       {
-        "code": "371850",
-        "author": "Melisa",
+        "code": "12345678",
+        "author": "Profesor / Administrador Mentix",
         "authorRole": "admin",
-        "createdAt": "22/11/2026, 9:07:59 p.m."
-      },
-      {
-        "code": "926407",
-        "author": "Melisa",
-        "authorRole": "admin",
-        "createdAt": "22/11/2026, 9:07:59 p.m."
-      },
-      {
-        "code": "583194",
-        "author": "Melisa",
-        "authorRole": "admin",
-        "createdAt": "22/11/2026, 9:07:51 p.m."
+        "createdAt": "2026-11-16"
       }
     ]
   },
