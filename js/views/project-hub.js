@@ -103,14 +103,21 @@ window.ProjectHub = {
       hub.__external = true;
     }
     ['joinRequests', 'members', 'views', 'ratings'].forEach(k => { if (!Array.isArray(hub[k])) hub[k] = []; });
-    // Si no tiene miembros, agregar el autor/líder y equipo realista
+    // Si no tiene miembros, agregar únicamente al autor/líder real (los miembros de prueba solo para proyectos demo)
     if (p && hub.members.length === 0) {
-      const leaderName = p.author || 'Ana Gómez';
-      hub.members = [
-        { name: leaderName, email: (leaderName.toLowerCase().replace(/\s+/g, '.') + '@mentix.edu'), role: 'owner', leader: true },
-        { name: 'Elena Morales', email: 'elena.morales@mentix.edu', role: 'collaborator' },
-        { name: 'David Soto', email: 'david.soto@mentix.edu', role: 'viewer' }
-      ];
+      const leaderName = p.author || p.teamLead || 'Autor del proyecto';
+      const leaderEmail = p.authorEmail || (leaderName.toLowerCase().replace(/\s+/g, '.') + '@mentix.edu');
+      if (id === 'demo-gov-data' || id === 'proj_gov_data') {
+        hub.members = [
+          { name: leaderName, email: leaderEmail, role: 'owner', leader: true },
+          { name: 'Elena Morales', email: 'elena.morales@mentix.edu', role: 'collaborator' },
+          { name: 'David Soto', email: 'david.soto@mentix.edu', role: 'viewer' }
+        ];
+      } else {
+        hub.members = [
+          { name: leaderName, email: leaderEmail, role: 'owner', leader: true }
+        ];
+      }
     }
     // Solo para proyectos de demostración se inicializa con una solicitud de prueba
     if (hub.joinRequests.length === 0 && (id === 'demo-gov-data' || id === 'proj_gov_data')) {
@@ -120,13 +127,15 @@ window.ProjectHub = {
     }
     return hub;
   },
-  saveHub(id, hub) {
+  saveHub(id, hub, options = {}) {
     const p = this.getProject(id);
     if (p && this.isStored(id)) {
       p.hub = hub;
       p.joinRequests = hub.joinRequests;
       p.members = hub.members;
-      if (typeof saveGlobalState === 'function') saveGlobalState(window.appState);
+      if (typeof saveGlobalState === 'function') {
+        try { saveGlobalState(window.appState); } catch (e) {}
+      }
     } else {
       let all = {};
       try { all = JSON.parse(localStorage.getItem('mentix_project_hub_v1') || '{}'); } catch (e) {}
@@ -135,6 +144,22 @@ window.ProjectHub = {
       all[id] = clean;
       try { localStorage.setItem('mentix_project_hub_v1', JSON.stringify(all)); } catch (e) {}
     }
+
+    if (options && options.skipCloudSync) return;
+
+    // Sincronización global en Supabase Cloud para que miembros aceptados y solicitudes se reflejen en todos los dispositivos
+    try {
+      if (id && window.supabaseEngine && typeof window.supabaseEngine.saveWizardDraft === 'function') {
+        const key = 'mentix_hub_sync_' + String(id);
+        window.supabaseEngine.saveWizardDraft(key, key, 'system_hub', 1, [], {
+          projectId: String(id),
+          members: Array.isArray(hub.members) ? hub.members : [],
+          joinRequests: Array.isArray(hub.joinRequests) ? hub.joinRequests : [],
+          ratings: Array.isArray(hub.ratings) ? hub.ratings.slice(-200) : [],
+          updatedAt: Date.now()
+        }).catch(() => {});
+      }
+    } catch (e) {}
   },
   me() {
     const u = (window.appState && window.appState.currentUser) || null;
@@ -192,14 +217,29 @@ window.ProjectHub = {
     const r = String(u.role || '').toLowerCase().trim();
     const uname = String(u.username || '').toLowerCase().trim();
     const email = String(u.email || '').toLowerCase().trim();
-    return r === 'admin' || r === 'administrador' || uname === 'melisa' || uname === 'admin' || email === 'melisa@mentix.edu.co';
+    return r === 'admin' || r === 'administrador' || uname === 'melisa' || uname === 'admin' || email === 'melisa@mentix.edu.co' || email === 'meli030814abc@gmail.com';
+  },
+  isTeacherUser() {
+    const u = window.appState?.currentUser;
+    if (!u || u.isGuest || u.username === 'invitado') return false;
+    const r = String(u.role || '').toLowerCase().trim();
+    return r === 'teacher' || r === 'profesor' || r === 'docente';
   },
   canView(proj) {
     if (!proj) return false;
     const u = window.appState?.currentUser;
     if (!u || u.isGuest || u.username === 'invitado') return false;
-    // Administradores, creadores, miembros y usuarios registrados pueden ver la ventana de Detalles (Project Hub)
-    return true;
+    // Exclusividad: Solo visible para Admin, Profesores, Creador y personas que el creador haya aceptado unir
+    if (this.isAdminUser() || this.isTeacherUser()) return true;
+    const role = this.getRole(proj);
+    if (role && role !== 'guest') return true;
+    const hub = this.getHub(proj.id);
+    const me = this.me();
+    const keys = [me.email, me.username, me.name, me.key].map(k => this.norm(k)).filter(Boolean);
+    const isAccepted = (hub.joinRequests || []).some(r =>
+      r && r.status === 'accepted' && keys.some(k => k && (k === this.norm(r.email) || k === this.norm(r.name)))
+    );
+    return isAccepted;
   },
   canEdit(proj) {
     if (!proj) return false;
@@ -288,42 +328,67 @@ window.ProjectHub = {
   },
 
   async syncHubFromCloud(projectId) {
-    if (!projectId) return;
+    if (!projectId) return false;
     try {
-      const apiBase = (window.appRouter && typeof window.appRouter.getApiBase === 'function') ? window.appRouter.getApiBase() : '';
-      const ctrl = (typeof AbortController !== 'undefined') ? new AbortController() : null;
-      const tid = ctrl ? setTimeout(() => ctrl.abort(), 2500) : null;
-      const res = await fetch(`${apiBase}/api/challenges?t=${Date.now()}&fresh=1`, {
-        cache: 'no-store',
-        signal: ctrl ? ctrl.signal : undefined
-      });
-      if (tid) clearTimeout(tid);
-      if (!res || !res.ok) return;
-      const data = await res.json();
-      const list = Array.isArray(data?.challenges) ? data.challenges : (Array.isArray(data) ? data : []);
-      const cloudProj = list.find(c => c && String(c.id) === String(projectId));
-      if (!cloudProj || !cloudProj.hub) return;
-
       const localProj = this.getProject(projectId);
-      if (!localProj) return;
+      if (!localProj) return false;
       const prevRole = this.getRole(localProj);
+      const prevCanView = this.canView(localProj);
+      let cloudHub = null;
 
-      const mergedHub = { ...(localProj.hub || {}), ...cloudProj.hub };
-      if (Array.isArray(cloudProj.hub.members) && cloudProj.hub.members.length > 0) {
-        mergedHub.members = cloudProj.hub.members;
+      // 1. Fuente principal ultrarrápida: Supabase Cloud (mentix_hub_sync_<id>)
+      if (window.supabaseEngine && typeof window.supabaseEngine.loadWizardDraft === 'function') {
+        try {
+          const key = 'mentix_hub_sync_' + String(projectId);
+          const rec = await window.supabaseEngine.loadWizardDraft(key, key);
+          const payload = rec && (rec.payload || rec.draft_data || rec.data || rec);
+          if (payload && (Array.isArray(payload.members) || Array.isArray(payload.joinRequests))) {
+            cloudHub = {
+              members: Array.isArray(payload.members) ? payload.members : [],
+              joinRequests: Array.isArray(payload.joinRequests) ? payload.joinRequests : [],
+              ratings: Array.isArray(payload.ratings) ? payload.ratings : []
+            };
+          }
+        } catch (e) {}
       }
-      if (Array.isArray(cloudProj.hub.joinRequests)) {
-        mergedHub.joinRequests = cloudProj.hub.joinRequests;
+
+      // 2. Respaldo desde /api/challenges si Supabase aún no tiene hub para este proyecto
+      if (!cloudHub) {
+        const apiBase = (window.appRouter && typeof window.appRouter.getApiBase === 'function') ? window.appRouter.getApiBase() : '';
+        const ctrl = (typeof AbortController !== 'undefined') ? new AbortController() : null;
+        const tid = ctrl ? setTimeout(() => ctrl.abort(), 2500) : null;
+        const res = await fetch(`${apiBase}/api/challenges?t=${Date.now()}&fresh=1`, {
+          cache: 'no-store',
+          signal: ctrl ? ctrl.signal : undefined
+        });
+        if (tid) clearTimeout(tid);
+        if (res && res.ok) {
+          const data = await res.json();
+          const list = Array.isArray(data?.challenges) ? data.challenges : (Array.isArray(data) ? data : []);
+          const cloudProj = list.find(c => c && String(c.id) === String(projectId));
+          if (cloudProj && cloudProj.hub) cloudHub = cloudProj.hub;
+        }
       }
-      if (Array.isArray(cloudProj.hub.ratings) && cloudProj.hub.ratings.length >= (localProj.hub?.ratings?.length || 0)) {
-        mergedHub.ratings = cloudProj.hub.ratings;
+
+      if (!cloudHub) return false;
+
+      const mergedHub = { ...(localProj.hub || {}), ...cloudHub };
+      if (Array.isArray(cloudHub.members) && cloudHub.members.length > 0) {
+        mergedHub.members = cloudHub.members;
+      }
+      if (Array.isArray(cloudHub.joinRequests)) {
+        mergedHub.joinRequests = cloudHub.joinRequests;
+      }
+      if (Array.isArray(cloudHub.ratings) && cloudHub.ratings.length >= (localProj.hub?.ratings?.length || 0)) {
+        mergedHub.ratings = cloudHub.ratings;
       }
       localProj.hub = mergedHub;
       localProj.members = mergedHub.members || [];
       localProj.joinRequests = mergedHub.joinRequests || [];
-      this.saveHub(projectId, mergedHub);
+      this.saveHub(projectId, mergedHub, { skipCloudSync: true });
 
       const nextRole = this.getRole(localProj);
+      const nextCanView = this.canView(localProj);
       if (nextRole !== prevRole && nextRole !== 'guest') {
         const info = this.ROLES[nextRole] || this.ROLES.viewer;
         this.toast(`🎉 ¡Tu acceso se actualizó! Ahora eres ${info.icon} ${info.label}.`);
@@ -331,10 +396,21 @@ window.ProjectHub = {
       if (document.getElementById('phub-overlay') && String(this.currentId) === String(projectId)) {
         this.render();
       }
-      if (window.ProjectsView && typeof window.ProjectsView.render === 'function' && window.appRouter && window.appRouter.currentView === 'projects' && window.ProjectsView.viewMode === 'list') {
+      if ((nextCanView !== prevCanView || nextRole !== prevRole) && window.ProjectsView && typeof window.ProjectsView.render === 'function' && window.appRouter && window.appRouter.currentView === 'projects' && window.ProjectsView.viewMode === 'list') {
         window.ProjectsView.render();
       }
-    } catch (e) {}
+      return true;
+    } catch (e) {
+      return false;
+    }
+  },
+
+  async syncAllHubsFromCloud(projectsList) {
+    const now = Date.now();
+    if (this._lastBulkHubSync && (now - this._lastBulkHubSync) < 15000) return;
+    this._lastBulkHubSync = now;
+    const list = Array.isArray(projectsList) ? projectsList.slice(0, 20) : [];
+    await Promise.all(list.map(p => (p && p.id) ? this.syncHubFromCloud(p.id).catch(() => false) : Promise.resolve(false)));
   },
   close(pushHistory = true) {
     const el = document.getElementById('phub-overlay');

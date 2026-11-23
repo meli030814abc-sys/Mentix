@@ -517,6 +517,10 @@ window.ProjectWizard = {
       if (typeof saveGlobalState === 'function') {
         saveGlobalState(window.appState);
       }
+      const trackCode = this.draft.joinCode || this.draft.accessCode || this.draft.code || '';
+      if (trackCode && window.ProjectsView && typeof window.ProjectsView.recordCodeParticipantProgress === 'function') {
+        window.ProjectsView.recordCodeParticipantProgress(trackCode, syncedRecord || this.draft);
+      }
     } catch (e) {
       console.warn('Aviso al sincronizar borrador con appState:', e);
     }
@@ -7053,6 +7057,11 @@ collectCurrentStepInputs() {
     this.draft.completedAt = this.draft.completedAt || new Date().toISOString();
     this.draft.isPublic = canPub;
     this.saveDraftToStorage(true);
+
+    const submitCode = this.draft.joinCode || this.draft.accessCode || this.draft.code || '';
+    if (submitCode && window.ProjectsView && typeof window.ProjectsView.recordCodeParticipantProgress === 'function') {
+      window.ProjectsView.recordCodeParticipantProgress(submitCode, rec || this.draft);
+    }
 
     if (window.appRouter && typeof window.appRouter.pushChallengeToCloud === 'function') {
       window.appRouter.pushChallengeToCloud(rec).catch(() => {});

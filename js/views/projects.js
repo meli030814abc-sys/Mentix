@@ -2501,22 +2501,24 @@ window.ProjectsView = {
 
     // Filtrar proyectos: Solo los proyectos debidamente autorizados por el Administrador son públicos.
     // Los proyectos pendientes de autorización o en revisión solo son visibles para el Administrador (para validarlos) o para su respectivo autor.
+    const isGuestUser = this.isUserGuest();
     const allUserProjects = rawProjects.filter(c => {
       const isApproved = c.approvalStatus === 'approved';
       const isAuthor = (window.appRouter && window.appRouter.isChallengeOwner(c)) ||
         ((c.author || '').toLowerCase().trim() === (u?.name || '').toLowerCase().trim()) ||
         (c.authorId && c.authorId === u?.id);
+      const isAcceptedMember = !isGuestUser && window.ProjectHub && typeof window.ProjectHub.canView === 'function' && window.ProjectHub.canView(c);
 
       if (!isApproved) {
-        // Si no cuenta con autorización, solo el administrador o el autor pueden verlo
-        if (isAdmin || isTeacherOrAdmin || isAuthor) return true;
+        // Si no cuenta con autorización, solo el administrador, profesor, autor o miembro aceptado pueden verlo
+        if (isAdmin || isTeacherOrAdmin || isAuthor || isAcceptedMember) return true;
         return false;
       }
 
       // Si está autorizado por el administrador, verificar si fue marcado expresamente como privado
       const isPrivate = c.isPublic === false || c.accessMode === 'private';
       if (isPrivate) {
-        if (isAdmin || isTeacherOrAdmin || isAuthor) return true;
+        if (isAdmin || isTeacherOrAdmin || isAuthor || isAcceptedMember) return true;
         return false;
       }
       return true;
@@ -3008,6 +3010,11 @@ window.ProjectsView = {
         </main>
       </div>
     `;
+
+    // Sincronizar miembros y solicitudes aceptadas desde la nube para desbloquear Detalles entre dispositivos
+    if (!isGuestUser && window.ProjectHub && typeof window.ProjectHub.syncAllHubsFromCloud === 'function') {
+      window.ProjectHub.syncAllHubsFromCloud(rawProjects);
+    }
   },
 
   renderProjectAttemptsSection() {
@@ -3192,13 +3199,37 @@ window.ProjectsView = {
       primaryText = 'Ver Detalles →';
     }
 
-    // Ventana de Detalles (Project Hub): visible para administradores, creadores, miembros y usuarios registrados
-    const isMemberOrAuthor = !isGuest && !!(isAuthor || isAdmin || (window.ProjectHub && typeof window.ProjectHub.getRole === 'function' && ['owner', 'editor', 'collaborator', 'commenter', 'viewer'].includes(window.ProjectHub.getRole(c))));
-    const canHubView = !isGuest;
-    const canHubEdit = !isGuest && !!(isAuthor || isAdmin || (window.ProjectHub && typeof window.ProjectHub.canEdit === 'function' && window.ProjectHub.canEdit(c)));
-
+    // Ventana de Detalles (Project Hub): visible EXCLUSIVAMENTE para Admin, Profesores, Creador y personas aceptadas por el creador
     const cHub = (window.ProjectHub && typeof window.ProjectHub.getHub === 'function') ? window.ProjectHub.getHub(c.id) : (c.hub || {});
     const cardPendingReqs = (cHub.joinRequests || []).filter(r => r && r.status === 'pending');
+
+    const isMemberOrAuthor = !isGuest && !!(isAuthor || isAdmin || (window.ProjectHub && typeof window.ProjectHub.getRole === 'function' && ['owner', 'editor', 'collaborator', 'commenter', 'viewer'].includes(window.ProjectHub.getRole(c))));
+    const canHubView = !isGuest && Boolean(
+      isAdmin || isTeacher || isAuthor || isMemberOrAuthor ||
+      (window.ProjectHub && typeof window.ProjectHub.canView === 'function' && window.ProjectHub.canView(c))
+    );
+    const canHubEdit = !isGuest && !!(isAuthor || isAdmin || (window.ProjectHub && typeof window.ProjectHub.canEdit === 'function' && window.ProjectHub.canEdit(c)));
+
+    // Construir lista limpia de autores del proyecto (creador + coautores + miembros aceptados)
+    const authorNames = [];
+    const seenAuthorKeys = new Set();
+    const addAuthorName = (val) => {
+      if (!val) return;
+      String(val).split(/[,;\n]+/).forEach(part => {
+        const cleanName = part.trim();
+        if (!cleanName || /^equipo del proyecto$|^docente \/ estudiante$|^autor del proyecto$/i.test(cleanName)) return;
+        const k = cleanName.toLowerCase();
+        if (seenAuthorKeys.has(k)) return;
+        seenAuthorKeys.add(k);
+        authorNames.push(cleanName);
+      });
+    };
+    addAuthorName(c.authorsConfig?.authorsList || c.govdata?.authorsConfig?.authorsList);
+    addAuthorName(c.author || c.govdata?.author || c.teamLead || c.govdata?.teamLead);
+    (Array.isArray(cHub.members) ? cHub.members : []).forEach(m => {
+      if (m && m.name) addAuthorName(m.name);
+    });
+    const authorsDisplay = authorNames.length > 0 ? authorNames.join(', ') : (c.author || 'Equipo Mentix');
 
     const hubAction = window.ProjectHub ? `window.ProjectHub.open('${c.id}')` : `window.ProjectsView.openProjectLanding('${c.id}')`;
     const landingAction = `window.ProjectsView.openProjectLanding('${c.id}')`;
@@ -3306,10 +3337,19 @@ window.ProjectsView = {
           </p>
 
           <!-- Metadata Row -->
-          <div class="saas-card-meta-row" style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem; font-size: 0.78rem; font-weight: 700; color: #1e293b; border-bottom: none; padding-bottom: 0;">
+          <div class="saas-card-meta-row" style="display: flex; align-items: center; gap: 1rem; margin-bottom: 0.65rem; font-size: 0.78rem; font-weight: 700; color: #1e293b; border-bottom: none; padding-bottom: 0;">
             <span style="display: inline-flex; align-items: center; gap: 0.35rem;">📅 ${dateStr}</span>
             <span style="display: inline-flex; align-items: center; gap: 0.35rem; color: #0284c7; cursor: pointer; transition: transform 0.15s ease;" onmouseenter="this.style.transform='scale(1.1)';" onmouseleave="this.style.transform='scale(1)';" onclick="event.stopPropagation(); window.ProjectsView.openParticipantsModal('${c.id}');" title="Ver personas y roles participantes">👥 ${studentsCount}</span>
             <span style="display: inline-flex; align-items: center; gap: 0.25rem; color: #eab308; cursor: pointer; transition: transform 0.15s ease;" onmouseenter="this.style.transform='scale(1.1)';" onmouseleave="this.style.transform='scale(1)';" onclick="event.stopPropagation(); window.ProjectsView.openReviewFullPage('${c.id}');" title="Ver comentarios y calificar este proyecto">⭐ ${ratingStr}</span>
+          </div>
+
+          <!-- Autores del proyecto (justo antes de los botones de acción) -->
+          <div class="saas-card-authors" style="display: flex; align-items: center; gap: 0.42rem; margin: 0 0 0.85rem; padding: 0.36rem 0.65rem; border-radius: 9px; background: #f8fafc; border: 1px solid #e2e8f0; font-size: 0.76rem; color: #334155;" title="Autores: ${this.escapeHtml(authorsDisplay)}">
+            <span style="font-size: 0.85rem; flex-shrink: 0;">👤</span>
+            <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+              <span style="color: #64748b; font-weight: 700;">${authorNames.length > 1 ? 'Autores:' : 'Autor:'}</span>
+              <strong style="color: #0f172a; font-weight: 800; margin-left: 0.2rem;">${this.escapeHtml(authorsDisplay)}</strong>
+            </span>
           </div>
 
           <!-- Action Buttons Row: En Proceso bloquea Detalles/Landing/Autorizar/Compartir y habilita Continuar el proceso (Admin y Estudiantes) -->
@@ -4762,6 +4802,10 @@ window.ProjectsView = {
     }
     try { localStorage.setItem('mentix_active_join_code', clean); } catch (e) {}
     try { sessionStorage.setItem('mentix_active_join_code', clean); } catch (e) {}
+    // Registrar de inmediato al estudiante/usuario en el seguimiento en vivo de este código para el Profe/Admin
+    if (typeof this.recordCodeParticipantProgress === 'function') {
+      try { this.recordCodeParticipantProgress(clean, null); } catch (e) {}
+    }
     if (window.soundEngine && window.soundEngine.playSuccess) window.soundEngine.playSuccess();
 
     // 6. Determinar el proyecto o borrador para abrir directamente en el Asistente de Proyectos
@@ -9183,6 +9227,435 @@ Generado por Mentix - Plataforma de Proyectos y Retos
     this.render();
   },
 
+  _normJoinCode(code) {
+    return String(code || '').trim().toLowerCase().replace(/[\s\-_]/g, '');
+  },
+
+  async recordCodeParticipantProgress(code, projectRec = null) {
+    const cleanCode = String(code || '').trim();
+    const normCode = this._normJoinCode(cleanCode);
+    if (!normCode) return;
+
+    const u = window.appState?.currentUser || {};
+    const userId = String(u.id || u.username || u.email || 'anon').trim();
+    const username = String(u.username || '').trim();
+    const name = String(u.name || u.username || 'Estudiante').trim();
+    const email = String(u.email || '').trim();
+    const role = String(u.role || 'student').trim();
+    const userKey = (username || userId || email || name).toLowerCase().replace(/[^a-z0-9]/g, '') || 'user';
+
+    const rec = projectRec || {};
+    const g = rec.govdata || {};
+    const stepsArr = Array.isArray(rec.completedSteps) ? rec.completedSteps : (Array.isArray(g.completedSteps) ? g.completedSteps : []);
+    const currentStep = Math.max(1, Number(rec.currentStep || g.currentStep || stepsArr.length || 1));
+    const completedStepsCount = stepsArr.length;
+    const isSubmitted = Boolean(
+      rec.submittedForApproval || g.submittedForApproval ||
+      rec.publicationStatus === 'published' || rec.publicationStatus === 'pending_approval' ||
+      rec.approvalStatus === 'approved' || rec.status === 'completed'
+    );
+    const isApproved = rec.approvalStatus === 'approved';
+    const progress = isSubmitted
+      ? 100
+      : Math.max(0, Math.min(100, Number(rec.progress || rec.calculatedProgress || Math.round((completedStepsCount / 16) * 100))));
+
+    const rawTitle = String(rec.title || g.title || rec.landingConfig?.publicName || '').trim();
+    const projectTitle = (!rawTitle || /^nuevo proyecto govdata$|^proyecto govdata$/i.test(rawTitle))
+      ? (projectRec ? 'Nuevo Proyecto' : '')
+      : rawTitle;
+    const rawDesc = String(rec.description || rec.shortDescription || g.shortDescription || g.fullDescription || '').trim();
+    const projectDescription = (!rawDesc || /Asistente Inteligente GovData Nexus/i.test(rawDesc))
+      ? (projectRec ? 'Proyecto en construcción con el Asistente Inteligente de Mentix.' : '')
+      : rawDesc;
+
+    let compactSnapshot = null;
+    if (projectRec && projectRec.id) {
+      try {
+        compactSnapshot = {
+          id: projectRec.id,
+          title: projectTitle || 'Nuevo Proyecto',
+          subtitle: rec.subtitle || g.subtitle || 'Proyecto Educativo Mentix',
+          description: projectDescription || 'Proyecto en construcción con el Asistente Inteligente de Mentix.',
+          author: rec.author || name,
+          authorEmail: rec.authorEmail || email,
+          joinCode: cleanCode,
+          accessCode: cleanCode,
+          projectType: 'presentation',
+          isGovDataProject: true,
+          status: isSubmitted ? 'completed' : 'in_progress',
+          publicationStatus: rec.publicationStatus || (isSubmitted ? 'pending_approval' : 'draft'),
+          approvalStatus: rec.approvalStatus || 'pending',
+          currentStep,
+          completedSteps: stepsArr,
+          progress,
+          banner: (rec.banner && !String(rec.banner).startsWith('data:')) ? rec.banner : 'assets/projects_ui/card_data_gov.png',
+          problemStatement: rec.problemStatement || g.problemStatement || '',
+          mainObjective: rec.mainObjective || g.mainObjective || '',
+          benefits: rec.benefits || g.benefits || '',
+          targetAudience: rec.targetAudience || g.targetAudience || '',
+          slidesCount: Array.isArray(rec.slides) ? rec.slides.length : 0,
+          resourcesCount: Array.isArray(rec.resources) ? rec.resources.length : 0,
+          landingConfig: rec.landingConfig || g.landingConfig || {},
+          valueProp: rec.valueProp || g.valueProp || {},
+          updatedAt: new Date().toISOString()
+        };
+      } catch (e) {}
+    }
+
+    const nowIso = new Date().toISOString();
+    const statusLabel = isApproved ? 'approved' : (isSubmitted ? 'submitted' : (projectRec ? 'in_progress' : 'joined'));
+
+    const mergeIntoMap = (allMap) => {
+      const list = Array.isArray(allMap[normCode]) ? [...allMap[normCode]] : [];
+      const idx = list.findIndex(x => x && (x.userKey === userKey || (projectRec && projectRec.id && x.projectId === projectRec.id)));
+      const prev = idx >= 0 ? list[idx] : {};
+      const entry = {
+        ...prev,
+        code: cleanCode,
+        normCode,
+        userKey,
+        userId,
+        username,
+        name,
+        email,
+        role,
+        joinedAt: prev.joinedAt || nowIso,
+        updatedAt: nowIso,
+        projectId: (projectRec && projectRec.id) ? projectRec.id : (prev.projectId || ''),
+        projectTitle: projectTitle || prev.projectTitle || '',
+        projectDescription: projectDescription || prev.projectDescription || '',
+        currentStep: projectRec ? currentStep : (prev.currentStep || 0),
+        completedStepsCount: projectRec ? completedStepsCount : (prev.completedStepsCount || 0),
+        progress: projectRec ? progress : (prev.progress || 0),
+        status: projectRec ? statusLabel : (prev.status || 'joined'),
+        approvalStatus: rec.approvalStatus || prev.approvalStatus || 'pending',
+        publicationStatus: rec.publicationStatus || prev.publicationStatus || 'draft',
+        slidesCount: compactSnapshot ? compactSnapshot.slidesCount : (prev.slidesCount || 0),
+        resourcesCount: compactSnapshot ? compactSnapshot.resourcesCount : (prev.resourcesCount || 0),
+        snapshot: compactSnapshot || prev.snapshot || null
+      };
+      if (idx >= 0) list[idx] = entry;
+      else list.unshift(entry);
+      allMap[normCode] = list;
+      return list;
+    };
+
+    // 1. Guardar localmente de inmediato
+    let localMap = {};
+    try { localMap = JSON.parse(localStorage.getItem('mentix_code_participants_v1') || '{}') || {}; } catch (e) {}
+    const updatedLocalList = mergeIntoMap(localMap);
+    try { localStorage.setItem('mentix_code_participants_v1', JSON.stringify(localMap)); } catch (e) {}
+
+    // 2. Sincronizar en Supabase Cloud (combinando con otros estudiantes ya registrados en el mismo código!)
+    try {
+      if (window.supabaseEngine && typeof window.supabaseEngine.loadWizardDraft === 'function' && typeof window.supabaseEngine.saveWizardDraft === 'function') {
+        const supaKey = 'mentix_code_participants_' + normCode;
+        const existingRec = await window.supabaseEngine.loadWizardDraft(supaKey, supaKey).catch(() => null);
+        const existingPayload = existingRec && (existingRec.payload || existingRec.draft_data || existingRec.data || existingRec);
+        const remoteList = (existingPayload && Array.isArray(existingPayload.participants)) ? existingPayload.participants : [];
+        const tempMap = { [normCode]: remoteList };
+        const mergedRemote = mergeIntoMap(tempMap);
+        await window.supabaseEngine.saveWizardDraft(supaKey, supaKey, 'system_codes', 1, [], {
+          code: cleanCode,
+          normCode,
+          participants: mergedRemote,
+          updatedAt: Date.now()
+        }).catch(() => {});
+      }
+    } catch (e) {}
+    return updatedLocalList;
+  },
+
+  async getCodeParticipantsMerged(code) {
+    const cleanCode = String(code || '').trim();
+    const normCode = this._normJoinCode(cleanCode);
+    const byKey = new Map();
+
+    const ingestEntry = (entry) => {
+      if (!entry) return;
+      const key = entry.userKey || (entry.projectId ? `proj_${entry.projectId}` : String(entry.email || entry.username || entry.name || Math.random()).toLowerCase().replace(/[^a-z0-9]/g, ''));
+      const prev = byKey.get(key);
+      if (!prev || new Date(entry.updatedAt || 0).getTime() >= new Date(prev.updatedAt || 0).getTime()) {
+        byKey.set(key, { ...(prev || {}), ...entry, joinedAt: (prev && prev.joinedAt) || entry.joinedAt || entry.updatedAt || new Date().toISOString() });
+      }
+    };
+
+    // 1. Local registry
+    try {
+      const localMap = JSON.parse(localStorage.getItem('mentix_code_participants_v1') || '{}') || {};
+      if (Array.isArray(localMap[normCode])) localMap[normCode].forEach(ingestEntry);
+    } catch (e) {}
+
+    // 2. Supabase Cloud registry (todos los estudiantes en cualquier dispositivo!)
+    try {
+      if (window.supabaseEngine && typeof window.supabaseEngine.loadWizardDraft === 'function') {
+        const supaKey = 'mentix_code_participants_' + normCode;
+        const rec = await window.supabaseEngine.loadWizardDraft(supaKey, supaKey).catch(() => null);
+        const payload = rec && (rec.payload || rec.draft_data || rec.data || rec);
+        if (payload && Array.isArray(payload.participants)) {
+          payload.participants.forEach(ingestEntry);
+        }
+      }
+    } catch (e) {}
+
+    // 3. Escanear proyectos reales (appState.challenges + wizard drafts locales + /api/challenges) que tengan este código
+    const ingestProject = (p) => {
+      if (!p || typeof p !== 'object') return;
+      const g = p.govdata || {};
+      const pCodes = [p.joinCode, p.accessCode, p.code, p.pin, g.joinCode, g.accessCode, g.code].map(x => this._normJoinCode(x));
+      if (!pCodes.includes(normCode)) return;
+
+      const authorName = String(p.author || g.author || p.teamLead || g.teamLead || 'Estudiante').trim();
+      const authorEmail = String(p.authorEmail || g.authorEmail || '').trim();
+      const authorUser = String(p.ownerUsername || g.ownerUsername || p.authorId || g.authorId || '').trim();
+      const userKey = (authorUser || authorEmail || authorName).toLowerCase().replace(/[^a-z0-9]/g, '') || `proj_${p.id}`;
+      const stepsArr = Array.isArray(p.completedSteps) ? p.completedSteps : (Array.isArray(g.completedSteps) ? g.completedSteps : []);
+      const isSubmitted = Boolean(p.submittedForApproval || g.submittedForApproval || p.publicationStatus === 'published' || p.publicationStatus === 'pending_approval' || p.approvalStatus === 'approved' || p.status === 'completed');
+      const isApproved = p.approvalStatus === 'approved';
+      const progress = isSubmitted ? 100 : Math.max(0, Math.min(100, Number(p.progress || p.calculatedProgress || Math.round((stepsArr.length / 16) * 100))));
+      const rawT = String(p.title || g.title || 'Nuevo Proyecto').trim();
+      const cleanT = /^nuevo proyecto govdata$|^proyecto govdata$/i.test(rawT) ? 'Nuevo Proyecto' : rawT;
+      const rawD = String(p.description || p.shortDescription || g.shortDescription || '').trim();
+      const cleanD = (!rawD || /Asistente Inteligente GovData Nexus/i.test(rawD)) ? 'Proyecto en construcción con el Asistente Inteligente de Mentix.' : rawD;
+
+      ingestEntry({
+        code: cleanCode,
+        normCode,
+        userKey,
+        name: authorName,
+        username: authorUser,
+        email: authorEmail,
+        role: p.authorRole || 'student',
+        joinedAt: p.createdAt || new Date().toISOString(),
+        updatedAt: p.updatedAt || p.createdAt || new Date().toISOString(),
+        projectId: p.id || '',
+        projectTitle: cleanT,
+        projectDescription: cleanD,
+        currentStep: Math.max(1, Number(p.currentStep || g.currentStep || stepsArr.length || 1)),
+        completedStepsCount: stepsArr.length,
+        progress,
+        status: isApproved ? 'approved' : (isSubmitted ? 'submitted' : 'in_progress'),
+        approvalStatus: p.approvalStatus || 'pending',
+        publicationStatus: p.publicationStatus || 'draft',
+        slidesCount: Array.isArray(p.slides) ? p.slides.length : 0,
+        resourcesCount: Array.isArray(p.resources) ? p.resources.length : 0,
+        snapshot: p
+      });
+    };
+
+    try { (window.appState?.challenges || []).forEach(ingestProject); } catch (e) {}
+    try {
+      const drafts = JSON.parse(localStorage.getItem('mentix_govdata_wizard_drafts') || '[]');
+      if (Array.isArray(drafts)) drafts.forEach(ingestProject);
+    } catch (e) {}
+    try {
+      const apiBase = (window.appRouter && typeof window.appRouter.getApiBase === 'function') ? window.appRouter.getApiBase() : '';
+      const ctrl = typeof AbortController !== 'undefined' ? new AbortController() : null;
+      const tid = ctrl ? setTimeout(() => ctrl.abort(), 2000) : null;
+      const r = await fetch(`${apiBase}/api/challenges?t=${Date.now()}`, { cache: 'no-store', signal: ctrl ? ctrl.signal : undefined });
+      if (tid) clearTimeout(tid);
+      if (r && r.ok) {
+        const arr = await r.json();
+        const list = Array.isArray(arr?.challenges) ? arr.challenges : (Array.isArray(arr) ? arr : []);
+        list.forEach(ingestProject);
+      }
+    } catch (e) {}
+
+    return Array.from(byKey.values()).sort((a, b) => new Date(b.updatedAt || 0).getTime() - new Date(a.updatedAt || 0).getTime());
+  },
+
+  previewStudentProjectFromCode(code, userKey, targetMode = 'landing') {
+    const entries = this._lastCodeDetailsEntries || [];
+    const entry = entries.find(e => e && (e.userKey === userKey || e.projectId === userKey));
+    if (!entry) {
+      this.showToast('⚠️ No se encontró la vista previa de este estudiante todavía.');
+      return;
+    }
+
+    // Cerrar el modal de detalles del código
+    const modal = document.getElementById('mentix-code-details-modal');
+    if (modal) modal.remove();
+
+    const openTarget = (projId) => {
+      if (targetMode === 'hub' && window.ProjectHub && typeof window.ProjectHub.open === 'function') {
+        window.ProjectHub.open(projId);
+      } else {
+        this.openProjectLanding(projId);
+      }
+    };
+
+    // Si el proyecto existe completo en appState o drafts, abrirlo directo; si viene de snapshot en la nube, inyectarlo temporalmente para ver su Landing o Detalles!
+    const existing = entry.projectId ? (this.getMergedProjectRecord(entry.projectId) || (window.appState?.challenges || []).find(c => c && String(c.id) === String(entry.projectId))) : null;
+    if (existing) {
+      openTarget(existing.id);
+      return;
+    }
+
+    if (entry.snapshot && entry.snapshot.id) {
+      if (!window.appState) window.appState = { challenges: [] };
+      if (!Array.isArray(window.appState.challenges)) window.appState.challenges = [];
+      if (!window.appState.challenges.some(c => c && String(c.id) === String(entry.snapshot.id))) {
+        window.appState.challenges.unshift(entry.snapshot);
+      }
+      openTarget(entry.snapshot.id);
+      return;
+    }
+
+    this.showToast(`⏳ ${entry.name} se unió al código, pero aún no ha empezado a guardar su proyecto.`);
+  },
+
+  async openCodeDetailsModal(code) {
+    const cleanCode = String(code || '').trim();
+    if (!cleanCode) return;
+
+    const existing = document.getElementById('mentix-code-details-modal');
+    if (existing) existing.remove();
+
+    const overlay = document.createElement('div');
+    overlay.id = 'mentix-code-details-modal';
+    overlay.style.cssText = 'position:fixed; inset:0; z-index:9999999; background:rgba(15,23,42,0.58); backdrop-filter:blur(8px); display:flex; align-items:center; justify-content:center; padding:1rem; overflow-y:auto;';
+    overlay.innerHTML = `
+      <div style="background:#ffffff; border:1.5px solid #cbd5e1; border-radius:22px; max-width:960px; width:100%; max-height:92vh; overflow-y:auto; padding:1.6rem 1.75rem; box-shadow:0 25px 70px rgba(15,23,42,0.28); color:#0f172a; font-family:'Outfit','Inter',sans-serif;">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:1rem; border-bottom:1.5px solid #e2e8f0; padding-bottom:1rem; margin-bottom:1.15rem; flex-wrap:wrap;">
+          <div>
+            <span style="display:inline-block; background:#e0f2fe; color:#0369a1; border:1px solid #7dd3fc; font-weight:800; font-size:0.72rem; padding:0.2rem 0.65rem; border-radius:999px; letter-spacing:0.04em;">SEGUIMIENTO EN VIVO DE CLASE</span>
+            <h2 style="margin:0.4rem 0 0; font-size:1.45rem; font-weight:900; color:#0f172a; display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap;">
+              <span>📊 Detalles del Código:</span>
+              <span style="background:#0f172a; color:#38bdf8; padding:0.15rem 0.7rem; border-radius:10px; letter-spacing:2px; font-size:1.25rem;">${this.escapeHtml(cleanCode)}</span>
+            </h2>
+            <p style="margin:0.3rem 0 0; font-size:0.84rem; color:#475569;">
+              Visualiza qué estudiantes se han unido a este código, cómo va su proceso paso a paso y revisa su Landing Page en tiempo real.
+            </p>
+          </div>
+          <div style="display:flex; align-items:center; gap:0.5rem;">
+            <button type="button" id="mentix-code-details-refresh-btn" onclick="window.ProjectsView.openCodeDetailsModal('${this.escapeHtml(cleanCode)}')" style="padding:0.48rem 0.9rem; border-radius:10px; background:#f0f9ff; border:1.5px solid #38bdf8; color:#0369a1; font-weight:800; font-size:0.8rem; cursor:pointer;">🔄 Actualizar</button>
+            <button type="button" onclick="document.getElementById('mentix-code-details-modal').remove()" style="width:36px; height:36px; border-radius:50%; background:#f1f5f9; border:1.5px solid #cbd5e1; color:#334155; font-weight:900; font-size:1.05rem; cursor:pointer; display:grid; place-items:center;">✕</button>
+          </div>
+        </div>
+        <div id="mentix-code-details-body" style="min-height:180px; display:flex; align-items:center; justify-content:center; color:#475569; font-weight:700;">
+          ⏳ Cargando estudiantes y progreso en vivo desde la nube...
+        </div>
+      </div>
+    `;
+    document.body.appendChild(overlay);
+
+    const entries = await this.getCodeParticipantsMerged(cleanCode);
+    this._lastCodeDetailsEntries = entries;
+
+    const bodyEl = document.getElementById('mentix-code-details-body');
+    if (!bodyEl) return;
+
+    const totalJoined = entries.length;
+    const completedCount = entries.filter(e => e.status === 'approved' || e.status === 'submitted').length;
+    const inProgressCount = entries.filter(e => e.status === 'in_progress' || e.status === 'joined').length;
+    const avgProgress = totalJoined > 0 ? Math.round(entries.reduce((acc, e) => acc + (Number(e.progress) || 0), 0) / totalJoined) : 0;
+
+    const formatTime = (iso) => {
+      if (!iso) return 'Recién';
+      try { return new Date(iso).toLocaleString('es-ES', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' }); } catch (e) { return String(iso); }
+    };
+
+    const statusBadge = (st) => {
+      if (st === 'approved') return `<span style="background:#dcfce7; color:#15803d; border:1px solid #86efac; padding:0.2rem 0.65rem; border-radius:999px; font-size:0.74rem; font-weight:800;">✔ Publicado / Autorizado</span>`;
+      if (st === 'submitted') return `<span style="background:#ccfbf1; color:#0f766e; border:1px solid #5eead4; padding:0.2rem 0.65rem; border-radius:999px; font-size:0.74rem; font-weight:800;">✅ Completado · Enviado</span>`;
+      if (st === 'in_progress') return `<span style="background:#e0f2fe; color:#0369a1; border:1px solid #7dd3fc; padding:0.2rem 0.65rem; border-radius:999px; font-size:0.74rem; font-weight:800;">⏱ En Proceso</span>`;
+      return `<span style="background:#fef3c7; color:#b45309; border:1px solid #fcd34d; padding:0.2rem 0.65rem; border-radius:999px; font-size:0.74rem; font-weight:800;">🟡 Unido (iniciando)</span>`;
+    };
+
+    bodyEl.style.display = 'block';
+    bodyEl.innerHTML = `
+      <!-- Resumen KPI -->
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(175px, 1fr)); gap:0.75rem; margin-bottom:1.25rem;">
+        <div style="background:#f8fafc; border:1.5px solid #e2e8f0; border-radius:14px; padding:0.85rem 1rem;">
+          <div style="font-size:0.74rem; font-weight:800; color:#64748b; text-transform:uppercase;">👥 Personas Unidas</div>
+          <div style="font-size:1.6rem; font-weight:900; color:#0f172a; margin-top:0.15rem;">${totalJoined}</div>
+        </div>
+        <div style="background:#f0f9ff; border:1.5px solid #bae6fd; border-radius:14px; padding:0.85rem 1rem;">
+          <div style="font-size:0.74rem; font-weight:800; color:#0369a1; text-transform:uppercase;">⏱ En Proceso</div>
+          <div style="font-size:1.6rem; font-weight:900; color:#0284c7; margin-top:0.15rem;">${inProgressCount}</div>
+        </div>
+        <div style="background:#ecfdf5; border:1.5px solid #a7f3d0; border-radius:14px; padding:0.85rem 1rem;">
+          <div style="font-size:0.74rem; font-weight:800; color:#047857; text-transform:uppercase;">✔ Completados</div>
+          <div style="font-size:1.6rem; font-weight:900; color:#10b981; margin-top:0.15rem;">${completedCount}</div>
+        </div>
+        <div style="background:#f5f3ff; border:1.5px solid #ddd6fe; border-radius:14px; padding:0.85rem 1rem;">
+          <div style="font-size:0.74rem; font-weight:800; color:#6d28d9; text-transform:uppercase;">📈 Avance Promedio</div>
+          <div style="font-size:1.6rem; font-weight:900; color:#7c3aed; margin-top:0.15rem;">${avgProgress}%</div>
+        </div>
+      </div>
+
+      ${entries.length === 0 ? `
+        <div style="text-align:center; padding:2.5rem 1.25rem; background:#f8fafc; border:1.5px dashed #cbd5e1; border-radius:16px;">
+          <div style="font-size:2.6rem; margin-bottom:0.5rem;">👩‍🎓👨‍🎓</div>
+          <div style="font-size:1.05rem; font-weight:900; color:#0f172a; margin-bottom:0.35rem;">Aún nadie se ha unido al código “${this.escapeHtml(cleanCode)}”</div>
+          <div style="font-size:0.85rem; color:#64748b; max-width:520px; margin:0 auto;">
+            Comparte el código con tus estudiantes para que entren por <b>“🎮 Unirse a un código”</b>. Apenas ingresen, aparecerán aquí automáticamente con su progreso y vista previa de su Landing.
+          </div>
+        </div>
+      ` : `
+        <div style="display:flex; flex-direction:column; gap:0.85rem;">
+          ${entries.map(e => {
+            const pct = Math.max(0, Math.min(100, Number(e.progress || 0)));
+            const barColor = pct >= 100 ? '#10b981' : (pct >= 50 ? '#0284c7' : '#f59e0b');
+            const initials = String(e.name || '?').trim().split(/\s+/).slice(0, 2).map(w => w[0] || '').join('').toUpperCase() || '?';
+            const hasProject = Boolean(e.projectId || e.snapshot);
+            return `
+              <div style="background:#ffffff; border:1.5px solid #e2e8f0; border-radius:16px; padding:1rem 1.15rem; box-shadow:0 4px 14px rgba(15,23,42,0.05);">
+                <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:0.85rem; flex-wrap:wrap;">
+                  <div style="display:flex; align-items:center; gap:0.75rem; min-width:220px; flex:1;">
+                    <div style="width:44px; height:44px; border-radius:12px; background:linear-gradient(135deg,#0284c7,#6366f1); color:#ffffff; font-weight:900; font-size:0.95rem; display:grid; place-items:center; flex-shrink:0;">
+                      ${this.escapeHtml(initials)}
+                    </div>
+                    <div style="min-width:0;">
+                      <div style="display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap;">
+                        <span style="font-size:0.98rem; font-weight:900; color:#0f172a;">${this.escapeHtml(e.name || 'Estudiante')}</span>
+                        ${statusBadge(e.status)}
+                      </div>
+                      <div style="font-size:0.76rem; color:#64748b; margin-top:0.15rem; display:flex; gap:0.45rem; flex-wrap:wrap;">
+                        ${e.email ? `<span>✉️ ${this.escapeHtml(e.email)}</span>` : (e.username ? `<span>@${this.escapeHtml(e.username)}</span>` : '')}
+                        <span>· 🕒 Unido: ${formatTime(e.joinedAt)}</span>
+                        <span>· 🔄 Último avance: ${formatTime(e.updatedAt)}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div style="display:flex; align-items:center; gap:0.45rem; flex-wrap:wrap;">
+                    <button type="button" ${hasProject ? '' : 'disabled'} onclick="window.ProjectsView.previewStudentProjectFromCode('${this.escapeHtml(cleanCode)}', '${this.escapeHtml(e.userKey || e.projectId)}')" style="padding:0.45rem 0.85rem; border-radius:10px; border:none; font-size:0.8rem; font-weight:800; cursor:${hasProject ? 'pointer' : 'not-allowed'}; background:${hasProject ? 'linear-gradient(135deg,#0284c7,#2563eb)' : '#e2e8f0'}; color:${hasProject ? '#ffffff' : '#94a3b8'}; box-shadow:${hasProject ? '0 3px 10px rgba(37,99,235,0.28)' : 'none'};" title="${hasProject ? 'Ver cómo va la Landing Page de este estudiante' : 'El estudiante aún no ha guardado contenido'}">
+                      🌐 Ver Landing
+                    </button>
+                    ${hasProject && window.ProjectHub ? `
+                      <button type="button" onclick="window.ProjectsView.previewStudentProjectFromCode('${this.escapeHtml(cleanCode)}', '${this.escapeHtml(e.userKey || e.projectId)}', 'hub')" style="padding:0.45rem 0.85rem; border-radius:10px; border:1.5px solid #cbd5e1; background:#f8fafc; color:#0f172a; font-size:0.8rem; font-weight:800; cursor:pointer;" title="Abrir panel de detalles y miembros del proyecto">
+                        📋 Detalles Proyecto
+                      </button>
+                    ` : ''}
+                  </div>
+                </div>
+
+                <!-- Proyecto y Barra de Progreso -->
+                <div style="margin-top:0.85rem; padding-top:0.75rem; border-top:1px solid #f1f5f9;">
+                  <div style="display:flex; justify-content:space-between; align-items:center; gap:0.5rem; flex-wrap:wrap; margin-bottom:0.35rem;">
+                    <div style="font-size:0.86rem; font-weight:800; color:#1e293b;">
+                      📁 ${this.escapeHtml(e.projectTitle || 'Aún sin título asignado')}
+                      ${e.slidesCount ? `<span style="font-size:0.74rem; color:#64748b; font-weight:700; margin-left:0.4rem;">· 🖼️ ${e.slidesCount} diap.</span>` : ''}
+                      ${e.resourcesCount ? `<span style="font-size:0.74rem; color:#64748b; font-weight:700; margin-left:0.3rem;">· 📎 ${e.resourcesCount} rec.</span>` : ''}
+                    </div>
+                    <div style="font-size:0.78rem; font-weight:900; color:${barColor};">
+                      Paso ${Math.min(16, Number(e.currentStep || 0))} de 16 · ${pct}%
+                    </div>
+                  </div>
+                  <div style="width:100%; height:9px; background:#e2e8f0; border-radius:999px; overflow:hidden;">
+                    <div style="width:${pct}%; height:100%; background:${barColor}; border-radius:999px; transition:width 0.3s ease;"></div>
+                  </div>
+                  ${e.projectDescription ? `<div style="font-size:0.78rem; color:#475569; margin-top:0.4rem; line-height:1.4;">${this.escapeHtml(this.truncateCardText(e.projectDescription, 160))}</div>` : ''}
+                </div>
+              </div>
+            `;
+          }).join('')}
+        </div>
+      `}
+    `;
+  },
+
   linkCodeToProject(code, projectId) {
     if (!code || !projectId) return;
     const codes = this.getSavedProjectCodes();
@@ -9407,12 +9880,15 @@ Generado por Mentix - Plataforma de Proyectos y Retos
                           ${item.createdAt ? `<span>·</span><span>${this.escapeHtml(item.createdAt)}</span>` : ''}
                         </div>
                       </div>
-                      <div style="display: flex; gap: 0.45rem; align-items: center; flex-shrink: 0;">
+                      <div style="display: flex; gap: 0.45rem; align-items: center; flex-shrink: 0; flex-wrap: wrap; justify-content: flex-end;">
                         <button type="button" class="btn btn-outline btn-sm" onclick="window.ProjectsView.copyCustomProjectCode('${this.escapeHtml(item.code)}')" style="padding: 0.4rem 0.75rem; font-size: 0.8rem; font-weight: 800; background: ${isLight ? '#ffffff' : 'transparent'}; color: ${isLight ? '#0f172a' : '#fff'}; border-color: ${isLight ? '#cbd5e1' : 'rgba(255,255,255,0.2)'};" title="Copiar código">
                           📋 Copiar
                         </button>
                         <button type="button" class="btn btn-danger btn-sm" onclick="window.ProjectsView.deleteCustomProjectCode('${this.escapeHtml(item.code)}')" style="padding: 0.4rem 0.65rem; font-size: 0.8rem;" title="Eliminar código">
                           🗑️
+                        </button>
+                        <button type="button" class="btn btn-sm" onclick="window.ProjectsView.openCodeDetailsModal('${this.escapeHtml(item.code)}')" style="padding: 0.42rem 0.82rem; font-size: 0.8rem; font-weight: 800; background: linear-gradient(135deg, #0284c7 0%, #2563eb 100%); color: #ffffff; border: none; border-radius: 8px; box-shadow: 0 3px 10px rgba(37, 99, 235, 0.3); cursor: pointer;" title="Ver estudiantes unidos, progreso y vista previa de sus landings">
+                          📊 Detalles
                         </button>
                       </div>
                     </div>
