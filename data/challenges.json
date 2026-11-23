@@ -1498,15 +1498,14 @@
       "titleColor": "#ffffff",
       "textColor": "#cbd5e1",
       "accentColor": "#00f5d4",
-      "bannerStyle": "gradient-cosmos",
-      "bannerUrl": ""
+      "bannerStyle": "gradient-cosmos"
     },
     "authorsConfig": {
       "authorsList": "Melisa",
       "authorsEmails": "gatitaxd6f79@gmail.com",
       "authorsRole": "Líder del Proyecto",
       "authorsInstitution": "",
-      "collaborators": ""
+      "collaborators": "gj"
     },
     "tags": [
       "Gobierno de Datos",
@@ -1635,10 +1634,10 @@
         "authorsEmails": "gatitaxd6f79@gmail.com",
         "authorsRole": "Líder del Proyecto",
         "authorsInstitution": "",
-        "collaborators": ""
+        "collaborators": "gj"
       },
       "createdAt": "2026-11-23T03:09:16.957Z",
-      "updatedAt": "2026-11-23T03:45:27.907Z",
+      "updatedAt": "2026-11-23T03:45:26.421Z",
       "progress": 60,
       "calculatedProgress": 60
     },
@@ -1652,7 +1651,7 @@
     "authorAvatar": "🐯",
     "authorRole": "Líder del Proyecto",
     "createdAt": "2026-11-23T03:09:16.957Z",
-    "updatedAt": "2026-11-23T03:45:27.918Z",
+    "updatedAt": "2026-11-23T03:45:26.497Z",
     "image": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
     "rejectionReason": "",
     "tag": "⏳ Pendiente de Autorización",
