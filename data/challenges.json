@@ -1367,7 +1367,7 @@
   {
     "id": "govdata_code_mentilona_804263",
     "slug": "nuevo-proyecto",
-    "title": "Nuevo Proyecto",
+    "title": "🌊 ¡El 95 % del océano sigue siendo un misterio! 😱 ¿Qué se esconde en las profundidades?",
     "subtitle": "Proyecto Educativo Mentix",
     "description": "Proyecto en construcción con el Asistente Inteligente de Mentix.",
     "shortDescription": "Proyecto en construcción con el Asistente Inteligente de Mentix.",
@@ -1397,8 +1397,8 @@
     "endDate": "",
     "currentStep": 1,
     "completedSteps": [],
-    "progress": 40,
-    "calculatedProgress": 40,
+    "progress": 45,
+    "calculatedProgress": 45,
     "valueProp": {
       "problemSolved": "",
       "howItWorks": "",
@@ -1475,7 +1475,7 @@
     "displayOrder": 1,
     "govdata": {
       "id": "govdata_code_mentilona_804263",
-      "title": "",
+      "title": "🌊 ¡El 95 % del océano sigue siendo un misterio! 😱 ¿Qué se esconde en las profundidades?",
       "subtitle": "",
       "shortDescription": "Proyecto en construcción con el Asistente Inteligente de Mentix.",
       "fullDescription": "Proyecto en construcción con el Asistente Inteligente de Mentix.",
@@ -1557,9 +1557,9 @@
         "authorsRole": "Líder del Proyecto"
       },
       "createdAt": "2026-11-23T03:09:16.957Z",
-      "updatedAt": "2026-11-23T03:42:42.097Z",
-      "progress": 40,
-      "calculatedProgress": 40
+      "updatedAt": "2026-11-23T03:43:05.135Z",
+      "progress": 45,
+      "calculatedProgress": 45
     },
     "author": "Melisa",
     "authorId": "user_1792184134006",
@@ -1571,7 +1571,7 @@
     "authorAvatar": "🐯",
     "authorRole": "admin",
     "createdAt": "2026-11-23T03:09:16.957Z",
-    "updatedAt": "2026-11-23T03:42:42.157Z",
+    "updatedAt": "2026-11-23T03:43:05.159Z",
     "image": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
     "rejectionReason": "",
     "tag": "⏳ Pendiente de Autorización",
