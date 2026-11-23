@@ -1349,7 +1349,7 @@
     "benefits": "",
     "teamLead": "Melisa",
     "preparationStatus": "en_desarrollo",
-    "publicationStatus": "draft",
+    "publicationStatus": "pending_approval",
     "approvalStatus": "pending",
     "submittedForApproval": false,
     "status": "in_progress",
@@ -1421,7 +1421,8 @@
       "titleColor": "#ffffff",
       "textColor": "#cbd5e1",
       "accentColor": "#00f5d4",
-      "bannerStyle": "gradient-cosmos"
+      "bannerStyle": "gradient-cosmos",
+      "bannerUrl": ""
     },
     "authorsConfig": {
       "authorsList": "Melisa",
@@ -1531,7 +1532,7 @@
     "authorAvatar": "🐯",
     "authorRole": "admin",
     "createdAt": "2026-11-23T03:09:16.957Z",
-    "updatedAt": "2026-11-23T03:09:21.458Z",
+    "updatedAt": "2026-11-23T03:39:13.841Z",
     "image": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
     "rejectionReason": "",
     "tag": "⏳ Pendiente de Autorización",
@@ -1549,6 +1550,47 @@
       "views": [],
       "ratings": []
     },
-    "_globalHeroBanner": "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=1600&q=80"
+    "_globalHeroBanner": "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=1600&q=80",
+    "joinRequests": [],
+    "members": [
+      {
+        "name": "Melisa",
+        "email": "gatitaxd6f79@gmail.com",
+        "role": "owner",
+        "leader": true
+      }
+    ],
+    "customProjectCodes": [
+      {
+        "code": "804263",
+        "author": "Melisa",
+        "authorRole": "admin",
+        "createdAt": "22/11/2026, 9:27:35 p.m."
+      },
+      {
+        "code": "371850",
+        "author": "Melisa",
+        "authorRole": "admin",
+        "createdAt": "22/11/2026, 9:27:35 p.m."
+      },
+      {
+        "code": "926407",
+        "author": "Melisa",
+        "authorRole": "admin",
+        "createdAt": "22/11/2026, 9:23:09 p.m."
+      },
+      {
+        "code": "583194",
+        "author": "Melisa",
+        "authorRole": "admin",
+        "createdAt": "22/11/2026, 9:22:51 p.m."
+      }
+    ],
+    "_globalHeroBannerStyle": {
+      "fit": "cover",
+      "offsetX": 5,
+      "offsetY": 0,
+      "zoom": 134
+    }
   }
 ]
