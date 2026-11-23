@@ -100,9 +100,7 @@
         "media": "",
         "notes": "",
         "bgColor": "#0b091a",
-        "themeId": "cosmos",
-        "imageUrl": "",
-        "bgImage": ""
+        "themeId": "cosmos"
       }
     ],
     "externalLinks": [],
@@ -323,49 +321,7 @@
     "authorAvatar": "🦊",
     "authorRole": "Líder del Proyecto",
     "createdAt": "2026-11-23T04:35:12.300Z",
-    "updatedAt": "2026-11-23T04:52:27.266Z",
-    "hub": {
-      "joinRequests": [],
-      "members": [
-        {
-          "name": "JHFK",
-          "email": "HGFH@HNGFH",
-          "role": "owner",
-          "leader": true
-        }
-      ],
-      "views": [],
-      "ratings": []
-    },
-    "customProjectCodes": [
-      {
-        "code": "804263",
-        "author": "Melisa",
-        "authorRole": "admin",
-        "createdAt": "22/11/2026, 9:27:35 p.m."
-      },
-      {
-        "code": "371850",
-        "author": "Melisa",
-        "authorRole": "admin",
-        "createdAt": "22/11/2026, 9:27:35 p.m."
-      },
-      {
-        "code": "926407",
-        "author": "Melisa",
-        "authorRole": "admin",
-        "createdAt": "22/11/2026, 9:23:09 p.m."
-      },
-      {
-        "code": "583194",
-        "author": "Melisa",
-        "authorRole": "admin",
-        "createdAt": "22/11/2026, 9:22:51 p.m."
-      }
-    ],
-    "tag": "⏳ Pendiente de Autorización",
-    "tagClass": "badge-review",
-    "rejectionReason": ""
+    "updatedAt": "2026-11-23T04:52:27.347Z"
   },
   {
     "id": "proj_pres_1791658288964",
