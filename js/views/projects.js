@@ -930,8 +930,10 @@ window.ProjectsView = {
       if (this.selectedProjectId === projId) {
         const heroSec = document.getElementById('inno-sec-hero');
         if (heroSec) {
-          heroSec.style.setProperty('background-image', `linear-gradient(to right, rgba(5, 14, 30, 0.75) 0%, rgba(5, 14, 30, 0.40) 42%, rgba(5, 14, 30, 0.08) 75%, transparent 100%), url('${bannerUrl}')`, 'important');
+          heroSec.style.setProperty('background-image', `linear-gradient(to right, rgba(5, 14, 30, 0.75) 0%, rgba(5, 14, 30, 0.40) 42%, rgba(5, 14, 30, 0.08) 75%, transparent 100%), url("${bannerUrl}")`, 'important');
         }
+        const heroBgImg = document.getElementById('inno-hero-bg-img-el');
+        if (heroBgImg) heroBgImg.src = bannerUrl;
       }
 
       // 5. Actualizar mentix_active_landing_project si corresponde
@@ -1359,25 +1361,37 @@ window.ProjectsView = {
       return !s || s.includes('photo-1451187580459-43490279c0fa') || s.includes('card_data_gov.png') || s.includes('card_ai_society.png') || s.includes('hero_banner.png');
     };
     const normalizeImg = (u) => {
-      const s = String(u || '').trim();
+      let s = String(u || '').trim();
       if (!s) return '';
+      if (window.ProjectWizard && typeof window.ProjectWizard.normalizeImageUrl === 'function') {
+        s = window.ProjectWizard.normalizeImageUrl(s);
+      }
       if (s.includes('photo-1518709268805-4e9042af9f23')) return 'assets/projects_ui/disney_hero_banner.png';
+      if (s.includes('photo-1451187580459-43490279c0fa') || s === 'assets/projects_ui/hero_banner.png') {
+        return 'assets/projects_ui/card_data_gov.png';
+      }
       return s;
     };
 
-    // 1. Priorizar la imagen real guardada dentro del proyecto (sincronizada en la BD para TODOS los usuarios)
+    // 1. Priorizar el banner recién aplicado localmente o la imagen personalizada del proyecto
+    const saved = projId ? localStorage.getItem('mentix_hero_banner_' + projId) : null;
+    if (saved && saved.trim() && !isGenericDef(saved)) {
+      return normalizeImg(saved);
+    }
+
     if (proj) {
       const candidates = [
+        proj.mainImage,
+        proj.thumbnailImage,
         proj.heroBanner,
         proj.designConfig?.bannerUrl,
         proj.landingConfig?.heroBanner,
+        proj.govdata?.mainImage,
+        proj.govdata?.thumbnailImage,
         proj.govdata?.heroBanner,
         proj.govdata?.designConfig?.bannerUrl,
-        proj.mainImage,
-        proj.govdata?.mainImage,
         proj.banner,
         proj.coverImage,
-        proj.thumbnailImage,
         proj.image,
         (Array.isArray(proj.visualAssets) && proj.visualAssets[0] && proj.visualAssets[0].url) ? proj.visualAssets[0].url : ''
       ];
@@ -1385,25 +1399,27 @@ window.ProjectsView = {
       if (realCustom) return normalizeImg(realCustom);
     }
 
-    // 2. Respaldo local (si el usuario acaba de cambiar el banner localmente antes de sincronizar)
-    const saved = projId ? localStorage.getItem('mentix_hero_banner_' + projId) : null;
     if (saved && saved.trim()) {
       return normalizeImg(saved);
     }
 
-    // 3. Cualquier imagen por defecto definida en el proyecto
     if (proj) {
-      const fallbackProj = proj.heroBanner || proj.banner || proj.mainImage || proj.coverImage || proj.image;
+      if (proj.id === 'proj_ai_society' || proj.id === 'demo-ai-society') return 'assets/projects_ui/card_ai_society.png';
+      if (proj.id === 'proj_open_data' || proj.id === 'demo-open-data') return 'assets/projects_ui/card_open_data.png';
+      const fallbackProj = proj.heroBanner || proj.banner || proj.mainImage || proj.thumbnailImage || proj.coverImage || proj.image;
       if (fallbackProj && typeof fallbackProj === 'string' && fallbackProj.trim()) {
         return normalizeImg(fallbackProj);
       }
     }
-    return 'assets/projects_ui/hero_banner.png';
+    return 'assets/projects_ui/card_data_gov.png';
   },
 
   setProjectHeroBanner(projId, bannerUrl) {
     if (!bannerUrl) return false;
-    const cleanUrl = bannerUrl.trim();
+    let cleanUrl = bannerUrl.trim();
+    if (window.ProjectWizard && typeof window.ProjectWizard.normalizeImageUrl === 'function') {
+      cleanUrl = window.ProjectWizard.normalizeImageUrl(cleanUrl);
+    }
     if (projId) {
       try { localStorage.setItem('mentix_hero_banner_' + projId, cleanUrl); } catch (e) {}
     }
@@ -1419,10 +1435,17 @@ window.ProjectsView = {
       proj.banner = cleanUrl;
       proj.coverImage = cleanUrl;
       proj.mainImage = cleanUrl;
+      proj.thumbnailImage = cleanUrl;
       proj.image = cleanUrl;
+      proj._clearedMainImage = false;
+      proj._clearedThumbImage = false;
       if (!proj.govdata) proj.govdata = {};
       proj.govdata.heroBanner = cleanUrl;
       proj.govdata.banner = cleanUrl;
+      proj.govdata.mainImage = cleanUrl;
+      proj.govdata.thumbnailImage = cleanUrl;
+      proj.govdata._clearedMainImage = false;
+      proj.govdata._clearedThumbImage = false;
       if (!proj.designConfig) proj.designConfig = {};
       proj.designConfig.bannerUrl = cleanUrl;
       if (!proj.landingConfig) proj.landingConfig = {};
@@ -1436,8 +1459,14 @@ window.ProjectsView = {
         d.heroBanner = cleanUrl;
         d.banner = cleanUrl;
         d.coverImage = cleanUrl;
+        d.mainImage = cleanUrl;
+        d.thumbnailImage = cleanUrl;
+        d._clearedMainImage = false;
+        d._clearedThumbImage = false;
         if (!d.govdata) d.govdata = {};
         d.govdata.heroBanner = cleanUrl;
+        d.govdata.mainImage = cleanUrl;
+        d.govdata.thumbnailImage = cleanUrl;
         if (!d.designConfig) d.designConfig = {};
         d.designConfig.bannerUrl = cleanUrl;
         localStorage.setItem('mentix_govdata_wizard_drafts', JSON.stringify(drafts));
@@ -1452,8 +1481,12 @@ window.ProjectsView = {
           active.heroBanner = cleanUrl;
           active.banner = cleanUrl;
           active.coverImage = cleanUrl;
+          active.mainImage = cleanUrl;
+          active.thumbnailImage = cleanUrl;
           if (!active.govdata) active.govdata = {};
           active.govdata.heroBanner = cleanUrl;
+          active.govdata.mainImage = cleanUrl;
+          active.govdata.thumbnailImage = cleanUrl;
           if (!active.designConfig) active.designConfig = {};
           active.designConfig.bannerUrl = cleanUrl;
           localStorage.setItem('mentix_active_landing_project', JSON.stringify(active));
@@ -1847,7 +1880,10 @@ window.ProjectsView = {
   },
 
   async previewHeroBannerUrl(url, showMsg = false) {
-    const trimmed = (url || '').trim();
+    let trimmed = (url || '').trim();
+    if (window.ProjectWizard && typeof window.ProjectWizard.normalizeImageUrl === 'function') {
+      trimmed = window.ProjectWizard.normalizeImageUrl(trimmed);
+    }
     const feedback = document.getElementById('hero-banner-dimension-feedback');
     if (!trimmed) {
       if (feedback) feedback.style.display = 'none';
@@ -1876,6 +1912,9 @@ window.ProjectsView = {
     const urlInput = document.getElementById('hero-banner-url-input');
     const typedUrl = urlInput ? urlInput.value.trim() : '';
     let finalUrl = (typedUrl && !typedUrl.startsWith('(')) ? typedUrl : this._tempSelectedHeroBanner;
+    if (window.ProjectWizard && typeof window.ProjectWizard.normalizeImageUrl === 'function') {
+      finalUrl = window.ProjectWizard.normalizeImageUrl(finalUrl);
+    }
     if (!finalUrl) {
       alert('⚠️ Por favor sube una imagen, pega un link o selecciona un fondo temático.');
       return;
@@ -1901,8 +1940,10 @@ window.ProjectsView = {
 
     const heroSec = document.getElementById('inno-sec-hero');
     if (heroSec) {
-      heroSec.style.setProperty('background-image', `linear-gradient(to right, rgba(5, 14, 30, 0.72) 0%, rgba(5, 14, 30, 0.35) 45%, rgba(5, 14, 30, 0.08) 78%, transparent 100%), url('${finalUrl}')`, 'important');
+      heroSec.style.setProperty('background-image', `linear-gradient(to right, rgba(5, 14, 30, 0.72) 0%, rgba(5, 14, 30, 0.35) 45%, rgba(5, 14, 30, 0.08) 78%, transparent 100%), url("${finalUrl}")`, 'important');
     }
+    const heroBgImg = document.getElementById('inno-hero-bg-img-el');
+    if (heroBgImg) heroBgImg.src = finalUrl;
 
     this.closeHeroBannerPicker();
     this.showToast('🎨 ¡Imagen del proyecto guardada en el proyecto y en la BD!');
@@ -1920,14 +1961,16 @@ window.ProjectsView = {
       return;
     }
 
-    const defaultUrl = 'assets/projects_ui/hero_banner.png';
+    const defaultUrl = 'assets/projects_ui/card_data_gov.png';
     this._tempSelectedHeroBanner = defaultUrl;
     this.setProjectHeroBanner(projId, defaultUrl);
 
     const heroSec = document.getElementById('inno-sec-hero');
     if (heroSec) {
-      heroSec.style.setProperty('background-image', `linear-gradient(to right, rgba(5, 14, 30, 0.75) 0%, rgba(5, 14, 30, 0.40) 42%, rgba(5, 14, 30, 0.08) 75%, transparent 100%), url('${defaultUrl}')`, 'important');
+      heroSec.style.setProperty('background-image', `linear-gradient(to right, rgba(5, 14, 30, 0.75) 0%, rgba(5, 14, 30, 0.40) 42%, rgba(5, 14, 30, 0.08) 75%, transparent 100%), url("${defaultUrl}")`, 'important');
     }
+    const heroBgImg = document.getElementById('inno-hero-bg-img-el');
+    if (heroBgImg) heroBgImg.src = defaultUrl;
 
     this.closeHeroBannerPicker();
     this.showToast('🔄 Fondo del banner restablecido al diseño original.');
@@ -7609,7 +7652,7 @@ window.ProjectsView = {
 
     const projHeroBanner = this.getProjectHeroBanner(targetProjId, selected);
     // Fondo normal, nítido y con colores auténticos: sutil degradado lateral solo sobre el texto para máxima legibilidad
-    const heroStyle = `background-image: linear-gradient(to right, rgba(5, 14, 30, 0.75) 0%, rgba(5, 14, 30, 0.40) 42%, rgba(5, 14, 30, 0.08) 75%, transparent 100%), url('${this.escapeHtml(projHeroBanner)}') !important; background-size: cover !important; background-position: center !important; position: relative !important; padding-top: 4.8rem !important;`;
+    const heroStyle = `background-image: linear-gradient(to right, rgba(5, 14, 30, 0.72) 0%, rgba(5, 14, 30, 0.35) 42%, rgba(5, 14, 30, 0.08) 75%, transparent 100%), url("${this.escapeHtml(projHeroBanner)}") !important; background-size: cover !important; background-position: center !important; background-repeat: no-repeat !important; position: relative !important; padding-top: 4.8rem !important; overflow: hidden !important;`;
 
     container.innerHTML = `
       <div class="plp-page-container ${currentTheme === 'light' ? 'light-theme' : ''}" data-theme="${currentTheme}" style="max-width: 1360px; margin: 0 auto; padding: 1.25rem clamp(1.25rem, 3.5vw, 2.75rem) 4rem; box-sizing: border-box;">
@@ -7712,6 +7755,9 @@ window.ProjectsView = {
                2. HERO SECTION (MOCKUP EXACTO)
                ================================================================ -->
           <section class="inno-hero" id="inno-sec-hero" style="${heroStyle}">
+            <!-- Imagen de fondo idéntica al banner de la tarjeta del proyecto -->
+            <img id="inno-hero-bg-img-el" src="${this.escapeHtml(projHeroBanner)}" alt="" aria-hidden="true" onerror="this.onerror=null;this.src='assets/projects_ui/card_data_gov.png';" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:center; z-index:0; pointer-events:none; display:block;" />
+            <div aria-hidden="true" style="position:absolute; inset:0; background:linear-gradient(to right, rgba(5, 14, 30, 0.72) 0%, rgba(5, 14, 30, 0.36) 44%, rgba(5, 14, 30, 0.08) 76%, transparent 100%); z-index:1; pointer-events:none;"></div>
             <!-- Botón interactivo para cambiar el fondo del banner de atrás (Solo Admin, Creador o Editores) -->
             ${canEditBanner ? `
               <button 

@@ -8176,9 +8176,9 @@ body.light-theme .inno-theme-btn.active {
 .plp-wrapper[data-theme="light"] .inno-hero:not([style*="background-image"]),
 body[data-theme="light"] .inno-hero:not([style*="background-image"]),
 body.light-theme .inno-hero:not([style*="background-image"]) {
-  background: linear-gradient(135deg, #ffffff 0%, #f0fdfa 55%, #f8fafc 100%) !important;
-  border: 1.5px solid #ccfbf1 !important;
-  box-shadow: 0 12px 35px rgba(15, 23, 42, 0.06), 0 0 20px rgba(0, 245, 212, 0.08) !important;
+  background-color: #06131f !important;
+  border: 1.5px solid rgba(0, 245, 212, 0.28) !important;
+  box-shadow: 0 12px 35px rgba(15, 23, 42, 0.25), 0 0 20px rgba(0, 245, 212, 0.08) !important;
 }
 
 .inno-hero-title,

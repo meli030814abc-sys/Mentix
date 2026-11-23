@@ -113,7 +113,9 @@
     <!-- ====================================================================
          2. HERO SECTION (MOCKUP EXACTO)
          ==================================================================== -->
-    <section class="inno-hero" id="inno-sec-hero" style="background-image: linear-gradient(to right, rgba(5, 14, 30, 0.78) 0%, rgba(5, 14, 30, 0.45) 45%, rgba(5, 14, 30, 0.10) 78%, transparent 100%), url('assets/projects_ui/disney_hero_banner.png') !important; background-size: cover !important; background-position: center !important; position: relative !important; padding-top: 4.8rem !important;">
+    <section class="inno-hero" id="inno-sec-hero" style="background-image: linear-gradient(to right, rgba(5, 14, 30, 0.72) 0%, rgba(5, 14, 30, 0.36) 44%, rgba(5, 14, 30, 0.08) 76%, transparent 100%), url('assets/projects_ui/card_data_gov.png') !important; background-size: cover !important; background-position: center !important; position: relative !important; padding-top: 4.8rem !important; overflow: hidden !important;">
+      <img id="inno-hero-bg-img-el" src="assets/projects_ui/card_data_gov.png" alt="" aria-hidden="true" onerror="this.onerror=null;this.src='assets/projects_ui/card_data_gov.png';" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:center; z-index:0; pointer-events:none; display:block;" />
+      <div aria-hidden="true" style="position:absolute; inset:0; background:linear-gradient(to right, rgba(5, 14, 30, 0.72) 0%, rgba(5, 14, 30, 0.36) 44%, rgba(5, 14, 30, 0.08) 76%, transparent 100%); z-index:1; pointer-events:none;"></div>
       <!-- Botón interactivo para cambiar el fondo del banner en Pantalla Grande -->
       <button 
         type="button" 
@@ -1762,30 +1764,49 @@
         const valProp = activeProject.valueProposition || vp || {};
         const des = activeProject.designConfig || activeProject.govdata?.designConfig || {};
 
-        // Resolución inteligente del Banner del Proyecto
+        // Resolución inteligente del Banner del Proyecto (idéntico al banner de la tarjeta en Mis Proyectos)
+        const isGenericDef = (u) => {
+          const s = String(u || '').trim();
+          return !s || s.includes('photo-1451187580459-43490279c0fa') || s.includes('card_data_gov.png') || s.includes('card_ai_society.png') || s.includes('hero_banner.png');
+        };
         const savedBanner = activeProject.id ? localStorage.getItem('mentix_hero_banner_' + activeProject.id) : null;
-        let projectBanner = (savedBanner && savedBanner.trim()) ? savedBanner.trim() : null;
+        let projectBanner = (savedBanner && savedBanner.trim() && !isGenericDef(savedBanner)) ? savedBanner.trim() : null;
         if (!projectBanner) {
-          projectBanner = activeProject.heroBanner ||
-                          activeProject.banner ||
-                          activeProject.govdata?.heroBanner ||
-                          activeProject.govdata?.banner ||
-                          activeProject.designConfig?.bannerUrl ||
-                          activeProject.govdata?.designConfig?.bannerUrl ||
-                          activeProject.landingConfig?.heroBanner ||
-                          activeProject.coverImage ||
-                          activeProject.mainImage ||
-                          activeProject.image ||
-                          activeProject.thumbnailImage;
+          const candidates = [
+            activeProject.mainImage,
+            activeProject.thumbnailImage,
+            activeProject.heroBanner,
+            activeProject.designConfig?.bannerUrl,
+            activeProject.landingConfig?.heroBanner,
+            activeProject.govdata?.mainImage,
+            activeProject.govdata?.thumbnailImage,
+            activeProject.govdata?.heroBanner,
+            activeProject.govdata?.designConfig?.bannerUrl,
+            activeProject.banner,
+            activeProject.coverImage,
+            activeProject.image,
+            (Array.isArray(activeProject.visualAssets) && activeProject.visualAssets[0] && activeProject.visualAssets[0].url) ? activeProject.visualAssets[0].url : ''
+          ];
+          projectBanner = candidates.find(u => typeof u === 'string' && !isGenericDef(u)) || null;
         }
-
-        const pFullText = ((activeProject.title || '') + ' ' + (activeProject.description || '') + ' ' + (activeProject.subtitle || '')).toLowerCase();
-        if (projectBanner && typeof projectBanner === 'string' && projectBanner.includes('photo-1518709268805-4e9042af9f23')) {
-          projectBanner = 'assets/projects_ui/disney_hero_banner.png';
-        } else if (!projectBanner && pFullText.includes('disney')) {
-          projectBanner = 'assets/projects_ui/disney_hero_banner.png';
-        } else if (!projectBanner) {
-          projectBanner = 'assets/projects_ui/hero_banner.png';
+        if (!projectBanner && savedBanner && savedBanner.trim()) {
+          projectBanner = savedBanner.trim();
+        }
+        if (projectBanner && typeof projectBanner === 'string') {
+          if (projectBanner.includes('photo-1518709268805-4e9042af9f23')) {
+            projectBanner = 'assets/projects_ui/disney_hero_banner.png';
+          } else if (projectBanner.includes('photo-1451187580459-43490279c0fa') || projectBanner === 'assets/projects_ui/hero_banner.png') {
+            projectBanner = 'assets/projects_ui/card_data_gov.png';
+          }
+        }
+        if (!projectBanner) {
+          if (activeProject.id === 'proj_ai_society' || activeProject.id === 'demo-ai-society') {
+            projectBanner = 'assets/projects_ui/card_ai_society.png';
+          } else if (activeProject.id === 'proj_open_data' || activeProject.id === 'demo-open-data') {
+            projectBanner = 'assets/projects_ui/card_open_data.png';
+          } else {
+            projectBanner = 'assets/projects_ui/card_data_gov.png';
+          }
         }
         des.bannerUrl = projectBanner;
 
@@ -1826,13 +1847,15 @@
 
         const heroSec = document.getElementById('inno-sec-hero');
         if (heroSec) {
-          const finalBanner = des.bannerUrl || 'assets/projects_ui/disney_hero_banner.png';
-          const finalGradient = contrast.bannerUrlGradient || 'linear-gradient(to right, rgba(5, 14, 30, 0.78) 0%, rgba(5, 14, 30, 0.45) 45%, rgba(5, 14, 30, 0.10) 78%, transparent 100%)';
-          heroSec.style.setProperty('background-image', `${finalGradient}, url('${finalBanner}')`, 'important');
+          const finalBanner = des.bannerUrl || 'assets/projects_ui/card_data_gov.png';
+          const finalGradient = contrast.bannerUrlGradient || 'linear-gradient(to right, rgba(5, 14, 30, 0.72) 0%, rgba(5, 14, 30, 0.36) 44%, rgba(5, 14, 30, 0.08) 76%, transparent 100%)';
+          heroSec.style.setProperty('background-image', `${finalGradient}, url("${finalBanner}")`, 'important');
           heroSec.style.setProperty('background-size', 'cover', 'important');
           heroSec.style.setProperty('background-position', 'center', 'important');
           heroSec.style.setProperty('background-repeat', 'no-repeat', 'important');
           heroSec.style.setProperty('background-color', '#06131f', 'important');
+          const heroBgImg = document.getElementById('inno-hero-bg-img-el');
+          if (heroBgImg) heroBgImg.src = finalBanner;
         }
 
         const heroEyebrow = document.getElementById('inno-hero-eyebrow');

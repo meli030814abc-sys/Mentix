@@ -12,8 +12,8 @@ window.ProjectWizard = {
   lastSavedText: 'Guardado automático activo',
   pendingAiProposal: null,
   uploadProgressMap: {},
-  defaultCoverImage: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80',
-  defaultThumbImage: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&q=80',
+  defaultCoverImage: 'assets/projects_ui/card_data_gov.png',
+  defaultThumbImage: 'assets/projects_ui/card_data_gov.png',
 
   SLIDE_THEMES: [
     { id: 'cosmos', name: 'Cosmos Neón', icon: '🌌', bg: 'linear-gradient(135deg, #0b091a 0%, #171033 50%, #200f40 100%)', titleColor: '#ffffff', subtitleColor: '#00f5d4', contentColor: '#cbd5e1', accent: '#00f5d4' },
@@ -145,21 +145,34 @@ window.ProjectWizard = {
   isDefaultPlaceholderImage(url) {
     const s = String(url || '').trim();
     if (!s) return true;
-    return s.includes('photo-1451187580459-43490279c0fa');
+    return s.includes('photo-1451187580459-43490279c0fa') ||
+      s === 'assets/projects_ui/card_data_gov.png' ||
+      s === 'assets/projects_ui/hero_banner.png';
   },
 
   normalizeImageUrl(rawUrl) {
-    const s = String(rawUrl || '').trim();
+    let s = String(rawUrl || '').trim();
     if (!s) return '';
     if (s.startsWith('data:image/')) return s;
+    if (s.startsWith('<img') && /src=["']([^"']+)["']/i.test(s)) {
+      const mTag = s.match(/src=["']([^"']+)["']/i);
+      if (mTag && mTag[1]) s = mTag[1].trim();
+    }
     try {
-      const mImg = s.match(/[?&]imgurl=([^&]+)/i);
+      const mImg = s.match(/[?&](?:imgurl|mediaurl|url)=([^&]+)/i);
       if (mImg && mImg[1]) {
-        return decodeURIComponent(mImg[1]);
+        const decoded = decodeURIComponent(mImg[1]);
+        if (/^https?:\/\//i.test(decoded)) return decoded;
       }
-      const mDrive = s.match(/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/i);
+      const mDrive = s.match(/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/i) || s.match(/drive\.google\.com\/open\?id=([a-zA-Z0-9_-]+)/i);
       if (mDrive && mDrive[1]) {
         return `https://drive.google.com/uc?export=view&id=${mDrive[1]}`;
+      }
+      if (/dropbox\.com\//i.test(s)) {
+        return s.replace(/[?&]dl=0\b/i, '?raw=1').replace(/www\.dropbox\.com/i, 'dl.dropboxusercontent.com');
+      }
+      if (/^https?:\/\/github\.com\/[^/]+\/[^/]+\/blob\//i.test(s)) {
+        return s.replace(/^https?:\/\/github\.com\/([^/]+)\/([^/]+)\/blob\//i, 'https://raw.githubusercontent.com/$1/$2/');
       }
     } catch (e) {}
     return s;
@@ -1295,18 +1308,32 @@ collectCurrentStepInputs() {
       const mVal = this.normalizeImageUrl(val('gdn-main-image'));
       if (mVal || !this.draft.mainImage?.startsWith('data:image/')) {
         this.draft.mainImage = mVal;
+        this.draft.thumbnailImage = mVal;
         this.draft.heroBanner = mVal;
         this.draft.banner = mVal;
         this.draft.image = mVal;
         this.draft.coverImage = mVal;
         if (this.draft.designConfig) this.draft.designConfig.bannerUrl = mVal;
         this.draft._clearedMainImage = !mVal;
+        this.draft._clearedThumbImage = !mVal;
+        if (this.draft.id) {
+          try {
+            if (mVal) localStorage.setItem('mentix_hero_banner_' + this.draft.id, mVal);
+            else localStorage.removeItem('mentix_hero_banner_' + this.draft.id);
+          } catch (e) {}
+        }
       }
-    }
-    if (val('gdn-thumb-image') !== null) {
+    } else if (val('gdn-thumb-image') !== null) {
       const tVal = this.normalizeImageUrl(val('gdn-thumb-image'));
       if (tVal || !this.draft.thumbnailImage?.startsWith('data:image/')) {
+        this.draft.mainImage = tVal;
         this.draft.thumbnailImage = tVal;
+        this.draft.heroBanner = tVal;
+        this.draft.banner = tVal;
+        this.draft.image = tVal;
+        this.draft.coverImage = tVal;
+        if (this.draft.designConfig) this.draft.designConfig.bannerUrl = tVal;
+        this.draft._clearedMainImage = !tVal;
         this.draft._clearedThumbImage = !tVal;
       }
     }
@@ -6038,15 +6065,20 @@ collectCurrentStepInputs() {
     const assets = Array.isArray(d.visualAssets) ? d.visualAssets : [];
     const mainVal = this.isDefaultPlaceholderImage(d.mainImage) ? '' : (d.mainImage || '');
     const thumbVal = this.isDefaultPlaceholderImage(d.thumbnailImage) ? '' : (d.thumbnailImage || '');
-    const activeCover = mainVal || (d.useDefaultImage !== false ? this.defaultCoverImage : '');
-    const activeThumb = thumbVal || activeCover;
+    const unifiedVal = mainVal || thumbVal;
+    if (unifiedVal) {
+      d.mainImage = unifiedVal;
+      d.thumbnailImage = unifiedVal;
+    }
+    const activeCover = unifiedVal || (d.useDefaultImage !== false ? 'assets/projects_ui/card_data_gov.png' : '');
+    const activeThumb = activeCover;
 
     return `
       <!-- Portada y Miniatura Principal -->
       <div class="gdn-card">
         <h3 style="margin:0 0 0.35rem; font-size:1.08rem; color:var(--gdn-text);">Imagen principal (Portada) y Miniatura</h3>
         <p class="gdn-help" style="margin-bottom:1rem;">
-          Dimensiones recomendadas para la Landing Page: <strong>Portada 1600×900 px (16:9)</strong> y <strong>Miniatura 800×500 px</strong> en formato JPG, PNG o WebP. Puedes pegar una URL de imagen o subir un archivo desde tu equipo.
+          Puedes pegar <strong>cualquier link de imagen</strong> (web, Google Imágenes, Drive, etc.) o subir un archivo desde tu equipo. El link o imagen se sincroniza automáticamente en ambos campos, en la tarjeta del proyecto y en el banner de la Landing Page.
         </p>
 
         <div class="gdn-field-grid">
@@ -6057,15 +6089,15 @@ collectCurrentStepInputs() {
                 🗑️ Quitar imagen
               </button>
             </div>
-            <input type="text" id="gdn-main-image" class="gdn-input" value="${this.escapeHtml(mainVal.startsWith('data:image/') ? '' : mainVal)}" placeholder="Pega aquí la URL de la imagen (https://...) o sube un archivo abajo" oninput="window.ProjectWizard.handleCoverUrlInput('main', this.value)" onchange="window.ProjectWizard.handleCoverUrlInput('main', this.value)" />
+            <input type="text" id="gdn-main-image" class="gdn-input" value="${this.escapeHtml(unifiedVal.startsWith('data:image/') ? '' : unifiedVal)}" placeholder="Pega aquí cualquier link de imagen (https://...) o sube un archivo" oninput="window.ProjectWizard.handleCoverUrlInput('main', this.value)" onchange="window.ProjectWizard.handleCoverUrlInput('main', this.value)" />
             <div style="margin-top:0.45rem; display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap;">
-              <input type="file" id="gdn-main-image-file" accept="image/png,image/jpeg,image/webp,image/svg+xml" onchange="window.ProjectWizard.handleCoverUpload(this.files, 'main')" style="font-size:0.8rem;" />
-              ${mainVal && mainVal.startsWith('data:image/') ? '<span style="font-size:0.74rem; color:#10b981; font-weight:700;">✔ Imagen propia cargada</span>' : ''}
+              <input type="file" id="gdn-main-image-file" accept="image/*" onchange="window.ProjectWizard.handleCoverUpload(this.files, 'main')" style="font-size:0.8rem;" />
+              ${unifiedVal && unifiedVal.startsWith('data:image/') ? '<span style="font-size:0.74rem; color:#10b981; font-weight:700;">✔ Imagen propia cargada en ambos campos</span>' : ''}
             </div>
             <div id="gdn-main-image-preview-wrap" style="margin-top:0.55rem; display:${activeCover ? 'flex' : 'none'}; align-items:center; gap:0.65rem;">
-              <img id="gdn-main-image-preview-img" src="${this.escapeHtml(activeCover)}" alt="Vista previa de portada" style="width:110px; height:62px; object-fit:cover; border-radius:8px; border:1.5px solid #10b981; background:#0f172a;" />
-              <span id="gdn-main-image-preview-label" style="font-size:0.75rem; color:${mainVal ? '#059669' : '#64748b'}; font-weight:700;">
-                ${mainVal ? '✔ Portada personalizada activa' : 'Portada predeterminada institucional'}
+              <img id="gdn-main-image-preview-img" src="${this.escapeHtml(activeCover)}" alt="Vista previa de portada" style="width:110px; height:62px; object-fit:cover; border-radius:8px; border:1.5px solid #10b981; background:#0f172a;" onerror="this.onerror=null;this.src='assets/projects_ui/card_data_gov.png';" />
+              <span id="gdn-main-image-preview-label" style="font-size:0.75rem; color:${unifiedVal ? '#059669' : '#64748b'}; font-weight:700;">
+                ${unifiedVal ? '✔ Link / Imagen sincronizada en Portada, Miniatura y Landing' : 'Banner oficial Mentix activo'}
               </span>
             </div>
           </div>
@@ -6077,15 +6109,15 @@ collectCurrentStepInputs() {
                 🗑️ Quitar imagen
               </button>
             </div>
-            <input type="text" id="gdn-thumb-image" class="gdn-input" value="${this.escapeHtml(thumbVal.startsWith('data:image/') ? '' : thumbVal)}" placeholder="Pega aquí la URL de la miniatura o déjalo vacío para usar la portada" oninput="window.ProjectWizard.handleCoverUrlInput('thumb', this.value)" onchange="window.ProjectWizard.handleCoverUrlInput('thumb', this.value)" />
+            <input type="text" id="gdn-thumb-image" class="gdn-input" value="${this.escapeHtml(unifiedVal.startsWith('data:image/') ? '' : unifiedVal)}" placeholder="Pega aquí cualquier link de imagen (https://...) — sincronizado con portada" oninput="window.ProjectWizard.handleCoverUrlInput('thumb', this.value)" onchange="window.ProjectWizard.handleCoverUrlInput('thumb', this.value)" />
             <div style="margin-top:0.45rem; display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap;">
-              <input type="file" id="gdn-thumb-image-file" accept="image/png,image/jpeg,image/webp,image/svg+xml" onchange="window.ProjectWizard.handleCoverUpload(this.files, 'thumb')" style="font-size:0.8rem;" />
-              ${thumbVal && thumbVal.startsWith('data:image/') ? '<span style="font-size:0.74rem; color:#10b981; font-weight:700;">✔ Miniatura propia cargada</span>' : ''}
+              <input type="file" id="gdn-thumb-image-file" accept="image/*" onchange="window.ProjectWizard.handleCoverUpload(this.files, 'thumb')" style="font-size:0.8rem;" />
+              ${unifiedVal && unifiedVal.startsWith('data:image/') ? '<span style="font-size:0.74rem; color:#10b981; font-weight:700;">✔ Imagen propia cargada en ambos campos</span>' : ''}
             </div>
             <div id="gdn-thumb-image-preview-wrap" style="margin-top:0.55rem; display:${activeThumb ? 'flex' : 'none'}; align-items:center; gap:0.65rem;">
-              <img id="gdn-thumb-image-preview-img" src="${this.escapeHtml(activeThumb)}" alt="Vista previa de miniatura" style="width:110px; height:62px; object-fit:cover; border-radius:8px; border:1.5px solid #0284c7; background:#0f172a;" />
-              <span id="gdn-thumb-image-preview-label" style="font-size:0.75rem; color:${thumbVal ? '#0284c7' : '#64748b'}; font-weight:700;">
-                ${thumbVal ? '✔ Miniatura personalizada activa' : 'Usando la portada principal'}
+              <img id="gdn-thumb-image-preview-img" src="${this.escapeHtml(activeThumb)}" alt="Vista previa de miniatura" style="width:110px; height:62px; object-fit:cover; border-radius:8px; border:1.5px solid #0284c7; background:#0f172a;" onerror="this.onerror=null;this.src='assets/projects_ui/card_data_gov.png';" />
+              <span id="gdn-thumb-image-preview-label" style="font-size:0.75rem; color:${unifiedVal ? '#0284c7' : '#64748b'}; font-weight:700;">
+                ${unifiedVal ? '✔ Misma imagen sincronizada en tarjeta y banner' : 'Misma imagen del banner oficial Mentix'}
               </span>
             </div>
           </div>
@@ -6169,26 +6201,36 @@ collectCurrentStepInputs() {
   handleCoverUrlInput(target, rawVal) {
     if (!this.draft) return;
     const clean = this.normalizeImageUrl(rawVal);
-    if (target === 'main') {
-      this.draft.mainImage = clean;
-      this.draft.heroBanner = clean;
-      this.draft.banner = clean;
-      this.draft.image = clean;
-      this.draft.coverImage = clean;
-      if (this.draft.designConfig) this.draft.designConfig.bannerUrl = clean;
-      this.draft._clearedMainImage = !clean;
-      const inp = document.getElementById('gdn-main-image');
-      if (inp && clean && clean !== rawVal) inp.value = clean;
-    } else {
-      this.draft.thumbnailImage = clean;
-      this.draft._clearedThumbImage = !clean;
-      const inp = document.getElementById('gdn-thumb-image');
-      if (inp && clean && clean !== rawVal) inp.value = clean;
+    // Sincronizar siempre ambos campos (Imagen principal o portada + Imagen de miniatura) y el banner del proyecto
+    this.draft.mainImage = clean;
+    this.draft.thumbnailImage = clean;
+    this.draft.heroBanner = clean;
+    this.draft.banner = clean;
+    this.draft.image = clean;
+    this.draft.coverImage = clean;
+    if (this.draft.designConfig) this.draft.designConfig.bannerUrl = clean;
+    this.draft._clearedMainImage = !clean;
+    this.draft._clearedThumbImage = !clean;
+    if (this.draft.id) {
+      try {
+        if (clean) localStorage.setItem('mentix_hero_banner_' + this.draft.id, clean);
+        else localStorage.removeItem('mentix_hero_banner_' + this.draft.id);
+      } catch (e) {}
     }
-    const mainVal = this.isDefaultPlaceholderImage(this.draft.mainImage) ? '' : (this.draft.mainImage || '');
-    const thumbVal = this.isDefaultPlaceholderImage(this.draft.thumbnailImage) ? '' : (this.draft.thumbnailImage || '');
-    const activeCover = mainVal || (this.draft.useDefaultImage !== false ? this.defaultCoverImage : '');
-    const activeThumb = thumbVal || activeCover;
+
+    const inpMain = document.getElementById('gdn-main-image');
+    const inpThumb = document.getElementById('gdn-thumb-image');
+    if (target === 'main') {
+      if (inpMain && clean && clean !== rawVal) inpMain.value = clean;
+      if (inpThumb) inpThumb.value = clean;
+    } else {
+      if (inpThumb && clean && clean !== rawVal) inpThumb.value = clean;
+      if (inpMain) inpMain.value = clean;
+    }
+
+    const unifiedVal = this.isDefaultPlaceholderImage(clean) ? '' : (clean || '');
+    const activeCover = unifiedVal || (this.draft.useDefaultImage !== false ? 'assets/projects_ui/card_data_gov.png' : '');
+    const activeThumb = activeCover;
     const mainImgEl = document.getElementById('gdn-main-image-preview-img');
     const mainWrapEl = document.getElementById('gdn-main-image-preview-wrap');
     const mainLblEl = document.getElementById('gdn-main-image-preview-label');
@@ -6197,8 +6239,8 @@ collectCurrentStepInputs() {
         mainImgEl.src = activeCover;
         mainWrapEl.style.display = 'flex';
         if (mainLblEl) {
-          mainLblEl.textContent = mainVal ? '✔ Portada personalizada activa' : 'Portada predeterminada institucional';
-          mainLblEl.style.color = mainVal ? '#059669' : '#64748b';
+          mainLblEl.textContent = unifiedVal ? '✔ Link / Imagen sincronizada en Portada, Miniatura y Landing' : 'Banner oficial Mentix activo';
+          mainLblEl.style.color = unifiedVal ? '#059669' : '#64748b';
         }
       } else {
         mainWrapEl.style.display = 'none';
@@ -6212,8 +6254,8 @@ collectCurrentStepInputs() {
         thumbImgEl.src = activeThumb;
         thumbWrapEl.style.display = 'flex';
         if (thumbLblEl) {
-          thumbLblEl.textContent = thumbVal ? '✔ Miniatura personalizada activa' : 'Usando la portada principal';
-          thumbLblEl.style.color = thumbVal ? '#0284c7' : '#64748b';
+          thumbLblEl.textContent = unifiedVal ? '✔ Misma imagen sincronizada en tarjeta y banner' : 'Misma imagen del banner oficial Mentix';
+          thumbLblEl.style.color = unifiedVal ? '#0284c7' : '#64748b';
         }
       } else {
         thumbWrapEl.style.display = 'none';
@@ -6225,44 +6267,40 @@ collectCurrentStepInputs() {
   clearCoverImage(target) {
     if (!this.draft) return;
     const matchChal = (window.appState?.challenges || []).find(c => c && c.id === this.draft.id);
-    if (target === 'main') {
-      this.draft.mainImage = '';
-      this.draft.heroBanner = '';
-      this.draft.banner = '';
-      this.draft.image = '';
-      this.draft.coverImage = '';
-      if (this.draft.designConfig) this.draft.designConfig.bannerUrl = '';
-      this.draft._clearedMainImage = true;
-      if (matchChal) {
-        matchChal.mainImage = '';
-        matchChal.heroBanner = '';
-        matchChal.banner = '';
-        matchChal.image = '';
-        matchChal.coverImage = '';
-        matchChal._clearedMainImage = true;
-        if (matchChal.designConfig) matchChal.designConfig.bannerUrl = '';
-        if (matchChal.govdata) {
-          matchChal.govdata.mainImage = '';
-          matchChal.govdata._clearedMainImage = true;
-          if (matchChal.govdata.designConfig) matchChal.govdata.designConfig.bannerUrl = '';
-        }
-      }
-      const inp = document.getElementById('gdn-main-image');
-      if (inp) inp.value = '';
-    } else {
-      this.draft.thumbnailImage = '';
-      this.draft._clearedThumbImage = true;
-      if (matchChal) {
-        matchChal.thumbnailImage = '';
-        matchChal._clearedThumbImage = true;
-        if (matchChal.govdata) {
-          matchChal.govdata.thumbnailImage = '';
-          matchChal.govdata._clearedThumbImage = true;
-        }
-      }
-      const inp = document.getElementById('gdn-thumb-image');
-      if (inp) inp.value = '';
+    this.draft.mainImage = '';
+    this.draft.thumbnailImage = '';
+    this.draft.heroBanner = '';
+    this.draft.banner = '';
+    this.draft.image = '';
+    this.draft.coverImage = '';
+    if (this.draft.designConfig) this.draft.designConfig.bannerUrl = '';
+    this.draft._clearedMainImage = true;
+    this.draft._clearedThumbImage = true;
+    if (this.draft.id) {
+      try { localStorage.removeItem('mentix_hero_banner_' + this.draft.id); } catch (e) {}
     }
+    if (matchChal) {
+      matchChal.mainImage = '';
+      matchChal.thumbnailImage = '';
+      matchChal.heroBanner = '';
+      matchChal.banner = '';
+      matchChal.image = '';
+      matchChal.coverImage = '';
+      matchChal._clearedMainImage = true;
+      matchChal._clearedThumbImage = true;
+      if (matchChal.designConfig) matchChal.designConfig.bannerUrl = '';
+      if (matchChal.govdata) {
+        matchChal.govdata.mainImage = '';
+        matchChal.govdata.thumbnailImage = '';
+        matchChal.govdata._clearedMainImage = true;
+        matchChal.govdata._clearedThumbImage = true;
+        if (matchChal.govdata.designConfig) matchChal.govdata.designConfig.bannerUrl = '';
+      }
+    }
+    const inpMain = document.getElementById('gdn-main-image');
+    if (inpMain) inpMain.value = '';
+    const inpThumb = document.getElementById('gdn-thumb-image');
+    if (inpThumb) inpThumb.value = '';
     this.saveDraftToStorage(true, true);
     if (window.ProjectsView) window.ProjectsView.render();
   },
@@ -6275,23 +6313,23 @@ collectCurrentStepInputs() {
       return;
     }
     this.collectCurrentStepInputs();
-    const dataUrl = await this.compressImageFile(file, 1400, 0.82);
-    if (target === 'main') {
-      this.draft.mainImage = dataUrl;
-      this.draft.heroBanner = dataUrl;
-      this.draft.banner = dataUrl;
-      this.draft.image = dataUrl;
-      this.draft.coverImage = dataUrl;
-      if (this.draft.designConfig) this.draft.designConfig.bannerUrl = dataUrl;
-      this.draft._clearedMainImage = false;
-      const inp = document.getElementById('gdn-main-image');
-      if (inp) inp.value = dataUrl.startsWith('data:image/') ? '' : dataUrl;
-    } else {
-      this.draft.thumbnailImage = dataUrl;
-      this.draft._clearedThumbImage = false;
-      const inp = document.getElementById('gdn-thumb-image');
-      if (inp) inp.value = dataUrl.startsWith('data:image/') ? '' : dataUrl;
+    let dataUrl = await this.compressImageFile(file, 1400, 0.82);
+    this.draft.mainImage = dataUrl;
+    this.draft.thumbnailImage = dataUrl;
+    this.draft.heroBanner = dataUrl;
+    this.draft.banner = dataUrl;
+    this.draft.image = dataUrl;
+    this.draft.coverImage = dataUrl;
+    if (this.draft.designConfig) this.draft.designConfig.bannerUrl = dataUrl;
+    this.draft._clearedMainImage = false;
+    this.draft._clearedThumbImage = false;
+    if (this.draft.id) {
+      try { localStorage.setItem('mentix_hero_banner_' + this.draft.id, dataUrl); } catch (e) {}
     }
+    const inpMain = document.getElementById('gdn-main-image');
+    if (inpMain) inpMain.value = dataUrl.startsWith('data:image/') ? '' : dataUrl;
+    const inpThumb = document.getElementById('gdn-thumb-image');
+    if (inpThumb) inpThumb.value = dataUrl.startsWith('data:image/') ? '' : dataUrl;
     this.saveDraftToStorage(true, true);
     if (window.ProjectsView) window.ProjectsView.render();
   },
