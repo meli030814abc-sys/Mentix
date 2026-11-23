@@ -1395,9 +1395,10 @@
     "isPublic": false,
     "startDate": "2026-11-23",
     "endDate": "",
-    "currentStep": 2,
+    "currentStep": 3,
     "completedSteps": [
-      1
+      1,
+      2
     ],
     "progress": 50,
     "calculatedProgress": 50,
@@ -1534,9 +1535,10 @@
       },
       "publicationStatus": "draft",
       "completedSteps": [
-        1
+        1,
+        2
       ],
-      "currentStep": 2,
+      "currentStep": 3,
       "author": "Melisa",
       "authorId": "user_1792184134006",
       "ownerId": "user_1792184134006",
@@ -1560,7 +1562,7 @@
         "authorsRole": "Líder del Proyecto"
       },
       "createdAt": "2026-11-23T03:09:16.957Z",
-      "updatedAt": "2026-11-23T03:43:52.276Z",
+      "updatedAt": "2026-11-23T03:43:53.496Z",
       "progress": 50,
       "calculatedProgress": 50
     },
@@ -1574,7 +1576,7 @@
     "authorAvatar": "🐯",
     "authorRole": "admin",
     "createdAt": "2026-11-23T03:09:16.957Z",
-    "updatedAt": "2026-11-23T03:43:52.349Z",
+    "updatedAt": "2026-11-23T03:43:53.591Z",
     "image": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
     "rejectionReason": "",
     "tag": "⏳ Pendiente de Autorización",
