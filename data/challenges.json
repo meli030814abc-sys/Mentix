@@ -1730,14 +1730,18 @@
         "collaborators": "hdfud"
       },
       "createdAt": "2026-11-23T03:09:16.957Z",
-      "updatedAt": "2026-11-23T21:10:15.331Z",
+      "updatedAt": "2026-11-23T21:10:17.798Z",
       "progress": 100,
       "calculatedProgress": 100,
       "heroBanner": "https://static.vecteezy.com/system/resources/thumbnails/060/843/811/small/close-up-of-raindrops-on-leaves-hd-background-luxury-hd-wallpaper-image-trendy-background-illustration-free-photo.jpg",
       "banner": "https://static.vecteezy.com/system/resources/thumbnails/060/843/811/small/close-up-of-raindrops-on-leaves-hd-background-luxury-hd-wallpaper-image-trendy-background-illustration-free-photo.jpg",
       "image": "https://static.vecteezy.com/system/resources/thumbnails/060/843/811/small/close-up-of-raindrops-on-leaves-hd-background-luxury-hd-wallpaper-image-trendy-background-illustration-free-photo.jpg",
       "coverImage": "https://static.vecteezy.com/system/resources/thumbnails/060/843/811/small/close-up-of-raindrops-on-leaves-hd-background-luxury-hd-wallpaper-image-trendy-background-illustration-free-photo.jpg",
-      "submittedForApproval": true
+      "submittedForApproval": true,
+      "approvalStatus": "pending",
+      "status": "completed",
+      "completedAt": "2026-11-23T21:10:17.798Z",
+      "isPublic": false
     },
     "author": "Melisa",
     "authorId": "user_1792184134006",
@@ -1749,7 +1753,7 @@
     "authorAvatar": "🐯",
     "authorRole": "Líder del Proyecto",
     "createdAt": "2026-11-23T03:09:16.957Z",
-    "updatedAt": "2026-11-23T21:10:17.911Z",
+    "updatedAt": "2026-11-23T21:10:19.918Z",
     "image": "https://static.vecteezy.com/system/resources/thumbnails/060/843/811/small/close-up-of-raindrops-on-leaves-hd-background-luxury-hd-wallpaper-image-trendy-background-illustration-free-photo.jpg",
     "rejectionReason": "Desautorizado por el Administrador (oculto al público).",
     "tag": "✔ Completado",
@@ -1811,7 +1815,7 @@
       "offsetY": 0,
       "zoom": 134
     },
-    "completedAt": "2026-11-23T04:12:17.867Z",
+    "completedAt": "2026-11-23T21:10:17.798Z",
     "authorizedAt": "2026-11-23T04:27:18.568Z",
     "authorizedBy": "Melisa",
     "stage": "completed",
