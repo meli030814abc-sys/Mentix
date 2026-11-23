@@ -140,6 +140,84 @@ window.ProjectWizard = {
   ],
 
   draft: null,
+  activePresentationIndex: 0,
+
+  isDefaultPlaceholderImage(url) {
+    const s = String(url || '').trim();
+    if (!s) return true;
+    return s.includes('photo-1451187580459-43490279c0fa');
+  },
+
+  normalizeImageUrl(rawUrl) {
+    const s = String(rawUrl || '').trim();
+    if (!s) return '';
+    if (s.startsWith('data:image/')) return s;
+    try {
+      const mImg = s.match(/[?&]imgurl=([^&]+)/i);
+      if (mImg && mImg[1]) {
+        return decodeURIComponent(mImg[1]);
+      }
+      const mDrive = s.match(/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/i);
+      if (mDrive && mDrive[1]) {
+        return `https://drive.google.com/uc?export=view&id=${mDrive[1]}`;
+      }
+    } catch (e) {}
+    return s;
+  },
+
+  ensurePresentationsSync() {
+    if (!this.draft) return;
+    if (!Array.isArray(this.draft.presentations)) {
+      this.draft.presentations = [];
+    }
+    if (this.draft.presentations.length === 0) {
+      const baseSlides = Array.isArray(this.draft.slides) ? this.draft.slides : [];
+      if (baseSlides.length > 0) {
+        this.draft.presentations.push({
+          id: 'pres_' + Date.now() + '_1',
+          title: this.draft.title ? `Presentación: ${this.draft.title}` : 'Presentación 1',
+          slides: baseSlides
+        });
+      }
+    }
+    if (typeof this.activePresentationIndex !== 'number' || this.activePresentationIndex < 0) {
+      this.activePresentationIndex = 0;
+    }
+    if (this.draft.presentations.length > 0) {
+      if (this.activePresentationIndex >= this.draft.presentations.length) {
+        this.activePresentationIndex = Math.max(0, this.draft.presentations.length - 1);
+      }
+      const activeDeck = this.draft.presentations[this.activePresentationIndex];
+      if (activeDeck) {
+        if (!Array.isArray(activeDeck.slides)) activeDeck.slides = [];
+        this.draft.slides = activeDeck.slides;
+      }
+    }
+  },
+
+  syncActiveSlidesBackToDeck() {
+    if (!this.draft) return;
+    if (!Array.isArray(this.draft.presentations)) {
+      this.draft.presentations = [];
+    }
+    const curSlides = Array.isArray(this.draft.slides) ? this.draft.slides : [];
+    if (this.draft.presentations.length === 0) {
+      if (curSlides.length > 0) {
+        this.draft.presentations.push({
+          id: 'pres_' + Date.now() + '_1',
+          title: this.draft.title ? `Presentación: ${this.draft.title}` : 'Presentación 1',
+          slides: curSlides
+        });
+        this.activePresentationIndex = 0;
+      }
+      return;
+    }
+    const idx = Math.max(0, Math.min(this.draft.presentations.length - 1, this.activePresentationIndex || 0));
+    this.activePresentationIndex = idx;
+    if (this.draft.presentations[idx]) {
+      this.draft.presentations[idx].slides = curSlides;
+    }
+  },
 
   createDefaultDraft(existingProject = null) {
     const u = window.appState?.currentUser || {};
@@ -148,6 +226,24 @@ window.ProjectWizard = {
 
     if (existingProject) {
       const gp = existingProject.govdata || {};
+      const initSlides = Array.isArray(existingProject.slides) && existingProject.slides.length > 0
+        ? JSON.parse(JSON.stringify(existingProject.slides))
+        : (Array.isArray(gp.slides) ? JSON.parse(JSON.stringify(gp.slides)) : []);
+      const rawPresentations = (Array.isArray(existingProject.presentations) && existingProject.presentations.length > 0)
+        ? JSON.parse(JSON.stringify(existingProject.presentations))
+        : ((Array.isArray(gp.presentations) && gp.presentations.length > 0)
+            ? JSON.parse(JSON.stringify(gp.presentations))
+            : (initSlides.length > 0
+                ? [{
+                    id: 'pres_1',
+                    title: (existingProject.title || gp.title) ? `Presentación: ${existingProject.title || gp.title}` : 'Presentación 1',
+                    slides: JSON.parse(JSON.stringify(initSlides))
+                  }]
+                : []));
+      const rawMainImg = existingProject._clearedMainImage ? '' : this.normalizeImageUrl(existingProject.mainImage || existingProject.banner || existingProject.image || gp.mainImage || gp.banner || gp.image || '');
+      const cleanMainImg = this.isDefaultPlaceholderImage(rawMainImg) ? '' : rawMainImg;
+      const rawThumbImg = existingProject._clearedThumbImage ? '' : this.normalizeImageUrl(existingProject.thumbnailImage || gp.thumbnailImage || cleanMainImg || '');
+      const cleanThumbImg = this.isDefaultPlaceholderImage(rawThumbImg) ? '' : rawThumbImg;
       return {
         id: existingProject.id || ('proj_' + Date.now()),
         title: existingProject.title || gp.title || '',
@@ -188,9 +284,12 @@ window.ProjectWizard = {
           verified: Boolean(existingProject.videoConfig?.verified || gp.videoConfig?.verified || existingProject.videoConfig?.url || existingProject.videoUrl)
         },
         resources: Array.isArray(existingProject.resources) && existingProject.resources.length > 0 ? JSON.parse(JSON.stringify(existingProject.resources)) : (Array.isArray(gp.resources) ? JSON.parse(JSON.stringify(gp.resources)) : []),
-        slides: Array.isArray(existingProject.slides) && existingProject.slides.length > 0 ? JSON.parse(JSON.stringify(existingProject.slides)) : (Array.isArray(gp.slides) ? JSON.parse(JSON.stringify(gp.slides)) : []),
-        mainImage: existingProject.mainImage || existingProject.banner || existingProject.image || gp.mainImage || gp.banner || gp.image || '',
-        thumbnailImage: existingProject.thumbnailImage || existingProject.mainImage || gp.thumbnailImage || '',
+        slides: initSlides,
+        presentations: rawPresentations,
+        mainImage: cleanMainImg,
+        thumbnailImage: cleanThumbImg,
+        _clearedMainImage: Boolean(existingProject._clearedMainImage || gp._clearedMainImage),
+        _clearedThumbImage: Boolean(existingProject._clearedThumbImage || gp._clearedThumbImage),
         useDefaultImage: existingProject.useDefaultImage !== undefined ? existingProject.useDefaultImage : true,
         visualAssets: Array.isArray(existingProject.visualAssets) && existingProject.visualAssets.length > 0 ? JSON.parse(JSON.stringify(existingProject.visualAssets)) : (Array.isArray(gp.visualAssets) ? JSON.parse(JSON.stringify(gp.visualAssets)) : []),
         externalLinks: Array.isArray(existingProject.externalLinks) && existingProject.externalLinks.length > 0 ? JSON.parse(JSON.stringify(existingProject.externalLinks)) : (Array.isArray(gp.externalLinks) ? JSON.parse(JSON.stringify(gp.externalLinks)) : []),
@@ -283,6 +382,7 @@ window.ProjectWizard = {
       },
       resources: [],
       slides: [],
+      presentations: [],
       mainImage: '',
       thumbnailImage: '',
       useDefaultImage: true,
@@ -448,6 +548,7 @@ window.ProjectWizard = {
     if (!skipCollect) {
       this.collectCurrentStepInputs();
     }
+    this.syncActiveSlidesBackToDeck();
     this.draft.currentStep = this.currentStep;
     this.draft.updatedAt = new Date().toISOString();
 
@@ -693,6 +794,7 @@ window.ProjectWizard = {
         if (typeof window.sanitizeProjectSlides === 'function') {
           base.slides = window.sanitizeProjectSlides(base.slides, base.title);
         }
+        base.presentations = pickLongerArr(savedDraft?.presentations, savedChallenge?.presentations, gov?.presentations, base.presentations);
         base.completedSteps = pickLongerArr(savedDraft?.completedSteps, savedChallenge?.completedSteps, gov?.completedSteps, base.completedSteps);
         base.resources = pickLongerArr(savedDraft?.resources, savedChallenge?.resources, gov?.resources, base.resources);
         base.externalLinks = pickLongerArr(savedDraft?.externalLinks, savedChallenge?.externalLinks, gov?.externalLinks, base.externalLinks);
@@ -708,8 +810,20 @@ window.ProjectWizard = {
         base.mainObjective = pickLongerStr(savedDraft?.mainObjective, savedChallenge?.mainObjective, gov?.mainObjective);
         base.benefits = pickLongerStr(savedDraft?.benefits, savedChallenge?.benefits, gov?.benefits);
         base.targetAudience = pickLongerStr(savedDraft?.targetAudience, savedChallenge?.targetAudience, gov?.targetAudience);
-        base.mainImage = pickLongerStr(savedDraft?.mainImage, savedChallenge?.mainImage, savedChallenge?.banner, gov?.mainImage, base.mainImage);
-        base.thumbnailImage = pickLongerStr(savedDraft?.thumbnailImage, savedChallenge?.thumbnailImage, gov?.thumbnailImage, base.thumbnailImage);
+        const pickCustomImg = (clearedFlag, ...imgs) => {
+          if (clearedFlag) return '';
+          for (const im of imgs) {
+            const clean = this.normalizeImageUrl(im);
+            if (clean && !this.isDefaultPlaceholderImage(clean)) return clean;
+          }
+          return '';
+        };
+        const clearedMain = Boolean(savedDraft?._clearedMainImage || gov?._clearedMainImage || savedChallenge?._clearedMainImage);
+        const clearedThumb = Boolean(savedDraft?._clearedThumbImage || gov?._clearedThumbImage || savedChallenge?._clearedThumbImage);
+        base._clearedMainImage = clearedMain;
+        base._clearedThumbImage = clearedThumb;
+        base.mainImage = pickCustomImg(clearedMain, savedDraft?.mainImage, gov?.mainImage, savedChallenge?.mainImage, savedChallenge?.banner, base.mainImage);
+        base.thumbnailImage = pickCustomImg(clearedThumb, savedDraft?.thumbnailImage, gov?.thumbnailImage, savedChallenge?.thumbnailImage, base.thumbnailImage);
         base.valueProp = mergeNonEmptyObj(gov?.valueProp, savedChallenge?.valueProp, savedChallenge?.valueProposition, savedDraft?.valueProp);
         base.videoConfig = mergeNonEmptyObj(gov?.videoConfig, savedChallenge?.videoConfig, savedDraft?.videoConfig);
         base.designConfig = mergeNonEmptyObj(gov?.designConfig, savedChallenge?.designConfig, savedDraft?.designConfig);
@@ -734,6 +848,7 @@ window.ProjectWizard = {
               ? { ...(existing || {}), ...cloudDraft }
               : { ...cloudDraft, ...(existing || {}) };
             mergedCloud.slides = pickLongerArr(existing?.slides, cloudDraft?.slides);
+            mergedCloud.presentations = pickLongerArr(existing?.presentations, cloudDraft?.presentations);
             mergedCloud.completedSteps = pickLongerArr(existing?.completedSteps, cloudDraft?.completedSteps);
             mergedCloud.resources = pickLongerArr(existing?.resources, cloudDraft?.resources);
             mergedCloud.externalLinks = pickLongerArr(existing?.externalLinks, cloudDraft?.externalLinks);
@@ -757,6 +872,8 @@ window.ProjectWizard = {
     }
 
     this.draft = this.createDefaultDraft(existing);
+    this.activePresentationIndex = 0;
+    this.ensurePresentationsSync();
     // Si es un borrador nuevo creado con ID determinístico por (usuario + código), conservar ese ID para sincronización multi-navegador
     if (!existing && projectId && String(projectId).startsWith('govdata_code_')) {
       this.draft.id = String(projectId);
@@ -1021,7 +1138,11 @@ window.ProjectWizard = {
         } break;
 
       case 11: // Slides/Diapositivas
-        if (!Array.isArray(d.slides) || d.slides.length === 0) errs.push('Debes agregar al menos una <strong>diapositiva</strong>.');
+        {
+          const hasAnySlides = (Array.isArray(d.slides) && d.slides.length > 0) ||
+            (Array.isArray(d.presentations) && d.presentations.some(pr => pr && Array.isArray(pr.slides) && pr.slides.length > 0));
+          if (!hasAnySlides) errs.push('Debes agregar al menos una <strong>diapositiva</strong>.');
+        }
         break;
 
       case 12: // Recursos
@@ -1029,8 +1150,8 @@ window.ProjectWizard = {
         break;
 
       case 13: // Visuals
-        if (!d.mainImage && (!Array.isArray(d.visualAssets) || d.visualAssets.length === 0)) {
-          errs.push('Debes agregar al menos una <strong>imagen o recurso visual</strong>.');
+        if (!d.mainImage && d.useDefaultImage === false && (!Array.isArray(d.visualAssets) || d.visualAssets.length === 0)) {
+          errs.push('Debes agregar al menos una <strong>imagen o recurso visual</strong> (o activar la imagen predeterminada).');
         }
         break;
 
@@ -1171,18 +1292,26 @@ collectCurrentStepInputs() {
     }
 
     if (val('gdn-main-image') !== null) {
-      const mVal = val('gdn-main-image').trim();
+      const mVal = this.normalizeImageUrl(val('gdn-main-image'));
       if (mVal || !this.draft.mainImage?.startsWith('data:image/')) {
         this.draft.mainImage = mVal;
+        this.draft.heroBanner = mVal;
+        this.draft.banner = mVal;
+        this.draft.image = mVal;
+        this.draft.coverImage = mVal;
+        if (this.draft.designConfig) this.draft.designConfig.bannerUrl = mVal;
+        this.draft._clearedMainImage = !mVal;
       }
     }
     if (val('gdn-thumb-image') !== null) {
-      const tVal = val('gdn-thumb-image').trim();
+      const tVal = this.normalizeImageUrl(val('gdn-thumb-image'));
       if (tVal || !this.draft.thumbnailImage?.startsWith('data:image/')) {
         this.draft.thumbnailImage = tVal;
+        this.draft._clearedThumbImage = !tVal;
       }
     }
     if (checked('gdn-use-default-img') !== null) this.draft.useDefaultImage = checked('gdn-use-default-img');
+    this.syncActiveSlidesBackToDeck();
 
     if (val('gdn-pub-name') !== null) this.draft.landingConfig.publicName = val('gdn-pub-name').trim();
     if (val('gdn-pub-slug') !== null) this.draft.landingConfig.slug = this.slugify(val('gdn-pub-slug'));
@@ -3492,36 +3621,45 @@ collectCurrentStepInputs() {
   // =========================================================================
   initDefaultSlidesIfEmpty() {
     if (!this.draft) return;
+    const autoNotes = new Set([
+      'Diapositiva inicial de presentación ante evaluadores y público general.',
+      'Explicar con claridad por qué este problema requiere una solución prioritaria.',
+      'Detallar las ventajas competitivas y la innovación de nuestra propuesta.',
+      'Apertura de la presentación: presentar el título, creadores y motivación general.',
+      'Sensibilizar al público sobre por qué este problema debe resolverse hoy.',
+      'Exponer la propuesta de valor y los pilares funcionales del proyecto.',
+      'Resaltar los beneficios directos para los usuarios finales y evaluadores.',
+      'Cierre con llamado a la acción y espacio para preguntas de la audiencia.'
+    ]);
+    const autoTitles = new Set([
+      'Problema y Necesidad Clave',
+      'Propuesta de Solución y Objetivos',
+      'Desafío y Problemática Actual',
+      'Objetivo y Propuesta de Solución',
+      'Beneficios e Impacto Medible',
+      'Conclusiones y Próximos Pasos'
+    ]);
+    const filterAutoSlides = (arr) => (Array.isArray(arr) ? arr : []).filter(s => {
+      if (!s) return false;
+      if (s.id === 's1') return false;
+      if (s.notes && autoNotes.has(String(s.notes).trim())) return false;
+      if (s.title && autoTitles.has(String(s.title).trim())) return false;
+      return true;
+    });
+
     if (!Array.isArray(this.draft.slides)) {
       this.draft.slides = [];
     } else {
-      // Eliminar cualquier diapositiva que haya sido autogenerada/inventada previamente por plantillas
-      const autoNotes = new Set([
-        'Diapositiva inicial de presentación ante evaluadores y público general.',
-        'Explicar con claridad por qué este problema requiere una solución prioritaria.',
-        'Detallar las ventajas competitivas y la innovación de nuestra propuesta.',
-        'Apertura de la presentación: presentar el título, creadores y motivación general.',
-        'Sensibilizar al público sobre por qué este problema debe resolverse hoy.',
-        'Exponer la propuesta de valor y los pilares funcionales del proyecto.',
-        'Resaltar los beneficios directos para los usuarios finales y evaluadores.',
-        'Cierre con llamado a la acción y espacio para preguntas de la audiencia.'
-      ]);
-      const autoTitles = new Set([
-        'Problema y Necesidad Clave',
-        'Propuesta de Solución y Objetivos',
-        'Desafío y Problemática Actual',
-        'Objetivo y Propuesta de Solución',
-        'Beneficios e Impacto Medible',
-        'Conclusiones y Próximos Pasos'
-      ]);
-      this.draft.slides = this.draft.slides.filter(s => {
-        if (!s) return false;
-        if (s.id === 's1') return false;
-        if (s.notes && autoNotes.has(String(s.notes).trim())) return false;
-        if (s.title && autoTitles.has(String(s.title).trim())) return false;
-        return true;
+      this.draft.slides = filterAutoSlides(this.draft.slides);
+    }
+    if (Array.isArray(this.draft.presentations)) {
+      this.draft.presentations.forEach(p => {
+        if (p && Array.isArray(p.slides)) {
+          p.slides = filterAutoSlides(p.slides);
+        }
       });
     }
+    this.ensurePresentationsSync();
     if (typeof this.activeSlideIndex !== 'number' || this.activeSlideIndex < 0) {
       this.activeSlideIndex = 0;
     }
@@ -3530,9 +3668,140 @@ collectCurrentStepInputs() {
     }
   },
 
+  selectWizardPresentation(deckIdx) {
+    if (!this.draft) return;
+    this.collectCurrentStepInputs();
+    this.syncActiveSlidesBackToDeck();
+    if (!Array.isArray(this.draft.presentations) || !this.draft.presentations[deckIdx]) return;
+    this.activePresentationIndex = deckIdx;
+    this.draft.slides = this.draft.presentations[deckIdx].slides || [];
+    this.activeSlideIndex = 0;
+    this.saveDraftToStorage(true, true);
+    if (window.ProjectsView) window.ProjectsView.render();
+  },
+
+  renameWizardPresentation(deckIdx) {
+    if (!this.draft || !Array.isArray(this.draft.presentations) || !this.draft.presentations[deckIdx]) return;
+    const deck = this.draft.presentations[deckIdx];
+    const nextTitle = prompt('Nombre de la presentación:', deck.title || `Presentación ${deckIdx + 1}`);
+    if (nextTitle === null) return;
+    const clean = String(nextTitle).trim();
+    if (!clean) return;
+    deck.title = clean;
+    this.saveDraftToStorage(true, true);
+    if (window.ProjectsView) window.ProjectsView.render();
+  },
+
+  deleteWizardPresentation(deckIdx) {
+    if (!this.draft || !Array.isArray(this.draft.presentations) || !this.draft.presentations[deckIdx]) return;
+    const deck = this.draft.presentations[deckIdx];
+    if (!confirm(`¿Deseas eliminar "${deck.title || `Presentación ${deckIdx + 1}`}" y sus ${(deck.slides || []).length} diapositivas?`)) return;
+    this.collectCurrentStepInputs();
+    this.syncActiveSlidesBackToDeck();
+    this.draft.presentations.splice(deckIdx, 1);
+    if (this.draft.presentations.length === 0) {
+      this.activePresentationIndex = 0;
+      this.draft.slides = [];
+    } else {
+      this.activePresentationIndex = Math.max(0, Math.min(this.draft.presentations.length - 1, deckIdx === 0 ? 0 : deckIdx - 1));
+      this.draft.slides = this.draft.presentations[this.activePresentationIndex].slides || [];
+    }
+    this.activeSlideIndex = 0;
+    this.saveDraftToStorage(true, true);
+    if (window.ProjectsView) window.ProjectsView.render();
+  },
+
+  triggerUploadAnotherPresentation() {
+    const inp = document.getElementById('gdn-wizard-another-pres-file-input');
+    if (inp) {
+      inp.value = '';
+      inp.click();
+    }
+  },
+
+  async handleUploadAnotherPresentationFiles(fileList) {
+    if (!fileList || fileList.length === 0) return;
+    this.collectCurrentStepInputs();
+    this.syncActiveSlidesBackToDeck();
+    if (!Array.isArray(this.draft.presentations)) {
+      this.draft.presentations = [];
+    }
+    if (this.draft.presentations.length === 0 && Array.isArray(this.draft.slides) && this.draft.slides.length > 0) {
+      this.draft.presentations.push({
+        id: 'pres_' + Date.now() + '_1',
+        title: this.draft.title ? `Presentación: ${this.draft.title}` : 'Presentación 1',
+        slides: this.draft.slides
+      });
+    }
+    const files = Array.from(fileList);
+    const firstFile = files[0];
+    const baseFileName = firstFile && firstFile.name ? firstFile.name.replace(/\.[^/.]+$/, '').replace(/[_-]+/g, ' ').trim() : '';
+    const nextNum = this.draft.presentations.length + 1;
+    const defaultTitle = baseFileName || `Presentación ${nextNum}`;
+    const newDeck = {
+      id: 'pres_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
+      title: defaultTitle,
+      slides: []
+    };
+    this.draft.presentations.push(newDeck);
+    this.activePresentationIndex = this.draft.presentations.length - 1;
+    this.draft.slides = newDeck.slides;
+    this.activeSlideIndex = 0;
+    await this.handleWizardSlideFiles(fileList);
+    this.syncActiveSlidesBackToDeck();
+    this.saveDraftToStorage(true, true);
+    if (window.ProjectsView) window.ProjectsView.render();
+  },
+
+  createAnotherPresentation() {
+    this.collectCurrentStepInputs();
+    this.syncActiveSlidesBackToDeck();
+    if (!Array.isArray(this.draft.presentations)) {
+      this.draft.presentations = [];
+    }
+    if (this.draft.presentations.length === 0 && Array.isArray(this.draft.slides) && this.draft.slides.length > 0) {
+      this.draft.presentations.push({
+        id: 'pres_' + Date.now() + '_1',
+        title: this.draft.title ? `Presentación: ${this.draft.title}` : 'Presentación 1',
+        slides: this.draft.slides
+      });
+    }
+    const nextNum = this.draft.presentations.length + 1;
+    const askName = prompt('Nombre de la nueva presentación:', `Presentación ${nextNum}`);
+    if (askName === null) return;
+    const deckTitle = String(askName).trim() || `Presentación ${nextNum}`;
+    const firstSlide = {
+      id: 'slide_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
+      title: `${deckTitle} - Diapositiva #1`,
+      subtitle: '',
+      content: '',
+      bullets: [],
+      layout: 'split',
+      media: '',
+      notes: '',
+      bgColor: '#0b091a',
+      themeId: this.draft.designConfig?.themeId || 'cosmos'
+    };
+    const newDeck = {
+      id: 'pres_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
+      title: deckTitle,
+      slides: [firstSlide]
+    };
+    this.draft.presentations.push(newDeck);
+    this.activePresentationIndex = this.draft.presentations.length - 1;
+    this.draft.slides = newDeck.slides;
+    this.activeSlideIndex = 0;
+    this.saveDraftToStorage(true, true);
+    if (window.ProjectsView) window.ProjectsView.render();
+  },
+
   renderStepSlides() {
     this.initDefaultSlidesIfEmpty();
     this.ensureWizardPasteListener();
+    const decks = Array.isArray(this.draft.presentations) ? this.draft.presentations : [];
+    const activeDeckIdx = Math.max(0, Math.min(Math.max(0, decks.length - 1), this.activePresentationIndex || 0));
+    this.activePresentationIndex = activeDeckIdx;
+    const activeDeck = decks[activeDeckIdx] || null;
     const slides = this.draft.slides || [];
     const activeIdx = Math.max(0, Math.min(slides.length - 1, this.activeSlideIndex || 0));
     this.activeSlideIndex = activeIdx;
@@ -3546,23 +3815,28 @@ collectCurrentStepInputs() {
     return `
       <!-- Cabecera y Herramientas Rápidas de Diapositivas -->
       <div class="gdn-card" style="margin-bottom: 1.25rem; border: 2px solid rgba(0, 245, 212, 0.35); background: linear-gradient(135deg, rgba(11,9,26,0.95), rgba(20,15,45,0.95)); box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
-        <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 1rem; ${slides.length > 0 ? 'margin-bottom: 1.2rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 1rem;' : ''}">
+        <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 1rem; ${(slides.length > 0 || decks.length > 0) ? 'margin-bottom: 1.2rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 1rem;' : ''}">
           <div>
             <div style="font-size: 0.82rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; color: #00f5d4; margin-bottom: 0.25rem;">
               📊 Paso 11 del Asistente · Presentaciones y Diapositivas
             </div>
-            <h3 style="margin: 0; font-size: 1.25rem; font-weight: 900; color: #ffffff; display: flex; align-items: center; gap: 0.5rem;">
-              <span>Diapositivas del Proyecto</span>
+            <h3 style="margin: 0; font-size: 1.25rem; font-weight: 900; color: #ffffff; display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
+              <span>${activeDeck ? this.escapeHtml(activeDeck.title || `Presentación ${activeDeckIdx + 1}`) : 'Diapositivas del Proyecto'}</span>
               <span style="font-size: 0.85rem; font-weight: 800; background: rgba(0,245,212,0.18); color: #00f5d4; border: 1px solid rgba(0,245,212,0.4); padding: 0.2rem 0.65rem; border-radius: 999px;">
                 ${slides.length} ${slides.length === 1 ? 'lámina' : 'láminas'}
               </span>
+              ${decks.length > 1 ? `
+                <span style="font-size: 0.8rem; font-weight: 800; background: rgba(168,85,247,0.22); color: #d8b4fe; border: 1px solid rgba(168,85,247,0.45); padding: 0.2rem 0.65rem; border-radius: 999px;">
+                  ${decks.length} presentaciones en el proyecto
+                </span>
+              ` : ''}
             </h3>
             <p style="margin: 0.35rem 0 0; font-size: 0.86rem; color: #cbd5e1;">
-              Sube cualquier presentación (.pptx, .pdf o imágenes) o pega tus diapositivas con <strong>Ctrl+V</strong>: quedan <strong>idénticas al original</strong> sin mover nada ni aplicar formato de Mentix (solo Anterior y Siguiente).
+              Sube una o más presentaciones (.pptx, .pdf o imágenes) o pega tus diapositivas con <strong>Ctrl+V</strong>: quedan <strong>idénticas al original</strong> sin mover nada ni aplicar formato de Mentix.
             </p>
           </div>
 
-          <!-- Botones de Acción Global: Subir, Pegar (Ctrl+V) o Crear -->
+          <!-- Botones de Acción Global: Subir, Pegar (Ctrl+V), Crear Diapositiva, Subir otra presentación aparte y Crear otra presentación -->
           <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center;">
             <input 
               type="file" 
@@ -3572,14 +3846,40 @@ collectCurrentStepInputs() {
               style="display: none;" 
               onchange="if(this.files && this.files.length) window.ProjectWizard.handleWizardSlideFiles(this.files)" 
             />
+            <input 
+              type="file" 
+              id="gdn-wizard-another-pres-file-input" 
+              multiple
+              accept=".pptx,.pdf,.json,.txt,.md,image/*" 
+              style="display: none;" 
+              onchange="if(this.files && this.files.length) window.ProjectWizard.handleUploadAnotherPresentationFiles(this.files)" 
+            />
             <button 
               type="button" 
               class="btn btn-outline" 
               style="border-color: #00f5d4; background: rgba(0, 245, 212, 0.14); color: #00f5d4; font-weight: 900; font-size: 0.85rem; padding: 0.55rem 1rem; display: inline-flex; align-items: center; gap: 0.45rem;"
               onclick="document.getElementById('gdn-wizard-slide-file-input').click()"
-              title="Subir PowerPoint (.pptx), PDF (.pdf) o imágenes tal cual están"
+              title="Subir PowerPoint (.pptx), PDF (.pdf) o imágenes a la presentación actual"
             >
               <span>📥</span> Subir Presentación (.pptx, .pdf, imágenes)
+            </button>
+            <button 
+              type="button" 
+              class="btn btn-outline" 
+              style="border-color: #a855f7; background: rgba(168, 85, 247, 0.18); color: #e9d5ff; font-weight: 900; font-size: 0.85rem; padding: 0.55rem 1rem; display: inline-flex; align-items: center; gap: 0.45rem;"
+              onclick="window.ProjectWizard.triggerUploadAnotherPresentation()"
+              title="Subir una segunda o tercera presentación independiente al proyecto (.pptx, .pdf o imágenes)"
+            >
+              <span>📥</span> Subir otra presentación aparte
+            </button>
+            <button 
+              type="button" 
+              class="btn btn-outline" 
+              style="border-color: #38bdf8; background: rgba(56, 189, 248, 0.18); color: #bae6fd; font-weight: 900; font-size: 0.85rem; padding: 0.55rem 1rem; display: inline-flex; align-items: center; gap: 0.45rem;"
+              onclick="window.ProjectWizard.createAnotherPresentation()"
+              title="Crear otra presentación adicional independiente dentro del proyecto"
+            >
+              <span>➕</span> Crear otra presentación
             </button>
             <button 
               type="button" 
@@ -3595,12 +3895,59 @@ collectCurrentStepInputs() {
               class="btn btn-cyan" 
               style="font-weight: 900; font-size: 0.85rem; padding: 0.55rem 1.05rem; background: linear-gradient(135deg, #10b981, #059669); border: none; color: #fff;"
               onclick="window.ProjectWizard.addWizardSlide()"
-              title="Crear una diapositiva manual en Mentix"
+              title="Crear una diapositiva manual en la presentación activa"
             >
               <span>➕</span> Crear Diapositiva
             </button>
           </div>
         </div>
+
+        ${decks.length > 0 ? `
+          <!-- Selector / Pestañas de Presentaciones del Proyecto -->
+          <div style="margin-bottom: 1.15rem; padding: 0.75rem 1rem; background: rgba(15, 23, 42, 0.8); border: 1.5px solid rgba(168, 85, 247, 0.35); border-radius: 14px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.55rem;">
+              <span style="font-size: 0.78rem; font-weight: 900; color: #d8b4fe; text-transform: uppercase; letter-spacing: 0.05em;">
+                🗂️ Presentaciones cargadas en este proyecto (${decks.length}):
+              </span>
+              <span style="font-size: 0.76rem; color: #94a3b8;">
+                Haz clic en una presentación para ver o editar sus diapositivas
+              </span>
+            </div>
+            <div style="display: flex; flex-wrap: wrap; gap: 0.55rem; align-items: center;">
+              ${decks.map((dk, dIdx) => {
+                const isAct = dIdx === activeDeckIdx;
+                const dCount = Array.isArray(dk.slides) ? dk.slides.length : 0;
+                return `
+                  <div style="display: inline-flex; align-items: center; border-radius: 10px; overflow: hidden; border: 2px solid ${isAct ? '#00f5d4' : 'rgba(255,255,255,0.16)'}; background: ${isAct ? 'rgba(0, 245, 212, 0.16)' : 'rgba(30, 41, 59, 0.85)'}; box-shadow: ${isAct ? '0 0 14px rgba(0,245,212,0.25)' : 'none'};">
+                    <button
+                      type="button"
+                      onclick="window.ProjectWizard.selectWizardPresentation(${dIdx})"
+                      style="background: transparent; border: none; color: ${isAct ? '#00f5d4' : '#e2e8f0'}; font-weight: 800; font-size: 0.83rem; padding: 0.45rem 0.8rem; cursor: pointer; display: inline-flex; align-items: center; gap: 0.45rem;"
+                    >
+                      <span>📊</span>
+                      <span>${this.escapeHtml(dk.title || `Presentación ${dIdx + 1}`)}</span>
+                      <span style="font-size: 0.74rem; padding: 0.1rem 0.45rem; border-radius: 999px; background: rgba(0,0,0,0.35); color: ${isAct ? '#ffffff' : '#94a3b8'};">
+                        ${dCount}
+                      </span>
+                    </button>
+                    <button
+                      type="button"
+                      onclick="window.ProjectWizard.renameWizardPresentation(${dIdx})"
+                      title="Cambiar nombre de esta presentación"
+                      style="background: rgba(255,255,255,0.06); border: none; border-left: 1px solid rgba(255,255,255,0.12); color: #cbd5e1; padding: 0.45rem 0.5rem; cursor: pointer; font-size: 0.76rem;"
+                    >✏️</button>
+                    <button
+                      type="button"
+                      onclick="window.ProjectWizard.deleteWizardPresentation(${dIdx})"
+                      title="Eliminar esta presentación"
+                      style="background: rgba(239,68,68,0.12); border: none; border-left: 1px solid rgba(255,255,255,0.12); color: #fca5a5; padding: 0.45rem 0.5rem; cursor: pointer; font-size: 0.76rem;"
+                    >🗑️</button>
+                  </div>
+                `;
+              }).join('')}
+            </div>
+          </div>
+        ` : ''}
 
         ${slides.length === 0 ? `
           <div style="margin-top: 1.25rem; padding: 2.5rem 1.5rem; text-align: center; background: rgba(15, 23, 42, 0.75); border: 2px dashed rgba(0, 245, 212, 0.35); border-radius: 16px;">
@@ -3609,7 +3956,7 @@ collectCurrentStepInputs() {
               Coloca aquí tu presentación tal cual está
             </h4>
             <p style="margin: 0 auto 1.35rem; max-width: 600px; font-size: 0.9rem; color: #cbd5e1; line-height: 1.55;">
-              Sube tu archivo <strong>PowerPoint (.pptx)</strong>, <strong>PDF (.pdf)</strong> o imágenes, o copia una diapositiva en PowerPoint y presiona <strong>Ctrl+V</strong>. Mentix la copia y pega idéntica sin mover nada ni cambiarle el formato:
+              Sube tu archivo <strong>PowerPoint (.pptx)</strong>, <strong>PDF (.pdf)</strong> o imágenes, o copia una diapositiva en PowerPoint y presiona <strong>Ctrl+V</strong>. Puedes subir dos o más presentaciones aparte:
             </p>
             <div style="display: flex; justify-content: center; gap: 0.85rem; flex-wrap: wrap;">
               <button 
@@ -3619,6 +3966,22 @@ collectCurrentStepInputs() {
                 onclick="document.getElementById('gdn-wizard-slide-file-input').click()"
               >
                 <span>📥</span> Subir Presentación (.pptx, .pdf, imágenes)
+              </button>
+              <button 
+                type="button" 
+                class="btn btn-outline" 
+                style="border: 2px solid #a855f7; background: rgba(168, 85, 247, 0.18); color: #e9d5ff; font-weight: 900; font-size: 0.92rem; padding: 0.75rem 1.35rem; border-radius: 12px; display: inline-flex; align-items: center; gap: 0.5rem; cursor: pointer;"
+                onclick="window.ProjectWizard.triggerUploadAnotherPresentation()"
+              >
+                <span>📥</span> Subir otra presentación aparte
+              </button>
+              <button 
+                type="button" 
+                class="btn btn-outline" 
+                style="border: 2px solid #38bdf8; background: rgba(56, 189, 248, 0.18); color: #bae6fd; font-weight: 900; font-size: 0.92rem; padding: 0.75rem 1.35rem; border-radius: 12px; display: inline-flex; align-items: center; gap: 0.5rem; cursor: pointer;"
+                onclick="window.ProjectWizard.createAnotherPresentation()"
+              >
+                <span>➕</span> Crear otra presentación
               </button>
               <button 
                 type="button" 
@@ -5673,46 +6036,57 @@ collectCurrentStepInputs() {
   renderStep5Visuals() {
     const d = this.draft;
     const assets = Array.isArray(d.visualAssets) ? d.visualAssets : [];
-    const activeCover = d.mainImage || (d.useDefaultImage ? this.defaultCoverImage : '');
+    const mainVal = this.isDefaultPlaceholderImage(d.mainImage) ? '' : (d.mainImage || '');
+    const thumbVal = this.isDefaultPlaceholderImage(d.thumbnailImage) ? '' : (d.thumbnailImage || '');
+    const activeCover = mainVal || (d.useDefaultImage !== false ? this.defaultCoverImage : '');
+    const activeThumb = thumbVal || activeCover;
 
     return `
       <!-- Portada y Miniatura Principal -->
       <div class="gdn-card">
         <h3 style="margin:0 0 0.35rem; font-size:1.08rem; color:var(--gdn-text);">Imagen principal (Portada) y Miniatura</h3>
         <p class="gdn-help" style="margin-bottom:1rem;">
-          Dimensiones recomendadas para la Landing Page: <strong>Portada 1600×900 px (16:9)</strong> y <strong>Miniatura 800×500 px</strong> en formato JPG, PNG o WebP. Si no cargas una imagen propia, el sistema usará la imagen institucional predeterminada.
+          Dimensiones recomendadas para la Landing Page: <strong>Portada 1600×900 px (16:9)</strong> y <strong>Miniatura 800×500 px</strong> en formato JPG, PNG o WebP. Puedes pegar una URL de imagen o subir un archivo desde tu equipo.
         </p>
 
         <div class="gdn-field-grid">
           <div class="gdn-field">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.25rem;">
               <label class="gdn-label" for="gdn-main-image" style="margin:0;">Imagen principal o portada (URL o archivo)</label>
-              ${d.mainImage ? `
-                <button type="button" onclick="window.ProjectWizard.clearCoverImage('main')" style="background:none; border:none; color:#ef4444; font-size:0.75rem; font-weight:700; cursor:pointer;">
-                  🗑️ Quitar imagen
-                </button>
-              ` : ''}
+              <button type="button" onclick="window.ProjectWizard.clearCoverImage('main')" style="background:none; border:none; color:#ef4444; font-size:0.75rem; font-weight:700; cursor:pointer;">
+                🗑️ Quitar imagen
+              </button>
             </div>
-            <input type="text" id="gdn-main-image" class="gdn-input" value="${this.escapeHtml(d.mainImage)}" placeholder="https://images.unsplash.com/... o sube una imagen" oninput="window.ProjectWizard.triggerFieldAutoSave();" />
+            <input type="text" id="gdn-main-image" class="gdn-input" value="${this.escapeHtml(mainVal.startsWith('data:image/') ? '' : mainVal)}" placeholder="Pega aquí la URL de la imagen (https://...) o sube un archivo abajo" oninput="window.ProjectWizard.handleCoverUrlInput('main', this.value)" onchange="window.ProjectWizard.handleCoverUrlInput('main', this.value)" />
             <div style="margin-top:0.45rem; display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap;">
-              <input type="file" accept="image/png,image/jpeg,image/webp,image/svg+xml" onchange="window.ProjectWizard.handleCoverUpload(this.files, 'main')" style="font-size:0.8rem;" />
-              ${d.mainImage && d.mainImage.startsWith('data:image/') ? '<span style="font-size:0.74rem; color:#10b981; font-weight:700;">✔ Imagen local cargada</span>' : ''}
+              <input type="file" id="gdn-main-image-file" accept="image/png,image/jpeg,image/webp,image/svg+xml" onchange="window.ProjectWizard.handleCoverUpload(this.files, 'main')" style="font-size:0.8rem;" />
+              ${mainVal && mainVal.startsWith('data:image/') ? '<span style="font-size:0.74rem; color:#10b981; font-weight:700;">✔ Imagen propia cargada</span>' : ''}
+            </div>
+            <div id="gdn-main-image-preview-wrap" style="margin-top:0.55rem; display:${activeCover ? 'flex' : 'none'}; align-items:center; gap:0.65rem;">
+              <img id="gdn-main-image-preview-img" src="${this.escapeHtml(activeCover)}" alt="Vista previa de portada" style="width:110px; height:62px; object-fit:cover; border-radius:8px; border:1.5px solid #10b981; background:#0f172a;" />
+              <span id="gdn-main-image-preview-label" style="font-size:0.75rem; color:${mainVal ? '#059669' : '#64748b'}; font-weight:700;">
+                ${mainVal ? '✔ Portada personalizada activa' : 'Portada predeterminada institucional'}
+              </span>
             </div>
           </div>
 
           <div class="gdn-field">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.25rem;">
               <label class="gdn-label" for="gdn-thumb-image" style="margin:0;">Imagen de miniatura para tarjetas (opcional)</label>
-              ${d.thumbnailImage ? `
-                <button type="button" onclick="window.ProjectWizard.clearCoverImage('thumb')" style="background:none; border:none; color:#ef4444; font-size:0.75rem; font-weight:700; cursor:pointer;">
-                  🗑️ Quitar imagen
-                </button>
-              ` : ''}
+              <button type="button" onclick="window.ProjectWizard.clearCoverImage('thumb')" style="background:none; border:none; color:#ef4444; font-size:0.75rem; font-weight:700; cursor:pointer;">
+                🗑️ Quitar imagen
+              </button>
             </div>
-            <input type="text" id="gdn-thumb-image" class="gdn-input" value="${this.escapeHtml(d.thumbnailImage)}" placeholder="Si se deja vacío, usará la portada principal" oninput="window.ProjectWizard.triggerFieldAutoSave();" />
+            <input type="text" id="gdn-thumb-image" class="gdn-input" value="${this.escapeHtml(thumbVal.startsWith('data:image/') ? '' : thumbVal)}" placeholder="Pega aquí la URL de la miniatura o déjalo vacío para usar la portada" oninput="window.ProjectWizard.handleCoverUrlInput('thumb', this.value)" onchange="window.ProjectWizard.handleCoverUrlInput('thumb', this.value)" />
             <div style="margin-top:0.45rem; display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap;">
-              <input type="file" accept="image/png,image/jpeg,image/webp" onchange="window.ProjectWizard.handleCoverUpload(this.files, 'thumb')" style="font-size:0.8rem;" />
-              ${d.thumbnailImage && d.thumbnailImage.startsWith('data:image/') ? '<span style="font-size:0.74rem; color:#10b981; font-weight:700;">✔ Imagen local cargada</span>' : ''}
+              <input type="file" id="gdn-thumb-image-file" accept="image/png,image/jpeg,image/webp,image/svg+xml" onchange="window.ProjectWizard.handleCoverUpload(this.files, 'thumb')" style="font-size:0.8rem;" />
+              ${thumbVal && thumbVal.startsWith('data:image/') ? '<span style="font-size:0.74rem; color:#10b981; font-weight:700;">✔ Miniatura propia cargada</span>' : ''}
+            </div>
+            <div id="gdn-thumb-image-preview-wrap" style="margin-top:0.55rem; display:${activeThumb ? 'flex' : 'none'}; align-items:center; gap:0.65rem;">
+              <img id="gdn-thumb-image-preview-img" src="${this.escapeHtml(activeThumb)}" alt="Vista previa de miniatura" style="width:110px; height:62px; object-fit:cover; border-radius:8px; border:1.5px solid #0284c7; background:#0f172a;" />
+              <span id="gdn-thumb-image-preview-label" style="font-size:0.75rem; color:${thumbVal ? '#0284c7' : '#64748b'}; font-weight:700;">
+                ${thumbVal ? '✔ Miniatura personalizada activa' : 'Usando la portada principal'}
+              </span>
             </div>
           </div>
         </div>
@@ -5792,13 +6166,100 @@ collectCurrentStepInputs() {
     `;
   },
 
+  handleCoverUrlInput(target, rawVal) {
+    if (!this.draft) return;
+    const clean = this.normalizeImageUrl(rawVal);
+    if (target === 'main') {
+      this.draft.mainImage = clean;
+      this.draft.heroBanner = clean;
+      this.draft.banner = clean;
+      this.draft.image = clean;
+      this.draft.coverImage = clean;
+      if (this.draft.designConfig) this.draft.designConfig.bannerUrl = clean;
+      this.draft._clearedMainImage = !clean;
+      const inp = document.getElementById('gdn-main-image');
+      if (inp && clean && clean !== rawVal) inp.value = clean;
+    } else {
+      this.draft.thumbnailImage = clean;
+      this.draft._clearedThumbImage = !clean;
+      const inp = document.getElementById('gdn-thumb-image');
+      if (inp && clean && clean !== rawVal) inp.value = clean;
+    }
+    const mainVal = this.isDefaultPlaceholderImage(this.draft.mainImage) ? '' : (this.draft.mainImage || '');
+    const thumbVal = this.isDefaultPlaceholderImage(this.draft.thumbnailImage) ? '' : (this.draft.thumbnailImage || '');
+    const activeCover = mainVal || (this.draft.useDefaultImage !== false ? this.defaultCoverImage : '');
+    const activeThumb = thumbVal || activeCover;
+    const mainImgEl = document.getElementById('gdn-main-image-preview-img');
+    const mainWrapEl = document.getElementById('gdn-main-image-preview-wrap');
+    const mainLblEl = document.getElementById('gdn-main-image-preview-label');
+    if (mainImgEl && mainWrapEl) {
+      if (activeCover) {
+        mainImgEl.src = activeCover;
+        mainWrapEl.style.display = 'flex';
+        if (mainLblEl) {
+          mainLblEl.textContent = mainVal ? '✔ Portada personalizada activa' : 'Portada predeterminada institucional';
+          mainLblEl.style.color = mainVal ? '#059669' : '#64748b';
+        }
+      } else {
+        mainWrapEl.style.display = 'none';
+      }
+    }
+    const thumbImgEl = document.getElementById('gdn-thumb-image-preview-img');
+    const thumbWrapEl = document.getElementById('gdn-thumb-image-preview-wrap');
+    const thumbLblEl = document.getElementById('gdn-thumb-image-preview-label');
+    if (thumbImgEl && thumbWrapEl) {
+      if (activeThumb) {
+        thumbImgEl.src = activeThumb;
+        thumbWrapEl.style.display = 'flex';
+        if (thumbLblEl) {
+          thumbLblEl.textContent = thumbVal ? '✔ Miniatura personalizada activa' : 'Usando la portada principal';
+          thumbLblEl.style.color = thumbVal ? '#0284c7' : '#64748b';
+        }
+      } else {
+        thumbWrapEl.style.display = 'none';
+      }
+    }
+    this.triggerFieldAutoSave();
+  },
+
   clearCoverImage(target) {
+    if (!this.draft) return;
+    const matchChal = (window.appState?.challenges || []).find(c => c && c.id === this.draft.id);
     if (target === 'main') {
       this.draft.mainImage = '';
+      this.draft.heroBanner = '';
+      this.draft.banner = '';
+      this.draft.image = '';
+      this.draft.coverImage = '';
+      if (this.draft.designConfig) this.draft.designConfig.bannerUrl = '';
+      this.draft._clearedMainImage = true;
+      if (matchChal) {
+        matchChal.mainImage = '';
+        matchChal.heroBanner = '';
+        matchChal.banner = '';
+        matchChal.image = '';
+        matchChal.coverImage = '';
+        matchChal._clearedMainImage = true;
+        if (matchChal.designConfig) matchChal.designConfig.bannerUrl = '';
+        if (matchChal.govdata) {
+          matchChal.govdata.mainImage = '';
+          matchChal.govdata._clearedMainImage = true;
+          if (matchChal.govdata.designConfig) matchChal.govdata.designConfig.bannerUrl = '';
+        }
+      }
       const inp = document.getElementById('gdn-main-image');
       if (inp) inp.value = '';
     } else {
       this.draft.thumbnailImage = '';
+      this.draft._clearedThumbImage = true;
+      if (matchChal) {
+        matchChal.thumbnailImage = '';
+        matchChal._clearedThumbImage = true;
+        if (matchChal.govdata) {
+          matchChal.govdata.thumbnailImage = '';
+          matchChal.govdata._clearedThumbImage = true;
+        }
+      }
       const inp = document.getElementById('gdn-thumb-image');
       if (inp) inp.value = '';
     }
@@ -5814,15 +6275,22 @@ collectCurrentStepInputs() {
       return;
     }
     this.collectCurrentStepInputs();
-    const dataUrl = await this.compressImageFile(file, 960, 0.72);
+    const dataUrl = await this.compressImageFile(file, 1400, 0.82);
     if (target === 'main') {
       this.draft.mainImage = dataUrl;
+      this.draft.heroBanner = dataUrl;
+      this.draft.banner = dataUrl;
+      this.draft.image = dataUrl;
+      this.draft.coverImage = dataUrl;
+      if (this.draft.designConfig) this.draft.designConfig.bannerUrl = dataUrl;
+      this.draft._clearedMainImage = false;
       const inp = document.getElementById('gdn-main-image');
-      if (inp) inp.value = dataUrl;
+      if (inp) inp.value = dataUrl.startsWith('data:image/') ? '' : dataUrl;
     } else {
       this.draft.thumbnailImage = dataUrl;
+      this.draft._clearedThumbImage = false;
       const inp = document.getElementById('gdn-thumb-image');
-      if (inp) inp.value = dataUrl;
+      if (inp) inp.value = dataUrl.startsWith('data:image/') ? '' : dataUrl;
     }
     this.saveDraftToStorage(true, true);
     if (window.ProjectsView) window.ProjectsView.render();
@@ -5870,9 +6338,16 @@ collectCurrentStepInputs() {
   setAsMainCover(idx) {
     const item = this.draft.visualAssets[idx];
     if (!item || !item.url) return;
-    this.draft.mainImage = item.url;
+    const clean = this.normalizeImageUrl(item.url);
+    this.draft.mainImage = clean;
+    this.draft.heroBanner = clean;
+    this.draft.banner = clean;
+    this.draft.image = clean;
+    this.draft.coverImage = clean;
+    if (this.draft.designConfig) this.draft.designConfig.bannerUrl = clean;
+    this.draft._clearedMainImage = false;
     const inp = document.getElementById('gdn-main-image');
-    if (inp) inp.value = item.url;
+    if (inp) inp.value = clean.startsWith('data:image/') ? '' : clean;
     this.saveDraftToStorage(true, true);
     if (window.ProjectsView) window.ProjectsView.render();
   },
@@ -7013,6 +7488,7 @@ collectCurrentStepInputs() {
   // =========================================================================
   buildChallengeCompatibleRecord(statusOverride = null) {
     this.collectCurrentStepInputs();
+    this.syncActiveSlidesBackToDeck();
     const d = this.draft;
     // Conservar el estado de autorización que el administrador ya haya dado a este proyecto
     const existingRec = (window.appState?.challenges || []).find(c => c && c.id === d.id) || {};
@@ -7029,15 +7505,22 @@ collectCurrentStepInputs() {
     const finalSlug = d.landingConfig?.slug || this.slugify(finalTitle);
     d.landingConfig.slug = finalSlug;
 
-    const customBanner = d.designConfig?.bannerUrl || d.heroBanner || d.mainImage || d.banner || (Array.isArray(d.visualAssets) && d.visualAssets[0]?.url) || '';
+    const cleanMain = d._clearedMainImage ? '' : this.normalizeImageUrl(d.mainImage);
+    const nonDefaultMain = this.isDefaultPlaceholderImage(cleanMain) ? '' : cleanMain;
+    const cleanThumb = d._clearedThumbImage ? '' : this.normalizeImageUrl(d.thumbnailImage);
+    const nonDefaultThumb = this.isDefaultPlaceholderImage(cleanThumb) ? '' : cleanThumb;
+    const fallbackBanner = d._clearedMainImage
+      ? ''
+      : this.normalizeImageUrl(d.designConfig?.bannerUrl || d.heroBanner || d.banner || (Array.isArray(d.visualAssets) && d.visualAssets[0]?.url) || '');
+    const nonDefaultFallback = this.isDefaultPlaceholderImage(fallbackBanner) ? '' : fallbackBanner;
+    const customBanner = nonDefaultMain || nonDefaultFallback;
     const cover = customBanner || (d.useDefaultImage !== false ? this.defaultCoverImage : '');
-    const slidesFromVisuals = (d.visualAssets || []).map((v, i) => ({
-      id: v.id || ('slide_' + i),
-      title: v.title || `Diapositiva ${i + 1}`,
-      content: v.caption || '',
-      imageUrl: v.url || cover,
-      layout: 'split'
-    }));
+    const validPresentations = Array.isArray(d.presentations)
+      ? d.presentations.filter(p => p && Array.isArray(p.slides) && p.slides.length > 0)
+      : [];
+    const primarySlides = (validPresentations.length > 0 && Array.isArray(validPresentations[0].slides))
+      ? validPresentations[0].slides
+      : (Array.isArray(d.slides) ? d.slides : []);
 
     return {
       id: d.id,
@@ -7057,8 +7540,10 @@ collectCurrentStepInputs() {
       banner: cover,
       image: cover,
       coverImage: cover,
-      mainImage: d.mainImage || cover,
-      thumbnailImage: d.thumbnailImage || cover,
+      mainImage: nonDefaultMain || cover,
+      thumbnailImage: nonDefaultThumb || nonDefaultMain || cover,
+      _clearedMainImage: Boolean(d._clearedMainImage),
+      _clearedThumbImage: Boolean(d._clearedThumbImage),
       useDefaultImage: d.useDefaultImage !== false,
       targetAudience: d.targetAudience || '',
       problemStatement: d.problemStatement || '',
@@ -7086,7 +7571,8 @@ collectCurrentStepInputs() {
       videoConfig: d.videoConfig || {},
       resources: Array.isArray(d.resources) ? d.resources : [],
       visualAssets: Array.isArray(d.visualAssets) ? d.visualAssets : [],
-      slides: Array.isArray(d.slides) ? d.slides : [],
+      slides: primarySlides,
+      presentations: validPresentations,
       externalLinks: Array.isArray(d.externalLinks) ? d.externalLinks : [],
       landingConfig: d.landingConfig || {},
       projectRoadmap: Array.isArray(d.projectRoadmap) ? d.projectRoadmap : [],
@@ -7097,6 +7583,7 @@ collectCurrentStepInputs() {
       govdata: (() => {
         const g = { ...d };
         delete g.slides;
+        delete g.presentations;
         delete g.resources;
         delete g.visualAssets;
         return JSON.parse(JSON.stringify(g));
@@ -7126,6 +7613,9 @@ collectCurrentStepInputs() {
       if ((!record.slides || record.slides.length === 0) && Array.isArray(prev.slides) && prev.slides.length > 0) {
         record.slides = prev.slides;
         if (record.govdata) record.govdata.slides = prev.slides;
+      }
+      if ((!record.presentations || record.presentations.length === 0) && Array.isArray(prev.presentations) && prev.presentations.length > 0) {
+        record.presentations = prev.presentations;
       }
       if ((!record.resources || record.resources.length === 0) && Array.isArray(prev.resources) && prev.resources.length > 0) {
         record.resources = prev.resources;

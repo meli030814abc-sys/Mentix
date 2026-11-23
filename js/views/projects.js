@@ -7076,11 +7076,12 @@ window.ProjectsView = {
     const rawSlides = (Array.isArray(selected?.slides) && selected.slides.length > 0)
       ? selected.slides
       : (Array.isArray(gp.slides) ? gp.slides : []);
-    const userSlides = rawSlides.filter(s => {
+    const filterValidSlides = (arr) => (Array.isArray(arr) ? arr : []).filter(s => {
       if (!s) return false;
       if (s.id === 's1' && String(s.title || '').includes('Arquitectura Gobernanza')) return false;
       return true;
     });
+    const userSlides = filterValidSlides(rawSlides);
 
     const mainCover = selected?.heroBanner || selected?.designConfig?.bannerUrl || selected?.mainImage || gp.mainImage || selected?.banner || '';
     const isPresProject = (selected?.projectType === 'presentation' || selected?.type === 'presentation' || selected?.isPresentation || selected?.category === 'presentacion');
@@ -7092,6 +7093,25 @@ window.ProjectsView = {
         subtitle: selected?.subtitle || 'Mentix Innovation',
         bgImage: mainCover || ''
       });
+    }
+
+    const rawPresArr = (Array.isArray(selected?.presentations) && selected.presentations.length > 0)
+      ? selected.presentations
+      : (Array.isArray(gp.presentations) ? gp.presentations : []);
+    let projectPresentations = rawPresArr
+      .map((dk, idx) => ({
+        id: dk?.id || ('pres_' + (idx + 1)),
+        title: dk?.title || (selectedTitle ? `Presentación ${idx + 1}: ${selectedTitle}` : `Presentación ${idx + 1}`),
+        slides: filterValidSlides(dk?.slides)
+      }))
+      .filter(dk => dk.slides.length > 0);
+
+    if (projectPresentations.length === 0 && userSlides.length > 0) {
+      projectPresentations = [{
+        id: 'pres_1',
+        title: selectedTitle ? `Presentación: ${selectedTitle}` : (userSlides[0]?.title || 'Presentación Interactiva'),
+        slides: userSlides
+      }];
     }
 
     // Colección segura en memoria para abrir imágenes en Lightbox por índice (evita strings gigantes inline en onclick)
@@ -7108,37 +7128,42 @@ window.ProjectsView = {
     let cardsHtml = '';
     let totalCardsCount = 0;
 
-    // 0. Tarjeta de Presentación Real (solo si el usuario subió o creó láminas en Mentix)
-    if (userSlides.length > 0) {
+    // 0. Tarjetas de Presentación Real (soporta 1, 2 o más presentaciones independientes en el proyecto)
+    projectPresentations.forEach((deck, deckIdx) => {
+      const deckSlides = deck.slides || [];
+      if (deckSlides.length === 0) return;
       totalCardsCount++;
-      const sTitle = selectedTitle ? `Presentación: ${selectedTitle}` : (userSlides[0]?.title || 'Presentación Interactiva');
+      const sTitle = deck.title || (selectedTitle ? `Presentación ${deckIdx + 1}: ${selectedTitle}` : `Presentación ${deckIdx + 1}`);
       const customPresCover = selected?.presentationCoverUrl || gp.presentationCoverUrl || '';
-      const sThumb = customPresCover || userSlides[0]?.bgImage || userSlides[0]?.media || userSlides[0]?.imageUrl || mainCover || this.getSmartResourceCover({ title: sTitle, type: 'ppt' }, 'pres', 0);
-      const slideNames = userSlides.map((s, i) => s.title || `Lámina ${i + 1}`).join(', ');
-      const sDesc = this.truncateCardText(`Incluye ${userSlides.length} ${userSlides.length === 1 ? 'lámina' : 'láminas'}: ${slideNames}`, 120);
+      const sThumb = (deckIdx === 0 && customPresCover) || deckSlides[0]?.bgImage || deckSlides[0]?.media || deckSlides[0]?.imageUrl || mainCover || this.getSmartResourceCover({ title: sTitle, type: 'ppt' }, 'pres', deckIdx);
+      const slideNames = deckSlides.map((s, i) => s.title || `Lámina ${i + 1}`).join(', ');
+      const sDesc = this.truncateCardText(`Incluye ${deckSlides.length} ${deckSlides.length === 1 ? 'lámina' : 'láminas'}: ${slideNames}`, 120);
       const sSearch = (sTitle + ' ' + slideNames + ' presentacion diapositivas mentix').toLowerCase();
+      const tagLabel = projectPresentations.length > 1
+        ? `📊 Presentación ${deckIdx + 1} (${deckSlides.length})`
+        : `📊 Presentación (${deckSlides.length})`;
 
       cardsHtml += `
         <article class="inno-resource-card" data-category="pres" data-plp-search="${this.escapeHtml(sSearch)}">
-          <div class="inno-card-thumb-wrap" style="background-image:url('${this.escapeHtml(sThumb)}'); background-size:cover; background-position:center; cursor:pointer;" onclick="window.ProjectsView.openLandingSlidesModal(0)">
-            <span class="inno-card-tag" style="background:#7c3aed;">📊 Presentación (${userSlides.length})</span>
+          <div class="inno-card-thumb-wrap" style="background-image:url('${this.escapeHtml(sThumb)}'); background-size:cover; background-position:center; cursor:pointer;" onclick="window.ProjectsView.openLandingSlidesModal(0, ${deckIdx})">
+            <span class="inno-card-tag" style="background:#7c3aed;">${tagLabel}</span>
           </div>
           <div class="inno-card-body">
             <div>
               <h4 class="inno-card-title">${this.escapeHtml(sTitle)}</h4>
               <p class="inno-card-desc">${this.escapeHtml(sDesc)}</p>
-              <span class="inno-why-card-link" style="margin-top:0.5rem; cursor:pointer;" onclick="window.ProjectsView.openLandingSlidesModal(0)">Saber más →</span>
+              <span class="inno-why-card-link" style="margin-top:0.5rem; cursor:pointer;" onclick="window.ProjectsView.openLandingSlidesModal(0, ${deckIdx})">Saber más →</span>
             </div>
             <div class="inno-card-footer">
-              <span>📽️ ${userSlides.length} ${userSlides.length === 1 ? 'lámina' : 'láminas'}</span>
-              <button type="button" class="inno-card-action-btn inno-res-btn-action" onclick="window.ProjectsView.openLandingSlidesModal(0)" title="Abrir presentación">
+              <span>📽️ ${deckSlides.length} ${deckSlides.length === 1 ? 'lámina' : 'láminas'}</span>
+              <button type="button" class="inno-card-action-btn inno-res-btn-action" onclick="window.ProjectsView.openLandingSlidesModal(0, ${deckIdx})" title="Abrir presentación">
                 <span>📊</span> Ver presentación
               </button>
             </div>
           </div>
         </article>
       `;
-    }
+    });
 
     // 1. Tarjeta de Video Real (si el usuario lo configuró)
     if (hasVideo) {
@@ -9274,7 +9299,7 @@ Generado por Mentix - Plataforma de Proyectos y Retos
     this.render();
   },
 
-  openLandingSlidesModal(index = 0) {
+  openLandingSlidesModal(index = 0, deckIndex = 0) {
     const lb = this.getOrMountLightbox();
     const modal = lb.modal;
     const body = lb.body;
@@ -9282,26 +9307,50 @@ Generado por Mentix - Plataforma de Proyectos y Retos
 
     let selected = this.getMergedProjectRecord(this.selectedProjectId);
     const gp = (selected && selected.govdata) ? selected.govdata : {};
-    const rawSlides = Array.isArray(selected?.slides) ? selected.slides : (Array.isArray(gp.slides) ? gp.slides : []);
-    const sanitizedSlides = (typeof window.sanitizeProjectSlides === 'function') ? window.sanitizeProjectSlides(rawSlides, selected?.title) : rawSlides;
-    let slides = sanitizedSlides.filter(s => {
-      if (!s) return false;
-      if (s.id === 's1' && String(s.title || '').includes('Arquitectura Gobernanza')) return false;
-      return true;
-    });
+    const filterClean = (arr) => {
+      const sanitized = (typeof window.sanitizeProjectSlides === 'function') ? window.sanitizeProjectSlides(arr || [], selected?.title) : (arr || []);
+      return sanitized.filter(s => {
+        if (!s) return false;
+        if (s.id === 's1' && String(s.title || '').includes('Arquitectura Gobernanza')) return false;
+        return true;
+      });
+    };
 
-    if (slides.length === 0) {
-      slides = [
-        {
-          id: 's_pres_main',
-          title: selected?.title || 'Presentación del Proyecto',
-          content: selected?.description || selected?.shortDescription || 'Información y láminas interactivas del proyecto.',
-          subtitle: selected?.subtitle || 'Mentix Innovation',
-          bgImage: selected?.mainImage || gp?.mainImage || ''
-        }
-      ];
+    const rawPresArr = (Array.isArray(selected?.presentations) && selected.presentations.length > 0)
+      ? selected.presentations
+      : (Array.isArray(gp.presentations) ? gp.presentations : []);
+    let decks = rawPresArr
+      .map((dk, idx) => ({
+        id: dk?.id || ('pres_' + (idx + 1)),
+        title: dk?.title || `Presentación ${idx + 1}`,
+        slides: filterClean(dk?.slides)
+      }))
+      .filter(dk => dk.slides.length > 0);
+
+    if (decks.length === 0) {
+      const rawSlides = Array.isArray(selected?.slides) ? selected.slides : (Array.isArray(gp.slides) ? gp.slides : []);
+      let slides = filterClean(rawSlides);
+      if (slides.length === 0) {
+        slides = [
+          {
+            id: 's_pres_main',
+            title: selected?.title || 'Presentación del Proyecto',
+            content: selected?.description || selected?.shortDescription || 'Información y láminas interactivas del proyecto.',
+            subtitle: selected?.subtitle || 'Mentix Innovation',
+            bgImage: selected?.mainImage || gp?.mainImage || ''
+          }
+        ];
+      }
+      decks = [{
+        id: 'pres_1',
+        title: selected?.title || 'Presentación',
+        slides
+      }];
     }
 
+    const curDeckIdx = Math.max(0, Math.min(decks.length - 1, Number(deckIndex) || 0));
+    const activeDeck = decks[curDeckIdx];
+    const slides = activeDeck.slides;
     const curIdx = Math.max(0, Math.min(slides.length - 1, index));
     const s = slides[curIdx];
     const sImg = s.media || s.imageUrl || s.bgImage || '';
@@ -9319,19 +9368,30 @@ Generado por Mentix - Plataforma de Proyectos y Retos
           ? window.ProjectWizard.renderSlidePreviewInner(s)
           : `<div style="padding:3rem; color:#fff;"><h2>${this.escapeHtml(s.title || '')}</h2><p>${this.escapeHtml(s.content || '')}</p></div>`);
 
+    const decksTabsHtml = decks.length > 1
+      ? `<div style="display:flex; align-items:center; gap:0.4rem; flex-wrap:wrap; margin-left:0.5rem;">
+          ${decks.map((dk, dIdx) => `
+            <button type="button" onclick="window.ProjectsView.openLandingSlidesModal(0, ${dIdx})" style="cursor:pointer; padding:0.25rem 0.7rem; border-radius:999px; font-size:0.78rem; font-weight:800; border:1.5px solid ${dIdx === curDeckIdx ? '#00f5d4' : 'rgba(255,255,255,0.2)'}; background:${dIdx === curDeckIdx ? 'rgba(0,245,212,0.18)' : 'rgba(30,41,59,0.85)'}; color:${dIdx === curDeckIdx ? '#00f5d4' : '#cbd5e1'};">
+              📊 ${this.escapeHtml(dk.title || `Presentación ${dIdx + 1}`)} (${dk.slides.length})
+            </button>
+          `).join('')}
+        </div>`
+      : '';
+
     document.body.style.overflow = 'hidden';
     modal.style.cssText = 'position: fixed !important; inset: 0 !important; width: 100vw !important; height: 100vh !important; margin: 0 !important; padding: 0 !important; background: #040914 !important; z-index: 2147483647 !important; display: flex !important; flex-direction: column !important;';
     body.style.cssText = 'width: 100vw !important; height: 100vh !important; max-width: 100vw !important; max-height: 100vh !important; margin: 0 !important; padding: 0 !important; display: flex !important; flex-direction: column !important; background: #040914 !important;';
 
     body.innerHTML = `
-      <div style="display:flex; justify-content:space-between; align-items:center; height:64px; padding:0 1.75rem; background:rgba(7, 16, 34, 0.96); border-bottom:1px solid rgba(56,189,248,0.25); flex-shrink:0;">
-        <div style="display:flex; align-items:center; gap:0.85rem; color:#f8fafc; font-weight:800; font-size:1.1rem;">
-          <span>📊 ${this.escapeHtml(selected?.title || 'Presentación')}</span>
+      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem; min-height:64px; padding:0.5rem 1.75rem; background:rgba(7, 16, 34, 0.96); border-bottom:1px solid rgba(56,189,248,0.25); flex-shrink:0;">
+        <div style="display:flex; align-items:center; gap:0.75rem; flex-wrap:wrap; color:#f8fafc; font-weight:800; font-size:1.05rem;">
+          <span>📊 ${this.escapeHtml(activeDeck.title || selected?.title || 'Presentación')}</span>
           <span style="font-size:0.85rem; color:#00f5d4; background:rgba(0,245,212,0.15); padding:0.2rem 0.65rem; border-radius:999px;">Lámina ${curIdx + 1} de ${slides.length}</span>
+          ${decksTabsHtml}
         </div>
         <div style="display:flex; align-items:center; gap:0.65rem;">
-          <button type="button" onclick="window.ProjectsView.openLandingSlidesModal(${Math.max(0, curIdx - 1)})" ${curIdx === 0 ? 'disabled style="opacity:0.4; cursor:not-allowed; padding:0.45rem 0.9rem; border-radius:8px; background:#1e293b; color:#fff; border:1px solid rgba(255,255,255,0.2);"' : 'style="cursor:pointer; padding:0.45rem 0.9rem; border-radius:8px; background:#1e293b; color:#fff; border:1px solid rgba(255,255,255,0.2); font-weight:800;"'}>◀ Anterior</button>
-          <button type="button" onclick="window.ProjectsView.openLandingSlidesModal(${Math.min(slides.length - 1, curIdx + 1)})" ${curIdx === slides.length - 1 ? 'disabled style="opacity:0.4; cursor:not-allowed; padding:0.45rem 0.9rem; border-radius:8px; background:#1e293b; color:#fff; border:1px solid rgba(255,255,255,0.2);"' : 'style="cursor:pointer; padding:0.45rem 0.9rem; border-radius:8px; background:#0284c7; color:#fff; border:none; font-weight:800;"'}>Siguiente ▶</button>
+          <button type="button" onclick="window.ProjectsView.openLandingSlidesModal(${Math.max(0, curIdx - 1)}, ${curDeckIdx})" ${curIdx === 0 ? 'disabled style="opacity:0.4; cursor:not-allowed; padding:0.45rem 0.9rem; border-radius:8px; background:#1e293b; color:#fff; border:1px solid rgba(255,255,255,0.2);"' : 'style="cursor:pointer; padding:0.45rem 0.9rem; border-radius:8px; background:#1e293b; color:#fff; border:1px solid rgba(255,255,255,0.2); font-weight:800;"'}>◀ Anterior</button>
+          <button type="button" onclick="window.ProjectsView.openLandingSlidesModal(${Math.min(slides.length - 1, curIdx + 1)}, ${curDeckIdx})" ${curIdx === slides.length - 1 ? 'disabled style="opacity:0.4; cursor:not-allowed; padding:0.45rem 0.9rem; border-radius:8px; background:#1e293b; color:#fff; border:1px solid rgba(255,255,255,0.2);"' : 'style="cursor:pointer; padding:0.45rem 0.9rem; border-radius:8px; background:#0284c7; color:#fff; border:none; font-weight:800;"'}>Siguiente ▶</button>
           <button type="button" onclick="window.ProjectsView.closeLandingLightbox()" style="background:linear-gradient(135deg,#ef4444,#dc2626); border:none; color:#ffffff; padding:0.45rem 1.1rem; border-radius:8px; cursor:pointer; font-weight:800;">✕ Cerrar</button>
         </div>
       </div>

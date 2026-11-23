@@ -809,10 +809,15 @@ window.mergeProjectPreservingImages = function(existing, incoming) {
   if (!existing) return incoming;
   if (!incoming) return existing;
 
+  const isPlaceholderCover = s => typeof s === 'string' && s.includes('photo-1451187580459-43490279c0fa');
   const pickImage = (a, b) => {
     const isGood = s => typeof s === 'string' && s.trim().length > 0;
-    if (isGood(b) && b.startsWith('data:image/')) return b;
-    if (isGood(a) && a.startsWith('data:image/')) return a;
+    const aCustom = isGood(a) && !isPlaceholderCover(a);
+    const bCustom = isGood(b) && !isPlaceholderCover(b);
+    if (bCustom && b.startsWith('data:image/')) return b;
+    if (aCustom && a.startsWith('data:image/')) return a;
+    if (bCustom) return b;
+    if (aCustom) return a;
     if (isGood(b)) return b;
     if (isGood(a)) return a;
     return '';
@@ -821,10 +826,22 @@ window.mergeProjectPreservingImages = function(existing, incoming) {
   const merged = { ...existing, ...incoming };
 
   // 1. Portadas y Banners principales
-  merged.mainImage = pickImage(existing.mainImage, incoming.mainImage);
-  merged.thumbnailImage = pickImage(existing.thumbnailImage, incoming.thumbnailImage);
-  merged.banner = pickImage(existing.banner, incoming.banner) || merged.mainImage;
-  merged.image = pickImage(existing.image, incoming.image) || merged.mainImage;
+  if (incoming._clearedMainImage) {
+    merged.mainImage = '';
+    merged.banner = '';
+    merged.image = '';
+    merged._clearedMainImage = true;
+  } else {
+    merged.mainImage = pickImage(existing.mainImage, incoming.mainImage);
+    merged.banner = pickImage(existing.banner, incoming.banner) || merged.mainImage;
+    merged.image = pickImage(existing.image, incoming.image) || merged.mainImage;
+  }
+  if (incoming._clearedThumbImage) {
+    merged.thumbnailImage = '';
+    merged._clearedThumbImage = true;
+  } else {
+    merged.thumbnailImage = pickImage(existing.thumbnailImage, incoming.thumbnailImage);
+  }
   if (existing.entityLogo || incoming.entityLogo) {
     merged.entityLogo = pickImage(existing.entityLogo, incoming.entityLogo);
   }
@@ -854,17 +871,18 @@ window.mergeProjectPreservingImages = function(existing, incoming) {
     merged.videoConfig.url = incoming.videoConfig?.url || existing.videoConfig?.url || '';
   }
 
-  // 4. Diapositivas: fusionar respetando láminas que tengan imágenes cargadas
-  const exSlides = Array.isArray(existing.slides) ? existing.slides : [];
-  const inSlides = Array.isArray(incoming.slides) ? incoming.slides : [];
-  if (exSlides.length > 0 || inSlides.length > 0) {
-    const targetLen = Math.max(exSlides.length, inSlides.length);
-    const resultSlides = [];
-    for (let i = 0; i < targetLen; i++) {
-      const sA = exSlides[i];
-      const sB = inSlides[i];
+  // 4. Diapositivas y Múltiples Presentaciones: fusionar respetando láminas que tengan imágenes cargadas
+  const mergeSlidesArr = (exArr, inArr) => {
+    const a = Array.isArray(exArr) ? exArr : [];
+    const b = Array.isArray(inArr) ? inArr : [];
+    if (a.length === 0 && b.length === 0) return [];
+    const len = Math.max(a.length, b.length);
+    const out = [];
+    for (let i = 0; i < len; i++) {
+      const sA = a[i];
+      const sB = b[i];
       if (sA && sB) {
-        resultSlides.push({
+        out.push({
           ...sA,
           ...sB,
           media: pickImage(sA.media, sB.media),
@@ -872,10 +890,35 @@ window.mergeProjectPreservingImages = function(existing, incoming) {
           bgImage: pickImage(sA.bgImage, sB.bgImage)
         });
       } else {
-        resultSlides.push(sB || sA);
+        out.push(sB || sA);
       }
     }
-    merged.slides = resultSlides;
+    return out;
+  };
+  const exSlides = Array.isArray(existing.slides) ? existing.slides : [];
+  const inSlides = Array.isArray(incoming.slides) ? incoming.slides : [];
+  if (exSlides.length > 0 || inSlides.length > 0) {
+    merged.slides = mergeSlidesArr(exSlides, inSlides);
+  }
+  const exPres = Array.isArray(existing.presentations) ? existing.presentations : [];
+  const inPres = Array.isArray(incoming.presentations) ? incoming.presentations : [];
+  if (exPres.length > 0 || inPres.length > 0) {
+    const pLen = Math.max(exPres.length, inPres.length);
+    const resPres = [];
+    for (let i = 0; i < pLen; i++) {
+      const pA = exPres[i];
+      const pB = inPres[i];
+      if (pA && pB) {
+        resPres.push({
+          ...pA,
+          ...pB,
+          slides: mergeSlidesArr(pA.slides, pB.slides)
+        });
+      } else {
+        resPres.push(pB || pA);
+      }
+    }
+    merged.presentations = resPres;
   }
 
   // 5. Recursos: fusionar miniaturas y URLs
@@ -964,6 +1007,7 @@ window.compactProjectForStorage = function(proj, stripLargeDataUrls = false) {
   if (clone.govdata && typeof clone.govdata === 'object') {
     const g = { ...clone.govdata };
     delete g.slides;
+    delete g.presentations;
     delete g.resources;
     delete g.visualAssets;
     clone.govdata = g;
@@ -977,14 +1021,24 @@ window.compactProjectForStorage = function(proj, stripLargeDataUrls = false) {
     if (typeof clone.banner === 'string' && clone.banner.startsWith('data:') && clone.banner.length > maxLen) delete clone.banner;
     if (typeof clone.mainImage === 'string' && clone.mainImage.startsWith('data:') && clone.mainImage.length > maxLen) clone.mainImage = '';
     if (typeof clone.thumbnailImage === 'string' && clone.thumbnailImage.startsWith('data:') && clone.thumbnailImage.length > maxLen) clone.thumbnailImage = '';
+    const stripSlideArr = (arr) => arr.map(s => {
+      if (!s || typeof s !== 'object') return s;
+      const sc = { ...s };
+      if (typeof sc.media === 'string' && sc.media.startsWith('data:') && sc.media.length > maxLen) sc.media = '';
+      if (typeof sc.bgImage === 'string' && sc.bgImage.startsWith('data:') && sc.bgImage.length > maxLen) sc.bgImage = '';
+      if (typeof sc.imageUrl === 'string' && sc.imageUrl.startsWith('data:') && sc.imageUrl.length > maxLen) sc.imageUrl = '';
+      return sc;
+    });
     if (Array.isArray(clone.slides)) {
-      clone.slides = clone.slides.map(s => {
-        if (!s || typeof s !== 'object') return s;
-        const sc = { ...s };
-        if (typeof sc.media === 'string' && sc.media.startsWith('data:') && sc.media.length > maxLen) sc.media = '';
-        if (typeof sc.bgImage === 'string' && sc.bgImage.startsWith('data:') && sc.bgImage.length > maxLen) sc.bgImage = '';
-        if (typeof sc.imageUrl === 'string' && sc.imageUrl.startsWith('data:') && sc.imageUrl.length > maxLen) sc.imageUrl = '';
-        return sc;
+      clone.slides = stripSlideArr(clone.slides);
+    }
+    if (Array.isArray(clone.presentations)) {
+      clone.presentations = clone.presentations.map(dk => {
+        if (!dk || typeof dk !== 'object') return dk;
+        return {
+          ...dk,
+          slides: Array.isArray(dk.slides) ? stripSlideArr(dk.slides) : []
+        };
       });
     }
     if (Array.isArray(clone.resources)) {

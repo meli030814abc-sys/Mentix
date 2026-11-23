@@ -2202,9 +2202,12 @@ class AppRouter {
                 ? window.mergeProjectPreservingImages(existing, c)
                 : { ...existing, ...c };
 
-              // Preservar siempre la versión que tenga más diapositivas, recursos, enlaces, imágenes y pasos completados para no perder avances nunca
+              // Preservar siempre la versión que tenga más diapositivas, presentaciones, recursos, enlaces, imágenes y pasos completados para no perder avances nunca
               if (Array.isArray(existing.slides) && (!Array.isArray(c.slides) || existing.slides.length > c.slides.length)) {
                 mergedItem.slides = existing.slides;
+              }
+              if (Array.isArray(existing.presentations) && (!Array.isArray(c.presentations) || existing.presentations.length > c.presentations.length)) {
+                mergedItem.presentations = existing.presentations;
               }
               if (Array.isArray(existing.completedSteps) && (!Array.isArray(c.completedSteps) || existing.completedSteps.length > c.completedSteps.length)) {
                 mergedItem.completedSteps = existing.completedSteps;
@@ -2303,7 +2306,8 @@ class AppRouter {
           (x.hub?.members?.length) || 0,
           (x.heroBanner || x.mainImage || x.banner || '').slice(-40),
           (Array.isArray(x.visualAssets) ? x.visualAssets.length : 0),
-          (Array.isArray(x.slides) ? x.slides.length : 0)
+          (Array.isArray(x.slides) ? x.slides.length : 0),
+          (Array.isArray(x.presentations) ? x.presentations.length : 0)
         ].join(':')).join('|');
         const beforeSig = sigOf(local);
         const afterSig = sigOf(merged);
