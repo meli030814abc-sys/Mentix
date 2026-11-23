@@ -61,5 +61,21 @@
     "lastLoginAt": "2026-11-23T16:22:24.852Z",
     "createdAt": "2026-11-23T16:19:10.999Z",
     "pwd": "a9456d0731114fc33896f4059d406cfb2cb17da950464bf342ebcb9e3006167b"
+  },
+  {
+    "id": "user_1795402834416",
+    "name": "Annie",
+    "username": "Annie",
+    "email": "acanon@ciudadmontesbilingue.edu.com",
+    "avatar": "🦊",
+    "role": "student",
+    "xp": 100,
+    "level": 1,
+    "levelName": "Principiante",
+    "institution": "Comunidad MENTIX",
+    "isBlocked": false,
+    "lastLoginAt": "2026-11-23T16:23:20.888Z",
+    "pwd": "11bd4a89b2fae8cb7a4afa66cfc6b5141b0f9f4acb2ed66b0ab12fdaf9baa78e",
+    "createdAt": "2026-11-23T16:23:20.888Z"
   }
 ]
