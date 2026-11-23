@@ -494,7 +494,7 @@
     "image": "nosequeestudiar.net/site/assets/files/217/medicina-mano-medica.jpg",
     "banner": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
     "createdAt": "2026-10-31T21:52:51.691Z",
-    "updatedAt": "2026-11-23T06:03:00.910Z",
+    "updatedAt": "2026-11-23T06:03:14.410Z",
     "govdata": {
       "id": "proj_pres_1791658288964",
       "title": "Personajes de Disney",
@@ -595,7 +595,7 @@
         "collaborators": ""
       },
       "createdAt": "2026-10-31T21:52:51.691Z",
-      "updatedAt": "2026-11-23T06:03:00.927Z",
+      "updatedAt": "2026-11-23T06:03:14.415Z",
       "progress": 95,
       "calculatedProgress": 95,
       "description": "Describe una cantidad enorme de caracteres o personajes",
@@ -771,7 +771,7 @@
     "rejectionReason": "Desautorizado por el Administrador (oculto al público).",
     "stage": "completed",
     "accessMode": "private",
-    "rejectedAt": "2026-11-23T06:03:00.927Z",
+    "rejectedAt": "2026-11-23T06:03:14.415Z",
     "visibility": "private",
     "tag": "✔ Completado",
     "tagClass": "badge-completed",
@@ -1335,7 +1335,7 @@
         }
       ],
       "projectId": "proj_pres_1791658288964",
-      "updatedAt": 1795405258283
+      "updatedAt": 1795405200685
     },
     "heroBanner": "assets/projects_ui/disney_hero_banner.png",
     "ratings": [
