@@ -1235,14 +1235,14 @@
     "benefits": "hfhkjl",
     "teamLead": "Melisa",
     "preparationStatus": "idea",
-    "publicationStatus": "completed",
+    "publicationStatus": "pending_approval",
     "approvalStatus": "pending",
     "submittedForApproval": true,
     "status": "completed",
     "isPublic": false,
     "startDate": "2026-11-23",
     "endDate": "2026-11-11",
-    "currentStep": 15,
+    "currentStep": 16,
     "completedSteps": [
       1,
       2,
@@ -1684,7 +1684,7 @@
         "displayOrder": 1,
         "featuredVideoPublic": true
       },
-      "publicationStatus": "completed",
+      "publicationStatus": "pending_approval",
       "completedSteps": [
         1,
         2,
@@ -1703,7 +1703,7 @@
         15,
         16
       ],
-      "currentStep": 15,
+      "currentStep": 16,
       "author": "Melisa",
       "authorId": "user_1792184134006",
       "ownerId": "user_1792184134006",
@@ -1730,13 +1730,14 @@
         "collaborators": "hdfud"
       },
       "createdAt": "2026-11-23T03:09:16.957Z",
-      "updatedAt": "2026-11-23T21:10:13.202Z",
+      "updatedAt": "2026-11-23T21:10:15.331Z",
       "progress": 100,
       "calculatedProgress": 100,
       "heroBanner": "https://static.vecteezy.com/system/resources/thumbnails/060/843/811/small/close-up-of-raindrops-on-leaves-hd-background-luxury-hd-wallpaper-image-trendy-background-illustration-free-photo.jpg",
       "banner": "https://static.vecteezy.com/system/resources/thumbnails/060/843/811/small/close-up-of-raindrops-on-leaves-hd-background-luxury-hd-wallpaper-image-trendy-background-illustration-free-photo.jpg",
       "image": "https://static.vecteezy.com/system/resources/thumbnails/060/843/811/small/close-up-of-raindrops-on-leaves-hd-background-luxury-hd-wallpaper-image-trendy-background-illustration-free-photo.jpg",
-      "coverImage": "https://static.vecteezy.com/system/resources/thumbnails/060/843/811/small/close-up-of-raindrops-on-leaves-hd-background-luxury-hd-wallpaper-image-trendy-background-illustration-free-photo.jpg"
+      "coverImage": "https://static.vecteezy.com/system/resources/thumbnails/060/843/811/small/close-up-of-raindrops-on-leaves-hd-background-luxury-hd-wallpaper-image-trendy-background-illustration-free-photo.jpg",
+      "submittedForApproval": true
     },
     "author": "Melisa",
     "authorId": "user_1792184134006",
@@ -1748,7 +1749,7 @@
     "authorAvatar": "🐯",
     "authorRole": "Líder del Proyecto",
     "createdAt": "2026-11-23T03:09:16.957Z",
-    "updatedAt": "2026-11-23T21:10:13.536Z",
+    "updatedAt": "2026-11-23T21:10:17.911Z",
     "image": "https://static.vecteezy.com/system/resources/thumbnails/060/843/811/small/close-up-of-raindrops-on-leaves-hd-background-luxury-hd-wallpaper-image-trendy-background-illustration-free-photo.jpg",
     "rejectionReason": "Desautorizado por el Administrador (oculto al público).",
     "tag": "✔ Completado",
