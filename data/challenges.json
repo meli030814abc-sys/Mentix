@@ -107,17 +107,26 @@
       {
         "title": "Proyecto: Marino",
         "content": "Presentación oficial del proyecto educativo.\nEnfoque: Gobierno de Datos e IA\nLema: Innovación, investigación y soluciones prácticas aplicadas a marino.",
-        "notes": "Introducción al tema de marino y presentación del equipo de trabajo."
+        "notes": "Introducción al tema de marino y presentación del equipo de trabajo.",
+        "media": "",
+        "imageUrl": "",
+        "bgImage": ""
       },
       {
         "title": "El Reto y la Oportunidad",
         "content": "¿Por qué es crucial investigar sobre Marino?\n\nProblema identificado: Falta de herramientas accesibles, metodologías prácticas y conciencia comunitaria para abordar con éxito los retos de marino.\n\nObjetivo: Diseñar e implementar una propuesta innovadora y funcional que promueva el conocimiento y aporte soluciones prácticas a marino.",
-        "notes": "Explicación del contexto y motivación del proyecto."
+        "notes": "Explicación del contexto y motivación del proyecto.",
+        "media": "",
+        "imageUrl": "",
+        "bgImage": ""
       },
       {
         "title": "Nuestra Propuesta de Solución",
         "content": "Cómo abordamos Marino:\n• Investigación contextualizada.\n• Desarrollo de prototipos funcionales.\n• Divulgación abierta a la comunidad educativa.",
-        "notes": "Detalles técnicos y metodológicos de la propuesta."
+        "notes": "Detalles técnicos y metodológicos de la propuesta.",
+        "media": "",
+        "imageUrl": "",
+        "bgImage": ""
       }
     ],
     "externalLinks": [],
@@ -172,7 +181,8 @@
       "titleColor": "#ffffff",
       "textColor": "#cbd5e1",
       "accentColor": "#00f5d4",
-      "bannerStyle": "gradient-cosmos"
+      "bannerStyle": "gradient-cosmos",
+      "bannerUrl": ""
     },
     "authorsConfig": {
       "authorsList": "Carlos Canon",
@@ -316,7 +326,7 @@
         "authorsInstitution": "Colegio Mentix"
       },
       "createdAt": "2026-11-23T03:21:39.599Z",
-      "updatedAt": "2026-11-23T03:25:17.280Z",
+      "updatedAt": "2026-11-23T03:25:30.167Z",
       "progress": 90,
       "calculatedProgress": 90
     },
@@ -330,7 +340,7 @@
     "authorAvatar": "👨‍🏫",
     "authorRole": "admin",
     "createdAt": "2026-11-23T03:21:39.599Z",
-    "updatedAt": "2026-11-23T03:25:18.303Z",
+    "updatedAt": "2026-11-23T03:25:30.207Z",
     "image": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
     "tag": "⏳ Pendiente de Autorización",
     "tagClass": "badge-review",
@@ -347,7 +357,16 @@
       "views": [],
       "ratings": []
     },
-    "rejectionReason": ""
+    "rejectionReason": "",
+    "members": [
+      {
+        "name": "Carlos Canon",
+        "email": "vivianacastanedam@gmail.com",
+        "role": "owner",
+        "leader": true
+      }
+    ],
+    "joinRequests": []
   },
   {
     "id": "govdata_code_mentilona_804263",
