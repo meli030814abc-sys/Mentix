@@ -2124,8 +2124,13 @@ window.AdminView = {
     const studentRetentionPct = 94.8;
     const excellenceApprovalPct = 91.2;
 
-    // Helper SVG para Anillo Circular Radial (%)
-    const renderCircularGauge = (pct, color1, color2, label, subtext, icon, pillText, gradKey) => {
+    // Helper para íconos 3D reales (Microsoft Fluent 3D) en todo el módulo Reportes
+    const F3D = 'https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets';
+    const rIco = (path, alt = '', size = 20, cls = 'rv3d-ico') =>
+      `<img src="${F3D}/${path}" alt="${alt}" width="${size}" height="${size}" class="${cls}" loading="lazy" decoding="async" />`;
+
+    // Helper SVG para Anillo Circular Radial (%) 3D
+    const renderCircularGauge = (pct, color1, color2, label, subtext, iconPath, pillText, gradKey, themeCls) => {
       const radius = 42;
       const circumference = 2 * Math.PI * radius; // ~263.89
       const arcLen = (Math.min(100, Math.max(0, pct)) / 100) * circumference;
@@ -2133,41 +2138,41 @@ window.AdminView = {
       const gradId = `gGrad_${gradKey}`;
 
       return `
-        <div class="round-gauge-card">
-          <div class="gauge-top-header">
-            <span class="gauge-icon-badge">${icon}</span>
-            <span class="gauge-pill" style="color: ${color1}; border-color: ${color1};">${pillText}</span>
+        <div class="rep3d-gauge-card ${themeCls}">
+          <div class="rep3d-gauge-top">
+            <span class="rep3d-gauge-medallion">${rIco(iconPath, label, 34, 'rv3d-ico')}</span>
+            <span class="rep3d-gauge-pill" style="color: ${color2}; border-color: ${color1};">${pillText}</span>
           </div>
 
-          <div class="gauge-svg-wrapper">
-            <svg viewBox="0 0 110 110" width="125" height="125" class="round-gauge-svg" style="display:block; margin:0 auto; overflow:visible;">
+          <div class="rep3d-gauge-svg-wrap">
+            <svg viewBox="0 0 110 110" width="128" height="128" class="round-gauge-svg" style="display:block; margin:0 auto; overflow:visible;">
               <defs>
                 <linearGradient id="${gradId}" x1="0%" y1="0%" x2="100%" y2="100%">
                   <stop offset="0%" stop-color="${color1}" />
                   <stop offset="100%" stop-color="${color2}" />
                 </linearGradient>
+                <filter id="gSh_${gradKey}" x="-20%" y="-20%" width="140%" height="140%">
+                  <feDropShadow dx="0" dy="4" stdDeviation="3.5" flood-color="${color2}" flood-opacity="0.35"/>
+                </filter>
               </defs>
-              <!-- Anillo de fondo -->
-              <circle cx="55" cy="55" r="${radius}" fill="none" stroke="rgba(255,255,255,0.09)" stroke-width="9" />
-              <!-- Anillo de progreso circular con fallback -->
-              <circle cx="55" cy="55" r="${radius}" fill="none" stroke="${color1}" stroke="url(#${gradId})" stroke-width="9"
+              <circle cx="55" cy="55" r="${radius}" fill="none" stroke="rgba(148,163,184,0.22)" stroke-width="10" />
+              <circle cx="55" cy="55" r="${radius}" fill="none" stroke="url(#${gradId})" stroke-width="10"
                 stroke-dasharray="${circumference}" stroke-dashoffset="${strokeDashoffset}"
-                stroke-linecap="round" transform="rotate(-90 55 55)" class="round-gauge-arc" />
-              <!-- Texto de Porcentaje Central -->
-              <text x="55" y="52" text-anchor="middle" font-size="20" font-weight="900" fill="#ffffff" class="gauge-pct-text">${pct}%</text>
-              <text x="55" y="68" text-anchor="middle" font-size="8.5" font-weight="800" fill="${color1}" letter-spacing="0.05em">COMPLETADO</text>
+                stroke-linecap="round" transform="rotate(-90 55 55)" filter="url(#gSh_${gradKey})" class="round-gauge-arc" />
+              <text x="55" y="53" text-anchor="middle" font-size="21" font-weight="900" class="rep3d-pct-num">${pct}%</text>
+              <text x="55" y="68" text-anchor="middle" font-size="8.2" font-weight="800" fill="${color2}" letter-spacing="0.06em">COMPLETADO</text>
             </svg>
           </div>
 
-          <div class="gauge-info">
-            <h4 class="gauge-title">${label}</h4>
-            <p class="gauge-subtext">${subtext}</p>
+          <div class="rep3d-gauge-info">
+            <h4>${label}</h4>
+            <p>${subtext}</p>
           </div>
         </div>
       `;
     };
 
-    // Helper SVG para Donut Multicapa (%)
+    // Helper SVG para Donut Multicapa (%) 3D
     const renderMultiSegmentDonut = (items, centerLabel, centerSub) => {
       const radius = 58;
       const circumference = 2 * Math.PI * radius; // ~364.42
@@ -2181,7 +2186,7 @@ window.AdminView = {
         accumulatedPct += item.pct;
 
         return `
-          <circle cx="85" cy="85" r="${radius}" fill="none" stroke="${item.color}" stroke-width="17"
+          <circle cx="85" cy="85" r="${radius}" fill="none" stroke="${item.color}" stroke-width="18"
             stroke-dasharray="${strokeDasharray}" stroke-dashoffset="${strokeDashoffset}"
             stroke-linecap="butt" transform="rotate(-90 85 85)" class="round-donut-slice">
             <title>${item.label}: ${item.pct}% (${item.count} proyectos)</title>
@@ -2190,27 +2195,26 @@ window.AdminView = {
       }).join('');
 
       return `
-        <div class="round-donut-block">
-          <div class="donut-svg-holder">
-            <svg viewBox="0 0 170 170" width="170" height="170" class="round-donut-svg" style="display:block; overflow:visible;">
-              <circle cx="85" cy="85" r="${radius}" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="17" />
+        <div class="rep3d-donut-block">
+          <div class="rep3d-donut-holder">
+            <svg viewBox="0 0 170 170" width="174" height="174" class="round-donut-svg" style="display:block; overflow:visible;">
+              <circle cx="85" cy="85" r="${radius}" fill="none" stroke="rgba(148,163,184,0.18)" stroke-width="18" />
               ${slices}
-              <!-- Círculo interior y texto central -->
-              <circle cx="85" cy="85" r="44" fill="#040b17" stroke="rgba(255,255,255,0.08)" stroke-width="1.5" />
-              <text x="85" y="80" text-anchor="middle" font-size="19" font-weight="900" fill="#ffffff">${centerLabel}</text>
-              <text x="85" y="96" text-anchor="middle" font-size="9" font-weight="700" fill="#94a3b8" letter-spacing="0.04em">${centerSub}</text>
+              <circle cx="85" cy="85" r="44" class="rep3d-donut-core" stroke-width="2" />
+              <text x="85" y="81" text-anchor="middle" font-size="20" font-weight="900" class="rep3d-donut-center-val">${centerLabel}</text>
+              <text x="85" y="97" text-anchor="middle" font-size="9" font-weight="800" class="rep3d-donut-center-sub" letter-spacing="0.05em">${centerSub}</text>
             </svg>
           </div>
 
-          <div class="donut-legend-list">
+          <div class="rep3d-donut-legend">
             ${items.map(item => `
-              <div class="donut-legend-item">
-                <div class="legend-color-dot" style="background: ${item.color}; box-shadow: 0 0 10px ${item.color};"></div>
-                <div class="legend-text-col">
-                  <span class="legend-name">${item.label}</span>
-                  <span class="legend-count">${item.count} proyectos registrados</span>
+              <div class="rep3d-legend-item">
+                <div class="rep3d-legend-dot" style="background: ${item.color}; box-shadow: 0 3px 8px ${item.color}66;"></div>
+                <div class="rep3d-legend-text">
+                  <span class="name">${item.label}</span>
+                  <span class="count">${item.count} proyectos registrados</span>
                 </div>
-                <span class="legend-pct-badge" style="border-color: ${item.color}; color: ${item.color}; background: rgba(255,255,255,0.03);">
+                <span class="rep3d-legend-pct" style="border-color: ${item.color}; color: ${item.color};">
                   ${item.pct}%
                 </span>
               </div>
@@ -2222,40 +2226,39 @@ window.AdminView = {
 
     // Datos para Donut de Fases
     const phaseDonutItems = [
-      { label: 'Fase 1: Planteamiento del Problema', pct: p1Pct, count: phase1Count, color: '#00f5d4' },
-      { label: 'Fase 2: Investigación & Métodos', pct: p2Pct, count: phase2Count, color: '#38bdf8' },
-      { label: 'Fase 3: Prototipado & Validación', pct: p3Pct, count: phase3Count, color: '#a855f7' },
+      { label: 'Fase 1: Planteamiento del Problema', pct: p1Pct, count: phase1Count, color: '#06b6d4' },
+      { label: 'Fase 2: Investigación & Métodos', pct: p2Pct, count: phase2Count, color: '#3b82f6' },
+      { label: 'Fase 3: Prototipado & Validación', pct: p3Pct, count: phase3Count, color: '#8b5cf6' },
       { label: 'Fase 4: Entrega Multimedia & Evaluación', pct: p4Pct, count: phase4Count, color: '#10b981' }
     ];
 
     // Datos para Donut de Categorías Temáticas
     const categoryDonutItems = [
-      { label: 'Tecnología & Inteligencia Artificial', pct: 38, count: Math.round(totalProj * 0.38), color: '#00f5d4' },
-      { label: 'Sostenibilidad & Medio Ambiente', pct: 28, count: Math.round(totalProj * 0.28), color: '#38bdf8' },
+      { label: 'Tecnología & Inteligencia Artificial', pct: 38, count: Math.round(totalProj * 0.38), color: '#06b6d4' },
+      { label: 'Sostenibilidad & Medio Ambiente', pct: 28, count: Math.round(totalProj * 0.28), color: '#3b82f6' },
       { label: 'Ciencias & Salud Comunitaria', pct: 20, count: Math.round(totalProj * 0.20), color: '#ec4899' },
       { label: 'Innovación Social & Humanidades', pct: 14, count: Math.max(1, totalProj - Math.round(totalProj * 0.38) - Math.round(totalProj * 0.28) - Math.round(totalProj * 0.20)), color: '#f59e0b' }
     ];
 
-    // Gráficas Redondas Semanales (%)
+    // Gráficas Redondas Semanales (%) 3D
     const weeklyCircles = stats.weeks.map((w, idx) => {
       const radius = 34;
       const circ = 2 * Math.PI * radius; // ~213.63
       const arc = (Math.min(100, Math.max(0, w.completionRate)) / 100) * circ;
       const offset = circ - arc;
 
-      // Color dinámico según porcentaje con gradiente local
-      const color1 = w.completionRate >= 80 ? '#34d399' : (w.completionRate >= 50 ? '#00f5d4' : '#fbbf24');
-      const color2 = w.completionRate >= 80 ? '#059669' : (w.completionRate >= 50 ? '#0284c7' : '#ea580c');
+      const color1 = w.completionRate >= 80 ? '#34d399' : (w.completionRate >= 50 ? '#06b6d4' : '#fbbf24');
+      const color2 = w.completionRate >= 80 ? '#059669' : (w.completionRate >= 50 ? '#0284c7' : '#d97706');
       const dialGradId = `dialGrad_${idx}`;
 
       return `
-        <div class="weekly-round-dial-card ${w.isCurrent ? 'active-week-dial' : ''}">
-          <div class="dial-header">
-            <span class="dial-week-title">${w.shortLabel}</span>
-            ${w.isCurrent ? '<span class="dial-badge-current">Esta Semana</span>' : `<span class="dial-badge-dates">${w.dateRange.split('-')[0].trim()}</span>`}
+        <div class="rep3d-dial-card ${w.isCurrent ? 'is-current' : ''}">
+          <div class="rep3d-dial-head">
+            <span class="rep3d-dial-week">${w.shortLabel}</span>
+            ${w.isCurrent ? '<span class="rep3d-dial-badge-cur">Esta Semana</span>' : `<span class="rep3d-dial-date">${w.dateRange.split('-')[0].trim()}</span>`}
           </div>
 
-          <div class="dial-svg-box">
+          <div class="rep3d-dial-svg">
             <svg viewBox="0 0 90 90" width="90" height="90" class="dial-mini-svg" style="display:block; margin:0 auto; overflow:visible;">
               <defs>
                 <linearGradient id="${dialGradId}" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -2263,202 +2266,236 @@ window.AdminView = {
                   <stop offset="100%" stop-color="${color2}" />
                 </linearGradient>
               </defs>
-              <circle cx="45" cy="45" r="${radius}" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="7.5" />
-              <circle cx="45" cy="45" r="${radius}" fill="none" stroke="${color1}" stroke="url(#${dialGradId})" stroke-width="7.5"
+              <circle cx="45" cy="45" r="${radius}" fill="none" stroke="rgba(148,163,184,0.22)" stroke-width="8" />
+              <circle cx="45" cy="45" r="${radius}" fill="none" stroke="url(#${dialGradId})" stroke-width="8"
                 stroke-dasharray="${circ}" stroke-dashoffset="${offset}"
                 stroke-linecap="round" transform="rotate(-90 45 45)" class="dial-progress-arc" />
-              <!-- Porcentaje redondo en el centro -->
-              <text x="45" y="49" text-anchor="middle" font-size="16" font-weight="900" fill="#ffffff">${w.completionRate}%</text>
-              <text x="45" y="62" text-anchor="middle" font-size="7.5" font-weight="800" fill="${color1}">AVANCE</text>
+              <text x="45" y="48" text-anchor="middle" font-size="16" font-weight="900" class="rep3d-pct-num">${w.completionRate}%</text>
+              <text x="45" y="61" text-anchor="middle" font-size="7.5" font-weight="800" fill="${color2}">AVANCE</text>
             </svg>
           </div>
 
-          <div class="dial-footer">
-            <span class="dial-count"><strong>${w.completedCount}</strong> de ${w.newCount} listos</span>
-            <span class="dial-cat-tag">${w.topCategory}</span>
+          <div class="rep3d-dial-foot">
+            <span class="rep3d-dial-count"><strong>${w.completedCount}</strong> de ${w.newCount} listos</span>
+            <span class="rep3d-dial-cat">${w.topCategory}</span>
           </div>
         </div>
       `;
     }).join('');
 
     return `
-      <!-- Breadcrumbs -->
-      <div class="admin-breadcrumbs">
-        <span>Inicio</span>
-        <span class="sep">/</span>
-        <span class="active">Centro de Reportes & Analítica Circular</span>
-      </div>
-
-      <!-- Header Principal con Filtro y Acciones -->
-      <div class="admin-section-header weekly-reports-header">
-        <div>
-          <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.35rem; flex-wrap: wrap;">
-            <h2 style="margin: 0;">📊 Reportes Circulares & Rendimiento en Porcentajes (%)</h2>
-            <span class="badge-tag live-reports-pulse-badge" style="background: rgba(0, 245, 212, 0.15); border: 1.5px solid #00f5d4; color: #00f5d4; font-weight: 800; font-size: 0.78rem; display: inline-flex; align-items: center; gap: 0.45rem; border-radius: 999px; padding: 0.22rem 0.65rem;">
-              <span style="width: 8px; height: 8px; border-radius: 50%; background: #00f5d4; box-shadow: 0 0 10px #00f5d4; display: inline-block;"></span>
-              ACTUALIZACIÓN EN VIVO
-            </span>
+      <div class="rep3d-shell">
+        <!-- Hero Banner Institucional de Reportes 100% 3D -->
+        <div class="rep3d-hero">
+          <div class="rep3d-hero-left">
+            <div class="roles-v2-breadcrumb">
+              ${rIco('House/3D/house_3d.png', 'Inicio', 18)}
+              <span>Inicio</span>
+              <span class="sep">/</span>
+              <span class="current">Centro de Reportes &amp; Analítica Circular</span>
+            </div>
+            <div class="rep3d-title-row">
+              <h2 class="roles-v2-title">
+                ${rIco('Bar%20chart/3D/bar_chart_3d.png', 'Reportes', 32)}
+                Reportes Circulares &amp; <span class="roles-v2-title-accent">Rendimiento (%)</span>
+              </h2>
+              <span class="rep3d-live-pill">
+                <span class="rep3d-live-dot"></span>
+                ACTUALIZACIÓN EN VIVO
+              </span>
+            </div>
+            <p class="roles-v2-subtitle">
+              Métricas radiales interactivas, tasas porcentuales de cumplimiento y evolución circular sincronizadas en tiempo real con cada proyecto.
+            </p>
+            <div class="roles-v2-accent-bar"></div>
           </div>
-          <p>Métricas radiales interactivas, tasas porcentuales de cumplimiento y evolución circular sincronizadas en tiempo real con cada proyecto.</p>
+
+          <div class="rep3d-hero-visual" aria-hidden="true">
+            <div class="rep3d-hero-stage">
+              <img src="${F3D}/Bar%20chart/3D/bar_chart_3d.png" alt="" class="rep3d-h-chart" />
+              <img src="${F3D}/Trophy/3D/trophy_3d.png" alt="" class="rep3d-h-trophy" />
+              <img src="${F3D}/Rocket/3D/rocket_3d.png" alt="" class="rep3d-h-rocket" />
+              <img src="${F3D}/Bullseye/3D/bullseye_3d.png" alt="" class="rep3d-h-target" />
+              <img src="${F3D}/Chart%20increasing/3D/chart_increasing_3d.png" alt="" class="rep3d-h-trend" />
+            </div>
+          </div>
         </div>
-        <div class="admin-header-actions weekly-header-actions">
-          <div class="weekly-range-control">
-            <span class="range-icon">📅</span>
+
+        <!-- Barra 3D de Controles y Exportación -->
+        <div class="rep3d-toolbar">
+          <div class="rep3d-range-box">
+            ${rIco('Calendar/3D/calendar_3d.png', 'Intervalo', 20)}
             <label for="admin-weekly-range">Intervalo:</label>
-            <select id="admin-weekly-range" class="admin-select-styled" onchange="window.AdminView.changeWeeklyReportRange(this.value)">
+            <select id="admin-weekly-range" class="roles-v2-role-select" onchange="window.AdminView.changeWeeklyReportRange(this.value)">
               <option value="4" ${numWeeks === 4 ? 'selected' : ''}>Últimas 4 Semanas (Mensual)</option>
               <option value="8" ${numWeeks === 8 ? 'selected' : ''}>Últimas 8 Semanas (Recomendado)</option>
               <option value="12" ${numWeeks === 12 ? 'selected' : ''}>Últimas 12 Semanas (Trimestral)</option>
             </select>
           </div>
-          <button class="btn btn-cyan" onclick="window.AdminView.refreshData(false)" title="Forzar sincronización de reportes en tiempo real">
-            <span>🔄</span> Actualizar Reportes
-          </button>
-          <button class="btn btn-outline" onclick="window.print()">
-            <span>🖨️</span> Imprimir Reporte
-          </button>
-          <button class="btn btn-outline" onclick="window.AdminView.exportWeeklyReportsCSV()">
-            <span>📥</span> Exportar CSV Semanal
-          </button>
-        </div>
-      </div>
-
-      <!-- 1. BLOQUE DE 4 GRANDES GRÁFICAS CIRCULARES (%) -->
-      <div class="round-gauges-grid">
-        ${renderCircularGauge(globalCompletionPct, '#34d399', '#059669', 'Tasa Global de Culminación', `${stats.totalCompletedPeriod} de ${stats.totalProjectsPeriod} proyectos terminados con éxito.`, '🏆', 'General', 'emerald')}
-        ${renderCircularGauge(weeklyGoalPct, '#00f5d4', '#0284c7', 'Cumplimiento de Esta Semana', `${stats.currentWeek.completedCount} entregas completadas en ${stats.currentWeek.label}.`, '🚀', 'Esta Semana', 'cyan')}
-        ${renderCircularGauge(studentRetentionPct, '#c084fc', '#7c3aed', 'Retención & Entrega Estudiantil', 'Estudiantes que continúan activos y colaborando sin deserción.', '👥', 'Académico', 'purple')}
-        ${renderCircularGauge(excellenceApprovalPct, '#fbbf24', '#ea580c', 'Aprobación con Excelencia', 'Proyectos con calificaciones sobresalientes en la rúbrica.', '⭐', 'Calidad', 'amber')}
-      </div>
-
-      <!-- 2. ANILLOS CIRCULARES DE PROGRESO POR CADA SEMANA (%) -->
-      <div class="weekly-round-container-card">
-        <div class="round-container-header">
-          <div>
-            <h3>🎡 Evolución Semanal en Anillos de Progreso Porcentual (%)</h3>
-            <p>Porcentaje de finalización y ritmo de entrega alcanzado en cada semana del ciclo académico.</p>
-          </div>
-          <div class="round-legend-pills">
-            <span class="round-pill-indicator indicator-green">● ≥ 80% Sobresaliente</span>
-            <span class="round-pill-indicator indicator-cyan">● 50-79% En Avance</span>
-            <span class="round-pill-indicator indicator-amber">● &lt; 50% En Desarrollo</span>
+          <div class="rep3d-toolbar-btns">
+            <button type="button" class="rep3d-btn rep3d-btn-primary" onclick="window.AdminView.refreshData(false)" title="Forzar sincronización de reportes en tiempo real">
+              ${rIco('Counterclockwise%20arrows%20button/3D/counterclockwise_arrows_button_3d.png', '', 18)}
+              <span>Actualizar Reportes</span>
+            </button>
+            <button type="button" class="rep3d-btn rep3d-btn-light" onclick="window.print()">
+              ${rIco('Printer/3D/printer_3d.png', '', 18)}
+              <span>Imprimir Reporte</span>
+            </button>
+            <button type="button" class="rep3d-btn rep3d-btn-light" onclick="window.AdminView.exportWeeklyReportsCSV()">
+              ${rIco('Inbox%20tray/3D/inbox_tray_3d.png', '', 18)}
+              <span>Exportar CSV Semanal</span>
+            </button>
           </div>
         </div>
 
-        <div class="weekly-round-dials-row">
-          ${weeklyCircles}
+        <!-- 1. BLOQUE DE 4 GRANDES GRÁFICAS CIRCULARES 3D (%) -->
+        <div class="rep3d-gauges-grid">
+          ${renderCircularGauge(globalCompletionPct, '#34d399', '#059669', 'Tasa Global de Culminación', `${stats.totalCompletedPeriod} de ${stats.totalProjectsPeriod} proyectos terminados con éxito.`, 'Trophy/3D/trophy_3d.png', 'General', 'emerald', 'g-green')}
+          ${renderCircularGauge(weeklyGoalPct, '#38bdf8', '#0284c7', 'Cumplimiento de Esta Semana', `${stats.currentWeek.completedCount} entregas completadas en ${stats.currentWeek.label}.`, 'Rocket/3D/rocket_3d.png', 'Esta Semana', 'cyan', 'g-blue')}
+          ${renderCircularGauge(studentRetentionPct, '#c084fc', '#7c3aed', 'Retención & Entrega Estudiantil', 'Estudiantes que continúan activos y colaborando sin deserción.', 'Busts%20in%20silhouette/3D/busts_in_silhouette_3d.png', 'Académico', 'purple', 'g-purple')}
+          ${renderCircularGauge(excellenceApprovalPct, '#fbbf24', '#d97706', 'Aprobación con Excelencia', 'Proyectos con calificaciones sobresalientes en la rúbrica.', 'Star/3D/star_3d.png', 'Calidad', 'amber', 'g-amber')}
         </div>
 
-        <div class="round-container-footer">
-          <span>💡 <strong>Consejo Visual:</strong> Cada anillo representa el porcentaje exacto de proyectos completados durante esa semana específica.</span>
-          <span class="footnote-live-pill">● Datos en vivo del ciclo</span>
-        </div>
-      </div>
-
-      <!-- 3. DOS DONUTS MULTISEGMENTO GIGANTES (%) -->
-      <div class="round-donuts-grid">
-        <!-- Donut 1: Fases Curriculares -->
-        <div class="round-donut-card">
-          <div class="donut-card-title-row">
-            <div>
-              <h4>🔬 Distribución de Retos por Fase (%)</h4>
-              <p>Porcentaje de proyectos transitando cada hito pedagógico.</p>
+        <!-- 2. ANILLOS CIRCULARES 3D DE PROGRESO POR CADA SEMANA (%) -->
+        <div class="roles-v2-panel rep3d-panel">
+          <div class="roles-v2-panel-header">
+            <div class="roles-v2-panel-title-group">
+              <div class="roles-v2-panel-ico ico-purple">${rIco('Bullseye/3D/bullseye_3d.png', '', 28)}</div>
+              <div>
+                <h3>Evolución Semanal en Anillos de Progreso Porcentual (%)</h3>
+                <p>Porcentaje de finalización y ritmo de entrega alcanzado en cada semana del ciclo académico.</p>
+              </div>
             </div>
-            <span class="card-highlight-badge">100% de Proyectos</span>
-          </div>
-          ${renderMultiSegmentDonut(phaseDonutItems, '100%', 'FASES')}
-        </div>
-
-        <!-- Donut 2: Áreas Temáticas -->
-        <div class="round-donut-card">
-          <div class="donut-card-title-row">
-            <div>
-              <h4>🌐 Participación por Área Temática (%)</h4>
-              <p>Porcentaje de interés temático e interdisciplinario.</p>
+            <div class="rep3d-legend-pills">
+              <span class="rv2-pill rv2-yes">● ≥ 80% Sobresaliente</span>
+              <span class="rv2-pill rv2-info">● 50-79% En Avance</span>
+              <span class="rv2-pill rep3d-pill-amber">● &lt; 50% En Desarrollo</span>
             </div>
-            <span class="card-highlight-badge">${stats.totalProjectsPeriod} Proyectos</span>
           </div>
-          ${renderMultiSegmentDonut(categoryDonutItems, `${stats.totalProjectsPeriod}`, 'PROYECTOS')}
-        </div>
-      </div>
 
-      <!-- 4. TABLA DETALLADA CON MINI INDICADORES CIRCULARES (%) -->
-      <div class="weekly-table-card">
-        <div class="weekly-table-header">
-          <div>
-            <h3>📅 Histórico Detallado por Semana (%)</h3>
-            <p>Resumen exhaustivo con medidor circular de porcentaje para cada semana lectiva.</p>
+          <div class="rep3d-dials-row">
+            ${weeklyCircles}
           </div>
-          <button class="btn btn-sm btn-cyan" onclick="window.AdminView.exportWeeklyReportsCSV()">
-            <span>📥</span> Descargar Tabla (CSV)
-          </button>
+
+          <div class="rep3d-panel-footer">
+            <span class="rep3d-tip">${rIco('Light%20bulb/3D/light_bulb_3d.png', 'Consejo', 18)} <strong>Consejo Visual:</strong> Cada anillo representa el porcentaje exacto de proyectos completados durante esa semana específica.</span>
+            <span class="rep3d-live-pill">● Datos en vivo del ciclo</span>
+          </div>
         </div>
 
-        <div class="weekly-table-responsive">
-          <table class="weekly-table">
-            <thead>
-              <tr>
-                <th>Semana</th>
-                <th>Período</th>
-                <th>Registrados</th>
-                <th>Culminados</th>
-                <th>En Progreso</th>
-                <th>Medidor Circular (%)</th>
-                <th>Tendencia</th>
-                <th>Área Principal</th>
-                <th>Acción</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${stats.weeks.map(w => {
-                const circMini = 2 * Math.PI * 14; // ~87.96
-                const arcMini = (Math.min(100, Math.max(0, w.completionRate)) / 100) * circMini;
-                const offsetMini = circMini - arcMini;
-                const strokeMini = w.completionRate >= 80 ? '#10b981' : (w.completionRate >= 50 ? '#00f5d4' : '#f59e0b');
+        <!-- 3. DOS DONUTS MULTISEGMENTO 3D GIGANTES (%) -->
+        <div class="rep3d-donuts-grid">
+          <div class="roles-v2-panel rep3d-panel">
+            <div class="roles-v2-panel-header">
+              <div class="roles-v2-panel-title-group">
+                <div class="roles-v2-panel-ico ico-purple">${rIco('Microscope/3D/microscope_3d.png', '', 28)}</div>
+                <div>
+                  <h3>Distribución de Retos por Fase (%)</h3>
+                  <p>Porcentaje de proyectos transitando cada hito pedagógico.</p>
+                </div>
+              </div>
+              <span class="roles-v2-total-badge">100% de Proyectos</span>
+            </div>
+            ${renderMultiSegmentDonut(phaseDonutItems, '100%', 'FASES')}
+          </div>
 
-                return `
-                  <tr class="${w.isCurrent ? 'row-current-week' : ''}">
-                    <td>
-                      <div class="week-name-cell">
-                        <strong>${w.label}</strong>
-                        ${w.isCurrent ? '<span class="pill-current-indicator">Semana Actual</span>' : ''}
-                      </div>
-                    </td>
-                    <td><span class="date-badge">${w.dateRange}</span></td>
-                    <td><span class="count-bold">${w.newCount}</span></td>
-                    <td><span class="badge-tag tag-emerald">${w.completedCount}</span></td>
-                    <td><span class="badge-tag tag-cyan">${w.inProgressCount}</span></td>
-                    <td>
-                      <div class="table-round-meter">
-                        <svg viewBox="0 0 36 36" class="tbl-round-svg">
-                          <circle cx="18" cy="18" r="14" fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="3.5" />
-                          <circle cx="18" cy="18" r="14" fill="none" stroke="${strokeMini}" stroke-width="3.5"
-                            stroke-dasharray="${circMini}" stroke-dashoffset="${offsetMini}"
-                            stroke-linecap="round" transform="rotate(-90 18 18)" />
-                        </svg>
-                        <strong class="tbl-round-pct-text" style="color: ${strokeMini};">${w.completionRate}%</strong>
-                      </div>
-                    </td>
-                    <td>
-                      ${w.deltaVsPrev > 0 ? `
-                        <span class="trend-pill-sm trend-up">↑ +${w.deltaPct}%</span>
-                      ` : (w.deltaVsPrev < 0 ? `
-                        <span class="trend-pill-sm trend-down">↓ ${w.deltaPct}%</span>
-                      ` : `
-                        <span class="trend-pill-sm trend-neutral">— 0%</span>
-                      `)}
-                    </td>
-                    <td><span class="cat-pill-sm">${w.topCategory}</span></td>
-                    <td>
-                      <button class="btn-tbl-action" onclick="window.AdminView.switchTab('projects')" title="Ver proyectos">
-                        Explorar ↗
-                      </button>
-                    </td>
-                  </tr>
-                `;
-              }).join('')}
-            </tbody>
-          </table>
+          <div class="roles-v2-panel rep3d-panel">
+            <div class="roles-v2-panel-header">
+              <div class="roles-v2-panel-title-group">
+                <div class="roles-v2-panel-ico ico-blue">${rIco('Globe%20showing%20americas/3D/globe_showing_americas_3d.png', '', 28)}</div>
+                <div>
+                  <h3>Participación por Área Temática (%)</h3>
+                  <p>Porcentaje de interés temático e interdisciplinario.</p>
+                </div>
+              </div>
+              <span class="roles-v2-total-badge">${stats.totalProjectsPeriod} Proyectos</span>
+            </div>
+            ${renderMultiSegmentDonut(categoryDonutItems, `${stats.totalProjectsPeriod}`, 'PROYECTOS')}
+          </div>
+        </div>
+
+        <!-- 4. TABLA DETALLADA 3D CON MINI INDICADORES CIRCULARES (%) -->
+        <div class="roles-v2-panel rep3d-panel">
+          <div class="roles-v2-panel-header">
+            <div class="roles-v2-panel-title-group">
+              <div class="roles-v2-panel-ico ico-blue">${rIco('Calendar/3D/calendar_3d.png', '', 28)}</div>
+              <div>
+                <h3>Histórico Detallado por Semana (%)</h3>
+                <p>Resumen exhaustivo con medidor circular de porcentaje para cada semana lectiva.</p>
+              </div>
+            </div>
+            <button type="button" class="rep3d-btn rep3d-btn-primary" onclick="window.AdminView.exportWeeklyReportsCSV()">
+              ${rIco('Inbox%20tray/3D/inbox_tray_3d.png', '', 18)}
+              <span>Descargar Tabla (CSV)</span>
+            </button>
+          </div>
+
+          <div class="roles-v2-table-scroll">
+            <table class="roles-v2-users-table rep3d-history-table">
+              <thead>
+                <tr>
+                  <th>Semana</th>
+                  <th>Período</th>
+                  <th>Registrados</th>
+                  <th>Culminados</th>
+                  <th>En Progreso</th>
+                  <th>Medidor Circular (%)</th>
+                  <th>Tendencia</th>
+                  <th>Área Principal</th>
+                  <th style="text-align: right;">Acción</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${stats.weeks.map(w => {
+                  const circMini = 2 * Math.PI * 14; // ~87.96
+                  const arcMini = (Math.min(100, Math.max(0, w.completionRate)) / 100) * circMini;
+                  const offsetMini = circMini - arcMini;
+                  const strokeMini = w.completionRate >= 80 ? '#10b981' : (w.completionRate >= 50 ? '#0284c7' : '#d97706');
+
+                  return `
+                    <tr class="${w.isCurrent ? 'rep3d-row-current' : ''}">
+                      <td>
+                        <div class="week-name-cell">
+                          <strong>${w.label}</strong>
+                          ${w.isCurrent ? '<span class="rep3d-dial-badge-cur">Semana Actual</span>' : ''}
+                        </div>
+                      </td>
+                      <td><span class="roles-v2-email">${w.dateRange}</span></td>
+                      <td><strong>${w.newCount}</strong></td>
+                      <td><span class="rv2-pill rv2-yes">${w.completedCount}</span></td>
+                      <td><span class="rv2-pill rv2-info">${w.inProgressCount}</span></td>
+                      <td>
+                        <div class="table-round-meter">
+                          <svg viewBox="0 0 36 36" width="34" height="34" class="tbl-round-svg">
+                            <circle cx="18" cy="18" r="14" fill="none" stroke="rgba(148,163,184,0.25)" stroke-width="3.8" />
+                            <circle cx="18" cy="18" r="14" fill="none" stroke="${strokeMini}" stroke-width="3.8"
+                              stroke-dasharray="${circMini}" stroke-dashoffset="${offsetMini}"
+                              stroke-linecap="round" transform="rotate(-90 18 18)" />
+                          </svg>
+                          <strong style="color: ${strokeMini};">${w.completionRate}%</strong>
+                        </div>
+                      </td>
+                      <td>
+                        ${w.deltaVsPrev > 0 ? `
+                          <span class="rv2-pill rv2-yes">${rIco('Chart%20increasing/3D/chart_increasing_3d.png', '', 15)} +${w.deltaPct}%</span>
+                        ` : (w.deltaVsPrev < 0 ? `
+                          <span class="rv2-pill rv2-no">${rIco('Chart%20decreasing/3D/chart_decreasing_3d.png', '', 15)} ${w.deltaPct}%</span>
+                        ` : `
+                          <span class="rv2-pill rep3d-pill-neutral">— 0%</span>
+                        `)}
+                      </td>
+                      <td><span class="rv2-pill rv2-info">${w.topCategory}</span></td>
+                      <td style="text-align: right;">
+                        <button type="button" class="rep3d-btn-sm" onclick="window.AdminView.switchTab('projects')" title="Ver proyectos">
+                          Explorar ↗
+                        </button>
+                      </td>
+                    </tr>
+                  `;
+                }).join('')}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     `;

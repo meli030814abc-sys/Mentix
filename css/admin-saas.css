@@ -5053,3 +5053,570 @@
   align-items: center;
   justify-content: center;
 }
+
+/* ==========================================================================
+   MÓDULO REPORTES — DISEÑO 100% 3D TÁCTIL Y FLUENT 3D (V166)
+   ========================================================================== */
+.rep3d-shell {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  font-family: 'Outfit', 'Inter', system-ui, sans-serif;
+  perspective: 1400px;
+}
+
+.rep3d-hero {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  padding: 1.45rem 1.75rem;
+  border-radius: 24px;
+  background: linear-gradient(125deg, #ffffff 0%, #eff6ff 48%, #ede9fe 100%);
+  border: 2px solid #dbe4ff;
+  box-shadow:
+    0 7px 0 #c7d2fe,
+    0 20px 42px rgba(79, 70, 229, 0.14),
+    inset 0 2px 0 rgba(255, 255, 255, 0.96);
+  overflow: hidden;
+}
+
+.rep3d-hero-left {
+  flex: 1.3;
+  min-width: 0;
+  position: relative;
+  z-index: 2;
+}
+
+.rep3d-title-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.35rem;
+}
+
+.rep3d-title-row .roles-v2-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0;
+}
+
+.rep3d-live-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: #dcfce7;
+  color: #15803d;
+  border: 1.5px solid #86efac;
+  padding: 0.25rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 900;
+  box-shadow: 0 3px 0 #bbf7d0, inset 0 1px 0 #ffffff;
+  white-space: nowrap;
+}
+
+.rep3d-live-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #22c55e;
+  box-shadow: 0 0 8px #22c55e;
+  display: inline-block;
+}
+
+/* Escena Hero 3D de Reportes */
+.rep3d-hero-visual {
+  flex-shrink: 0;
+  position: relative;
+  z-index: 2;
+  animation: rv2Float3D 5s ease-in-out infinite;
+}
+
+.rep3d-hero-stage {
+  position: relative;
+  width: 225px;
+  height: 118px;
+}
+
+.rep3d-hero-stage img {
+  position: absolute;
+  object-fit: contain;
+  pointer-events: none;
+}
+
+.rep3d-h-chart {
+  width: 96px;
+  height: 96px;
+  left: 56px;
+  top: 12px;
+  z-index: 2;
+  filter: drop-shadow(0 12px 16px rgba(59, 130, 246, 0.34));
+}
+
+.rep3d-h-trophy {
+  width: 68px;
+  height: 68px;
+  right: 16px;
+  top: 22px;
+  z-index: 4;
+  transform: rotate(8deg);
+  filter: drop-shadow(0 10px 14px rgba(217, 119, 6, 0.35));
+}
+
+.rep3d-h-rocket {
+  width: 58px;
+  height: 58px;
+  left: 4px;
+  top: 4px;
+  z-index: 4;
+  transform: rotate(-10deg);
+  filter: drop-shadow(0 10px 14px rgba(124, 58, 237, 0.34));
+}
+
+.rep3d-h-target {
+  width: 46px;
+  height: 46px;
+  left: 10px;
+  bottom: 4px;
+  z-index: 3;
+  filter: drop-shadow(0 8px 10px rgba(239, 68, 68, 0.28));
+}
+
+.rep3d-h-trend {
+  width: 42px;
+  height: 42px;
+  right: 2px;
+  top: 0px;
+  z-index: 5;
+  filter: drop-shadow(0 6px 8px rgba(16, 185, 129, 0.32));
+}
+
+/* Barra 3D de filtros y acciones */
+.rep3d-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.9rem;
+  flex-wrap: wrap;
+  padding: 0.85rem 1.2rem;
+  border-radius: 18px;
+  background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+  border: 2px solid #e2e8f0;
+  box-shadow: 0 5px 0 #cbd5e1, 0 12px 24px rgba(15, 23, 42, 0.06), inset 0 2px 0 #ffffff;
+}
+
+.rep3d-range-box {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.84rem;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.rep3d-toolbar-btns {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.rep3d-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.52rem 1.05rem;
+  border-radius: 999px;
+  font-size: 0.82rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: transform 0.14s ease, box-shadow 0.14s ease;
+  white-space: nowrap;
+}
+
+.rep3d-btn-primary {
+  background: linear-gradient(135deg, #2563eb 0%, #6366f1 55%, #7c3aed 100%);
+  color: #ffffff;
+  border: 1.5px solid rgba(255, 255, 255, 0.35);
+  box-shadow: 0 4px 0 #3730a3, 0 10px 20px rgba(79, 70, 229, 0.3), inset 0 1.5px 0 rgba(255, 255, 255, 0.4);
+}
+
+.rep3d-btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 0 #3730a3, 0 14px 26px rgba(79, 70, 229, 0.38); }
+.rep3d-btn-primary:active { transform: translateY(3px); box-shadow: 0 1.5px 0 #3730a3; }
+
+.rep3d-btn-light {
+  background: linear-gradient(180deg, #ffffff 0%, #f1f5f9 100%);
+  color: #1e293b;
+  border: 1.5px solid #cbd5e1;
+  box-shadow: 0 4px 0 #cbd5e1, inset 0 1.5px 0 #ffffff;
+}
+
+.rep3d-btn-light:hover { transform: translateY(-2px); border-color: #93c5fd; color: #1d4ed8; box-shadow: 0 6px 0 #93c5fd; }
+.rep3d-btn-light:active { transform: translateY(3px); box-shadow: 0 1.5px 0 #cbd5e1; }
+
+.rep3d-btn-sm {
+  padding: 0.34rem 0.78rem;
+  border-radius: 999px;
+  border: 1.5px solid #93c5fd;
+  background: linear-gradient(180deg, #eff6ff 0%, #dbeafe 100%);
+  color: #1d4ed8;
+  font-size: 0.75rem;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 3px 0 #93c5fd, inset 0 1px 0 #ffffff;
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+
+.rep3d-btn-sm:hover { transform: translateY(-1px); background: #2563eb; color: #ffffff; border-color: #1d4ed8; box-shadow: 0 4px 0 #1e40af; }
+.rep3d-btn-sm:active { transform: translateY(2px); box-shadow: 0 1px 0 #1e40af; }
+
+/* 4 Grandes Tarjetas Circulares 3D */
+.rep3d-gauges-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1.1rem;
+  perspective: 1400px;
+}
+
+.rep3d-gauge-card {
+  background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+  border-radius: 22px;
+  padding: 1.2rem 1.15rem;
+  border: 2px solid #e2e8f0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.7rem;
+  transform-style: preserve-3d;
+  transition: transform 0.22s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.22s ease;
+}
+
+.rep3d-gauge-card:hover {
+  transform: translateY(-6px) rotateX(3deg) rotateY(-1.5deg);
+}
+
+.rep3d-gauge-card.g-green {
+  background: linear-gradient(180deg, #ffffff 0%, #f0fdf4 100%);
+  border-color: #86efac;
+  box-shadow: 0 7px 0 #4ade80, 0 18px 32px rgba(16, 185, 129, 0.16), inset 0 2px 0 #ffffff;
+}
+.rep3d-gauge-card.g-blue {
+  background: linear-gradient(180deg, #ffffff 0%, #f0f9ff 100%);
+  border-color: #93c5fd;
+  box-shadow: 0 7px 0 #60a5fa, 0 18px 32px rgba(59, 130, 246, 0.16), inset 0 2px 0 #ffffff;
+}
+.rep3d-gauge-card.g-purple {
+  background: linear-gradient(180deg, #ffffff 0%, #faf5ff 100%);
+  border-color: #d8b4fe;
+  box-shadow: 0 7px 0 #c084fc, 0 18px 32px rgba(139, 92, 246, 0.16), inset 0 2px 0 #ffffff;
+}
+.rep3d-gauge-card.g-amber {
+  background: linear-gradient(180deg, #ffffff 0%, #fffbeb 100%);
+  border-color: #fcd34d;
+  box-shadow: 0 7px 0 #fbbf24, 0 18px 32px rgba(245, 158, 11, 0.16), inset 0 2px 0 #ffffff;
+}
+
+.rep3d-gauge-top {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.rep3d-gauge-medallion {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  background: linear-gradient(145deg, #ffffff 0%, #f1f5f9 100%);
+  border: 1.5px solid rgba(255, 255, 255, 0.9);
+  box-shadow: 0 4px 0 rgba(15, 23, 42, 0.08), 0 8px 14px rgba(15, 23, 42, 0.10), inset 0 2px 1px #ffffff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.rep3d-gauge-pill {
+  padding: 0.22rem 0.68rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 900;
+  border: 1.5px solid;
+  background: #ffffff;
+  box-shadow: 0 3px 0 rgba(15, 23, 42, 0.07);
+}
+
+.rep3d-pct-num {
+  fill: #0f172a;
+}
+
+.rep3d-gauge-info h4 {
+  margin: 0 0 0.25rem;
+  font-size: 0.96rem;
+  font-weight: 900;
+  color: #0f172a;
+}
+
+.rep3d-gauge-info p {
+  margin: 0;
+  font-size: 0.76rem;
+  color: #475569;
+  line-height: 1.4;
+}
+
+/* Fila de Anillos Semanales 3D */
+.rep3d-legend-pills {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  flex-wrap: wrap;
+}
+
+.rep3d-pill-amber {
+  background: #fef3c7;
+  color: #b45309;
+}
+
+.rep3d-pill-neutral {
+  background: #f1f5f9;
+  color: #475569;
+}
+
+.rep3d-dials-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(145px, 1fr));
+  gap: 0.9rem;
+  margin-bottom: 1rem;
+}
+
+.rep3d-dial-card {
+  background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+  border: 1.5px solid #e2e8f0;
+  border-radius: 18px;
+  padding: 0.85rem 0.75rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  box-shadow: 0 5px 0 #cbd5e1, 0 10px 18px rgba(15, 23, 42, 0.06), inset 0 1.5px 0 #ffffff;
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.rep3d-dial-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 0 #93c5fd, 0 16px 26px rgba(59, 130, 246, 0.15);
+}
+
+.rep3d-dial-card.is-current {
+  border-color: #6366f1;
+  background: linear-gradient(180deg, #ffffff 0%, #eef2ff 100%);
+  box-shadow: 0 5px 0 #818cf8, 0 12px 24px rgba(99, 102, 241, 0.18), inset 0 1.5px 0 #ffffff;
+}
+
+.rep3d-dial-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.3rem;
+}
+
+.rep3d-dial-week {
+  font-size: 0.8rem;
+  font-weight: 900;
+  color: #0f172a;
+}
+
+.rep3d-dial-date {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #64748b;
+}
+
+.rep3d-dial-badge-cur {
+  background: linear-gradient(135deg, #6366f1, #7c3aed);
+  color: #ffffff;
+  font-size: 0.66rem;
+  font-weight: 800;
+  padding: 0.14rem 0.48rem;
+  border-radius: 999px;
+}
+
+.rep3d-dial-foot {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.rep3d-dial-count {
+  font-size: 0.74rem;
+  color: #334155;
+}
+
+.rep3d-dial-cat {
+  font-size: 0.68rem;
+  font-weight: 800;
+  color: #0369a1;
+  background: #e0f2fe;
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.rep3d-panel-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  padding-top: 0.85rem;
+  border-top: 1px solid #e2e8f0;
+  font-size: 0.8rem;
+  color: #475569;
+}
+
+.rep3d-tip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+/* Dos Donuts 3D */
+.rep3d-donuts-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.15rem;
+}
+
+.rep3d-donut-block {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  flex-wrap: wrap;
+}
+
+.rep3d-donut-holder {
+  flex-shrink: 0;
+  filter: drop-shadow(0 10px 16px rgba(15, 23, 42, 0.12));
+}
+
+.rep3d-donut-core {
+  fill: #ffffff;
+  stroke: #e2e8f0;
+}
+
+.rep3d-donut-center-val { fill: #0f172a; }
+.rep3d-donut-center-sub { fill: #64748b; }
+
+.rep3d-donut-legend {
+  flex: 1;
+  min-width: 210px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.rep3d-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.5rem 0.7rem;
+  border-radius: 12px;
+  background: #f8fafc;
+  border: 1.5px solid #e2e8f0;
+  box-shadow: 0 3px 0 #e2e8f0;
+}
+
+.rep3d-legend-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.rep3d-legend-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.rep3d-legend-text .name {
+  display: block;
+  font-size: 0.79rem;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.rep3d-legend-text .count {
+  display: block;
+  font-size: 0.7rem;
+  color: #64748b;
+  font-weight: 600;
+}
+
+.rep3d-legend-pct {
+  padding: 0.18rem 0.55rem;
+  border-radius: 999px;
+  font-size: 0.74rem;
+  font-weight: 900;
+  border: 1.5px solid;
+  background: #ffffff;
+}
+
+.rep3d-row-current td {
+  background: #eef2ff !important;
+}
+
+/* Modo Oscuro limpio para Reportes 3D */
+.mentix-admin-layout:not(.theme-light) .rep3d-hero {
+  background: linear-gradient(125deg, #0f172a 0%, #1e1b4b 60%, #172554 100%);
+  border-color: rgba(139, 92, 246, 0.35);
+  box-shadow: 0 7px 0 #312e81, 0 22px 44px rgba(0, 0, 0, 0.48), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+.mentix-admin-layout:not(.theme-light) .rep3d-toolbar,
+.mentix-admin-layout:not(.theme-light) .rep3d-dial-card,
+.mentix-admin-layout:not(.theme-light) .rep3d-legend-item {
+  background: #0f172a;
+  border-color: rgba(148, 163, 184, 0.22);
+  box-shadow: 0 5px 0 #020617;
+}
+.mentix-admin-layout:not(.theme-light) .rep3d-gauge-card {
+  background: linear-gradient(180deg, #111c33 0%, #0b1324 100%);
+  box-shadow: 0 7px 0 #020617, 0 18px 34px rgba(0, 0, 0, 0.48);
+}
+.mentix-admin-layout:not(.theme-light) .rep3d-pct-num,
+.mentix-admin-layout:not(.theme-light) .rep3d-donut-center-val { fill: #f8fafc; }
+.mentix-admin-layout:not(.theme-light) .rep3d-donut-core { fill: #0b1324; stroke: rgba(148, 163, 184, 0.25); }
+.mentix-admin-layout:not(.theme-light) .rep3d-gauge-info h4,
+.mentix-admin-layout:not(.theme-light) .rep3d-dial-week,
+.mentix-admin-layout:not(.theme-light) .rep3d-legend-text .name,
+.mentix-admin-layout:not(.theme-light) .rep3d-range-box { color: #f8fafc; }
+.mentix-admin-layout:not(.theme-light) .rep3d-gauge-info p,
+.mentix-admin-layout:not(.theme-light) .rep3d-dial-count,
+.mentix-admin-layout:not(.theme-light) .rep3d-panel-footer { color: #cbd5e1; }
+.mentix-admin-layout:not(.theme-light) .rep3d-btn-light {
+  background: #1e293b;
+  color: #f8fafc;
+  border-color: rgba(148, 163, 184, 0.3);
+  box-shadow: 0 4px 0 #020617;
+}
+.mentix-admin-layout:not(.theme-light) .rep3d-row-current td {
+  background: rgba(99, 102, 241, 0.16) !important;
+}
+
+/* Responsivo Reportes 3D */
+@media (max-width: 1200px) {
+  .rep3d-gauges-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .rep3d-donuts-grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 720px) {
+  .rep3d-gauges-grid { grid-template-columns: 1fr; }
+  .rep3d-hero { flex-direction: column; align-items: flex-start; }
+  .rep3d-hero-visual { display: none; }
+}
