@@ -10,33 +10,33 @@
       "email": "gatitaxd6f79@gmail.com",
       "role": "admin",
       "joinedAt": "2026-11-23T04:35:10.065Z",
-      "updatedAt": "2026-11-23T06:02:36.381Z",
-      "projectId": "govdata_code_nocturno_804263",
-      "projectTitle": "Nuevo Proyecto",
-      "projectDescription": "Iniciativa integral que aborda \"Marino\" mediante metodologías activas de aprendizaje, diseño de prototipos e investigación aplicada para generar impacto positivo.",
-      "currentStep": 11,
-      "completedStepsCount": 10,
-      "progress": 95,
-      "status": "in_progress",
+      "updatedAt": "2026-11-23T06:04:49.201Z",
+      "projectId": "govdata_code_mentilona_804263",
+      "projectTitle": "🌊 ¡El 95 % del océano sigue siendo un misterio! 😱 ¿Qué se esconde en las profundidades?",
+      "projectDescription": "116456.1103249872313216",
+      "currentStep": 1,
+      "completedStepsCount": 16,
+      "progress": 100,
+      "status": "submitted",
       "approvalStatus": "pending",
-      "publicationStatus": "draft",
-      "slidesCount": 8,
-      "resourcesCount": 0,
+      "publicationStatus": "completed",
+      "slidesCount": 1,
+      "resourcesCount": 4,
       "snapshot": {
-        "id": "govdata_code_nocturno_804263",
-        "title": "Nuevo Proyecto",
+        "id": "govdata_code_mentilona_804263",
+        "title": "🌊 ¡El 95 % del océano sigue siendo un misterio! 😱 ¿Qué se esconde en las profundidades?",
         "subtitle": "Proyecto Educativo Mentix",
-        "description": "Iniciativa integral que aborda \"Marino\" mediante metodologías activas de aprendizaje, diseño de prototipos e investigación aplicada para generar impacto positivo.",
-        "author": "Carlos Canon",
-        "authorEmail": "vivianacastanedam@gmail.com",
+        "description": "116456.1103249872313216",
+        "author": "Melisa",
+        "authorEmail": "gatitaxd6f79@gmail.com",
         "joinCode": "804263",
         "accessCode": "804263",
         "projectType": "presentation",
         "isGovDataProject": true,
-        "status": "in_progress",
-        "publicationStatus": "draft",
+        "status": "completed",
+        "publicationStatus": "completed",
         "approvalStatus": "pending",
-        "currentStep": 11,
+        "currentStep": 1,
         "completedSteps": [
           1,
           2,
@@ -47,21 +47,27 @@
           7,
           8,
           9,
-          10
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16
         ],
-        "progress": 95,
-        "banner": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
-        "problemStatement": "Falta de herramientas accesibles, metodologías prácticas y conciencia comunitaria para abordar con éxito los retos de marino.",
-        "mainObjective": "Diseñar e implementar una propuesta innovadora y funcional que promueva el conocimiento y aporte soluciones prácticas a marino.",
-        "benefits": "Fomenta habilidades del siglo XXI (creatividad, trabajo en equipo y resolución de problemas), ofrece soluciones replicables y genera conciencia en la comunidad.",
-        "targetAudience": "Estudiantes, docentes, familias y comunidades interesadas en marino y la innovación social.",
-        "slidesCount": 8,
-        "resourcesCount": 0,
+        "progress": 100,
+        "banner": "https://static.vecteezy.com/system/resources/thumbnails/060/843/811/small/close-up-of-raindrops-on-leaves-hd-background-luxury-hd-wallpaper-image-trendy-background-illustration-free-photo.jpg",
+        "problemStatement": "hjlkkj",
+        "mainObjective": "fjhl",
+        "benefits": "hfhkjl",
+        "targetAudience": "5l6514",
+        "slidesCount": 1,
+        "resourcesCount": 4,
         "landingConfig": {
-          "publicName": "Proyecto Marino",
-          "slug": "proyecto-marino",
-          "landingTitle": "Proyecto Marino",
-          "publicDescription": "Iniciativa integral que aborda \"Marino\" mediante metodologías activas de aprendizaje, diseño de prototipos e investigación aplicada para generar impacto positivo.",
+          "publicName": "🌊 ¡El 95 % del océano sigue siendo un misterio! 😱 ¿Qué se esconde en las profundidades?",
+          "slug": "nuevo-proyecto",
+          "landingTitle": "🌊 ¡El 95 % del océano sigue siendo un misterio! 😱 ¿Qué se esconde en las profundidades?",
+          "publicDescription": "Proyecto en construcción con el Asistente Inteligente de Mentix.",
           "visibleCategory": "Administración Pública",
           "tags": [
             "Gobierno de Datos",
@@ -73,36 +79,20 @@
           "featuredVideoPublic": true
         },
         "valueProp": {
-          "problemSolved": "Dificultad de acceso a recursos e iniciativas prácticas enfocadas en marino.",
-          "howItWorks": "Centraliza la investigación, recursos interactivos y resultados del proyecto en una plataforma abierta y colaborativa.",
-          "forWhom": "Estudiantes, docentes, familias y comunidades interesadas en marino y la innovación social.",
-          "differentiator": "Metodología basada en evidencias, enfoque centrado en la comunidad y facilidad de adopción escolar.",
+          "problemSolved": "hjlkkj",
+          "howItWorks": "ljll",
+          "forWhom": "5l6514",
+          "differentiator": "jgfkkhdg",
           "keyFeatures": [
-            "Diagnóstico contextualizado sobre Marino",
-            "Prototipo interactivo y aplicable",
-            "Recursos educativos y guías abiertas",
-            "Indicadores de impacto y evaluación comunitaria"
+            "kglghljj"
           ],
-          "resultsAndBenefits": "Fomenta habilidades del siglo XXI (creatividad, trabajo en equipo y resolución de problemas), ofrece soluciones replicables y genera conciencia en la comunidad.",
+          "resultsAndBenefits": "hfhkjl",
           "prerequisites": "",
-          "visitorAction": "Explorar la propuesta y colaborar",
-          "commercialPitch": "Transformando Marino en acciones y soluciones concretas",
-          "faqs": [
-            {
-              "question": "¿Cuál es el propósito principal de este proyecto sobre Marino?",
-              "answer": "Desarrollar soluciones viables y educativas que respondan a los retos de marino, involucrando activamente a la comunidad."
-            },
-            {
-              "question": "¿Quiénes pueden beneficiarse de los resultados?",
-              "answer": "Toda la comunidad escolar, docentes de diferentes áreas y personas interesadas en aplicar metodologías sobre marino."
-            },
-            {
-              "question": "¿Cómo se puede colaborar o hacer seguimiento?",
-              "answer": "A través de los canales de contacto de los autores y explorando las etapas documentadas en la Ruta del Proyecto."
-            }
-          ]
+          "visitorAction": "Unirse / Colaborar",
+          "commercialPitch": "12123322",
+          "faqs": []
         },
-        "updatedAt": "2026-11-23T06:02:36.381Z"
+        "updatedAt": "2026-11-23T06:04:49.201Z"
       }
     },
     {
