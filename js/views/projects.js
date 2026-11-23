@@ -8284,9 +8284,6 @@ window.ProjectsView = {
             <!-- Video Oficial Destacado (si existe, llena el ancho completamente) -->
             ${videoShowcaseHtml}
 
-            <!-- Galería Visual de Imágenes del Proyecto -->
-            ${projectGalleryHtml}
-
             <!-- Filtros de categoría -->
             <div class="inno-filter-pills">
               <button type="button" class="inno-pill-tab inno-filter-pill active" onclick="window.ProjectsView.filterResourceCategory('all', this)"><span>🌐</span> Todos</button>
