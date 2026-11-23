@@ -33,7 +33,7 @@
     "isPublic": false,
     "startDate": "2026-11-23",
     "endDate": "2026-11-06",
-    "currentStep": 9,
+    "currentStep": 10,
     "completedSteps": [
       1,
       2,
@@ -42,7 +42,8 @@
       5,
       6,
       7,
-      8
+      8,
+      9
     ],
     "progress": 58,
     "calculatedProgress": 58,
@@ -262,9 +263,10 @@
         5,
         6,
         7,
-        8
+        8,
+        9
       ],
-      "currentStep": 9,
+      "currentStep": 10,
       "author": "JHFK",
       "authorId": "user_1795407757752",
       "ownerId": "user_1795407757752",
@@ -290,7 +292,7 @@
         "collaborators": "V"
       },
       "createdAt": "2026-11-23T04:35:12.300Z",
-      "updatedAt": "2026-11-23T04:52:01.396Z",
+      "updatedAt": "2026-11-23T04:52:01.848Z",
       "progress": 58,
       "calculatedProgress": 58
     },
@@ -304,7 +306,7 @@
     "authorAvatar": "🦊",
     "authorRole": "Líder del Proyecto",
     "createdAt": "2026-11-23T04:35:12.300Z",
-    "updatedAt": "2026-11-23T04:52:01.420Z",
+    "updatedAt": "2026-11-23T04:52:01.841Z",
     "hub": {
       "joinRequests": [],
       "members": [
