@@ -237,7 +237,7 @@ class RealtimeEngine {
 
       client.on('connect', () => {
         client.subscribe('mentix/global/design', { qos: 0 });
-        client.subscribe('mentix/global/banners', { qos: 0 });
+        client.subscribe('mentix/global/banners_v2', { qos: 0 });
         client.subscribe('mentix/global/join_requests', { qos: 0 });
         client.subscribe('mentix/global/project_deleted', { qos: 0 });
       });
@@ -256,9 +256,11 @@ class RealtimeEngine {
               }
             }
           } catch(e) {}
-        } else if (topic === 'mentix/global/banners') {
+        } else if (topic === 'mentix/global/banners_v2') {
           try {
-            const data = JSON.parse(messageBuffer.toString());
+            const rawStr = messageBuffer.toString();
+            if (!rawStr) return;
+            const data = JSON.parse(rawStr);
             if (data) {
               if (window.ProjectsView && typeof window.ProjectsView.applyGlobalBannerUpdate === 'function') {
                 window.ProjectsView.applyGlobalBannerUpdate(data);
@@ -291,24 +293,36 @@ class RealtimeEngine {
 
   publishGlobalBanner(bannerData) {
     if (!bannerData) return;
-    const payload = JSON.stringify({
-      type: 'GLOBAL_BANNER_UPDATED',
-      ...bannerData,
-      timestamp: Date.now()
-    });
-    if (this.globalMqttClient && this.globalMqttClient.connected) {
+    const nowTs = Number(bannerData.timestamp || Date.now());
+    const urlStr = String(bannerData.bannerUrl || '');
+    const isLargePayload = urlStr.length > 18000;
+    const mqttObj = isLargePayload
+      ? {
+          type: 'GLOBAL_BANNER_SYNC_PING',
+          target: bannerData.target || 'hero',
+          projId: bannerData.projId || undefined,
+          style: bannerData.style || undefined,
+          timestamp: nowTs
+        }
+      : {
+          type: 'GLOBAL_BANNER_UPDATED',
+          ...bannerData,
+          timestamp: nowTs
+        };
+    const payload = JSON.stringify(mqttObj);
+    const sendOnClient = (c) => {
+      if (!c || !c.connected) return;
       try {
-        this.globalMqttClient.publish('mentix/global/banners', payload, { qos: 0, retain: true });
+        // Limpiar el tópico antiguo retenido (evita que vuelva a salir un banner viejo como Matrix)
+        c.publish('mentix/global/banners', '', { qos: 0, retain: true });
+        c.publish('mentix/global/banners_v2', payload, { qos: 0, retain: !isLargePayload });
       } catch(e) {}
-    }
-    if (this.mqttClient && this.mqttClient.connected) {
-      try {
-        this.mqttClient.publish('mentix/global/banners', payload, { qos: 0, retain: true });
-      } catch(e) {}
-    }
-    this.broadcast({ type: 'GLOBAL_BANNER_UPDATED', ...bannerData });
+    };
+    sendOnClient(this.globalMqttClient);
+    sendOnClient(this.mqttClient);
+    this.broadcast({ type: 'GLOBAL_BANNER_UPDATED', ...bannerData, timestamp: nowTs });
     try {
-      localStorage.setItem('mentix_project_banner_sync', JSON.stringify({ ...bannerData, t: Date.now() }));
+      localStorage.setItem('mentix_project_banner_sync', JSON.stringify({ target: bannerData.target || 'hero', timestamp: nowTs, t: nowTs }));
     } catch(e) {}
   }
 

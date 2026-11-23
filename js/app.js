@@ -1999,14 +1999,14 @@ class AppRouter {
         }
       }
 
+      // Sincronizar Banner Principal Global del Admin para TODOS los usuarios siempre al iniciar
+      if (window.ProjectsView && typeof window.ProjectsView.syncHeroBannerFromCloud === 'function') {
+        window.ProjectsView.syncHeroBannerFromCloud().catch(() => {});
+      }
+
       if (Array.isArray(cloudChallenges) && cloudChallenges.length > 0) {
         if (typeof window.deepCleanMojibake === 'function') {
           cloudChallenges = window.deepCleanMojibake(cloudChallenges);
-        }
-
-        // Sincronizar Banner Principal Global desde Supabase respetando timestamps (nunca pisa un banner más reciente del Admin)
-        if (window.ProjectsView && typeof window.ProjectsView.syncHeroBannerFromCloud === 'function') {
-          window.ProjectsView.syncHeroBannerFromCloud().catch(() => {});
         }
 
         const local = Array.isArray(window.appState.challenges) ? window.appState.challenges : [];

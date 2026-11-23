@@ -230,7 +230,7 @@ window.ProjectsView = {
     return 'assets/projects_ui/hero_banner.png?v=20261101_bright_sharp';
   },
 
-  compressBannerDataUrl(dataUrl, maxWidth = 1800, quality = 0.84) {
+  compressBannerDataUrl(dataUrl, maxWidth = 1500, quality = 0.78) {
     return new Promise((resolve) => {
       if (!dataUrl || typeof dataUrl !== 'string' || !dataUrl.startsWith('data:image/') || dataUrl.startsWith('data:image/svg')) {
         return resolve(dataUrl);
@@ -238,8 +238,8 @@ window.ProjectsView = {
       const img = new Image();
       img.onload = () => {
         try {
-          let w = img.naturalWidth || img.width || 1600;
-          let h = img.naturalHeight || img.height || 400;
+          let w = img.naturalWidth || img.width || 1500;
+          let h = img.naturalHeight || img.height || 360;
           if (w > maxWidth) {
             h = Math.max(1, Math.round((h * maxWidth) / w));
             w = maxWidth;
@@ -250,16 +250,16 @@ window.ProjectsView = {
           const ctx = canvas.getContext('2d');
           ctx.drawImage(img, 0, 0, w, h);
           let out = canvas.toDataURL('image/jpeg', quality);
-          if (out.length > 260000) {
-            out = canvas.toDataURL('image/jpeg', 0.72);
+          if (out.length > 150000) {
+            out = canvas.toDataURL('image/jpeg', 0.68);
           }
-          if (out.length > 360000) {
+          if (out.length > 200000) {
             const c2 = document.createElement('canvas');
-            const scale = 1280 / Math.max(1280, w);
+            const scale = 1200 / Math.max(1200, w);
             c2.width = Math.round(w * scale);
             c2.height = Math.round(h * scale);
             c2.getContext('2d').drawImage(img, 0, 0, c2.width, c2.height);
-            out = c2.toDataURL('image/jpeg', 0.7);
+            out = c2.toDataURL('image/jpeg', 0.64);
           }
           resolve(out && out.startsWith('data:') ? out : dataUrl);
         } catch (err) {
@@ -316,68 +316,98 @@ window.ProjectsView = {
 
   async syncHeroBannerFromCloud(force = false) {
     const now = Date.now();
-    if (!force && this._lastHeroBannerCloudSync && (now - this._lastHeroBannerCloudSync) < 8000) return false;
+    // Si este mismo Admin acaba de guardar un banner hace < 12s, esperar a que termine de escribir en GitHub
+    if (!force && this._lastLocalAdminBannerSaveAt && (now - this._lastLocalAdminBannerSaveAt) < 12000) {
+      return false;
+    }
+    if (!force && this._lastHeroBannerCloudSync && (now - this._lastHeroBannerCloudSync) < 6000) return false;
     this._lastHeroBannerCloudSync = now;
     try {
       let payload = null;
       const apiBase = (window.appRouter && typeof window.appRouter.getApiBase === 'function') ? window.appRouter.getApiBase() : '';
 
-      // 1. Fuente principal mundial: /api/challenges?heroBanner=1 (persiste en GitHub para TODOS los usuarios y dispositivos)
+      const extractFromResponse = (data) => {
+        if (!data) return null;
+        // Formato dedicado v145+: { bannerUrl, style, updatedAt }
+        if (!Array.isArray(data) && typeof data === 'object' && (data.bannerUrl || data.style)) {
+          return {
+            bannerUrl: String(data.bannerUrl || '').trim(),
+            style: (data.style && typeof data.style === 'object') ? data.style : null,
+            updatedAt: Number(data.updatedAt || 0)
+          };
+        }
+        // Formato compatible v144: Array de challenges con _globalHeroBanner / _globalHeroBannerStyle
+        const arr = Array.isArray(data) ? data : (Array.isArray(data.challenges) ? data.challenges : null);
+        if (arr && arr.length > 0) {
+          const withB = arr.find(c => c && (c._globalHeroBanner || c.globalHeroBanner));
+          const withS = arr.find(c => c && c._globalHeroBannerStyle && typeof c._globalHeroBannerStyle === 'object');
+          if (withB || withS) {
+            return {
+              bannerUrl: withB ? String(withB._globalHeroBanner || withB.globalHeroBanner || '').trim() : '',
+              style: withS ? withS._globalHeroBannerStyle : null,
+              updatedAt: Number((withB && withB._globalHeroBannerTs) || 0)
+            };
+          }
+        }
+        return null;
+      };
+
+      // 1. Fuente principal mundial: /api/challenges?heroBanner=1 (compatible con API v144 y v145+)
       try {
         const ctrl = typeof AbortController !== 'undefined' ? new AbortController() : null;
-        const tid = ctrl ? setTimeout(() => ctrl.abort(), 3500) : null;
+        const tid = ctrl ? setTimeout(() => ctrl.abort(), 4500) : null;
         const r = await fetch(`${apiBase}/api/challenges?heroBanner=1&t=${Date.now()}`, {
           cache: 'no-store',
           signal: ctrl ? ctrl.signal : undefined
         });
         if (tid) clearTimeout(tid);
         if (r && r.ok) {
-          const data = await r.json();
-          if (data && (data.bannerUrl || data.style)) payload = data;
+          payload = extractFromResponse(await r.json());
         }
       } catch (e) {}
 
-      // 2. Respaldo estático (GitHub Pages): data/hero_banner.json
-      if (!payload) {
+      // 2. Respaldo estático (GitHub Pages / CDN): data/hero_banner.json y data/challenges.json
+      if (!payload || !payload.bannerUrl) {
         try {
           const r2 = await fetch(`data/hero_banner.json?t=${Date.now()}`, { cache: 'no-store' });
           if (r2 && r2.ok) {
-            const d2 = await r2.json();
-            if (d2 && (d2.bannerUrl || d2.style)) payload = d2;
+            const p2 = extractFromResponse(await r2.json());
+            if (p2 && (p2.bannerUrl || p2.style)) payload = p2;
           }
         } catch (e) {}
       }
-
-      // 3. Respaldo Supabase Cloud
-      if (!payload && window.supabaseEngine && typeof window.supabaseEngine.loadWizardDraft === 'function') {
+      if (!payload || !payload.bannerUrl) {
         try {
-          const rec = await window.supabaseEngine.loadWizardDraft('mentix_global_hero_banner_v1', 'mentix_global_hero_banner_v1');
-          const p3 = rec && (rec.payload || rec.draft_data || rec.data || rec);
-          if (p3 && (p3.bannerUrl || p3.style)) payload = p3;
+          const r3 = await fetch(`data/challenges.json?t=${Date.now()}`, { cache: 'no-store' });
+          if (r3 && r3.ok) {
+            const p3 = extractFromResponse(await r3.json());
+            if (p3 && (p3.bannerUrl || p3.style)) payload = p3;
+          }
         } catch (e) {}
       }
 
       if (!payload || (!payload.bannerUrl && !payload.style)) return false;
 
-      const cloudTs = Number(payload.updatedAt || 0);
-      const localTs = Number(localStorage.getItem('mentix_projects_hero_banner_ts') || 0);
-      if (localTs > 0 && cloudTs > 0 && localTs >= cloudTs) {
-        return false;
+      // El banner oficial del servidor (guardado por el Admin) SIEMPRE es la fuente de verdad para TODOS los usuarios!
+      const currentLocal = String(localStorage.getItem('mentix_projects_hero_banner') || (window.appState && window.appState.projectsHeroBanner) || '').trim();
+      const cloudUrl = String(payload.bannerUrl || '').trim();
+      let changed = false;
+
+      if (cloudUrl && cloudUrl !== currentLocal) {
+        this.setHeroBannerUrl(cloudUrl, { skipCloudSync: true, updatedAt: payload.updatedAt || Date.now() });
+        changed = true;
+      } else if (cloudUrl) {
+        this._applyHeroBannerSrcToDom(cloudUrl);
       }
 
-      if (payload.bannerUrl) {
-        const cleanUrl = String(payload.bannerUrl).trim();
-        if (cleanUrl) {
-          this.setHeroBannerUrl(cleanUrl, { skipCloudSync: true, updatedAt: cloudTs || Date.now() });
-        }
-      }
       if (payload.style && typeof payload.style === 'object') {
         try { localStorage.setItem('mentix_projects_hero_banner_style', JSON.stringify(payload.style)); } catch (e) {}
         if (!window.appState) window.appState = {};
         window.appState.projectsHeroBannerStyle = payload.style;
         this.applyHeroBannerStyleToDom(payload.style);
+        changed = true;
       }
-      return true;
+      return changed;
     } catch (e) {
       return false;
     }
@@ -388,6 +418,11 @@ window.ProjectsView = {
     const cleanUrl = String(url).trim();
     if (!cleanUrl) return false;
     const nowTs = Number(options.updatedAt || Date.now());
+    const isRemoteSync = Boolean(options && options.skipCloudSync);
+
+    if (!isRemoteSync) {
+      this._lastLocalAdminBannerSaveAt = Date.now();
+    }
 
     // 1. Actualizar memoria y DOM INMEDIATAMENTE (nunca se traba ni falla)
     if (!window.appState) window.appState = {};
@@ -397,7 +432,7 @@ window.ProjectsView = {
     // 2. Guardar en localStorage de forma segura (1 sola clave canónica, con manejo de cuota)
     this._safeSaveHeroBannerLocal(cleanUrl, nowTs);
 
-    // Actualizar metadato liviano en challenges (solo si no es dataUrl gigante)
+    // Actualizar metadato liviano en challenges
     if (Array.isArray(window.appState.challenges)) {
       window.appState.challenges.forEach(c => {
         if (c) {
@@ -416,11 +451,12 @@ window.ProjectsView = {
       window.dispatchEvent(new CustomEvent('mentix:hero-banner-changed', { detail: { bannerUrl: cleanUrl, timestamp: nowTs } }));
     } catch (e) {}
 
-    if (options && options.skipCloudSync) return true;
+    if (isRemoteSync) return true;
 
     const currentStyle = this.getHeroBannerStyle();
 
-    // 4. Persistencia GLOBAL MUNDIAL en servidor (/api/challenges -> data/hero_banner.json) para URLs E imágenes subidas!
+    // 4. Persistencia GLOBAL MUNDIAL en servidor (/api/challenges -> GitHub) para URLs E imágenes subidas!
+    // Al confirmarse el guardado en la nube, se envía ping en tiempo real a TODOS los usuarios conectados!
     try {
       const apiBase = (window.appRouter && typeof window.appRouter.getApiBase === 'function') ? window.appRouter.getApiBase() : '';
       fetch(`${apiBase}/api/challenges`, {
@@ -433,24 +469,20 @@ window.ProjectsView = {
           style: currentStyle,
           updatedAt: nowTs
         })
-      }).catch(() => {});
+      })
+        .then(r => r && r.ok ? r.json() : null)
+        .then(res => {
+          if (res && res.success) {
+            if (window.realtimeEngine && typeof window.realtimeEngine.publishGlobalBanner === 'function') {
+              window.realtimeEngine.publishGlobalBanner({ target: 'hero', bannerUrl: cleanUrl, style: currentStyle, timestamp: nowTs });
+            }
+          }
+        })
+        .catch(() => {});
     } catch (e) {}
 
-    // 5. Respaldo en Supabase Cloud y MQTT en tiempo real
-    try {
-      if (window.supabaseEngine && typeof window.supabaseEngine.saveWizardDraft === 'function') {
-        window.supabaseEngine.saveWizardDraft(
-          'mentix_global_hero_banner_v1',
-          'mentix_global_hero_banner_v1',
-          'system_admin',
-          1,
-          [],
-          { bannerUrl: cleanUrl, style: currentStyle, updatedAt: nowTs }
-        ).catch(() => {});
-      }
-    } catch (e) {}
-
-    if (cleanUrl.length < 220000 && window.realtimeEngine && typeof window.realtimeEngine.publishGlobalBanner === 'function') {
+    // 5. Aviso instantáneo MQTT (ligero: ping si es imagen subida, o URL directa si es enlace)
+    if (window.realtimeEngine && typeof window.realtimeEngine.publishGlobalBanner === 'function') {
       try {
         window.realtimeEngine.publishGlobalBanner({ target: 'hero', bannerUrl: cleanUrl, style: currentStyle, timestamp: nowTs });
       } catch (e) {}
@@ -539,31 +571,27 @@ window.ProjectsView = {
       try { saveGlobalState(window.appState); } catch (e) {}
     }
     this.applyHeroBannerStyleToDom(clean);
+    this._lastLocalAdminBannerSaveAt = Date.now();
     try {
       const nowTs = Date.now();
       localStorage.setItem('mentix_projects_hero_banner_ts', String(nowTs));
       const apiBase = (window.appRouter && typeof window.appRouter.getApiBase === 'function') ? window.appRouter.getApiBase() : '';
+      const curBanner = this.getHeroBannerUrl();
       fetch(`${apiBase}/api/challenges`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           type: 'GLOBAL_HERO_BANNER',
           target: 'hero',
-          bannerUrl: this.getHeroBannerUrl(),
+          bannerUrl: curBanner,
           style: clean,
           updatedAt: nowTs
         })
+      }).then(() => {
+        if (window.realtimeEngine && typeof window.realtimeEngine.publishGlobalBanner === 'function') {
+          window.realtimeEngine.publishGlobalBanner({ target: 'hero', bannerUrl: curBanner, style: clean, timestamp: nowTs });
+        }
       }).catch(() => {});
-      if (window.supabaseEngine && typeof window.supabaseEngine.saveWizardDraft === 'function') {
-        window.supabaseEngine.saveWizardDraft(
-          'mentix_global_hero_banner_v1',
-          'mentix_global_hero_banner_v1',
-          'system_admin',
-          1,
-          [],
-          { bannerUrl: this.getHeroBannerUrl(), style: clean, updatedAt: nowTs }
-        ).catch(() => {});
-      }
       window.dispatchEvent(new CustomEvent('mentix:hero-banner-style-changed', { detail: clean }));
     } catch (e) {}
     return clean;
@@ -792,17 +820,35 @@ window.ProjectsView = {
   applyGlobalBannerUpdate(data) {
     if (!data) return;
     const target = data.target || (data.projId ? 'project' : 'hero');
+
+    // Ping ligero en tiempo real: el Admin actualizó el banner en el servidor (ej. foto subida) -> recargar al instante!
+    if (data.type === 'GLOBAL_BANNER_SYNC_PING' && target === 'hero') {
+      if (data.style && typeof data.style === 'object') {
+        try { localStorage.setItem('mentix_projects_hero_banner_style', JSON.stringify(data.style)); } catch (e) {}
+        if (!window.appState) window.appState = {};
+        window.appState.projectsHeroBannerStyle = data.style;
+        this.applyHeroBannerStyleToDom(data.style);
+      }
+      this.syncHeroBannerFromCloud(true);
+      setTimeout(() => { this.syncHeroBannerFromCloud(true); }, 1800);
+      return;
+    }
+
     const bannerUrl = (data.bannerUrl || '').trim();
     if (!bannerUrl) return;
 
     if (target === 'hero') {
       const incomingTs = Number(data.timestamp || data.updatedAt || data.t || 0);
-      const localTs = Number(localStorage.getItem('mentix_projects_hero_banner_ts') || 0);
-      // Nunca dejar que un mensaje MQTT viejo o retenido pise un banner más reciente del Admin
-      if (localTs > 0 && (!incomingTs || incomingTs <= localTs)) {
+      if (this._lastLocalAdminBannerSaveAt && (Date.now() - this._lastLocalAdminBannerSaveAt) < 8000) {
         return;
       }
       this.setHeroBannerUrl(bannerUrl, { skipCloudSync: true, updatedAt: incomingTs || Date.now() });
+      if (data.style && typeof data.style === 'object') {
+        try { localStorage.setItem('mentix_projects_hero_banner_style', JSON.stringify(data.style)); } catch (e) {}
+        if (!window.appState) window.appState = {};
+        window.appState.projectsHeroBannerStyle = data.style;
+        this.applyHeroBannerStyleToDom(data.style);
+      }
     } else if (target === 'project') {
       const projId = data.projId;
       if (!projId) return;
