@@ -1485,10 +1485,10 @@
       {
         "title": "Publicación",
         "description": "Despliegue en la Landing Page y comunicación.",
-        "progress": 0,
-        "status": "pending",
-        "icon": "rocket",
-        "emoji": "🚀"
+        "status": "active",
+        "progress": 10,
+        "emoji": "💡",
+        "icon": "clipboard"
       }
     ],
     "designConfig": {
@@ -1581,10 +1581,10 @@
         {
           "title": "Publicación",
           "description": "Despliegue en la Landing Page y comunicación.",
-          "progress": 0,
-          "status": "pending",
-          "icon": "rocket",
-          "emoji": "🚀"
+          "status": "active",
+          "progress": 10,
+          "emoji": "💡",
+          "icon": "clipboard"
         }
       ],
       "landingConfig": {
@@ -1632,7 +1632,7 @@
         "authorsRole": "Líder del Proyecto"
       },
       "createdAt": "2026-11-23T03:09:16.957Z",
-      "updatedAt": "2026-11-23T03:45:11.416Z",
+      "updatedAt": "2026-11-23T03:45:19.583Z",
       "progress": 60,
       "calculatedProgress": 60
     },
@@ -1646,7 +1646,7 @@
     "authorAvatar": "🐯",
     "authorRole": "admin",
     "createdAt": "2026-11-23T03:09:16.957Z",
-    "updatedAt": "2026-11-23T03:45:11.433Z",
+    "updatedAt": "2026-11-23T03:45:19.601Z",
     "image": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
     "rejectionReason": "",
     "tag": "⏳ Pendiente de Autorización",
