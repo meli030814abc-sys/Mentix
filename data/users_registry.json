@@ -142,5 +142,21 @@
     "lastLoginAt": "2026-11-23T20:59:24.615Z",
     "pwd": "9eaa6e0155c77de0a9ba36e8e467706f0d45f7e0475fb826e443d9bdb2fc3635",
     "createdAt": "2026-11-23T20:59:24.615Z"
+  },
+  {
+    "id": "user_1795437974586",
+    "name": "Laura Sofía Hernández Chaparro",
+    "username": "laurasofiahz",
+    "email": "ing.laurasofiax04@gmail.com",
+    "avatar": "🐼",
+    "role": "student",
+    "xp": 100,
+    "level": 1,
+    "levelName": "Principiante",
+    "institution": "Comunidad MENTIX",
+    "isBlocked": false,
+    "lastLoginAt": "2026-11-23T23:07:28.379Z",
+    "pwd": "2071634917e07486538894e208e3e77b900c8102334ca9bac4f92dc65112033d",
+    "createdAt": "2026-11-23T23:07:28.379Z"
   }
 ]
