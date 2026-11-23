@@ -62,5 +62,21 @@
     "lastLoginAt": "2026-11-23T16:40:55.536Z",
     "pwd": "11bd4a89b2fae8cb7a4afa66cfc6b5141b0f9f4acb2ed66b0ab12fdaf9baa78e",
     "createdAt": "2026-11-23T16:23:20.888Z"
+  },
+  {
+    "id": "user_1795453864866",
+    "name": "GATITAXDr",
+    "username": "Mentilonag",
+    "email": "canon3@hlk",
+    "avatar": "🦊",
+    "role": "student",
+    "xp": 100,
+    "level": 1,
+    "levelName": "Principiante",
+    "institution": "Comunidad MENTIX",
+    "isBlocked": false,
+    "lastLoginAt": "2026-11-23T17:11:04.922Z",
+    "pwd": "488a5d4bbdf192cdba93eb3675355ead05877158e1cad3b3b2a1e4545e19041f",
+    "createdAt": "2026-11-23T17:11:04.922Z"
   }
 ]
