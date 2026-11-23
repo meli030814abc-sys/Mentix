@@ -33,7 +33,7 @@
     "isPublic": false,
     "startDate": "2026-11-23",
     "endDate": "2026-11-06",
-    "currentStep": 10,
+    "currentStep": 11,
     "completedSteps": [
       1,
       2,
@@ -43,10 +43,11 @@
       6,
       7,
       8,
-      9
+      9,
+      10
     ],
-    "progress": 58,
-    "calculatedProgress": 58,
+    "progress": 63,
+    "calculatedProgress": 63,
     "valueProp": {
       "problemSolved": "G",
       "howItWorks": "G",
@@ -75,10 +76,10 @@
       "commercialPitch": "G",
       "faqs": []
     },
-    "videoUrl": "",
+    "videoUrl": "F",
     "videoConfig": {
       "sourceType": "url",
-      "url": "",
+      "url": "F",
       "fileName": "",
       "title": "",
       "description": "",
@@ -193,7 +194,7 @@
       },
       "videoConfig": {
         "sourceType": "url",
-        "url": "",
+        "url": "F",
         "fileName": "",
         "title": "",
         "description": "",
@@ -264,9 +265,10 @@
         6,
         7,
         8,
-        9
+        9,
+        10
       ],
-      "currentStep": 10,
+      "currentStep": 11,
       "author": "JHFK",
       "authorId": "user_1795407757752",
       "ownerId": "user_1795407757752",
@@ -292,9 +294,9 @@
         "collaborators": "V"
       },
       "createdAt": "2026-11-23T04:35:12.300Z",
-      "updatedAt": "2026-11-23T04:52:01.848Z",
-      "progress": 58,
-      "calculatedProgress": 58
+      "updatedAt": "2026-11-23T04:52:12.900Z",
+      "progress": 63,
+      "calculatedProgress": 63
     },
     "author": "JHFK",
     "authorId": "user_1795407757752",
@@ -306,7 +308,7 @@
     "authorAvatar": "🦊",
     "authorRole": "Líder del Proyecto",
     "createdAt": "2026-11-23T04:35:12.300Z",
-    "updatedAt": "2026-11-23T04:52:01.841Z",
+    "updatedAt": "2026-11-23T04:52:12.882Z",
     "hub": {
       "joinRequests": [],
       "members": [
