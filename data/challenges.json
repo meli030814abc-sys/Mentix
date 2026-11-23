@@ -1368,7 +1368,7 @@
     "id": "govdata_code_mentilona_804263",
     "slug": "nuevo-proyecto",
     "title": "🌊 ¡El 95 % del océano sigue siendo un misterio! 😱 ¿Qué se esconde en las profundidades?",
-    "subtitle": "🌊 **¿Y si te dijera que conocemos más sobre algunos lugares del espacio que sobre las profundidades de nuestros océanos?** 😱  Bajo la superficie del mar existe un universo extraordinario lleno de criaturas sorprendentes, ecosistemas desconocidos y fenómenos que la ciencia continúa investigando.  🐙 Animales capaces de producir su propia luz.  🌋 Volcanes submarinos y fuentes hidrotermales.  🦈 Criaturas adaptadas a presiones extremas.  🔎 Nuevas especies que siguen siendo descubiertas.  En este contenido exploraremos algunos de los secretos más fascinantes del océano y descubriremos por qué su exploración representa uno de los mayores desafíos científicos de nuestro tiempo.  💬 **Y tú, ¿qué crees que todavía se esconde en las profundidades del océano?**  👇 ¡Déjanos tu opinión en los comentarios y comparte este contenido con alguien que ame los misterios!  #MisteriosDelOceano #Ciencia #Curiosidades #Descubrimientos #Naturaleza #Tecnologia #SabiasQue #Exploracion #Misterios #ContenidoEducativo",
+    "subtitle": "🌊 ¿Y si te dijera que conocemos más sobre algunos lugares del espacio que sobre las profundidades de nuestros océanos?** 😱  Bajo la superficie del mar existe un universo extraordinario lleno de criaturas sorprendentes, ecosistemas desconocidos y fenómenos que la ciencia continúa investigando.  🐙 Animales capaces de producir su propia luz.  🌋 Volcanes submarinos y fuentes hidrotermales.  🦈 Criaturas adaptadas a presiones extremas.  🔎 Nuevas especies que siguen siendo descubiertas.  En este contenido exploraremos algunos de los secretos más fascinantes del océano y descubriremos por qué su exploración representa uno de los mayores desafíos científicos de nuestro tiempo.  💬 **Y tú, ¿qué crees que todavía se esconde en las profundidades del océano?**  👇 ¡Déjanos tu opinión en los comentarios y comparte este contenido con alguien que ame los misterios!  #MisteriosDelOceano #Ciencia #Curiosidades #Descubrimientos #Naturaleza #Tecnologia #SabiasQue #Exploracion #Misterios #ContenidoEducativo",
     "description": "Proyecto en construcción con el Asistente Inteligente de Mentix.",
     "shortDescription": "Proyecto en construcción con el Asistente Inteligente de Mentix.",
     "fullDescription": "Proyecto en construcción con el Asistente Inteligente de Mentix.",
@@ -1462,8 +1462,7 @@
       "titleColor": "#ffffff",
       "textColor": "#cbd5e1",
       "accentColor": "#00f5d4",
-      "bannerStyle": "gradient-cosmos",
-      "bannerUrl": ""
+      "bannerStyle": "gradient-cosmos"
     },
     "authorsConfig": {
       "authorsList": "Melisa",
@@ -1478,7 +1477,7 @@
     "govdata": {
       "id": "govdata_code_mentilona_804263",
       "title": "🌊 ¡El 95 % del océano sigue siendo un misterio! 😱 ¿Qué se esconde en las profundidades?",
-      "subtitle": "🌊 **¿Y si te dijera que conocemos más sobre algunos lugares del espacio que sobre las profundidades de nuestros océanos?** 😱  Bajo la superficie del mar existe un universo extraordinario lleno de criaturas sorprendentes, ecosistemas desconocidos y fenómenos que la ciencia continúa investigando.  🐙 Animales capaces de producir su propia luz.  🌋 Volcanes submarinos y fuentes hidrotermales.  🦈 Criaturas adaptadas a presiones extremas.  🔎 Nuevas especies que siguen siendo descubiertas.  En este contenido exploraremos algunos de los secretos más fascinantes del océano y descubriremos por qué su exploración representa uno de los mayores desafíos científicos de nuestro tiempo.  💬 **Y tú, ¿qué crees que todavía se esconde en las profundidades del océano?**  👇 ¡Déjanos tu opinión en los comentarios y comparte este contenido con alguien que ame los misterios!  #MisteriosDelOceano #Ciencia #Curiosidades #Descubrimientos #Naturaleza #Tecnologia #SabiasQue #Exploracion #Misterios #ContenidoEducativo",
+      "subtitle": "🌊 ¿Y si te dijera que conocemos más sobre algunos lugares del espacio que sobre las profundidades de nuestros océanos?** 😱  Bajo la superficie del mar existe un universo extraordinario lleno de criaturas sorprendentes, ecosistemas desconocidos y fenómenos que la ciencia continúa investigando.  🐙 Animales capaces de producir su propia luz.  🌋 Volcanes submarinos y fuentes hidrotermales.  🦈 Criaturas adaptadas a presiones extremas.  🔎 Nuevas especies que siguen siendo descubiertas.  En este contenido exploraremos algunos de los secretos más fascinantes del océano y descubriremos por qué su exploración representa uno de los mayores desafíos científicos de nuestro tiempo.  💬 **Y tú, ¿qué crees que todavía se esconde en las profundidades del océano?**  👇 ¡Déjanos tu opinión en los comentarios y comparte este contenido con alguien que ame los misterios!  #MisteriosDelOceano #Ciencia #Curiosidades #Descubrimientos #Naturaleza #Tecnologia #SabiasQue #Exploracion #Misterios #ContenidoEducativo",
       "shortDescription": "Proyecto en construcción con el Asistente Inteligente de Mentix.",
       "fullDescription": "Proyecto en construcción con el Asistente Inteligente de Mentix.",
       "category": "tecnologia",
@@ -1561,7 +1560,7 @@
         "authorsRole": "Líder del Proyecto"
       },
       "createdAt": "2026-11-23T03:09:16.957Z",
-      "updatedAt": "2026-11-23T03:43:21.071Z",
+      "updatedAt": "2026-11-23T03:43:24.705Z",
       "progress": 50,
       "calculatedProgress": 50
     },
@@ -1575,7 +1574,7 @@
     "authorAvatar": "🐯",
     "authorRole": "admin",
     "createdAt": "2026-11-23T03:09:16.957Z",
-    "updatedAt": "2026-11-23T03:43:21.076Z",
+    "updatedAt": "2026-11-23T03:43:24.765Z",
     "image": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
     "rejectionReason": "",
     "tag": "⏳ Pendiente de Autorización",
