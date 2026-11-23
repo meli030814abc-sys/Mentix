@@ -11,13 +11,13 @@
     "author": "Eimy",
     "authorRole": "Líder del Proyecto",
     "status": "in_progress",
-    "publicationStatus": "draft",
-    "approvalStatus": "rejected",
+    "publicationStatus": "pending_approval",
+    "approvalStatus": "pending",
     "isPublic": false,
     "image": "nosequeestudiar.net/site/assets/files/217/medicina-mano-medica.jpg",
     "banner": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
     "createdAt": "2026-10-31T21:52:51.691Z",
-    "updatedAt": "2026-11-23T01:32:40.413Z",
+    "updatedAt": "2026-11-23T01:32:42.739Z",
     "govdata": {
       "id": "proj_pres_1791658288964",
       "title": "Personajes de Disney",
@@ -99,7 +99,7 @@
         "displayOrder": 1,
         "featuredVideoPublic": true
       },
-      "publicationStatus": "draft",
+      "publicationStatus": "pending_approval",
       "completedSteps": [
         1,
         2,
@@ -143,9 +143,12 @@
         "authorsRole": "Líder del Proyecto"
       },
       "createdAt": "2026-10-31T21:52:51.691Z",
-      "updatedAt": "2026-11-23T01:32:40.168Z",
+      "updatedAt": "2026-11-23T01:32:42.563Z",
       "progress": 100,
-      "calculatedProgress": 100
+      "calculatedProgress": 100,
+      "approvalStatus": "pending",
+      "status": "review",
+      "isPublic": false
     },
     "rejectionReason": "Faltan detalles o el contenido requiere ajustes antes de publicarse.",
     "stage": "in_progress",
