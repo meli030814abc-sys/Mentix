@@ -1388,11 +1388,11 @@
     "benefits": "",
     "teamLead": "Melisa",
     "preparationStatus": "en_desarrollo",
-    "publicationStatus": "completed",
-    "approvalStatus": "pending",
+    "publicationStatus": "published",
+    "approvalStatus": "approved",
     "submittedForApproval": false,
     "status": "completed",
-    "isPublic": false,
+    "isPublic": true,
     "startDate": "2026-11-23",
     "endDate": "",
     "currentStep": 1,
@@ -1694,7 +1694,7 @@
       "mainObjective": "",
       "benefits": "",
       "teamLead": "Melisa",
-      "preparationStatus": "en_desarrollo",
+      "preparationStatus": "completado",
       "startDate": "2026-11-23",
       "endDate": "",
       "valueProp": {
@@ -1738,7 +1738,7 @@
         "displayOrder": 1,
         "featuredVideoPublic": true
       },
-      "publicationStatus": "completed",
+      "publicationStatus": "published",
       "completedSteps": [],
       "currentStep": 1,
       "author": "Melisa",
@@ -1764,13 +1764,15 @@
         "authorsRole": "Líder del Proyecto"
       },
       "createdAt": "2026-11-23T03:09:16.957Z",
-      "updatedAt": "2026-11-23T03:09:21.319Z",
+      "updatedAt": "2026-11-23T04:01:30.952Z",
       "progress": 40,
       "calculatedProgress": 40,
-      "approvalStatus": "pending",
+      "approvalStatus": "approved",
       "status": "completed",
-      "isPublic": false,
-      "rejectionReason": "Faltan detalles o el contenido requiere ajustes antes de publicarse."
+      "isPublic": true,
+      "rejectionReason": "",
+      "authorizedAt": "2026-11-23T04:01:30.952Z",
+      "authorizedBy": "Melisa"
     },
     "author": "Melisa",
     "authorId": "user_1792184134006",
@@ -1782,11 +1784,11 @@
     "authorAvatar": "🐯",
     "authorRole": "admin",
     "createdAt": "2026-11-23T03:09:16.957Z",
-    "updatedAt": "2026-11-23T04:01:24.165Z",
+    "updatedAt": "2026-11-23T04:01:31.129Z",
     "image": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
-    "rejectionReason": "Faltan detalles o el contenido requiere ajustes antes de publicarse.",
-    "tag": "⏳ Pendiente de Autorización",
-    "tagClass": "badge-review",
+    "rejectionReason": "",
+    "tag": "✔ Completado",
+    "tagClass": "badge-completed",
     "hub": {
       "joinRequests": [],
       "members": [
@@ -1845,12 +1847,12 @@
       "zoom": 134
     },
     "completedAt": "2026-11-23T03:50:22.698Z",
-    "authorizedAt": "2026-11-23T03:50:28.488Z",
+    "authorizedAt": "2026-11-23T04:01:30.952Z",
     "authorizedBy": "Melisa",
     "stage": "completed",
     "visibility": "public",
-    "accessMode": "private",
-    "rejectedAt": "2026-11-23T04:01:23.983Z",
+    "accessMode": "public",
+    "rejectedAt": "",
     "heroBanner": ""
   }
 ]
