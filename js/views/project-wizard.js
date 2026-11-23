@@ -1282,7 +1282,7 @@ collectCurrentStepInputs() {
             </div>
           </div>
 
-<!-- Cuerpo Principal (Área de Paso + Panel Lateral de Asistencia IA y Resumen) -->
+<!-- Cuerpo Principal (Área de Paso del Asistente) -->
           <div class="gdn-wizard-body">
             
             <!-- Columna Principal del Paso Actual -->
@@ -1371,35 +1371,6 @@ collectCurrentStepInputs() {
     const d = this.draft;
     return `
       <div class="gdn-card">
-        <!-- Banner para autocompletar todo el proyecto con un tema -->
-        <div style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.12), rgba(124, 58, 237, 0.12)); border: 1.5px solid rgba(16, 185, 129, 0.45); border-radius: 16px; padding: 1rem 1.25rem; margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap;">
-          <div style="flex: 1; min-width: 220px;">
-            <div style="font-size: 0.92rem; font-weight: 800; color: #10b981; margin-bottom: 0.2rem; display: flex; align-items: center; gap: 0.4rem;">
-              <span>⚡ ¿Tienes un tema en mente? La IA crea todo el proyecto</span>
-            </div>
-            <p style="margin: 0; font-size: 0.82rem; color: var(--gdn-text-sec); line-height: 1.4;">
-              Escribe el tema que deseas y la IA redactará el nombre, lema, ruta de 4 etapas, descripciones y objetivos.
-            </p>
-          </div>
-          <div style="display: flex; gap: 0.5rem; flex: 1; min-width: 260px;">
-            <input 
-              type="text" 
-              id="gdn-step1-topic-input" 
-              placeholder="Ej: Robótica marina, Reciclaje inteligente, Agua limpia..." 
-              value="${this.escapeHtml(this.lastAiTopic || '')}"
-              style="flex: 1; min-width: 140px; padding: 0.6rem 0.85rem; border-radius: 10px; border: 1.5px solid #10b981; font-size: 0.88rem; font-weight: 600; background: var(--gdn-surface); color: var(--gdn-text);" 
-              onkeydown="if(event.key === 'Enter') { event.preventDefault(); window.ProjectWizard.generateCompleteProjectFromTopic(this.value); }"
-            />
-            <button 
-              type="button" 
-              onclick="window.ProjectWizard.generateCompleteProjectFromTopic(document.getElementById('gdn-step1-topic-input')?.value)" 
-              style="padding: 0.6rem 1.25rem; font-size: 0.88rem; font-weight: 800; background: linear-gradient(135deg, #10b981, #059669); color: #fff; border: none; border-radius: 10px; cursor: pointer; white-space: nowrap; box-shadow: 0 4px 14px rgba(16,185,129,0.35); transition: all 0.2s;"
-            >
-              ⚡ Generar Todo
-            </button>
-          </div>
-        </div>
-
         <h3 style="margin: 0 0 0.35rem; font-size: 1.15rem; color: var(--gdn-text); font-weight: 800;">1. Identidad básica del proyecto</h3>
         <p class="gdn-help" style="margin-bottom: 1.35rem; font-size: 0.88rem;">
           Comencemos con el nombre y la frase clave que identificará tu proyecto ante toda la comunidad.
@@ -1408,11 +1379,8 @@ collectCurrentStepInputs() {
         <div class="gdn-field" style="margin-bottom: 1.25rem;">
           <label class="gdn-label" for="gdn-title" style="font-size: 0.95rem; font-weight: 700;">
             <span>Nombre del proyecto <span style="color:#10b981;">*</span></span>
-            <button type="button" style="background:none; border:none; color:#10b981; font-weight:700; font-size:0.8rem; cursor:pointer;" onclick="window.ProjectWizard.aiProposeTitles()">
-              ✨ Sugerir nombres con IA
-            </button>
           </label>
-          <input type="text" id="gdn-title" class="gdn-input" style="font-size: 1.05rem; padding: 0.75rem 1rem;" value="${this.escapeHtml(d.title)}" placeholder="Ej: Plataforma de Gobierno de Datos e IA" autofocus />
+          <input type="text" id="gdn-title" class="gdn-input" style="font-size: 1.05rem; padding: 0.75rem 1rem;" value="${this.escapeHtml(d.title)}" placeholder="Ej: Plataforma de Innovación Educativa" autofocus />
           <div class="gdn-help">Nombre claro con el que se identificará el proyecto.</div>
         </div>
 
@@ -1436,26 +1404,20 @@ collectCurrentStepInputs() {
       <div class="gdn-card">
         <h3 style="margin: 0 0 0.35rem; font-size: 1.15rem; color: var(--gdn-text); font-weight: 800;">2. Descripción y resumen ejecutivo</h3>
         <p class="gdn-help" style="margin-bottom: 1.35rem; font-size: 0.88rem;">
-          Explica el alcance y contexto del proyecto. Puedes escribir una idea base y perfeccionarla con la IA.
+          Explica el alcance y contexto del proyecto con tus propias palabras.
         </p>
 
         <div class="gdn-field" style="margin-bottom: 1.25rem;">
           <label class="gdn-label" for="gdn-short-desc">
             <span>Descripción corta (Resumen ejecutivo) <span style="color:#10b981;">*</span></span>
-            <button type="button" style="background:none; border:none; color:#10b981; font-weight:700; font-size:0.8rem; cursor:pointer;" onclick="window.ProjectWizard.aiGenerateShortDesc()">
-              ✨ Generar desde la descripción completa
-            </button>
           </label>
-          <textarea id="gdn-short-desc" class="gdn-textarea" rows="2" placeholder="Ej: Ecosistema integral que estandariza la calidad de datos e impulsa modelos predictivos auditables para instituciones educativas y públicas.">${this.escapeHtml(d.shortDescription)}</textarea>
+          <textarea id="gdn-short-desc" class="gdn-textarea" rows="2" placeholder="Ej: Ecosistema integral que estandariza la calidad de los datos y mejora el aprendizaje para instituciones educativas y públicas.">${this.escapeHtml(d.shortDescription)}</textarea>
           <div class="gdn-help">Se mostrará en el encabezado de la Landing Page y en las tarjetas de resumen (ideal entre 120 y 240 caracteres).</div>
         </div>
 
         <div class="gdn-field">
           <label class="gdn-label" for="gdn-full-desc">
             <span>Descripción completa del proyecto <span style="color:#10b981;">*</span></span>
-            <button type="button" style="background:none; border:none; color:#10b981; font-weight:700; font-size:0.8rem; cursor:pointer;" onclick="window.ProjectWizard.aiImproveDescription()">
-              ✨ Mejorar redacción con IA
-            </button>
           </label>
           <textarea id="gdn-full-desc" class="gdn-textarea" rows="4" placeholder="Explica en qué consiste el proyecto, su contexto, alcance y cómo aporta valor...">${this.escapeHtml(d.fullDescription)}</textarea>
         </div>
@@ -2914,9 +2876,6 @@ collectCurrentStepInputs() {
             <h3 style="margin:0; font-size:1.15rem; color:var(--gdn-text); font-weight:800;">6. Propuesta de valor y funcionamiento</h3>
             <p class="gdn-help" style="margin:0.2rem 0 0;">Responde con tus palabras para estructurar la Landing Page oficial.</p>
           </div>
-          <button type="button" class="plp-doc-btn" style="width:auto; padding:0.45rem 0.9rem;" onclick="window.ProjectWizard.aiProposeValueProp()">
-            ✨ Autocompletar sugerencias con IA
-          </button>
         </div>
 
         <div class="gdn-field-grid" style="margin-bottom:1.25rem;">
@@ -2945,7 +2904,7 @@ collectCurrentStepInputs() {
 
         <div class="gdn-field">
           <label class="gdn-label" for="gdn-vp-features">Principales funcionalidades o pilares (Una por línea)</label>
-          <textarea id="gdn-vp-features" class="gdn-textarea" rows="3" placeholder="Catálogo maestro de datos verificados&#10;Modelos predictivos con IA explicable&#10;Protocolos de ética y privacidad por diseño">${this.escapeHtml(featuresText)}</textarea>
+          <textarea id="gdn-vp-features" class="gdn-textarea" rows="3" placeholder="Catálogo maestro de recursos verificados&#10;Tableros interactivos y seguimiento continuo&#10;Protocolos de ética y privacidad por diseño">${this.escapeHtml(featuresText)}</textarea>
           <div class="gdn-help">Se mostrarán como etiquetas destacadas (chips) en la Landing Page.</div>
         </div>
       </div>
@@ -2972,7 +2931,7 @@ collectCurrentStepInputs() {
 
           <div class="gdn-field">
             <label class="gdn-label" for="gdn-vp-pitch">Lema o pitch de una línea <span style="color:#10b981;">*</span></label>
-            <input type="text" id="gdn-vp-pitch" class="gdn-input" value="${this.escapeHtml(vp.commercialPitch)}" placeholder="Ej: Impulsando decisiones inteligentes con datos confiables" />
+            <input type="text" id="gdn-vp-pitch" class="gdn-input" value="${this.escapeHtml(vp.commercialPitch)}" placeholder="Ej: Impulsando decisiones estratégicas con datos confiables" />
           </div>
         </div>
 
@@ -2982,9 +2941,6 @@ collectCurrentStepInputs() {
             <p class="gdn-help" style="margin:0.15rem 0 0;">Respuestas claras para los visitantes del proyecto.</p>
           </div>
           <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
-            <button type="button" class="plp-doc-btn outline" style="width:auto; padding:0.4rem 0.85rem;" onclick="window.ProjectWizard.aiProposeFaqs()">
-              ✨ Sugerir FAQs con IA
-            </button>
             <button type="button" class="plp-doc-btn" style="width:auto; padding:0.4rem 0.85rem;" onclick="window.ProjectWizard.addFaqItem()">
               + Agregar pregunta
             </button>
@@ -2993,7 +2949,7 @@ collectCurrentStepInputs() {
 
         ${faqs.length === 0 ? `
           <div style="padding:1rem; background:var(--gdn-subtle); border-radius:10px; font-size:0.85rem; color:var(--gdn-text-muted); text-align:center;">
-            Aún no has agregado preguntas frecuentes. Pulsa "+ Agregar pregunta" o usa el Copiloto IA para sugerirlas.
+            Aún no has agregado preguntas frecuentes. Pulsa "+ Agregar pregunta" para añadir la primera.
           </div>
         ` : `
           <div style="display:flex; flex-direction:column; gap:0.75rem;">
@@ -3020,7 +2976,7 @@ collectCurrentStepInputs() {
       <div class="gdn-card">
         <h3 style="margin: 0 0 0.35rem; font-size: 1.08rem; color: var(--gdn-text);">1. Identidad principal del proyecto</h3>
         <p class="gdn-help" style="margin-bottom: 1.1rem;">
-          No necesitas tener todo definitivo desde el primer momento. Puedes empezar con una idea general y pedir ayuda al asistente de IA a la derecha.
+          No necesitas tener todo definitivo desde el primer momento. Puedes empezar con una idea general y editarla en cualquier paso.
         </p>
 
         <div class="gdn-field-grid">
@@ -3028,7 +2984,7 @@ collectCurrentStepInputs() {
             <label class="gdn-label" for="gdn-title">
               <span>Nombre del proyecto <span style="color:#10b981;">*</span></span>
             </label>
-            <input type="text" id="gdn-title" class="gdn-input" value="${this.escapeHtml(d.title)}" placeholder="Ej: Plataforma de Gobierno de Datos e IA" />
+            <input type="text" id="gdn-title" class="gdn-input" value="${this.escapeHtml(d.title)}" placeholder="Ej: Plataforma de Innovación Educativa" />
             <div class="gdn-help">Nombre claro con el que se identificará el proyecto.</div>
           </div>
 
@@ -3036,7 +2992,7 @@ collectCurrentStepInputs() {
             <label class="gdn-label" for="gdn-subtitle">
               <span>Subtítulo o frase descriptiva</span>
             </label>
-            <input type="text" id="gdn-subtitle" class="gdn-input" value="${this.escapeHtml(d.subtitle)}" placeholder="Ej:Decisiones estratégicas con ética, transparencia y alto impacto" />
+            <input type="text" id="gdn-subtitle" class="gdn-input" value="${this.escapeHtml(d.subtitle)}" placeholder="Ej: Decisiones estratégicas con ética, transparencia y alto impacto" />
             <div class="gdn-help">Una frase breve que resuma la esencia o promesa del proyecto.</div>
           </div>
         </div>
@@ -3044,20 +3000,14 @@ collectCurrentStepInputs() {
         <div class="gdn-field">
           <label class="gdn-label" for="gdn-short-desc">
             <span>Descripción corta (Resumen ejecutivo) <span style="color:#10b981;">*</span></span>
-            <button type="button" style="background:none; border:none; color:#10b981; font-weight:700; font-size:0.78rem; cursor:pointer;" onclick="window.ProjectWizard.aiGenerateShortDesc()">
-              ✨ Generar desde la descripción completa
-            </button>
           </label>
-          <textarea id="gdn-short-desc" class="gdn-textarea" rows="2" placeholder="Ej: Ecosistema integral que estandariza la calidad de datos e impulsa modelos predictivos auditables para instituciones educativas y públicas.">${this.escapeHtml(d.shortDescription)}</textarea>
+          <textarea id="gdn-short-desc" class="gdn-textarea" rows="2" placeholder="Ej: Ecosistema integral que estandariza la calidad de los datos y mejora el aprendizaje para instituciones educativas y públicas.">${this.escapeHtml(d.shortDescription)}</textarea>
           <div class="gdn-help">Se mostrará en el encabezado de la Landing Page y en las tarjetas de resumen (ideal entre 120 y 240 caracteres).</div>
         </div>
 
         <div class="gdn-field">
           <label class="gdn-label" for="gdn-full-desc">
             <span>Descripción completa del proyecto <span style="color:#10b981;">*</span></span>
-            <button type="button" style="background:none; border:none; color:#10b981; font-weight:700; font-size:0.78rem; cursor:pointer;" onclick="window.ProjectWizard.aiImproveDescription()">
-              ✨ Mejorar redacción con IA
-            </button>
           </label>
           <textarea id="gdn-full-desc" class="gdn-textarea" rows="4" placeholder="Explica en qué consiste el proyecto, su contexto, alcance y cómo aporta valor...">${this.escapeHtml(d.fullDescription)}</textarea>
         </div>
@@ -3155,9 +3105,6 @@ collectCurrentStepInputs() {
             <h3 style="margin:0; font-size:1.08rem; color:var(--gdn-text);">Preguntas clave para presentar tu proyecto</h3>
             <p class="gdn-help" style="margin:0.2rem 0 0;">Responde con tus propias palabras. El asistente usará estas respuestas para estructurar la Landing Page.</p>
           </div>
-          <button type="button" class="plp-doc-btn" style="width:auto; padding:0.45rem 0.9rem;" onclick="window.ProjectWizard.aiProposeValueProp()">
-            ✨ Autocompletar sugerencias con IA
-          </button>
         </div>
 
         <div class="gdn-field-grid">
@@ -3184,7 +3131,7 @@ collectCurrentStepInputs() {
 
         <div class="gdn-field">
           <label class="gdn-label" for="gdn-vp-features">5. ¿Cuáles son sus principales funcionalidades o pilares? (Una por línea)</label>
-          <textarea id="gdn-vp-features" class="gdn-textarea" rows="3" placeholder="Catálogo maestro de datos verificados&#10;Modelos predictivos con IA explicable&#10;Protocolos de ética y privacidad por diseño">${this.escapeHtml(featuresText)}</textarea>
+          <textarea id="gdn-vp-features" class="gdn-textarea" rows="3" placeholder="Catálogo maestro de recursos verificados&#10;Tableros interactivos y seguimiento continuo&#10;Protocolos de ética y privacidad por diseño">${this.escapeHtml(featuresText)}</textarea>
           <div class="gdn-help">Se mostrarán como etiquetas destacadas (chips) en la sección principal de la Landing Page.</div>
         </div>
 
@@ -3221,9 +3168,6 @@ collectCurrentStepInputs() {
             <p class="gdn-help" style="margin:0.2rem 0 0;">Se mostrarán en el centro de ayuda de la Landing Page del proyecto.</p>
           </div>
           <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
-            <button type="button" class="plp-doc-btn outline" style="width:auto; padding:0.4rem 0.85rem;" onclick="window.ProjectWizard.aiProposeFaqs()">
-              ✨ Sugerir FAQs con IA
-            </button>
             <button type="button" class="plp-doc-btn" style="width:auto; padding:0.4rem 0.85rem;" onclick="window.ProjectWizard.addFaqItem()">
               + Agregar pregunta
             </button>
@@ -3232,7 +3176,7 @@ collectCurrentStepInputs() {
 
         ${faqs.length === 0 ? `
           <div style="padding:1rem; background:var(--gdn-subtle); border-radius:10px; font-size:0.85rem; color:var(--gdn-text-muted); text-align:center;">
-            Aún no has agregado preguntas frecuentes. Puedes agregarlas manualmente o pedirle a la IA que sugiera preguntas basadas en tu descripción.
+            Aún no has agregado preguntas frecuentes. Pulsa "+ Agregar pregunta" para añadirlas manualmente.
           </div>
         ` : `
           <div style="display:flex; flex-direction:column; gap:0.75rem;">
@@ -4938,7 +4882,7 @@ collectCurrentStepInputs() {
       console.warn('Error reading text slides:', txtErr);
     }
 
-    alert('⚠️ No se pudieron extraer diapositivas automáticas del archivo. Recuerda que puedes crear diapositivas directamente con el botón "+ Nueva Diapositiva" o "Generar con IA".');
+    alert('⚠️ No se pudieron extraer diapositivas automáticas del archivo. Recuerda que puedes crear diapositivas directamente con el botón "+ Crear Diapositiva en Mentix".');
   },
 
   generateAiSlidesForProject() {
@@ -5104,7 +5048,7 @@ collectCurrentStepInputs() {
 
       ${duplicates.length > 0 ? `
         <div style="padding:0.85rem 1.1rem; background:rgba(245,158,11,0.12); border:1px solid rgba(245,158,11,0.45); border-radius:12px; margin-bottom:1.1rem; font-size:0.84rem; color:#b45309;">
-          <strong>🤖 Aviso del Asistente IA (Posibles duplicados detectados):</strong>
+          <strong>⚠️ Aviso de revisión (Posibles duplicados detectados):</strong>
           Revisamos tus recursos y encontramos nombres o archivos muy similares: <strong>${duplicates.map(d => this.escapeHtml(d)).join(', ')}</strong>. Verifica si deseas conservar ambos o eliminar el duplicado.
         </div>
       ` : ''}
@@ -5636,7 +5580,7 @@ collectCurrentStepInputs() {
 
         ${assets.length === 0 ? `
           <div style="padding:1.8rem 1rem; text-align:center; background:var(--gdn-subtle); border-radius:12px; color:var(--gdn-text-muted); font-size:0.88rem;">
-            Aún no has añadido elementos a la galería o carrusel de presentaciones. Puedes subir imágenes o pedir al Asistente IA que proponga la estructura de diapositivas.
+            Aún no has añadido elementos a la galería o carrusel de presentaciones. Puedes subir imágenes o agregarlas por URL.
           </div>
         ` : `
           <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(270px, 1fr)); gap:1rem;">
@@ -6355,112 +6299,9 @@ collectCurrentStepInputs() {
     `;
   },
 
-  // =========================================================================
-  // ASISTENCIA CONTEXTUAL MEDIANTE INTELIGENCIA ARTIFICIAL (CON APROBACIÓN)
-  // =========================================================================
+  // Panel lateral de IA desactivado en el Asistente de Proyectos
   renderAiSidebar() {
-    const d = this.draft;
-    const missing = this.getMissingInfoSuggestions();
-
-    return `
-      <div style="display:flex; align-items:center; gap:0.6rem; margin-bottom:0.65rem;">
-        <span style="width:34px; height:34px; border-radius:10px; background:linear-gradient(135deg, #0a192f, #10b981); color:#fff; display:inline-flex; align-items:center; justify-content:center; font-size:1.1rem;">🤖</span>
-        <div>
-          <h4 style="margin:0; font-size:0.96rem; color:var(--gdn-text);">Copiloto IA de Proyectos</h4>
-          <span style="font-size:0.74rem; color:#059669; font-weight:700;">Asistencia contextual • Nunca reemplaza sin tu permiso</span>
-        </div>
-      </div>
-
-      <p style="font-size:0.8rem; color:var(--gdn-text-sec); margin:0 0 0.85rem; line-height:1.45;">
-        Solicita propuestas basadas en lo que ya escribiste o en los documentos de texto cargados. Tú decides si aceptar, editar o descartar cada sugerencia.
-      </p>
-
-      <!-- NUEVO: Generador Completo por Tema con IA -->
-      <div style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.16), rgba(6, 78, 59, 0.45)); border: 1.5px solid #10b981; border-radius: 14px; padding: 0.85rem; margin-bottom: 0.95rem; box-shadow: 0 4px 18px rgba(16, 185, 129, 0.22);">
-        <label for="gdn-ai-topic-input" style="display: flex; align-items: center; gap: 0.4rem; font-size: 0.82rem; font-weight: 800; color: #10b981; margin-bottom: 0.45rem;">
-          <span>🎯 Escribe el tema de tu proyecto:</span>
-        </label>
-        <div style="display: flex; flex-direction: column; gap: 0.45rem;">
-          <input 
-            type="text" 
-            id="gdn-ai-topic-input" 
-            placeholder="Ej: Robótica marina, Reciclaje inteligente, Agua limpia..." 
-            value="${this.escapeHtml(this.lastAiTopic || '')}"
-            style="width: 100%; box-sizing: border-box; padding: 0.55rem 0.75rem; border-radius: 10px; border: 1.5px solid #10b981; font-size: 0.84rem; font-weight: 700; background: var(--gdn-surface); color: var(--gdn-text); outline: none;" 
-            onkeydown="if(event.key === 'Enter') { event.preventDefault(); window.ProjectWizard.generateCompleteProjectFromTopic(); }"
-          />
-          <button 
-            type="button" 
-            onclick="window.ProjectWizard.generateCompleteProjectFromTopic()" 
-            style="width: 100%; padding: 0.65rem 0.85rem; font-size: 0.86rem; font-weight: 900; background: linear-gradient(135deg, #10b981, #059669); color: #ffffff; border: none; border-radius: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.45rem; box-shadow: 0 4px 14px rgba(16, 185, 129, 0.4); transition: all 0.2s;"
-            onmouseenter="this.style.background='linear-gradient(135deg, #059669, #047857)';"
-            onmouseleave="this.style.background='linear-gradient(135deg, #10b981, #059669)';"
-          >
-            ⚡ Crear proyecto de este tema con IA
-          </button>
-        </div>
-        <div style="font-size: 0.72rem; color: var(--gdn-text-sec); margin-top: 0.4rem; line-height: 1.35;">
-          La IA redactará el nombre, lema, descripción, ruta de 4 etapas, objetivos y preguntas automáticamente basados en este tema.
-        </div>
-      </div>
-
-      <div style="display:flex; flex-direction:column; gap:0.45rem;">
-        <button type="button" class="plp-doc-btn outline" style="justify-content:flex-start; font-size:0.8rem; padding:0.5rem 0.75rem;" onclick="window.ProjectWizard.aiProposeTitlesAndSubtitles()">
-          ✨ Proponer títulos y subtítulos
-        </button>
-        <button type="button" class="plp-doc-btn outline" style="justify-content:flex-start; font-size:0.8rem; padding:0.5rem 0.75rem;" onclick="window.ProjectWizard.aiImproveDescription()">
-          📝 Mejorar redacción y resumen corto
-        </button>
-        <button type="button" class="plp-doc-btn outline" style="justify-content:flex-start; font-size:0.8rem; padding:0.5rem 0.75rem;" onclick="window.ProjectWizard.aiSuggestCategoriesAndTags()">
-          🏷️ Sugerir categoría y etiquetas
-        </button>
-        <button type="button" class="plp-doc-btn outline" style="justify-content:flex-start; font-size:0.8rem; padding:0.5rem 0.75rem;" onclick="window.ProjectWizard.aiProposeFaqs()">
-          ❓ Generar preguntas frecuentes (FAQ)
-        </button>
-        <button type="button" class="plp-doc-btn outline" style="justify-content:flex-start; font-size:0.8rem; padding:0.5rem 0.75rem;" onclick="window.ProjectWizard.aiProposeCaseStudy()">
-          📁 Proponer Caso Práctico situacional
-        </button>
-        <button type="button" class="plp-doc-btn outline" style="justify-content:flex-start; font-size:0.8rem; padding:0.5rem 0.75rem;" onclick="window.ProjectWizard.aiSynthesizeAuthorizedMaterials()">
-          📑 Sintetizar materiales autorizados
-        </button>
-      </div>
-
-      ${this.pendingAiProposal ? `
-        <div class="gdn-ai-proposal-box animate-fade-in">
-          <div style="font-size:0.76rem; font-weight:800; color:#059669; text-transform:uppercase; margin-bottom:0.35rem;">
-            💡 Propuesta de IA (${this.escapeHtml(this.pendingAiProposal.title)})
-          </div>
-          <div style="font-size:0.78rem; color:var(--gdn-text-sec); margin-bottom:0.45rem;">
-            Puedes editar el texto propuesto antes de aplicarlo:
-          </div>
-          <textarea id="gdn-ai-proposal-textarea" class="gdn-textarea" rows="5" style="font-size:0.82rem; background:var(--gdn-surface);">${this.escapeHtml(this.pendingAiProposal.text)}</textarea>
-          <div style="display:flex; gap:0.45rem; flex-wrap:wrap; margin-top:0.6rem;">
-            <button type="button" class="plp-doc-btn" style="width:auto; padding:0.4rem 0.8rem; font-size:0.78rem;" onclick="window.ProjectWizard.acceptAiProposal()">
-              ✅ Aceptar y aplicar
-            </button>
-            <button type="button" class="plp-doc-btn outline" style="width:auto; padding:0.4rem 0.8rem; font-size:0.78rem;" onclick="window.ProjectWizard.discardAiProposal()">
-              ✕ Descartar
-            </button>
-          </div>
-        </div>
-      ` : ''}
-
-      <!-- Detector de Información Faltante -->
-      <div style="margin-top:1rem; padding-top:0.9rem; border-top:1px solid var(--gdn-border);">
-        <div style="font-size:0.78rem; font-weight:800; color:var(--gdn-text); margin-bottom:0.4rem;">
-          🔎 Diagnóstico rápido del proyecto:
-        </div>
-        ${missing.length === 0 ? `
-          <div style="font-size:0.78rem; color:#059669; font-weight:700;">
-            ✔ Todos los apartados principales cuentan con información documentada.
-          </div>
-        ` : `
-          <ul style="margin:0; padding-left:1.1rem; font-size:0.76rem; color:var(--gdn-text-sec); line-height:1.5;">
-            ${missing.map(m => `<li>${this.escapeHtml(m)}</li>`).join('')}
-          </ul>
-        `}
-      </div>
-    `;
+    return '';
   },
 
   getMissingInfoSuggestions() {
