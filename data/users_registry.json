@@ -26,7 +26,7 @@
     "levelName": "Experto",
     "institution": "Comunidad MENTIX",
     "isBlocked": false,
-    "lastLoginAt": "2026-11-23T16:36:26.924Z",
+    "lastLoginAt": "2026-11-23T16:33:49.107Z",
     "createdAt": "2026-11-23T16:19:05.106Z",
     "pwd": "2bfa6394324932f16ee943b72461afd700b900ff5a698f25c9a42d81509e06e4"
   },
@@ -73,8 +73,8 @@
     "level": 1,
     "levelName": "Principiante",
     "institution": "Comunidad MENTIX",
-    "isBlocked": true,
-    "lastLoginAt": "2026-11-23T16:36:21.103Z",
+    "isBlocked": false,
+    "lastLoginAt": "2026-11-23T16:36:28.214Z",
     "pwd": "11bd4a89b2fae8cb7a4afa66cfc6b5141b0f9f4acb2ed66b0ab12fdaf9baa78e",
     "createdAt": "2026-11-23T16:23:20.888Z"
   }
