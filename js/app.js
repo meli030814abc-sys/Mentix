@@ -1273,6 +1273,35 @@ class AppRouter {
     }
   }
 
+  // Registro global de cuentas: cada persona que crea cuenta / inicia sesión queda visible para el Admin con su animal
+  async pushUserToRegistry(user, adminUpdate = false) {
+    if (!user || user.isGuest || /^guest_/.test(String(user.id || ''))) return;
+    if (!user.email && !user.id) return;
+    try {
+      const safe = {
+        id: user.id, name: user.name, username: user.username, email: user.email,
+        avatar: user.avatar, role: user.role, xp: user.xp, level: user.level,
+        levelName: user.levelName, institution: user.institution, provider: user.provider,
+        isBlocked: !!user.isBlocked
+      };
+      await fetch(`${this.getApiBase()}/api/challenges`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type: 'USER_SYNC', user: safe, adminUpdate: !!adminUpdate })
+      });
+    } catch (e) {}
+  }
+
+  queueUserRegistrySync() {
+    const u = window.appState && window.appState.currentUser;
+    if (!u || u.isGuest) return;
+    const sig = [u.id, u.name, u.avatar, u.xp, u.level, u.role].join('|');
+    if (sig === this._lastUserRegistrySig) return;
+    this._lastUserRegistrySig = sig;
+    clearTimeout(this._userRegistryTimer);
+    this._userRegistryTimer = setTimeout(() => this.pushUserToRegistry(u), 1500);
+  }
+
   async hashPassword(email, password) {
     const data = new TextEncoder().encode(email.toLowerCase() + ':' + password);
     const buf = await crypto.subtle.digest('SHA-256', data);
@@ -1283,6 +1312,7 @@ class AppRouter {
     window.appState.currentUser = user;
     saveGlobalState(window.appState);
     localStorage.setItem('te_reto_session', '1');
+    this.pushUserToRegistry(user);
     this.closeModal('auth-modal');
     this.updateNavbar();
     this.syncChallengesWithCloud(true);

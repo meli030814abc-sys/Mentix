@@ -1543,6 +1543,11 @@ function saveGlobalState(state) {
 
   // Notificar actualización en tiempo real para reportes y vistas
   try {
+    if (window.appRouter && typeof window.appRouter.queueUserRegistrySync === 'function') {
+      window.appRouter.queueUserRegistrySync();
+    }
+  } catch (e) {}
+  try {
     if (typeof window !== 'undefined' && typeof window.dispatchEvent === 'function') {
       window.dispatchEvent(new CustomEvent('mentix:projects-updated', { detail: { timestamp: Date.now() } }));
     }

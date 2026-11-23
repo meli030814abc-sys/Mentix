@@ -24,6 +24,9 @@ let inMemoryCodeParticipants = null;
 
 const inMemoryImages = new Map();
 
+const USERS_PATH = 'data/users_registry.json';
+let inMemoryUsers = null;
+
 function ghHeaders() {
   const h = { 'Accept': 'application/vnd.github.v3+json', 'User-Agent': 'Mentix-App' };
   if (GITHUB_TOKEN) h['Authorization'] = `Bearer ${GITHUB_TOKEN}`;
@@ -250,6 +253,13 @@ export default async function handler(req, res) {
     return res.status(200).json(inMemoryHeroBanner || { bannerUrl: '', style: null, updatedAt: 0 });
   }
 
+  if (req.method === 'GET' && req.query && req.query.users) {
+    const { data } = await readGitHubJsonFile(USERS_PATH, inMemoryUsers || []);
+    if (Array.isArray(data)) inMemoryUsers = data;
+    res.setHeader('Cache-Control', 'no-store');
+    return res.status(200).json((inMemoryUsers || []).map(x => { const c = { ...x }; delete c.passwordHash; return c; }));
+  }
+
   if (req.method === 'GET' && req.query && (req.query.hubs || req.query.hubId)) {
     const { data } = await readGitHubJsonFile(HUBS_PATH, inMemoryHubs || {});
     if (data && typeof data === 'object') inMemoryHubs = data;
@@ -427,6 +437,48 @@ export default async function handler(req, res) {
           inMemoryChallenges.forEach(c => { if (c) c._globalHeroBanner = cleanBanner; });
         }
         return res.status(200).json({ success: true, target: 'hero', bannerUrl: cleanBanner, style: cleanStyle, updatedAt: nowTs, persisted: savedDedicated });
+      }
+
+      // A1b. Registro global de cuentas de Mentix (para que el Admin vea a TODAS las personas registradas con su animal)
+      if (body && body.type === 'USER_SYNC' && body.user && typeof body.user === 'object') {
+        const u = body.user;
+        const emailKey = String(u.email || '').trim().toLowerCase();
+        const idKey = String(u.id || '').trim();
+        if (!emailKey && !idKey) return res.status(400).json({ error: 'Usuario sin id ni correo' });
+        if (u.isGuest || /^guest_/.test(idKey)) return res.status(200).json({ success: true, skipped: true });
+        const { data: prevUsers } = await readGitHubJsonFile(USERS_PATH, inMemoryUsers || []);
+        const list = Array.isArray(prevUsers) ? [...prevUsers] : [];
+        const idx = list.findIndex(x => x && ((emailKey && String(x.email || '').toLowerCase() === emailKey) || (idKey && x.id === idKey)));
+        const nowIso = new Date().toISOString();
+        const clean = {
+          id: idKey || ('user_' + Date.now()),
+          name: String(u.name || '').slice(0, 80),
+          username: String(u.username || '').slice(0, 60),
+          email: emailKey,
+          avatar: String(u.avatar || '').slice(0, 2000),
+          role: ['admin', 'teacher', 'student'].includes(u.role) ? u.role : 'student',
+          xp: Number(u.xp) || 0,
+          level: Number(u.level) || 1,
+          levelName: String(u.levelName || '').slice(0, 40),
+          institution: String(u.institution || '').slice(0, 80),
+          provider: u.provider ? String(u.provider).slice(0, 20) : undefined,
+          isBlocked: !!u.isBlocked,
+          lastLoginAt: nowIso
+        };
+        if (idx >= 0) {
+          const prev = list[idx];
+          // Solo el Admin puede cambiar rol / bloqueo de una cuenta ya registrada
+          if (!body.adminUpdate) {
+            clean.role = prev.role || clean.role;
+            clean.isBlocked = !!prev.isBlocked;
+          }
+          list[idx] = { ...prev, ...clean, createdAt: prev.createdAt || nowIso };
+        } else {
+          list.push({ ...clean, createdAt: nowIso });
+        }
+        inMemoryUsers = list;
+        const persisted = await writeGitHubJsonFile(USERS_PATH, list, `chore(data): cuenta ${clean.username || clean.email}`);
+        return res.status(200).json({ success: true, persisted });
       }
 
       // A2. Sincronización global de miembros y solicitudes de ProjectHub (Detalles)

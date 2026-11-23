@@ -1348,6 +1348,15 @@ window.AdminView = {
    * 3. CONFIGURACIÓN DE ROLES & USUARIOS
    */
   templateRoles() {
+    // Traer en segundo plano a todas las personas registradas en Mentix y refrescar la tabla si hay nuevas
+    if (typeof this.syncUsersFromRegistry === 'function') {
+      this.syncUsersFromRegistry().then(changed => {
+        if (changed && (this.activeTab === 'community' || this.activeTab === 'roles')) {
+          const ae = document.activeElement;
+          if (!(ae && (ae.tagName === 'INPUT' || ae.tagName === 'SELECT'))) this.renderActiveTab();
+        }
+      }).catch(() => {});
+    }
     const rawUsers = (window.appState && window.appState.users) ? window.appState.users : [];
     
     // Filtro
@@ -4113,6 +4122,10 @@ window.AdminView = {
     try {
       localStorage.setItem('mentix_users', JSON.stringify(users));
     } catch(e) {}
+    try { if (typeof saveGlobalState === 'function') saveGlobalState(window.appState); } catch (e) {}
+    if (window.appRouter && typeof window.appRouter.pushUserToRegistry === 'function') {
+      window.appRouter.pushUserToRegistry(u, true);
+    }
 
     this.logAuditEvent(`Estado de usuario cambiado: ${u.name} (${u.isBlocked ? 'Bloqueado' : 'Activo'})`, 'Usuarios');
     this.showToast(`Usuario ${u.isBlocked ? 'bloqueado' : 'desbloqueado'} exitosamente`, 'success');
@@ -4184,6 +4197,76 @@ window.AdminView = {
     this.renderActiveTab();
   },
 
+  /**
+   * Descarga el registro global de cuentas y las fusiona en la lista local (todas las personas registradas en Mentix, con su animal)
+   */
+  _usersSyncing: false,
+  _lastUsersSyncAt: 0,
+  async syncUsersFromRegistry(force = false) {
+    if (this._usersSyncing) return false;
+    if (!force && (Date.now() - this._lastUsersSyncAt) < 3000) return false;
+    this._usersSyncing = true;
+    this._lastUsersSyncAt = Date.now();
+    let changed = false;
+    try {
+      const apiBase = (window.appRouter && typeof window.appRouter.getApiBase === 'function') ? window.appRouter.getApiBase() : '';
+      const res = await fetch(`${apiBase}/api/challenges?users=1&t=${Date.now()}`, { cache: 'no-store' });
+      if (!res.ok) return false;
+      const remote = await res.json();
+      if (!Array.isArray(remote)) return false;
+      if (!window.appState) return false;
+      if (!Array.isArray(window.appState.users)) window.appState.users = [];
+      const local = window.appState.users;
+      const curId = window.appState.currentUser && window.appState.currentUser.id;
+      remote.forEach(r => {
+        if (!r || (!r.email && !r.id)) return;
+        const em = String(r.email || '').toLowerCase();
+        const lu = local.find(x => x && ((em && String(x.email || '').toLowerCase() === em) || (r.id && x.id === r.id)));
+        if (!lu) {
+          local.push({
+            id: r.id, name: r.name || r.username || 'Usuario', username: r.username || '', email: r.email || '',
+            avatar: r.avatar || '🦊', role: r.role || 'student', xp: r.xp || 0, level: r.level || 1,
+            levelName: r.levelName || 'Principiante', institution: r.institution || 'Comunidad MENTIX',
+            challengesPlayed: 0, challengesCreated: 0, victories: 0, medals: [], status: 'active',
+            isBlocked: !!r.isBlocked, provider: r.provider, lastLoginAt: r.lastLoginAt, createdAt: r.createdAt
+          });
+          changed = true;
+        } else {
+          const upd = (k, v) => { if (v !== undefined && v !== '' && lu[k] !== v) { lu[k] = v; changed = true; } };
+          upd('role', r.role);
+          if (!!lu.isBlocked !== !!r.isBlocked) { lu.isBlocked = !!r.isBlocked; changed = true; }
+          if (lu.id !== curId) {
+            upd('avatar', r.avatar);
+            upd('name', r.name);
+            upd('xp', r.xp);
+            upd('level', r.level);
+            upd('levelName', r.levelName);
+          }
+          upd('lastLoginAt', r.lastLoginAt);
+        }
+      });
+      // Subir al registro global las cuentas locales que aún no estén (cuentas creadas antes de este módulo)
+      if (!this._localUsersSeeded && window.appRouter && typeof window.appRouter.pushUserToRegistry === 'function') {
+        this._localUsersSeeded = true;
+        const remoteKeys = new Set();
+        remote.forEach(r => { if (r) { if (r.email) remoteKeys.add('e:' + String(r.email).toLowerCase()); if (r.id) remoteKeys.add('i:' + r.id); } });
+        local.forEach((lu, i) => {
+          if (!lu || lu.isGuest || !lu.email) return;
+          if (remoteKeys.has('e:' + String(lu.email).toLowerCase()) || remoteKeys.has('i:' + lu.id)) return;
+          setTimeout(() => window.appRouter.pushUserToRegistry(lu, true), i * 1500);
+        });
+      }
+      if (changed) {
+        try { if (typeof saveGlobalState === 'function') saveGlobalState(window.appState); } catch (e) {}
+      }
+    } catch (e) {
+      return false;
+    } finally {
+      this._usersSyncing = false;
+    }
+    return changed;
+  },
+
   changeUserRole(userId, newRole) {
     let users = (window.appState && window.appState.users) ? window.appState.users : [];
     const u = users.find(item => item.id === userId);
@@ -4196,6 +4279,10 @@ window.AdminView = {
     try {
       localStorage.setItem('mentix_users', JSON.stringify(users));
     } catch(e) {}
+    try { if (typeof saveGlobalState === 'function') saveGlobalState(window.appState); } catch (e) {}
+    if (window.appRouter && typeof window.appRouter.pushUserToRegistry === 'function') {
+      window.appRouter.pushUserToRegistry(u, true);
+    }
 
     this.logAuditEvent(`Rol de usuario actualizado: ${u.name} (${oldRole} ➔ ${newRole})`, 'Roles');
     this.showToast(`Rol de ${u.name} actualizado a ${newRole}`, 'success');
@@ -5401,3 +5488,18 @@ window.AdminView = {
   }
 })();
 
+
+// Refresco en vivo del directorio de usuarios: cada persona que se registra aparece en la tabla de Comunidad
+setInterval(function() {
+  try {
+    if (!window.AdminView || !window.appRouter || window.appRouter.currentView !== 'admin') return;
+    if (window.AdminView.activeTab !== 'community' && window.AdminView.activeTab !== 'roles') return;
+    if (typeof window.AdminView.isAdminUser === 'function' && !window.AdminView.isAdminUser()) return;
+    window.AdminView.syncUsersFromRegistry(true).then(function(changed) {
+      if (!changed) return;
+      var ae = document.activeElement;
+      if (ae && (ae.tagName === 'INPUT' || ae.tagName === 'SELECT')) return;
+      window.AdminView.renderActiveTab();
+    });
+  } catch (e) {}
+}, 8000);
