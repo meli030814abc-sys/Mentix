@@ -10,7 +10,7 @@
       "email": "gatitaxd6f79@gmail.com",
       "role": "admin",
       "joinedAt": "2026-11-23T04:35:10.065Z",
-      "updatedAt": "2026-11-23T05:04:39.398Z",
+      "updatedAt": "2026-11-23T05:04:40.899Z",
       "projectId": "govdata_code_nocturno_804263",
       "projectTitle": "Nuevo Proyecto",
       "projectDescription": "Iniciativa integral que aborda \"Marino\" mediante metodologías activas de aprendizaje, diseño de prototipos e investigación aplicada para generar impacto positivo.",
@@ -20,7 +20,7 @@
       "status": "in_progress",
       "approvalStatus": "pending",
       "publicationStatus": "draft",
-      "slidesCount": 3,
+      "slidesCount": 8,
       "resourcesCount": 0,
       "snapshot": {
         "id": "govdata_code_nocturno_804263",
@@ -55,7 +55,7 @@
         "mainObjective": "Diseñar e implementar una propuesta innovadora y funcional que promueva el conocimiento y aporte soluciones prácticas a marino.",
         "benefits": "Fomenta habilidades del siglo XXI (creatividad, trabajo en equipo y resolución de problemas), ofrece soluciones replicables y genera conciencia en la comunidad.",
         "targetAudience": "Estudiantes, docentes, familias y comunidades interesadas en marino y la innovación social.",
-        "slidesCount": 3,
+        "slidesCount": 8,
         "resourcesCount": 0,
         "landingConfig": {
           "publicName": "Proyecto Marino",
@@ -102,7 +102,7 @@
             }
           ]
         },
-        "updatedAt": "2026-11-23T05:04:39.398Z"
+        "updatedAt": "2026-11-23T05:04:40.899Z"
       }
     },
     {
