@@ -1349,6 +1349,20 @@ window.ProjectsView = {
     return this.isAdminUser();
   },
 
+  // Si la imagen del banner no carga (hotlink bloqueado, etc.), reintenta vía proxy y luego usa la imagen por defecto
+  heroImgFallback(img) {
+    if (!img) return;
+    const orig = img.getAttribute('data-orig') || '';
+    const step = Number(img.getAttribute('data-fb') || '0');
+    img.setAttribute('data-fb', String(step + 1));
+    if (step === 0 && /^https?:\/\//i.test(orig)) {
+      img.src = 'https://images.weserv.nl/?url=' + encodeURIComponent(orig.replace(/^https?:\/\//i, ''));
+      return;
+    }
+    img.onerror = null;
+    img.src = 'assets/projects_ui/card_data_gov.png';
+  },
+
   getProjectHeroBanner(projId, selected) {
     if (!projId && selected && selected.id) projId = selected.id;
     let proj = selected;
@@ -7760,7 +7774,7 @@ window.ProjectsView = {
 
     const projHeroBanner = this.getProjectHeroBanner(targetProjId, selected);
     // Fondo normal, nítido y con colores auténticos: sutil degradado lateral solo sobre el texto para máxima legibilidad
-    const heroStyle = `background-image: linear-gradient(to right, rgba(5, 14, 30, 0.72) 0%, rgba(5, 14, 30, 0.35) 42%, rgba(5, 14, 30, 0.08) 75%, transparent 100%), url("${this.escapeHtml(projHeroBanner)}") !important; background-size: cover !important; background-position: center !important; background-repeat: no-repeat !important; position: relative !important; padding-top: 4.8rem !important; overflow: hidden !important;`;
+    const heroStyle = `background-image: linear-gradient(to right, rgba(5, 14, 30, 0.72) 0%, rgba(5, 14, 30, 0.35) 42%, rgba(5, 14, 30, 0.08) 75%, transparent 100%), url('${this.escapeHtml(String(projHeroBanner || '').replace(/'/g, '%27'))}') !important; background-color: #06131f !important; background-size: cover !important; background-position: center !important; background-repeat: no-repeat !important; position: relative !important; padding-top: 4.8rem !important; overflow: hidden !important;`;
 
     container.innerHTML = `
       <div class="plp-page-container ${currentTheme === 'light' ? 'light-theme' : ''}" data-theme="${currentTheme}" style="max-width: 1360px; margin: 0 auto; padding: 1.25rem clamp(1.25rem, 3.5vw, 2.75rem) 4rem; box-sizing: border-box;">
@@ -7864,7 +7878,7 @@ window.ProjectsView = {
                ================================================================ -->
           <section class="inno-hero" id="inno-sec-hero" style="${heroStyle}">
             <!-- Imagen de fondo idéntica al banner de la tarjeta del proyecto -->
-            <img id="inno-hero-bg-img-el" src="${this.escapeHtml(projHeroBanner)}" alt="" aria-hidden="true" onerror="this.onerror=null;this.src='assets/projects_ui/card_data_gov.png';" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:center; z-index:0; pointer-events:none; display:block;" />
+            <img id="inno-hero-bg-img-el" src="${this.escapeHtml(projHeroBanner)}" alt="" aria-hidden="true" referrerpolicy="no-referrer" data-orig="${this.escapeHtml(projHeroBanner)}" onerror="window.ProjectsView.heroImgFallback(this)" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:center; z-index:0; pointer-events:none; display:block;" />
             <div aria-hidden="true" style="position:absolute; inset:0; background:linear-gradient(to right, rgba(5, 14, 30, 0.72) 0%, rgba(5, 14, 30, 0.36) 44%, rgba(5, 14, 30, 0.08) 76%, transparent 100%); z-index:1; pointer-events:none;"></div>
             <!-- Botón interactivo para cambiar el fondo del banner de atrás (Solo Admin, Creador o Editores) -->
             ${canEditBanner ? `
