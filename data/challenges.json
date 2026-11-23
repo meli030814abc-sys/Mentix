@@ -103,7 +103,8 @@
         "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fgovdata_code_hhgfj_804263%2F1795409568917_z7a7_slide_1.jpg",
         "notes": "",
         "bgColor": "#ffffff",
-        "themeId": "cosmos"
+        "themeId": "cosmos",
+        "bgImage": ""
       },
       {
         "id": "slide_1795409568566_1",
@@ -118,7 +119,8 @@
         "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fgovdata_code_hhgfj_804263%2F1795409570495_1onc_slide_2.jpg",
         "notes": "",
         "bgColor": "#ffffff",
-        "themeId": "cosmos"
+        "themeId": "cosmos",
+        "bgImage": ""
       },
       {
         "id": "slide_1795409568566_2",
@@ -133,7 +135,8 @@
         "imageUrl": "",
         "notes": "",
         "bgColor": "#ffffff",
-        "themeId": "cosmos"
+        "themeId": "cosmos",
+        "bgImage": ""
       },
       {
         "id": "slide_1795409568566_3",
@@ -148,7 +151,8 @@
         "imageUrl": "",
         "notes": "",
         "bgColor": "#ffffff",
-        "themeId": "cosmos"
+        "themeId": "cosmos",
+        "bgImage": ""
       },
       {
         "id": "slide_1795409568566_4",
@@ -163,7 +167,8 @@
         "imageUrl": "",
         "notes": "",
         "bgColor": "#ffffff",
-        "themeId": "cosmos"
+        "themeId": "cosmos",
+        "bgImage": ""
       },
       {
         "id": "slide_1795409568566_5",
@@ -178,7 +183,8 @@
         "imageUrl": "",
         "notes": "",
         "bgColor": "#ffffff",
-        "themeId": "cosmos"
+        "themeId": "cosmos",
+        "bgImage": ""
       },
       {
         "id": "slide_1795409568566_6",
@@ -193,7 +199,8 @@
         "imageUrl": "",
         "notes": "",
         "bgColor": "#ffffff",
-        "themeId": "cosmos"
+        "themeId": "cosmos",
+        "bgImage": ""
       },
       {
         "id": "slide_1795409568566_7",
@@ -208,7 +215,8 @@
         "imageUrl": "",
         "notes": "",
         "bgColor": "#ffffff",
-        "themeId": "cosmos"
+        "themeId": "cosmos",
+        "bgImage": ""
       }
     ],
     "externalLinks": [],
@@ -429,7 +437,49 @@
     "authorAvatar": "🦊",
     "authorRole": "Líder del Proyecto",
     "createdAt": "2026-11-23T04:35:12.300Z",
-    "updatedAt": "2026-11-23T04:52:52.399Z"
+    "updatedAt": "2026-11-23T04:52:52.055Z",
+    "hub": {
+      "joinRequests": [],
+      "members": [
+        {
+          "name": "JHFK",
+          "email": "HGFH@HNGFH",
+          "role": "owner",
+          "leader": true
+        }
+      ],
+      "views": [],
+      "ratings": []
+    },
+    "customProjectCodes": [
+      {
+        "code": "804263",
+        "author": "Melisa",
+        "authorRole": "admin",
+        "createdAt": "22/11/2026, 9:27:35 p.m."
+      },
+      {
+        "code": "371850",
+        "author": "Melisa",
+        "authorRole": "admin",
+        "createdAt": "22/11/2026, 9:27:35 p.m."
+      },
+      {
+        "code": "926407",
+        "author": "Melisa",
+        "authorRole": "admin",
+        "createdAt": "22/11/2026, 9:23:09 p.m."
+      },
+      {
+        "code": "583194",
+        "author": "Melisa",
+        "authorRole": "admin",
+        "createdAt": "22/11/2026, 9:22:51 p.m."
+      }
+    ],
+    "tag": "⏳ Pendiente de Autorización",
+    "tagClass": "badge-review",
+    "rejectionReason": ""
   },
   {
     "id": "proj_pres_1791658288964",
