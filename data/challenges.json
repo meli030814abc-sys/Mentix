@@ -1395,7 +1395,7 @@
     "isPublic": true,
     "startDate": "2026-11-23",
     "endDate": "2026-11-11",
-    "currentStep": 9,
+    "currentStep": 10,
     "completedSteps": [
       1,
       2,
@@ -1444,16 +1444,16 @@
       "commercialPitch": "12123322",
       "faqs": []
     },
-    "videoUrl": "",
+    "videoUrl": "https://www.youtube.com/watch?v=B1gW2ivlQDs",
     "videoConfig": {
       "sourceType": "url",
-      "url": "",
+      "url": "https://www.youtube.com/watch?v=B1gW2ivlQDs",
       "fileName": "",
       "title": "",
       "description": "",
       "thumbnailUrl": "",
       "isPublic": true,
-      "verified": false
+      "verified": true
     },
     "resources": [
       {
@@ -1752,13 +1752,13 @@
       },
       "videoConfig": {
         "sourceType": "url",
-        "url": "",
+        "url": "https://www.youtube.com/watch?v=B1gW2ivlQDs",
         "fileName": "",
         "title": "",
         "description": "",
         "thumbnailUrl": "",
         "isPublic": true,
-        "verified": false
+        "verified": true
       },
       "mainImage": "https://www.google.com/imgres?q=imagen&imgurl=https%3A%2F%2Fstatic.vecteezy.com%2Fsystem%2Fresources%2Fthumbnails%2F060%2F843%2F811%2Fsmall%2Fclose-up-of-raindrops-on-leaves-hd-background-luxury-hd-wallpaper-image-trendy-background-illustration-free-photo.jpg&imgrefurl=https%3A%2F%2Fes.vecteezy.com%2Ffotos-gratis%2Fimagen&docid=FjgWdyaU7OHLOM&tbnid=XfSoVrwZgQjJsM&vet=12ahUKEwiv0c2nl52YAxUomYQIHTZzLVUQnPAOegQINxAA..i&w=625&h=350&hcb=2&ved=2ahUKEwiv0c2nl52YAxUomYQIHTZzLVUQnPAOegQINxAA",
       "thumbnailImage": "https://www.google.com/imgres?q=imagen&imgurl=https%3A%2F%2Fstatic.vecteezy.com%2Fsystem%2Fresources%2Fthumbnails%2F060%2F843%2F811%2Fsmall%2Fclose-up-of-raindrops-on-leaves-hd-background-luxury-hd-wallpaper-image-trendy-background-illustration-free-photo.jpg&imgrefurl=https%3A%2F%2Fes.vecteezy.com%2Ffotos-gratis%2Fimagen&docid=FjgWdyaU7OHLOM&tbnid=XfSoVrwZgQjJsM&vet=12ahUKEwiv0c2nl52YAxUomYQIHTZzLVUQnPAOegQINxAA..i&w=625&h=350&hcb=2&ved=2ahUKEwiv0c2nl52YAxUomYQIHTZzLVUQnPAOegQINxAA",
@@ -1832,7 +1832,7 @@
         15,
         16
       ],
-      "currentStep": 9,
+      "currentStep": 10,
       "author": "Melisa",
       "authorId": "user_1792184134006",
       "ownerId": "user_1792184134006",
@@ -1859,7 +1859,7 @@
         "collaborators": "hdfud"
       },
       "createdAt": "2026-11-23T03:09:16.957Z",
-      "updatedAt": "2026-11-23T04:11:09.272Z",
+      "updatedAt": "2026-11-23T04:11:12.457Z",
       "progress": 100,
       "calculatedProgress": 100
     },
@@ -1873,7 +1873,7 @@
     "authorAvatar": "🐯",
     "authorRole": "Líder del Proyecto",
     "createdAt": "2026-11-23T03:09:16.957Z",
-    "updatedAt": "2026-11-23T04:11:09.504Z",
+    "updatedAt": "2026-11-23T04:11:12.676Z",
     "image": "https://www.google.com/imgres?q=imagen&imgurl=https%3A%2F%2Fstatic.vecteezy.com%2Fsystem%2Fresources%2Fthumbnails%2F060%2F843%2F811%2Fsmall%2Fclose-up-of-raindrops-on-leaves-hd-background-luxury-hd-wallpaper-image-trendy-background-illustration-free-photo.jpg&imgrefurl=https%3A%2F%2Fes.vecteezy.com%2Ffotos-gratis%2Fimagen&docid=FjgWdyaU7OHLOM&tbnid=XfSoVrwZgQjJsM&vet=12ahUKEwiv0c2nl52YAxUomYQIHTZzLVUQnPAOegQINxAA..i&w=625&h=350&hcb=2&ved=2ahUKEwiv0c2nl52YAxUomYQIHTZzLVUQnPAOegQINxAA",
     "rejectionReason": "",
     "tag": "✔ Completado",
