@@ -6902,7 +6902,8 @@ collectCurrentStepInputs() {
       approvalStatus: approvalStatus,
       authorizedAt: authorizedAt,
       authorizedBy: authorizedBy,
-      status: pubStatus === 'published' ? 'completed' : 'in_progress',
+      status: (pubStatus === 'published' || pubStatus === 'pending_approval' || pubStatus === 'completed' || Number(d.progress) >= 100 || (Array.isArray(d.completedSteps) && d.completedSteps.length >= 16)) ? 'completed' : 'in_progress',
+      completedAt: (pubStatus === 'published' || pubStatus === 'pending_approval' || pubStatus === 'completed') ? (d.completedAt || existingRec.completedAt || new Date().toISOString()) : (d.completedAt || existingRec.completedAt || undefined),
       isPublic: pubStatus === 'published' && approvalStatus === 'approved',
       startDate: d.startDate || '',
       endDate: d.endDate || '',
@@ -7043,10 +7044,11 @@ collectCurrentStepInputs() {
     this.draft.calculatedProgress = 100;
     const rec = this.syncProjectRecordToAppState(targetStatus);
 
-    // Guardar siempre como pendiente de autorización a menos que sea publicación forzada por admin
+    // Guardar siempre como completado (pendiente de autorización a menos que sea publicación forzada por admin)
     this.draft.publicationStatus = targetStatus;
     this.draft.approvalStatus = canPub ? 'approved' : 'pending';
-    this.draft.status = canPub ? 'completed' : 'review';
+    this.draft.status = 'completed';
+    this.draft.completedAt = this.draft.completedAt || new Date().toISOString();
     this.draft.isPublic = canPub;
     this.saveDraftToStorage(true);
 
