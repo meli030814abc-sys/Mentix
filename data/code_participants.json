@@ -10,13 +10,13 @@
       "email": "gatitaxd6f79@gmail.com",
       "role": "admin",
       "joinedAt": "2026-11-23T03:09:15.937Z",
-      "updatedAt": "2026-11-23T03:49:06.786Z",
+      "updatedAt": "2026-11-23T03:49:12.327Z",
       "projectId": "govdata_code_mentilona_804263",
       "projectTitle": "🌊 ¡El 95 % del océano sigue siendo un misterio! 😱 ¿Qué se esconde en las profundidades?",
       "projectDescription": "Bajo la superficie del mar existe un universo extraordinario lleno de criaturas sorprendentes, ecosistemas desconocidos y fenómenos que la ciencia continúa investigando.\n\n🐙 Animales capaces de producir su propia luz.\n\n🌋 Volcanes submarinos y fuentes hidrotermales.\n\n🦈 Criaturas adaptadas a presiones extremas.\n\n🔎 Nuevas especies que siguen siendo descubiertas.\n\nEn este contenido exploraremos algunos de los secretos más fascinantes del océano y descubriremos por qué su exploración representa uno de los mayores desafíos científicos de nuestro tiempo.\n\n💬 Y tú, ¿qué crees que todavía se esconde en las profundidades del océano?\n\n👇 ¡Déjanos tu opinión en los comentarios y comparte este contenido con alguien que ame los misterios!\n\n#MisteriosDelOceano #Ciencia #Curiosidades #Descubrimientos #Naturaleza #Tecnologia #SabiasQue #Exploracion #Misterios #ContenidoEducativo",
-      "currentStep": 15,
-      "completedStepsCount": 14,
-      "progress": 88,
+      "currentStep": 16,
+      "completedStepsCount": 15,
+      "progress": 94,
       "status": "in_progress",
       "approvalStatus": "pending",
       "publicationStatus": "draft",
@@ -36,7 +36,7 @@
         "status": "in_progress",
         "publicationStatus": "draft",
         "approvalStatus": "pending",
-        "currentStep": 15,
+        "currentStep": 16,
         "completedSteps": [
           1,
           2,
@@ -51,9 +51,10 @@
           11,
           12,
           13,
-          14
+          14,
+          15
         ],
-        "progress": 88,
+        "progress": 94,
         "banner": "https://www.google.com/imgres?q=imagen&imgurl=https%3A%2F%2Fstatic.vecteezy.com%2Fsystem%2Fresources%2Fthumbnails%2F060%2F843%2F811%2Fsmall%2Fclose-up-of-raindrops-on-leaves-hd-background-luxury-hd-wallpaper-image-trendy-background-illustration-free-photo.jpg&imgrefurl=https%3A%2F%2Fes.vecteezy.com%2Ffotos-gratis%2Fimagen&docid=FjgWdyaU7OHLOM&tbnid=XfSoVrwZgQjJsM&vet=12ahUKEwiv0c2nl52YAxUomYQIHTZzLVUQnPAOegQINxAA..i&w=625&h=350&hcb=2&ved=2ahUKEwiv0c2nl52YAxUomYQIHTZzLVUQnPAOegQINxAA",
         "problemStatement": "hgj",
         "mainObjective": "khgk",
@@ -90,7 +91,7 @@
           "commercialPitch": "2321324351010115.0.",
           "faqs": []
         },
-        "updatedAt": "2026-11-23T03:49:06.786Z"
+        "updatedAt": "2026-11-23T03:49:12.327Z"
       }
     }
   ]
