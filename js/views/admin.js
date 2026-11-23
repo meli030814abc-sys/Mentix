@@ -4126,6 +4126,9 @@ window.AdminView = {
     if (window.appRouter && typeof window.appRouter.pushUserToRegistry === 'function') {
       window.appRouter.pushUserToRegistry(u, true);
     }
+    if (window.realtimeEngine && typeof window.realtimeEngine.publishUserControl === 'function') {
+      window.realtimeEngine.publishUserControl('block', u, { isBlocked: u.isBlocked });
+    }
 
     this.logAuditEvent(`Estado de usuario cambiado: ${u.name} (${u.isBlocked ? 'Bloqueado' : 'Activo'})`, 'Usuarios');
     this.showToast(`Usuario ${u.isBlocked ? 'bloqueado' : 'desbloqueado'} exitosamente`, 'success');
@@ -4133,21 +4136,35 @@ window.AdminView = {
   },
 
   deleteUser(userId) {
-    if (!confirm('¿Deseas eliminar definitivamente este usuario?')) return;
+    if (!confirm('¿Deseas eliminar definitivamente este usuario? Su cuenta se borrará de MENTIX y deberá crear una nueva para volver a entrar.')) return;
 
     let users = (window.appState && window.appState.users) ? window.appState.users : [];
     const u = users.find(item => item.id === userId);
     const uName = u ? u.name : userId;
+    const uEmail = u ? String(u.email || '').trim().toLowerCase() : '';
 
     users = users.filter(item => item.id !== userId);
     window.appState.users = users;
 
     try {
       localStorage.setItem('mentix_users', JSON.stringify(users));
+      const delArr = JSON.parse(localStorage.getItem('mentix_deleted_users') || '[]');
+      const nextDel = Array.isArray(delArr) ? delArr : [];
+      nextDel.push({ id: userId, email: uEmail, deletedAt: new Date().toISOString() });
+      localStorage.setItem('mentix_deleted_users', JSON.stringify(nextDel));
     } catch(e) {}
+    try { if (typeof saveGlobalState === 'function') saveGlobalState(window.appState); } catch (e) {}
 
-    this.logAuditEvent(`Usuario eliminado: ${uName}`, 'Usuarios');
-    this.showToast('Usuario eliminado', 'success');
+    // Eliminar del registro global en la nube y expulsar en tiempo real al usuario
+    if (window.appRouter && typeof window.appRouter.deleteUserFromRegistry === 'function') {
+      window.appRouter.deleteUserFromRegistry(userId, uEmail);
+    }
+    if (window.realtimeEngine && typeof window.realtimeEngine.publishUserControl === 'function') {
+      window.realtimeEngine.publishUserControl('delete', { id: userId, email: uEmail });
+    }
+
+    this.logAuditEvent(`Usuario eliminado definitivamente: ${uName}`, 'Usuarios');
+    this.showToast(`🗑️ Cuenta de "${uName}" eliminada de MENTIX`, 'success');
     this.renderActiveTab();
   },
 
@@ -4214,8 +4231,37 @@ window.AdminView = {
       if (!res.ok) return false;
       const remote = await res.json();
       if (!Array.isArray(remote)) return false;
+      let deletedRemote = [];
+      try {
+        const resDel = await fetch(`${apiBase}/api/challenges?deletedUsers=1&t=${Date.now()}`, { cache: 'no-store' });
+        if (resDel.ok) {
+          const jd = await resDel.json();
+          if (Array.isArray(jd)) deletedRemote = jd;
+        }
+      } catch (e) {}
       if (!window.appState) return false;
       if (!Array.isArray(window.appState.users)) window.appState.users = [];
+
+      const delSet = new Set();
+      deletedRemote.forEach(d => {
+        if (!d) return;
+        if (d.id) delSet.add('i:' + String(d.id));
+        if (d.email) delSet.add('e:' + String(d.email).toLowerCase());
+      });
+      if (delSet.size > 0) {
+        const remoteActiveIds = new Set(remote.map(r => r && r.id ? 'i:' + String(r.id) : '').filter(Boolean));
+        const remoteActiveEmails = new Set(remote.map(r => r && r.email ? 'e:' + String(r.email).toLowerCase() : '').filter(Boolean));
+        const beforeLen = window.appState.users.length;
+        window.appState.users = window.appState.users.filter(x => {
+          if (!x) return false;
+          const ik = x.id ? 'i:' + String(x.id) : '';
+          const ek = x.email ? 'e:' + String(x.email).toLowerCase() : '';
+          if (remoteActiveIds.has(ik) || remoteActiveEmails.has(ek)) return true;
+          return !delSet.has(ik) && !delSet.has(ek);
+        });
+        if (window.appState.users.length !== beforeLen) changed = true;
+      }
+
       const local = window.appState.users;
       const curId = window.appState.currentUser && window.appState.currentUser.id;
       remote.forEach(r => {
@@ -4282,6 +4328,15 @@ window.AdminView = {
     try { if (typeof saveGlobalState === 'function') saveGlobalState(window.appState); } catch (e) {}
     if (window.appRouter && typeof window.appRouter.pushUserToRegistry === 'function') {
       window.appRouter.pushUserToRegistry(u, true);
+    }
+    if (window.realtimeEngine && typeof window.realtimeEngine.publishUserControl === 'function') {
+      window.realtimeEngine.publishUserControl('role', u, { role: newRole });
+    }
+    // Si el admin cambió su propio rol en esta misma pestaña, reflejarlo al instante
+    if (window.appState?.currentUser && (window.appState.currentUser.id === u.id || (u.email && window.appState.currentUser.email && u.email.toLowerCase() === window.appState.currentUser.email.toLowerCase()))) {
+      window.appState.currentUser.role = newRole;
+      window.appState.currentUser.isAdmin = (newRole === 'admin');
+      if (window.appRouter && typeof window.appRouter.updateNavbar === 'function') window.appRouter.updateNavbar();
     }
 
     this.logAuditEvent(`Rol de usuario actualizado: ${u.name} (${oldRole} ➔ ${newRole})`, 'Roles');

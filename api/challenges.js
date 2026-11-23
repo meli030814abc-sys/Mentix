@@ -27,6 +27,8 @@ const inMemoryImages = new Map();
 
 const USERS_PATH = 'data/users_registry.json';
 let inMemoryUsers = null;
+const DELETED_USERS_PATH = 'data/deleted_users.json';
+let inMemoryDeletedUsers = null;
 const nodeCrypto = { createHmac: (...a) => nodeCryptoMod.createHmac(...a) };
 // La contraseña (ya hasheada en el cliente) se vuelve a firmar con un secreto del servidor antes de guardarse; nunca se devuelve por la API
 function sealPwd(clientHash) {
@@ -268,6 +270,13 @@ export default async function handler(req, res) {
     return res.status(200).json((inMemoryUsers || []).map(publicUser));
   }
 
+  if (req.method === 'GET' && req.query && req.query.deletedUsers) {
+    const { data } = await readGitHubJsonFile(DELETED_USERS_PATH, inMemoryDeletedUsers || []);
+    if (Array.isArray(data)) inMemoryDeletedUsers = data;
+    res.setHeader('Cache-Control', 'no-store');
+    return res.status(200).json(inMemoryDeletedUsers || []);
+  }
+
   if (req.method === 'GET' && req.query && (req.query.hubs || req.query.hubId)) {
     const { data } = await readGitHubJsonFile(HUBS_PATH, inMemoryHubs || {});
     if (data && typeof data === 'object') inMemoryHubs = data;
@@ -447,6 +456,33 @@ export default async function handler(req, res) {
         return res.status(200).json({ success: true, target: 'hero', bannerUrl: cleanBanner, style: cleanStyle, updatedAt: nowTs, persisted: savedDedicated });
       }
 
+      // A1d. Eliminacion definitiva de una cuenta por el Administrador
+      if (body && body.type === 'USER_DELETE' && (body.userId || body.email)) {
+        const idKey = String(body.userId || '').trim();
+        const emailKey = String(body.email || '').trim().toLowerCase();
+        const { data: prevUsers } = await readGitHubJsonFile(USERS_PATH, inMemoryUsers || []);
+        const list = Array.isArray(prevUsers) ? [...prevUsers] : [];
+        const filtered = list.filter(x => {
+          if (!x) return false;
+          if (idKey && String(x.id || '') === idKey) return false;
+          if (emailKey && String(x.email || '').toLowerCase() === emailKey) return false;
+          return true;
+        });
+        inMemoryUsers = filtered;
+        const persistedUsers = await writeGitHubJsonFile(USERS_PATH, filtered, `chore(data): eliminar cuenta ${emailKey || idKey}`);
+
+        const { data: prevDel } = await readGitHubJsonFile(DELETED_USERS_PATH, inMemoryDeletedUsers || []);
+        const delList = Array.isArray(prevDel) ? [...prevDel] : [];
+        const nowIso = new Date().toISOString();
+        const delIdx = delList.findIndex(d => d && ((idKey && d.id === idKey) || (emailKey && String(d.email || '').toLowerCase() === emailKey)));
+        const delRec = { id: idKey, email: emailKey, deletedAt: nowIso };
+        if (delIdx >= 0) delList[delIdx] = delRec;
+        else delList.push(delRec);
+        inMemoryDeletedUsers = delList;
+        await writeGitHubJsonFile(DELETED_USERS_PATH, delList, `chore(data): registrar cuenta eliminada ${emailKey || idKey}`);
+        return res.status(200).json({ success: true, persisted: persistedUsers, deleted: delRec });
+      }
+
       // A1c. Inicio de sesion desde cualquier dispositivo con una cuenta del registro global
       if (body && body.type === 'USER_LOGIN' && body.email && body.hash) {
         const { data: usersNow } = await readGitHubJsonFile(USERS_PATH, inMemoryUsers || []);
@@ -455,7 +491,7 @@ export default async function handler(req, res) {
         const found = arr.find(x => x && String(x.email || '').toLowerCase() === em);
         if (!found || !found.pwd) return res.status(404).json({ success: false, error: 'not_found' });
         if (found.pwd !== sealPwd(body.hash)) return res.status(401).json({ success: false, error: 'bad_password' });
-        if (found.isBlocked) return res.status(403).json({ success: false, error: 'blocked' });
+        // Si esta bloqueada, devolvemos el usuario con isBlocked: true para que siga "presente" pero sin poder hacer nada
         return res.status(200).json({ success: true, user: publicUser(found) });
       }
 
@@ -469,6 +505,21 @@ export default async function handler(req, res) {
         const { data: prevUsers } = await readGitHubJsonFile(USERS_PATH, inMemoryUsers || []);
         const list = Array.isArray(prevUsers) ? [...prevUsers] : [];
         const idx = list.findIndex(x => x && ((emailKey && String(x.email || '').toLowerCase() === emailKey) || (idKey && x.id === idKey)));
+
+        // Evitar que un navegador desactualizado resucite una cuenta eliminada por el Admin
+        const { data: prevDel } = await readGitHubJsonFile(DELETED_USERS_PATH, inMemoryDeletedUsers || []);
+        const delList = Array.isArray(prevDel) ? [...prevDel] : [];
+        const delMatch = delList.find(d => d && ((idKey && d.id === idKey) || (emailKey && String(d.email || '').toLowerCase() === emailKey)));
+        if (delMatch && idx < 0) {
+          if (body.isNewRegistration) {
+            // El usuario está creando una cuenta nueva tras ser eliminado -> quitarlo de eliminados
+            const nextDel = delList.filter(d => d && !( (idKey && d.id === idKey) || (emailKey && String(d.email || '').toLowerCase() === emailKey) ));
+            inMemoryDeletedUsers = nextDel;
+            await writeGitHubJsonFile(DELETED_USERS_PATH, nextDel, `chore(data): re-registro de ${emailKey || idKey}`);
+          } else {
+            return res.status(200).json({ success: false, deleted: true });
+          }
+        }
         const nowIso = new Date().toISOString();
         const clean = {
           id: idKey || ('user_' + Date.now()),

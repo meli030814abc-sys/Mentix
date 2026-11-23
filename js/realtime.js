@@ -64,6 +64,13 @@ class RealtimeEngine {
             this._handleRemoteProjectAuthSync(data);
           }
         } catch (err) {}
+      } else if (event.key === 'mentix_user_control_ping' && event.newValue) {
+        try {
+          const data = JSON.parse(event.newValue);
+          if (data) {
+            this._handleRemoteUserControl(data);
+          }
+        } catch (err) {}
       }
     });
   }
@@ -250,6 +257,8 @@ class RealtimeEngine {
         client.subscribe('mentix/global/project_deleted', { qos: 0 });
         client.subscribe('mentix/global/projects_sync', { qos: 0 });
         client.subscribe('mentix/global/project_auth/+', { qos: 0 });
+        client.subscribe('mentix/global/user_control', { qos: 0 });
+        client.subscribe('mentix/global/user_state/+', { qos: 0 });
         if (Array.isArray(this._pendingGlobalAuthQueue) && this._pendingGlobalAuthQueue.length > 0) {
           const toFlush = [...this._pendingGlobalAuthQueue];
           this._pendingGlobalAuthQueue = [];
@@ -257,6 +266,16 @@ class RealtimeEngine {
             try {
               client.publish('mentix/global/projects_sync', item.payload, { qos: 0, retain: false });
               client.publish('mentix/global/project_auth/' + item.cleanId, item.payload, { qos: 0, retain: true });
+            } catch (e) {}
+          });
+        }
+        if (Array.isArray(this._pendingUserControlQueue) && this._pendingUserControlQueue.length > 0) {
+          const toFlushU = [...this._pendingUserControlQueue];
+          this._pendingUserControlQueue = [];
+          toFlushU.forEach(item => {
+            try {
+              client.publish('mentix/global/user_control', item.payload, { qos: 0, retain: false });
+              if (item.topicKey) client.publish('mentix/global/user_state/' + item.topicKey, item.payload, { qos: 0, retain: true });
             } catch (e) {}
           });
         }
@@ -311,6 +330,15 @@ class RealtimeEngine {
             const data = JSON.parse(rawStr);
             if (data) {
               this._handleRemoteProjectAuthSync(data);
+            }
+          } catch(e) {}
+        } else if (topic === 'mentix/global/user_control' || topic.startsWith('mentix/global/user_state/')) {
+          try {
+            const rawStr = messageBuffer.toString();
+            if (!rawStr) return;
+            const data = JSON.parse(rawStr);
+            if (data) {
+              this._handleRemoteUserControl(data);
             }
           } catch(e) {}
         }
@@ -567,6 +595,54 @@ class RealtimeEngine {
     try {
       localStorage.setItem('mentix_projects_auth_sync_ping', JSON.stringify(msg));
     } catch(e) {}
+  }
+
+  publishUserControl(action, userObj = {}, extra = {}) {
+    if (!action || (!userObj.id && !userObj.email)) return;
+    const emailKey = String(userObj.email || '').trim().toLowerCase();
+    const idKey = String(userObj.id || '').trim();
+    const topicKey = (emailKey || idKey).replace(/[^a-zA-Z0-9._-]/g, '_');
+    const msg = {
+      type: 'USER_CONTROL',
+      senderId: this._tabId,
+      action: String(action), // 'role' | 'block' | 'delete'
+      userId: idKey,
+      email: emailKey,
+      role: extra.role !== undefined ? extra.role : userObj.role,
+      isBlocked: extra.isBlocked !== undefined ? !!extra.isBlocked : !!userObj.isBlocked,
+      timestamp: Date.now()
+    };
+    const payload = JSON.stringify(msg);
+    let sentMqtt = false;
+    [this.globalMqttClient, this.mqttClient].forEach(c => {
+      if (c && c.connected) {
+        try {
+          c.publish('mentix/global/user_control', payload, { qos: 0, retain: false });
+          if (topicKey) c.publish('mentix/global/user_state/' + topicKey, payload, { qos: 0, retain: true });
+          sentMqtt = true;
+        } catch (e) {}
+      }
+    });
+    if (!sentMqtt) {
+      if (!Array.isArray(this._pendingUserControlQueue)) this._pendingUserControlQueue = [];
+      this._pendingUserControlQueue.push({ topicKey, payload });
+    }
+    this.broadcast(msg);
+    try {
+      localStorage.setItem('mentix_user_control_ping', JSON.stringify(msg));
+    } catch (e) {}
+  }
+
+  _handleRemoteUserControl(data) {
+    if (!data || typeof data !== 'object' || !data.action) return;
+    if (data.senderId && data.senderId === this._tabId) return;
+    const dedupeKey = [data.action, data.userId || '', data.email || '', data.role || '', String(data.isBlocked), data.timestamp || ''].join(':');
+    if (this._lastUserCtrlKey === dedupeKey && (Date.now() - (this._lastUserCtrlAt || 0)) < 2500) return;
+    this._lastUserCtrlKey = dedupeKey;
+    this._lastUserCtrlAt = Date.now();
+    if (window.appRouter && typeof window.appRouter.applyRemoteUserControl === 'function') {
+      window.appRouter.applyRemoteUserControl(data);
+    }
   }
 
   publishGlobalBanner(bannerData) {
@@ -1034,6 +1110,11 @@ class RealtimeEngine {
     // 🔄 Sincronización global en tiempo real de autorización/desautorización de proyectos
     if (msg.type === 'PROJECT_AUTH_CHANGED' && msg.projectId) {
       this._handleRemoteProjectAuthSync(msg);
+    }
+
+    // 🛡️ Control en tiempo real de cuentas (cambio de rol, bloqueo, eliminación)
+    if (msg.type === 'USER_CONTROL' && msg.action) {
+      this._handleRemoteUserControl(msg);
     }
 
     if (msg.type === 'ROOM_CLOSED') {

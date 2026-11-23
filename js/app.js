@@ -55,6 +55,13 @@ class AppRouter {
     this.syncCategoriesWithCloud();
     this.syncChallengesWithCloud(true);
 
+    // Verificar estado de cuenta actual (bloqueo, cambio de rol o eliminación) al iniciar y periódicamente
+    if (window.appState && window.appState.currentUser && window.appState.currentUser.isBlocked && localStorage.getItem('te_reto_session') === '1') {
+      this.applyBlockedOverlay(true);
+    }
+    this.syncCurrentUserStatusFromCloud();
+    setInterval(() => this.syncCurrentUserStatusFromCloud(), 15000);
+
     // Manejar atajos globales
     this.setupGlobalEvents();
 
@@ -1274,7 +1281,7 @@ class AppRouter {
   }
 
   // Registro global de cuentas: cada persona que crea cuenta / inicia sesión queda visible para el Admin con su animal
-  async pushUserToRegistry(user, adminUpdate = false) {
+  async pushUserToRegistry(user, adminUpdate = false, isNewRegistration = false) {
     if (!user || user.isGuest || /^guest_/.test(String(user.id || ''))) return;
     if (!user.email && !user.id) return;
     try {
@@ -1284,12 +1291,226 @@ class AppRouter {
         levelName: user.levelName, institution: user.institution, provider: user.provider,
         isBlocked: !!user.isBlocked
       };
+      const res = await fetch(`${this.getApiBase()}/api/challenges`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type: 'USER_SYNC',
+          user: safe,
+          adminUpdate: !!adminUpdate,
+          isNewRegistration: !!isNewRegistration,
+          passwordHash: user.passwordHash || undefined
+        })
+      });
+      if (res && res.ok) {
+        const j = await res.json().catch(() => ({}));
+        if (j && j.deleted && !adminUpdate && !isNewRegistration) {
+          this.handleAccountDeletedByAdmin(user.id, user.email);
+        }
+      }
+    } catch (e) {}
+  }
+
+  async deleteUserFromRegistry(userId, email) {
+    if (!userId && !email) return;
+    try {
       await fetch(`${this.getApiBase()}/api/challenges`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ type: 'USER_SYNC', user: safe, adminUpdate: !!adminUpdate, passwordHash: user.passwordHash || undefined })
+        body: JSON.stringify({ type: 'USER_DELETE', userId: String(userId || ''), email: String(email || '').trim().toLowerCase() })
       });
     } catch (e) {}
+  }
+
+  applyBlockedOverlay(isBlocked) {
+    const existing = document.getElementById('mentix-blocked-account-overlay');
+    if (!isBlocked) {
+      if (existing) existing.remove();
+      if (this._blockedKeyHandler) {
+        window.removeEventListener('keydown', this._blockedKeyHandler, true);
+        this._blockedKeyHandler = null;
+      }
+      document.body.style.overflow = '';
+      return;
+    }
+    if (existing) return;
+    document.body.style.overflow = 'hidden';
+    const overlay = document.createElement('div');
+    overlay.id = 'mentix-blocked-account-overlay';
+    overlay.style.cssText = 'position:fixed; inset:0; z-index:99999999; background:rgba(15, 23, 42, 0.72); backdrop-filter:blur(5px); display:flex; align-items:center; justify-content:center; padding:1.5rem; pointer-events:all; user-select:none;';
+    overlay.innerHTML = `
+      <div style="background:#ffffff; color:#0f172a; border-radius:24px; max-width:460px; width:100%; padding:2.2rem 2rem; text-align:center; box-shadow:0 25px 70px rgba(0,0,0,0.45); border:2px solid #ef4444; font-family:'Outfit','Inter',sans-serif;">
+        <div style="width:74px; height:74px; margin:0 auto 1rem; border-radius:50%; background:#fee2e2; display:flex; align-items:center; justify-content:center; font-size:2.2rem;">🔒</div>
+        <h2 style="margin:0 0 0.65rem; font-size:1.55rem; font-weight:900; color:#b91c1c;">Cuenta Bloqueada</h2>
+        <p style="margin:0 0 1.4rem; font-size:0.98rem; line-height:1.55; color:#334155; font-weight:600;">
+          Tu cuenta ha sido bloqueada temporalmente por el Administrador de MENTIX.<br><br>
+          Permaneces conectado en la plataforma, pero <strong>no puedes realizar ninguna acción</strong> hasta que el Administrador la desbloquee.
+        </p>
+        <div style="display:inline-flex; align-items:center; gap:0.5rem; background:#fef2f2; border:1px solid #fecaca; color:#991b1b; padding:0.45rem 1rem; border-radius:999px; font-size:0.82rem; font-weight:800; margin-bottom:1.25rem;">
+          <span>⏳</span> Esperando desbloqueo en tiempo real...
+        </div>
+        <div>
+          <button type="button" id="mentix-blocked-logout-btn" onclick="window.appRouter && window.appRouter.logout(true)" style="background:#f1f5f9; border:1.5px solid #cbd5e1; color:#475569; border-radius:999px; padding:0.55rem 1.25rem; font-size:0.85rem; font-weight:800; cursor:pointer;">
+            🚪 Cerrar sesión
+          </button>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(overlay);
+    if (!this._blockedKeyHandler) {
+      this._blockedKeyHandler = (ev) => {
+        if (!document.getElementById('mentix-blocked-account-overlay')) return;
+        ev.preventDefault();
+        ev.stopPropagation();
+      };
+      window.addEventListener('keydown', this._blockedKeyHandler, true);
+    }
+  }
+
+  showLiveAccountNotice(text, bg = '#0f172a') {
+    try {
+      const old = document.getElementById('mentix-live-account-toast');
+      if (old) old.remove();
+      const el = document.createElement('div');
+      el.id = 'mentix-live-account-toast';
+      el.style.cssText = `position:fixed; top:18px; left:50%; transform:translateX(-50%); z-index:99999998; background:${bg}; color:#ffffff; padding:0.85rem 1.4rem; border-radius:999px; font-weight:800; font-size:0.92rem; box-shadow:0 12px 35px rgba(0,0,0,0.35); border:1.5px solid rgba(255,255,255,0.22); max-width:92vw; text-align:center;`;
+      el.textContent = text;
+      document.body.appendChild(el);
+      setTimeout(() => { if (el.parentNode) el.remove(); }, 5000);
+    } catch (e) {}
+  }
+
+  handleAccountDeletedByAdmin(targetId, targetEmail) {
+    const idKey = String(targetId || '').trim();
+    const emKey = String(targetEmail || '').trim().toLowerCase();
+    const matchesUser = (u) => u && ((idKey && String(u.id || '') === idKey) || (emKey && String(u.email || '').toLowerCase() === emKey));
+
+    if (window.appState && Array.isArray(window.appState.users)) {
+      window.appState.users = window.appState.users.filter(u => !matchesUser(u));
+      try { localStorage.setItem('mentix_users', JSON.stringify(window.appState.users)); } catch (e) {}
+      try { localStorage.setItem('te_reto_users', JSON.stringify(window.appState.users)); } catch (e) {}
+    }
+
+    const cur = window.appState && window.appState.currentUser;
+    if (matchesUser(cur) && localStorage.getItem('te_reto_session') === '1') {
+      if (this._accountDeleteHandled) return;
+      this._accountDeleteHandled = true;
+      this.applyBlockedOverlay(false);
+      try {
+        if (window.supabaseService && window.supabaseService.client) {
+          window.supabaseService.client.auth.signOut().catch(() => {});
+        }
+      } catch (e) {}
+      localStorage.removeItem('te_reto_session');
+      localStorage.removeItem('te_reto_current_user');
+      alert('🗑️ Tu cuenta ha sido eliminada de MENTIX por el Administrador.\n\nYa no puedes entrar con esta cuenta; deberás crear una nueva si deseas volver a ingresar.');
+      window.location.hash = '';
+      window.location.reload();
+    }
+  }
+
+  applyRemoteUserControl(data) {
+    if (!data || !data.action) return;
+    const idKey = String(data.userId || '').trim();
+    const emKey = String(data.email || '').trim().toLowerCase();
+    const matchesUser = (u) => u && ((idKey && String(u.id || '') === idKey) || (emKey && String(u.email || '').toLowerCase() === emKey));
+
+    if (data.action === 'delete') {
+      this.handleAccountDeletedByAdmin(idKey, emKey);
+      if (this.currentView === 'admin' && window.AdminView && typeof window.AdminView.renderActiveTab === 'function') {
+        window.AdminView.renderActiveTab();
+      }
+      return;
+    }
+
+    if (window.appState && Array.isArray(window.appState.users)) {
+      const targetInList = window.appState.users.find(matchesUser);
+      if (targetInList) {
+        if (data.action === 'role' && data.role) {
+          targetInList.role = data.role;
+          targetInList.isAdmin = (data.role === 'admin');
+        }
+        if (data.action === 'block') {
+          targetInList.isBlocked = !!data.isBlocked;
+        }
+      }
+    }
+
+    const cur = window.appState && window.appState.currentUser;
+    const isMe = matchesUser(cur) && localStorage.getItem('te_reto_session') === '1';
+
+    if (isMe) {
+      if (data.action === 'role' && data.role && cur.role !== data.role) {
+        cur.role = data.role;
+        cur.isAdmin = (data.role === 'admin');
+        try { saveGlobalState(window.appState); } catch (e) {}
+        this.updateNavbar();
+        const roleLabels = { admin: '🛡️ Administrador', teacher: '👨‍🏫 Docente', student: '🎓 Estudiante' };
+        this.showLiveAccountNotice(`✨ Tu rol en MENTIX ahora es: ${roleLabels[data.role] || data.role}`, '#0284c7');
+
+        if (this.currentView === 'admin' && data.role !== 'admin') {
+          this.navigate('home');
+        } else if (this.currentView === 'teacher' && data.role === 'student') {
+          this.navigate('home');
+        } else {
+          if (this.currentView === 'projects' && window.ProjectsView && window.ProjectsView.viewMode !== 'wizard') window.ProjectsView.render();
+          else if (this.currentView === 'home' && window.HomeView) window.HomeView.render();
+          else if (this.currentView === 'profile' && window.ProfileView) window.ProfileView.render();
+          else if (this.currentView === 'admin' && window.AdminView) window.AdminView.render();
+        }
+      } else if (data.action === 'block') {
+        const nextBlocked = !!data.isBlocked;
+        const prevBlocked = !!cur.isBlocked;
+        cur.isBlocked = nextBlocked;
+        try { saveGlobalState(window.appState); } catch (e) {}
+        this.applyBlockedOverlay(nextBlocked);
+        if (prevBlocked && !nextBlocked) {
+          this.showLiveAccountNotice('🔓 ¡Tu cuenta ha sido desbloqueada por el Administrador! Ya puedes usar MENTIX.', '#059669');
+        }
+      }
+    } else if (this.currentView === 'admin' && window.AdminView && typeof window.AdminView.renderActiveTab === 'function') {
+      try { saveGlobalState(window.appState); } catch (e) {}
+      window.AdminView.renderActiveTab();
+    }
+  }
+
+  async syncCurrentUserStatusFromCloud() {
+    const cur = window.appState && window.appState.currentUser;
+    if (!cur || cur.isGuest || localStorage.getItem('te_reto_session') !== '1') return;
+    if (this._syncingCurUserStatus) return;
+    this._syncingCurUserStatus = true;
+    try {
+      const base = this.getApiBase();
+      const [rUsers, rDel] = await Promise.all([
+        fetch(`${base}/api/challenges?users=1&t=${Date.now()}`, { cache: 'no-store' }).catch(() => null),
+        fetch(`${base}/api/challenges?deletedUsers=1&t=${Date.now()}`, { cache: 'no-store' }).catch(() => null)
+      ]);
+      const usersList = (rUsers && rUsers.ok) ? await rUsers.json().catch(() => null) : null;
+      const delList = (rDel && rDel.ok) ? await rDel.json().catch(() => null) : null;
+      const idKey = String(cur.id || '').trim();
+      const emKey = String(cur.email || '').trim().toLowerCase();
+      const matchFn = (x) => x && ((idKey && String(x.id || '') === idKey) || (emKey && String(x.email || '').toLowerCase() === emKey));
+
+      const inActive = Array.isArray(usersList) ? usersList.find(matchFn) : null;
+      const inDeleted = Array.isArray(delList) ? delList.find(matchFn) : null;
+
+      if (inDeleted && !inActive) {
+        this.handleAccountDeletedByAdmin(cur.id, cur.email);
+        return;
+      }
+      if (inActive) {
+        if (inActive.role && inActive.role !== cur.role) {
+          this.applyRemoteUserControl({ action: 'role', userId: cur.id, email: cur.email, role: inActive.role });
+        }
+        if (!!inActive.isBlocked !== !!cur.isBlocked) {
+          this.applyRemoteUserControl({ action: 'block', userId: cur.id, email: cur.email, isBlocked: !!inActive.isBlocked });
+        } else if (inActive.isBlocked) {
+          this.applyBlockedOverlay(true);
+        }
+      }
+    } catch (e) {} finally {
+      this._syncingCurUserStatus = false;
+    }
   }
 
   queueUserRegistrySync() {
@@ -1308,15 +1529,17 @@ class AppRouter {
     return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
   }
 
-  finishAuth(user, message) {
+  finishAuth(user, message, isNewRegistration = false) {
     window.appState.currentUser = user;
     saveGlobalState(window.appState);
     localStorage.setItem('te_reto_session', '1');
-    this.pushUserToRegistry(user);
+    this._accountDeleteHandled = false;
+    this.pushUserToRegistry(user, false, !!isNewRegistration);
     this.closeModal('auth-modal');
     this.updateNavbar();
+    this.applyBlockedOverlay(!!user.isBlocked);
     this.syncChallengesWithCloud(true);
-    if (message) alert(message);
+    if (!user.isBlocked && message) alert(message);
   }
 
   // Inicio de sesión con una cuenta del registro global (creada en otro dispositivo)
@@ -1348,9 +1571,35 @@ class AppRouter {
     const id = document.getElementById('login-email').value.trim().toLowerCase();
     const password = document.getElementById('login-password').value;
 
-    const user = window.appState.users.find(u =>
+    let user = window.appState.users.find(u =>
       (u.email && u.email.toLowerCase() === id) || (u.username && u.username.toLowerCase() === id)
     );
+    // Verificar en la nube si esta cuenta fue eliminada definitivamente por el Administrador
+    if (user) {
+      try {
+        const base = this.getApiBase();
+        const [rU, rD] = await Promise.all([
+          fetch(`${base}/api/challenges?users=1&t=${Date.now()}`, { cache: 'no-store' }).catch(() => null),
+          fetch(`${base}/api/challenges?deletedUsers=1&t=${Date.now()}`, { cache: 'no-store' }).catch(() => null)
+        ]);
+        const uList = (rU && rU.ok) ? await rU.json().catch(() => null) : null;
+        const dList = (rD && rD.ok) ? await rD.json().catch(() => null) : null;
+        const em = String(user.email || '').toLowerCase();
+        const inActive = Array.isArray(uList) ? uList.find(x => x && ((em && String(x.email || '').toLowerCase() === em) || x.id === user.id)) : null;
+        const inDel = Array.isArray(dList) ? dList.find(x => x && ((em && String(x.email || '').toLowerCase() === em) || x.id === user.id)) : null;
+        if (inDel && !inActive) {
+          window.appState.users = window.appState.users.filter(x => x && x.id !== user.id && String(x.email || '').toLowerCase() !== em);
+          saveGlobalState(window.appState);
+          alert('🗑️ Esta cuenta fue eliminada de MENTIX por el Administrador.\n\nDebes crear una cuenta nueva para poder entrar.');
+          this.switchAuthTab('register');
+          return;
+        }
+        if (inActive) {
+          if (inActive.role) user.role = inActive.role;
+          user.isBlocked = !!inActive.isBlocked;
+        }
+      } catch (e) {}
+    }
     // Si la cuenta no existe en este dispositivo (o no tiene contraseña local), intentar con el registro global de Mentix
     if (!user || !user.passwordHash) {
       const rr = await this.remoteLogin(id, password);
@@ -1459,7 +1708,7 @@ class AppRouter {
     };
 
     window.appState.users.push(newUser);
-    this.finishAuth(newUser);
+    this.finishAuth(newUser, null, true);
     window.soundEngine.playFanfare();
     alert(`🎉 ¡Cuenta creada con éxito! Bienvenido a MENTIX, ${name}.`);
     this.navigate('profile');
