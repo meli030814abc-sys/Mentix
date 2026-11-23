@@ -1388,11 +1388,11 @@
     "benefits": "hki",
     "teamLead": "Melisa",
     "preparationStatus": "en_desarrollo",
-    "publicationStatus": "pending_approval",
-    "approvalStatus": "pending",
+    "publicationStatus": "published",
+    "approvalStatus": "approved",
     "submittedForApproval": true,
     "status": "completed",
-    "isPublic": false,
+    "isPublic": true,
     "startDate": "2026-11-23",
     "endDate": "2026-11-18",
     "currentStep": 16,
@@ -1471,7 +1471,8 @@
         "order": 1,
         "status": "verified",
         "extractedText": "",
-        "uploadedAt": "2026-11-23T03:47:29.357Z"
+        "uploadedAt": "2026-11-23T03:47:29.357Z",
+        "thumbnailUrl": ""
       },
       {
         "id": "res_1795405649524_bugu",
@@ -1488,7 +1489,8 @@
         "order": 2,
         "status": "verified",
         "extractedText": "",
-        "uploadedAt": "2026-11-23T03:47:29.524Z"
+        "uploadedAt": "2026-11-23T03:47:29.524Z",
+        "thumbnailUrl": ""
       },
       {
         "id": "res_1795405649671_bqtl",
@@ -1505,7 +1507,8 @@
         "order": 3,
         "status": "verified",
         "extractedText": "",
-        "uploadedAt": "2026-11-23T03:47:29.671Z"
+        "uploadedAt": "2026-11-23T03:47:29.671Z",
+        "thumbnailUrl": ""
       },
       {
         "id": "res_1795405649790_da3f",
@@ -1522,7 +1525,8 @@
         "order": 4,
         "status": "verified",
         "extractedText": "",
-        "uploadedAt": "2026-11-23T03:47:29.790Z"
+        "uploadedAt": "2026-11-23T03:47:29.790Z",
+        "thumbnailUrl": ""
       }
     ],
     "visualAssets": [
@@ -1639,7 +1643,9 @@
         "media": "",
         "notes": "",
         "bgColor": "#090e1a",
-        "themeId": "cosmos"
+        "themeId": "cosmos",
+        "imageUrl": "",
+        "bgImage": ""
       }
     ],
     "externalLinks": [],
@@ -1698,7 +1704,8 @@
       "titleColor": "#ffffff",
       "textColor": "#cbd5e1",
       "accentColor": "#00f5d4",
-      "bannerStyle": "gradient-cosmos"
+      "bannerStyle": "gradient-cosmos",
+      "bannerUrl": ""
     },
     "authorsConfig": {
       "authorsList": "Melisa",
@@ -1726,7 +1733,7 @@
       "mainObjective": "khgk",
       "benefits": "hki",
       "teamLead": "Melisa",
-      "preparationStatus": "en_desarrollo",
+      "preparationStatus": "completado",
       "startDate": "2026-11-23",
       "endDate": "2026-11-18",
       "valueProp": {
@@ -1806,7 +1813,7 @@
         "displayOrder": 1,
         "featuredVideoPublic": true
       },
-      "publicationStatus": "pending_approval",
+      "publicationStatus": "published",
       "completedSteps": [
         1,
         2,
@@ -1851,10 +1858,17 @@
         "collaborators": "personas"
       },
       "createdAt": "2026-11-23T03:09:16.957Z",
-      "updatedAt": "2026-11-23T03:50:20.015Z",
+      "updatedAt": "2026-11-23T03:50:28.488Z",
       "submittedForApproval": true,
       "progress": 100,
-      "calculatedProgress": 100
+      "calculatedProgress": 100,
+      "approvalStatus": "approved",
+      "status": "completed",
+      "completedAt": "2026-11-23T03:50:22.698Z",
+      "isPublic": true,
+      "authorizedAt": "2026-11-23T03:50:28.488Z",
+      "authorizedBy": "Melisa",
+      "rejectionReason": ""
     },
     "author": "Melisa",
     "authorId": "user_1792184134006",
@@ -1866,11 +1880,11 @@
     "authorAvatar": "🐯",
     "authorRole": "Líder del Proyecto",
     "createdAt": "2026-11-23T03:09:16.957Z",
-    "updatedAt": "2026-11-23T03:50:22.944Z",
+    "updatedAt": "2026-11-23T03:50:28.642Z",
     "image": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
     "rejectionReason": "",
-    "tag": "⏳ Pendiente de Autorización",
-    "tagClass": "badge-review",
+    "tag": "✔ Completado",
+    "tagClass": "badge-completed",
     "hub": {
       "joinRequests": [],
       "members": [
@@ -1882,7 +1896,9 @@
         }
       ],
       "views": [],
-      "ratings": []
+      "ratings": [],
+      "projectId": "govdata_code_mentilona_804263",
+      "updatedAt": 1795405784959
     },
     "_globalHeroBanner": "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=1600&q=80",
     "joinRequests": [],
@@ -1926,6 +1942,12 @@
       "offsetY": 0,
       "zoom": 134
     },
-    "completedAt": "2026-11-23T03:50:22.663Z"
+    "completedAt": "2026-11-23T03:50:22.698Z",
+    "authorizedAt": "2026-11-23T03:50:28.488Z",
+    "authorizedBy": "Melisa",
+    "stage": "completed",
+    "visibility": "public",
+    "accessMode": "public",
+    "rejectedAt": ""
   }
 ]
