@@ -473,7 +473,8 @@
     ],
     "tag": "⏳ Pendiente de Autorización",
     "tagClass": "badge-review",
-    "rejectionReason": ""
+    "rejectionReason": "",
+    "_globalHeroBanner": "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=1600&q=80"
   },
   {
     "id": "proj_pres_1791658288964",
@@ -1483,7 +1484,7 @@
     "isPublic": false,
     "startDate": "2026-11-23",
     "endDate": "2027-02-23",
-    "currentStep": 10,
+    "currentStep": 11,
     "completedSteps": [
       1,
       2,
@@ -1493,7 +1494,8 @@
       6,
       7,
       8,
-      9
+      9,
+      10
     ],
     "progress": 95,
     "calculatedProgress": 95,
@@ -1797,9 +1799,10 @@
         6,
         7,
         8,
-        9
+        9,
+        10
       ],
-      "currentStep": 10,
+      "currentStep": 11,
       "author": "Carlos Canon",
       "authorId": "user_1793449738905",
       "ownerId": "user_1793449738905",
@@ -1825,7 +1828,7 @@
         "collaborators": "jk"
       },
       "createdAt": "2026-11-23T03:21:39.599Z",
-      "updatedAt": "2026-11-23T05:04:32.245Z",
+      "updatedAt": "2026-11-23T05:04:33.239Z",
       "progress": 95,
       "calculatedProgress": 95
     },
@@ -1839,7 +1842,7 @@
     "authorAvatar": "👨‍🏫",
     "authorRole": "Líder del Proyecto",
     "createdAt": "2026-11-23T03:21:39.599Z",
-    "updatedAt": "2026-11-23T05:04:32.307Z",
+    "updatedAt": "2026-11-23T05:04:33.198Z",
     "image": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
     "tag": "⏳ Pendiente de Autorización",
     "tagClass": "badge-review",
@@ -1867,6 +1870,12 @@
     ],
     "joinRequests": [],
     "_globalHeroBanner": "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=1600&q=80",
+    "_globalHeroBannerStyle": {
+      "fit": "cover",
+      "offsetX": 5,
+      "offsetY": 0,
+      "zoom": 134
+    },
     "heroBanner": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
     "coverImage": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80"
   },
