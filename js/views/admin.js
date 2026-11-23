@@ -1382,213 +1382,360 @@ window.AdminView = {
     const teacherCount = rawUsers.filter(u => u.role === 'teacher').length;
     const studentCount = rawUsers.filter(u => u.role === 'student' || !u.role).length;
 
+    const blockedCount = rawUsers.filter(u => u.isBlocked === true).length;
+
     return `
-      <!-- Breadcrumbs -->
-      <div class="admin-breadcrumbs">
-        <span>Inicio</span>
-        <span class="sep">/</span>
-        <span class="active">Configuración de Roles & Permisos</span>
-      </div>
-
-      <!-- Header -->
-      <div class="admin-section-header">
-        <div>
-          <h2>Configuración de Roles & Permisos Institucionales</h2>
-          <p>Administra las cuentas de estudiantes, docentes y administradores con control de acceso granular y asignación inmediata de roles.</p>
-        </div>
-        <div class="admin-header-actions">
-          <button class="btn btn-cyan" onclick="window.AdminView.openCreateUserModal()">
-            <span>➕</span> Crear Administrador / Docente
-          </button>
-        </div>
-      </div>
-
-      <!-- Tarjetas de Roles Principales -->
-      <div class="admin-roles-overview-grid">
-        <div class="admin-role-card role-card-admin">
-          <div class="role-card-top">
-            <span class="role-card-icon">🛡️</span>
-            <span class="role-card-badge">${adminCount} Cuentas</span>
+      <div class="roles-v2-shell">
+        <!-- Hero Banner Institucional -->
+        <div class="roles-v2-hero">
+          <div class="roles-v2-hero-left">
+            <div class="roles-v2-breadcrumb">
+              <span>🏠</span>
+              <span>Inicio</span>
+              <span class="sep">/</span>
+              <span class="current">Configuración de Roles &amp; Permisos</span>
+            </div>
+            <h2 class="roles-v2-title">
+              Configuración de <span class="roles-v2-title-accent">Roles &amp; Permisos</span> Institucionales
+            </h2>
+            <p class="roles-v2-subtitle">
+              Administra las cuentas de estudiantes, docentes y administradores con control de acceso granular y asignación inmediata de roles.
+            </p>
+            <div class="roles-v2-accent-bar"></div>
           </div>
-          <h3>Super Administrador</h3>
-          <p>Control total del backend, personalización del robot y banners, gestión de usuarios, recursos y auditoría completa.</p>
-          <ul class="role-caps-list">
-            <li>✅ Acceso exclusivo a panel administrativo</li>
-            <li>✅ Cambio de banner de robot & colores</li>
-            <li>✅ Moderación y eliminación global</li>
-          </ul>
-        </div>
 
-        <div class="admin-role-card role-card-teacher">
-          <div class="role-card-top">
-            <span class="role-card-icon">👨‍🏫</span>
-            <span class="role-card-badge">${teacherCount} Cuentas</span>
+          <div class="roles-v2-hero-visual" aria-hidden="true">
+            <svg viewBox="0 0 210 120" width="195" height="112" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <linearGradient id="rv2Lap" x1="40" y1="20" x2="120" y2="95" gradientUnits="userSpaceOnUse">
+                  <stop stop-color="#6366f1"/><stop offset="1" stop-color="#3b82f6"/>
+                </linearGradient>
+                <linearGradient id="rv2Shield" x1="115" y1="16" x2="175" y2="105" gradientUnits="userSpaceOnUse">
+                  <stop stop-color="#a855f7"/><stop offset="1" stop-color="#6366f1"/>
+                </linearGradient>
+                <linearGradient id="rv2Base" x1="35" y1="95" x2="135" y2="108" gradientUnits="userSpaceOnUse">
+                  <stop stop-color="#e0e7ff"/><stop offset="1" stop-color="#c7d2fe"/>
+                </linearGradient>
+              </defs>
+              <!-- Tarjetas flotantes de usuarios -->
+              <rect x="8" y="34" width="24" height="28" rx="6" fill="#60a5fa" opacity="0.9"/>
+              <circle cx="20" cy="44" r="4" fill="#fff"/><path d="M13 56c1-4 13-4 14 0" fill="#fff"/>
+              <rect x="40" y="10" width="24" height="26" rx="6" fill="#a78bfa" opacity="0.9"/>
+              <circle cx="52" cy="19" r="4" fill="#fff"/><path d="M45 31c1-4 13-4 14 0" fill="#fff"/>
+              <rect x="32" y="64" width="22" height="24" rx="6" fill="#818cf8" opacity="0.85"/>
+              <circle cx="43" cy="73" r="3.5" fill="#fff"/><path d="M37 83c1-3.5 11-3.5 12 0" fill="#fff"/>
+              <!-- Laptop -->
+              <path d="M56 88 L128 88 L142 106 L44 106 Z" fill="url(#rv2Base)" stroke="#a5b4fc" stroke-width="1.5"/>
+              <rect x="60" y="24" width="70" height="62" rx="9" transform="skewY(-6) translate(0, 8)" fill="#1e1b4b"/>
+              <rect x="64" y="28" width="62" height="53" rx="6" transform="skewY(-6) translate(0, 8)" fill="url(#rv2Lap)"/>
+              <circle cx="95" cy="46" r="8" fill="#fff" opacity="0.92"/>
+              <path d="M81 66c2-9 26-9 28 0" fill="#fff" opacity="0.92"/>
+              <!-- Escudo 3D con check -->
+              <path d="M148 16 L184 28 V58 C184 82 167 98 148 106 C129 98 112 82 112 58 V28 Z" fill="url(#rv2Shield)" stroke="#f5f3ff" stroke-width="3"/>
+              <path d="M148 24 L176 34 V57 C176 76 163 89 148 96 C133 89 120 76 120 57 V34 Z" fill="#ffffff" opacity="0.16"/>
+              <path d="M135 58 L144 67 L162 47" stroke="#ffffff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+              <!-- Engranaje decorativo -->
+              <circle cx="174" cy="98" r="9" fill="#4f46e5" stroke="#c7d2fe" stroke-width="2.5"/>
+              <circle cx="174" cy="98" r="3.5" fill="#eef2ff"/>
+            </svg>
           </div>
-          <h3>Docente / Mentor</h3>
-          <p>Creación y asignación de retos académicos, revisión de proyectos de estudiantes y evaluación con rúbricas oficiales.</p>
-          <ul class="role-caps-list">
-            <li>✅ Gestión de proyectos y retos de curso</li>
-            <li>✅ Rúbricas y retroalimentación didáctica</li>
-            <li>✅ Visualización de analítica de alumnos</li>
-          </ul>
-        </div>
 
-        <div class="admin-role-card role-card-student">
-          <div class="role-card-top">
-            <span class="role-card-icon">🎓</span>
-            <span class="role-card-badge">${studentCount} Cuentas</span>
+          <div class="roles-v2-hero-cta">
+            <button type="button" class="roles-v2-btn-create" onclick="window.AdminView.openCreateUserModal()">
+              <span class="plus-ico">+</span>
+              <span>Crear Administrador / Docente</span>
+            </button>
           </div>
-          <h3>Estudiante Creador</h3>
-          <p>Creación de proyectos multimedia interactivos (públicos y privados), diapositivas, videos y documentos con IA.</p>
-          <ul class="role-caps-list">
-            <li>✅ Creación de proyectos en 4 formatos</li>
-            <li>✅ Publicación y Landing Pages públicas</li>
-            <li>✅ Participación en desafíos y XP</li>
-          </ul>
         </div>
-      </div>
 
-      <!-- Matriz de Permisos del Sistema -->
-      <div class="admin-card" style="margin-bottom: 1.5rem;">
-        <div class="admin-card-header">
-          <div>
-            <h3>Matriz de Permisos por Rol</h3>
-            <p>Capacidades autorizadas en cada módulo de Mentix según el tipo de cuenta autenticada.</p>
+        <!-- 3 Tarjetas de Resumen de Roles -->
+        <div class="roles-v2-cards-grid">
+          <!-- Super Administrador -->
+          <div class="roles-v2-role-card card-purple">
+            <div class="roles-v2-card-head">
+              <div class="roles-v2-card-icon-box icon-purple" aria-hidden="true">
+                <svg viewBox="0 0 48 48" width="44" height="44" fill="none">
+                  <defs><linearGradient id="icPurp" x1="8" y1="6" x2="40" y2="44" gradientUnits="userSpaceOnUse"><stop stop-color="#a855f7"/><stop offset="1" stop-color="#6366f1"/></linearGradient></defs>
+                  <path d="M24 4L40 10V23C40 34 32.5 41 24 44C15.5 41 8 34 8 23V10L24 4Z" fill="url(#icPurp)"/>
+                  <path d="M15 28L17 17L24 22L31 17L33 28H15Z" fill="#facc15" stroke="#fef08a" stroke-width="1.2" stroke-linejoin="round"/>
+                </svg>
+              </div>
+              <div class="roles-v2-card-title-wrap">
+                <div class="roles-v2-card-title-row">
+                  <h3>Super Administrador</h3>
+                  <span class="roles-v2-count-pill pill-purple">👤 ${adminCount} Cuentas</span>
+                </div>
+                <p>Control total del backend, personalización del robot y banners, gestión de usuarios, recursos y auditoría completa.</p>
+              </div>
+            </div>
+            <ul class="roles-v2-caps">
+              <li><span class="chk-box">✓</span> Acceso exclusivo al panel administrativo</li>
+              <li><span class="chk-box">✓</span> Cambio de banner de robot &amp; colores</li>
+              <li><span class="chk-box">✓</span> Moderación y eliminación global</li>
+            </ul>
           </div>
-          <span class="badge-tag tag-cyan">Políticas de Seguridad Activas</span>
-        </div>
-        <div class="admin-permissions-table-wrap">
-          <table class="admin-permissions-table">
-            <thead>
-              <tr>
-                <th>Capacidad / Módulo</th>
-                <th style="text-align: center;">🎓 Estudiante</th>
-                <th style="text-align: center;">👨‍🏫 Docente</th>
-                <th style="text-align: center;">🛡️ Administrador</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td><strong>Crear proyectos interactivos</strong> (Públicos / Privados)</td>
-                <td style="text-align: center;"><span class="perm-yes">✅ Sí</span></td>
-                <td style="text-align: center;"><span class="perm-yes">✅ Sí</span></td>
-                <td style="text-align: center;"><span class="perm-yes">✅ Sí</span></td>
-              </tr>
-              <tr>
-                <td><strong>Editor de Diapositivas, Videos y Documentos</strong></td>
-                <td style="text-align: center;"><span class="perm-yes">✅ Sí</span></td>
-                <td style="text-align: center;"><span class="perm-yes">✅ Sí</span></td>
-                <td style="text-align: center;"><span class="perm-yes">✅ Sí</span></td>
-              </tr>
-              <tr>
-                <td><strong>Modificar Banner de Robot de Proyectos y Temas de Diseño</strong></td>
-                <td style="text-align: center;"><span class="perm-no">❌ No</span></td>
-                <td style="text-align: center;"><span class="perm-no">❌ No</span></td>
-                <td style="text-align: center;"><span class="perm-yes">✅ Exclusivo</span></td>
-              </tr>
-              <tr>
-                <td><strong>Gestionar Biblioteca de Recursos y Plantillas</strong></td>
-                <td style="text-align: center;"><span class="perm-readonly">👁️ Solo Descarga</span></td>
-                <td style="text-align: center;"><span class="perm-yes">✅ Crear Guías</span></td>
-                <td style="text-align: center;"><span class="perm-yes">✅ Control Total</span></td>
-              </tr>
-              <tr>
-                <td><strong>Asignar Roles, Suspender Cuentas y Crear Administradores</strong></td>
-                <td style="text-align: center;"><span class="perm-no">❌ No</span></td>
-                <td style="text-align: center;"><span class="perm-no">❌ No</span></td>
-                <td style="text-align: center;"><span class="perm-yes">✅ Exclusivo</span></td>
-              </tr>
-              <tr>
-                <td><strong>Exportar Reportes Globales y Registros de Auditoría</strong></td>
-                <td style="text-align: center;"><span class="perm-no">❌ No</span></td>
-                <td style="text-align: center;"><span class="perm-readonly">📊 Reporte Curso</span></td>
-                <td style="text-align: center;"><span class="perm-yes">✅ Exclusivo</span></td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
 
-      <!-- Barra de Filtros del Directorio -->
-      <div class="admin-filter-bar">
-        <div class="filter-search-box">
-          <span class="search-icon">🔍</span>
-          <input type="text" placeholder="Buscar usuario por nombre o correo electrónico..." value="${this.userFilter.search}" oninput="window.AdminView.setUserSearch(this.value)">
+          <!-- Docente / Mentor -->
+          <div class="roles-v2-role-card card-blue">
+            <div class="roles-v2-card-head">
+              <div class="roles-v2-card-icon-box icon-blue" aria-hidden="true">
+                <svg viewBox="0 0 48 48" width="44" height="44" fill="none">
+                  <defs><linearGradient id="icBlue" x1="6" y1="10" x2="42" y2="38" gradientUnits="userSpaceOnUse"><stop stop-color="#38bdf8"/><stop offset="1" stop-color="#2563eb"/></linearGradient></defs>
+                  <path d="M24 9L4 19L24 29L44 19L24 9Z" fill="url(#icBlue)"/>
+                  <path d="M12 23.5V33C12 36.5 17.5 39 24 39C30.5 39 36 36.5 36 33V23.5L24 29.5L12 23.5Z" fill="#1d4ed8"/>
+                  <path d="M40 21V32" stroke="#38bdf8" stroke-width="2.6" stroke-linecap="round"/>
+                  <circle cx="40" cy="33.5" r="2.2" fill="#60a5fa"/>
+                </svg>
+              </div>
+              <div class="roles-v2-card-title-wrap">
+                <div class="roles-v2-card-title-row">
+                  <h3>Docente / Mentor</h3>
+                  <span class="roles-v2-count-pill pill-blue">👤 ${teacherCount} Cuentas</span>
+                </div>
+                <p>Creación y asignación de retos académicos, revisión de proyectos de estudiantes y evaluación con rúbricas oficiales.</p>
+              </div>
+            </div>
+            <ul class="roles-v2-caps">
+              <li><span class="chk-box">✓</span> Gestión de proyectos y retos de curso</li>
+              <li><span class="chk-box">✓</span> Rúbricas y retroalimentación didáctica</li>
+              <li><span class="chk-box">✓</span> Visualización de analítica de alumnos</li>
+            </ul>
+          </div>
+
+          <!-- Estudiante Creador -->
+          <div class="roles-v2-role-card card-green">
+            <div class="roles-v2-card-head">
+              <div class="roles-v2-card-icon-box icon-green" aria-hidden="true">
+                <svg viewBox="0 0 48 48" width="44" height="44" fill="none">
+                  <defs><linearGradient id="icGrn" x1="8" y1="8" x2="40" y2="42" gradientUnits="userSpaceOnUse"><stop stop-color="#34d399"/><stop offset="1" stop-color="#059669"/></linearGradient></defs>
+                  <circle cx="24" cy="15" r="7" fill="url(#icGrn)"/>
+                  <path d="M12 31C12 25.5 17 23 24 23C31 23 36 25.5 36 31" fill="url(#icGrn)"/>
+                  <rect x="13" y="29" width="22" height="12" rx="3" fill="#e2e8f0" stroke="#94a3b8" stroke-width="1.5"/>
+                  <circle cx="24" cy="35" r="2" fill="#10b981"/>
+                </svg>
+              </div>
+              <div class="roles-v2-card-title-wrap">
+                <div class="roles-v2-card-title-row">
+                  <h3>Estudiante Creador</h3>
+                  <span class="roles-v2-count-pill pill-green">👤 ${studentCount} Cuentas</span>
+                </div>
+                <p>Creación de proyectos multimedia interactivos (públicos y privados), diapositivas, videos y documentos con IA.</p>
+              </div>
+            </div>
+            <ul class="roles-v2-caps">
+              <li><span class="chk-box">✓</span> Creación de proyectos en 4 formatos</li>
+              <li><span class="chk-box">✓</span> Publicación y Landing Pages públicas</li>
+              <li><span class="chk-box">✓</span> Participación en desafíos y XP</li>
+            </ul>
+          </div>
         </div>
 
-        <div class="filter-pills">
-          <button class="filter-pill ${this.userFilter.role === 'all' ? 'active' : ''}" onclick="window.AdminView.setUserRoleFilter('all')">Todos (${rawUsers.length})</button>
-          <button class="filter-pill ${this.userFilter.role === 'admin' ? 'active' : ''}" onclick="window.AdminView.setUserRoleFilter('admin')">Administradores (${adminCount})</button>
-          <button class="filter-pill ${this.userFilter.role === 'teacher' ? 'active' : ''}" onclick="window.AdminView.setUserRoleFilter('teacher')">Docentes (${teacherCount})</button>
-          <button class="filter-pill ${this.userFilter.role === 'student' ? 'active' : ''}" onclick="window.AdminView.setUserRoleFilter('student')">Estudiantes (${studentCount})</button>
-          <button class="filter-pill ${this.userFilter.status === 'blocked' ? 'active' : ''}" onclick="window.AdminView.setUserStatusFilter('blocked')">Bloqueados</button>
-        </div>
-      </div>
+        <!-- Panel Inferior en 2 Columnas: Matriz de Permisos (izq) + Usuarios de la Plataforma (der) -->
+        <div class="roles-v2-bottom-grid">
+          <!-- Izquierda: Matriz de Permisos por Rol -->
+          <div class="roles-v2-panel">
+            <div class="roles-v2-panel-header">
+              <div class="roles-v2-panel-title-group">
+                <div class="roles-v2-panel-ico ico-purple">📚</div>
+                <div>
+                  <h3>Matriz de Permisos por Rol</h3>
+                  <p>Capacidades autorizadas en cada módulo de Mentix según el tipo de cuenta autenticada.</p>
+                </div>
+              </div>
+              <span class="roles-v2-sec-badge">🛡️ POLÍTICAS DE SEGURIDAD ACTIVAS</span>
+            </div>
 
-      <!-- Tabla de Usuarios y Cambio Directo de Rol -->
-      <div class="admin-table-card">
-        <table class="admin-data-table">
-          <thead>
-            <tr>
-              <th>Usuario</th>
-              <th>Correo Institucional</th>
-              <th>Rol Actual (Asignación Rápida)</th>
-              <th>Estado</th>
-              <th>Nivel / XP</th>
-              <th>Último Acceso</th>
-              <th style="text-align: right;">Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${users.map(u => {
-              const isBlocked = !!u.isBlocked;
-
-              return `
-                <tr>
-                  <td>
-                    <div class="table-user-cell">
-                      <div class="user-avatar-circle">${u.avatar || '👤'}</div>
-                      <div class="user-meta">
-                        <strong class="name">${u.name}</strong>
-                        <span class="handle">@${(u.name || '').toLowerCase().replace(/\s+/g, '')}</span>
+            <div class="roles-v2-table-scroll">
+              <table class="roles-v2-matrix-table">
+                <thead>
+                  <tr>
+                    <th>Capacidad / Módulo</th>
+                    <th class="col-center">🎓 Estudiante</th>
+                    <th class="col-center">👨‍🏫 Docente</th>
+                    <th class="col-center">🛡️ Administrador</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>
+                      <div class="roles-v2-cap-cell">
+                        <span class="cap-ico cap-amber">📁</span>
+                        <div>
+                          <strong>Crear proyectos interactivos</strong>
+                          <small>(Públicos / Privados)</small>
+                        </div>
                       </div>
-                    </div>
-                  </td>
-                  <td><span class="table-email">${u.email || 'sin-correo@mentix.edu'}</span></td>
-                  <td>
-                    <select class="admin-role-select" onchange="window.AdminView.changeUserRole('${u.id}', this.value)">
-                      <option value="admin" ${u.role === 'admin' ? 'selected' : ''}>🛡️ Administrador</option>
-                      <option value="teacher" ${u.role === 'teacher' ? 'selected' : ''}>👨‍🏫 Docente</option>
-                      <option value="student" ${u.role === 'student' || !u.role ? 'selected' : ''}>🎓 Estudiante</option>
-                    </select>
-                  </td>
-                  <td>
-                    <span class="badge-status ${isBlocked ? 'status-blocked' : 'status-active'}">
-                      ${isBlocked ? '🚫 Bloqueado' : '🟢 Activo'}
-                    </span>
-                  </td>
-                  <td>
-                    <div class="xp-pill">
-                      <span>⭐ Nvl ${u.level || 1}</span>
-                      <small>(${u.xp || 0} XP)</small>
-                    </div>
-                  </td>
-                  <td class="table-date">${u.lastLogin || 'Hoy'}</td>
-                  <td style="text-align: right;">
-                    <div class="table-actions">
-                      <button class="btn-icon ${isBlocked ? 'success' : 'warning'}" title="${isBlocked ? 'Desbloquear acceso' : 'Suspender acceso'}" onclick="window.AdminView.toggleUserBlock('${u.id}')">
-                        ${isBlocked ? '🔓' : '🔒'}
-                      </button>
-                      <button class="btn-icon danger" title="Eliminar cuenta" onclick="window.AdminView.deleteUser('${u.id}')">
-                        🗑️
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              `;
-            }).join('')}
-          </tbody>
-        </table>
+                    </td>
+                    <td class="col-center"><span class="rv2-pill rv2-yes">✔ Sí</span></td>
+                    <td class="col-center"><span class="rv2-pill rv2-yes">✔ Sí</span></td>
+                    <td class="col-center"><span class="rv2-pill rv2-yes">✔ Sí</span></td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <div class="roles-v2-cap-cell">
+                        <span class="cap-ico cap-indigo">▶️</span>
+                        <div>
+                          <strong>Editor de Diapositivas, Videos y Documentos</strong>
+                        </div>
+                      </div>
+                    </td>
+                    <td class="col-center"><span class="rv2-pill rv2-yes">✔ Sí</span></td>
+                    <td class="col-center"><span class="rv2-pill rv2-yes">✔ Sí</span></td>
+                    <td class="col-center"><span class="rv2-pill rv2-yes">✔ Sí</span></td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <div class="roles-v2-cap-cell">
+                        <span class="cap-ico cap-sky">🖼️</span>
+                        <div>
+                          <strong>Modificar Banner de Robot de Proyectos y Temas de Diseño</strong>
+                        </div>
+                      </div>
+                    </td>
+                    <td class="col-center"><span class="rv2-pill rv2-no">✖ No</span></td>
+                    <td class="col-center"><span class="rv2-pill rv2-no">✖ No</span></td>
+                    <td class="col-center"><span class="rv2-pill rv2-yes">✔ Exclusivo</span></td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <div class="roles-v2-cap-cell">
+                        <span class="cap-ico cap-purple">📖</span>
+                        <div>
+                          <strong>Gestionar Biblioteca de Recursos y Plantillas</strong>
+                        </div>
+                      </div>
+                    </td>
+                    <td class="col-center"><span class="rv2-pill rv2-info">⬇ Solo Descarga</span></td>
+                    <td class="col-center"><span class="rv2-pill rv2-yes">✔ Crear Guías</span></td>
+                    <td class="col-center"><span class="rv2-pill rv2-yes">✔ Control Total</span></td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <div class="roles-v2-cap-cell">
+                        <span class="cap-ico cap-blue">👥</span>
+                        <div>
+                          <strong>Asignar Roles, Suspender Cuentas y Crear Administradores</strong>
+                        </div>
+                      </div>
+                    </td>
+                    <td class="col-center"><span class="rv2-pill rv2-no">✖ No</span></td>
+                    <td class="col-center"><span class="rv2-pill rv2-no">✖ No</span></td>
+                    <td class="col-center"><span class="rv2-pill rv2-yes">✔ Exclusivo</span></td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <div class="roles-v2-cap-cell">
+                        <span class="cap-ico cap-cyan">📊</span>
+                        <div>
+                          <strong>Exportar Reportes Globales y Registros de Auditoría</strong>
+                        </div>
+                      </div>
+                    </td>
+                    <td class="col-center"><span class="rv2-pill rv2-no">✖ No</span></td>
+                    <td class="col-center"><span class="rv2-pill rv2-info">📊 Reporte Curso</span></td>
+                    <td class="col-center"><span class="rv2-pill rv2-yes">✔ Exclusivo</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Derecha: Usuarios de la Plataforma -->
+          <div class="roles-v2-panel">
+            <div class="roles-v2-panel-header">
+              <div class="roles-v2-panel-title-group">
+                <div class="roles-v2-panel-ico ico-blue">👥</div>
+                <div>
+                  <h3>Usuarios de la Plataforma</h3>
+                  <p>Gestiona, consulta y administra las cuentas registradas.</p>
+                </div>
+              </div>
+              <span class="roles-v2-total-badge">👥 Total: ${rawUsers.length} usuarios</span>
+            </div>
+
+            <!-- Buscador + Filtros integrados -->
+            <div class="roles-v2-users-toolbar">
+              <div class="roles-v2-search">
+                <span class="search-ico">🔍</span>
+                <input type="text" placeholder="Buscar usuario por nombre o correo electrónico..." value="${this.userFilter.search}" oninput="window.AdminView.setUserSearch(this.value)">
+              </div>
+              <div class="roles-v2-filter-pills">
+                <button type="button" class="roles-v2-fpill ${this.userFilter.role === 'all' && this.userFilter.status !== 'blocked' ? 'active' : ''}" onclick="window.AdminView.setUserRoleFilter('all')">Todos (${rawUsers.length})</button>
+                <button type="button" class="roles-v2-fpill ${this.userFilter.role === 'admin' ? 'active' : ''}" onclick="window.AdminView.setUserRoleFilter('admin')">Admins (${adminCount})</button>
+                <button type="button" class="roles-v2-fpill ${this.userFilter.role === 'teacher' ? 'active' : ''}" onclick="window.AdminView.setUserRoleFilter('teacher')">Docentes (${teacherCount})</button>
+                <button type="button" class="roles-v2-fpill ${this.userFilter.role === 'student' ? 'active' : ''}" onclick="window.AdminView.setUserRoleFilter('student')">Estudiantes (${studentCount})</button>
+                ${blockedCount > 0 || this.userFilter.status === 'blocked' ? `<button type="button" class="roles-v2-fpill ${this.userFilter.status === 'blocked' ? 'active' : ''}" onclick="window.AdminView.setUserStatusFilter('blocked')">Bloqueados (${blockedCount})</button>` : `<button type="button" class="roles-v2-fpill ${this.userFilter.status === 'blocked' ? 'active' : ''}" onclick="window.AdminView.setUserStatusFilter('blocked')">Bloqueados</button>`}
+              </div>
+            </div>
+
+            <!-- Tabla de Usuarios -->
+            <div class="roles-v2-table-scroll">
+              <table class="roles-v2-users-table">
+                <thead>
+                  <tr>
+                    <th>Usuario</th>
+                    <th>Correo Institucional</th>
+                    <th>Rol Actual</th>
+                    <th>Estado</th>
+                    <th>Nivel / XP</th>
+                    <th style="text-align: right;">Acciones</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${users.map(u => {
+                    const isBlocked = !!u.isBlocked;
+                    const handleTxt = (u.username || (u.name || '').toLowerCase().replace(/\s+/g, ''));
+
+                    return `
+                      <tr>
+                        <td>
+                          <div class="roles-v2-user-cell">
+                            <div class="roles-v2-avatar">${u.avatar || '🦊'}</div>
+                            <div class="roles-v2-user-meta">
+                              <strong>${u.name}</strong>
+                              <span>@${handleTxt}</span>
+                            </div>
+                          </div>
+                        </td>
+                        <td><span class="roles-v2-email">${u.email || 'sin-correo@mentix.edu'}</span></td>
+                        <td>
+                          <select class="roles-v2-role-select" onchange="window.AdminView.changeUserRole('${u.id}', this.value)">
+                            <option value="admin" ${u.role === 'admin' ? 'selected' : ''}>🛡️ Administrador</option>
+                            <option value="teacher" ${u.role === 'teacher' ? 'selected' : ''}>👨‍🏫 Docente</option>
+                            <option value="student" ${u.role === 'student' || !u.role ? 'selected' : ''}>🎓 Estudiante</option>
+                          </select>
+                        </td>
+                        <td>
+                          <span class="roles-v2-status ${isBlocked ? 'is-blocked' : 'is-active'}">
+                            <span class="dot"></span>
+                            ${isBlocked ? 'Bloqueado' : 'Activo'}
+                          </span>
+                        </td>
+                        <td>
+                          <div class="roles-v2-xp">
+                            <span class="star">⭐</span>
+                            <strong>Nvl ${u.level || 1}</strong>
+                            <small>(${u.xp || 0} XP)</small>
+                          </div>
+                        </td>
+                        <td style="text-align: right;">
+                          <div class="roles-v2-actions">
+                            <button type="button" class="roles-v2-act-btn ${isBlocked ? 'act-unlock' : 'act-lock'}" title="${isBlocked ? 'Desbloquear acceso' : 'Bloquear cuenta'}" onclick="window.AdminView.toggleUserBlock('${u.id}')">
+                              ${isBlocked ? '🔓' : '🔒'}
+                            </button>
+                            <button type="button" class="roles-v2-act-btn act-del" title="Eliminar cuenta" onclick="window.AdminView.deleteUser('${u.id}')">
+                              🗑️
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    `;
+                  }).join('')}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
       </div>
     `;
   },
