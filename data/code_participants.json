@@ -3,20 +3,20 @@
     {
       "code": "804263",
       "normCode": "804263",
-      "userKey": "hhgfj",
-      "userId": "user_1795407757752",
-      "username": "HHGFJ",
-      "name": "JHFK",
-      "email": "HGFH@HNGFH",
+      "userKey": "mentilona",
+      "userId": "user_1792189908636",
+      "username": "Mentilona",
+      "name": "Melisa",
+      "email": "gatitaxd679@gmail.com",
       "role": "student",
       "joinedAt": "2026-11-23T04:35:10.065Z",
-      "updatedAt": "2026-11-23T04:35:32.942Z",
+      "updatedAt": "2026-11-23T04:51:31.445Z",
       "projectId": "govdata_code_hhgfj_804263",
       "projectTitle": "Nuevo Proyecto",
       "projectDescription": "Proyecto en construcción con el Asistente Inteligente de Mentix.",
-      "currentStep": 1,
-      "completedStepsCount": 0,
-      "progress": 40,
+      "currentStep": 2,
+      "completedStepsCount": 1,
+      "progress": 50,
       "status": "in_progress",
       "approvalStatus": "pending",
       "publicationStatus": "draft",
@@ -36,9 +36,11 @@
         "status": "in_progress",
         "publicationStatus": "draft",
         "approvalStatus": "pending",
-        "currentStep": 1,
-        "completedSteps": [],
-        "progress": 40,
+        "currentStep": 2,
+        "completedSteps": [
+          1
+        ],
+        "progress": 50,
         "banner": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
         "problemStatement": "",
         "mainObjective": "",
@@ -47,10 +49,10 @@
         "slidesCount": 0,
         "resourcesCount": 0,
         "landingConfig": {
-          "publicName": "",
+          "publicName": "Nuevo Proyecto",
           "slug": "nuevo-proyecto",
-          "landingTitle": "",
-          "publicDescription": "",
+          "landingTitle": "Nuevo Proyecto",
+          "publicDescription": "Proyecto en construcción con el Asistente Inteligente de Mentix.",
           "visibleCategory": "Tecnología & Programación",
           "tags": [
             "Gobierno de Datos",
@@ -73,7 +75,7 @@
           "commercialPitch": "",
           "faqs": []
         },
-        "updatedAt": "2026-11-23T04:35:32.942Z"
+        "updatedAt": "2026-11-23T04:51:31.445Z"
       }
     },
     {
