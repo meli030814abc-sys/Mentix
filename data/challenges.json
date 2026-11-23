@@ -1757,7 +1757,7 @@
         "collaborators": "hdfud"
       },
       "createdAt": "2026-11-23T03:09:16.957Z",
-      "updatedAt": "2026-11-23T21:09:49.188Z",
+      "updatedAt": "2026-11-23T21:09:52.303Z",
       "progress": 100,
       "calculatedProgress": 100
     },
@@ -1771,7 +1771,7 @@
     "authorAvatar": "🐯",
     "authorRole": "Líder del Proyecto",
     "createdAt": "2026-11-23T03:09:16.957Z",
-    "updatedAt": "2026-11-23T21:09:48.665Z",
+    "updatedAt": "2026-11-23T21:09:51.852Z",
     "image": "https://static.vecteezy.com/system/resources/thumbnails/060/843/811/small/close-up-of-raindrops-on-leaves-hd-background-luxury-hd-wallpaper-image-trendy-background-illustration-free-photo.jpg",
     "rejectionReason": "Desautorizado por el Administrador (oculto al público).",
     "tag": "✔ Completado",
@@ -2424,8 +2424,8 @@
             "layout": "full",
             "isFullImage": true,
             "isImported": true,
-            "media": "",
-            "imageUrl": "",
+            "media": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fgovdata_code_mentilona_804263%2F1795468188070_l7e5_slide_28.jpg",
+            "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fgovdata_code_mentilona_804263%2F1795468188070_l7e5_slide_28.jpg",
             "notes": "",
             "bgColor": "#ffffff",
             "themeId": "cosmos",
