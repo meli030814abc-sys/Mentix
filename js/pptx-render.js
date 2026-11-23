@@ -551,11 +551,18 @@
   /* ------------------------------------------------------------------ */
   /* Texto                                                               */
   /* ------------------------------------------------------------------ */
+  function isCondensedFontName(name) {
+    return /bebas|oswald|anton|impact|condensed|narrow|agency\s*fb|din\s*cond|tw\s*cen.*cond|bahnschrift.*cond|league\s*gothic|fjalla|teko|barlow\s*condensed|roboto\s*condensed/i.test(String(name || ''));
+  }
+
   function fontStack(face, ctx) {
     var f = String(face || '').replace(/['"<>&]/g, '');
     if (f === '+mj-lt') f = ctx.theme.major;
     else if (f === '+mn-lt') f = ctx.theme.minor;
     else if (!f || /^\+/.test(f)) f = ctx.theme.minor;
+    if (isCondensedFontName(f)) {
+      return "'" + f + "', 'Bebas Neue', 'Oswald', 'Bahnschrift Light Condensed', 'Bahnschrift Condensed', 'Bahnschrift SemiCondensed', 'Arial Narrow', 'Agency FB', 'Franklin Gothic Medium Cond', Impact, 'Segoe UI', Arial, sans-serif";
+    }
     return "'" + f + "', Calibri, 'Segoe UI', Arial, Helvetica, sans-serif";
   }
 
@@ -619,7 +626,7 @@
     else if (vert === 'vert270') wm = 'writing-mode:vertical-rl;transform:rotate(180deg);';
 
     var paras = kids(txBody, 'p');
-    var html = '', plain = [];
+    var html = '', plain = [], maxFontPx = 0;
     var counters = {};
     var lstOwn = kid(txBody, 'lstStyle');
     var fullChain = chain.concat(lstOwn ? [lstOwn] : []);
@@ -645,9 +652,10 @@
       };
       var firstRun = kid(p, 'r');
       var paraSizePx = sizeOfRuns(firstRun ? kid(firstRun, 'rPr') : endRpr);
+      if (paraSizePx > maxFontPx) maxFontPx = paraSizePx;
 
-      // Interlineado fiel a DrawingML (100000 = 1.05x del tamaño de fuente)
-      var lnSpc = pKid('lnSpc'), lineH = 1.15;
+      // Interlineado fiel a DrawingML (para títulos grandes >=36px sin interlineado explícito usar 0.98 para evitar desbordes verticales)
+      var lnSpc = pKid('lnSpc'), lineH = (paraSizePx >= 36) ? 0.96 : 1.15;
       if (lnSpc) {
         var pct = kid(lnSpc, 'spcPct'), pts = kid(lnSpc, 'spcPts');
         if (pct) lineH = Math.max(0.6, (nu(pct, 'val', 100000) / 100000 - lnRed)) * 1.04;
@@ -705,15 +713,18 @@
         var deco = [];
         if (u && u !== 'none') deco.push('underline');
         if (strike && strike !== 'noStrike') deco.push('line-through');
+        var rawFace = latin ? at(latin, 'typeface', '') : '';
+        var condCss = isCondensedFontName(rawFace) ? 'font-stretch:condensed;letter-spacing:-0.02em;' : '';
         var st = 'font-size:' + r2(px * (base ? 0.7 : 1)) + 'px;' +
-          'font-family:' + fontStack(latin ? at(latin, 'typeface', '') : '', ctx) + ';' +
+          'font-family:' + fontStack(rawFace, ctx) + ';' +
           'color:' + colorCss + ';' +
+          condCss +
           (bold ? 'font-weight:700;' : '') + (ital ? 'font-style:italic;' : '') +
           (deco.length ? 'text-decoration:' + deco.join(' ') + ';' : '') +
           (cap === 'all' ? 'text-transform:uppercase;' : (cap === 'small' ? 'font-variant:small-caps;' : '')) +
           (base ? 'vertical-align:' + (base > 0 ? 'super' : 'sub') + ';' : '') +
           (spc ? 'letter-spacing:' + r2(Number(spc) / 100 * 12700 * k) + 'px;' : '');
-        return '<span style="' + st + '">' + esc(text) + '</span>';
+        return '<span data-fsz="' + r2(px * (base ? 0.7 : 1)) + '" style="' + st + '">' + esc(text) + '</span>';
       };
 
       kids(p).forEach(function (n) {
@@ -754,8 +765,14 @@
       plain.push(ptext);
     });
 
-    var wrapCss = (wrap === 'none') ? 'white-space:nowrap;' : 'white-space:normal;word-wrap:break-word;overflow-wrap:break-word;';
-    var box = '<div style="position:absolute;left:0;top:0;right:0;bottom:0;box-sizing:border-box;' +
+    var nonEmptyParas = plain.filter(function (t) { return String(t || '').trim().length > 0; }).length;
+    var boxH = opts.boxH || 0;
+    // Si el cuadro de texto tiene 1 solo párrafo con letra grande (>=24px) y la altura de su caja en PowerPoint
+    // solo alcanza para 1 línea (boxH < maxFontPx * 2.05), mantenerlo en 1 sola línea y auto-ajustar al ancho
+    var isSingleLineHeading = (nonEmptyParas === 1 && maxFontPx >= 24 && boxH > 0 && boxH < maxFontPx * 2.05 && plain.join('').indexOf('\n') === -1);
+    var wrapCss = (wrap === 'none' || isSingleLineHeading) ? 'white-space:nowrap;' : 'white-space:normal;word-wrap:break-word;overflow-wrap:break-word;';
+    var fitAttr = ' data-pptx-txbox="1" data-max-fsz="' + r2(maxFontPx) + '" data-single-line="' + (isSingleLineHeading ? '1' : '0') + '"';
+    var box = '<div' + fitAttr + ' style="position:absolute;left:0;top:0;right:0;bottom:0;box-sizing:border-box;' +
       'padding:' + r2(tIns) + 'px ' + r2(rIns) + 'px ' + r2(bIns) + 'px ' + r2(lIns) + 'px;' +
       'display:flex;flex-direction:column;justify-content:' + jc + ';' + wrapCss + wm + '">' + html + '</div>';
     return { html: box, text: plain.join('\n') };
@@ -953,7 +970,7 @@
           if (bp && at(bp, 'anchor', null)) { anchorDef = at(bp, 'anchor', 't'); break; }
         }
       }
-      var res = buildText(tb, chain, ctx, { defColor: frc ? frc.css : (ctx.defTextColor || '#000000'), anchor: anchorDef });
+      var res = buildText(tb, chain, ctx, { defColor: frc ? frc.css : (ctx.defTextColor || '#000000'), anchor: anchorDef, boxW: w, boxH: h });
       textHtml = res.html;
       textPlain = res.text;
       if (isTitle && res.text.trim() && !ctx.slideTitle) ctx.slideTitle = res.text.trim().split('\n')[0];
@@ -1112,11 +1129,131 @@
   }
 
   /* ------------------------------------------------------------------ */
-  /* Rasterizado                                                         */
+  /* Rasterizado y Auto-Ajuste Inteligente de Textos Grandes             */
   /* ------------------------------------------------------------------ */
-  function serializeFragment(html) {
+  function scaleBoxFont(box, factor) {
+    if (!box || !(factor > 0 && factor < 1)) return;
+    var curScale = Number(box.getAttribute('data-cur-scale') || '1') * factor;
+    curScale = Math.max(0.38, Math.min(1, curScale));
+    box.setAttribute('data-cur-scale', String(curScale));
+    var spans = box.querySelectorAll('[data-fsz]');
+    for (var i = 0; i < spans.length; i++) {
+      var base = Number(spans[i].getAttribute('data-fsz') || '18');
+      spans[i].style.fontSize = r2(base * curScale) + 'px';
+    }
+  }
+
+  function setBoxScale(box, targetScale) {
+    if (!box) return;
+    var s = Math.max(0.38, Math.min(1, targetScale));
+    box.setAttribute('data-cur-scale', String(s));
+    var spans = box.querySelectorAll('[data-fsz]');
+    for (var i = 0; i < spans.length; i++) {
+      var base = Number(spans[i].getAttribute('data-fsz') || '18');
+      spans[i].style.fontSize = r2(base * s) + 'px';
+    }
+  }
+
+  function autoFitSlideTextBoxes(holder, W, H) {
+    if (!document || !document.body) return;
+    holder.style.cssText = 'position:fixed;left:-99999px;top:0;width:' + W + 'px;height:' + H + 'px;overflow:hidden;visibility:hidden;pointer-events:none;z-index:-1;';
+    document.body.appendChild(holder);
+    try {
+      var boxes = Array.prototype.slice.call(holder.querySelectorAll('[data-pptx-txbox="1"]'));
+      if (!boxes.length) return;
+
+      // Paso 1: Ajustar cada caja individualmente para que textos grandes de 1 línea no se partan ni se salgan de su ancho/alto
+      boxes.forEach(function (box) {
+        var isSingle = box.getAttribute('data-single-line') === '1';
+        var cw = box.clientWidth, ch = box.clientHeight;
+        if (cw <= 4 || ch <= 4) return;
+
+        if (isSingle) {
+          for (var iter = 0; iter < 4; iter++) {
+            var sw = box.scrollWidth;
+            if (sw <= cw + 2) break;
+            var ratio = (cw - 3) / Math.max(1, sw);
+            scaleBoxFont(box, Math.max(0.45, Math.min(0.96, ratio)));
+          }
+        } else {
+          for (var iter2 = 0; iter2 < 5; iter2++) {
+            var sh = box.scrollHeight, sw2 = box.scrollWidth;
+            if (sh <= ch + 3 && sw2 <= cw + 3) break;
+            var rH = sh > ch + 3 ? Math.sqrt((ch - 2) / Math.max(1, sh)) : 1;
+            var rW = sw2 > cw + 3 ? ((cw - 2) / Math.max(1, sw2)) : 1;
+            var step = Math.min(rH, rW, 0.92);
+            scaleBoxFont(box, Math.max(0.45, step));
+          }
+        }
+      });
+
+      // Paso 2: Evitar que títulos o cajas apiladas verticalmente se monten unas encima de otras y uniformar títulos de 2 cajas
+      var items = boxes.map(function (box) {
+        var wrap = box.parentElement;
+        if (!wrap) return null;
+        var left = parseFloat(wrap.style.left) || 0;
+        var top = parseFloat(wrap.style.top) || 0;
+        var width = parseFloat(wrap.style.width) || box.clientWidth || 0;
+        var height = parseFloat(wrap.style.height) || box.clientHeight || 0;
+        var maxFsz = Number(box.getAttribute('data-max-fsz') || '0');
+        var isSingle = box.getAttribute('data-single-line') === '1';
+        return { box: box, wrap: wrap, left: left, top: top, width: width, height: height, maxFsz: maxFsz, isSingle: isSingle };
+      }).filter(Boolean);
+
+      items.sort(function (a, b) { return a.top - b.top || a.left - b.left; });
+
+      for (var i = 0; i < items.length; i++) {
+        var A = items[i];
+        if (A.maxFsz < 20) continue;
+        for (var j = i + 1; j < items.length; j++) {
+          var B = items[j];
+          var dy = B.top - A.top;
+          if (dy < 6) continue;
+          if (dy > A.height * 1.35) break;
+          var xOverlap = Math.min(A.left + A.width, B.left + B.width) - Math.max(A.left, B.left);
+          if (xOverlap < Math.min(A.width, B.width) * 0.35) continue;
+
+          // La caja A está justo encima de B: asegurar que el texto real de A quepa dentro de la distancia vertical dy
+          var padTopA = parseFloat(A.box.style.paddingTop) || 0;
+          var availH = Math.max(14, dy - padTopA - 3);
+          var curScaleA = Number(A.box.getAttribute('data-cur-scale') || '1');
+          var effFszA = A.maxFsz * curScaleA;
+
+          if (A.isSingle && effFszA > availH * 0.94) {
+            var newScaleA = (availH * 0.92) / A.maxFsz;
+            setBoxScale(A.box, Math.min(curScaleA, newScaleA));
+          } else {
+            for (var k = 0; k < 4; k++) {
+              var contentH = 0;
+              var pDivs = A.box.children;
+              for (var pi = 0; pi < pDivs.length; pi++) contentH += pDivs[pi].offsetHeight;
+              if (contentH <= availH) break;
+              scaleBoxFont(A.box, Math.max(0.5, Math.min(0.9, availH / Math.max(1, contentH))));
+            }
+          }
+
+          // Si A y B son dos líneas del mismo título grande (mismo tamaño original maxFsz), igualar su escala para que luzcan uniformes
+          if (Math.abs(A.maxFsz - B.maxFsz) <= 2 && A.maxFsz >= 32) {
+            var sA = Number(A.box.getAttribute('data-cur-scale') || '1');
+            var sB = Number(B.box.getAttribute('data-cur-scale') || '1');
+            var common = Math.min(sA, sB);
+            setBoxScale(A.box, common);
+            setBoxScale(B.box, common);
+          }
+        }
+      }
+    } catch (e) {
+      /* continuar si falla medición */
+    } finally {
+      if (holder.parentNode) holder.parentNode.removeChild(holder);
+      holder.style.cssText = '';
+    }
+  }
+
+  function serializeFragment(html, W, H) {
     var holder = document.createElement('div');
     holder.innerHTML = html;
+    autoFitSlideTextBoxes(holder, W || 1280, H || 720);
     var ser = new XMLSerializer();
     var out = '';
     for (var n = holder.firstChild; n; n = n.nextSibling) out += ser.serializeToString(n);
@@ -1149,7 +1286,7 @@
   }
 
   async function rasterize(innerHtml, W, H, outW, outH, bgCss) {
-    var xhtml = serializeFragment(innerHtml);
+    var xhtml = serializeFragment(innerHtml, W, H);
     var svg = '<svg xmlns="http://www.w3.org/2000/svg" width="' + outW + '" height="' + outH + '" viewBox="0 0 ' + W + ' ' + H + '">' +
       '<foreignObject x="0" y="0" width="' + W + '" height="' + H + '">' +
       '<div xmlns="' + NS_XHTML + '" style="position:relative;width:' + W + 'px;height:' + H + 'px;overflow:hidden;' + bgCss + '">' + xhtml + '</div>' +
