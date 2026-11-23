@@ -1083,8 +1083,13 @@ window.ProjectsView = {
       ? projectOrId
       : (this.getMergedProjectRecord(projectOrId) || (window.appState?.challenges || []).find(c => c && String(c.id) === String(projectOrId)));
     if (!proj) return false;
-    if (window.appRouter && typeof window.appRouter.isChallengeOwner === 'function') {
-      return window.appRouter.isChallengeOwner(proj);
+    if (this.isAdminUser()) return true;
+    if (window.appRouter && typeof window.appRouter.isChallengeOwner === 'function' && window.appRouter.isChallengeOwner(proj)) {
+      return true;
+    }
+    if (window.ProjectHub && typeof window.ProjectHub.getRole === 'function') {
+      const r = window.ProjectHub.getRole(proj);
+      if (r === 'owner' || r === 'editor') return true;
     }
     return false;
   },
@@ -1094,10 +1099,10 @@ window.ProjectsView = {
       alert('🔒 Permiso exclusivo: Solo los administradores, Melisa o el creador de este proyecto tienen autorización para editarlo.');
       return;
     }
-    if (window.AdminView && typeof window.AdminView.openEditProjectModal === 'function' && this.isAdminUser()) {
+    if (window.ProjectWizard && typeof window.ProjectWizard.openWizard === 'function') {
+      window.ProjectWizard.openWizard(projectId, 1, true);
+    } else if (window.AdminView && typeof window.AdminView.openEditProjectModal === 'function' && this.isAdminUser()) {
       window.AdminView.openEditProjectModal(projectId);
-    } else if (window.ProjectWizard && typeof window.ProjectWizard.openWizard === 'function') {
-      window.ProjectWizard.openWizard(projectId, 1);
     } else {
       this.openProjectLanding(projectId);
     }

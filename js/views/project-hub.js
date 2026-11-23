@@ -1771,10 +1771,26 @@ window.ProjectHub = {
 
   /* ------------------------------ acciones ------------------------------ */
   editProject(projectId) {
-    const proj = this.getProject(projectId);
+    const pid = projectId || this.currentId;
+    const proj = this.getProject(pid);
     if (!this.canEdit(proj)) { this.toast('🔒 Tu rol no permite editar este proyecto.'); return; }
     this.close();
-    if (window.ProjectsView && typeof window.ProjectsView.openEditProject === 'function') window.ProjectsView.openEditProject(projectId);
+    const launchWizard = () => {
+      if (window.ProjectWizard && typeof window.ProjectWizard.openWizard === 'function') {
+        window.ProjectWizard.openWizard(pid, 1, true);
+      } else if (window.ProjectsView && typeof window.ProjectsView.openEditProject === 'function') {
+        window.ProjectsView.openEditProject(pid);
+      }
+    };
+    // Asegurar que la vista de proyectos esté activa para que el asistente sea 100% visible
+    const projSec = document.getElementById('view-projects');
+    const isProjVisible = projSec && projSec.classList.contains('active');
+    if (!isProjVisible && window.appRouter && typeof window.appRouter.navigate === 'function') {
+      try { window.appRouter.navigate('projects'); } catch (e) {}
+      setTimeout(launchWizard, 80);
+    } else {
+      launchWizard();
+    }
   },
   openLanding(projectId) {
     this.close();
