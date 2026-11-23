@@ -404,43 +404,31 @@ window.AdminView = {
             </button>
           </div>
 
-          <!-- Navegación del Sidebar (Solo Inicio, Mis Proyectos, Comunidad, Reportes y Configuración) -->
+          <!-- Navegación del Sidebar 100% 3D (Inicio, Mis Proyectos, Comunidad, Reportes y Configuración) -->
           <nav class="admin-sidebar-nav">
             <button class="admin-nav-item ${this.activeTab === 'dashboard' ? 'active' : ''}" onclick="window.AdminView.switchTab('dashboard')">
-              <span class="admin-nav-icon">🏠</span>
+              <span class="admin-nav-icon"><img src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/House/3D/house_3d.png" alt="Inicio" width="24" height="24" class="rv3d-ico" /></span>
               <span class="admin-nav-label sidebar-hideable">Inicio</span>
             </button>
             <button class="admin-nav-item ${this.activeTab === 'projects' ? 'active' : ''}" onclick="window.AdminView.switchTab('projects')">
-              <span class="admin-nav-icon">📁</span>
+              <span class="admin-nav-icon"><img src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/File%20folder/3D/file_folder_3d.png" alt="Mis Proyectos" width="24" height="24" class="rv3d-ico" /></span>
               <span class="admin-nav-label sidebar-hideable">Mis Proyectos</span>
               <span class="admin-nav-badge sidebar-hideable">${this.getRealProjects().length}</span>
             </button>
             <button class="admin-nav-item ${this.activeTab === 'community' || this.activeTab === 'roles' ? 'active' : ''}" onclick="window.AdminView.switchTab('community')">
-              <span class="admin-nav-icon">👥</span>
+              <span class="admin-nav-icon"><img src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Busts%20in%20silhouette/3D/busts_in_silhouette_3d.png" alt="Comunidad" width="24" height="24" class="rv3d-ico" /></span>
               <span class="admin-nav-label sidebar-hideable">Comunidad</span>
               <span class="admin-nav-badge sidebar-hideable">${(window.appState && window.appState.users ? window.appState.users.length : 0)}</span>
             </button>
             <button class="admin-nav-item ${this.activeTab === 'reports' ? 'active' : ''}" onclick="window.AdminView.switchTab('reports')">
-              <span class="admin-nav-icon">📊</span>
+              <span class="admin-nav-icon"><img src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Bar%20chart/3D/bar_chart_3d.png" alt="Reportes" width="24" height="24" class="rv3d-ico" /></span>
               <span class="admin-nav-label sidebar-hideable">Reportes</span>
             </button>
             <button class="admin-nav-item ${this.activeTab === 'settings' || this.activeTab === 'design' ? 'active' : ''}" onclick="window.AdminView.switchTab('settings')">
-              <span class="admin-nav-icon">⚙️</span>
+              <span class="admin-nav-icon"><img src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Gear/3D/gear_3d.png" alt="Configuración" width="24" height="24" class="rv3d-ico" /></span>
               <span class="admin-nav-label sidebar-hideable">Configuración</span>
             </button>
           </nav>
-
-          <!-- Tarjeta de Soporte Institucional -->
-          <div class="admin-sidebar-footer">
-            <div class="admin-support-card">
-              <div class="admin-support-icon">🏛️</div>
-              <div class="admin-support-content">
-                <h4>Mentix Cloud v3.5</h4>
-                <p>Modo Administrador Activo con permisos de auditoría.</p>
-                <button class="admin-support-btn" onclick="window.AdminView.switchTab('audit')">Ver logs de seguridad</button>
-              </div>
-            </div>
-          </div>
         </aside>
 
         <!-- CONTENIDO PRINCIPAL Y HEADER SUPERIOR -->

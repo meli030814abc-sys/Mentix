@@ -5976,3 +5976,115 @@
   border-color: rgba(148, 163, 184, 0.35);
   box-shadow: 0 5px 0 #020617, inset 0 1.5px 0 rgba(255, 255, 255, 0.12);
 }
+
+/* ==========================================================================
+   SIDEBAR LATERAL ADMIN 100% 3D Y ALTURA COMPLETA HASTA EL FINAL (V170)
+   ========================================================================== */
+.mentix-admin-layout {
+  align-items: stretch !important;
+  min-height: 100vh !important;
+}
+
+.mentix-admin-sidebar {
+  height: auto !important;
+  min-height: 100vh !important;
+  align-self: stretch !important;
+  position: relative !important;
+  top: auto !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.mentix-admin-layout.theme-light .mentix-admin-sidebar {
+  background: linear-gradient(180deg, #ffffff 0%, #f8fafc 60%, #f1f5ff 100%) !important;
+  border-right: 2px solid #dbe4ff !important;
+  box-shadow: 6px 0 28px rgba(79, 70, 229, 0.08), inset -2px 0 0 #ffffff !important;
+}
+
+.mentix-admin-sidebar .admin-sidebar-toggle-btn {
+  border-radius: 12px !important;
+  box-shadow: 0 4px 0 #cbd5e1, inset 0 1.5px 0 #ffffff !important;
+  transition: transform 0.14s ease, box-shadow 0.14s ease !important;
+}
+
+.mentix-admin-sidebar .admin-sidebar-toggle-btn:hover {
+  transform: translateY(-1.5px) !important;
+}
+
+.mentix-admin-sidebar .admin-sidebar-toggle-btn:active {
+  transform: translateY(2px) !important;
+  box-shadow: 0 1px 0 #cbd5e1 !important;
+}
+
+.mentix-admin-sidebar .admin-sidebar-nav {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 0.65rem !important;
+  padding: 1.15rem 0.9rem !important;
+  flex: 1 1 auto !important;
+}
+
+.mentix-admin-sidebar .admin-nav-item {
+  position: relative !important;
+  border-radius: 18px !important;
+  padding: 0.82rem 1rem !important;
+  border: 1.5px solid transparent !important;
+  overflow: hidden !important;
+  transition: transform 0.16s ease, box-shadow 0.16s ease, background 0.16s ease !important;
+}
+
+.mentix-admin-layout.theme-light .mentix-admin-sidebar .admin-nav-item:not(.active) {
+  background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%) !important;
+  border-color: #e2e8f0 !important;
+  box-shadow: 0 4px 0 #dbe4f0, 0 6px 14px rgba(15, 23, 42, 0.05), inset 0 1.5px 0 #ffffff !important;
+}
+
+.mentix-admin-layout.theme-light .mentix-admin-sidebar .admin-nav-item:not(.active):hover {
+  transform: translateY(-2px) !important;
+  border-color: #93c5fd !important;
+  box-shadow: 0 6px 0 #93c5fd, 0 12px 22px rgba(59, 130, 246, 0.14), inset 0 1.5px 0 #ffffff !important;
+}
+
+.mentix-admin-sidebar .admin-nav-item:active {
+  transform: translateY(2.5px) !important;
+}
+
+.mentix-admin-sidebar .admin-nav-item.active {
+  background: linear-gradient(180deg, #38bdf8 0%, #2563eb 55%, #1d4ed8 100%) !important;
+  color: #ffffff !important;
+  border: 2px solid #93c5fd !important;
+  box-shadow: 0 6px 0 #1e3a8a, 0 14px 28px rgba(37, 99, 235, 0.36), inset 0 2px 1px rgba(255, 255, 255, 0.45) !important;
+}
+
+.mentix-admin-sidebar .admin-nav-item.active::before {
+  content: '';
+  position: absolute;
+  left: 6%;
+  right: 6%;
+  top: 2px;
+  height: 44%;
+  border-radius: 9999px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.42) 0%, rgba(255, 255, 255, 0.02) 100%);
+  pointer-events: none;
+}
+
+.mentix-admin-sidebar .admin-nav-icon {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 28px !important;
+  height: 28px !important;
+  flex-shrink: 0 !important;
+}
+
+.mentix-admin-sidebar .admin-nav-badge {
+  border-radius: 999px !important;
+  font-weight: 900 !important;
+  box-shadow: 0 2.5px 0 rgba(15, 23, 42, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.5) !important;
+}
+
+.mentix-admin-layout:not(.theme-light) .mentix-admin-sidebar .admin-nav-item:not(.active) {
+  background: linear-gradient(180deg, #111c33 0%, #0b1324 100%) !important;
+  border-color: rgba(148, 163, 184, 0.22) !important;
+  box-shadow: 0 4px 0 #020617, inset 0 1px 0 rgba(255, 255, 255, 0.08) !important;
+}
