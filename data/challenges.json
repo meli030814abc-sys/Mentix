@@ -743,7 +743,15 @@
     "ownerId": "user_1791496180841",
     "ownerUsername": "Mentilona",
     "joinCode": "245801",
-    "accessCode": "245801"
+    "accessCode": "245801",
+    "customProjectCodes": [
+      {
+        "code": "12345678",
+        "author": "Profesor / Administrador Mentix",
+        "authorRole": "admin",
+        "createdAt": "2026-11-16"
+      }
+    ]
   },
   {
     "id": "govdata_code_mentilona_245801",
