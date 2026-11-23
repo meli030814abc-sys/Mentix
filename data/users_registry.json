@@ -94,5 +94,21 @@
     "lastLoginAt": "2026-11-23T17:11:51.261Z",
     "pwd": "91f2fafcc015b63852a3a2ad278ecd90573900b0fd2a3b9aa833fa0039799d25",
     "createdAt": "2026-11-23T17:11:47.895Z"
+  },
+  {
+    "id": "user_1795453936224",
+    "name": "GATITAXD2",
+    "username": "Cañon52",
+    "email": "gatitaxd679@gmail.com522",
+    "avatar": "🦊",
+    "role": "admin",
+    "xp": 100,
+    "level": 1,
+    "levelName": "Principiante",
+    "institution": "Comunidad MENTIX",
+    "isBlocked": false,
+    "lastLoginAt": "2026-11-23T17:12:16.095Z",
+    "pwd": "2c202f0114f478fee01140e39aaf8408570260b9e5a2c34db3b137c74125297c",
+    "createdAt": "2026-11-23T17:12:16.095Z"
   }
 ]
