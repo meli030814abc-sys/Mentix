@@ -10,10 +10,10 @@
       "email": "gatitaxd6f79@gmail.com",
       "role": "admin",
       "joinedAt": "2026-11-23T03:09:15.937Z",
-      "updatedAt": "2026-11-23T04:09:50.730Z",
+      "updatedAt": "2026-11-23T04:09:57.015Z",
       "projectId": "govdata_code_mentilona_804263",
       "projectTitle": "🌊 ¡El 95 % del océano sigue siendo un misterio! 😱 ¿Qué se esconde en las profundidades?",
-      "projectDescription": "Proyecto en construcción con el Asistente Inteligente de Mentix.",
+      "projectDescription": "116456.1103249872313216",
       "currentStep": 2,
       "completedStepsCount": 16,
       "progress": 100,
@@ -26,7 +26,7 @@
         "id": "govdata_code_mentilona_804263",
         "title": "🌊 ¡El 95 % del océano sigue siendo un misterio! 😱 ¿Qué se esconde en las profundidades?",
         "subtitle": "Proyecto Educativo Mentix",
-        "description": "Proyecto en construcción con el Asistente Inteligente de Mentix.",
+        "description": "116456.1103249872313216",
         "author": "Melisa",
         "authorEmail": "gatitaxd6f79@gmail.com",
         "joinCode": "804263",
@@ -90,7 +90,7 @@
           "commercialPitch": "",
           "faqs": []
         },
-        "updatedAt": "2026-11-23T04:09:50.730Z"
+        "updatedAt": "2026-11-23T04:09:57.015Z"
       }
     }
   ]
