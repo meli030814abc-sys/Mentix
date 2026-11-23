@@ -992,177 +992,163 @@ window.AdminView = {
       return true;
     });
 
+    const F3D = 'https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets';
+    const pIco = (path, alt = '', size = 18) =>
+      `<img src="${F3D}/${path}" alt="${alt}" width="${size}" height="${size}" class="rv3d-ico" loading="lazy" decoding="async" />`;
+
     return `
-      <!-- Breadcrumbs -->
-      <div class="admin-breadcrumbs">
-        <span>Inicio</span>
-        <span class="sep">/</span>
-        <span class="active">Mis Proyectos</span>
+      <div class="proj3d-shell">
+        <!-- Breadcrumbs 3D -->
+        <div class="roles-v2-breadcrumb">
+          ${pIco('House/3D/house_3d.png', 'Inicio', 18)}
+          <span>Inicio</span>
+          <span class="sep">/</span>
+          <span class="current">Mis Proyectos</span>
+        </div>
+
+        <!-- HERO BANNER INSTITUCIONAL DEL ROBOT EN MARCO 3D (SOLO PARA ADMINS CON BOTONES DE ACCIÓN) -->
+        <div class="saas-hero-banner-wrapper proj3d-hero-frame" style="position: relative; width: 100%; aspect-ratio: 2090 / 422; min-height: 200px; max-height: 265px; border-radius: 24px; overflow: hidden; margin-bottom: 0.35rem; background: #071739;">
+          <img 
+            id="mentix-admin-projects-hero-banner-img"
+            src="${this.getHeroBannerUrl()}" 
+            alt="Banner de Robot de Proyectos Mentix" 
+            style="${window.ProjectsView && typeof window.ProjectsView.buildHeroBannerImgCss === 'function' ? window.ProjectsView.buildHeroBannerImgCss() : 'position: absolute; inset: 0; width: 100%; height: 100%; display: block; object-fit: cover; object-position: center;'}" 
+          />
+
+          <!-- BOTONES FLOTANTES 3D EXCLUSIVOS DE ADMINISTRADOR PARA ENCUADRAR Y CAMBIAR BANNER -->
+          <div class="mentix-banner-admin-controls" style="position: absolute; top: 1rem; right: 1.25rem; z-index: 10; display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; justify-content: flex-end;">
+            <button 
+              type="button" 
+              class="proj3d-gloss-btn gloss-white"
+              onclick="window.ProjectsView && window.ProjectsView.openHeroBannerRepositionMode('mentix-admin-projects-hero-banner-img')" 
+              title="Mover, centrar o mostrar completo el fondo del banner"
+            >
+              ${pIco('Raised%20hand/Default/3D/raised_hand_3d_default.png', 'Encuadrar', 18)}
+              <span>Encuadrar</span>
+            </button>
+            <button 
+              type="button" 
+              class="proj3d-gloss-btn gloss-white"
+              onclick="window.AdminView.openBannerCustomizerModal()" 
+              title="Cambiar Banner Principal de Proyectos (Exclusivo Administrador)"
+            >
+              ${pIco('Artist%20palette/3D/artist_palette_3d.png', 'Banner', 19)}
+              <span>Cambiar Banner</span>
+              <span style="background: linear-gradient(135deg, #0284c7 0%, #2563eb 100%); color: #ffffff; padding: 0.14rem 0.55rem; border-radius: 999px; font-size: 0.7rem; font-weight: 900;">ADMIN</span>
+            </button>
+          </div>
+
+          <!-- BOTONES PRINCIPALES 3D DE ACCIÓN INTEGRADOS EN EL BANNER -->
+          <div class="mentix-banner-action-row" style="position: absolute; left: 3.5%; bottom: 8.5%; z-index: 5; display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;">
+            <button type="button" onclick="window.AdminView.bannerAction('join')" title="Unirse a un código" class="proj3d-gloss-btn gloss-pink">
+              ${pIco('Video%20game/3D/video_game_3d.png', '', 19)}
+              <span>Unirse a un código</span>
+            </button>
+            <button type="button" onclick="window.AdminView.bannerAction('create')" title="Crear Proyecto" class="proj3d-gloss-btn gloss-cyan">
+              ${pIco('Plus/3D/plus_3d.png', '', 18)}
+              <span>Crear Proyecto</span>
+            </button>
+            <button type="button" onclick="window.AdminView.bannerAction('code')" title="Crear Código de Proyecto" class="proj3d-gloss-btn gloss-green">
+              ${pIco('Key/3D/key_3d.png', '', 18)}
+              <span>Crear Código</span>
+            </button>
+            <button type="button" onclick="window.AdminView.bannerAction('categories')" title="Categorías" class="proj3d-gloss-btn gloss-indigo">
+              ${pIco('Label/3D/label_3d.png', '', 18)}
+              <span>Categorías</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Header 3D del Módulo -->
+        <div class="proj3d-header-bar">
+          <div class="proj3d-header-title">
+            <div class="roles-v2-panel-ico ico-blue">${pIco('File%20folder/3D/file_folder_3d.png', 'Proyectos', 28)}</div>
+            <div>
+              <h2>Mis Proyectos</h2>
+              <p>Supervisa, administra y gestiona exclusivamente los proyectos educativos de la plataforma.</p>
+            </div>
+          </div>
+          <div class="proj3d-header-actions">
+            <button type="button" class="proj3d-gloss-btn gloss-white" onclick="window.AdminView.bannerAction('code')">
+              ${pIco('Key/3D/key_3d.png', '', 18)}
+              <span>Códigos de Proyecto</span>
+            </button>
+            <button type="button" class="proj3d-gloss-btn gloss-white" onclick="window.AdminView.exportProjectsCSV()">
+              ${pIco('Inbox%20tray/3D/inbox_tray_3d.png', '', 18)}
+              <span>Exportar CSV</span>
+            </button>
+            <button type="button" class="proj3d-gloss-btn gloss-cyan" onclick="window.appRouter.navigate('projects', { viewMode: 'create' })">
+              ${pIco('Plus/3D/plus_3d.png', '', 18)}
+              <span>Crear Proyecto</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Barra 3D de Filtros y Búsqueda Superior -->
+        <div class="proj3d-filter-bar">
+          <div class="roles-v2-search proj3d-search">
+            <span class="search-ico">${pIco('Magnifying%20glass%20tilted%20left/3D/magnifying_glass_tilted_left_3d.png', 'Buscar', 17)}</span>
+            <input type="text" placeholder="Buscar por título, estudiante o tema..." value="${this.projectFilter.search}" oninput="window.AdminView.setProjectSearch(this.value)">
+          </div>
+
+          <div class="proj3d-cat-select-wrap">
+            <select class="roles-v2-role-select" onchange="window.AdminView.setProjectCategoryFilter(this.value)">
+              <option value="all" ${this.projectFilter.category === 'all' ? 'selected' : ''}>Todas las categorías</option>
+              ${categories.map(c => `
+                <option value="${c.id}" ${this.projectFilter.category === c.id ? 'selected' : ''}>${c.icon || '🏷️'} ${c.name}</option>
+              `).join('')}
+            </select>
+          </div>
+
+          <!-- Filtros de Píldoras 3D -->
+          <div class="roles-v2-filter-pills">
+            <button type="button" class="roles-v2-fpill ${this.projectFilter.status === 'all' ? 'active' : ''}" onclick="window.AdminView.setProjectStatusFilter('all')">Todos (${rawProjects.length})</button>
+            <button type="button" class="roles-v2-fpill ${this.projectFilter.status === 'pending_approval' ? 'active' : ''} ${pendingApprovalCount > 0 && this.projectFilter.status !== 'pending_approval' ? 'fpill-amber' : ''}" onclick="window.AdminView.setProjectStatusFilter('pending_approval')">
+              ${pIco('Hourglass%20not%20done/3D/hourglass_not_done_3d.png', '', 14)} Pendientes (${pendingApprovalCount})
+            </button>
+            <button type="button" class="roles-v2-fpill ${this.projectFilter.status === 'approved' ? 'active' : ''}" onclick="window.AdminView.setProjectStatusFilter('approved')">
+              ${pIco('Check%20mark%20button/3D/check_mark_button_3d.png', '', 14)} Autorizados
+            </button>
+            <button type="button" class="roles-v2-fpill ${this.projectFilter.status === 'in_progress' ? 'active' : ''}" onclick="window.AdminView.setProjectStatusFilter('in_progress')">En Proceso</button>
+            <button type="button" class="roles-v2-fpill ${this.projectFilter.status === 'completed' ? 'active' : ''}" onclick="window.AdminView.setProjectStatusFilter('completed')">Completados</button>
+            <button type="button" class="roles-v2-fpill ${this.projectFilter.status === 'public' ? 'active' : ''}" onclick="window.AdminView.setProjectStatusFilter('public')">Públicos</button>
+            <button type="button" class="roles-v2-fpill ${this.projectFilter.status === 'private' ? 'active' : ''}" onclick="window.AdminView.setProjectStatusFilter('private')">Privados</button>
+          </div>
+
+          <!-- Alternador de Vista 3D (Tarjetas / Tabla) -->
+          <div class="proj3d-view-toggle">
+            <button type="button" class="roles-v2-act-btn ${this.projectFilter.viewMode === 'cards' ? 'is-active-view' : ''}" title="Vista en Tarjetas" onclick="window.AdminView.setProjectViewMode('cards')">
+              ${pIco('Framed%20picture/3D/framed_picture_3d.png', 'Tarjetas', 18)}
+            </button>
+            <button type="button" class="roles-v2-act-btn ${this.projectFilter.viewMode === 'table' ? 'is-active-view' : ''}" title="Vista en Tabla" onclick="window.AdminView.setProjectViewMode('table')">
+              ${pIco('Clipboard/3D/clipboard_3d.png', 'Tabla', 18)}
+            </button>
+          </div>
+        </div>
+
+        <!-- CONTENIDO DE PROYECTOS -->
+        ${projects.length === 0 ? `
+          <div class="roles-v2-panel proj3d-empty-state">
+            <div>${pIco('File%20folder/3D/file_folder_3d.png', 'Vacío', 56)}</div>
+            <h3>No se encontraron proyectos</h3>
+            <p>Intenta ajustar tus filtros de búsqueda o categoría seleccionada.</p>
+            <button type="button" class="proj3d-gloss-btn gloss-cyan" onclick="window.AdminView.resetProjectFilters()">Restablecer filtros</button>
+          </div>
+        ` : (this.projectFilter.viewMode === 'cards' ? this.renderProjectCardsGrid(projects) : this.renderProjectsTable(projects))}
       </div>
-
-      <!-- HERO BANNER INSTITUCIONAL DEL ROBOT (SOLO PARA ADMINS CON BOTONES DE ACCIÓN) -->
-      <div class="saas-hero-banner-wrapper" style="position: relative; width: 100%; aspect-ratio: 2090 / 422; min-height: 200px; max-height: 265px; border-radius: 20px; overflow: hidden; margin-bottom: 1.75rem; box-shadow: 0 12px 35px rgba(2, 40, 100, 0.16); background: #071739;">
-        <img 
-          id="mentix-admin-projects-hero-banner-img"
-          src="${this.getHeroBannerUrl()}" 
-          alt="Banner de Robot de Proyectos Mentix" 
-          style="${window.ProjectsView && typeof window.ProjectsView.buildHeroBannerImgCss === 'function' ? window.ProjectsView.buildHeroBannerImgCss() : 'position: absolute; inset: 0; width: 100%; height: 100%; display: block; object-fit: cover; object-position: center;'}" 
-        />
-
-        <!-- BOTONES FLOTANTES EXCLUSIVOS DE ADMINISTRADOR PARA ENCUADRAR Y CAMBIAR BANNER -->
-        <div class="mentix-banner-admin-controls" style="position: absolute; top: 1rem; right: 1.25rem; z-index: 10; display: flex; align-items: center; gap: 0.55rem; flex-wrap: wrap; justify-content: flex-end;">
-          <button 
-            type="button" 
-            onclick="window.ProjectsView && window.ProjectsView.openHeroBannerRepositionMode('mentix-admin-projects-hero-banner-img')" 
-            title="Mover, centrar o mostrar completo el fondo del banner"
-            style="display: inline-flex; align-items: center; gap: 0.45rem; background: rgba(255, 255, 255, 0.96); backdrop-filter: blur(10px); color: #0f172a; border: 2px solid #0ea5e9; border-radius: 9999px; padding: 0.5rem 1.05rem; font-size: 0.85rem; font-weight: 900; cursor: pointer; box-shadow: 0 6px 20px rgba(15, 23, 42, 0.3), 0 0 0 3px rgba(255, 255, 255, 0.35); transition: all 0.2s ease;"
-            onmouseenter="this.style.transform='scale(1.05)'; this.style.background='#f0f9ff';"
-            onmouseleave="this.style.transform='scale(1)'; this.style.background='rgba(255, 255, 255, 0.96)';"
-          >
-            <span style="font-size: 1rem;">✋</span>
-            <span>Encuadrar</span>
-          </button>
-          <button 
-            type="button" 
-            onclick="window.AdminView.openBannerCustomizerModal()" 
-            title="Cambiar Banner Principal de Proyectos (Exclusivo Administrador)"
-            style="display: inline-flex; align-items: center; gap: 0.55rem; background: rgba(255, 255, 255, 0.96); backdrop-filter: blur(10px); color: #0f172a; border: 2px solid #0284c7; border-radius: 9999px; padding: 0.52rem 1.25rem; font-size: 0.88rem; font-weight: 900; cursor: pointer; box-shadow: 0 6px 22px rgba(15, 23, 42, 0.34), 0 0 0 3px rgba(255, 255, 255, 0.35); transition: all 0.2s ease;"
-            onmouseenter="this.style.transform='scale(1.05)'; this.style.background='#f0f9ff';"
-            onmouseleave="this.style.transform='scale(1)'; this.style.background='rgba(255, 255, 255, 0.96)';"
-          >
-            <span style="font-size: 1.15rem;">🎨</span>
-            <span>Cambiar Banner</span>
-            <span style="background: linear-gradient(135deg, #0284c7 0%, #2563eb 100%); color: #ffffff; padding: 0.14rem 0.55rem; border-radius: 999px; font-size: 0.72rem; font-weight: 900;">ADMIN</span>
-          </button>
-        </div>
-
-        <!-- BOTONES PRINCIPALES DE ACCIÓN INTEGRADOS EN EL BANNER -->
-        <div class="mentix-banner-action-row" style="position: absolute; left: 3.5%; bottom: 8.5%; z-index: 5; display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;">
-          
-          <button 
-            type="button" 
-            onclick="window.AdminView.bannerAction('join')" 
-            title="Unirse a un código"
-            class="mentix-hero-action-btn"
-            style="display: inline-flex; align-items: center; gap: 0.45rem; background: linear-gradient(135deg, #f72585 0%, #b5179e 100%); color: #ffffff; border: none; border-radius: 9999px; padding: 0.52rem 1.25rem; font-size: 0.9rem; font-weight: 800; cursor: pointer; box-shadow: 0 4px 16px rgba(247, 37, 133, 0.45); transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); white-space: nowrap;"
-          >
-            <span style="font-size: 1rem;">🎮</span>
-            <span>Unirse a un código</span>
-          </button>
-
-          <button 
-            type="button" 
-            onclick="window.AdminView.bannerAction('create')" 
-            title="Crear Proyecto"
-            class="mentix-hero-action-btn"
-            style="display: inline-flex; align-items: center; gap: 0.45rem; background: linear-gradient(135deg, #00d2ff 0%, #0077ff 100%); color: #ffffff; border: none; border-radius: 9999px; padding: 0.52rem 1.25rem; font-size: 0.9rem; font-weight: 800; cursor: pointer; box-shadow: 0 4px 16px rgba(0, 180, 255, 0.48); transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); white-space: nowrap;"
-          >
-            <span style="font-size: 1rem;">➕</span>
-            <span>Crear Proyecto</span>
-          </button>
-
-          <button 
-            type="button" 
-            onclick="window.AdminView.bannerAction('code')" 
-            title="Crear Código de Proyecto"
-            class="mentix-hero-action-btn"
-            style="display: inline-flex; align-items: center; gap: 0.45rem; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: #ffffff; border: none; border-radius: 9999px; padding: 0.52rem 1.25rem; font-size: 0.9rem; font-weight: 800; cursor: pointer; box-shadow: 0 4px 16px rgba(16, 185, 129, 0.45); transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); white-space: nowrap;"
-          >
-            <span style="font-size: 1rem;">🔑</span>
-            <span>Crear Código</span>
-          </button>
-
-          <button 
-            type="button" 
-            onclick="window.AdminView.bannerAction('categories')" 
-            title="Categorías"
-            class="mentix-hero-action-btn"
-            style="display: inline-flex; align-items: center; gap: 0.45rem; background: linear-gradient(135deg, #4f46e5 0%, #3730a3 100%); color: #ffffff; border: none; border-radius: 9999px; padding: 0.52rem 1.25rem; font-size: 0.9rem; font-weight: 800; cursor: pointer; box-shadow: 0 4px 16px rgba(79, 70, 229, 0.45); transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); white-space: nowrap;"
-          >
-            <span style="font-size: 1rem;">🏷️</span>
-            <span>Categorías</span>
-          </button>
-
-        </div>
-      </div>
-
-      <!-- Header del Módulo -->
-      <div class="admin-section-header">
-        <div>
-          <h2>Mis Proyectos</h2>
-          <p>Supervisa, administra y gestiona exclusivamente los proyectos educativos de la plataforma.</p>
-        </div>
-        <div class="admin-header-actions">
-          <button class="btn btn-outline" onclick="window.AdminView.bannerAction('code')" style="display: inline-flex; align-items: center; gap: 0.4rem; font-weight: 800; border-color: rgba(0, 245, 212, 0.45); color: #00f5d4;">
-            <span>🔑</span> Códigos de Proyecto
-          </button>
-          <button class="btn btn-outline" onclick="window.AdminView.exportProjectsCSV()">
-            <span>📥</span> Exportar CSV
-          </button>
-          <button class="btn btn-cyan" onclick="window.appRouter.navigate('projects', { viewMode: 'create' })">
-            <span>➕</span> Crear Proyecto
-          </button>
-        </div>
-      </div>
-
-      <!-- Barra de Filtros y Búsqueda Superior -->
-      <div class="admin-filter-bar">
-        <div class="filter-search-box">
-          <span class="search-icon">🔍</span>
-          <input type="text" placeholder="Buscar por título, estudiante o tema..." value="${this.projectFilter.search}" oninput="window.AdminView.setProjectSearch(this.value)">
-        </div>
-
-        <div class="filter-select-box">
-          <select onchange="window.AdminView.setProjectCategoryFilter(this.value)">
-            <option value="all" ${this.projectFilter.category === 'all' ? 'selected' : ''}>Todas las categorías</option>
-            ${categories.map(c => `
-              <option value="${c.id}" ${this.projectFilter.category === c.id ? 'selected' : ''}>${c.icon || '🏷️'} ${c.name}</option>
-            `).join('')}
-          </select>
-        </div>
-
-        <!-- Filtros de Píldoras -->
-        <div class="filter-pills">
-          <button class="filter-pill ${this.projectFilter.status === 'all' ? 'active' : ''}" onclick="window.AdminView.setProjectStatusFilter('all')">Todos (${rawProjects.length})</button>
-          <button class="filter-pill ${this.projectFilter.status === 'pending_approval' ? 'active' : ''}" style="${pendingApprovalCount > 0 ? 'background: rgba(245, 158, 11, 0.22); border: 1.5px solid #f59e0b; color: #fbbf24; font-weight: 800;' : ''}" onclick="window.AdminView.setProjectStatusFilter('pending_approval')">
-            ⏳ Pendientes (${pendingApprovalCount})
-          </button>
-          <button class="filter-pill ${this.projectFilter.status === 'approved' ? 'active' : ''}" onclick="window.AdminView.setProjectStatusFilter('approved')">✔ Autorizados</button>
-          <button class="filter-pill ${this.projectFilter.status === 'in_progress' ? 'active' : ''}" onclick="window.AdminView.setProjectStatusFilter('in_progress')">En Proceso</button>
-          <button class="filter-pill ${this.projectFilter.status === 'completed' ? 'active' : ''}" onclick="window.AdminView.setProjectStatusFilter('completed')">Completados</button>
-          <button class="filter-pill ${this.projectFilter.status === 'public' ? 'active' : ''}" onclick="window.AdminView.setProjectStatusFilter('public')">Públicos</button>
-          <button class="filter-pill ${this.projectFilter.status === 'private' ? 'active' : ''}" onclick="window.AdminView.setProjectStatusFilter('private')">Privados</button>
-        </div>
-
-        <!-- Alternador de Vista (Tarjetas / Tabla) -->
-        <div class="view-mode-toggle">
-          <button class="view-mode-btn ${this.projectFilter.viewMode === 'cards' ? 'active' : ''}" title="Vista en Tarjetas" onclick="window.AdminView.setProjectViewMode('cards')">
-            <span>🎴</span>
-          </button>
-          <button class="view-mode-btn ${this.projectFilter.viewMode === 'table' ? 'active' : ''}" title="Vista en Tabla" onclick="window.AdminView.setProjectViewMode('table')">
-            <span>📋</span>
-          </button>
-        </div>
-      </div>
-
-      <!-- CONTENIDO DE PROYECTOS -->
-      ${projects.length === 0 ? `
-        <div class="admin-empty-state">
-          <div class="empty-icon">📂</div>
-          <h3>No se encontraron proyectos</h3>
-          <p>Intenta ajustar tus filtros de búsqueda o categoría seleccionada.</p>
-          <button class="btn btn-outline" onclick="window.AdminView.resetProjectFilters()">Restablecer filtros</button>
-        </div>
-      ` : (this.projectFilter.viewMode === 'cards' ? this.renderProjectCardsGrid(projects) : this.renderProjectsTable(projects))}
     `;
   },
 
   /**
-   * Vista de Cuadrícula de Tarjetas de Proyectos (Diseño Idéntico a Imagen 2)
+   * Vista de Cuadrícula de Tarjetas de Proyectos 100% 3D
    */
   renderProjectCardsGrid(projects) {
+    const F3D = 'https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets';
+    const pIco = (path, alt = '', size = 17) =>
+      `<img src="${F3D}/${path}" alt="${alt}" width="${size}" height="${size}" class="rv3d-ico" loading="lazy" decoding="async" />`;
+
     return `
-      <div class="admin-projects-grid">
+      <div class="admin-projects-grid proj3d-cards-grid">
         ${projects.map(p => {
           const isApproved = p.approvalStatus === 'approved' && !p.rejectionReason;
           const isPendingApproval = !isApproved;
@@ -1185,81 +1171,76 @@ window.AdminView = {
           const rating = p.rating || '4.8';
 
           return `
-            <div class="admin-project-card">
-              <!-- Portada con Badges y Acciones Flotantes Superiores (Idéntico a Imagen 2) -->
-              <div class="admin-card-banner">
+            <div class="admin-project-card proj3d-card ${isPendingApproval ? 'pcard-amber' : 'pcard-blue'}">
+              <!-- Portada 3D con Badges y Acciones Flotantes Superiores -->
+              <div class="admin-card-banner proj3d-card-banner">
                 <img src="${coverImage}" alt="${title}" class="admin-card-cover-img" onerror="this.onerror=null; this.src='assets/student_create_bg.jpg';">
                 
                 <div class="admin-card-badge-row">
-                  <!-- Badge Izquierdo de Estado -->
-                  <div class="admin-card-status-badge ${isPendingApproval ? 'pending' : (isCompleted ? 'completed' : 'in-progress')}" style="${isPendingApproval ? 'background: #f59e0b; color: #07152b; border: 1.5px solid #fbbf24; font-weight: 900; box-shadow: 0 0 10px rgba(245, 158, 11, 0.45);' : ''}">
-                    <span>${isPendingApproval ? '⏳' : (isCompleted ? '✔' : '⚡')}</span>
+                  <!-- Badge Izquierdo 3D de Estado -->
+                  <div class="proj3d-status-badge ${isPendingApproval ? 'st-pending' : (isCompleted ? 'st-completed' : 'st-progress')}">
+                    ${isPendingApproval ? pIco('Hourglass%20not%20done/3D/hourglass_not_done_3d.png', '', 15) : (isCompleted ? pIco('Check%20mark%20button/3D/check_mark_button_3d.png', '', 15) : pIco('High%20voltage/3D/high_voltage_3d.png', '', 15))}
                     <span>${isPendingApproval ? 'Pendiente Autorización' : (isCompleted ? 'Completado' : 'En Proceso')}</span>
                   </div>
 
-                  <!-- Botones Flotantes Derechos -->
+                  <!-- Botones Flotantes Derechos 3D -->
                   <div class="admin-card-top-actions">
-                    <button class="btn-card-robot-banner" title="Personalizar banner del robot" onclick="window.AdminView.switchTab('design')">
-                      <span>🤖</span> Banner
+                    <button type="button" class="proj3d-top-btn tbtn-dark" title="Personalizar banner del robot" onclick="window.AdminView.switchTab('design')">
+                      ${pIco('Robot/3D/robot_3d.png', '', 15)} <span>Banner</span>
                     </button>
-                    <button class="btn-card-review" title="Revisar Landing Page y Autorización" onclick="window.AdminView.reviewProjectInLanding('${p.id}')">
-                      <span>🔍</span> Revisar
+                    <button type="button" class="proj3d-top-btn tbtn-cyan" title="Revisar Landing Page y Autorización" onclick="window.AdminView.reviewProjectInLanding('${p.id}')">
+                      ${pIco('Magnifying%20glass%20tilted%20left/3D/magnifying_glass_tilted_left_3d.png', '', 14)} <span>Revisar</span>
                     </button>
-                    <button class="btn-card-edit" title="Editar proyecto" onclick="window.AdminView.openEditProjectModal('${p.id}')">
-                      ✏️
+                    <button type="button" class="proj3d-top-ico tbtn-edit" title="Editar proyecto" onclick="window.AdminView.openEditProjectModal('${p.id}')">
+                      ${pIco('Pencil/3D/pencil_3d.png', 'Editar', 15)}
                     </button>
-                    <button class="btn-card-trash" title="Eliminar proyecto" onclick="window.AdminView.deleteProject('${p.id}')">
-                      🗑️
+                    <button type="button" class="proj3d-top-ico tbtn-del" title="Eliminar proyecto" onclick="window.AdminView.deleteProject('${p.id}')">
+                      ${pIco('Wastebasket/3D/wastebasket_3d.png', 'Eliminar', 15)}
                     </button>
-                    <button class="btn-card-more" title="Editar y más opciones" onclick="window.AdminView.openEditProjectModal('${p.id}')">
+                    <button type="button" class="proj3d-top-ico tbtn-more" title="Editar y más opciones" onclick="window.AdminView.openEditProjectModal('${p.id}')">
                       •••
                     </button>
                   </div>
                 </div>
               </div>
 
-              <!-- Contenido de la Tarjeta -->
-              <div class="admin-card-body">
+              <!-- Contenido de la Tarjeta 3D -->
+              <div class="admin-card-body proj3d-card-body">
                 <h3 class="admin-card-title" title="${title}">${title}</h3>
                 <p class="admin-card-desc">${description}</p>
 
-                <!-- Fila de Metadatos: Fecha, Participantes y Puntuación -->
-                <div class="admin-card-meta-row">
-                  <div class="meta-item">
-                    <span class="meta-icon">📅</span>
-                    <span class="meta-text">${dateStr}</span>
+                <!-- Fila de Metadatos 3D: Fecha, Participantes y Puntuación -->
+                <div class="proj3d-meta-row">
+                  <div class="proj3d-meta-pill">
+                    ${pIco('Calendar/3D/calendar_3d.png', '', 15)}
+                    <span>${dateStr}</span>
                   </div>
-                  <div class="meta-item">
-                    <span class="meta-icon">👥</span>
-                    <span class="meta-text">${participants}</span>
+                  <div class="proj3d-meta-pill">
+                    ${pIco('Busts%20in%20silhouette/3D/busts_in_silhouette_3d.png', '', 15)}
+                    <span>${participants}</span>
                   </div>
-                  <div class="meta-item">
-                    <span class="meta-icon">⭐</span>
-                    <span class="meta-text">${rating}</span>
+                  <div class="proj3d-meta-pill">
+                    ${pIco('Star/3D/star_3d.png', '', 15)}
+                    <span>${rating}</span>
                   </div>
                 </div>
 
-                <!-- Botones Inferiores: Ver Detalles, Autorizar y Compartir -->
-                <div class="admin-card-actions-row">
-                  <button class="btn-card-details" onclick="window.ProjectHub ? window.ProjectHub.open('${p.id}') : window.AdminView.openProjectDetailModal('${p.id}')" title="Ver detalles y panel del proyecto">
-                    Detalles →
+                <!-- 4 Botones Inferiores 3D Glossy Pill: Detalles, Ver Landing, Autorizar y Compartir -->
+                <div class="proj3d-card-actions-grid">
+                  <button type="button" class="proj3d-gloss-btn gloss-white proj3d-card-btn" onclick="window.ProjectHub ? window.ProjectHub.open('${p.id}') : window.AdminView.openProjectDetailModal('${p.id}')" title="Ver detalles y panel del proyecto">
+                    <span>Detalles →</span>
                   </button>
-                  <button class="btn-card-landing" onclick="window.ProjectsView ? window.ProjectsView.openProjectLanding('${p.id}') : (window.AdminView.openProjectDetailModal('${p.id}'))" title="Ver Landing Page pública" style="background:#f0fdf4; color:#047857; border:1.5px solid #86efac; border-radius:10px; padding:0.46rem 0.55rem; font-size:0.74rem; font-weight:800; cursor:pointer; display:inline-flex; align-items:center; gap:0.25rem;">
-                    <span>🌐</span> Ver Landing
+                  <button type="button" class="proj3d-gloss-btn gloss-cyan proj3d-card-btn" onclick="window.ProjectsView ? window.ProjectsView.openProjectLanding('${p.id}') : (window.AdminView.openProjectDetailModal('${p.id}'))" title="Ver Landing Page pública">
+                    ${pIco('Globe%20showing%20americas/3D/globe_showing_americas_3d.png', '', 17)}
+                    <span>Ver Landing</span>
                   </button>
-                  <button class="btn-card-authorize ${isApproved ? 'approved' : ''}" title="${isApproved ? 'Proyecto ya autorizado (clic para revocar)' : 'Autorizar y publicar este proyecto'}" onclick="${isApproved ? `window.AdminView.rejectProject('${p.id}')` : `window.AdminView.approveProject('${p.id}')`}">
-                    <span>${isApproved ? '✔' : '✅'}</span>
+                  <button type="button" class="proj3d-gloss-btn ${isApproved ? 'gloss-emerald' : 'gloss-green'} proj3d-card-btn" title="${isApproved ? 'Proyecto ya autorizado (clic para revocar)' : 'Autorizar y publicar este proyecto'}" onclick="${isApproved ? `window.AdminView.rejectProject('${p.id}')` : `window.AdminView.approveProject('${p.id}')`}">
+                    ${pIco('Check%20mark%20button/3D/check_mark_button_3d.png', '', 17)}
                     <span>${isApproved ? 'Autorizado' : 'Autorizar'}</span>
                   </button>
-                  <button class="btn-card-share" onclick="window.AdminView.shareProject('${p.id}')">
+                  <button type="button" class="proj3d-gloss-btn gloss-blue proj3d-card-btn" onclick="window.AdminView.shareProject('${p.id}')">
                     <span>Compartir</span>
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                      <circle cx="18" cy="5" r="3"></circle>
-                      <circle cx="6" cy="12" r="3"></circle>
-                      <circle cx="18" cy="19" r="3"></circle>
-                      <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
-                      <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
-                    </svg>
+                    ${pIco('Link/3D/link_3d.png', '', 16)}
                   </button>
                 </div>
               </div>
@@ -1271,75 +1252,81 @@ window.AdminView = {
   },
 
   /**
-   * Vista de Tabla Moderna de Proyectos
+   * Vista de Tabla Moderna 3D de Proyectos
    */
   renderProjectsTable(projects) {
-    return `
-      <div class="admin-table-card">
-        <table class="admin-data-table">
-          <thead>
-            <tr>
-              <th>Proyecto</th>
-              <th>Estudiante Creador</th>
-              <th>Categoría</th>
-              <th>Estado</th>
-              <th>Visibilidad</th>
-              <th>Fecha</th>
-              <th style="text-align: right;">Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${projects.map(p => {
-              const isPublic = p.visibility !== 'private';
-              const isCompleted = p.status === 'completed' || p.stage === 'completed';
-              const creatorName = p.creatorName || p.author || 'Estudiante';
-              const dateStr = p.createdAt ? new Date(p.createdAt).toLocaleDateString('es-CO') : 'Reciente';
+    const F3D = 'https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets';
+    const pIco = (path, alt = '', size = 17) =>
+      `<img src="${F3D}/${path}" alt="${alt}" width="${size}" height="${size}" class="rv3d-ico" loading="lazy" decoding="async" />`;
 
-              return `
-                <tr>
-                  <td>
-                    <div class="table-project-cell">
-                      <img src="${p.image || 'assets/student_create_bg.jpg'}" class="table-thumb" onerror="this.onerror=null; this.src='assets/student_create_bg.jpg';">
-                      <div class="table-project-meta">
-                        <strong class="title">${p.title}</strong>
-                        <span class="subtitle">${p.stages ? p.stages.length + ' etapas' : '1 reto'}</span>
+    return `
+      <div class="roles-v2-panel">
+        <div class="roles-v2-table-scroll">
+          <table class="roles-v2-users-table">
+            <thead>
+              <tr>
+                <th>Proyecto</th>
+                <th>Estudiante Creador</th>
+                <th>Categoría</th>
+                <th>Estado</th>
+                <th>Visibilidad</th>
+                <th>Fecha</th>
+                <th style="text-align: right;">Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${projects.map(p => {
+                const isPublic = p.visibility !== 'private';
+                const isCompleted = p.status === 'completed' || p.stage === 'completed';
+                const creatorName = p.creatorName || p.author || 'Estudiante';
+                const dateStr = p.createdAt ? new Date(p.createdAt).toLocaleDateString('es-CO') : 'Reciente';
+
+                return `
+                  <tr>
+                    <td>
+                      <div class="table-project-cell">
+                        <img src="${p.image || 'assets/student_create_bg.jpg'}" class="table-thumb" onerror="this.onerror=null; this.src='assets/student_create_bg.jpg';">
+                        <div class="table-project-meta">
+                          <strong class="title">${p.title}</strong>
+                          <span class="subtitle">${p.stages ? p.stages.length + ' etapas' : '1 reto'}</span>
+                        </div>
                       </div>
-                    </div>
-                  </td>
-                  <td>
-                    <div class="table-user-cell">
-                      <span>👤</span>
-                      <span>${creatorName}</span>
-                    </div>
-                  </td>
-                  <td><span class="table-cat-badge">${p.category || 'General'}</span></td>
-                  <td>
-                    <span class="badge-status ${p.approvalStatus === 'pending' || p.status === 'review' ? 'status-review' : (isCompleted ? 'status-completed' : 'status-in-progress')}" style="${p.approvalStatus === 'pending' || p.status === 'review' ? 'background: #f59e0b; color: #07152b; font-weight: 800;' : ''}">
-                      ${p.approvalStatus === 'pending' || p.status === 'review' ? '⏳ Pendiente' : (isCompleted ? '🏆 Autorizado' : '⚡ En Proceso')}
-                    </span>
-                  </td>
-                  <td>
-                    <span class="badge-visibility ${isPublic ? 'vis-public' : 'vis-private'}">
-                      ${isPublic ? '🌐 Público' : '🔒 Privado'}
-                    </span>
-                  </td>
-                  <td class="table-date">${dateStr}</td>
-                  <td style="text-align: right;">
-                    <div class="table-actions">
-                      <button class="btn-icon" title="Revisar Landing Page y Autorización" onclick="window.AdminView.reviewProjectInLanding('${p.id}')">🔍</button>
-                      <button class="btn-icon" title="Editar proyecto" onclick="window.AdminView.openEditProjectModal('${p.id}')">✏️</button>
-                      <button class="btn-icon" title="Ver detalle" onclick="window.AdminView.openProjectDetailModal('${p.id}')">👁️</button>
-                      <button class="btn-icon" title="Alternar visibilidad" onclick="window.AdminView.toggleProjectVisibility('${p.id}')">
-                        ${isPublic ? '🔒' : '🌐'}
-                      </button>
-                      <button class="btn-icon danger" title="Eliminar" onclick="window.AdminView.deleteProject('${p.id}')">🗑️</button>
-                    </div>
-                  </td>
-                </tr>
-              `;
-            }).join('')}
-          </tbody>
-        </table>
+                    </td>
+                    <td>
+                      <div class="roles-v2-user-cell">
+                        <div class="roles-v2-avatar">${pIco('Student/Default/3D/student_3d_default.png', '', 24)}</div>
+                        <span>${creatorName}</span>
+                      </div>
+                    </td>
+                    <td><span class="rv2-pill rv2-info">${p.category || 'General'}</span></td>
+                    <td>
+                      <span class="rv2-pill ${p.approvalStatus === 'pending' || p.status === 'review' ? 'rep3d-pill-amber' : (isCompleted ? 'rv2-yes' : 'rv2-info')}">
+                        ${p.approvalStatus === 'pending' || p.status === 'review' ? `${pIco('Hourglass%20not%20done/3D/hourglass_not_done_3d.png', '', 14)} Pendiente` : (isCompleted ? `${pIco('Trophy/3D/trophy_3d.png', '', 14)} Autorizado` : `${pIco('High%20voltage/3D/high_voltage_3d.png', '', 14)} En Proceso`)}
+                      </span>
+                    </td>
+                    <td>
+                      <span class="rv2-pill ${isPublic ? 'rv2-info' : 'rep3d-pill-neutral'}">
+                        ${isPublic ? `${pIco('Globe%20showing%20americas/3D/globe_showing_americas_3d.png', '', 14)} Público` : `${pIco('Locked/3D/locked_3d.png', '', 14)} Privado`}
+                      </span>
+                    </td>
+                    <td class="table-date">${dateStr}</td>
+                    <td style="text-align: right;">
+                      <div class="roles-v2-actions">
+                        <button type="button" class="roles-v2-act-btn" title="Revisar Landing Page y Autorización" onclick="window.AdminView.reviewProjectInLanding('${p.id}')">${pIco('Magnifying%20glass%20tilted%20left/3D/magnifying_glass_tilted_left_3d.png', '', 16)}</button>
+                        <button type="button" class="roles-v2-act-btn" title="Editar proyecto" onclick="window.AdminView.openEditProjectModal('${p.id}')">${pIco('Pencil/3D/pencil_3d.png', '', 16)}</button>
+                        <button type="button" class="roles-v2-act-btn" title="Ver detalle" onclick="window.AdminView.openProjectDetailModal('${p.id}')">${pIco('Eye/3D/eye_3d.png', '', 16)}</button>
+                        <button type="button" class="roles-v2-act-btn" title="Alternar visibilidad" onclick="window.AdminView.toggleProjectVisibility('${p.id}')">
+                          ${isPublic ? pIco('Locked/3D/locked_3d.png', '', 16) : pIco('Globe%20showing%20americas/3D/globe_showing_americas_3d.png', '', 16)}
+                        </button>
+                        <button type="button" class="roles-v2-act-btn act-del" title="Eliminar" onclick="window.AdminView.deleteProject('${p.id}')">${pIco('Wastebasket/3D/wastebasket_3d.png', '', 16)}</button>
+                      </div>
+                    </td>
+                  </tr>
+                `;
+              }).join('')}
+            </tbody>
+          </table>
+        </div>
       </div>
     `;
   },

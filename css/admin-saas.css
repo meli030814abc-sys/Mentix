@@ -5643,3 +5643,336 @@
   .rep3d-hero { flex-direction: column; align-items: flex-start; }
   .rep3d-hero-visual { display: none; }
 }
+
+/* ==========================================================================
+   MÓDULO MIS PROYECTOS — 100% 3D GLOSSY PILL & TARJETAS EXTRUIDAS (V168)
+   ========================================================================== */
+.proj3d-shell {
+  display: flex;
+  flex-direction: column;
+  gap: 1.15rem;
+  font-family: 'Outfit', 'Inter', system-ui, sans-serif;
+  perspective: 1400px;
+}
+
+.proj3d-hero-frame {
+  border: 2.5px solid #93c5fd;
+  box-shadow:
+    0 8px 0 #3b82f6,
+    0 22px 44px rgba(15, 23, 42, 0.24),
+    inset 0 2px 0 rgba(255, 255, 255, 0.35);
+}
+
+/* Botones Píldora 3D Glossy con brillo superior cristalino y base extruida */
+.proj3d-gloss-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  padding: 0.56rem 1.15rem;
+  border-radius: 9999px;
+  font-size: 0.85rem;
+  font-weight: 900;
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  transition: transform 0.14s ease, box-shadow 0.14s ease, filter 0.14s ease;
+}
+
+.proj3d-gloss-btn::before {
+  content: '';
+  position: absolute;
+  left: 6%;
+  right: 6%;
+  top: 2px;
+  height: 44%;
+  border-radius: 9999px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.52) 0%, rgba(255, 255, 255, 0.04) 100%);
+  pointer-events: none;
+}
+
+.proj3d-gloss-btn:hover {
+  transform: translateY(-2.5px);
+  filter: brightness(1.04);
+}
+
+.proj3d-gloss-btn:active {
+  transform: translateY(3px);
+}
+
+/* Variantes de color 3D Glossy */
+.proj3d-gloss-btn.gloss-white {
+  background: linear-gradient(180deg, #ffffff 0%, #f1f5f9 100%);
+  color: #0f172a;
+  border: 1.8px solid #cbd5e1;
+  box-shadow: 0 5px 0 #cbd5e1, 0 10px 20px rgba(15, 23, 42, 0.10), inset 0 2px 0 #ffffff;
+}
+.proj3d-gloss-btn.gloss-white:active { box-shadow: 0 1.5px 0 #cbd5e1; }
+
+.proj3d-gloss-btn.gloss-cyan {
+  background: linear-gradient(180deg, #38bdf8 0%, #0284c7 55%, #0369a1 100%);
+  color: #ffffff;
+  border: 2px solid #7dd3fc;
+  box-shadow: 0 5px 0 #075985, 0 12px 24px rgba(2, 132, 199, 0.36), inset 0 2px 1px rgba(255, 255, 255, 0.45);
+}
+.proj3d-gloss-btn.gloss-cyan:active { box-shadow: 0 1.5px 0 #075985; }
+
+.proj3d-gloss-btn.gloss-blue {
+  background: linear-gradient(180deg, #3b82f6 0%, #2563eb 55%, #1d4ed8 100%);
+  color: #ffffff;
+  border: 2px solid #93c5fd;
+  box-shadow: 0 5px 0 #1e3a8a, 0 12px 24px rgba(37, 99, 235, 0.36), inset 0 2px 1px rgba(255, 255, 255, 0.45);
+}
+.proj3d-gloss-btn.gloss-blue:active { box-shadow: 0 1.5px 0 #1e3a8a; }
+
+.proj3d-gloss-btn.gloss-green {
+  background: linear-gradient(180deg, #34d399 0%, #10b981 55%, #059669 100%);
+  color: #ffffff;
+  border: 2px solid #6ee7b7;
+  box-shadow: 0 5px 0 #065f46, 0 12px 24px rgba(16, 185, 129, 0.36), inset 0 2px 1px rgba(255, 255, 255, 0.45);
+}
+.proj3d-gloss-btn.gloss-green:active { box-shadow: 0 1.5px 0 #065f46; }
+
+.proj3d-gloss-btn.gloss-emerald {
+  background: linear-gradient(180deg, #10b981 0%, #059669 55%, #047857 100%);
+  color: #ffffff;
+  border: 2px solid #6ee7b7;
+  box-shadow: 0 5px 0 #064e3b, 0 12px 24px rgba(5, 150, 105, 0.38), inset 0 2px 1px rgba(255, 255, 255, 0.4);
+}
+.proj3d-gloss-btn.gloss-emerald:active { box-shadow: 0 1.5px 0 #064e3b; }
+
+.proj3d-gloss-btn.gloss-pink {
+  background: linear-gradient(180deg, #f472b6 0%, #ec4899 55%, #be185d 100%);
+  color: #ffffff;
+  border: 2px solid #fbcfe8;
+  box-shadow: 0 5px 0 #831843, 0 12px 24px rgba(236, 72, 153, 0.38), inset 0 2px 1px rgba(255, 255, 255, 0.45);
+}
+.proj3d-gloss-btn.gloss-pink:active { box-shadow: 0 1.5px 0 #831843; }
+
+.proj3d-gloss-btn.gloss-indigo {
+  background: linear-gradient(180deg, #818cf8 0%, #6366f1 55%, #4338ca 100%);
+  color: #ffffff;
+  border: 2px solid #c7d2fe;
+  box-shadow: 0 5px 0 #312e81, 0 12px 24px rgba(99, 102, 241, 0.38), inset 0 2px 1px rgba(255, 255, 255, 0.45);
+}
+.proj3d-gloss-btn.gloss-indigo:active { box-shadow: 0 1.5px 0 #312e81; }
+
+/* Header y Barra de Filtros 3D */
+.proj3d-header-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  padding: 1.05rem 1.35rem;
+  border-radius: 20px;
+  background: linear-gradient(125deg, #ffffff 0%, #f5f7ff 55%, #eff6ff 100%);
+  border: 2px solid #dbe4ff;
+  box-shadow: 0 6px 0 #c7d2fe, 0 14px 28px rgba(79, 70, 229, 0.10), inset 0 2px 0 #ffffff;
+}
+
+.proj3d-header-title {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.proj3d-header-title h2 {
+  margin: 0 0 0.15rem;
+  font-size: 1.3rem;
+  font-weight: 900;
+  color: #0f172a;
+}
+
+.proj3d-header-title p {
+  margin: 0;
+  font-size: 0.82rem;
+  color: #475569;
+}
+
+.proj3d-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  flex-wrap: wrap;
+}
+
+.proj3d-filter-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  padding: 0.85rem 1.15rem;
+  border-radius: 18px;
+  background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+  border: 2px solid #e2e8f0;
+  box-shadow: 0 5px 0 #cbd5e1, 0 12px 24px rgba(15, 23, 42, 0.06), inset 0 2px 0 #ffffff;
+}
+
+.proj3d-search {
+  min-width: 220px;
+}
+
+.proj3d-view-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-left: auto;
+}
+
+.roles-v2-act-btn.is-active-view {
+  background: linear-gradient(135deg, #6366f1, #7c3aed);
+  border-color: #4f46e5;
+  box-shadow: 0 4px 0 #3730a3;
+}
+
+.roles-v2-fpill.fpill-amber {
+  background: #fef3c7;
+  color: #b45309;
+  border-color: #fcd34d;
+  box-shadow: 0 3px 0 #f59e0b;
+}
+
+/* Tarjetas de Proyectos 3D Extruidas */
+.proj3d-cards-grid {
+  perspective: 1400px;
+  gap: 1.35rem !important;
+}
+
+.proj3d-card {
+  border-radius: 22px !important;
+  border: 2px solid #dbe4ff !important;
+  background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%) !important;
+  box-shadow: 0 8px 0 #cbd5e1, 0 20px 38px rgba(15, 23, 42, 0.10), inset 0 2px 0 #ffffff !important;
+  overflow: hidden !important;
+  transform-style: preserve-3d;
+  transition: transform 0.22s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.22s ease !important;
+}
+
+.proj3d-card.pcard-amber {
+  border-color: #fcd34d !important;
+  box-shadow: 0 8px 0 #f59e0b, 0 20px 38px rgba(245, 158, 11, 0.16), inset 0 2px 0 #ffffff !important;
+}
+
+.proj3d-card.pcard-blue {
+  border-color: #bfdbfe !important;
+  box-shadow: 0 8px 0 #93c5fd, 0 20px 38px rgba(59, 130, 246, 0.14), inset 0 2px 0 #ffffff !important;
+}
+
+.proj3d-card:hover {
+  transform: translateY(-6px) rotateX(2deg) !important;
+}
+
+.proj3d-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.3rem 0.78rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 900;
+  box-shadow: 0 4px 0 rgba(15, 23, 42, 0.22), 0 6px 14px rgba(0, 0, 0, 0.24), inset 0 1.5px 0 rgba(255, 255, 255, 0.45);
+}
+
+.proj3d-status-badge.st-pending { background: linear-gradient(180deg, #fbbf24, #d97706); color: #ffffff; border: 1.5px solid #fef08a; }
+.proj3d-status-badge.st-completed { background: linear-gradient(180deg, #34d399, #059669); color: #ffffff; border: 1.5px solid #a7f3d0; }
+.proj3d-status-badge.st-progress { background: linear-gradient(180deg, #38bdf8, #0284c7); color: #ffffff; border: 1.5px solid #bae6fd; }
+
+.proj3d-top-btn,
+.proj3d-top-ico {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.3rem;
+  height: 30px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 900;
+  cursor: pointer;
+  border: 1.5px solid rgba(255, 255, 255, 0.45);
+  box-shadow: 0 3.5px 0 rgba(15, 23, 42, 0.38), 0 5px 12px rgba(0, 0, 0, 0.25), inset 0 1.5px 0 rgba(255, 255, 255, 0.35);
+  transition: transform 0.14s ease, box-shadow 0.14s ease;
+}
+
+.proj3d-top-btn { padding: 0 0.65rem; }
+.proj3d-top-ico { width: 30px; border-radius: 10px; padding: 0; }
+.proj3d-top-btn:hover, .proj3d-top-ico:hover { transform: translateY(-2px) scale(1.06); }
+.proj3d-top-btn:active, .proj3d-top-ico:active { transform: translateY(2px); }
+
+.tbtn-dark { background: linear-gradient(180deg, #1e293b, #0f172a); color: #38bdf8; }
+.tbtn-cyan { background: linear-gradient(180deg, #0ea5e9, #0284c7); color: #ffffff; }
+.tbtn-edit { background: linear-gradient(180deg, #38bdf8, #0284c7); color: #ffffff; }
+.tbtn-del { background: linear-gradient(180deg, #f87171, #dc2626); color: #ffffff; }
+.tbtn-more { background: linear-gradient(180deg, #ffffff, #e2e8f0); color: #0f172a; }
+
+.proj3d-meta-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin: 0.65rem 0 0.95rem;
+}
+
+.proj3d-meta-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.32rem;
+  padding: 0.26rem 0.65rem;
+  border-radius: 999px;
+  background: #f1f5f9;
+  border: 1.5px solid #e2e8f0;
+  box-shadow: 0 2.5px 0 #cbd5e1, inset 0 1px 0 #ffffff;
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: #1e293b;
+}
+
+/* Grid 2x2 de los 4 botones Glossy 3D en cada tarjeta de proyecto */
+.proj3d-card-actions-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.6rem;
+  margin-top: auto;
+}
+
+.proj3d-card-btn {
+  width: 100%;
+  padding: 0.56rem 0.75rem;
+  font-size: 0.82rem;
+}
+
+.proj3d-empty-state {
+  text-align: center;
+  padding: 2.5rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+/* Modo Oscuro limpio para Mis Proyectos 3D */
+.mentix-admin-layout:not(.theme-light) .proj3d-header-bar,
+.mentix-admin-layout:not(.theme-light) .proj3d-filter-bar {
+  background: linear-gradient(180deg, #111c33 0%, #0b1324 100%);
+  border-color: rgba(148, 163, 184, 0.25);
+  box-shadow: 0 6px 0 #020617;
+}
+.mentix-admin-layout:not(.theme-light) .proj3d-header-title h2 { color: #f8fafc; }
+.mentix-admin-layout:not(.theme-light) .proj3d-header-title p { color: #cbd5e1; }
+.mentix-admin-layout:not(.theme-light) .proj3d-card {
+  background: linear-gradient(180deg, #111c33 0%, #0b1324 100%) !important;
+  box-shadow: 0 8px 0 #020617, 0 20px 38px rgba(0, 0, 0, 0.5) !important;
+}
+.mentix-admin-layout:not(.theme-light) .proj3d-meta-pill {
+  background: #1e293b;
+  border-color: rgba(148, 163, 184, 0.28);
+  box-shadow: 0 2.5px 0 #020617;
+  color: #e2e8f0;
+}
+.mentix-admin-layout:not(.theme-light) .proj3d-gloss-btn.gloss-white {
+  background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+  color: #f8fafc;
+  border-color: rgba(148, 163, 184, 0.35);
+  box-shadow: 0 5px 0 #020617, inset 0 1.5px 0 rgba(255, 255, 255, 0.12);
+}
