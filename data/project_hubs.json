@@ -1,0 +1,83 @@
+{
+  "proj_pres_1791658288964": {
+    "projectId": "proj_pres_1791658288964",
+    "members": [
+      {
+        "name": "Eimy",
+        "email": "eimy@mentix.edu",
+        "role": "owner",
+        "leader": true
+      },
+      {
+        "name": "Melisa",
+        "email": "gatitaxd6f79@gmail.com",
+        "passHash": "f83eb6d6c9c521f14120a4d67658626bde70a51bb7c9e3ed64a1eaf5440f8434",
+        "role": "commenter",
+        "since": 1795226802519
+      }
+    ],
+    "joinRequests": [
+      {
+        "id": "req_1795405191849_xzjc",
+        "name": "Annie",
+        "email": "acanon@ciudadmontesbilingue.edu.com",
+        "passHash": "e730ee9f1d8cefc2b52d18dcf6890dfd14aa79c2b6beaeb0f8b282d9d39ee3f8",
+        "status": "pending",
+        "createdAt": 1795405191849,
+        "role": "editor"
+      },
+      {
+        "id": "req_1795226777352_afyz",
+        "name": "Melisa",
+        "email": "gatitaxd6f79@gmail.com",
+        "passHash": "f83eb6d6c9c521f14120a4d67658626bde70a51bb7c9e3ed64a1eaf5440f8434",
+        "status": "accepted",
+        "createdAt": 1795226777353,
+        "role": "commenter"
+      },
+      {
+        "id": "req_demo_1",
+        "name": "Carlos Ruiz",
+        "email": "carlos.ruiz@mentix.edu",
+        "passHash": "demo",
+        "status": "rejected",
+        "created": 1794009310971
+      }
+    ],
+    "ratings": [
+      {
+        "who": "user_1792184134006",
+        "name": "Melisa",
+        "stars": 5,
+        "comment": "kjrrrr",
+        "tag": "🚀 Gran impacto",
+        "t": 1794082888524
+      },
+      {
+        "who": "usr_sample_1",
+        "name": "Sofía Morales",
+        "stars": 5,
+        "comment": "¡Increíble trabajo en equipo! La propuesta visual, la temática y los recursos interactivos están extraordinarios.",
+        "tag": "🎨 Gran diseño",
+        "t": 1793982063860
+      },
+      {
+        "who": "usr_sample_2",
+        "name": "Mateo Delgado",
+        "stars": 5,
+        "comment": "Un proyecto sumamente inspirador para toda la comunidad. Gran dominio temático, claridad y propuesta pedagógica.",
+        "tag": "🚀 Gran impacto",
+        "t": 1793823663860
+      },
+      {
+        "who": "usr_sample_3",
+        "name": "Camila Ríos",
+        "stars": 4,
+        "comment": "Muy bien estructurado. Me encantó la metodología ágil y la documentación de las etapas de trabajo.",
+        "tag": "💡 Idea innovadora",
+        "t": 1793650863860
+      }
+    ],
+    "updatedAt": 1795405191853
+  }
+}
