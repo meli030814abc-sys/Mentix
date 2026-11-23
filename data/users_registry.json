@@ -104,8 +104,8 @@
     "level": 6,
     "levelName": "Leyenda",
     "institution": "Plataforma Global MENTIX",
-    "isBlocked": false,
-    "lastLoginAt": "2026-11-23T16:50:36.258Z",
+    "isBlocked": true,
+    "lastLoginAt": "2026-11-23T16:50:46.059Z",
     "createdAt": "2026-11-23T16:48:46.816Z"
   }
 ]
