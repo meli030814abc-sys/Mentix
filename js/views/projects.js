@@ -1027,163 +1027,147 @@ window.ProjectsView = {
 
     const overlay = document.createElement('div');
     overlay.id = 'mentix-hero-banner-modal-overlay';
-    overlay.style.cssText = 'position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(4,9,24,0.92); backdrop-filter:blur(14px); z-index:9999999; display:flex; align-items:center; justify-content:center; padding:1.25rem; overflow-y:auto;';
+    overlay.style.cssText = 'position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(15,23,42,0.58); backdrop-filter:blur(8px); z-index:9999999; display:flex; align-items:center; justify-content:center; padding:1.1rem; overflow-y:auto;';
 
     overlay.innerHTML = `
-      <div style="background: linear-gradient(135deg, #071739 0%, #0d204d 50%, #071129 100%); border: 2px solid #00f5d4; border-radius: 22px; max-width: 960px; width: 100%; max-height: 92vh; overflow-y: auto; padding: 1.85rem; box-shadow: 0 25px 70px rgba(0,0,0,0.8), 0 0 40px rgba(0,245,212,0.25); color: #ffffff; position: relative; font-family: 'Outfit','Inter',sans-serif;">
+      <div style="background: #ffffff; border: 1.5px solid #cbd5e1; border-radius: 22px; max-width: 960px; width: 100%; max-height: 92vh; overflow-y: auto; padding: 1.75rem; box-shadow: 0 25px 70px rgba(15,23,42,0.28); color: #0f172a; position: relative; font-family: 'Outfit','Inter',sans-serif;">
         
         <!-- Header -->
-        <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:1.15rem; border-bottom:1px solid rgba(255,255,255,0.12); padding-bottom:1rem;">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:1.1rem; border-bottom:1.5px solid #e2e8f0; padding-bottom:0.95rem;">
           <div>
-            <div style="display:inline-flex; align-items:center; gap:0.4rem; background:rgba(0,245,212,0.15); border:1px solid #00f5d4; padding:0.25rem 0.75rem; border-radius:999px; font-size:0.75rem; font-weight:900; color:#00f5d4; margin-bottom:0.45rem;">
-              ${isMainHero ? '🌐 BANNER PRINCIPAL DE LA PLATAFORMA' : '🎨 PERSONALIZACIÓN VISUAL DEL HERO'}
+            <div style="display:inline-flex; align-items:center; gap:0.4rem; background:#e0f2fe; border:1px solid #38bdf8; padding:0.25rem 0.75rem; border-radius:999px; font-size:0.75rem; font-weight:900; color:#0369a1; margin-bottom:0.45rem;">
+              ${isMainHero ? '🌐 BANNER PRINCIPAL DE LA PLATAFORMA' : '🎨 PERSONALIZACIÓN VISUAL DEL BANNER'}
             </div>
-            <h2 style="margin:0; font-size:1.45rem; font-weight:900; color:#ffffff; display:flex; align-items:center; gap:0.5rem;">
-              <span>🖼️</span> <span>${isMainHero ? 'Cambiar Banner Principal (Visible para Todos)' : 'Cambiar Fondo del Banner de Atrás'}</span>
+            <h2 style="margin:0; font-size:1.4rem; font-weight:900; color:#0f172a; display:flex; align-items:center; gap:0.5rem;">
+              <span>🖼️</span> <span>${isMainHero ? 'Cambiar Banner Principal de Proyectos' : 'Cambiar Fondo del Banner'}</span>
             </h2>
-            <p style="margin:0.25rem 0 0; font-size:0.86rem; color:#cbd5e1;">
+            <p style="margin:0.25rem 0 0; font-size:0.86rem; color:#475569;">
               ${isMainHero 
-                ? 'Elige una imagen temática panorámica, sube una foto desde tu equipo o pega una URL para el banner superior principal. Los cambios se guardan globalmente para todos los usuarios.' 
-                : `Elige una imagen temática, sube una foto desde tu equipo o pega una URL para el banner de <b>“${this.escapeHtml(projTitle)}”</b>.`}
+                ? 'Sube una imagen desde tu equipo, pega cualquier enlace directo o elige uno de los 16 fondos oficiales. Se aplica al instante.' 
+                : `Sube una imagen, pega un enlace o elige un fondo temático para <b>“${this.escapeHtml(projTitle)}”</b>.`}
             </p>
           </div>
-          <button type="button" onclick="window.ProjectsView.closeHeroBannerPicker()" style="background:none; border:none; color:#cbd5e1; font-size:1.6rem; cursor:pointer; line-height:1; padding:0.2rem;" title="Cerrar">✕</button>
+          <button type="button" onclick="window.ProjectsView.closeHeroBannerPicker()" style="background:#f1f5f9; border:1px solid #cbd5e1; border-radius:50%; width:34px; height:34px; color:#334155; font-size:1.15rem; font-weight:800; cursor:pointer; display:flex; align-items:center; justify-content:center;" title="Cerrar">✕</button>
         </div>
 
-        <!-- Banner de Requisitos de Tamaño y Regla Anti-Miniaturas -->
-        <div style="background:linear-gradient(135deg, rgba(2,132,199,0.18) 0%, rgba(15,23,42,0.85) 100%); border:1.5px solid #38bdf8; border-radius:14px; padding:0.9rem 1.15rem; margin-bottom:1.3rem; display:flex; align-items:center; gap:0.9rem; box-shadow:0 4px 18px rgba(0,0,0,0.35);">
-          <div style="font-size:2.2rem; line-height:1; flex-shrink:0;">📐</div>
+        <!-- Guía Clara de Tamaño Recomendado (Sin Bloqueos) -->
+        <div style="background:linear-gradient(135deg, #f0f9ff 0%, #eff6ff 100%); border:1.5px solid #93c5fd; border-radius:14px; padding:0.85rem 1.1rem; margin-bottom:1.2rem; display:flex; align-items:center; gap:0.85rem;">
+          <div style="font-size:2rem; line-height:1; flex-shrink:0;">📐</div>
           <div style="flex:1;">
-            <div style="display:flex; align-items:center; gap:0.6rem; flex-wrap:wrap;">
-              <span style="font-size:0.88rem; font-weight:900; color:#38bdf8; text-transform:uppercase; letter-spacing:0.04em;">
-                Tamaño Específico Requerido para el Banner
-              </span>
-              <span style="background:#ef4444; color:#ffffff; font-size:0.68rem; font-weight:900; padding:0.18rem 0.55rem; border-radius:999px; text-transform:uppercase; letter-spacing:0.04em; display:inline-flex; align-items:center; gap:0.25rem;">
-                🚫 Miniaturas no permitidas
-              </span>
+            <div style="font-size:0.86rem; font-weight:900; color:#0369a1; text-transform:uppercase; letter-spacing:0.03em;">
+              Tamaño Oficial Recomendado (igual a los banners temáticos)
             </div>
-            <p style="margin:0.35rem 0 0.15rem; font-size:0.83rem; color:#f1f5f9; line-height:1.45;">
-              • <b>Tamaño Mínimo Obligatorio:</b> <span style="color:#00f5d4; font-weight:800;">1200 × 400 píxeles</span> &nbsp;|&nbsp; 
-              • <b>Tamaño Recomendado:</b> <span style="color:#38bdf8; font-weight:800;">1920 × 600 píxeles</span> (formato panorámico horizontal HD).
+            <p style="margin:0.25rem 0 0; font-size:0.83rem; color:#1e293b; line-height:1.4;">
+              • <b>Tamaño exacto oficial:</b> <span style="color:#0284c7; font-weight:900;">1376 × 768 px</span> (formato horizontal 16:9). También queda nítido en <b>1280 × 720 px</b> o <b>1920 × 600 px</b> (JPG, PNG o WebP).
             </p>
-            <div style="font-size:0.75rem; color:#fca5a5; font-weight:700; margin-top:0.2rem;">
-              ⚠️ El sistema rechazará automáticamente cualquier archivo o enlace que mida menos de 1200 × 400 px para evitar que el banner se vea pixelado o borroso.
-            </div>
           </div>
         </div>
 
         <!-- Vista Previa en Vivo -->
-        <div style="margin-bottom:1.4rem;">
-          <label style="display:block; font-size:0.82rem; font-weight:800; color:#00f5d4; margin-bottom:0.5rem; text-transform:uppercase; letter-spacing:0.04em;">
+        <div style="margin-bottom:1.25rem;">
+          <label style="display:block; font-size:0.82rem; font-weight:800; color:#0369a1; margin-bottom:0.45rem; text-transform:uppercase; letter-spacing:0.04em;">
             👁️ Vista Previa en Vivo del Banner
           </label>
-          <div id="hero-banner-preview-box" style="position:relative; width:100%; height:160px; border-radius:18px; overflow:hidden; background-image:linear-gradient(to right, rgba(5, 14, 30, 0.75) 0%, rgba(5, 14, 30, 0.40) 42%, rgba(5, 14, 30, 0.08) 75%, transparent 100%), url('${this.escapeHtml(currentBanner)}'); background-size:cover; background-position:center; border:2px solid #00f5d4; display:flex; align-items:center; justify-content:space-between; padding:1.5rem 2rem; box-shadow:0 8px 30px rgba(0,0,0,0.5);">
+          <div id="hero-banner-preview-box" style="position:relative; width:100%; height:160px; border-radius:16px; overflow:hidden; background-image:linear-gradient(to right, rgba(5, 14, 30, 0.72) 0%, rgba(5, 14, 30, 0.35) 45%, rgba(5, 14, 30, 0.08) 78%, transparent 100%), url('${this.escapeHtml(currentBanner)}'); background-size:cover; background-position:center; border:2px solid #0284c7; display:flex; align-items:center; justify-content:space-between; padding:1.4rem 1.8rem; box-shadow:0 8px 24px rgba(15,23,42,0.14);">
             ${isMainHero ? `
               <div>
-                <div style="font-size:1.35rem; font-weight:900; color:#ffffff; line-height:1.2;">Tu ecosistema de aprendizaje estructurado</div>
-                <div style="font-size:0.86rem; font-weight:600; color:#cbd5e1; margin-top:0.35rem; max-width:480px;">Gestiona tus proyectos, evalúa competencias y potencia el aprendizaje con IA.</div>
-                <div style="margin-top:0.85rem; display:flex; gap:0.5rem; flex-wrap:wrap;">
-                  <span style="background:linear-gradient(135deg, #f72585, #b5179e); color:#ffffff; font-size:0.75rem; font-weight:800; padding:0.3rem 0.8rem; border-radius:999px;">🎮 Unirse a un código</span>
-                  <span style="background:linear-gradient(135deg, #00d2ff, #0077ff); color:#ffffff; font-size:0.75rem; font-weight:800; padding:0.3rem 0.8rem; border-radius:999px;">➕ Crear Proyecto</span>
-                  <span style="background:linear-gradient(135deg, #00f5d4, #059669); color:#071739; font-size:0.75rem; font-weight:900; padding:0.3rem 0.8rem; border-radius:999px;">🔑 Crear Código</span>
+                <div style="font-size:1.3rem; font-weight:900; color:#ffffff; line-height:1.2;">Tu ecosistema de aprendizaje estructurado</div>
+                <div style="font-size:0.84rem; font-weight:600; color:#e2e8f0; margin-top:0.3rem; max-width:480px;">Gestiona tus proyectos, evalúa competencias y potencia el aprendizaje con IA.</div>
+                <div style="margin-top:0.75rem; display:flex; gap:0.45rem; flex-wrap:wrap;">
+                  <span style="background:linear-gradient(135deg, #f72585, #b5179e); color:#ffffff; font-size:0.74rem; font-weight:800; padding:0.28rem 0.75rem; border-radius:999px;">🎮 Unirse a un código</span>
+                  <span style="background:linear-gradient(135deg, #00d2ff, #0077ff); color:#ffffff; font-size:0.74rem; font-weight:800; padding:0.28rem 0.75rem; border-radius:999px;">➕ Crear Proyecto</span>
+                  <span style="background:linear-gradient(135deg, #00f5d4, #059669); color:#071739; font-size:0.74rem; font-weight:900; padding:0.28rem 0.75rem; border-radius:999px;">🔑 Crear Código</span>
                 </div>
               </div>
-              <div style="display:flex; flex-direction:column; gap:0.35rem; background:rgba(7,23,57,0.75); border:1px solid rgba(0,245,212,0.35); border-radius:12px; padding:0.6rem 0.9rem; backdrop-filter:blur(6px);">
-                <span style="font-size:0.75rem; color:#00f5d4; font-weight:800;">🤖 IA para aprender</span>
-                <span style="font-size:0.75rem; color:#ffffff; font-weight:700;">📦 Proyectos interactivos</span>
-                <span style="font-size:0.75rem; color:#38bdf8; font-weight:700;">💡 Experiencia única</span>
+              <div style="display:flex; flex-direction:column; gap:0.35rem; background:rgba(7,23,57,0.78); border:1px solid rgba(56,189,248,0.45); border-radius:12px; padding:0.55rem 0.85rem; backdrop-filter:blur(6px);">
+                <span style="font-size:0.74rem; color:#00f5d4; font-weight:800;">🤖 IA para aprender</span>
+                <span style="font-size:0.74rem; color:#ffffff; font-weight:700;">📦 Proyectos interactivos</span>
+                <span style="font-size:0.74rem; color:#38bdf8; font-weight:700;">💡 Experiencia única</span>
               </div>
             ` : `
               <div>
                 <div style="font-size:1.25rem; font-weight:900; color:#ffffff; line-height:1.2;">${this.escapeHtml(projTitle)}</div>
-                <div style="font-size:0.9rem; font-weight:800; color:#00f5d4; margin-top:0.25rem;">${this.escapeHtml(selected?.subtitle || 'Soluciones Tecnológicas')}</div>
-                <div style="margin-top:0.75rem; display:flex; gap:0.5rem;">
-                  <span style="background:#0047cc; color:#ffffff; font-size:0.75rem; font-weight:800; padding:0.3rem 0.8rem; border-radius:999px;">▶ Explorar proyecto</span>
-                  <span style="background:rgba(255,255,255,0.15); color:#ffffff; font-size:0.75rem; font-weight:700; padding:0.3rem 0.8rem; border-radius:999px;">📑 Ver recursos</span>
-                </div>
-              </div>
-              <div style="background:rgba(15,23,42,0.85); border:1.5px solid rgba(0,245,212,0.4); border-radius:14px; padding:0.75rem 1.25rem; text-align:center; min-width:130px; backdrop-filter:blur(6px);">
-                <span style="font-size:1.2rem; color:#00f5d4; font-weight:900;">100%</span>
-                <small style="display:block; font-size:0.7rem; color:#cbd5e1; font-weight:700; margin-top:0.15rem;">Avance del proyecto</small>
+                <div style="font-size:0.88rem; font-weight:800; color:#38bdf8; margin-top:0.25rem;">${this.escapeHtml(selected?.subtitle || 'Soluciones Tecnológicas')}</div>
               </div>
             `}
           </div>
         </div>
 
-        <!-- Controles para Subir o Ingresar URL -->
-        <div style="background:rgba(0,0,0,0.35); border:1.5px solid rgba(255,255,255,0.12); border-radius:14px; padding:1.1rem; margin-bottom:1.5rem;">
-          <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.2rem;">
+        <!-- Controles Claros para Subir Archivo o Pegar Link -->
+        <div style="background:#f8fafc; border:1.5px solid #e2e8f0; border-radius:14px; padding:1.05rem; margin-bottom:1.35rem;">
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.1rem;">
             <div>
-              <label style="display:block; font-size:0.82rem; font-weight:800; color:#38bdf8; margin-bottom:0.4rem;">
-                📤 Subir Imagen Panorámica desde tu Equipo:
+              <label style="display:block; font-size:0.82rem; font-weight:800; color:#0f172a; margin-bottom:0.4rem;">
+                📤 Subir Imagen desde tu Computador:
               </label>
               <input 
                 type="file" 
                 id="hero-banner-file-input" 
-                accept="image/png, image/jpeg, image/webp, image/svg+xml" 
+                accept="image/*" 
                 onchange="window.ProjectsView.handleHeroBannerFileUpload(this.files[0])"
-                style="display:block; width:100%; font-size:0.82rem; color:#cbd5e1; cursor:pointer;"
+                style="display:block; width:100%; font-size:0.82rem; color:#334155; background:#ffffff; border:1.5px dashed #94a3b8; border-radius:10px; padding:0.45rem; cursor:pointer;"
               />
-              <small style="display:block; color:#94a3b8; font-size:0.74rem; margin-top:0.35rem;">
-                Mínimo 1200×400 px. Formatos: JPG, PNG, WEBP.
+              <small style="display:block; color:#64748b; font-size:0.74rem; margin-top:0.35rem;">
+                JPG, PNG, WEBP o SVG. Se optimiza y aplica al instante.
               </small>
             </div>
 
             <div>
-              <label style="display:block; font-size:0.82rem; font-weight:800; color:#38bdf8; margin-bottom:0.4rem;">
-                🔗 O Pega una URL de Imagen Directa:
+              <label style="display:block; font-size:0.82rem; font-weight:800; color:#0f172a; margin-bottom:0.4rem;">
+                🔗 O Pega un Link de Imagen Directo:
               </label>
-              <div style="display:flex; gap:0.5rem;">
+              <div style="display:flex; gap:0.45rem;">
                 <input 
                   type="text" 
                   id="hero-banner-url-input" 
-                  placeholder="https://.../banner-1920x600.jpg" 
-                  value="${currentBanner.startsWith('data:') ? '(Imagen cargada localmente)' : this.escapeHtml(currentBanner)}"
-                  onkeydown="if(event.key==='Enter'){event.preventDefault(); window.ProjectsView.previewHeroBannerUrl(this.value);}"
-                  style="flex:1; background:rgba(0,0,0,0.45); border:1px solid rgba(255,255,255,0.2); border-radius:8px; padding:0.45rem 0.75rem; color:#ffffff; font-size:0.82rem; outline:none;"
+                  placeholder="https://.../mi-banner.jpg" 
+                  value="${currentBanner.startsWith('data:') ? '' : this.escapeHtml(currentBanner)}"
+                  oninput="window.ProjectsView.previewHeroBannerUrl(this.value)"
+                  onkeydown="if(event.key==='Enter'){event.preventDefault(); window.ProjectsView.applyHeroBanner('${this.escapeHtml(projId)}');}"
+                  style="flex:1; background:#ffffff; border:1.5px solid #cbd5e1; border-radius:10px; padding:0.48rem 0.75rem; color:#0f172a; font-size:0.84rem; outline:none;"
                 />
-                <button type="button" onclick="window.ProjectsView.previewHeroBannerUrl(document.getElementById('hero-banner-url-input').value)" style="background:#0284c7; color:#ffffff; border:none; border-radius:8px; padding:0.45rem 0.95rem; font-size:0.78rem; font-weight:800; cursor:pointer; white-space:nowrap;">
-                  Verificar URL
+                <button type="button" onclick="window.ProjectsView.previewHeroBannerUrl(document.getElementById('hero-banner-url-input').value, true)" style="background:#0284c7; color:#ffffff; border:none; border-radius:10px; padding:0.48rem 0.9rem; font-size:0.8rem; font-weight:800; cursor:pointer; white-space:nowrap;">
+                  Probar Link
                 </button>
               </div>
-              <small style="display:block; color:#94a3b8; font-size:0.74rem; margin-top:0.35rem;">
-                Presiona "Verificar URL" para validar sus dimensiones.
+              <small style="display:block; color:#64748b; font-size:0.74rem; margin-top:0.35rem;">
+                Al pegar el link se previsualiza de inmediato.
               </small>
             </div>
           </div>
 
           <!-- Dynamic Status Feedback Box -->
-          <div id="hero-banner-dimension-feedback" style="display:none; margin-top:0.9rem; border-radius:10px; padding:0.65rem 0.95rem; font-size:0.82rem; font-weight:700;"></div>
+          <div id="hero-banner-dimension-feedback" style="display:none; margin-top:0.85rem; border-radius:10px; padding:0.6rem 0.9rem; font-size:0.82rem; font-weight:700;"></div>
         </div>
 
         <!-- Galería de Fondos Temáticos (16 Presets) -->
-        <div style="margin-bottom:1.5rem;">
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.75rem;">
-            <label style="font-size:0.85rem; font-weight:800; color:#00f5d4; text-transform:uppercase; letter-spacing:0.04em;">
-              Colección de 16 Fondos Temáticos Oficiales
+        <div style="margin-bottom:1.35rem;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.65rem;">
+            <label style="font-size:0.85rem; font-weight:900; color:#0f172a; text-transform:uppercase; letter-spacing:0.03em;">
+              🎨 Colección de 16 Fondos Temáticos Oficiales (1376 × 768 px)
             </label>
-            <span style="font-size:0.75rem; color:#cbd5e1;">Haz clic en cualquiera para seleccionarlo</span>
+            <span style="font-size:0.76rem; color:#64748b; font-weight:600;">Haz clic en cualquiera para seleccionarlo</span>
           </div>
 
-          <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(210px, 1fr)); gap:0.85rem; max-height:290px; overflow-y:auto; padding-right:0.3rem;">
+          <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(210px, 1fr)); gap:0.8rem; max-height:265px; overflow-y:auto; padding-right:0.3rem;">
             ${this.HERO_BANNER_THEMES.map(theme => {
               const isSelected = this._tempSelectedHeroBanner === theme.url;
               return `
                 <div 
                   class="hero-theme-card ${isSelected ? 'active' : ''}" 
                   onclick="window.ProjectsView.selectHeroBannerPreset('${theme.id}')"
-                  style="border-radius:12px; overflow:hidden; background:rgba(0,0,0,0.4); border:${isSelected ? '2px solid #00f5d4' : '1.5px solid rgba(255,255,255,0.1)'}; cursor:pointer; transition:transform 0.15s ease, border-color 0.15s ease; position:relative; box-shadow:${isSelected ? '0 0 16px rgba(0,245,212,0.4)' : 'none'};"
+                  style="border-radius:12px; overflow:hidden; background:#ffffff; border:${isSelected ? '2.5px solid #0284c7' : '1.5px solid #e2e8f0'}; cursor:pointer; transition:transform 0.15s ease, border-color 0.15s ease; position:relative; box-shadow:${isSelected ? '0 6px 18px rgba(2,132,199,0.25)' : '0 2px 6px rgba(15,23,42,0.05)'};"
                   onmouseenter="this.style.transform='translateY(-3px)';"
                   onmouseleave="this.style.transform='none';"
                 >
                   <div style="height:76px; background-image:url('${theme.url}'); background-size:cover; background-position:center; position:relative;">
-                    <span style="position:absolute; top:6px; left:6px; background:rgba(7,23,57,0.85); color:#00f5d4; font-size:0.68rem; font-weight:800; padding:0.18rem 0.5rem; border-radius:999px; backdrop-filter:blur(4px);">
+                    <span style="position:absolute; top:6px; left:6px; background:rgba(15,23,42,0.82); color:#ffffff; font-size:0.68rem; font-weight:800; padding:0.18rem 0.5rem; border-radius:999px;">
                       ${theme.icon} ${this.escapeHtml(theme.category)}
                     </span>
-                    ${isSelected ? `<span style="position:absolute; top:6px; right:6px; background:#00f5d4; color:#071739; font-size:0.72rem; font-weight:900; padding:0.15rem 0.45rem; border-radius:999px;">✓ ACTIVO</span>` : ''}
+                    ${isSelected ? `<span style="position:absolute; top:6px; right:6px; background:#0284c7; color:#ffffff; font-size:0.7rem; font-weight:900; padding:0.15rem 0.48rem; border-radius:999px;">✓ ACTIVO</span>` : ''}
                   </div>
-                  <div style="padding:0.6rem 0.75rem;">
-                    <div style="font-weight:800; font-size:0.82rem; color:#ffffff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+                  <div style="padding:0.55rem 0.7rem; background:#ffffff;">
+                    <div style="font-weight:800; font-size:0.82rem; color:#0f172a; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
                       ${this.escapeHtml(theme.name)}
                     </div>
                   </div>
@@ -1194,34 +1178,30 @@ window.ProjectsView = {
         </div>
 
         <!-- Botones de Acción Finales -->
-        <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid rgba(255,255,255,0.12); padding-top:1.15rem; flex-wrap:wrap; gap:0.75rem;">
+        <div style="display:flex; justify-content:space-between; align-items:center; border-top:1.5px solid #e2e8f0; padding-top:1.05rem; flex-wrap:wrap; gap:0.75rem;">
           <button 
             type="button" 
             onclick="window.ProjectsView.resetHeroBanner('${this.escapeHtml(projId)}')"
-            style="background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.2); color:#cbd5e1; border-radius:10px; padding:0.6rem 1.15rem; font-size:0.84rem; font-weight:700; cursor:pointer; display:inline-flex; align-items:center; gap:0.4rem; transition:background 0.15s ease;"
-            title="Restablecer al fondo Robot oficial"
-            onmouseenter="this.style.background='rgba(255,255,255,0.14)';"
-            onmouseleave="this.style.background='rgba(255,255,255,0.06)';"
+            style="background:#f1f5f9; border:1.5px solid #cbd5e1; color:#334155; border-radius:999px; padding:0.58rem 1.1rem; font-size:0.84rem; font-weight:800; cursor:pointer; display:inline-flex; align-items:center; gap:0.4rem;"
+            title="Restablecer al fondo oficial por defecto"
           >
-            <span>🔄</span> <span>Restablecer fondo por defecto</span>
+            <span>🔄</span> <span>Restablecer por defecto</span>
           </button>
 
-          <div style="display:flex; gap:0.75rem;">
+          <div style="display:flex; gap:0.7rem;">
             <button 
               type="button" 
               onclick="window.ProjectsView.closeHeroBannerPicker()" 
-              style="background:transparent; border:1px solid rgba(255,255,255,0.25); color:#ffffff; border-radius:10px; padding:0.65rem 1.25rem; font-size:0.86rem; font-weight:700; cursor:pointer;"
+              style="background:#ffffff; border:1.5px solid #cbd5e1; color:#334155; border-radius:999px; padding:0.62rem 1.25rem; font-size:0.86rem; font-weight:800; cursor:pointer;"
             >
               Cancelar
             </button>
             <button 
               type="button" 
               onclick="window.ProjectsView.applyHeroBanner('${this.escapeHtml(projId)}')" 
-              style="background:linear-gradient(135deg, #00f5d4 0%, #0284c7 100%); color:#071739; border:none; border-radius:10px; padding:0.65rem 1.5rem; font-size:0.9rem; font-weight:900; cursor:pointer; display:inline-flex; align-items:center; gap:0.45rem; box-shadow:0 4px 18px rgba(0,245,212,0.35); transition:transform 0.15s ease;"
-              onmouseenter="this.style.transform='scale(1.04)';"
-              onmouseleave="this.style.transform='none';"
+              style="background:linear-gradient(135deg, #06b6d4 0%, #0284c7 50%, #2563eb 100%); color:#ffffff; border:2px solid #38bdf8; border-radius:999px; padding:0.62rem 1.55rem; font-size:0.9rem; font-weight:900; cursor:pointer; display:inline-flex; align-items:center; gap:0.45rem; box-shadow:0 6px 18px rgba(2,132,199,0.35);"
             >
-              <span>💾</span> <span>Guardar y Aplicar Fondo</span>
+              <span>💾</span> <span>Guardar y Aplicar Ya</span>
             </button>
           </div>
         </div>
@@ -1251,28 +1231,28 @@ window.ProjectsView = {
     const feedback = document.getElementById('hero-banner-dimension-feedback');
     if (feedback) {
       feedback.style.display = 'block';
-      feedback.style.background = 'rgba(0, 245, 212, 0.12)';
-      feedback.style.border = '1.5px solid #00f5d4';
-      feedback.style.color = '#99f6e4';
+      feedback.style.background = '#f0f9ff';
+      feedback.style.border = '1.5px solid #0284c7';
+      feedback.style.color = '#0c4a6e';
       feedback.innerHTML = `
         <div style="display:flex; align-items:center; gap:0.6rem;">
-          <span style="font-size:1.3rem;">⭐</span>
+          <span style="font-size:1.25rem;">⭐</span>
           <div>
-            <b style="color:#ffffff;">Tema Oficial Mentix Seleccionado:</b>
-            “${this.escapeHtml(theme.name)}” (1920 × 600 px Ultra HD Panorámico Optimizado).
+            <b style="color:#0369a1;">Tema Oficial Mentix Seleccionado:</b>
+            “${this.escapeHtml(theme.name)}” (1376 × 768 px · 16:9 Oficial Optimizado).
           </div>
         </div>
       `;
     }
 
     document.querySelectorAll('.hero-theme-card').forEach(c => {
-      c.style.border = '1.5px solid rgba(255,255,255,0.1)';
+      c.style.border = '1.5px solid #e2e8f0';
       c.style.boxShadow = 'none';
     });
     const clicked = document.querySelector(`.hero-theme-card[onclick*="'${presetId}'"]`);
     if (clicked) {
-      clicked.style.border = '2px solid #00f5d4';
-      clicked.style.boxShadow = '0 0 16px rgba(0,245,212,0.4)';
+      clicked.style.border = '2px solid #0284c7';
+      clicked.style.boxShadow = '0 4px 14px rgba(2, 132, 199, 0.28)';
     }
     this.showToast(`🎨 Seleccionado: ${theme.name}`);
   },
@@ -1290,64 +1270,35 @@ window.ProjectsView = {
 
     const reader = new FileReader();
     reader.onload = async (e) => {
-      const dataUrl = e.target.result;
-      const res = await this.validateBannerImageDimensions(dataUrl);
-
-      if (!res.valid) {
-        if (fileInput) fileInput.value = '';
-        if (feedback) {
-          feedback.style.display = 'block';
-          feedback.style.background = 'rgba(239, 68, 68, 0.18)';
-          feedback.style.border = '1.5px solid #ef4444';
-          feedback.style.color = '#fecaca';
-          feedback.innerHTML = `
-            <div style="display:flex; align-items:center; gap:0.6rem;">
-              <span style="font-size:1.3rem;">🚫</span>
-              <div>
-                <b style="color:#ffffff;">IMAGEN RECHAZADA (Miniatura no permitida):</b>
-                Tu archivo mide solo <b>${res.width} × ${res.height} px</b>.<br>
-                El banner no admite miniaturas ni imágenes pequeñas. Debe medir mínimo <b>1200 × 400 px</b> (Recomendado: <b>1920 × 600 px</b>).
-              </div>
-            </div>
-          `;
+      let dataUrl = e.target.result;
+      try {
+        if (window.ProjectWizard && typeof window.ProjectWizard.compressImageFile === 'function' && file.size > 450 * 1024) {
+          const compressed = await window.ProjectWizard.compressImageFile(file, 1600, 0.82);
+          if (compressed && compressed.startsWith('data:')) dataUrl = compressed;
         }
-        alert(`🚫 ARCHIVO RECHAZADO: No se permiten miniaturas en el banner.\n\n` +
-              `• Dimensiones detectadas: ${res.width} × ${res.height} px\n` +
-              `• Tamaño mínimo obligatorio: 1200 × 400 px\n` +
-              `• Tamaño recomendado: 1920 × 600 px (panorámico HD)\n\n` +
-              `Las miniaturas e imágenes pequeñas se distorsionan y se verán pixeladas. Por favor sube una imagen panorámica de alta calidad.`);
-        return;
-      }
+      } catch (compErr) {}
 
       this._tempSelectedHeroBanner = dataUrl;
       const box = document.getElementById('hero-banner-preview-box');
       if (box) {
-        box.style.backgroundImage = `linear-gradient(to right, rgba(5, 14, 30, 0.75) 0%, rgba(5, 14, 30, 0.40) 42%, rgba(5, 14, 30, 0.08) 75%, transparent 100%), url('${dataUrl}')`;
+        box.style.backgroundImage = `linear-gradient(to right, rgba(5, 14, 30, 0.72) 0%, rgba(5, 14, 30, 0.35) 45%, rgba(5, 14, 30, 0.08) 78%, transparent 100%), url('${dataUrl}')`;
       }
       const input = document.getElementById('hero-banner-url-input');
-      if (input) input.value = dataUrl.slice(0, 45) + '... (Imagen local HD)';
+      if (input) input.value = '';
 
       if (feedback) {
         feedback.style.display = 'block';
-        feedback.style.background = 'rgba(16, 185, 129, 0.18)';
+        feedback.style.background = '#ecfdf5';
         feedback.style.border = '1.5px solid #10b981';
-        feedback.style.color = '#a7f3d0';
-        feedback.innerHTML = `
-          <div style="display:flex; align-items:center; gap:0.6rem;">
-            <span style="font-size:1.3rem;">✅</span>
-            <div>
-              <b style="color:#ffffff;">Imagen válida aprobada para Banner:</b>
-              Mide <b>${res.width} × ${res.height} px</b>. Cumple con los requisitos de nitidez panorámica HD.
-            </div>
-          </div>
-        `;
+        feedback.style.color = '#065f46';
+        feedback.innerHTML = `✅ <b>Imagen cargada al instante:</b> "${this.escapeHtml(file.name)}". Pulsa <b>Guardar y Aplicar Ya</b> para fijarla.`;
       }
-      this.showToast(`📷 Imagen válida (${res.width}×${res.height} px) cargada.`);
+      this.showToast('📷 Imagen lista para aplicar.');
     };
     reader.readAsDataURL(file);
   },
 
-  async previewHeroBannerUrl(url) {
+  async previewHeroBannerUrl(url, showMsg = false) {
     const trimmed = (url || '').trim();
     const feedback = document.getElementById('hero-banner-dimension-feedback');
     if (!trimmed) {
@@ -1355,96 +1306,52 @@ window.ProjectsView = {
       return;
     }
 
-    if (trimmed.startsWith('data:') || this.HERO_BANNER_THEMES.some(t => t.url === trimmed)) {
-      this._tempSelectedHeroBanner = trimmed;
-      const box = document.getElementById('hero-banner-preview-box');
-      if (box) {
-        box.style.backgroundImage = `linear-gradient(to right, rgba(5, 14, 30, 0.75) 0%, rgba(5, 14, 30, 0.40) 42%, rgba(5, 14, 30, 0.08) 75%, transparent 100%), url('${trimmed}')`;
-      }
-      return;
-    }
-
-    const res = await this.validateBannerImageDimensions(trimmed);
-
-    if (!res.valid) {
-      if (feedback) {
-        feedback.style.display = 'block';
-        feedback.style.background = 'rgba(239, 68, 68, 0.18)';
-        feedback.style.border = '1.5px solid #ef4444';
-        feedback.style.color = '#fecaca';
-        feedback.innerHTML = `
-          <div style="display:flex; align-items:center; gap:0.6rem;">
-            <span style="font-size:1.3rem;">🚫</span>
-            <div>
-              <b style="color:#ffffff;">URL RECHAZADA (Miniatura detectada):</b>
-              La imagen del enlace mide <b>${res.width || 'desconocido'} × ${res.height || 'desconocido'} px</b>.<br>
-              ${res.error || 'El tamaño mínimo obligatorio para el banner es de 1200 × 400 px.'}
-            </div>
-          </div>
-        `;
-      }
-      alert(`🚫 ENLACE RECHAZADO: ${res.error || 'La imagen es una miniatura y no cumple el tamaño mínimo de 1200 × 400 px.'}`);
-      return;
-    }
-
     this._tempSelectedHeroBanner = trimmed;
     const box = document.getElementById('hero-banner-preview-box');
     if (box) {
-      box.style.backgroundImage = `linear-gradient(to right, rgba(5, 14, 30, 0.75) 0%, rgba(5, 14, 30, 0.40) 42%, rgba(5, 14, 30, 0.08) 75%, transparent 100%), url('${trimmed}')`;
+      box.style.backgroundImage = `linear-gradient(to right, rgba(5, 14, 30, 0.72) 0%, rgba(5, 14, 30, 0.35) 45%, rgba(5, 14, 30, 0.08) 78%, transparent 100%), url('${trimmed}')`;
     }
-    if (feedback) {
+    if (feedback && (showMsg || /^https?:\/\//i.test(trimmed))) {
       feedback.style.display = 'block';
-      feedback.style.background = 'rgba(16, 185, 129, 0.18)';
-      feedback.style.border = '1.5px solid #10b981';
-      feedback.style.color = '#a7f3d0';
-      feedback.innerHTML = `
-        <div style="display:flex; align-items:center; gap:0.6rem;">
-          <span style="font-size:1.3rem;">✅</span>
-          <div>
-            <b style="color:#ffffff;">Enlace verificado y aprobado:</b>
-            Dimensiones <b>${res.width} × ${res.height} px</b>. Apta para banner panorámico HD.
-          </div>
-        </div>
-      `;
+      feedback.style.background = '#f0f9ff';
+      feedback.style.border = '1.5px solid #38bdf8';
+      feedback.style.color = '#0369a1';
+      feedback.innerHTML = `🔗 <b>Enlace listo:</b> Vista previa actualizada al instante. Pulsa <b>Guardar y Aplicar Ya</b>.`;
     }
-    this.showToast(`🌐 URL verificada (${res.width}×${res.height} px).`);
+    if (showMsg) this.showToast('🌐 Enlace aplicado en vista previa.');
   },
 
   async applyHeroBanner(projId) {
-    const finalUrl = this._tempSelectedHeroBanner;
+    const urlInput = document.getElementById('hero-banner-url-input');
+    const typedUrl = urlInput ? urlInput.value.trim() : '';
+    const finalUrl = (typedUrl && !typedUrl.startsWith('(')) ? typedUrl : this._tempSelectedHeroBanner;
     if (!finalUrl) {
-      alert('⚠️ Por favor selecciona una imagen antes de guardar. Recuerda que no se permiten miniaturas (mínimo 1200 × 400 px).');
+      alert('⚠️ Por favor sube una imagen, pega un link o selecciona un fondo temático.');
       return;
-    }
-
-    // Doble verificación: no permitir guardar miniaturas
-    if (!this.HERO_BANNER_THEMES.some(t => t.url === finalUrl) && finalUrl !== 'assets/projects_ui/hero_banner.png') {
-      const res = await this.validateBannerImageDimensions(finalUrl);
-      if (!res.valid) {
-        alert(`🚫 No se puede guardar: ${res.error || 'La imagen seleccionada es una miniatura y no cumple los requisitos.'}`);
-        return;
-      }
     }
 
     if (projId === 'main_hero') {
       this.setHeroBannerUrl(finalUrl);
       const heroImg = document.getElementById('mentix-projects-hero-banner-img');
       if (heroImg) heroImg.src = finalUrl;
+      const adminHeroImg = document.getElementById('mentix-admin-projects-hero-banner-img');
+      if (adminHeroImg) adminHeroImg.src = finalUrl;
+      const adminPreviewImg = document.getElementById('admin-banner-preview-img');
+      if (adminPreviewImg) adminPreviewImg.src = finalUrl;
       this.closeHeroBannerPicker();
-      this.showToast('🎨 ¡Banner principal actualizado para todos los usuarios con éxito!');
+      this.showToast('🎨 ¡Banner principal actualizado al instante!');
       return;
     }
 
     this.setProjectHeroBanner(projId, finalUrl);
 
-    // Actualizar directamente la sección del Hero activa en pantalla con fondo normal
     const heroSec = document.getElementById('inno-sec-hero');
     if (heroSec) {
-      heroSec.style.setProperty('background-image', `linear-gradient(to right, rgba(5, 14, 30, 0.75) 0%, rgba(5, 14, 30, 0.40) 42%, rgba(5, 14, 30, 0.08) 75%, transparent 100%), url('${finalUrl}')`, 'important');
+      heroSec.style.setProperty('background-image', `linear-gradient(to right, rgba(5, 14, 30, 0.72) 0%, rgba(5, 14, 30, 0.35) 45%, rgba(5, 14, 30, 0.08) 78%, transparent 100%), url('${finalUrl}')`, 'important');
     }
 
     this.closeHeroBannerPicker();
-    this.showToast('🎨 ¡Fondo del banner actualizado con éxito!');
+    this.showToast('🎨 ¡Fondo del banner actualizado al instante!');
   },
 
   resetHeroBanner(projId) {
@@ -2419,7 +2326,7 @@ window.ProjectsView = {
               style="position: absolute; inset: 0; width: 100%; height: 100%; display: block; object-fit: cover; object-position: center; filter: brightness(1.12) contrast(1.08) saturate(1.15); image-rendering: -webkit-optimize-contrast; image-rendering: high-quality; transform: translateZ(0); backface-visibility: hidden;" 
             />
 
-            <!-- BOTÓN FLOTANTE PARA CAMBIAR BANNER (EXCLUSIVO ADMINISTRADORES) -->
+            <!-- BOTÓN FLOTANTE PARA CAMBIAR BANNER (EXCLUSIVO ADMINISTRADORES - ALTA VISIBILIDAD) -->
             ${isAdmin ? `
             <div style="position: absolute; top: 1rem; right: 1.25rem; z-index: 10;">
               <button 
@@ -2427,13 +2334,13 @@ window.ProjectsView = {
                 onclick="window.ProjectsView.openMainHeroBannerPicker()" 
                 title="Cambiar imagen o fondo de este Banner Principal (Exclusivo Administradores)"
                 class="mentix-change-main-banner-btn"
-                style="display: inline-flex; align-items: center; gap: 0.55rem; background: rgba(7, 23, 57, 0.92); backdrop-filter: blur(12px); color: #00f5d4; border: 2px solid #00f5d4; border-radius: 9999px; padding: 0.48rem 1.2rem; font-size: 0.86rem; font-weight: 900; cursor: pointer; box-shadow: 0 4px 20px rgba(0, 245, 212, 0.45); transition: all 0.25s ease;"
-                onmouseenter="this.style.transform='scale(1.05)'; this.style.background='rgba(0, 245, 212, 0.22)';"
-                onmouseleave="this.style.transform='scale(1)'; this.style.background='rgba(7, 23, 57, 0.92)';"
+                style="display: inline-flex; align-items: center; gap: 0.55rem; background: rgba(255, 255, 255, 0.96); backdrop-filter: blur(10px); color: #0f172a; border: 2px solid #0284c7; border-radius: 9999px; padding: 0.52rem 1.25rem; font-size: 0.88rem; font-weight: 900; cursor: pointer; box-shadow: 0 6px 22px rgba(15, 23, 42, 0.32), 0 0 0 3px rgba(255, 255, 255, 0.35); transition: all 0.2s ease;"
+                onmouseenter="this.style.transform='scale(1.05)'; this.style.background='#f0f9ff';"
+                onmouseleave="this.style.transform='scale(1)'; this.style.background='rgba(255, 255, 255, 0.96)';"
               >
                 <span style="font-size: 1.15rem;">🎨</span>
                 <span>Cambiar Banner</span>
-                <span style="background: linear-gradient(135deg, #00f5d4 0%, #00b4d8 100%); color: #071739; padding: 0.12rem 0.5rem; border-radius: 999px; font-size: 0.72rem; font-weight: 900; letter-spacing: 0.02em;">OFICIAL</span>
+                <span style="background: linear-gradient(135deg, #0284c7 0%, #2563eb 100%); color: #ffffff; padding: 0.14rem 0.55rem; border-radius: 999px; font-size: 0.72rem; font-weight: 900; letter-spacing: 0.02em;">ADMIN</span>
               </button>
             </div>
             ` : ''}
@@ -2734,7 +2641,8 @@ window.ProjectsView = {
     const isAuthor = !isGuest && (window.appRouter ? window.appRouter.isChallengeOwner(c) : false);
     const isApproved = c.approvalStatus === 'approved' && !c.rejectionReason;
     const isRejected = c.approvalStatus === 'rejected';
-    const isDraft = c.status === 'in_progress' || c.publicationStatus === 'draft' || c.stage === 'in_progress';
+    const isExplicitCompleted = c.status === 'completed' || c.stage === 'completed' || c.publicationStatus === 'completed' || c.publicationStatus === 'published' || Boolean(c.completedAt || c.publishedAt || c.approvedAt || (c.govdata && (c.govdata.publicationStatus === 'published' || c.govdata.publicationStatus === 'completed' || c.govdata.completedAt)));
+    const isDraft = !isExplicitCompleted && (c.status === 'in_progress' || c.publicationStatus === 'draft' || c.stage === 'in_progress');
     const isInProgress = Boolean(isDraft && !isApproved);
     const userRole = String(currentUser?.role || '').trim().toLowerCase();
     const isTeacher = !isAdmin && (userRole === 'teacher' || userRole === 'profesor' || userRole === 'docente');
@@ -2756,10 +2664,14 @@ window.ProjectsView = {
       tag = 'Completado';
       tagIcon = '✔';
       tagColor = 'background: #22c55e;';
+    } else if (isExplicitCompleted) {
+      tag = 'Completado · Sin autorizar';
+      tagIcon = '✔';
+      tagColor = 'background: #0d9488;';
     } else if (isRejected) {
-      tag = 'Autorización Revocada';
-      tagIcon = '❌';
-      tagColor = 'background: #ef4444;';
+      tag = 'Completado · Sin autorizar';
+      tagIcon = '✔';
+      tagColor = 'background: #0d9488;';
     } else if (isDraft) {
       tag = 'En Proceso';
       tagIcon = '⏱';
@@ -2770,9 +2682,9 @@ window.ProjectsView = {
       secondaryAction = `window.ProjectsView.openProjectLanding('${c.id}')`;
       if (!c.image && !c.banner) defaultBanner = 'assets/projects_ui/card_ai_society.png';
     } else {
-      tag = 'Pendiente de Autorización';
-      tagIcon = '⏳';
-      tagColor = 'background: #d97706;';
+      tag = 'Completado · Sin autorizar';
+      tagIcon = '✔';
+      tagColor = 'background: #0d9488;';
     }
 
     if (c.id === 'proj_gov_data' || c.id === 'demo-gov-data') {
@@ -2841,9 +2753,9 @@ window.ProjectsView = {
         secondaryAction = `window.ProjectsView.openProjectLanding('${c.id}')`;
         primaryIsBlue = true;
       } else {
-        tag = 'Pendiente de Autorización';
-        tagIcon = '⏳';
-        tagColor = 'background: #d97706;';
+        tag = 'Completado · Sin autorizar';
+        tagIcon = '✔';
+        tagColor = 'background: #0d9488;';
         primaryText = 'Ver Detalles →';
         primaryAction = `window.ProjectsView.openProjectLanding('${c.id}')`;
         secondaryText = 'Compartir <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-left:3px;"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>';
@@ -3109,18 +3021,24 @@ window.ProjectsView = {
       if (window.AdminView && typeof window.AdminView.rejectProject === 'function') {
         window.AdminView.rejectProject(projectId);
       } else {
-        const note = prompt('Ingresa el motivo de cancelación o corrección:', 'Faltan detalles o el contenido requiere ajustes antes de publicarse.');
+        const note = prompt('Ingresa el motivo de desautorización (el proyecto seguirá Completado pero no será visible para todos):', 'Oculto temporalmente para revisión antes de hacerlo público.');
         if (note === null) return;
-        p.approvalStatus = 'rejected';
-        p.publicationStatus = 'draft';
-        p.status = 'in_progress';
-        p.stage = 'in_progress';
+        p.approvalStatus = 'pending';
+        p.publicationStatus = 'completed';
+        p.status = 'completed';
+        p.stage = 'completed';
         p.isPublic = false;
         p.accessMode = 'private';
         p.rejectionReason = note;
         p.rejectedAt = new Date().toISOString();
+        if (p.govdata && typeof p.govdata === 'object') {
+          p.govdata.approvalStatus = 'pending';
+          p.govdata.publicationStatus = 'completed';
+          p.govdata.status = 'completed';
+          p.govdata.isPublic = false;
+        }
         if (typeof saveGlobalState === 'function') saveGlobalState(window.appState);
-        if (this.showToast) this.showToast(`❌ Autorización cancelada para "${p.title}".`, 'warning');
+        if (this.showToast) this.showToast(`🔒 "${p.title}" desautorizado (sigue Completado, oculto al público).`, 'warning');
       }
     } else {
       if (window.AdminView && typeof window.AdminView.approveProject === 'function') {
