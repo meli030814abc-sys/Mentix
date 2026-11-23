@@ -2317,7 +2317,7 @@
       "textColor": "#cbd5e1",
       "accentColor": "#00f5d4",
       "bannerStyle": "gradient-cosmos",
-      "bannerUrl": "https://www.google.com/imgres?q=imagen&imgurl=https%3A%2F%2Fstatic.vecteezy.com%2Fsystem%2Fresources%2Fthumbnails%2F060%2F843%2F811%2Fsmall%2Fclose-up-of-raindrops-on-leaves-hd-background-luxury-hd-wallpaper-image-trendy-background-illustration-free-photo.jpg&imgrefurl=https%3A%2F%2Fes.vecteezy.com%2Ffotos-gratis%2Fimagen&docid=FjgWdyaU7OHLOM&tbnid=XfSoVrwZgQjJsM&vet=12ahUKEwiv0c2nl52YAxUomYQIHTZzLVUQnPAOegQINxAA..i&w=625&h=350&hcb=2&ved=2ahUKEwiv0c2nl52YAxUomYQIHTZzLVUQnPAOegQINxAA"
+      "bannerUrl": "https://static.vecteezy.com/system/resources/thumbnails/060/843/811/small/close-up-of-raindrops-on-leaves-hd-background-luxury-hd-wallpaper-image-trendy-background-illustration-free-photo.jpg"
     },
     "authorsConfig": {
       "authorsList": "Melisa",
@@ -2474,7 +2474,7 @@
         "textColor": "#cbd5e1",
         "accentColor": "#00f5d4",
         "bannerStyle": "gradient-cosmos",
-        "bannerUrl": "https://www.google.com/imgres?q=imagen&imgurl=https%3A%2F%2Fstatic.vecteezy.com%2Fsystem%2Fresources%2Fthumbnails%2F060%2F843%2F811%2Fsmall%2Fclose-up-of-raindrops-on-leaves-hd-background-luxury-hd-wallpaper-image-trendy-background-illustration-free-photo.jpg&imgrefurl=https%3A%2F%2Fes.vecteezy.com%2Ffotos-gratis%2Fimagen&docid=FjgWdyaU7OHLOM&tbnid=XfSoVrwZgQjJsM&vet=12ahUKEwiv0c2nl52YAxUomYQIHTZzLVUQnPAOegQINxAA..i&w=625&h=350&hcb=2&ved=2ahUKEwiv0c2nl52YAxUomYQIHTZzLVUQnPAOegQINxAA"
+        "bannerUrl": "https://static.vecteezy.com/system/resources/thumbnails/060/843/811/small/close-up-of-raindrops-on-leaves-hd-background-luxury-hd-wallpaper-image-trendy-background-illustration-free-photo.jpg"
       },
       "authorsConfig": {
         "authorsList": "Melisa",
@@ -2484,9 +2484,13 @@
         "collaborators": "hdfud"
       },
       "createdAt": "2026-11-23T03:09:16.957Z",
-      "updatedAt": "2026-11-23T06:05:12.351Z",
+      "updatedAt": "2026-11-23T06:05:19.031Z",
       "progress": 100,
-      "calculatedProgress": 100
+      "calculatedProgress": 100,
+      "heroBanner": "https://static.vecteezy.com/system/resources/thumbnails/060/843/811/small/close-up-of-raindrops-on-leaves-hd-background-luxury-hd-wallpaper-image-trendy-background-illustration-free-photo.jpg",
+      "banner": "https://static.vecteezy.com/system/resources/thumbnails/060/843/811/small/close-up-of-raindrops-on-leaves-hd-background-luxury-hd-wallpaper-image-trendy-background-illustration-free-photo.jpg",
+      "image": "https://static.vecteezy.com/system/resources/thumbnails/060/843/811/small/close-up-of-raindrops-on-leaves-hd-background-luxury-hd-wallpaper-image-trendy-background-illustration-free-photo.jpg",
+      "coverImage": "https://static.vecteezy.com/system/resources/thumbnails/060/843/811/small/close-up-of-raindrops-on-leaves-hd-background-luxury-hd-wallpaper-image-trendy-background-illustration-free-photo.jpg"
     },
     "author": "Melisa",
     "authorId": "user_1792184134006",
@@ -2498,7 +2502,7 @@
     "authorAvatar": "🐯",
     "authorRole": "Líder del Proyecto",
     "createdAt": "2026-11-23T03:09:16.957Z",
-    "updatedAt": "2026-11-23T06:05:12.497Z",
+    "updatedAt": "2026-11-23T06:05:19.004Z",
     "image": "https://static.vecteezy.com/system/resources/thumbnails/060/843/811/small/close-up-of-raindrops-on-leaves-hd-background-luxury-hd-wallpaper-image-trendy-background-illustration-free-photo.jpg",
     "rejectionReason": "Desautorizado por el Administrador (oculto al público).",
     "tag": "✔ Completado",
