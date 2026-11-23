@@ -1457,6 +1457,24 @@
     },
     "resources": [
       {
+        "id": "res_1795405649524_bugu",
+        "name": "Diagnóstico de Madurez GovData Nexus",
+        "fileName": "Diagnóstico de Madurez GovData Nexus.png",
+        "description": "Recurso oficial en formato PNG (1.97 MB).",
+        "type": "image",
+        "url": "",
+        "format": "PNG",
+        "sizeBytes": 2061015,
+        "sizeLabel": "1.97 MB",
+        "category": "Imágenes y material gráfico",
+        "visibility": "public",
+        "order": 2,
+        "status": "verified",
+        "extractedText": "",
+        "uploadedAt": "2026-11-23T03:47:29.524Z",
+        "thumbnailUrl": ""
+      },
+      {
         "id": "res_1795405649671_bqtl",
         "name": "Reforma Tributaria Colombia Explicada",
         "fileName": "Reforma Tributaria Colombia Explicada.png",
@@ -1823,7 +1841,7 @@
         "collaborators": "hdfud"
       },
       "createdAt": "2026-11-23T03:09:16.957Z",
-      "updatedAt": "2026-11-23T04:11:26.671Z",
+      "updatedAt": "2026-11-23T04:11:25.959Z",
       "progress": 100,
       "calculatedProgress": 100
     },
@@ -1837,7 +1855,7 @@
     "authorAvatar": "🐯",
     "authorRole": "Líder del Proyecto",
     "createdAt": "2026-11-23T03:09:16.957Z",
-    "updatedAt": "2026-11-23T04:11:26.897Z",
+    "updatedAt": "2026-11-23T04:11:26.182Z",
     "image": "https://www.google.com/imgres?q=imagen&imgurl=https%3A%2F%2Fstatic.vecteezy.com%2Fsystem%2Fresources%2Fthumbnails%2F060%2F843%2F811%2Fsmall%2Fclose-up-of-raindrops-on-leaves-hd-background-luxury-hd-wallpaper-image-trendy-background-illustration-free-photo.jpg&imgrefurl=https%3A%2F%2Fes.vecteezy.com%2Ffotos-gratis%2Fimagen&docid=FjgWdyaU7OHLOM&tbnid=XfSoVrwZgQjJsM&vet=12ahUKEwiv0c2nl52YAxUomYQIHTZzLVUQnPAOegQINxAA..i&w=625&h=350&hcb=2&ved=2ahUKEwiv0c2nl52YAxUomYQIHTZzLVUQnPAOegQINxAA",
     "rejectionReason": "",
     "tag": "✔ Completado",
