@@ -1,20 +1,5 @@
 [
   {
-    "id": "user_1",
-    "name": "Mateo Gamer",
-    "username": "mateo_pro",
-    "email": "mateo@te-reto.app",
-    "avatar": "🦊",
-    "role": "student",
-    "xp": 2850,
-    "level": 3,
-    "levelName": "Competidor",
-    "institution": "Instituto Tecnológico Nacional",
-    "isBlocked": false,
-    "lastLoginAt": "2026-11-23T16:54:18.791Z",
-    "createdAt": "2026-11-23T16:17:00.259Z"
-  },
-  {
     "id": "user_1792184134006",
     "name": "Melisa",
     "username": "Mentilona",
