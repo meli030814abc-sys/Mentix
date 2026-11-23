@@ -14,6 +14,13 @@
         "passHash": "f83eb6d6c9c521f14120a4d67658626bde70a51bb7c9e3ed64a1eaf5440f8434",
         "role": "commenter",
         "since": 1795226802519
+      },
+      {
+        "name": "Annie",
+        "email": "acanon@ciudadmontesbilingue.edu.com",
+        "passHash": "e730ee9f1d8cefc2b52d18dcf6890dfd14aa79c2b6beaeb0f8b282d9d39ee3f8",
+        "role": "collaborator",
+        "since": 1795405205888
       }
     ],
     "joinRequests": [
@@ -22,9 +29,9 @@
         "name": "Annie",
         "email": "acanon@ciudadmontesbilingue.edu.com",
         "passHash": "e730ee9f1d8cefc2b52d18dcf6890dfd14aa79c2b6beaeb0f8b282d9d39ee3f8",
-        "status": "pending",
+        "status": "accepted",
         "createdAt": 1795405191849,
-        "role": "editor"
+        "role": "collaborator"
       },
       {
         "id": "req_1795226777352_afyz",
@@ -78,6 +85,6 @@
         "t": 1793650863860
       }
     ],
-    "updatedAt": 1795405200685
+    "updatedAt": 1795405205890
   }
 }
