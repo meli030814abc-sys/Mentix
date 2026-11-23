@@ -15,9 +15,9 @@
     "approvalStatus": "pending",
     "isPublic": false,
     "image": "nosequeestudiar.net/site/assets/files/217/medicina-mano-medica.jpg",
-    "banner": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
+    "banner": "assets/projects_ui/disney_hero_banner.png",
     "createdAt": "2026-10-31T21:52:51.691Z",
-    "updatedAt": "2026-11-23T16:04:52.212Z",
+    "updatedAt": "2026-11-23T16:11:03.260Z",
     "govdata": {
       "id": "proj_pres_1791658288964",
       "title": "Personajes de Disney",
@@ -56,8 +56,8 @@
         "isPublic": true,
         "verified": true
       },
-      "mainImage": "nosequeestudiar.net/site/assets/files/217/medicina-mano-medica.jpg",
-      "thumbnailImage": "nosequeestudiar.net/site/assets/files/217/medicina-mano-medica.jpg",
+      "mainImage": "assets/projects_ui/disney_hero_banner.png",
+      "thumbnailImage": "assets/projects_ui/disney_hero_banner.png",
       "useDefaultImage": true,
       "externalLinks": [],
       "landingConfig": {
@@ -129,7 +129,7 @@
       "approvalStatus": "pending",
       "isPublic": false,
       "image": "assets/projects_ui/card_data_gov.png",
-      "banner": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
+      "banner": "assets/projects_ui/disney_hero_banner.png",
       "govdata": {
         "id": "proj_pres_1791658288964",
         "title": "Personajes de Disney",
@@ -288,7 +288,10 @@
         "Juegos",
         "Disney"
       ],
-      "displayOrder": 1
+      "displayOrder": 1,
+      "heroBanner": "assets/projects_ui/disney_hero_banner.png",
+      "_clearedMainImage": false,
+      "_clearedThumbImage": false
     },
     "submittedForApproval": true,
     "rejectionReason": "Desautorizado por el Administrador (oculto al público).",
@@ -685,7 +688,8 @@
       "ctaText": "Unirse / Colaborar",
       "ctaUrl": "#plp-sec-contacto",
       "displayOrder": 1,
-      "featuredVideoPublic": true
+      "featuredVideoPublic": true,
+      "heroBanner": "assets/projects_ui/disney_hero_banner.png"
     },
     "completedSteps": [
       1,
@@ -975,7 +979,10 @@
         "createdAt": "2026-11-16"
       }
     ],
-    "presentations": []
+    "presentations": [],
+    "coverImage": "assets/projects_ui/disney_hero_banner.png",
+    "_clearedMainImage": false,
+    "_clearedThumbImage": false
   },
   {
     "id": "govdata_code_mentilona_804263",
