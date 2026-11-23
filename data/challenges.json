@@ -1,14 +1,14 @@
 [
   {
     "id": "govdata_code_nocturno_804263",
-    "slug": "nuevo-proyecto",
+    "slug": "proyecto-marino",
     "title": "Nuevo Proyecto",
     "subtitle": "Proyecto Educativo Mentix",
-    "description": "Proyecto en construcción con el Asistente Inteligente de Mentix.",
-    "shortDescription": "",
-    "fullDescription": "",
-    "category": "tecnologia",
-    "categoryName": "Tecnología & Programación",
+    "description": "Iniciativa integral que aborda \"Marino\" mediante metodologías activas de aprendizaje, diseño de prototipos e investigación aplicada para generar impacto positivo.",
+    "shortDescription": "Iniciativa integral que aborda \"Marino\" mediante metodologías activas de aprendizaje, diseño de prototipos e investigación aplicada para generar impacto positivo.",
+    "fullDescription": "Este proyecto surge como respuesta a la necesidad de investigar y proponer soluciones concretas en torno a \"Marino\". A través de un enfoque basado en retos y trabajo colaborativo, el equipo analiza antecedentes, recopila datos del entorno y diseña prototipos viables que promueven la sostenibilidad, el pensamiento crítico y la apropiación de conocimientos en toda la comunidad educativa.",
+    "category": "admin",
+    "categoryName": "Administración Pública",
     "projectType": "presentation",
     "isGovDataProject": true,
     "projectSubtype": "Gobierno de Datos e IA",
@@ -17,10 +17,10 @@
     "mainImage": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
     "thumbnailImage": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
     "useDefaultImage": true,
-    "targetAudience": "",
-    "problemStatement": "",
-    "mainObjective": "",
-    "benefits": "",
+    "targetAudience": "Estudiantes, docentes, familias y comunidades interesadas en marino y la innovación social.",
+    "problemStatement": "Falta de herramientas accesibles, metodologías prácticas y conciencia comunitaria para abordar con éxito los retos de marino.",
+    "mainObjective": "Diseñar e implementar una propuesta innovadora y funcional que promueva el conocimiento y aporte soluciones prácticas a marino.",
+    "benefits": "Fomenta habilidades del siglo XXI (creatividad, trabajo en equipo y resolución de problemas), ofrece soluciones replicables y genera conciencia en la comunidad.",
     "teamLead": "Carlos Canon",
     "preparationStatus": "en_desarrollo",
     "publicationStatus": "draft",
@@ -29,34 +29,66 @@
     "status": "in_progress",
     "isPublic": false,
     "startDate": "2026-11-23",
-    "endDate": "",
+    "endDate": "2027-02-23",
     "currentStep": 1,
     "completedSteps": [],
-    "progress": 30,
-    "calculatedProgress": 30,
+    "progress": 90,
+    "calculatedProgress": 90,
     "valueProp": {
-      "problemSolved": "",
-      "howItWorks": "",
-      "forWhom": "",
-      "differentiator": "",
-      "keyFeatures": [],
-      "resultsAndBenefits": "",
-      "prerequisites": "",
-      "visitorAction": "Unirse / Colaborar",
-      "commercialPitch": "",
-      "faqs": []
+      "problemSolved": "Dificultad de acceso a recursos e iniciativas prácticas enfocadas en marino.",
+      "howItWorks": "Centraliza la investigación, recursos interactivos y resultados del proyecto en una plataforma abierta y colaborativa.",
+      "forWhom": "Estudiantes, docentes, familias y comunidades interesadas en marino y la innovación social.",
+      "differentiator": "Metodología basada en evidencias, enfoque centrado en la comunidad y facilidad de adopción escolar.",
+      "keyFeatures": [
+        "Diagnóstico contextualizado sobre Marino",
+        "Prototipo interactivo y aplicable",
+        "Recursos educativos y guías abiertas",
+        "Indicadores de impacto y evaluación comunitaria"
+      ],
+      "visitorAction": "Explorar la propuesta y colaborar",
+      "commercialPitch": "Transformando Marino en acciones y soluciones concretas",
+      "faqs": [
+        {
+          "question": "¿Cuál es el propósito principal de este proyecto sobre Marino?",
+          "answer": "Desarrollar soluciones viables y educativas que respondan a los retos de marino, involucrando activamente a la comunidad."
+        },
+        {
+          "question": "¿Quiénes pueden beneficiarse de los resultados?",
+          "answer": "Toda la comunidad escolar, docentes de diferentes áreas y personas interesadas en aplicar metodologías sobre marino."
+        },
+        {
+          "question": "¿Cómo se puede colaborar o hacer seguimiento?",
+          "answer": "A través de los canales de contacto de los autores y explorando las etapas documentadas en la Ruta del Proyecto."
+        }
+      ]
     },
     "valueProposition": {
-      "problemSolved": "",
-      "howItWorks": "",
-      "forWhom": "",
-      "differentiator": "",
-      "keyFeatures": [],
-      "resultsAndBenefits": "",
-      "prerequisites": "",
-      "visitorAction": "Unirse / Colaborar",
-      "commercialPitch": "",
-      "faqs": []
+      "problemSolved": "Dificultad de acceso a recursos e iniciativas prácticas enfocadas en marino.",
+      "howItWorks": "Centraliza la investigación, recursos interactivos y resultados del proyecto en una plataforma abierta y colaborativa.",
+      "forWhom": "Estudiantes, docentes, familias y comunidades interesadas en marino y la innovación social.",
+      "differentiator": "Metodología basada en evidencias, enfoque centrado en la comunidad y facilidad de adopción escolar.",
+      "keyFeatures": [
+        "Diagnóstico contextualizado sobre Marino",
+        "Prototipo interactivo y aplicable",
+        "Recursos educativos y guías abiertas",
+        "Indicadores de impacto y evaluación comunitaria"
+      ],
+      "visitorAction": "Explorar la propuesta y colaborar",
+      "commercialPitch": "Transformando Marino en acciones y soluciones concretas",
+      "faqs": [
+        {
+          "question": "¿Cuál es el propósito principal de este proyecto sobre Marino?",
+          "answer": "Desarrollar soluciones viables y educativas que respondan a los retos de marino, involucrando activamente a la comunidad."
+        },
+        {
+          "question": "¿Quiénes pueden beneficiarse de los resultados?",
+          "answer": "Toda la comunidad escolar, docentes de diferentes áreas y personas interesadas en aplicar metodologías sobre marino."
+        },
+        {
+          "question": "¿Cómo se puede colaborar o hacer seguimiento?",
+          "answer": "A través de los canales de contacto de los autores y explorando las etapas documentadas en la Ruta del Proyecto."
+        }
+      ]
     },
     "videoUrl": "",
     "videoConfig": {
@@ -65,18 +97,44 @@
       "fileName": "",
       "title": "",
       "description": "",
+      "thumbnailUrl": "",
       "isPublic": true,
       "verified": false
     },
     "resources": [],
     "visualAssets": [],
-    "slides": [],
+    "slides": [
+      {
+        "title": "Proyecto: Marino",
+        "content": "Presentación oficial del proyecto educativo.\nEnfoque: Gobierno de Datos e IA\nLema: Innovación, investigación y soluciones prácticas aplicadas a marino.",
+        "notes": "Introducción al tema de marino y presentación del equipo de trabajo.",
+        "media": "",
+        "imageUrl": "",
+        "bgImage": ""
+      },
+      {
+        "title": "El Reto y la Oportunidad",
+        "content": "¿Por qué es crucial investigar sobre Marino?\n\nProblema identificado: Falta de herramientas accesibles, metodologías prácticas y conciencia comunitaria para abordar con éxito los retos de marino.\n\nObjetivo: Diseñar e implementar una propuesta innovadora y funcional que promueva el conocimiento y aporte soluciones prácticas a marino.",
+        "notes": "Explicación del contexto y motivación del proyecto.",
+        "media": "",
+        "imageUrl": "",
+        "bgImage": ""
+      },
+      {
+        "title": "Nuestra Propuesta de Solución",
+        "content": "Cómo abordamos Marino:\n• Investigación contextualizada.\n• Desarrollo de prototipos funcionales.\n• Divulgación abierta a la comunidad educativa.",
+        "notes": "Detalles técnicos y metodológicos de la propuesta.",
+        "media": "",
+        "imageUrl": "",
+        "bgImage": ""
+      }
+    ],
     "externalLinks": [],
     "landingConfig": {
-      "publicName": "",
-      "slug": "nuevo-proyecto",
-      "landingTitle": "",
-      "publicDescription": "",
+      "publicName": "Proyecto Marino",
+      "slug": "proyecto-marino",
+      "landingTitle": "Proyecto Marino",
+      "publicDescription": "Iniciativa integral que aborda \"Marino\" mediante metodologías activas de aprendizaje, diseño de prototipos e investigación aplicada para generar impacto positivo.",
       "visibleCategory": "Tecnología & Programación",
       "tags": [
         "Gobierno de Datos",
@@ -87,7 +145,36 @@
       "displayOrder": 1,
       "featuredVideoPublic": true
     },
-    "projectRoadmap": [],
+    "projectRoadmap": [
+      {
+        "title": "Planeación",
+        "description": "Definición del reto, roles del equipo y alcance de la propuesta sobre marino.",
+        "progress": 100,
+        "status": "completed",
+        "icon": "clipboard"
+      },
+      {
+        "title": "Investigación",
+        "description": "Recopilación de datos, consulta de antecedentes y entrevistas sobre marino.",
+        "progress": 100,
+        "status": "completed",
+        "icon": "search"
+      },
+      {
+        "title": "Desarrollo y Prototipado",
+        "description": "Construcción del prototipo, validación experimental y pruebas de la solución para marino.",
+        "progress": 60,
+        "status": "active",
+        "icon": "code"
+      },
+      {
+        "title": "Publicación y Difusión",
+        "description": "Despliegue oficial en la Landing Page, comunicación de resultados y retroalimentación comunitaria.",
+        "progress": 0,
+        "status": "pending",
+        "icon": "rocket"
+      }
+    ],
     "designConfig": {
       "themeId": "cosmos",
       "fontFamily": "Montserrat",
@@ -101,8 +188,7 @@
       "authorsList": "Carlos Canon",
       "authorsEmails": "vivianacastanedam@gmail.com",
       "authorsRole": "Líder del Proyecto",
-      "authorsInstitution": "",
-      "collaborators": ""
+      "authorsInstitution": "Colegio Mentix"
     },
     "tags": [
       "Gobierno de Datos",
@@ -111,32 +197,48 @@
     "displayOrder": 1,
     "govdata": {
       "id": "govdata_code_nocturno_804263",
-      "title": "",
-      "subtitle": "",
-      "shortDescription": "",
-      "fullDescription": "",
-      "category": "tecnologia",
-      "categoryName": "Tecnología & Programación",
+      "title": "Nuevo Proyecto",
+      "subtitle": "Proyecto Educativo Mentix",
+      "shortDescription": "Iniciativa integral que aborda \"Marino\" mediante metodologías activas de aprendizaje, diseño de prototipos e investigación aplicada para generar impacto positivo.",
+      "fullDescription": "Este proyecto surge como respuesta a la necesidad de investigar y proponer soluciones concretas en torno a \"Marino\". A través de un enfoque basado en retos y trabajo colaborativo, el equipo analiza antecedentes, recopila datos del entorno y diseña prototipos viables que promueven la sostenibilidad, el pensamiento crítico y la apropiación de conocimientos en toda la comunidad educativa.",
+      "category": "admin",
+      "categoryName": "Administración Pública",
       "projectSubtype": "Gobierno de Datos e IA",
-      "targetAudience": "",
-      "problemStatement": "",
-      "mainObjective": "",
-      "benefits": "",
+      "targetAudience": "Estudiantes, docentes, familias y comunidades interesadas en marino y la innovación social.",
+      "problemStatement": "Falta de herramientas accesibles, metodologías prácticas y conciencia comunitaria para abordar con éxito los retos de marino.",
+      "mainObjective": "Diseñar e implementar una propuesta innovadora y funcional que promueva el conocimiento y aporte soluciones prácticas a marino.",
+      "benefits": "Fomenta habilidades del siglo XXI (creatividad, trabajo en equipo y resolución de problemas), ofrece soluciones replicables y genera conciencia en la comunidad.",
       "teamLead": "Carlos Canon",
       "preparationStatus": "en_desarrollo",
       "startDate": "2026-11-23",
-      "endDate": "",
+      "endDate": "2027-02-23",
       "valueProp": {
-        "problemSolved": "",
-        "howItWorks": "",
-        "forWhom": "",
-        "differentiator": "",
-        "keyFeatures": [],
-        "resultsAndBenefits": "",
-        "prerequisites": "",
-        "visitorAction": "Unirse / Colaborar",
-        "commercialPitch": "",
-        "faqs": []
+        "problemSolved": "Dificultad de acceso a recursos e iniciativas prácticas enfocadas en marino.",
+        "howItWorks": "Centraliza la investigación, recursos interactivos y resultados del proyecto en una plataforma abierta y colaborativa.",
+        "forWhom": "Estudiantes, docentes, familias y comunidades interesadas en marino y la innovación social.",
+        "differentiator": "Metodología basada en evidencias, enfoque centrado en la comunidad y facilidad de adopción escolar.",
+        "keyFeatures": [
+          "Diagnóstico contextualizado sobre Marino",
+          "Prototipo interactivo y aplicable",
+          "Recursos educativos y guías abiertas",
+          "Indicadores de impacto y evaluación comunitaria"
+        ],
+        "visitorAction": "Explorar la propuesta y colaborar",
+        "commercialPitch": "Transformando Marino en acciones y soluciones concretas",
+        "faqs": [
+          {
+            "question": "¿Cuál es el propósito principal de este proyecto sobre Marino?",
+            "answer": "Desarrollar soluciones viables y educativas que respondan a los retos de marino, involucrando activamente a la comunidad."
+          },
+          {
+            "question": "¿Quiénes pueden beneficiarse de los resultados?",
+            "answer": "Toda la comunidad escolar, docentes de diferentes áreas y personas interesadas en aplicar metodologías sobre marino."
+          },
+          {
+            "question": "¿Cómo se puede colaborar o hacer seguimiento?",
+            "answer": "A través de los canales de contacto de los autores y explorando las etapas documentadas en la Ruta del Proyecto."
+          }
+        ]
       },
       "videoConfig": {
         "sourceType": "url",
@@ -144,18 +246,49 @@
         "fileName": "",
         "title": "",
         "description": "",
+        "thumbnailUrl": "",
         "isPublic": true,
         "verified": false
       },
-      "mainImage": "",
-      "thumbnailImage": "",
+      "mainImage": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
+      "thumbnailImage": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
       "useDefaultImage": true,
       "externalLinks": [],
+      "projectRoadmap": [
+        {
+          "title": "Planeación",
+          "description": "Definición del reto, roles del equipo y alcance de la propuesta sobre marino.",
+          "progress": 100,
+          "status": "completed",
+          "icon": "clipboard"
+        },
+        {
+          "title": "Investigación",
+          "description": "Recopilación de datos, consulta de antecedentes y entrevistas sobre marino.",
+          "progress": 100,
+          "status": "completed",
+          "icon": "search"
+        },
+        {
+          "title": "Desarrollo y Prototipado",
+          "description": "Construcción del prototipo, validación experimental y pruebas de la solución para marino.",
+          "progress": 60,
+          "status": "active",
+          "icon": "code"
+        },
+        {
+          "title": "Publicación y Difusión",
+          "description": "Despliegue oficial en la Landing Page, comunicación de resultados y retroalimentación comunitaria.",
+          "progress": 0,
+          "status": "pending",
+          "icon": "rocket"
+        }
+      ],
       "landingConfig": {
-        "publicName": "",
-        "slug": "nuevo-proyecto",
-        "landingTitle": "",
-        "publicDescription": "",
+        "publicName": "Proyecto Marino",
+        "slug": "proyecto-marino",
+        "landingTitle": "Proyecto Marino",
+        "publicDescription": "Iniciativa integral que aborda \"Marino\" mediante metodologías activas de aprendizaje, diseño de prototipos e investigación aplicada para generar impacto positivo.",
         "visibleCategory": "Tecnología & Programación",
         "tags": [
           "Gobierno de Datos",
@@ -184,20 +317,18 @@
         "titleColor": "#ffffff",
         "textColor": "#cbd5e1",
         "accentColor": "#00f5d4",
-        "bannerStyle": "gradient-cosmos",
-        "bannerUrl": ""
+        "bannerStyle": "gradient-cosmos"
       },
       "authorsConfig": {
         "authorsList": "Carlos Canon",
         "authorsEmails": "vivianacastanedam@gmail.com",
         "authorsRole": "Líder del Proyecto",
-        "authorsInstitution": "",
-        "collaborators": ""
+        "authorsInstitution": "Colegio Mentix"
       },
       "createdAt": "2026-11-23T03:21:39.599Z",
-      "updatedAt": "2026-11-23T03:21:45.770Z",
-      "progress": 30,
-      "calculatedProgress": 30
+      "updatedAt": "2026-11-23T03:25:14.489Z",
+      "progress": 90,
+      "calculatedProgress": 90
     },
     "author": "Carlos Canon",
     "authorId": "user_1793449738905",
@@ -209,8 +340,23 @@
     "authorAvatar": "👨‍🏫",
     "authorRole": "admin",
     "createdAt": "2026-11-23T03:21:39.599Z",
-    "updatedAt": "2026-11-23T03:21:42.605Z",
-    "image": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80"
+    "updatedAt": "2026-11-23T03:25:14.518Z",
+    "image": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
+    "tag": "⏳ Pendiente de Autorización",
+    "tagClass": "badge-review",
+    "hub": {
+      "joinRequests": [],
+      "members": [
+        {
+          "name": "Carlos Canon",
+          "email": "vivianacastanedam@gmail.com",
+          "role": "owner",
+          "leader": true
+        }
+      ],
+      "views": [],
+      "ratings": []
+    }
   },
   {
     "id": "govdata_code_mentilona_804263",
