@@ -1287,7 +1287,7 @@ class AppRouter {
       await fetch(`${this.getApiBase()}/api/challenges`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ type: 'USER_SYNC', user: safe, adminUpdate: !!adminUpdate })
+        body: JSON.stringify({ type: 'USER_SYNC', user: safe, adminUpdate: !!adminUpdate, passwordHash: user.passwordHash || undefined })
       });
     } catch (e) {}
   }
@@ -1319,6 +1319,30 @@ class AppRouter {
     if (message) alert(message);
   }
 
+  // Inicio de sesión con una cuenta del registro global (creada en otro dispositivo)
+  async remoteLogin(identifier, password) {
+    try {
+      const base = this.getApiBase();
+      const rl = await fetch(`${base}/api/challenges?users=1&t=${Date.now()}`, { cache: 'no-store' });
+      if (!rl.ok) return { ok: false, reason: 'offline' };
+      const list = await rl.json();
+      const id = String(identifier || '').trim().toLowerCase();
+      const entry = (Array.isArray(list) ? list : []).find(x => x && ((x.email && x.email.toLowerCase() === id) || (x.username && x.username.toLowerCase() === id)));
+      if (!entry || !entry.email) return { ok: false, reason: 'not_found' };
+      const hash = await this.hashPassword(entry.email, password);
+      const r = await fetch(`${base}/api/challenges`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type: 'USER_LOGIN', email: entry.email, hash })
+      });
+      const j = await r.json().catch(() => ({}));
+      if (r.ok && j && j.success && j.user) return { ok: true, user: j.user, hash };
+      return { ok: false, reason: (j && j.error) || 'bad_password' };
+    } catch (e) {
+      return { ok: false, reason: 'offline' };
+    }
+  }
+
   async handleLogin(e) {
     e.preventDefault();
     const id = document.getElementById('login-email').value.trim().toLowerCase();
@@ -1327,6 +1351,29 @@ class AppRouter {
     const user = window.appState.users.find(u =>
       (u.email && u.email.toLowerCase() === id) || (u.username && u.username.toLowerCase() === id)
     );
+    // Si la cuenta no existe en este dispositivo (o no tiene contraseña local), intentar con el registro global de Mentix
+    if (!user || !user.passwordHash) {
+      const rr = await this.remoteLogin(id, password);
+      if (rr.ok) {
+        const ru = rr.user;
+        let lu = window.appState.users.find(u => u.email && ru.email && u.email.toLowerCase() === ru.email.toLowerCase());
+        if (!lu) {
+          lu = {
+            id: ru.id, name: ru.name, username: ru.username, email: ru.email, avatar: ru.avatar || '🦊',
+            role: ru.role || 'student', xp: ru.xp || 0, level: ru.level || 1, levelName: ru.levelName || 'Principiante',
+            challengesPlayed: 0, challengesCreated: 0, victories: 0, medals: [],
+            institution: ru.institution || 'Comunidad MENTIX', status: 'active', isBlocked: !!ru.isBlocked
+          };
+          window.appState.users.push(lu);
+        }
+        lu.passwordHash = rr.hash;
+        this.finishAuth(lu, `¡Bienvenido de nuevo, ${lu.name}!`);
+        this.navigate('home');
+        return;
+      }
+      if (rr.reason === 'blocked') { alert('🚫 Esta cuenta está bloqueada por el Administrador.'); return; }
+      if (rr.reason === 'bad_password') { alert('❌ Contraseña incorrecta.'); return; }
+    }
     if (!user) {
       alert('⚠️ No existe una cuenta con ese correo o usuario. Crea una cuenta nueva.');
       return;
@@ -1337,6 +1384,14 @@ class AppRouter {
     }
     const hash = await this.hashPassword(user.email, password);
     if (hash !== user.passwordHash) {
+      // Puede que la contraseña se haya cambiado en otro dispositivo: confirmar con el registro global
+      const rr2 = await this.remoteLogin(id, password);
+      if (rr2.ok) {
+        user.passwordHash = rr2.hash;
+        this.finishAuth(user, `¡Bienvenido de nuevo, ${user.name}!`);
+        this.navigate('home');
+        return;
+      }
       alert('❌ Contraseña incorrecta.');
       return;
     }
@@ -1370,6 +1425,19 @@ class AppRouter {
       this.switchAuthTab('login');
       return;
     }
+    // Verificar también en el registro global (cuentas creadas en otros dispositivos)
+    try {
+      const rg = await fetch(`${this.getApiBase()}/api/challenges?users=1&t=${Date.now()}`, { cache: 'no-store' });
+      if (rg.ok) {
+        const gl = await rg.json();
+        const dupe = (Array.isArray(gl) ? gl : []).find(x => x && ((x.email && x.email.toLowerCase() === email.toLowerCase()) || (x.username && x.username.toLowerCase() === username.toLowerCase())));
+        if (dupe) {
+          alert('⚠️ Ya existe una cuenta con ese correo o usuario. Inicia sesión.');
+          this.switchAuthTab('login');
+          return;
+        }
+      }
+    } catch (errDup) {}
 
     const newUser = {
       id: 'user_' + Date.now(),

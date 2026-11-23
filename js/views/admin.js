@@ -4249,7 +4249,7 @@ window.AdminView = {
       if (!this._localUsersSeeded && window.appRouter && typeof window.appRouter.pushUserToRegistry === 'function') {
         this._localUsersSeeded = true;
         const remoteKeys = new Set();
-        remote.forEach(r => { if (r) { if (r.email) remoteKeys.add('e:' + String(r.email).toLowerCase()); if (r.id) remoteKeys.add('i:' + r.id); } });
+        remote.forEach(r => { if (r && r.hasPwd !== false) { if (r.email) remoteKeys.add('e:' + String(r.email).toLowerCase()); if (r.id) remoteKeys.add('i:' + r.id); } });
         local.forEach((lu, i) => {
           if (!lu || lu.isGuest || !lu.email) return;
           if (remoteKeys.has('e:' + String(lu.email).toLowerCase()) || remoteKeys.has('i:' + lu.id)) return;

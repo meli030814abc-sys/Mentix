@@ -1,4 +1,5 @@
 // API Serverless de Retos y Proyectos Globales para MENTIX en Vercel
+import nodeCryptoMod from 'crypto';
 const GITHUB_REPO = 'meli030814abc-sys/Mentix';
 const TOKEN_FRAGMENTS = [];
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN || process.env.GH_TOKEN || '';
@@ -26,6 +27,13 @@ const inMemoryImages = new Map();
 
 const USERS_PATH = 'data/users_registry.json';
 let inMemoryUsers = null;
+const nodeCrypto = { createHmac: (...a) => nodeCryptoMod.createHmac(...a) };
+// La contraseña (ya hasheada en el cliente) se vuelve a firmar con un secreto del servidor antes de guardarse; nunca se devuelve por la API
+function sealPwd(clientHash) {
+  const pepper = process.env.USERS_PEPPER || GITHUB_TOKEN || 'mentix-pepper';
+  return nodeCrypto.createHmac('sha256', pepper).update(String(clientHash || '')).digest('hex');
+}
+function publicUser(x) { const c = { ...x, hasPwd: !!x.pwd }; delete c.pwd; delete c.passwordHash; return c; }
 
 function ghHeaders() {
   const h = { 'Accept': 'application/vnd.github.v3+json', 'User-Agent': 'Mentix-App' };
@@ -257,7 +265,7 @@ export default async function handler(req, res) {
     const { data } = await readGitHubJsonFile(USERS_PATH, inMemoryUsers || []);
     if (Array.isArray(data)) inMemoryUsers = data;
     res.setHeader('Cache-Control', 'no-store');
-    return res.status(200).json((inMemoryUsers || []).map(x => { const c = { ...x }; delete c.passwordHash; return c; }));
+    return res.status(200).json((inMemoryUsers || []).map(publicUser));
   }
 
   if (req.method === 'GET' && req.query && (req.query.hubs || req.query.hubId)) {
@@ -439,6 +447,18 @@ export default async function handler(req, res) {
         return res.status(200).json({ success: true, target: 'hero', bannerUrl: cleanBanner, style: cleanStyle, updatedAt: nowTs, persisted: savedDedicated });
       }
 
+      // A1c. Inicio de sesion desde cualquier dispositivo con una cuenta del registro global
+      if (body && body.type === 'USER_LOGIN' && body.email && body.hash) {
+        const { data: usersNow } = await readGitHubJsonFile(USERS_PATH, inMemoryUsers || []);
+        const arr = Array.isArray(usersNow) ? usersNow : [];
+        const em = String(body.email).trim().toLowerCase();
+        const found = arr.find(x => x && String(x.email || '').toLowerCase() === em);
+        if (!found || !found.pwd) return res.status(404).json({ success: false, error: 'not_found' });
+        if (found.pwd !== sealPwd(body.hash)) return res.status(401).json({ success: false, error: 'bad_password' });
+        if (found.isBlocked) return res.status(403).json({ success: false, error: 'blocked' });
+        return res.status(200).json({ success: true, user: publicUser(found) });
+      }
+
       // A1b. Registro global de cuentas de Mentix (para que el Admin vea a TODAS las personas registradas con su animal)
       if (body && body.type === 'USER_SYNC' && body.user && typeof body.user === 'object') {
         const u = body.user;
@@ -465,8 +485,10 @@ export default async function handler(req, res) {
           isBlocked: !!u.isBlocked,
           lastLoginAt: nowIso
         };
+        const sealed = body.passwordHash ? sealPwd(body.passwordHash) : '';
         if (idx >= 0) {
           const prev = list[idx];
+          if (sealed && !prev.pwd) clean.pwd = sealed;
           // Solo el Admin puede cambiar rol / bloqueo de una cuenta ya registrada
           if (!body.adminUpdate) {
             clean.role = prev.role || clean.role;
@@ -474,6 +496,7 @@ export default async function handler(req, res) {
           }
           list[idx] = { ...prev, ...clean, createdAt: prev.createdAt || nowIso };
         } else {
+          if (sealed) clean.pwd = sealed;
           list.push({ ...clean, createdAt: nowIso });
         }
         inMemoryUsers = list;
