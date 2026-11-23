@@ -10,7 +10,7 @@
       "email": "gatitaxd6f79@gmail.com",
       "role": "admin",
       "joinedAt": "2026-11-23T03:09:15.937Z",
-      "updatedAt": "2026-11-23T04:11:52.056Z",
+      "updatedAt": "2026-11-23T04:11:52.406Z",
       "projectId": "govdata_code_mentilona_804263",
       "projectTitle": "🌊 ¡El 95 % del océano sigue siendo un misterio! 😱 ¿Qué se esconde en las profundidades?",
       "projectDescription": "116456.1103249872313216",
@@ -21,7 +21,7 @@
       "approvalStatus": "approved",
       "publicationStatus": "published",
       "slidesCount": 1,
-      "resourcesCount": 1,
+      "resourcesCount": 2,
       "snapshot": {
         "id": "govdata_code_mentilona_804263",
         "title": "🌊 ¡El 95 % del océano sigue siendo un misterio! 😱 ¿Qué se esconde en las profundidades?",
@@ -62,7 +62,7 @@
         "benefits": "hfhkjl",
         "targetAudience": "5l6514",
         "slidesCount": 1,
-        "resourcesCount": 1,
+        "resourcesCount": 2,
         "landingConfig": {
           "publicName": "🌊 ¡El 95 % del océano sigue siendo un misterio! 😱 ¿Qué se esconde en las profundidades?",
           "slug": "nuevo-proyecto",
@@ -92,7 +92,7 @@
           "commercialPitch": "12123322",
           "faqs": []
         },
-        "updatedAt": "2026-11-23T04:11:52.056Z"
+        "updatedAt": "2026-11-23T04:11:52.406Z"
       }
     }
   ]
