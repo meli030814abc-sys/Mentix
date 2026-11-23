@@ -975,11 +975,22 @@ window.AdminView = {
           id="mentix-admin-projects-hero-banner-img"
           src="${this.getHeroBannerUrl()}" 
           alt="Banner de Robot de Proyectos Mentix" 
-          style="position: absolute; inset: 0; width: 100%; height: 100%; display: block; object-fit: cover; object-position: center; filter: brightness(1.08) contrast(1.05); image-rendering: high-quality;" 
+          style="${window.ProjectsView && typeof window.ProjectsView.buildHeroBannerImgCss === 'function' ? window.ProjectsView.buildHeroBannerImgCss() : 'position: absolute; inset: 0; width: 100%; height: 100%; display: block; object-fit: cover; object-position: center;'}" 
         />
 
-        <!-- BOTÓN FLOTANTE EXCLUSIVO DE ADMINISTRADOR PARA CAMBIAR BANNER (ALTA VISIBILIDAD) -->
-        <div style="position: absolute; top: 1rem; right: 1.25rem; z-index: 10;">
+        <!-- BOTONES FLOTANTES EXCLUSIVOS DE ADMINISTRADOR PARA ENCUADRAR Y CAMBIAR BANNER -->
+        <div class="mentix-banner-admin-controls" style="position: absolute; top: 1rem; right: 1.25rem; z-index: 10; display: flex; align-items: center; gap: 0.55rem; flex-wrap: wrap; justify-content: flex-end;">
+          <button 
+            type="button" 
+            onclick="window.ProjectsView && window.ProjectsView.openHeroBannerRepositionMode('mentix-admin-projects-hero-banner-img')" 
+            title="Mover, centrar o mostrar completo el fondo del banner"
+            style="display: inline-flex; align-items: center; gap: 0.45rem; background: rgba(255, 255, 255, 0.96); backdrop-filter: blur(10px); color: #0f172a; border: 2px solid #0ea5e9; border-radius: 9999px; padding: 0.5rem 1.05rem; font-size: 0.85rem; font-weight: 900; cursor: pointer; box-shadow: 0 6px 20px rgba(15, 23, 42, 0.3), 0 0 0 3px rgba(255, 255, 255, 0.35); transition: all 0.2s ease;"
+            onmouseenter="this.style.transform='scale(1.05)'; this.style.background='#f0f9ff';"
+            onmouseleave="this.style.transform='scale(1)'; this.style.background='rgba(255, 255, 255, 0.96)';"
+          >
+            <span style="font-size: 1rem;">✋</span>
+            <span>Encuadrar</span>
+          </button>
           <button 
             type="button" 
             onclick="window.AdminView.openBannerCustomizerModal()" 
