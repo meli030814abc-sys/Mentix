@@ -1383,9 +1383,9 @@
     "thumbnailImage": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
     "useDefaultImage": true,
     "targetAudience": "Personas",
-    "problemStatement": "",
-    "mainObjective": "",
-    "benefits": "",
+    "problemStatement": "hgj",
+    "mainObjective": "khgk",
+    "benefits": "hki",
     "teamLead": "Melisa",
     "preparationStatus": "en_desarrollo",
     "publicationStatus": "draft",
@@ -1395,16 +1395,17 @@
     "isPublic": false,
     "startDate": "2026-11-23",
     "endDate": "",
-    "currentStep": 6,
+    "currentStep": 7,
     "completedSteps": [
       1,
       2,
       3,
       4,
-      5
+      5,
+      6
     ],
-    "progress": 60,
-    "calculatedProgress": 60,
+    "progress": 68,
+    "calculatedProgress": 68,
     "valueProp": {
       "problemSolved": "",
       "howItWorks": "",
@@ -1499,8 +1500,7 @@
       "titleColor": "#ffffff",
       "textColor": "#cbd5e1",
       "accentColor": "#00f5d4",
-      "bannerStyle": "gradient-cosmos",
-      "bannerUrl": ""
+      "bannerStyle": "gradient-cosmos"
     },
     "authorsConfig": {
       "authorsList": "Melisa",
@@ -1524,9 +1524,9 @@
       "categoryName": "Cultura General",
       "projectSubtype": "Gobierno de Datos e IA",
       "targetAudience": "Personas",
-      "problemStatement": "",
-      "mainObjective": "",
-      "benefits": "",
+      "problemStatement": "hgj",
+      "mainObjective": "khgk",
+      "benefits": "hki",
       "teamLead": "Melisa",
       "preparationStatus": "en_desarrollo",
       "startDate": "2026-11-23",
@@ -1612,9 +1612,10 @@
         2,
         3,
         4,
-        5
+        5,
+        6
       ],
-      "currentStep": 6,
+      "currentStep": 7,
       "author": "Melisa",
       "authorId": "user_1792184134006",
       "ownerId": "user_1792184134006",
@@ -1640,9 +1641,9 @@
         "collaborators": "personas"
       },
       "createdAt": "2026-11-23T03:09:16.957Z",
-      "updatedAt": "2026-11-23T03:45:37.927Z",
-      "progress": 60,
-      "calculatedProgress": 60
+      "updatedAt": "2026-11-23T03:45:43.255Z",
+      "progress": 68,
+      "calculatedProgress": 68
     },
     "author": "Melisa",
     "authorId": "user_1792184134006",
@@ -1654,7 +1655,7 @@
     "authorAvatar": "🐯",
     "authorRole": "Líder del Proyecto",
     "createdAt": "2026-11-23T03:09:16.957Z",
-    "updatedAt": "2026-11-23T03:45:37.918Z",
+    "updatedAt": "2026-11-23T03:45:43.401Z",
     "image": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
     "rejectionReason": "",
     "tag": "⏳ Pendiente de Autorización",
