@@ -1177,27 +1177,27 @@ window.AdminView = {
                 <img src="${coverImage}" alt="${title}" class="admin-card-cover-img" onerror="this.onerror=null; this.src='assets/student_create_bg.jpg';">
                 
                 <div class="admin-card-badge-row">
-                  <!-- Badge Izquierdo 3D de Estado -->
-                  <div class="proj3d-status-badge ${isPendingApproval ? 'st-pending' : (isCompleted ? 'st-completed' : 'st-progress')}">
-                    ${isPendingApproval ? pIco('Hourglass%20not%20done/3D/hourglass_not_done_3d.png', '', 15) : (isCompleted ? pIco('Check%20mark%20button/3D/check_mark_button_3d.png', '', 15) : pIco('High%20voltage/3D/high_voltage_3d.png', '', 15))}
+                  <!-- Badge Izquierdo de Estado -->
+                  <div class="admin-card-status-badge ${isPendingApproval ? 'pending' : (isCompleted ? 'completed' : 'in-progress')}" style="${isPendingApproval ? 'background: #f59e0b; color: #07152b; border: 1.5px solid #fbbf24; font-weight: 900; box-shadow: 0 0 10px rgba(245, 158, 11, 0.45);' : ''}">
+                    <span>${isPendingApproval ? '⏳' : (isCompleted ? '✔' : '⚡')}</span>
                     <span>${isPendingApproval ? 'Pendiente Autorización' : (isCompleted ? 'Completado' : 'En Proceso')}</span>
                   </div>
 
-                  <!-- Botones Flotantes Derechos 3D -->
+                  <!-- Botones Flotantes Derechos -->
                   <div class="admin-card-top-actions">
-                    <button type="button" class="proj3d-top-btn tbtn-dark" title="Personalizar banner del robot" onclick="window.AdminView.switchTab('design')">
-                      ${pIco('Robot/3D/robot_3d.png', '', 15)} <span>Banner</span>
+                    <button class="btn-card-robot-banner" title="Personalizar banner del robot" onclick="window.AdminView.switchTab('design')">
+                      <span>🤖</span> Banner
                     </button>
-                    <button type="button" class="proj3d-top-btn tbtn-cyan" title="Revisar Landing Page y Autorización" onclick="window.AdminView.reviewProjectInLanding('${p.id}')">
-                      ${pIco('Magnifying%20glass%20tilted%20left/3D/magnifying_glass_tilted_left_3d.png', '', 14)} <span>Revisar</span>
+                    <button class="btn-card-review" title="Revisar Landing Page y Autorización" onclick="window.AdminView.reviewProjectInLanding('${p.id}')">
+                      <span>🔍</span> Revisar
                     </button>
-                    <button type="button" class="proj3d-top-ico tbtn-edit" title="Editar proyecto" onclick="window.AdminView.openEditProjectModal('${p.id}')">
-                      ${pIco('Pencil/3D/pencil_3d.png', 'Editar', 15)}
+                    <button class="btn-card-edit" title="Editar proyecto" onclick="window.AdminView.openEditProjectModal('${p.id}')">
+                      ✏️
                     </button>
-                    <button type="button" class="proj3d-top-ico tbtn-del" title="Eliminar proyecto" onclick="window.AdminView.deleteProject('${p.id}')">
-                      ${pIco('Wastebasket/3D/wastebasket_3d.png', 'Eliminar', 15)}
+                    <button class="btn-card-trash" title="Eliminar proyecto" onclick="window.AdminView.deleteProject('${p.id}')">
+                      🗑️
                     </button>
-                    <button type="button" class="proj3d-top-ico tbtn-more" title="Editar y más opciones" onclick="window.AdminView.openEditProjectModal('${p.id}')">
+                    <button class="btn-card-more" title="Editar y más opciones" onclick="window.AdminView.openEditProjectModal('${p.id}')">
                       •••
                     </button>
                   </div>
