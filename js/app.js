@@ -2119,6 +2119,10 @@ class AppRouter {
         let appMapDirty = false;
         try { appMap = JSON.parse(localStorage.getItem('mentix_approved_projects_map') || '{}') || {}; } catch(e) {}
 
+        let unappMap = {};
+        let unappMapDirty = false;
+        try { unappMap = JSON.parse(localStorage.getItem('mentix_unapproved_projects_map') || '{}') || {}; } catch(e) {}
+
         let wizardDraftsCache = null;
         let wizardDraftsDirty = false;
         try {
@@ -2167,9 +2171,31 @@ class AppRouter {
           }
 
           const isProjectItem = (c.projectType && c.projectType !== 'quiz') || c.isGovDataProject === true;
+          const unappEntry = unappMap[c.id];
+          const appEntry = appMap[c.id];
+          const unappTs = unappEntry ? (new Date(unappEntry.updatedAt || unappEntry.rejectedAt || 0).getTime() || 0) : 0;
+          const appTs = appEntry ? (new Date(appEntry.updatedAt || appEntry.authorizedAt || 0).getTime() || 0) : 0;
+          const cTs = new Date(c.updatedAt || c.rejectedAt || c.authorizedAt || 0).getTime() || 0;
+
           if (!map.has(c.id)) {
             if ((Array.isArray(c.questions) && c.questions.length > 0) || isProjectItem) {
-              if (isProjectItem && c.approvalStatus === 'approved' && !c.rejectionReason) {
+              if (isProjectItem && unappEntry && unappTs >= cTs && unappTs >= appTs) {
+                c.approvalStatus = unappEntry.approvalStatus || 'pending';
+                c.publicationStatus = 'completed';
+                c.isPublic = false;
+                c.accessMode = 'private';
+                c.visibility = 'private';
+                c.rejectionReason = unappEntry.rejectionReason || 'Desautorizado por el Administrador.';
+                c.rejectedAt = unappEntry.rejectedAt || new Date().toISOString();
+                if (c.govdata && typeof c.govdata === 'object') {
+                  c.govdata.approvalStatus = c.approvalStatus;
+                  c.govdata.publicationStatus = 'completed';
+                  c.govdata.isPublic = false;
+                  c.govdata.rejectionReason = c.rejectionReason;
+                }
+                syncLocalDraftApproval(c.id, false, c);
+              } else if (isProjectItem && ((c.approvalStatus === 'approved' && !c.rejectionReason) || (appEntry && appTs > cTs && appTs > unappTs))) {
+                c.approvalStatus = 'approved';
                 c.isPublic = true;
                 c.accessMode = 'public';
                 c.visibility = 'public';
@@ -2177,8 +2203,8 @@ class AppRouter {
                 c.status = 'completed';
                 c.stage = 'completed';
                 c.rejectionReason = '';
-                c.authorizedAt = c.authorizedAt || new Date().toISOString();
-                c.authorizedBy = c.authorizedBy || 'Administrador Mentix';
+                c.authorizedAt = c.authorizedAt || appEntry?.authorizedAt || new Date().toISOString();
+                c.authorizedBy = c.authorizedBy || appEntry?.authorizedBy || 'Administrador Mentix';
                 if (c.govdata && typeof c.govdata === 'object') {
                   c.govdata.approvalStatus = 'approved';
                   c.govdata.publicationStatus = 'published';
@@ -2193,11 +2219,15 @@ class AppRouter {
           } else {
             const existing = map.get(c.id);
             if ((Array.isArray(c.questions) && c.questions.length > 0) || isProjectItem) {
-              const cloudTs = new Date(c.updatedAt || c.rejectedAt || c.authorizedAt || 0).getTime() || 0;
+              const cloudTs = cTs;
               const localTs = new Date(existing.updatedAt || existing.rejectedAt || existing.authorizedAt || 0).getTime() || 0;
-              const cloudExplicitlyUnapproved = isProjectItem && c.approvalStatus !== 'approved' && (Boolean(c.rejectedAt) || Boolean(c.rejectionReason)) && cloudTs >= localTs;
-              const localApproved = !!(appMap[c.id]) || existing.approvalStatus === 'approved';
-              const cloudApproved = c.approvalStatus === 'approved' && !c.rejectionReason;
+              const localExplicitlyUnapproved = isProjectItem && (
+                (unappEntry && unappTs >= cloudTs && unappTs >= appTs) ||
+                (existing.approvalStatus !== 'approved' && (Boolean(existing.rejectedAt) || Boolean(existing.rejectionReason)) && localTs > cloudTs)
+              );
+              const cloudExplicitlyUnapproved = isProjectItem && c.approvalStatus !== 'approved' && (Boolean(c.rejectedAt) || Boolean(c.rejectionReason)) && cloudTs >= localTs && cloudTs >= appTs;
+              const localApproved = !localExplicitlyUnapproved && (Boolean(appEntry && appTs >= unappTs) || (existing.approvalStatus === 'approved' && !existing.rejectionReason));
+              const cloudApproved = !localExplicitlyUnapproved && c.approvalStatus === 'approved' && !c.rejectionReason;
               const mergedItem = (typeof window.mergeProjectPreservingImages === 'function')
                 ? window.mergeProjectPreservingImages(existing, c)
                 : { ...existing, ...c };
@@ -2226,17 +2256,18 @@ class AppRouter {
                 mergedItem.videoUrl = existing.videoUrl || existing.videoConfig.url;
               }
 
-              if (cloudExplicitlyUnapproved) {
-                // El administrador revocó/desautorizó el proyecto en la nube más recientemente
-                mergedItem.approvalStatus = c.approvalStatus || 'pending';
-                mergedItem.publicationStatus = c.publicationStatus || 'completed';
-                mergedItem.status = c.status || 'completed';
-                mergedItem.stage = c.stage || mergedItem.status;
+              if (cloudExplicitlyUnapproved || localExplicitlyUnapproved) {
+                // El administrador revocó/desautorizó el proyecto (en tiempo real o en la nube)
+                const unappSrc = cloudExplicitlyUnapproved ? c : (unappEntry || existing);
+                mergedItem.approvalStatus = unappSrc.approvalStatus || 'pending';
+                mergedItem.publicationStatus = 'completed';
+                mergedItem.status = 'completed';
+                mergedItem.stage = 'completed';
                 mergedItem.isPublic = false;
                 mergedItem.accessMode = 'private';
                 mergedItem.visibility = 'private';
-                mergedItem.rejectionReason = c.rejectionReason || '';
-                mergedItem.rejectedAt = c.rejectedAt || '';
+                mergedItem.rejectionReason = unappSrc.rejectionReason || 'Desautorizado por el Administrador.';
+                mergedItem.rejectedAt = unappSrc.rejectedAt || new Date().toISOString();
                 if (mergedItem.govdata && typeof mergedItem.govdata === 'object') {
                   mergedItem.govdata.approvalStatus = mergedItem.approvalStatus;
                   mergedItem.govdata.publicationStatus = mergedItem.publicationStatus;
@@ -2270,6 +2301,10 @@ class AppRouter {
                   mergedItem.govdata.authorizedAt = mergedItem.authorizedAt;
                   mergedItem.govdata.authorizedBy = mergedItem.authorizedBy;
                 }
+                if (unappMap[c.id]) {
+                  delete unappMap[c.id];
+                  unappMapDirty = true;
+                }
                 syncLocalDraftApproval(c.id, true, mergedItem);
               }
 
@@ -2287,6 +2322,9 @@ class AppRouter {
 
         if (appMapDirty) {
           try { localStorage.setItem('mentix_approved_projects_map', JSON.stringify(appMap)); } catch(e) {}
+        }
+        if (unappMapDirty) {
+          try { localStorage.setItem('mentix_unapproved_projects_map', JSON.stringify(unappMap)); } catch(e) {}
         }
         if (wizardDraftsDirty && Array.isArray(wizardDraftsCache)) {
           try { localStorage.setItem('mentix_govdata_wizard_drafts', JSON.stringify(wizardDraftsCache)); } catch(e) {}

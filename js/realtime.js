@@ -249,6 +249,7 @@ class RealtimeEngine {
         client.subscribe('mentix/global/join_requests', { qos: 0 });
         client.subscribe('mentix/global/project_deleted', { qos: 0 });
         client.subscribe('mentix/global/projects_sync', { qos: 0 });
+        client.subscribe('mentix/global/project_auth/+', { qos: 0 });
       });
 
       client.on('message', (topic, messageBuffer) => {
@@ -293,9 +294,11 @@ class RealtimeEngine {
               this._handleRemoteProjectDeleted(data.projectId);
             }
           } catch(e) {}
-        } else if (topic === 'mentix/global/projects_sync') {
+        } else if (topic === 'mentix/global/projects_sync' || topic.startsWith('mentix/global/project_auth/')) {
           try {
-            const data = JSON.parse(messageBuffer.toString());
+            const rawStr = messageBuffer.toString();
+            if (!rawStr) return;
+            const data = JSON.parse(rawStr);
             if (data) {
               this._handleRemoteProjectAuthSync(data);
             }
@@ -320,7 +323,40 @@ class RealtimeEngine {
     this._lastAuthSyncKey = nowKey;
     this._lastAuthSyncHandledAt = Date.now();
 
-    // Si el proyecto ya existe en memoria local, aplicar su estado de autorización de forma inmediata (<100ms)
+    const syncLocalVaults = (projectIdStr, isApprovedNow, metaInfo) => {
+      try {
+        for (let i = 0; i < localStorage.length; i++) {
+          const k = localStorage.key(i);
+          if (k && (k.startsWith('mentix_user_projects_') || k === 'mentix_govdata_wizard_drafts')) {
+            const raw = localStorage.getItem(k);
+            if (!raw) continue;
+            const list = JSON.parse(raw);
+            if (!Array.isArray(list)) continue;
+            const idx = list.findIndex(item => item && String(item.id) === projectIdStr);
+            if (idx >= 0) {
+              list[idx].approvalStatus = isApprovedNow ? 'approved' : (metaInfo.approvalStatus || 'pending');
+              list[idx].publicationStatus = isApprovedNow ? 'published' : 'completed';
+              list[idx].isPublic = isApprovedNow;
+              list[idx].accessMode = isApprovedNow ? 'public' : 'private';
+              list[idx].visibility = isApprovedNow ? 'public' : 'private';
+              list[idx].rejectionReason = isApprovedNow ? '' : (metaInfo.rejectionReason || 'Oculto por el Administrador.');
+              if (metaInfo.rejectedAt) list[idx].rejectedAt = metaInfo.rejectedAt;
+              if (metaInfo.authorizedAt) list[idx].authorizedAt = metaInfo.authorizedAt;
+              if (metaInfo.updatedAt) list[idx].updatedAt = metaInfo.updatedAt;
+              if (list[idx].govdata && typeof list[idx].govdata === 'object') {
+                list[idx].govdata.approvalStatus = list[idx].approvalStatus;
+                list[idx].govdata.publicationStatus = list[idx].publicationStatus;
+                list[idx].govdata.isPublic = isApprovedNow;
+                list[idx].govdata.rejectionReason = list[idx].rejectionReason;
+              }
+              localStorage.setItem(k, JSON.stringify(list));
+            }
+          }
+        }
+      } catch (e) {}
+    };
+
+    // Si el proyecto ya existe en memoria local, aplicar su estado de autorización de forma inmediata (<50ms)
     if (pid && window.appState && Array.isArray(window.appState.challenges)) {
       const target = window.appState.challenges.find(c => c && String(c.id) === pid);
       if (target) {
@@ -354,17 +390,30 @@ class RealtimeEngine {
             };
             localStorage.setItem('mentix_approved_projects_map', JSON.stringify(appMap));
           } catch (e) {}
+          try {
+            const unappMap = JSON.parse(localStorage.getItem('mentix_unapproved_projects_map') || '{}') || {};
+            if (unappMap[pid]) {
+              delete unappMap[pid];
+              localStorage.setItem('mentix_unapproved_projects_map', JSON.stringify(unappMap));
+            }
+          } catch (e) {}
+          syncLocalVaults(pid, true, data);
         } else if (status === 'pending' || status === 'rejected') {
           target.approvalStatus = status;
+          target.publicationStatus = 'completed';
           target.isPublic = false;
+          target.visibility = 'private';
           target.accessMode = 'private';
-          if (data.rejectionReason !== undefined) target.rejectionReason = data.rejectionReason;
-          if (data.rejectedAt) target.rejectedAt = data.rejectedAt;
+          target.rejectionReason = (data.rejectionReason !== undefined && data.rejectionReason !== '')
+            ? data.rejectionReason
+            : 'Desautorizado por el Administrador.';
+          target.rejectedAt = data.rejectedAt || new Date().toISOString();
           if (data.updatedAt) target.updatedAt = data.updatedAt;
           if (target.govdata && typeof target.govdata === 'object') {
             target.govdata.approvalStatus = status;
+            target.govdata.publicationStatus = 'completed';
             target.govdata.isPublic = false;
-            if (data.rejectionReason !== undefined) target.govdata.rejectionReason = data.rejectionReason;
+            target.govdata.rejectionReason = target.rejectionReason;
           }
           try {
             const appMap = JSON.parse(localStorage.getItem('mentix_approved_projects_map') || '{}') || {};
@@ -373,6 +422,46 @@ class RealtimeEngine {
               localStorage.setItem('mentix_approved_projects_map', JSON.stringify(appMap));
             }
           } catch (e) {}
+          try {
+            const unappMap = JSON.parse(localStorage.getItem('mentix_unapproved_projects_map') || '{}') || {};
+            unappMap[pid] = {
+              approvalStatus: status,
+              rejectedAt: target.rejectedAt,
+              rejectionReason: target.rejectionReason,
+              updatedAt: target.updatedAt || new Date().toISOString()
+            };
+            localStorage.setItem('mentix_unapproved_projects_map', JSON.stringify(unappMap));
+          } catch (e) {}
+          try {
+            const rawAct = localStorage.getItem('mentix_active_landing_project');
+            if (rawAct) {
+              const act = JSON.parse(rawAct);
+              if (act && String(act.id) === pid) {
+                act.approvalStatus = status;
+                act.isPublic = false;
+                act.rejectionReason = target.rejectionReason;
+                act.rejectedAt = target.rejectedAt;
+                localStorage.setItem('mentix_active_landing_project', JSON.stringify(act));
+              }
+            }
+          } catch (e) {}
+          syncLocalVaults(pid, false, data);
+
+          // Si un usuario que NO es Admin está viendo este proyecto en su Landing Page o Hub, sacarlo al listado de inmediato
+          const isAdminNow = window.ProjectsView && typeof window.ProjectsView.isAdminUser === 'function' && window.ProjectsView.isAdminUser();
+          if (!isAdminNow) {
+            if (window.ProjectsView && String(window.ProjectsView.selectedProjectId) === pid && window.ProjectsView.viewMode === 'landing') {
+              window.ProjectsView.closeLandingLightbox?.();
+              window.ProjectsView.viewMode = 'list';
+              if (typeof window.ProjectsView.showToast === 'function') {
+                window.ProjectsView.showToast('🔒 Este proyecto ha sido desautorizado por el Administrador.');
+              }
+            }
+            if (window.ProjectHub && String(window.ProjectHub.activeProjectId) === pid) {
+              const hubModal = document.getElementById('project-hub-modal');
+              if (hubModal) hubModal.remove();
+            }
+          }
         }
         try { if (typeof saveGlobalState === 'function') saveGlobalState(window.appState); } catch (e) {}
         if (window.appRouter) {
@@ -381,6 +470,8 @@ class RealtimeEngine {
             try { window.ProjectsView.render(); } catch (e) {}
           } else if (v === 'admin' && window.AdminView && typeof window.AdminView.renderActiveTab === 'function') {
             try { window.AdminView.renderActiveTab(); } catch (e) {}
+          } else if (v === 'home' && window.HomeView && typeof window.HomeView.render === 'function') {
+            try { window.HomeView.render(); } catch (e) {}
           }
         }
       }
@@ -393,16 +484,17 @@ class RealtimeEngine {
         if (window.appRouter && typeof window.appRouter.syncChallengesWithCloud === 'function') {
           window.appRouter.syncChallengesWithCloud(true);
         }
-      }, 1800);
+      }, 1500);
     }
   }
 
   publishProjectAuthSync(projectId, approvalStatus = 'approved', title = '', meta = {}) {
     if (!projectId) return;
+    const cleanId = String(projectId);
     const msg = {
       type: 'PROJECT_AUTH_CHANGED',
       senderId: this._tabId,
-      projectId: String(projectId),
+      projectId: cleanId,
       approvalStatus: String(approvalStatus || 'approved'),
       isPublic: String(approvalStatus || 'approved') === 'approved',
       title: String(title || '').slice(0, 80),
@@ -416,7 +508,10 @@ class RealtimeEngine {
     const payload = JSON.stringify(msg);
     [this.globalMqttClient, this.mqttClient].forEach(c => {
       if (c && c.connected) {
-        try { c.publish('mentix/global/projects_sync', payload, { qos: 0, retain: false }); } catch(e) {}
+        try {
+          c.publish('mentix/global/projects_sync', payload, { qos: 0, retain: false });
+          c.publish('mentix/global/project_auth/' + cleanId, payload, { qos: 0, retain: true });
+        } catch(e) {}
       }
     });
     this.broadcast(msg);

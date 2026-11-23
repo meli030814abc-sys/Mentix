@@ -2734,20 +2734,28 @@ window.ProjectsView = {
     }
 
     // Filtrar proyectos: Solo los proyectos debidamente autorizados por el Administrador son públicos.
-    // Los proyectos pendientes de autorización o en revisión solo son visibles para el Administrador (para validarlos) o para su respectivo autor.
+    // Si el Administrador desautoriza un proyecto, no lo ve nadie en ese momento (solo el Administrador).
     const isGuestUser = this.isUserGuest();
     const allUserProjects = rawProjects.filter(c => {
       const isApproved = c.approvalStatus === 'approved' && !c.rejectionReason;
-      // Si el proyecto fue autorizado por el Administrador, es visible para TODA la comunidad de Mentix sin excepción
+      // Si el proyecto fue autorizado por el Administrador, es visible para TODA la comunidad de Mentix al instante
       if (isApproved) return true;
 
-      const isAuthor = (window.appRouter && window.appRouter.isChallengeOwner(c)) ||
+      const isExplicitlyUnapproved = Boolean(c.rejectedAt || c.rejectionReason || c.govdata?.rejectionReason);
+      // Si fue desautorizado por el Administrador, nadie más puede verlo (únicamente el Administrador para volver a autorizarlo)
+      if (isExplicitlyUnapproved) {
+        return Boolean(isAdmin);
+      }
+
+      const isAuthor = !isGuestUser && (
+        (window.appRouter && window.appRouter.isChallengeOwner(c)) ||
         ((c.author || '').toLowerCase().trim() === (u?.name || '').toLowerCase().trim()) ||
-        (c.authorId && c.authorId === u?.id);
+        (c.authorId && c.authorId === u?.id)
+      );
       const isAcceptedMember = !isGuestUser && window.ProjectHub && typeof window.ProjectHub.canView === 'function' && window.ProjectHub.canView(c);
 
-      // Si no cuenta con autorización, solo el administrador, profesor, autor o miembro aceptado pueden verlo
-      if (isAdmin || isTeacherOrAdmin || isAuthor || isAcceptedMember) return true;
+      // Si está en proceso / borrador inicial aún no desautorizado, solo el administrador o su autor/miembro pueden verlo
+      if (isAdmin || isAuthor || isAcceptedMember) return true;
       return false;
     });
 
@@ -3707,8 +3715,7 @@ window.ProjectsView = {
       if (window.AdminView && typeof window.AdminView.rejectProject === 'function') {
         window.AdminView.rejectProject(projectId);
       } else {
-        const note = prompt('Ingresa el motivo de desautorización (el proyecto seguirá Completado pero no será visible para todos):', 'Oculto temporalmente para revisión antes de hacerlo público.');
-        if (note === null) return;
+        const note = 'Desautorizado por el Administrador (oculto al público).';
         const nowIso = new Date().toISOString();
         p.approvalStatus = 'pending';
         p.publicationStatus = 'completed';
@@ -3726,6 +3733,7 @@ window.ProjectsView = {
           p.govdata.status = 'completed';
           p.govdata.isPublic = false;
           p.govdata.rejectionReason = note;
+          p.govdata.updatedAt = nowIso;
         }
         try {
           const appMap = JSON.parse(localStorage.getItem('mentix_approved_projects_map') || '{}');
@@ -3733,8 +3741,20 @@ window.ProjectsView = {
             delete appMap[projectId];
             localStorage.setItem('mentix_approved_projects_map', JSON.stringify(appMap));
           }
+          const unappMap = JSON.parse(localStorage.getItem('mentix_unapproved_projects_map') || '{}');
+          unappMap[projectId] = { approvalStatus: 'pending', rejectedAt: nowIso, rejectionReason: note, updatedAt: nowIso };
+          localStorage.setItem('mentix_unapproved_projects_map', JSON.stringify(unappMap));
         } catch(e) {}
         if (typeof saveGlobalState === 'function') saveGlobalState(window.appState);
+        // Emitir por MQTT/BroadcastChannel de inmediato para ocultarlo en todas las pantallas al instante
+        if (window.realtimeEngine && typeof window.realtimeEngine.publishProjectAuthSync === 'function') {
+          window.realtimeEngine.publishProjectAuthSync(p.id, p.approvalStatus, p.title, {
+            isPublic: false,
+            rejectedAt: p.rejectedAt,
+            rejectionReason: p.rejectionReason,
+            updatedAt: p.updatedAt
+          });
+        }
         if (window.appRouter && typeof window.appRouter.pushChallengeToCloud === 'function') {
           Promise.resolve(window.appRouter.pushChallengeToCloud(p)).then(() => {
             if (window.realtimeEngine && typeof window.realtimeEngine.publishProjectAuthSync === 'function') {
@@ -3747,7 +3767,7 @@ window.ProjectsView = {
             }
           });
         }
-        if (this.showToast) this.showToast(`🔒 "${p.title}" desautorizado (sigue Completado, oculto al público).`, 'warning');
+        if (this.showToast) this.showToast(`🔒 "${p.title}" desautorizado (oculto para todos en este momento).`, 'warning');
       }
     } else {
       if (window.AdminView && typeof window.AdminView.approveProject === 'function') {
@@ -3775,15 +3795,30 @@ window.ProjectsView = {
           p.govdata.rejectionReason = '';
           p.govdata.authorizedAt = nowIso;
           p.govdata.authorizedBy = adminName;
+          p.govdata.updatedAt = nowIso;
         }
         try {
           const appMap = JSON.parse(localStorage.getItem('mentix_approved_projects_map') || '{}');
           appMap[projectId] = { approvalStatus: 'approved', authorizedAt: nowIso, authorizedBy: adminName, updatedAt: nowIso };
           localStorage.setItem('mentix_approved_projects_map', JSON.stringify(appMap));
+          const unappMap = JSON.parse(localStorage.getItem('mentix_unapproved_projects_map') || '{}');
+          if (unappMap && unappMap[projectId]) {
+            delete unappMap[projectId];
+            localStorage.setItem('mentix_unapproved_projects_map', JSON.stringify(unappMap));
+          }
         } catch(e) {}
         this.currentFilterTab = 'all';
         this.searchQuery = '';
         if (typeof saveGlobalState === 'function') saveGlobalState(window.appState);
+        // Emitir por MQTT/BroadcastChannel de inmediato para mostrarlo en todas las pantallas al instante
+        if (window.realtimeEngine && typeof window.realtimeEngine.publishProjectAuthSync === 'function') {
+          window.realtimeEngine.publishProjectAuthSync(p.id, p.approvalStatus, p.title, {
+            isPublic: true,
+            authorizedAt: p.authorizedAt,
+            authorizedBy: p.authorizedBy,
+            updatedAt: p.updatedAt
+          });
+        }
         if (window.appRouter && typeof window.appRouter.pushChallengeToCloud === 'function') {
           Promise.resolve(window.appRouter.pushChallengeToCloud(p)).then(() => {
             if (window.realtimeEngine && typeof window.realtimeEngine.publishProjectAuthSync === 'function') {
@@ -3796,7 +3831,7 @@ window.ProjectsView = {
             }
           });
         }
-        if (this.showToast) this.showToast(`✅ ¡Proyecto "${p.title}" autorizado y publicado con éxito!`, 'success');
+        if (this.showToast) this.showToast(`✅ ¡Proyecto "${p.title}" autorizado y visible para todos en este momento!`, 'success');
       }
     }
 

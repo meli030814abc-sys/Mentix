@@ -2712,6 +2712,29 @@
       selectLandingBanner(inp.value.trim());
     }
 
+    function isCurrentUserAdminInStandalone() {
+      try {
+        if (localStorage.getItem('mentix_admin_override') === 'true') return true;
+        const uRaw = localStorage.getItem('te_reto_current_user') || localStorage.getItem('mentix_current_user');
+        if (uRaw) {
+          const u = JSON.parse(uRaw);
+          const role = String(u?.role || '').toLowerCase();
+          const name = String(u?.name || u?.username || '').toLowerCase();
+          if (role === 'admin' || role === 'administrador' || name.includes('melisa') || name.includes('admin')) return true;
+        }
+      } catch (e) {}
+      return false;
+    }
+
+    function handleStandaloneProjectAuthChange(data) {
+      if (!data || !data.projectId || !currentActiveProject) return;
+      if (String(currentActiveProject.id) !== String(data.projectId)) return;
+      const status = String(data.approvalStatus || '');
+      if (status !== 'approved' && !isCurrentUserAdminInStandalone()) {
+        window.location.href = 'index.html#projects';
+      }
+    }
+
     // Sincronización en vivo entre pestañas y ventanas locales
     window.addEventListener('storage', (ev) => {
       if (ev.key === 'mentix_project_banner_sync' && ev.newValue) {
@@ -2722,6 +2745,11 @@
               updateLandingHeroBackground(sync.bannerUrl);
             }
           }
+        } catch (e) {}
+      } else if (ev.key === 'mentix_projects_auth_sync_ping' && ev.newValue) {
+        try {
+          const data = JSON.parse(ev.newValue);
+          handleStandaloneProjectAuthChange(data);
         } catch (e) {}
       }
     });
@@ -2735,6 +2763,8 @@
           if (!msg.projId || !currentActiveProject || String(currentActiveProject.id) === String(msg.projId)) {
             updateLandingHeroBackground(msg.bannerUrl);
           }
+        } else if (msg.type === 'PROJECT_AUTH_CHANGED') {
+          handleStandaloneProjectAuthChange(msg);
         }
       };
     } catch (e) {}
@@ -2750,9 +2780,12 @@
         });
         mqttClient.on('connect', () => {
           mqttClient.subscribe('mentix/global/banners', { qos: 0 });
+          mqttClient.subscribe('mentix/global/banners_v2', { qos: 0 });
+          mqttClient.subscribe('mentix/global/projects_sync', { qos: 0 });
+          mqttClient.subscribe('mentix/global/project_auth/+', { qos: 0 });
         });
         mqttClient.on('message', (topic, payload) => {
-          if (topic === 'mentix/global/banners') {
+          if (topic === 'mentix/global/banners' || topic === 'mentix/global/banners_v2') {
             try {
               const data = JSON.parse(payload.toString());
               if (data && data.bannerUrl) {
@@ -2760,6 +2793,11 @@
                   updateLandingHeroBackground(data.bannerUrl);
                 }
               }
+            } catch (err) {}
+          } else if (topic === 'mentix/global/projects_sync' || topic.startsWith('mentix/global/project_auth/')) {
+            try {
+              const data = JSON.parse(payload.toString());
+              handleStandaloneProjectAuthChange(data);
             } catch (err) {}
           }
         });

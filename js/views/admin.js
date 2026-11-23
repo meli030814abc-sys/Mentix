@@ -3807,11 +3807,17 @@ window.AdminView = {
       p.govdata.updatedAt = nowIso;
     }
 
-    // Registrar autorización en mapa persistente y quitar de lista de eliminados si estuvo allí
+    // Registrar autorización en mapa persistente y quitar de listas de desautorizados/eliminados si estuvo allí
     try {
       const appMap = JSON.parse(localStorage.getItem('mentix_approved_projects_map') || '{}');
       appMap[projectId] = { approvalStatus: 'approved', authorizedAt: nowIso, authorizedBy: adminName, updatedAt: nowIso };
       localStorage.setItem('mentix_approved_projects_map', JSON.stringify(appMap));
+
+      const unappMap = JSON.parse(localStorage.getItem('mentix_unapproved_projects_map') || '{}');
+      if (unappMap && unappMap[projectId]) {
+        delete unappMap[projectId];
+        localStorage.setItem('mentix_unapproved_projects_map', JSON.stringify(unappMap));
+      }
 
       const delIds = JSON.parse(localStorage.getItem('te_reto_deleted_ids') || '[]');
       if (Array.isArray(delIds) && delIds.includes(projectId)) {
@@ -3887,17 +3893,15 @@ window.AdminView = {
           });
         }
       };
+      // Emitir inmediatamente por MQTT / BroadcastChannel / localStorage para que todos los usuarios lo vean/oculten al instante (<50ms)
+      notifyGlobalSync();
+
       if (window.appRouter && typeof window.appRouter.pushChallengeToCloud === 'function') {
         Promise.resolve(window.appRouter.pushChallengeToCloud(p)).then(() => {
-          if (p.approvalStatus === 'approved' && window.appRouter.lastCloudPersisted === false) {
-            alert('⚠️ El proyecto quedó autorizado SOLO en este navegador.\n\nEl servidor no pudo guardarlo en la base de datos compartida (falta un GITHUB_TOKEN válido en Vercel), por eso estudiantes y docentes aún no lo ven.');
-          } else {
-            notifyGlobalSync();
-          }
+          notifyGlobalSync();
         });
       } else if (window.supabaseService && typeof window.supabaseService.saveChallengeToSupabase === 'function') {
         window.supabaseService.saveChallengeToSupabase(p);
-        notifyGlobalSync();
       }
     } catch (e) {
       console.warn('No se pudo sincronizar el proyecto con la base de datos:', e);
@@ -3905,7 +3909,7 @@ window.AdminView = {
   },
 
   /**
-   * Cancela o deniega la autorización de un proyecto
+   * Cancela o deniega la autorización de un proyecto de forma inmediata
    */
   rejectProject(projectId, reason = '') {
     if (!this.isAdminUser()) {
@@ -3919,8 +3923,10 @@ window.AdminView = {
       return;
     }
 
-    const note = prompt('Ingresa el motivo de cancelación o corrección que debe realizar el autor:', reason || 'Faltan detalles o el contenido requiere ajustes antes de publicarse.');
-    if (note === null) return;
+    const note = (typeof reason === 'string' && reason.trim())
+      ? reason.trim()
+      : 'Desautorizado por el Administrador (oculto al público).';
+    const nowIso = new Date().toISOString();
 
     // Mantener el proyecto como COMPLETADO (solo oculto/pendiente de autorización, nunca volverlo "En Proceso")
     const wasDraft = (p.status === 'in_progress' || p.publicationStatus === 'draft') && p.approvalStatus !== 'approved';
@@ -3929,10 +3935,11 @@ window.AdminView = {
     p.status = wasDraft ? 'in_progress' : 'completed';
     p.stage = wasDraft ? 'in_progress' : 'completed';
     p.isPublic = false;
+    p.visibility = 'private';
     p.accessMode = 'private';
     p.rejectionReason = note;
-    p.rejectedAt = new Date().toISOString();
-    p.updatedAt = new Date().toISOString();
+    p.rejectedAt = nowIso;
+    p.updatedAt = nowIso;
 
     if (p.govdata && typeof p.govdata === 'object') {
       p.govdata.approvalStatus = 'pending';
@@ -3940,6 +3947,7 @@ window.AdminView = {
       p.govdata.status = wasDraft ? 'in_progress' : 'completed';
       p.govdata.isPublic = false;
       p.govdata.rejectionReason = note;
+      p.govdata.updatedAt = nowIso;
     }
 
     try {
@@ -3948,6 +3956,9 @@ window.AdminView = {
         delete appMap[projectId];
         localStorage.setItem('mentix_approved_projects_map', JSON.stringify(appMap));
       }
+      const unappMap = JSON.parse(localStorage.getItem('mentix_unapproved_projects_map') || '{}');
+      unappMap[projectId] = { approvalStatus: 'pending', rejectedAt: nowIso, rejectionReason: note, updatedAt: nowIso };
+      localStorage.setItem('mentix_unapproved_projects_map', JSON.stringify(unappMap));
     } catch(e) {}
 
     if (this.projectFilter && ['approved', 'completed', 'public'].includes(this.projectFilter.status)) {
