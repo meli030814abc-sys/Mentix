@@ -1395,7 +1395,7 @@
     "isPublic": true,
     "startDate": "2026-11-23",
     "endDate": "",
-    "currentStep": 3,
+    "currentStep": 4,
     "completedSteps": [
       1,
       2,
@@ -1660,7 +1660,40 @@
       "displayOrder": 1,
       "featuredVideoPublic": true
     },
-    "projectRoadmap": [],
+    "projectRoadmap": [
+      {
+        "title": "Planeación",
+        "description": "Conformación del equipo y definición de objetivos.",
+        "progress": 40,
+        "status": "active",
+        "icon": "clipboard",
+        "emoji": "📋"
+      },
+      {
+        "title": "Investigación",
+        "description": "Recopilación de datos e información relevante.",
+        "status": "active",
+        "progress": 45,
+        "emoji": "🎨",
+        "icon": "clipboard"
+      },
+      {
+        "title": "Desarrollo",
+        "description": "Construcción de la solución y prototipos.",
+        "progress": 0,
+        "status": "pending",
+        "icon": "code",
+        "emoji": "💻"
+      },
+      {
+        "title": "Publicación",
+        "description": "Despliegue en la Landing Page y comunicación.",
+        "progress": 0,
+        "status": "pending",
+        "icon": "rocket",
+        "emoji": "🚀"
+      }
+    ],
     "designConfig": {
       "themeId": "cosmos",
       "fontFamily": "Montserrat",
@@ -1723,6 +1756,40 @@
       "thumbnailImage": "https://www.google.com/imgres?q=imagen&imgurl=https%3A%2F%2Fstatic.vecteezy.com%2Fsystem%2Fresources%2Fthumbnails%2F060%2F843%2F811%2Fsmall%2Fclose-up-of-raindrops-on-leaves-hd-background-luxury-hd-wallpaper-image-trendy-background-illustration-free-photo.jpg&imgrefurl=https%3A%2F%2Fes.vecteezy.com%2Ffotos-gratis%2Fimagen&docid=FjgWdyaU7OHLOM&tbnid=XfSoVrwZgQjJsM&vet=12ahUKEwiv0c2nl52YAxUomYQIHTZzLVUQnPAOegQINxAA..i&w=625&h=350&hcb=2&ved=2ahUKEwiv0c2nl52YAxUomYQIHTZzLVUQnPAOegQINxAA",
       "useDefaultImage": true,
       "externalLinks": [],
+      "projectRoadmap": [
+        {
+          "title": "Planeación",
+          "description": "Conformación del equipo y definición de objetivos.",
+          "progress": 40,
+          "status": "active",
+          "icon": "clipboard",
+          "emoji": "📋"
+        },
+        {
+          "title": "Investigación",
+          "description": "Recopilación de datos e información relevante.",
+          "status": "active",
+          "progress": 45,
+          "emoji": "🎨",
+          "icon": "clipboard"
+        },
+        {
+          "title": "Desarrollo",
+          "description": "Construcción de la solución y prototipos.",
+          "progress": 0,
+          "status": "pending",
+          "icon": "code",
+          "emoji": "💻"
+        },
+        {
+          "title": "Publicación",
+          "description": "Despliegue en la Landing Page y comunicación.",
+          "progress": 0,
+          "status": "pending",
+          "icon": "rocket",
+          "emoji": "🚀"
+        }
+      ],
       "landingConfig": {
         "publicName": "🌊 ¡El 95 % del océano sigue siendo un misterio! 😱 ¿Qué se esconde en las profundidades?",
         "slug": "nuevo-proyecto",
@@ -1757,7 +1824,7 @@
         15,
         16
       ],
-      "currentStep": 3,
+      "currentStep": 4,
       "author": "Melisa",
       "authorId": "user_1792184134006",
       "ownerId": "user_1792184134006",
@@ -1782,7 +1849,7 @@
         "authorsRole": "Líder del Proyecto"
       },
       "createdAt": "2026-11-23T03:09:16.957Z",
-      "updatedAt": "2026-11-23T04:10:05.497Z",
+      "updatedAt": "2026-11-23T04:10:13.992Z",
       "progress": 100,
       "calculatedProgress": 100
     },
@@ -1796,7 +1863,7 @@
     "authorAvatar": "🐯",
     "authorRole": "admin",
     "createdAt": "2026-11-23T03:09:16.957Z",
-    "updatedAt": "2026-11-23T04:10:05.730Z",
+    "updatedAt": "2026-11-23T04:10:14.161Z",
     "image": "https://www.google.com/imgres?q=imagen&imgurl=https%3A%2F%2Fstatic.vecteezy.com%2Fsystem%2Fresources%2Fthumbnails%2F060%2F843%2F811%2Fsmall%2Fclose-up-of-raindrops-on-leaves-hd-background-luxury-hd-wallpaper-image-trendy-background-illustration-free-photo.jpg&imgrefurl=https%3A%2F%2Fes.vecteezy.com%2Ffotos-gratis%2Fimagen&docid=FjgWdyaU7OHLOM&tbnid=XfSoVrwZgQjJsM&vet=12ahUKEwiv0c2nl52YAxUomYQIHTZzLVUQnPAOegQINxAA..i&w=625&h=350&hcb=2&ved=2ahUKEwiv0c2nl52YAxUomYQIHTZzLVUQnPAOegQINxAA",
     "rejectionReason": "",
     "tag": "✔ Completado",
