@@ -92,5 +92,20 @@
     "isBlocked": false,
     "lastLoginAt": "2026-11-23T16:48:45.240Z",
     "createdAt": "2026-11-23T16:48:45.240Z"
+  },
+  {
+    "id": "user_3",
+    "name": "Laura Administradora",
+    "username": "admin_laura",
+    "email": "laura@te-reto.app",
+    "avatar": "🛡️",
+    "role": "admin",
+    "xp": 14200,
+    "level": 6,
+    "levelName": "Leyenda",
+    "institution": "Plataforma Global MENTIX",
+    "isBlocked": false,
+    "lastLoginAt": "2026-11-23T16:48:46.816Z",
+    "createdAt": "2026-11-23T16:48:46.816Z"
   }
 ]
