@@ -17,7 +17,7 @@
     "image": "nosequeestudiar.net/site/assets/files/217/medicina-mano-medica.jpg",
     "banner": "assets/projects_ui/disney_hero_banner.png",
     "createdAt": "2026-10-31T21:52:51.691Z",
-    "updatedAt": "2026-11-23T16:13:22.344Z",
+    "updatedAt": "2026-11-23T16:48:45.136Z",
     "govdata": {
       "id": "proj_pres_1791658288964",
       "title": "Personajes de Disney",
@@ -56,8 +56,8 @@
         "isPublic": true,
         "verified": true
       },
-      "mainImage": "assets/projects_ui/disney_hero_banner.png",
-      "thumbnailImage": "assets/projects_ui/disney_hero_banner.png",
+      "mainImage": "nosequeestudiar.net/site/assets/files/217/medicina-mano-medica.jpg",
+      "thumbnailImage": "nosequeestudiar.net/site/assets/files/217/medicina-mano-medica.jpg",
       "useDefaultImage": true,
       "externalLinks": [],
       "landingConfig": {
@@ -118,7 +118,7 @@
         "collaborators": ""
       },
       "createdAt": "2026-10-31T21:52:51.691Z",
-      "updatedAt": "2026-11-23T16:04:52.599Z",
+      "updatedAt": "2026-11-03T03:41:05.423Z",
       "progress": 95,
       "calculatedProgress": 95,
       "description": "Describe una cantidad enorme de caracteres o personajes",
@@ -253,7 +253,7 @@
       "tagClass": "badge-review",
       "stage": "completed",
       "accessMode": "public",
-      "authorizedAt": "2026-11-23T16:04:47.855Z",
+      "authorizedAt": "2026-11-03T03:41:05.423Z",
       "authorizedBy": "Melisa",
       "rejectionReason": "Desautorizado por el Administrador (oculto al público).",
       "rejectedAt": "2026-11-02T19:17:59.220Z",
@@ -289,9 +289,7 @@
         "Disney"
       ],
       "displayOrder": 1,
-      "heroBanner": "assets/projects_ui/disney_hero_banner.png",
-      "_clearedMainImage": false,
-      "_clearedThumbImage": false
+      "heroBanner": "assets/projects_ui/disney_hero_banner.png"
     },
     "submittedForApproval": true,
     "rejectionReason": "Desautorizado por el Administrador (oculto al público).",
@@ -688,8 +686,7 @@
       "ctaText": "Unirse / Colaborar",
       "ctaUrl": "#plp-sec-contacto",
       "displayOrder": 1,
-      "featuredVideoPublic": true,
-      "heroBanner": "assets/projects_ui/disney_hero_banner.png"
+      "featuredVideoPublic": true
     },
     "completedSteps": [
       1,
@@ -862,7 +859,7 @@
         }
       ],
       "projectId": "proj_pres_1791658288964",
-      "updatedAt": 1795448718083
+      "updatedAt": 1795405200685
     },
     "heroBanner": "assets/projects_ui/disney_hero_banner.png",
     "ratings": [
@@ -955,7 +952,7 @@
     "ownerUsername": "Mentilona",
     "joinCode": "245801",
     "accessCode": "245801",
-    "authorizedAt": "2026-11-23T16:04:47.855Z",
+    "authorizedAt": "2026-11-03T03:41:05.423Z",
     "authorizedBy": "Melisa",
     "_globalHeroBannerStyle": {
       "fit": "cover",
