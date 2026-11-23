@@ -10,13 +10,13 @@
       "email": "gatitaxd6f79@gmail.com",
       "role": "admin",
       "joinedAt": "2026-11-23T03:09:15.937Z",
-      "updatedAt": "2026-11-23T03:45:36.788Z",
+      "updatedAt": "2026-11-23T03:45:42.893Z",
       "projectId": "govdata_code_mentilona_804263",
       "projectTitle": "🌊 ¡El 95 % del océano sigue siendo un misterio! 😱 ¿Qué se esconde en las profundidades?",
       "projectDescription": "Bajo la superficie del mar existe un universo extraordinario lleno de criaturas sorprendentes, ecosistemas desconocidos y fenómenos que la ciencia continúa investigando.\n\n🐙 Animales capaces de producir su propia luz.\n\n🌋 Volcanes submarinos y fuentes hidrotermales.\n\n🦈 Criaturas adaptadas a presiones extremas.\n\n🔎 Nuevas especies que siguen siendo descubiertas.\n\nEn este contenido exploraremos algunos de los secretos más fascinantes del océano y descubriremos por qué su exploración representa uno de los mayores desafíos científicos de nuestro tiempo.\n\n💬 Y tú, ¿qué crees que todavía se esconde en las profundidades del océano?\n\n👇 ¡Déjanos tu opinión en los comentarios y comparte este contenido con alguien que ame los misterios!\n\n#MisteriosDelOceano #Ciencia #Curiosidades #Descubrimientos #Naturaleza #Tecnologia #SabiasQue #Exploracion #Misterios #ContenidoEducativo",
-      "currentStep": 5,
-      "completedStepsCount": 4,
-      "progress": 60,
+      "currentStep": 6,
+      "completedStepsCount": 5,
+      "progress": 68,
       "status": "in_progress",
       "approvalStatus": "pending",
       "publicationStatus": "draft",
@@ -36,18 +36,19 @@
         "status": "in_progress",
         "publicationStatus": "draft",
         "approvalStatus": "pending",
-        "currentStep": 5,
+        "currentStep": 6,
         "completedSteps": [
           1,
           2,
           3,
-          4
+          4,
+          5
         ],
-        "progress": 60,
+        "progress": 68,
         "banner": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
-        "problemStatement": "",
-        "mainObjective": "",
-        "benefits": "",
+        "problemStatement": "hgj",
+        "mainObjective": "khgk",
+        "benefits": "hki",
         "targetAudience": "Personas",
         "slidesCount": 0,
         "resourcesCount": 0,
@@ -78,7 +79,7 @@
           "commercialPitch": "",
           "faqs": []
         },
-        "updatedAt": "2026-11-23T03:45:36.788Z"
+        "updatedAt": "2026-11-23T03:45:42.893Z"
       }
     }
   ]
