@@ -1166,6 +1166,10 @@ function loadInitialState() {
   }
 
   // 2. Recuperar SIEMPRE todos los proyectos de las bóvedas de cada persona
+  let initApprovedMap = {};
+  let initUnapprovedMap = {};
+  try { initApprovedMap = JSON.parse(localStorage.getItem('mentix_approved_projects_map') || '{}') || {}; } catch(e) {}
+  try { initUnapprovedMap = JSON.parse(localStorage.getItem('mentix_unapproved_projects_map') || '{}') || {}; } catch(e) {}
   const pickLongerArr = (...arrs) => {
     let best = [];
     for (const a of arrs) {
@@ -1184,9 +1188,22 @@ function loadInitialState() {
             userProjList.forEach(up => {
               if (up && up.id) {
                 const exIdx = challenges.findIndex(c => c && c.id === up.id);
+                const unappEnt = initUnapprovedMap[up.id];
+                const appEnt = initApprovedMap[up.id];
+                const unappTs = unappEnt ? (new Date(unappEnt.updatedAt || unappEnt.rejectedAt || 0).getTime() || 0) : 0;
+                const appTs = appEnt ? (new Date(appEnt.updatedAt || appEnt.authorizedAt || 0).getTime() || 0) : 0;
                 if (exIdx >= 0) {
                   const prev = challenges[exIdx];
-                  const keepApproved = prev.approvalStatus === 'approved' || up.approvalStatus === 'approved';
+                  const isExplicitUnapproved = Boolean(
+                    (unappEnt && unappTs >= appTs) ||
+                    (prev.approvalStatus !== 'approved' && (prev.rejectedAt || prev.rejectionReason)) ||
+                    (up.approvalStatus !== 'approved' && (up.rejectedAt || up.rejectionReason))
+                  );
+                  const keepApproved = !isExplicitUnapproved && (
+                    Boolean(appEnt && appTs > unappTs) ||
+                    (prev.approvalStatus === 'approved' && !prev.rejectionReason) ||
+                    (up.approvalStatus === 'approved' && !up.rejectionReason)
+                  );
                   const isGenericTitle = (t) => !t || /^nuevo proyecto(\s+govdata)?$|^proyecto govdata$/i.test(String(t).trim());
                   const bestTitle = (!isGenericTitle(prev.title) && isGenericTitle(up.title))
                     ? prev.title
@@ -1198,23 +1215,34 @@ function loadInitialState() {
                     ...merged,
                     title: bestTitle || merged.title,
                     slides: pickLongerArr(up.slides, prev.slides, up.govdata?.slides, prev.govdata?.slides, merged.slides),
+                    presentations: pickLongerArr(up.presentations, prev.presentations, up.govdata?.presentations, prev.govdata?.presentations, merged.presentations),
                     resources: pickLongerArr(up.resources, prev.resources, up.govdata?.resources, prev.govdata?.resources, merged.resources),
                     externalLinks: pickLongerArr(up.externalLinks, prev.externalLinks, up.govdata?.externalLinks, prev.govdata?.externalLinks, merged.externalLinks),
                     visualAssets: pickLongerArr(up.visualAssets, prev.visualAssets, up.govdata?.visualAssets, prev.govdata?.visualAssets, merged.visualAssets),
                     completedSteps: pickLongerArr(up.completedSteps, prev.completedSteps, up.govdata?.completedSteps, prev.govdata?.completedSteps, merged.completedSteps),
                     videoConfig: (up.videoConfig?.url ? up.videoConfig : (prev.videoConfig?.url ? prev.videoConfig : (merged.videoConfig || up.videoConfig || prev.videoConfig || {}))),
                     videoUrl: up.videoUrl || up.videoConfig?.url || prev.videoUrl || prev.videoConfig?.url || merged.videoUrl || '',
-                    approvalStatus: keepApproved ? 'approved' : (up.approvalStatus || prev.approvalStatus),
-                    publicationStatus: keepApproved ? 'published' : (up.publicationStatus || prev.publicationStatus),
-                    status: keepApproved ? 'completed' : (up.status || prev.status),
-                    isPublic: keepApproved ? true : (up.isPublic ?? prev.isPublic),
-                    accessMode: keepApproved ? 'public' : (up.accessMode || prev.accessMode),
-                    visibility: keepApproved ? 'public' : (up.visibility || prev.visibility),
+                    approvalStatus: keepApproved ? 'approved' : (unappEnt?.approvalStatus || (prev.approvalStatus !== 'approved' ? prev.approvalStatus : up.approvalStatus) || 'pending'),
+                    publicationStatus: keepApproved ? 'published' : (prev.publicationStatus === 'published' ? 'completed' : (prev.publicationStatus || up.publicationStatus || 'completed')),
+                    status: keepApproved ? 'completed' : (prev.status || up.status || 'completed'),
+                    isPublic: keepApproved ? true : false,
+                    accessMode: keepApproved ? 'public' : 'private',
+                    visibility: keepApproved ? 'public' : 'private',
                     authorizedAt: prev.authorizedAt || up.authorizedAt,
                     authorizedBy: prev.authorizedBy || up.authorizedBy,
-                    rejectionReason: keepApproved ? '' : (up.rejectionReason || prev.rejectionReason || '')
+                    rejectedAt: keepApproved ? '' : (unappEnt?.rejectedAt || prev.rejectedAt || up.rejectedAt || ''),
+                    rejectionReason: keepApproved ? '' : (unappEnt?.rejectionReason || prev.rejectionReason || up.rejectionReason || '')
                   };
                 } else {
+                  if (unappEnt && unappTs >= appTs) {
+                    up.approvalStatus = unappEnt.approvalStatus || 'pending';
+                    up.publicationStatus = 'completed';
+                    up.isPublic = false;
+                    up.accessMode = 'private';
+                    up.visibility = 'private';
+                    up.rejectionReason = unappEnt.rejectionReason || 'Desautorizado por el Administrador.';
+                    up.rejectedAt = unappEnt.rejectedAt || new Date().toISOString();
+                  }
                   challenges.unshift(up);
                 }
               }
@@ -1283,23 +1311,52 @@ function loadInitialState() {
   try {
     approvedMap = JSON.parse(localStorage.getItem('mentix_approved_projects_map') || '{}') || {};
   } catch(e) {}
+  let unapprovedMap = {};
+  try {
+    unapprovedMap = JSON.parse(localStorage.getItem('mentix_unapproved_projects_map') || '{}') || {};
+  } catch(e) {}
 
   challenges.forEach(c => {
     if (!c || !c.id) return;
     const isProject = c.projectType === 'presentation' || c.projectType === 'video' || c.projectType === 'document' || c.projectType === 'url' || c.isGovDataProject || c.project_type || c.is_gov_data_project;
     if (isProject) {
-      if (approvedMap[c.id]) {
+      const unapp = unapprovedMap[c.id];
+      const app = approvedMap[c.id];
+      const unappTs = unapp ? (new Date(unapp.updatedAt || unapp.rejectedAt || 0).getTime() || 0) : 0;
+      const appTs = app ? (new Date(app.updatedAt || app.authorizedAt || 0).getTime() || 0) : 0;
+      if (unapp && unappTs >= appTs) {
+        c.approvalStatus = unapp.approvalStatus || 'pending';
+        c.publicationStatus = 'completed';
+        c.isPublic = false;
+        c.accessMode = 'private';
+        c.visibility = 'private';
+        c.rejectionReason = unapp.rejectionReason || 'Desautorizado por el Administrador.';
+        c.rejectedAt = unapp.rejectedAt || new Date().toISOString();
+        if (c.govdata && typeof c.govdata === 'object') {
+          c.govdata.approvalStatus = c.approvalStatus;
+          c.govdata.publicationStatus = 'completed';
+          c.govdata.isPublic = false;
+          c.govdata.rejectionReason = c.rejectionReason;
+        }
+      } else if (app && appTs > unappTs) {
         c.approvalStatus = 'approved';
         c.publicationStatus = 'published';
         c.status = 'completed';
         c.stage = 'completed';
         c.isPublic = true;
         c.accessMode = 'public';
-        c.authorizedAt = approvedMap[c.id].authorizedAt || c.authorizedAt || new Date().toISOString();
-        c.authorizedBy = approvedMap[c.id].authorizedBy || c.authorizedBy || 'Administrador Mentix';
+        c.authorizedAt = app.authorizedAt || c.authorizedAt || new Date().toISOString();
+        c.authorizedBy = app.authorizedBy || c.authorizedBy || 'Administrador Mentix';
         c.rejectionReason = '';
+        if (c.govdata && typeof c.govdata === 'object') {
+          c.govdata.approvalStatus = 'approved';
+          c.govdata.publicationStatus = 'published';
+          c.govdata.status = 'completed';
+          c.govdata.isPublic = true;
+          c.govdata.rejectionReason = '';
+        }
       }
-      if (c.approvalStatus === 'approved') {
+      if (c.approvalStatus === 'approved' && !c.rejectionReason) {
         c.rejectionReason = '';
         c.publicationStatus = 'published';
         c.status = 'completed';
@@ -1311,9 +1368,9 @@ function loadInitialState() {
         c.tagClass = 'badge-completed';
       } else {
         c.approvalStatus = c.approvalStatus === 'rejected' ? 'rejected' : 'pending';
-        c.publicationStatus = c.approvalStatus === 'rejected' ? 'draft' : 'pending_approval';
+        c.publicationStatus = c.approvalStatus === 'rejected' ? 'draft' : (c.status === 'completed' ? 'completed' : 'pending_approval');
         c.isPublic = false;
-        c.status = (c.status === 'in_progress' && c.publicationStatus === 'draft') ? 'in_progress' : 'review';
+        c.status = (c.status === 'in_progress' && c.publicationStatus === 'draft') ? 'in_progress' : (c.status === 'completed' ? 'completed' : 'review');
         c.tag = '⏳ Pendiente de Autorización';
         c.tagClass = 'badge-review';
       }

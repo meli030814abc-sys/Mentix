@@ -2176,10 +2176,12 @@ class AppRouter {
           const unappTs = unappEntry ? (new Date(unappEntry.updatedAt || unappEntry.rejectedAt || 0).getTime() || 0) : 0;
           const appTs = appEntry ? (new Date(appEntry.updatedAt || appEntry.authorizedAt || 0).getTime() || 0) : 0;
           const cTs = new Date(c.updatedAt || c.rejectedAt || c.authorizedAt || 0).getTime() || 0;
+          const cloudAuthTs = new Date(c.authorizedAt || 0).getTime() || 0;
+          const cloudReauthorizedAfterLocalUnapp = Boolean(c.approvalStatus === 'approved' && !c.rejectionReason && cloudAuthTs > 0 && unappTs > 0 && cloudAuthTs > unappTs + 1000);
 
           if (!map.has(c.id)) {
             if ((Array.isArray(c.questions) && c.questions.length > 0) || isProjectItem) {
-              if (isProjectItem && unappEntry && unappTs >= cTs && unappTs >= appTs) {
+              if (isProjectItem && unappEntry && unappTs >= appTs && !cloudReauthorizedAfterLocalUnapp) {
                 c.approvalStatus = unappEntry.approvalStatus || 'pending';
                 c.publicationStatus = 'completed';
                 c.isPublic = false;
@@ -2222,8 +2224,8 @@ class AppRouter {
               const cloudTs = cTs;
               const localTs = new Date(existing.updatedAt || existing.rejectedAt || existing.authorizedAt || 0).getTime() || 0;
               const localExplicitlyUnapproved = isProjectItem && (
-                (unappEntry && unappTs >= cloudTs && unappTs >= appTs) ||
-                (existing.approvalStatus !== 'approved' && (Boolean(existing.rejectedAt) || Boolean(existing.rejectionReason)) && localTs > cloudTs)
+                (unappEntry && unappTs >= appTs && !cloudReauthorizedAfterLocalUnapp) ||
+                (existing.approvalStatus !== 'approved' && (Boolean(existing.rejectedAt) || Boolean(existing.rejectionReason)) && (localTs >= cloudTs || localTs >= cloudAuthTs))
               );
               const cloudExplicitlyUnapproved = isProjectItem && c.approvalStatus !== 'approved' && (Boolean(c.rejectedAt) || Boolean(c.rejectionReason)) && cloudTs >= localTs && cloudTs >= appTs;
               const localApproved = !localExplicitlyUnapproved && (Boolean(appEntry && appTs >= unappTs) || (existing.approvalStatus === 'approved' && !existing.rejectionReason));
@@ -2353,10 +2355,10 @@ class AppRouter {
         window.appState.challenges = merged;
         saveGlobalState(window.appState);
 
-        // Si en este navegador hay proyectos autorizados por Admin que aún no figuran como 'approved' en la nube, subirlos automáticamente
+        // Si en este navegador hay proyectos autorizados o desautorizados por Admin que aún no coinciden en la nube, subirlos automáticamente
         const cloudLookup = new Map((cloudChallenges || []).map(c => [String(c?.id || ''), c]));
         const unsyncedApproved = merged.filter(p => {
-          if (!p || !p.id || p.projectType === 'quiz' || p.approvalStatus !== 'approved' || p.rejectionReason) return false;
+          if (!p || !p.id || p.projectType === 'quiz' || p.approvalStatus !== 'approved' || p.rejectionReason || unappMap[p.id]) return false;
           const inCloud = cloudLookup.get(String(p.id));
           return !inCloud || inCloud.approvalStatus !== 'approved' || inCloud.isPublic !== true;
         });
@@ -2377,6 +2379,34 @@ class AppRouter {
               }
             } catch (e) {} finally {
               this._pushingUnsyncedApproved = false;
+            }
+          })();
+        }
+
+        const unsyncedUnapproved = merged.filter(p => {
+          if (!p || !p.id || p.projectType === 'quiz') return false;
+          const isLocallyUnapproved = Boolean(unappMap[p.id]) || (p.approvalStatus !== 'approved' && (Boolean(p.rejectedAt) || Boolean(p.rejectionReason)));
+          if (!isLocallyUnapproved) return false;
+          const inCloud = cloudLookup.get(String(p.id));
+          return Boolean(inCloud && (inCloud.approvalStatus === 'approved' || inCloud.isPublic === true));
+        });
+        if (unsyncedUnapproved.length > 0 && !this._pushingUnsyncedUnapproved) {
+          this._pushingUnsyncedUnapproved = true;
+          (async () => {
+            try {
+              for (const up of unsyncedUnapproved) {
+                if (window.realtimeEngine && typeof window.realtimeEngine.publishProjectAuthSync === 'function') {
+                  window.realtimeEngine.publishProjectAuthSync(up.id, up.approvalStatus || 'pending', up.title, {
+                    isPublic: false,
+                    rejectedAt: up.rejectedAt,
+                    rejectionReason: up.rejectionReason,
+                    updatedAt: up.updatedAt
+                  });
+                }
+                await this.pushChallengeToCloud(up);
+              }
+            } catch (e) {} finally {
+              this._pushingUnsyncedUnapproved = false;
             }
           })();
         }

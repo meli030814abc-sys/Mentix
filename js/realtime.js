@@ -250,6 +250,16 @@ class RealtimeEngine {
         client.subscribe('mentix/global/project_deleted', { qos: 0 });
         client.subscribe('mentix/global/projects_sync', { qos: 0 });
         client.subscribe('mentix/global/project_auth/+', { qos: 0 });
+        if (Array.isArray(this._pendingGlobalAuthQueue) && this._pendingGlobalAuthQueue.length > 0) {
+          const toFlush = [...this._pendingGlobalAuthQueue];
+          this._pendingGlobalAuthQueue = [];
+          toFlush.forEach(item => {
+            try {
+              client.publish('mentix/global/projects_sync', item.payload, { qos: 0, retain: false });
+              client.publish('mentix/global/project_auth/' + item.cleanId, item.payload, { qos: 0, retain: true });
+            } catch (e) {}
+          });
+        }
       });
 
       client.on('message', (topic, messageBuffer) => {
@@ -316,6 +326,39 @@ class RealtimeEngine {
 
     const pid = data.projectId ? String(data.projectId) : '';
     const status = String(data.approvalStatus || '');
+    const msgTs = Number(data.timestamp) || new Date(data.updatedAt || data.rejectedAt || data.authorizedAt || 0).getTime() || 0;
+
+    // Verificar contra el estado local más reciente para que un mensaje MQTT retenido antiguo nunca revierta una desautorización o autorización más reciente
+    if (pid) {
+      try {
+        const unappMapCheck = JSON.parse(localStorage.getItem('mentix_unapproved_projects_map') || '{}') || {};
+        const appMapCheck = JSON.parse(localStorage.getItem('mentix_approved_projects_map') || '{}') || {};
+        const localUnapp = unappMapCheck[pid];
+        const localApp = appMapCheck[pid];
+        const localUnappTs = localUnapp ? (new Date(localUnapp.updatedAt || localUnapp.rejectedAt || 0).getTime() || 0) : 0;
+        const localAppTs = localApp ? (new Date(localApp.updatedAt || localApp.authorizedAt || 0).getTime() || 0) : 0;
+        if (status === 'approved' && localUnapp && localUnappTs >= localAppTs && (msgTs === 0 || localUnappTs >= msgTs)) {
+          // Este dispositivo tiene una desautorización más reciente que el mensaje retenido; republicar la desautorización
+          this.publishProjectAuthSync(pid, localUnapp.approvalStatus || 'pending', data.title || '', {
+            isPublic: false,
+            rejectedAt: localUnapp.rejectedAt,
+            rejectionReason: localUnapp.rejectionReason,
+            updatedAt: localUnapp.updatedAt
+          });
+          return;
+        }
+        if ((status === 'pending' || status === 'rejected') && localApp && localAppTs > localUnappTs && (msgTs === 0 || localAppTs > msgTs)) {
+          this.publishProjectAuthSync(pid, 'approved', data.title || '', {
+            isPublic: true,
+            authorizedAt: localApp.authorizedAt,
+            authorizedBy: localApp.authorizedBy,
+            updatedAt: localApp.updatedAt
+          });
+          return;
+        }
+      } catch (e) {}
+    }
+
     const nowKey = pid + ':' + status + ':' + (data.timestamp || data.updatedAt || '');
     if (this._lastAuthSyncKey === nowKey && (Date.now() - (this._lastAuthSyncHandledAt || 0)) < 2500) {
       return;
@@ -506,14 +549,20 @@ class RealtimeEngine {
       timestamp: Date.now()
     };
     const payload = JSON.stringify(msg);
+    let sentMqtt = false;
     [this.globalMqttClient, this.mqttClient].forEach(c => {
       if (c && c.connected) {
         try {
           c.publish('mentix/global/projects_sync', payload, { qos: 0, retain: false });
           c.publish('mentix/global/project_auth/' + cleanId, payload, { qos: 0, retain: true });
+          sentMqtt = true;
         } catch(e) {}
       }
     });
+    if (!sentMqtt) {
+      if (!Array.isArray(this._pendingGlobalAuthQueue)) this._pendingGlobalAuthQueue = [];
+      this._pendingGlobalAuthQueue.push({ cleanId, payload });
+    }
     this.broadcast(msg);
     try {
       localStorage.setItem('mentix_projects_auth_sync_ping', JSON.stringify(msg));

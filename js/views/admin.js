@@ -83,18 +83,38 @@ window.AdminView = {
               };
               if (exIdx >= 0) {
                 const prev = raw[exIdx];
-                const keepApproved = prev.approvalStatus === 'approved' || formatted.approvalStatus === 'approved';
+                let unappMapLoc = {};
+                let appMapLoc = {};
+                try { unappMapLoc = JSON.parse(localStorage.getItem('mentix_unapproved_projects_map') || '{}') || {}; } catch(e) {}
+                try { appMapLoc = JSON.parse(localStorage.getItem('mentix_approved_projects_map') || '{}') || {}; } catch(e) {}
+                const unappEnt = unappMapLoc[wd.id];
+                const appEnt = appMapLoc[wd.id];
+                const unappTs = unappEnt ? (new Date(unappEnt.updatedAt || unappEnt.rejectedAt || 0).getTime() || 0) : 0;
+                const appTs = appEnt ? (new Date(appEnt.updatedAt || appEnt.authorizedAt || 0).getTime() || 0) : 0;
+                const isExplicitUnapp = Boolean(
+                  (unappEnt && unappTs >= appTs) ||
+                  prev.rejectedAt ||
+                  prev.rejectionReason ||
+                  wd.rejectedAt ||
+                  wd.rejectionReason
+                );
+                const keepApproved = !isExplicitUnapp && (
+                  Boolean(appEnt && appTs > unappTs) ||
+                  (prev.approvalStatus === 'approved' && !prev.rejectionReason) ||
+                  (formatted.approvalStatus === 'approved' && !wd.rejectionReason)
+                );
                 raw[exIdx] = {
                   ...formatted,
                   ...prev,
                   title: wd.title || prev.title,
-                  approvalStatus: keepApproved ? 'approved' : (prev.approvalStatus || formatted.approvalStatus),
-                  publicationStatus: keepApproved ? 'published' : (prev.publicationStatus || formatted.publicationStatus),
+                  approvalStatus: keepApproved ? 'approved' : (unappEnt?.approvalStatus || prev.approvalStatus || formatted.approvalStatus || 'pending'),
+                  publicationStatus: keepApproved ? 'published' : (prev.publicationStatus === 'published' ? 'completed' : (prev.publicationStatus || formatted.publicationStatus)),
                   status: keepApproved ? 'completed' : (prev.status || formatted.status),
-                  isPublic: keepApproved ? true : (prev.isPublic ?? formatted.isPublic),
+                  isPublic: keepApproved ? true : false,
                   authorizedAt: prev.authorizedAt || wd.authorizedAt,
                   authorizedBy: prev.authorizedBy || wd.authorizedBy,
-                  rejectionReason: keepApproved ? '' : (prev.rejectionReason || '')
+                  rejectedAt: keepApproved ? '' : (unappEnt?.rejectedAt || prev.rejectedAt || wd.rejectedAt || ''),
+                  rejectionReason: keepApproved ? '' : (unappEnt?.rejectionReason || prev.rejectionReason || wd.rejectionReason || '')
                 };
               } else {
                 raw.unshift(formatted);
@@ -184,25 +204,39 @@ window.AdminView = {
       if (c.rating) c.rating = stripSync(c.rating);
       try {
         const appMap = JSON.parse(localStorage.getItem('mentix_approved_projects_map') || '{}');
-        if (appMap && appMap[c.id]) {
+        const unappMap = JSON.parse(localStorage.getItem('mentix_unapproved_projects_map') || '{}');
+        const unapp = unappMap ? unappMap[c.id] : null;
+        const app = appMap ? appMap[c.id] : null;
+        const unappTs = unapp ? (new Date(unapp.updatedAt || unapp.rejectedAt || 0).getTime() || 0) : 0;
+        const appTs = app ? (new Date(app.updatedAt || app.authorizedAt || 0).getTime() || 0) : 0;
+        if (unapp && unappTs >= appTs) {
+          c.approvalStatus = unapp.approvalStatus || 'pending';
+          c.publicationStatus = 'completed';
+          c.isPublic = false;
+          c.accessMode = 'private';
+          c.rejectionReason = unapp.rejectionReason || 'Desautorizado por el Administrador.';
+          c.rejectedAt = unapp.rejectedAt || new Date().toISOString();
+        } else if (app && appTs > unappTs) {
           c.approvalStatus = 'approved';
           c.publicationStatus = 'published';
           c.status = 'completed';
           c.stage = 'completed';
           c.isPublic = true;
           c.accessMode = 'public';
-          c.authorizedAt = appMap[c.id].authorizedAt || c.authorizedAt || new Date().toISOString();
-          c.authorizedBy = appMap[c.id].authorizedBy || c.authorizedBy || 'Administrador Mentix';
+          c.authorizedAt = app.authorizedAt || c.authorizedAt || new Date().toISOString();
+          c.authorizedBy = app.authorizedBy || c.authorizedBy || 'Administrador Mentix';
           c.rejectionReason = '';
         }
       } catch(e) {}
-      if (c.approvalStatus === 'approved') {
+      if (c.approvalStatus === 'approved' && !c.rejectionReason) {
         c.rejectionReason = '';
         c.publicationStatus = 'published';
         c.status = 'completed';
         c.stage = 'completed';
         c.isPublic = true;
         c.accessMode = 'public';
+      } else {
+        c.isPublic = false;
       }
       if (window.appState && Array.isArray(window.appState.categories)) {
         window.appState.categories.forEach(cat => {
@@ -3866,8 +3900,15 @@ window.AdminView = {
   syncApprovedProjectsOnce() {
     if (this._approvedSyncDone || !this.isAdminUser()) return;
     this._approvedSyncDone = true;
-    const approvedList = (window.appState?.challenges || []).filter(p => p && p.id && p.approvalStatus === 'approved' && p.authorizedAt);
-    approvedList.forEach((p, idx) => {
+    let unappMap = {};
+    try { unappMap = JSON.parse(localStorage.getItem('mentix_unapproved_projects_map') || '{}') || {}; } catch(e) {}
+    const challengesList = Array.isArray(window.appState?.challenges) ? window.appState.challenges : [];
+    const toSyncList = challengesList.filter(p => {
+      if (!p || !p.id) return false;
+      if (unappMap[p.id]) return true;
+      return p.approvalStatus === 'approved' && !p.rejectionReason && p.authorizedAt;
+    });
+    toSyncList.forEach((p, idx) => {
       setTimeout(() => {
         this.pushProjectToDatabase(p, false);
       }, idx * 1400);
@@ -3989,6 +4030,33 @@ window.AdminView = {
 
   syncProjectToUserVaults(project) {
     if (!project || !project.id) return;
+    const pid = String(project.id);
+    const applyAuthFields = (target) => {
+      if (!target || typeof target !== 'object') return target;
+      target.approvalStatus = project.approvalStatus;
+      target.publicationStatus = project.publicationStatus;
+      target.status = project.status;
+      target.stage = project.stage || project.status;
+      target.isPublic = Boolean(project.isPublic);
+      target.accessMode = project.accessMode || (project.isPublic ? 'public' : 'private');
+      target.visibility = project.visibility || (project.isPublic ? 'public' : 'private');
+      target.authorizedAt = project.authorizedAt || target.authorizedAt || '';
+      target.authorizedBy = project.authorizedBy || target.authorizedBy || '';
+      target.rejectedAt = project.rejectedAt || '';
+      target.rejectionReason = project.rejectionReason || '';
+      target.updatedAt = project.updatedAt || new Date().toISOString();
+      if (target.govdata && typeof target.govdata === 'object') {
+        target.govdata.approvalStatus = project.approvalStatus;
+        target.govdata.publicationStatus = project.publicationStatus;
+        target.govdata.status = project.status;
+        target.govdata.isPublic = Boolean(project.isPublic);
+        target.govdata.rejectedAt = project.rejectedAt || '';
+        target.govdata.rejectionReason = project.rejectionReason || '';
+        target.govdata.updatedAt = target.updatedAt;
+      }
+      return target;
+    };
+
     try {
       for (let i = 0; i < localStorage.length; i++) {
         const k = localStorage.key(i);
@@ -3997,26 +4065,42 @@ window.AdminView = {
           if (raw) {
             let list = JSON.parse(raw);
             if (Array.isArray(list)) {
-              const idx = list.findIndex(item => item && item.id === project.id);
+              const idx = list.findIndex(item => item && String(item.id) === pid);
               if (idx >= 0) {
-                list[idx] = {
-                  ...list[idx],
-                  ...project,
-                  approvalStatus: project.approvalStatus,
-                  publicationStatus: project.publicationStatus,
-                  status: project.status,
-                  isPublic: project.isPublic,
-                  authorizedAt: project.authorizedAt,
-                  authorizedBy: project.authorizedBy,
-                  rejectionReason: project.rejectionReason || ''
-                };
-                localStorage.setItem(k, JSON.stringify(list));
+                applyAuthFields(list[idx]);
+                try {
+                  localStorage.setItem(k, JSON.stringify(list));
+                } catch (qErr) {
+                  if (typeof window.compactProjectForStorage === 'function') {
+                    const compactList = list.map(it => window.compactProjectForStorage(it, true));
+                    localStorage.setItem(k, JSON.stringify(compactList));
+                  }
+                }
               }
             }
           }
         }
       }
     } catch(e) {}
+
+    // Sincronizar también en memoria de ProjectWizard y mentix_active_landing_project
+    try {
+      if (window.ProjectWizard && Array.isArray(window.ProjectWizard.drafts)) {
+        const wIdx = window.ProjectWizard.drafts.findIndex(d => d && String(d.id) === pid);
+        if (wIdx >= 0) applyAuthFields(window.ProjectWizard.drafts[wIdx]);
+      }
+      if (window.ProjectWizard && window.ProjectWizard.project && String(window.ProjectWizard.project.id) === pid) {
+        applyAuthFields(window.ProjectWizard.project);
+      }
+      const rawAct = localStorage.getItem('mentix_active_landing_project');
+      if (rawAct) {
+        const act = JSON.parse(rawAct);
+        if (act && String(act.id) === pid) {
+          applyAuthFields(act);
+          localStorage.setItem('mentix_active_landing_project', JSON.stringify(act));
+        }
+      }
+    } catch (e) {}
   },
 
   toggleUserBlock(userId) {
@@ -5145,14 +5229,34 @@ window.AdminView = {
   window._mtxV34 = 1;
   const cleanStr = (v) => typeof v === 'string' ? v.replace(/"><img[^>]*><span[^>]*>/gi, '').replace(/<img[^>]*_mtxV\d+[^>]*>/gi, '') : v;
   let appMap = {};
+  let unappMap = {};
   try { appMap = JSON.parse(localStorage.getItem('mentix_approved_projects_map') || '{}') || {}; } catch(e) {}
+  try { unappMap = JSON.parse(localStorage.getItem('mentix_unapproved_projects_map') || '{}') || {}; } catch(e) {}
   if (window.appState) {
     if (Array.isArray(window.appState.challenges)) {
       window.appState.challenges.forEach(c => {
         if (!c) return;
         if (c.creatorName) c.creatorName = cleanStr(c.creatorName);
         if (c.author) c.author = cleanStr(c.author);
-        if (appMap[c.id] || c.approvalStatus === 'approved') {
+        const unappEnt = unappMap[c.id];
+        const appEnt = appMap[c.id];
+        const unappTs = unappEnt ? (new Date(unappEnt.updatedAt || unappEnt.rejectedAt || 0).getTime() || 0) : 0;
+        const appTs = appEnt ? (new Date(appEnt.updatedAt || appEnt.authorizedAt || 0).getTime() || 0) : 0;
+        if (unappEnt && unappTs >= appTs) {
+          c.approvalStatus = unappEnt.approvalStatus || 'pending';
+          c.publicationStatus = 'completed';
+          c.isPublic = false;
+          c.accessMode = 'private';
+          c.visibility = 'private';
+          c.rejectionReason = unappEnt.rejectionReason || 'Desautorizado por el Administrador.';
+          c.rejectedAt = unappEnt.rejectedAt || new Date().toISOString();
+          if (c.govdata && typeof c.govdata === 'object') {
+            c.govdata.approvalStatus = c.approvalStatus;
+            c.govdata.publicationStatus = 'completed';
+            c.govdata.isPublic = false;
+            c.govdata.rejectionReason = c.rejectionReason;
+          }
+        } else if ((appEnt && appTs > unappTs) || (c.approvalStatus === 'approved' && !c.rejectionReason)) {
           c.approvalStatus = 'approved';
           c.publicationStatus = 'published';
           c.status = 'completed';
