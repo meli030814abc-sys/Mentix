@@ -13,5 +13,20 @@
     "isBlocked": false,
     "lastLoginAt": "2026-11-23T16:17:00.259Z",
     "createdAt": "2026-11-23T16:17:00.259Z"
+  },
+  {
+    "id": "user_1792184134006",
+    "name": "Melisa",
+    "username": "Mentilona",
+    "email": "gatitaxd6f79@gmail.com",
+    "avatar": "🐯",
+    "role": "admin",
+    "xp": 4200,
+    "level": 4,
+    "levelName": "Experto",
+    "institution": "Comunidad MENTIX",
+    "isBlocked": false,
+    "lastLoginAt": "2026-11-23T16:19:05.106Z",
+    "createdAt": "2026-11-23T16:19:05.106Z"
   }
 ]
