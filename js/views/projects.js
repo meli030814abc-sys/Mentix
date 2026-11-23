@@ -217,67 +217,195 @@ window.ProjectsView = {
     if (window.appState && window.appState.projectsHeroBanner) {
       return window.appState.projectsHeroBanner;
     }
+    try {
+      const saved = localStorage.getItem('mentix_projects_hero_banner') || localStorage.getItem('mentix_admin_hero_banner') || localStorage.getItem('te_reto_projects_hero_banner') || localStorage.getItem('te_reto_hero_banner');
+      if (saved && saved.trim()) return saved.trim();
+    } catch (e) {}
     if (window.appState && Array.isArray(window.appState.challenges)) {
       const withBanner = window.appState.challenges.find(c => c && (c._globalHeroBanner || c.globalHeroBanner));
       if (withBanner && (withBanner._globalHeroBanner || withBanner.globalHeroBanner)) {
         return withBanner._globalHeroBanner || withBanner.globalHeroBanner;
       }
     }
-    const saved = localStorage.getItem('te_reto_projects_hero_banner') || localStorage.getItem('mentix_projects_hero_banner') || localStorage.getItem('te_reto_hero_banner');
-    if (saved && saved.trim()) return saved.trim();
     return 'assets/projects_ui/hero_banner.png?v=20261101_bright_sharp';
   },
 
-  setHeroBannerUrl(url) {
-    if (!url) return false;
-    const cleanUrl = url.trim();
-    localStorage.setItem('mentix_projects_hero_banner', cleanUrl);
-    localStorage.setItem('te_reto_projects_hero_banner', cleanUrl);
-    localStorage.setItem('te_reto_hero_banner', cleanUrl);
-    localStorage.setItem('mentix_admin_hero_banner', cleanUrl);
+  compressBannerDataUrl(dataUrl, maxWidth = 1800, quality = 0.84) {
+    return new Promise((resolve) => {
+      if (!dataUrl || typeof dataUrl !== 'string' || !dataUrl.startsWith('data:image/') || dataUrl.startsWith('data:image/svg')) {
+        return resolve(dataUrl);
+      }
+      const img = new Image();
+      img.onload = () => {
+        try {
+          let w = img.naturalWidth || img.width || 1600;
+          let h = img.naturalHeight || img.height || 400;
+          if (w > maxWidth) {
+            h = Math.max(1, Math.round((h * maxWidth) / w));
+            w = maxWidth;
+          }
+          const canvas = document.createElement('canvas');
+          canvas.width = w;
+          canvas.height = h;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, w, h);
+          let out = canvas.toDataURL('image/jpeg', quality);
+          if (out.length > 260000) {
+            out = canvas.toDataURL('image/jpeg', 0.72);
+          }
+          if (out.length > 360000) {
+            const c2 = document.createElement('canvas');
+            const scale = 1280 / Math.max(1280, w);
+            c2.width = Math.round(w * scale);
+            c2.height = Math.round(h * scale);
+            c2.getContext('2d').drawImage(img, 0, 0, c2.width, c2.height);
+            out = c2.toDataURL('image/jpeg', 0.7);
+          }
+          resolve(out && out.startsWith('data:') ? out : dataUrl);
+        } catch (err) {
+          resolve(dataUrl);
+        }
+      };
+      img.onerror = () => resolve(dataUrl);
+      img.src = dataUrl;
+    });
+  },
 
+  _safeSaveHeroBannerLocal(cleanUrl, ts) {
+    // Limpiar claves duplicadas antiguas para no desperdiciar cuota de localStorage (4x ahorro)
+    try { localStorage.removeItem('te_reto_projects_hero_banner'); } catch (e) {}
+    try { localStorage.removeItem('te_reto_hero_banner'); } catch (e) {}
+    try { localStorage.removeItem('mentix_admin_hero_banner'); } catch (e) {}
+    try {
+      localStorage.setItem('mentix_projects_hero_banner', cleanUrl);
+      localStorage.setItem('mentix_projects_hero_banner_ts', String(ts));
+      return true;
+    } catch (quotaErr) {
+      // Liberar espacio de borradores con imágenes enormes y reintentar una vez
+      try {
+        ['mentix_govdata_wizard_drafts', 'te_reto_challenges', 'mentix_challenges', 'mentix_projects'].forEach(k => {
+          const val = localStorage.getItem(k);
+          if (val && val.length > 250000) {
+            localStorage.setItem(k, val.replace(/data:image\/[^;]+;base64,[A-Za-z0-9+/=]{30000,}/g, 'assets/projects_ui/card_data_gov.png'));
+          }
+        });
+        localStorage.setItem('mentix_projects_hero_banner', cleanUrl);
+        localStorage.setItem('mentix_projects_hero_banner_ts', String(ts));
+        return true;
+      } catch (e2) {
+        try { localStorage.setItem('mentix_projects_hero_banner_ts', String(ts)); } catch (e3) {}
+        return false;
+      }
+    }
+  },
+
+  _applyHeroBannerSrcToDom(cleanUrl) {
+    const ids = ['mentix-projects-hero-banner-img', 'mentix-admin-projects-hero-banner-img', 'admin-banner-preview-img'];
+    ids.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) {
+        el.style.opacity = '1';
+        el.src = cleanUrl;
+      }
+    });
+    document.querySelectorAll('.saas-hero-banner-wrapper img').forEach(im => {
+      im.style.opacity = '1';
+      im.src = cleanUrl;
+    });
+  },
+
+  async syncHeroBannerFromCloud() {
+    try {
+      if (!window.supabaseEngine || typeof window.supabaseEngine.loadWizardDraft !== 'function') return false;
+      const rec = await window.supabaseEngine.loadWizardDraft('mentix_global_hero_banner_v1', 'mentix_global_hero_banner_v1');
+      const payload = rec && (rec.payload || rec.draft_data || rec.data || rec);
+      if (!payload || !payload.bannerUrl) return false;
+      const cloudTs = Number(payload.updatedAt || 0);
+      const localTs = Number(localStorage.getItem('mentix_projects_hero_banner_ts') || 0);
+      if (localTs > 0 && cloudTs > 0 && localTs >= cloudTs) {
+        return false;
+      }
+      const cleanUrl = String(payload.bannerUrl).trim();
+      if (!cleanUrl) return false;
+      this.setHeroBannerUrl(cleanUrl, { skipCloudSync: true, updatedAt: cloudTs || Date.now() });
+      if (payload.style && typeof payload.style === 'object') {
+        try { localStorage.setItem('mentix_projects_hero_banner_style', JSON.stringify(payload.style)); } catch (e) {}
+        if (!window.appState) window.appState = {};
+        window.appState.projectsHeroBannerStyle = payload.style;
+        this.applyHeroBannerStyleToDom(payload.style);
+      }
+      return true;
+    } catch (e) {
+      return false;
+    }
+  },
+
+  setHeroBannerUrl(url, options = {}) {
+    if (!url) return false;
+    const cleanUrl = String(url).trim();
+    if (!cleanUrl) return false;
+    const nowTs = Number(options.updatedAt || Date.now());
+
+    // 1. Actualizar memoria y DOM INMEDIATAMENTE (nunca se traba ni falla)
     if (!window.appState) window.appState = {};
     window.appState.projectsHeroBanner = cleanUrl;
+    this._applyHeroBannerSrcToDom(cleanUrl);
 
-    // Vincular al array de retos compartidos para que viaje a todos los usuarios y dispositivos
+    // 2. Guardar en localStorage de forma segura (1 sola clave canónica, con manejo de cuota)
+    this._safeSaveHeroBannerLocal(cleanUrl, nowTs);
+
+    // Actualizar metadato liviano en challenges (solo si no es dataUrl gigante)
     if (Array.isArray(window.appState.challenges)) {
       window.appState.challenges.forEach(c => {
         if (c) {
-          c._globalHeroBanner = cleanUrl;
-          c.globalHeroBanner = cleanUrl;
+          c._globalHeroBanner = cleanUrl.length < 4000 ? cleanUrl : undefined;
+          c.globalHeroBanner = cleanUrl.length < 4000 ? cleanUrl : undefined;
         }
       });
-      if (window.appState.challenges.length > 0 && window.appRouter && typeof window.appRouter.pushChallengeToCloud === 'function') {
-        try { window.appRouter.pushChallengeToCloud(window.appState.challenges[0]); } catch (e) {}
-      }
     }
 
     if (typeof saveGlobalState === 'function') {
-      saveGlobalState(window.appState);
+      try { saveGlobalState(window.appState); } catch (e) {}
     }
 
-    // 1. Notificar por la API serverless (/api/challenges) para persistir en GitHub y Vercel
+    // 3. Notificación entre pestañas del mismo navegador
     try {
-      const apiBase = (window.appRouter && typeof window.appRouter.getApiBase === 'function') ? window.appRouter.getApiBase() : '';
-      fetch(`${apiBase}/api/challenges`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ type: 'GLOBAL_HERO_BANNER', target: 'hero', bannerUrl: cleanUrl })
-      }).catch(() => {});
-    } catch(e) {}
+      window.dispatchEvent(new CustomEvent('mentix:hero-banner-changed', { detail: { bannerUrl: cleanUrl, timestamp: nowTs } }));
+    } catch (e) {}
 
-    // 2. Transmisión mundial en tiempo real vía MQTT con retain: true
-    if (window.realtimeEngine && typeof window.realtimeEngine.publishGlobalBanner === 'function') {
+    if (options && options.skipCloudSync) return true;
+
+    // 4. Persistencia global confiable en Supabase Cloud (funciona para links E imágenes subidas!)
+    try {
+      if (window.supabaseEngine && typeof window.supabaseEngine.saveWizardDraft === 'function') {
+        window.supabaseEngine.saveWizardDraft(
+          'mentix_global_hero_banner_v1',
+          'mentix_global_hero_banner_v1',
+          'system_admin',
+          1,
+          [],
+          { bannerUrl: cleanUrl, style: this.getHeroBannerStyle(), updatedAt: nowTs }
+        ).catch(() => {});
+      }
+    } catch (e) {}
+
+    // 5. Respaldo en API serverless (solo URLs cortas para no saturar commits) y MQTT con timestamp
+    if (cleanUrl.length < 4000) {
       try {
-        window.realtimeEngine.publishGlobalBanner({ target: 'hero', bannerUrl: cleanUrl });
+        const apiBase = (window.appRouter && typeof window.appRouter.getApiBase === 'function') ? window.appRouter.getApiBase() : '';
+        fetch(`${apiBase}/api/challenges`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ type: 'GLOBAL_HERO_BANNER', target: 'hero', bannerUrl: cleanUrl })
+        }).catch(() => {});
       } catch (e) {}
     }
 
-    // 3. Transmisión local entre pestañas y ventanas
-    try {
-      localStorage.setItem('mentix_project_banner_sync', JSON.stringify({ target: 'hero', bannerUrl: cleanUrl, t: Date.now() }));
-      window.dispatchEvent(new CustomEvent('mentix:hero-banner-changed', { detail: { bannerUrl: cleanUrl } }));
-    } catch (e) {}
+    if (cleanUrl.length < 180000 && window.realtimeEngine && typeof window.realtimeEngine.publishGlobalBanner === 'function') {
+      try {
+        window.realtimeEngine.publishGlobalBanner({ target: 'hero', bannerUrl: cleanUrl, timestamp: nowTs });
+      } catch (e) {}
+    }
 
     return true;
   },
@@ -363,6 +491,18 @@ window.ProjectsView = {
     }
     this.applyHeroBannerStyleToDom(clean);
     try {
+      const nowTs = Date.now();
+      localStorage.setItem('mentix_projects_hero_banner_ts', String(nowTs));
+      if (window.supabaseEngine && typeof window.supabaseEngine.saveWizardDraft === 'function') {
+        window.supabaseEngine.saveWizardDraft(
+          'mentix_global_hero_banner_v1',
+          'mentix_global_hero_banner_v1',
+          'system_admin',
+          1,
+          [],
+          { bannerUrl: this.getHeroBannerUrl(), style: clean, updatedAt: nowTs }
+        ).catch(() => {});
+      }
       window.dispatchEvent(new CustomEvent('mentix:hero-banner-style-changed', { detail: clean }));
     } catch (e) {}
     return clean;
@@ -595,33 +735,13 @@ window.ProjectsView = {
     if (!bannerUrl) return;
 
     if (target === 'hero') {
-      // 1. Guardar en storage local del usuario
-      localStorage.setItem('mentix_projects_hero_banner', bannerUrl);
-      localStorage.setItem('te_reto_projects_hero_banner', bannerUrl);
-      localStorage.setItem('te_reto_hero_banner', bannerUrl);
-      localStorage.setItem('mentix_admin_hero_banner', bannerUrl);
-      if (!window.appState) window.appState = {};
-      window.appState.projectsHeroBanner = bannerUrl;
-      if (Array.isArray(window.appState.challenges)) {
-        window.appState.challenges.forEach(c => {
-          if (c) {
-            c._globalHeroBanner = bannerUrl;
-            c.globalHeroBanner = bannerUrl;
-          }
-        });
+      const incomingTs = Number(data.timestamp || data.updatedAt || data.t || 0);
+      const localTs = Number(localStorage.getItem('mentix_projects_hero_banner_ts') || 0);
+      // Nunca dejar que un mensaje MQTT viejo o retenido pise un banner más reciente del Admin
+      if (localTs > 0 && (!incomingTs || incomingTs <= localTs)) {
+        return;
       }
-
-      // 2. Si el hero banner de proyectos está en pantalla, actualizarlo inmediatamente con animación suave
-      const heroImg = document.getElementById('mentix-projects-hero-banner-img');
-      if (heroImg && heroImg.src !== bannerUrl) {
-        heroImg.style.transition = 'opacity 0.3s ease';
-        heroImg.style.opacity = '0.5';
-        heroImg.src = bannerUrl;
-        heroImg.onload = () => { heroImg.style.opacity = '1'; };
-      }
-      try {
-        window.dispatchEvent(new CustomEvent('mentix:hero-banner-changed', { detail: { bannerUrl } }));
-      } catch (e) {}
+      this.setHeroBannerUrl(bannerUrl, { skipCloudSync: true, updatedAt: incomingTs || Date.now() });
     } else if (target === 'project') {
       const projId = data.projId;
       if (!projId) return;
@@ -1292,7 +1412,7 @@ window.ProjectsView = {
               Tamaño Oficial Recomendado (igual a los banners temáticos)
             </div>
             <p style="margin:0.25rem 0 0; font-size:0.83rem; color:#1e293b; line-height:1.4;">
-              • <b>Tamaño exacto oficial:</b> <span style="color:#0284c7; font-weight:900;">1376 × 768 px</span> (formato horizontal 16:9). También queda nítido en <b>1280 × 720 px</b> o <b>1920 × 600 px</b> (JPG, PNG o WebP).
+              • <b>Tamaño exacto para que salga 100% completo sin recortes:</b> <span style="color:#0284c7; font-weight:900;">2090 × 422 px</span> (o <b>2000 × 400 px</b>, proporción 5:1). Acepta JPG, PNG o WebP y se guarda al instante.
             </p>
           </div>
         </div>
@@ -1354,8 +1474,8 @@ window.ProjectsView = {
                 <input 
                   type="text" 
                   id="hero-banner-url-input" 
-                  placeholder="https://.../mi-banner.jpg" 
-                  value="${currentBanner.startsWith('data:') ? '' : this.escapeHtml(currentBanner)}"
+                  placeholder="Pega aquí un link nuevo (https://.../mi-banner.jpg)" 
+                  value=""
                   oninput="window.ProjectsView.previewHeroBannerUrl(this.value)"
                   onkeydown="if(event.key==='Enter'){event.preventDefault(); window.ProjectsView.applyHeroBanner('${this.escapeHtml(projId)}');}"
                   style="flex:1; background:#ffffff; border:1.5px solid #cbd5e1; border-radius:10px; padding:0.48rem 0.75rem; color:#0f172a; font-size:0.84rem; outline:none;"
@@ -1502,34 +1622,48 @@ window.ProjectsView = {
       return;
     }
 
-    const reader = new FileReader();
-    reader.onload = async (e) => {
-      let dataUrl = e.target.result;
-      try {
-        if (window.ProjectWizard && typeof window.ProjectWizard.compressImageFile === 'function' && file.size > 450 * 1024) {
-          const compressed = await window.ProjectWizard.compressImageFile(file, 1600, 0.82);
-          if (compressed && compressed.startsWith('data:')) dataUrl = compressed;
+    const input = document.getElementById('hero-banner-url-input');
+    if (input) input.value = '';
+
+    if (feedback) {
+      feedback.style.display = 'block';
+      feedback.style.background = '#f0f9ff';
+      feedback.style.border = '1.5px solid #38bdf8';
+      feedback.style.color = '#0369a1';
+      feedback.innerHTML = `⏳ <b>Preparando imagen:</b> "${this.escapeHtml(file.name)}"...`;
+    }
+
+    this._uploadingBannerPromise = new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onload = async (e) => {
+        try {
+          let dataUrl = e.target.result;
+          if (typeof this.compressBannerDataUrl === 'function') {
+            dataUrl = await this.compressBannerDataUrl(dataUrl, 1800, 0.84);
+          }
+          this._tempSelectedHeroBanner = dataUrl;
+          const box = document.getElementById('hero-banner-preview-box');
+          if (box) {
+            box.style.backgroundImage = `linear-gradient(to right, rgba(5, 14, 30, 0.72) 0%, rgba(5, 14, 30, 0.35) 45%, rgba(5, 14, 30, 0.08) 78%, transparent 100%), url('${dataUrl}')`;
+          }
+          if (feedback) {
+            feedback.style.display = 'block';
+            feedback.style.background = '#ecfdf5';
+            feedback.style.border = '1.5px solid #10b981';
+            feedback.style.color = '#065f46';
+            feedback.innerHTML = `✅ <b>Imagen lista:</b> "${this.escapeHtml(file.name)}". Pulsa <b>Guardar y Aplicar Ya</b> para fijarla.`;
+          }
+          this.showToast('📷 Imagen lista para aplicar.');
+          resolve(dataUrl);
+        } catch (err) {
+          resolve(null);
         }
-      } catch (compErr) {}
-
-      this._tempSelectedHeroBanner = dataUrl;
-      const box = document.getElementById('hero-banner-preview-box');
-      if (box) {
-        box.style.backgroundImage = `linear-gradient(to right, rgba(5, 14, 30, 0.72) 0%, rgba(5, 14, 30, 0.35) 45%, rgba(5, 14, 30, 0.08) 78%, transparent 100%), url('${dataUrl}')`;
-      }
-      const input = document.getElementById('hero-banner-url-input');
-      if (input) input.value = '';
-
-      if (feedback) {
-        feedback.style.display = 'block';
-        feedback.style.background = '#ecfdf5';
-        feedback.style.border = '1.5px solid #10b981';
-        feedback.style.color = '#065f46';
-        feedback.innerHTML = `✅ <b>Imagen cargada al instante:</b> "${this.escapeHtml(file.name)}". Pulsa <b>Guardar y Aplicar Ya</b> para fijarla.`;
-      }
-      this.showToast('📷 Imagen lista para aplicar.');
-    };
-    reader.readAsDataURL(file);
+      };
+      reader.onerror = () => resolve(null);
+      reader.readAsDataURL(file);
+    });
+    await this._uploadingBannerPromise;
+    this._uploadingBannerPromise = null;
   },
 
   async previewHeroBannerUrl(url, showMsg = false) {
@@ -1556,24 +1690,25 @@ window.ProjectsView = {
   },
 
   async applyHeroBanner(projId) {
+    if (this._uploadingBannerPromise) {
+      try { await this._uploadingBannerPromise; } catch (e) {}
+    }
     const urlInput = document.getElementById('hero-banner-url-input');
     const typedUrl = urlInput ? urlInput.value.trim() : '';
-    const finalUrl = (typedUrl && !typedUrl.startsWith('(')) ? typedUrl : this._tempSelectedHeroBanner;
+    let finalUrl = (typedUrl && !typedUrl.startsWith('(')) ? typedUrl : this._tempSelectedHeroBanner;
     if (!finalUrl) {
       alert('⚠️ Por favor sube una imagen, pega un link o selecciona un fondo temático.');
       return;
     }
 
+    if (finalUrl.startsWith('data:image/') && finalUrl.length > 220000 && typeof this.compressBannerDataUrl === 'function') {
+      finalUrl = await this.compressBannerDataUrl(finalUrl, 1800, 0.82);
+    }
+
     if (projId === 'main_hero') {
       this.setHeroBannerUrl(finalUrl);
-      const heroImg = document.getElementById('mentix-projects-hero-banner-img');
-      if (heroImg) heroImg.src = finalUrl;
-      const adminHeroImg = document.getElementById('mentix-admin-projects-hero-banner-img');
-      if (adminHeroImg) adminHeroImg.src = finalUrl;
-      const adminPreviewImg = document.getElementById('admin-banner-preview-img');
-      if (adminPreviewImg) adminPreviewImg.src = finalUrl;
       this.closeHeroBannerPicker();
-      this.showToast('🎨 ¡Banner principal actualizado al instante!');
+      this.showToast('🎨 ¡Banner principal actualizado y guardado al instante!');
       return;
     }
 

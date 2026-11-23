@@ -2004,16 +2004,9 @@ class AppRouter {
           cloudChallenges = window.deepCleanMojibake(cloudChallenges);
         }
 
-        // Sincronizar Banner Principal Global si fue actualizado por un Administrador
-        const globalHero = cloudChallenges.find(x => x && x._globalHeroBanner)?._globalHeroBanner;
-        if (globalHero) {
-          try {
-            if (window.appState) window.appState.projectsHeroBanner = globalHero;
-            localStorage.setItem('mentix_projects_hero_banner', globalHero);
-            localStorage.setItem('mentix_admin_hero_banner', globalHero);
-            const heroImg = document.getElementById('mentix-projects-hero-banner-img');
-            if (heroImg && heroImg.src !== globalHero) heroImg.src = globalHero;
-          } catch (e) {}
+        // Sincronizar Banner Principal Global desde Supabase respetando timestamps (nunca pisa un banner más reciente del Admin)
+        if (window.ProjectsView && typeof window.ProjectsView.syncHeroBannerFromCloud === 'function') {
+          window.ProjectsView.syncHeroBannerFromCloud().catch(() => {});
         }
 
         const local = Array.isArray(window.appState.challenges) ? window.appState.challenges : [];
