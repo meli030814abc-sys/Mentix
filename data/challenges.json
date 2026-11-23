@@ -1437,16 +1437,16 @@
       "commercialPitch": "2321324351010115.0.",
       "faqs": []
     },
-    "videoUrl": "https://www.youtube.com/results?search_query=misterios+del+oceano+documental+en+espa%C3%B1ol&utm_source=chatgpt.com",
+    "videoUrl": "https://www.youtube.com/watch?v=knUERVioeog&pp=ygUrbWlzdGVyaW9zIGRlbCBvY2Vhbm8gZG9jdW1lbnRhbCBlbiBlc3Bhw7FvbNIHCQkQCAGHKiGM7w%3D%3D",
     "videoConfig": {
       "sourceType": "url",
-      "url": "https://www.youtube.com/results?search_query=misterios+del+oceano+documental+en+espa%C3%B1ol&utm_source=chatgpt.com",
+      "url": "https://www.youtube.com/watch?v=knUERVioeog&pp=ygUrbWlzdGVyaW9zIGRlbCBvY2Vhbm8gZG9jdW1lbnRhbCBlbiBlc3Bhw7FvbNIHCQkQCAGHKiGM7w%3D%3D",
       "fileName": "",
       "title": "",
       "description": "",
       "thumbnailUrl": "",
       "isPublic": true,
-      "verified": false
+      "verified": true
     },
     "resources": [],
     "visualAssets": [],
@@ -1507,7 +1507,8 @@
       "titleColor": "#ffffff",
       "textColor": "#cbd5e1",
       "accentColor": "#00f5d4",
-      "bannerStyle": "gradient-cosmos"
+      "bannerStyle": "gradient-cosmos",
+      "bannerUrl": ""
     },
     "authorsConfig": {
       "authorsList": "Melisa",
@@ -1554,13 +1555,13 @@
       },
       "videoConfig": {
         "sourceType": "url",
-        "url": "https://www.youtube.com/results?search_query=misterios+del+oceano+documental+en+espa%C3%B1ol&utm_source=chatgpt.com",
+        "url": "https://www.youtube.com/watch?v=knUERVioeog&pp=ygUrbWlzdGVyaW9zIGRlbCBvY2Vhbm8gZG9jdW1lbnRhbCBlbiBlc3Bhw7FvbNIHCQkQCAGHKiGM7w%3D%3D",
         "fileName": "",
         "title": "",
         "description": "",
         "thumbnailUrl": "",
         "isPublic": true,
-        "verified": false
+        "verified": true
       },
       "mainImage": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
       "thumbnailImage": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
@@ -1653,7 +1654,7 @@
         "collaborators": "personas"
       },
       "createdAt": "2026-11-23T03:09:16.957Z",
-      "updatedAt": "2026-11-23T03:46:23.235Z",
+      "updatedAt": "2026-11-23T03:46:39.362Z",
       "progress": 73,
       "calculatedProgress": 73
     },
@@ -1667,7 +1668,7 @@
     "authorAvatar": "🐯",
     "authorRole": "Líder del Proyecto",
     "createdAt": "2026-11-23T03:09:16.957Z",
-    "updatedAt": "2026-11-23T03:46:23.360Z",
+    "updatedAt": "2026-11-23T03:46:39.397Z",
     "image": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
     "rejectionReason": "",
     "tag": "⏳ Pendiente de Autorización",
