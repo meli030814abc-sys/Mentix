@@ -10,13 +10,13 @@
       "email": "gatitaxd6f79@gmail.com",
       "role": "admin",
       "joinedAt": "2026-11-23T03:09:15.937Z",
-      "updatedAt": "2026-11-23T03:43:05.189Z",
+      "updatedAt": "2026-11-23T03:43:09.132Z",
       "projectId": "govdata_code_mentilona_804263",
       "projectTitle": "🌊 ¡El 95 % del océano sigue siendo un misterio! 😱 ¿Qué se esconde en las profundidades?",
       "projectDescription": "Proyecto en construcción con el Asistente Inteligente de Mentix.",
       "currentStep": 1,
       "completedStepsCount": 0,
-      "progress": 45,
+      "progress": 50,
       "status": "in_progress",
       "approvalStatus": "pending",
       "publicationStatus": "draft",
@@ -25,7 +25,7 @@
       "snapshot": {
         "id": "govdata_code_mentilona_804263",
         "title": "🌊 ¡El 95 % del océano sigue siendo un misterio! 😱 ¿Qué se esconde en las profundidades?",
-        "subtitle": "Proyecto Educativo Mentix",
+        "subtitle": "🌊 **¿Y si te dijera que conocemos más sobre algunos lugares del espacio que sobre las profundidades de nuestros océanos?** 😱  Bajo la superficie del mar existe un universo extraordinario lleno de criaturas sorprendentes, ecosistemas desconocidos y fenómenos que la ciencia continúa investigando.  🐙 Animales capaces de producir su propia luz.  🌋 Volcanes submarinos y fuentes hidrotermales.  🦈 Criaturas adaptadas a presiones extremas.  🔎 Nuevas especies que siguen siendo descubiertas.  En este contenido exploraremos algunos de los secretos más fascinantes del océano y descubriremos por qué su exploración representa uno de los mayores desafíos científicos de nuestro tiempo.  💬 **Y tú, ¿qué crees que todavía se esconde en las profundidades del océano?**  👇 ¡Déjanos tu opinión en los comentarios y comparte este contenido con alguien que ame los misterios!  #MisteriosDelOceano #Ciencia #Curiosidades #Descubrimientos #Naturaleza #Tecnologia #SabiasQue #Exploracion #Misterios #ContenidoEducativo",
         "description": "Proyecto en construcción con el Asistente Inteligente de Mentix.",
         "author": "Melisa",
         "authorEmail": "gatitaxd6f79@gmail.com",
@@ -38,7 +38,7 @@
         "approvalStatus": "pending",
         "currentStep": 1,
         "completedSteps": [],
-        "progress": 45,
+        "progress": 50,
         "banner": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
         "problemStatement": "",
         "mainObjective": "",
@@ -73,7 +73,7 @@
           "commercialPitch": "",
           "faqs": []
         },
-        "updatedAt": "2026-11-23T03:43:05.189Z"
+        "updatedAt": "2026-11-23T03:43:09.132Z"
       }
     }
   ]
