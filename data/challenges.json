@@ -1388,14 +1388,14 @@
     "benefits": "hfhkjl",
     "teamLead": "Melisa",
     "preparationStatus": "idea",
-    "publicationStatus": "published",
-    "approvalStatus": "approved",
+    "publicationStatus": "pending_approval",
+    "approvalStatus": "pending",
     "submittedForApproval": true,
     "status": "completed",
-    "isPublic": true,
+    "isPublic": false,
     "startDate": "2026-11-23",
     "endDate": "2026-11-11",
-    "currentStep": 15,
+    "currentStep": 16,
     "completedSteps": [
       1,
       2,
@@ -1471,7 +1471,8 @@
         "order": 1,
         "status": "verified",
         "extractedText": "",
-        "uploadedAt": "2026-11-23T04:11:41.755Z"
+        "uploadedAt": "2026-11-23T04:11:41.755Z",
+        "thumbnailUrl": ""
       },
       {
         "id": "res_1795407112283_umir",
@@ -1488,7 +1489,8 @@
         "order": 2,
         "status": "verified",
         "extractedText": "",
-        "uploadedAt": "2026-11-23T04:11:52.283Z"
+        "uploadedAt": "2026-11-23T04:11:52.283Z",
+        "thumbnailUrl": ""
       }
     ],
     "visualAssets": [
@@ -1618,7 +1620,8 @@
         "description": "",
         "category": "Página web oficial",
         "visibility": "public",
-        "verified": false
+        "verified": false,
+        "thumbnailUrl": ""
       }
     ],
     "landingConfig": {
@@ -1795,7 +1798,7 @@
         "displayOrder": 1,
         "featuredVideoPublic": true
       },
-      "publicationStatus": "published",
+      "publicationStatus": "pending_approval",
       "completedSteps": [
         1,
         2,
@@ -1814,7 +1817,7 @@
         15,
         16
       ],
-      "currentStep": 15,
+      "currentStep": 16,
       "author": "Melisa",
       "authorId": "user_1792184134006",
       "ownerId": "user_1792184134006",
@@ -1841,9 +1844,14 @@
         "collaborators": "hdfud"
       },
       "createdAt": "2026-11-23T03:09:16.957Z",
-      "updatedAt": "2026-11-23T04:12:12.343Z",
+      "updatedAt": "2026-11-23T04:12:17.867Z",
       "progress": 100,
-      "calculatedProgress": 100
+      "calculatedProgress": 100,
+      "submittedForApproval": true,
+      "approvalStatus": "pending",
+      "status": "completed",
+      "completedAt": "2026-11-23T04:12:17.867Z",
+      "isPublic": false
     },
     "author": "Melisa",
     "authorId": "user_1792184134006",
@@ -1855,7 +1863,7 @@
     "authorAvatar": "🐯",
     "authorRole": "Líder del Proyecto",
     "createdAt": "2026-11-23T03:09:16.957Z",
-    "updatedAt": "2026-11-23T04:12:12.833Z",
+    "updatedAt": "2026-11-23T04:12:18.411Z",
     "image": "https://www.google.com/imgres?q=imagen&imgurl=https%3A%2F%2Fstatic.vecteezy.com%2Fsystem%2Fresources%2Fthumbnails%2F060%2F843%2F811%2Fsmall%2Fclose-up-of-raindrops-on-leaves-hd-background-luxury-hd-wallpaper-image-trendy-background-illustration-free-photo.jpg&imgrefurl=https%3A%2F%2Fes.vecteezy.com%2Ffotos-gratis%2Fimagen&docid=FjgWdyaU7OHLOM&tbnid=XfSoVrwZgQjJsM&vet=12ahUKEwiv0c2nl52YAxUomYQIHTZzLVUQnPAOegQINxAA..i&w=625&h=350&hcb=2&ved=2ahUKEwiv0c2nl52YAxUomYQIHTZzLVUQnPAOegQINxAA",
     "rejectionReason": "",
     "tag": "✔ Completado",
@@ -1917,7 +1925,7 @@
       "offsetY": 0,
       "zoom": 134
     },
-    "completedAt": "2026-11-23T03:50:22.698Z",
+    "completedAt": "2026-11-23T04:12:17.867Z",
     "authorizedAt": "2026-11-23T04:01:30.952Z",
     "authorizedBy": "Melisa",
     "stage": "completed",
