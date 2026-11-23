@@ -1382,7 +1382,7 @@
     "mainImage": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
     "thumbnailImage": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
     "useDefaultImage": true,
-    "targetAudience": "",
+    "targetAudience": "Personas",
     "problemStatement": "",
     "mainObjective": "",
     "benefits": "",
@@ -1400,8 +1400,8 @@
       1,
       2
     ],
-    "progress": 50,
-    "calculatedProgress": 50,
+    "progress": 60,
+    "calculatedProgress": 60,
     "valueProp": {
       "problemSolved": "",
       "howItWorks": "",
@@ -1484,7 +1484,7 @@
       "category": "cultura",
       "categoryName": "Cultura General",
       "projectSubtype": "Gobierno de Datos e IA",
-      "targetAudience": "",
+      "targetAudience": "Personas",
       "problemStatement": "",
       "mainObjective": "",
       "benefits": "",
@@ -1562,9 +1562,9 @@
         "authorsRole": "Líder del Proyecto"
       },
       "createdAt": "2026-11-23T03:09:16.957Z",
-      "updatedAt": "2026-11-23T03:44:01.697Z",
-      "progress": 50,
-      "calculatedProgress": 50
+      "updatedAt": "2026-11-23T03:44:05.130Z",
+      "progress": 60,
+      "calculatedProgress": 60
     },
     "author": "Melisa",
     "authorId": "user_1792184134006",
@@ -1576,7 +1576,7 @@
     "authorAvatar": "🐯",
     "authorRole": "admin",
     "createdAt": "2026-11-23T03:09:16.957Z",
-    "updatedAt": "2026-11-23T03:44:01.788Z",
+    "updatedAt": "2026-11-23T03:44:05.193Z",
     "image": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
     "rejectionReason": "",
     "tag": "⏳ Pendiente de Autorización",
