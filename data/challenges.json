@@ -28,7 +28,7 @@
     "accessMode": "private",
     "displayOrder": 1,
     "createdAt": "2026-11-24T02:08:03.167Z",
-    "updatedAt": "2026-11-24T02:25:06.718Z",
+    "updatedAt": "2026-11-24T02:25:37.287Z",
     "landingConfig": {
       "publicName": "Diagnóstico y propuesta de optimización del gobierno de datos en GPC Pharma S.A.S. Empresa del Sector Farmaceutico.",
       "slug": "diagnostico-y-propuesta-de-optimizacion-del-gobierno-de-datos-en-gpc-pharma-s-a-s-empresa-del-sector-farmaceutico",
@@ -162,7 +162,12 @@
       "prerequisites": "",
       "visitorAction": "Unirse / Colaborar",
       "commercialPitch": "Datos gobernados para una industria farmacéutica confiable.",
-      "faqs": []
+      "faqs": [
+        {
+          "q": "",
+          "a": ""
+        }
+      ]
     },
     "valueProposition": {
       "problemSolved": "GPC Pharma S.A.S. opera con una gestión de la información distribuida por áreas, apoyada en varias plataformas. Esto representa la oportunidad de formalizar roles de gobierno de datos, contar con un diccionario de metadatos y unificar criterios (por ejemplo, la identificación de clientes entre plataformas), de modo que la trazabilidad y la confianza en los datos acompañen el crecimiento de la operación.",
@@ -182,7 +187,12 @@
       "prerequisites": "",
       "visitorAction": "Unirse / Colaborar",
       "commercialPitch": "Datos gobernados para una industria farmacéutica confiable.",
-      "faqs": []
+      "faqs": [
+        {
+          "q": "",
+          "a": ""
+        }
+      ]
     },
     "resources": [],
     "visualAssets": [],
@@ -263,7 +273,12 @@
         "prerequisites": "",
         "visitorAction": "Unirse / Colaborar",
         "commercialPitch": "Datos gobernados para una industria farmacéutica confiable.",
-        "faqs": []
+        "faqs": [
+          {
+            "q": "",
+            "a": ""
+          }
+        ]
       },
       "videoConfig": {
         "sourceType": "url",
@@ -368,7 +383,7 @@
         "collaborators": ""
       },
       "createdAt": "2026-11-24T02:08:03.167Z",
-      "updatedAt": "2026-11-24T02:25:09.435Z",
+      "updatedAt": "2026-11-24T02:25:40.301Z",
       "progress": 80,
       "calculatedProgress": 80
     },
