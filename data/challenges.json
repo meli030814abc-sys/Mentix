@@ -28,7 +28,7 @@
     "accessMode": "private",
     "displayOrder": 1,
     "createdAt": "2026-11-24T02:08:03.167Z",
-    "updatedAt": "2026-11-24T02:31:59.643Z",
+    "updatedAt": "2026-11-24T02:32:08.799Z",
     "landingConfig": {
       "publicName": "Diagnóstico y propuesta de optimización del gobierno de datos en GPC Pharma S.A.S. Empresa del Sector Farmaceutico.",
       "slug": "diagnostico-y-propuesta-de-optimizacion-del-gobierno-de-datos-en-gpc-pharma-s-a-s-empresa-del-sector-farmaceutico",
@@ -314,8 +314,8 @@
         "layout": "full",
         "isFullImage": true,
         "isImported": true,
-        "media": "",
-        "imageUrl": "",
+        "media": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795487520072_xnaq_slide_7.jpg",
+        "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795487520072_xnaq_slide_7.jpg",
         "notes": "",
         "bgColor": "#ffffff",
         "themeId": "cosmos"
@@ -329,8 +329,8 @@
         "layout": "full",
         "isFullImage": true,
         "isImported": true,
-        "media": "",
-        "imageUrl": "",
+        "media": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795487521559_rln0_slide_8.jpg",
+        "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795487521559_rln0_slide_8.jpg",
         "notes": "",
         "bgColor": "#ffffff",
         "themeId": "cosmos"
@@ -665,8 +665,8 @@
             "layout": "full",
             "isFullImage": true,
             "isImported": true,
-            "media": "",
-            "imageUrl": "",
+            "media": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795487520072_xnaq_slide_7.jpg",
+            "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795487520072_xnaq_slide_7.jpg",
             "notes": "",
             "bgColor": "#ffffff",
             "themeId": "cosmos"
@@ -680,8 +680,8 @@
             "layout": "full",
             "isFullImage": true,
             "isImported": true,
-            "media": "",
-            "imageUrl": "",
+            "media": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795487521559_rln0_slide_8.jpg",
+            "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795487521559_rln0_slide_8.jpg",
             "notes": "",
             "bgColor": "#ffffff",
             "themeId": "cosmos"
@@ -1109,7 +1109,7 @@
         "collaborators": ""
       },
       "createdAt": "2026-11-24T02:08:03.167Z",
-      "updatedAt": "2026-11-24T02:31:50.286Z",
+      "updatedAt": "2026-11-24T02:32:05.214Z",
       "progress": 95,
       "calculatedProgress": 95
     },
