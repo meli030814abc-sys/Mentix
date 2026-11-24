@@ -28,7 +28,7 @@
     "accessMode": "private",
     "displayOrder": 1,
     "createdAt": "2026-11-24T02:08:03.167Z",
-    "updatedAt": "2026-11-24T03:25:20.325Z",
+    "updatedAt": "2026-11-24T03:25:22.875Z",
     "landingConfig": {
       "publicName": "Diagnóstico y propuesta de optimización del gobierno de datos en GPC Pharma S.A.S.",
       "slug": "propuesta-gobierno-de-datos-gpc-pharma",
@@ -130,7 +130,7 @@
     "submittedForApproval": false,
     "startDate": "2026-08-03",
     "endDate": "2026-11-25",
-    "currentStep": 7,
+    "currentStep": 6,
     "completedSteps": [
       1,
       2,
@@ -1218,7 +1218,7 @@
         14,
         15
       ],
-      "currentStep": 7,
+      "currentStep": 6,
       "author": "Laura Sofía Hernández Chaparro",
       "authorId": "user_1795437974586",
       "ownerId": "user_1795437974586",
@@ -1244,7 +1244,7 @@
         "authorsInstitution": "Institución Universitaria Politécnico Grancolombiano"
       },
       "createdAt": "2026-11-24T02:08:03.167Z",
-      "updatedAt": "2026-11-24T03:25:24.023Z",
+      "updatedAt": "2026-11-24T03:25:26.562Z",
       "progress": 95,
       "calculatedProgress": 95,
       "heroBanner": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795490558177_yj68_asset.jpg",
