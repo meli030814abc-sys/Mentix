@@ -1778,9 +1778,9 @@ window.ProjectsView = {
   setProjectCrop(projId, type = 'card', cropObj = {}) {
     if (!projId) return;
     const clean = {
-      zoom: Math.max(50, Math.min(250, Number(cropObj.zoom ?? 100) || 100)),
-      offsetX: Math.max(-80, Math.min(80, Number(cropObj.offsetX ?? 0) || 0)),
-      offsetY: Math.max(-80, Math.min(80, Number(cropObj.offsetY ?? 0) || 0)),
+      zoom: Math.max(30, Math.min(400, Number(cropObj.zoom ?? 100) || 100)),
+      offsetX: Math.max(-150, Math.min(150, Math.round((Number(cropObj.offsetX ?? 0) || 0) * 10) / 10)),
+      offsetY: Math.max(-150, Math.min(150, Math.round((Number(cropObj.offsetY ?? 0) || 0) * 10) / 10)),
       fit: cropObj.fit === 'contain' ? 'contain' : 'cover'
     };
     const key = `mentix_crop_${type}_${projId}`;
@@ -2212,7 +2212,7 @@ window.ProjectsView = {
   },
 
   /**
-   * Modal Interactivo de Encuadre para Portada o Hero
+   * Modal Interactivo de Encuadre para Portada o Hero (Muestra toda la imagen completa sin recortarla al moverla)
    */
   openProjectCropAdjuster(projId, type = 'card') {
     const isCard = type === 'card';
@@ -2221,76 +2221,97 @@ window.ProjectsView = {
     const imgSrc = imgEl ? imgEl.src : (isCard ? this.getProjectCardCover(projId) : this.getProjectHeroBanner(projId));
 
     const currentCrop = this.getProjectCrop(projId, type);
-    const live = { ...currentCrop };
+    // Siempre usar 'contain' dentro del editor para que aparezca TODA la imagen completa y no se corte al moverla
+    const live = {
+      zoom: Number(currentCrop.zoom || 100),
+      offsetX: Number(currentCrop.offsetX || 0),
+      offsetY: Number(currentCrop.offsetY || 0),
+      fit: 'contain'
+    };
 
     const existing = document.getElementById('mentix-crop-submodal-overlay');
     if (existing) existing.remove();
 
     const overlay = document.createElement('div');
     overlay.id = 'mentix-crop-submodal-overlay';
-    overlay.style.cssText = 'position:fixed; inset:0; background:rgba(3,7,18,0.85); backdrop-filter:blur(10px); z-index:999999999; display:flex; align-items:center; justify-content:center; padding:1.2rem; overflow-y:auto; font-family:"Outfit","Inter",sans-serif;';
+    overlay.style.cssText = 'position:fixed; inset:0; background:rgba(3,7,18,0.88); backdrop-filter:blur(10px); z-index:999999999; display:flex; align-items:center; justify-content:center; padding:1.1rem; overflow-y:auto; font-family:"Outfit","Inter",sans-serif;';
+
+    // Proporción real del marco visible: Tarjeta (~2.85:1) vs Hero (~4.1:1)
+    const frameWidthCss = isCard ? 'min(480px, 86%)' : 'min(640px, 90%)';
+    const frameHeightPx = isCard ? 168 : 156;
 
     overlay.innerHTML = `
-      <div style="background:#ffffff; border:2px solid #00f5d4; border-radius:20px; max-width:820px; width:100%; padding:1.6rem; box-shadow:0 25px 70px rgba(0,0,0,0.7), 0 0 30px rgba(0,245,212,0.25); color:#0f172a; position:relative;">
-        <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:1rem; border-bottom:1.5px solid #e2e8f0; padding-bottom:0.75rem;">
+      <div style="background:#ffffff; border:2px solid #00f5d4; border-radius:20px; max-width:900px; width:100%; padding:1.5rem; box-shadow:0 25px 70px rgba(0,0,0,0.7), 0 0 30px rgba(0,245,212,0.25); color:#0f172a; position:relative;">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:0.95rem; border-bottom:1.5px solid #e2e8f0; padding-bottom:0.7rem;">
           <div>
             <div style="display:inline-flex; align-items:center; gap:0.35rem; background:#071739; border:1px solid #00f5d4; color:#00f5d4; padding:0.2rem 0.65rem; border-radius:999px; font-size:0.72rem; font-weight:900;">
-              📐 MODO ENCUADRE DE PRECISIÓN
+              📐 MODO ENCUADRE LIBRE (SIN CORTES)
             </div>
-            <h3 style="margin:0.35rem 0 0; font-size:1.3rem; font-weight:900; color:#0f172a;">
+            <h3 style="margin:0.35rem 0 0; font-size:1.28rem; font-weight:900; color:#0f172a;">
               Encuadrar: ${label}
             </h3>
             <p style="margin:0.2rem 0 0; font-size:0.82rem; color:#64748b;">
-              Arrastra directamente sobre la imagen, haz zoom o usa las flechas para encuadrarla exactamente como deseas.
+              Aquí ves <b>toda tu imagen completa</b>. Arrástrala, agrándala o muévela libremente: lo que quede dentro del recuadro iluminado es lo que se mostrará.
             </p>
           </div>
           <button type="button" onclick="document.getElementById('mentix-crop-submodal-overlay').remove()" style="background:#f1f5f9; border:1px solid #cbd5e1; border-radius:50%; width:34px; height:34px; font-size:1.1rem; cursor:pointer; font-weight:800; color:#475569;">✕</button>
         </div>
 
-        <!-- Área de Encuadre Interactivo con Canvas/Img -->
-        <div id="crop-stage-container" style="position:relative; width:100%; height:${isCard ? '220px' : '170px'}; border-radius:14px; overflow:hidden; border:2.5px dashed #0284c7; background:#071739; cursor:grab; user-select:none; touch-action:none; margin-bottom:1rem; display:flex; align-items:center; justify-content:center;">
-          <img 
-            id="crop-stage-img" 
-            src="${this.escapeHtml(imgSrc)}" 
-            alt="" 
-            style="width:100%; height:100%; object-fit:${live.fit}; object-position:center center; transform:translate(${live.offsetX}%, ${live.offsetY}%) scale(${(live.zoom / 100).toFixed(2)}); transform-origin:center center; pointer-events:none; transition:none;"
-          />
-          <div style="position:absolute; bottom:8px; left:10px; background:rgba(7,23,57,0.85); color:#00f5d4; font-size:0.72rem; font-weight:800; padding:0.2rem 0.6rem; border-radius:999px; pointer-events:none;">
-            🖱️ Mantén presionado y arrastra para mover
+        <!-- Visor Amplio Exterior: deja ver toda la imagen completa aunque sobresalga del recuadro -->
+        <div id="crop-stage-container" style="position:relative; width:100%; height:330px; border-radius:16px; overflow:hidden; border:2px solid #1e293b; background:#040d1e; cursor:grab; user-select:none; touch-action:none; margin-bottom:1rem; display:flex; align-items:center; justify-content:center;">
+          
+          <!-- Marco Exacto de Recorte (overflow: visible para que la imagen completa sea visible alrededor) -->
+          <div id="crop-frame-box" style="position:relative; width:${frameWidthCss}; height:${frameHeightPx}px; overflow:visible; display:flex; align-items:center; justify-content:center; pointer-events:none;">
+            <img 
+              id="crop-stage-img" 
+              src="${this.escapeHtml(imgSrc)}" 
+              alt="" 
+              style="width:100%; height:100%; object-fit:contain; object-position:center center; transform:translate(${live.offsetX}%, ${live.offsetY}%) scale(${(live.zoom / 100).toFixed(2)}); transform-origin:center center; pointer-events:none; transition:none; max-width:none; max-height:none;"
+            />
+            <!-- Máscara Oscura Exterior + Borde Neón del Marco Visible -->
+            <div style="position:absolute; inset:0; border:2.5px solid #00f5d4; border-radius:10px; box-shadow:0 0 0 9999px rgba(4, 12, 28, 0.72), inset 0 0 0 1px rgba(255,255,255,0.25); pointer-events:none; z-index:3;">
+              <span style="position:absolute; top:-22px; left:0; background:#00f5d4; color:#071739; font-size:0.68rem; font-weight:900; padding:0.12rem 0.55rem; border-radius:999px; letter-spacing:0.03em;">
+                ÁREA VISIBLE FINAL
+              </span>
+            </div>
+          </div>
+
+          <div style="position:absolute; bottom:10px; left:12px; z-index:5; background:rgba(7,23,57,0.9); border:1px solid rgba(0,245,212,0.45); color:#00f5d4; font-size:0.73rem; font-weight:800; padding:0.25rem 0.7rem; border-radius:999px; pointer-events:none;">
+            🖱️ Arrastra para mover • Rueda del ratón para agrandar/achicar
           </div>
         </div>
 
         <!-- Toolbar de Controles de Encuadre -->
-        <div style="background:#f8fafc; border:1.5px solid #e2e8f0; border-radius:14px; padding:0.85rem 1.1rem; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:0.6rem; margin-bottom:1.2rem;">
+        <div style="background:#f8fafc; border:1.5px solid #e2e8f0; border-radius:14px; padding:0.85rem 1.05rem; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:0.65rem; margin-bottom:1.15rem;">
           <div style="display:flex; align-items:center; gap:0.4rem; flex-wrap:wrap;">
-            <button type="button" id="crop-btn-fit-cover" style="padding:0.4rem 0.8rem; border-radius:9px; border:1.5px solid #cbd5e1; background:${live.fit === 'cover' ? '#0047cc' : '#ffffff'}; color:${live.fit === 'cover' ? '#ffffff' : '#0f172a'}; font-size:0.78rem; font-weight:800; cursor:pointer;">
-              📐 Llenar marco
+            <button type="button" id="crop-btn-fit-contain" style="padding:0.42rem 0.85rem; border-radius:9px; border:1.5px solid #0284c7; background:#e0f2fe; color:#0369a1; font-size:0.78rem; font-weight:900; cursor:pointer;" title="Mostrar toda la imagen completa dentro del marco">
+              🖼️ Ver toda completa
             </button>
-            <button type="button" id="crop-btn-fit-contain" style="padding:0.4rem 0.8rem; border-radius:9px; border:1.5px solid #cbd5e1; background:${live.fit === 'contain' ? '#0047cc' : '#ffffff'}; color:${live.fit === 'contain' ? '#ffffff' : '#0f172a'}; font-size:0.78rem; font-weight:800; cursor:pointer;">
-              🖼️ Ver completa
+            <button type="button" id="crop-btn-fit-fill" style="padding:0.42rem 0.85rem; border-radius:9px; border:1.5px solid #cbd5e1; background:#ffffff; color:#0f172a; font-size:0.78rem; font-weight:800; cursor:pointer;" title="Agrandar automáticamente para llenar todo el marco sin dejar bordes">
+              📐 Llenar marco
             </button>
 
             <!-- Flechas de Ajuste Fino -->
-            <button type="button" id="crop-btn-up" style="padding:0.38rem 0.6rem; border-radius:8px; border:1px solid #cbd5e1; background:#ffffff; cursor:pointer; font-weight:800;" title="Subir">⬆️</button>
-            <button type="button" id="crop-btn-down" style="padding:0.38rem 0.6rem; border-radius:8px; border:1px solid #cbd5e1; background:#ffffff; cursor:pointer; font-weight:800;" title="Bajar">⬇️</button>
-            <button type="button" id="crop-btn-left" style="padding:0.38rem 0.6rem; border-radius:8px; border:1px solid #cbd5e1; background:#ffffff; cursor:pointer; font-weight:800;" title="Izquierda">⬅️</button>
-            <button type="button" id="crop-btn-right" style="padding:0.38rem 0.6rem; border-radius:8px; border:1px solid #cbd5e1; background:#ffffff; cursor:pointer; font-weight:800;" title="Derecha">➡️</button>
-            <button type="button" id="crop-btn-center" style="padding:0.38rem 0.75rem; border-radius:8px; border:1px solid #cbd5e1; background:#ffffff; cursor:pointer; font-weight:800; font-size:0.78rem;" title="Centrar">🎯 Centrar</button>
+            <button type="button" id="crop-btn-up" style="padding:0.38rem 0.58rem; border-radius:8px; border:1px solid #cbd5e1; background:#ffffff; cursor:pointer; font-weight:800;" title="Subir">⬆️</button>
+            <button type="button" id="crop-btn-down" style="padding:0.38rem 0.58rem; border-radius:8px; border:1px solid #cbd5e1; background:#ffffff; cursor:pointer; font-weight:800;" title="Bajar">⬇️</button>
+            <button type="button" id="crop-btn-left" style="padding:0.38rem 0.58rem; border-radius:8px; border:1px solid #cbd5e1; background:#ffffff; cursor:pointer; font-weight:800;" title="Izquierda">⬅️</button>
+            <button type="button" id="crop-btn-right" style="padding:0.38rem 0.58rem; border-radius:8px; border:1px solid #cbd5e1; background:#ffffff; cursor:pointer; font-weight:800;" title="Derecha">➡️</button>
+            <button type="button" id="crop-btn-center" style="padding:0.38rem 0.72rem; border-radius:8px; border:1px solid #cbd5e1; background:#ffffff; cursor:pointer; font-weight:800; font-size:0.78rem;" title="Centrar al 100%">🎯 Centrar</button>
           </div>
 
-          <!-- Slider de Zoom -->
+          <!-- Slider de Zoom Amplio (30% a 400%) -->
           <div style="display:flex; align-items:center; gap:0.45rem;">
-            <span style="font-size:0.8rem; font-weight:800; color:#334155;">🔍 Zoom:</span>
+            <span style="font-size:0.8rem; font-weight:800; color:#334155;">🔍 Tamaño:</span>
             <input 
               type="range" 
               id="crop-zoom-slider" 
-              min="50" 
-              max="240" 
+              min="30" 
+              max="400" 
               step="2" 
               value="${live.zoom}" 
-              style="width:90px; accent-color:#0047cc; cursor:pointer;"
+              style="width:120px; accent-color:#0047cc; cursor:pointer;"
             />
-            <span id="crop-zoom-val" style="font-size:0.82rem; font-weight:900; color:#0047cc; min-width:38px;">${Math.round(live.zoom)}%</span>
+            <span id="crop-zoom-val" style="font-size:0.82rem; font-weight:900; color:#0047cc; min-width:44px;">${Math.round(live.zoom)}%</span>
           </div>
         </div>
 
@@ -2317,23 +2338,19 @@ window.ProjectsView = {
     document.body.appendChild(overlay);
 
     const stageContainer = overlay.querySelector('#crop-stage-container');
+    const frameBox = overlay.querySelector('#crop-frame-box');
     const stageImg = overlay.querySelector('#crop-stage-img');
     const zoomSlider = overlay.querySelector('#crop-zoom-slider');
     const zoomVal = overlay.querySelector('#crop-zoom-val');
-    const btnCover = overlay.querySelector('#crop-btn-fit-cover');
-    const btnContain = overlay.querySelector('#crop-btn-fit-contain');
 
     const updateStage = () => {
-      stageImg.style.objectFit = live.fit;
+      stageImg.style.objectFit = 'contain';
       stageImg.style.transform = `translate(${live.offsetX}%, ${live.offsetY}%) scale(${(live.zoom / 100).toFixed(2)})`;
       zoomVal.textContent = `${Math.round(live.zoom)}%`;
-      btnCover.style.background = live.fit === 'cover' ? '#0047cc' : '#ffffff';
-      btnCover.style.color = live.fit === 'cover' ? '#ffffff' : '#0f172a';
-      btnContain.style.background = live.fit === 'contain' ? '#0047cc' : '#ffffff';
-      btnContain.style.color = live.fit === 'contain' ? '#ffffff' : '#0f172a';
+      zoomSlider.value = live.zoom;
     };
 
-    // Arrastre con puntero/mouse
+    // Arrastre libre con puntero/mouse (sin límites estrechos)
     let isDragging = false;
     let sX = 0, sY = 0, sOx = live.offsetX, sOy = live.offsetY;
 
@@ -2350,11 +2367,11 @@ window.ProjectsView = {
 
     stageContainer.addEventListener('pointermove', (e) => {
       if (!isDragging) return;
-      const rect = stageContainer.getBoundingClientRect();
-      const dx = ((e.clientX - sX) / Math.max(100, rect.width)) * 100;
-      const dy = ((e.clientY - sY) / Math.max(80, rect.height)) * 100;
-      live.offsetX = Math.max(-80, Math.min(80, Math.round((sOx + dx) * 10) / 10));
-      live.offsetY = Math.max(-80, Math.min(80, Math.round((sOy + dy) * 10) / 10));
+      const rect = frameBox.getBoundingClientRect();
+      const dx = ((e.clientX - sX) / Math.max(80, rect.width)) * 100;
+      const dy = ((e.clientY - sY) / Math.max(60, rect.height)) * 100;
+      live.offsetX = Math.max(-150, Math.min(150, Math.round((sOx + dx) * 10) / 10));
+      live.offsetY = Math.max(-150, Math.min(150, Math.round((sOy + dy) * 10) / 10));
       updateStage();
     });
 
@@ -2370,9 +2387,8 @@ window.ProjectsView = {
     // Zoom con rueda del ratón
     stageContainer.addEventListener('wheel', (e) => {
       e.preventDefault();
-      const delta = e.deltaY < 0 ? 6 : -6;
-      live.zoom = Math.max(50, Math.min(240, live.zoom + delta));
-      zoomSlider.value = live.zoom;
+      const delta = e.deltaY < 0 ? 8 : -8;
+      live.zoom = Math.max(30, Math.min(400, live.zoom + delta));
       updateStage();
     }, { passive: false });
 
@@ -2381,20 +2397,41 @@ window.ProjectsView = {
       updateStage();
     });
 
-    btnCover.addEventListener('click', () => { live.fit = 'cover'; updateStage(); });
-    btnContain.addEventListener('click', () => { live.fit = 'contain'; live.offsetX = 0; live.offsetY = 0; live.zoom = 100; zoomSlider.value = 100; updateStage(); });
+    overlay.querySelector('#crop-btn-fit-contain').addEventListener('click', () => {
+      live.fit = 'contain';
+      live.offsetX = 0;
+      live.offsetY = 0;
+      live.zoom = 100;
+      updateStage();
+    });
 
-    overlay.querySelector('#crop-btn-up').addEventListener('click', () => { live.offsetY = Math.max(-80, live.offsetY - 4); updateStage(); });
-    overlay.querySelector('#crop-btn-down').addEventListener('click', () => { live.offsetY = Math.min(80, live.offsetY + 4); updateStage(); });
-    overlay.querySelector('#crop-btn-left').addEventListener('click', () => { live.offsetX = Math.max(-80, live.offsetX - 4); updateStage(); });
-    overlay.querySelector('#crop-btn-right').addEventListener('click', () => { live.offsetX = Math.min(80, live.offsetX + 4); updateStage(); });
-    overlay.querySelector('#crop-btn-center').addEventListener('click', () => { live.offsetX = 0; live.offsetY = 0; live.zoom = 100; zoomSlider.value = 100; updateStage(); });
+    overlay.querySelector('#crop-btn-fit-fill').addEventListener('click', () => {
+      live.fit = 'contain';
+      const nw = stageImg.naturalWidth || 1600;
+      const nh = stageImg.naturalHeight || 900;
+      const rect = frameBox.getBoundingClientRect();
+      const fw = Math.max(100, rect.width);
+      const fh = Math.max(60, rect.height);
+      const imgAspect = nw / nh;
+      const frameAspect = fw / fh;
+      const fillRatio = Math.max(imgAspect / frameAspect, frameAspect / imgAspect);
+      live.zoom = Math.min(400, Math.max(100, Math.round(fillRatio * 100)));
+      live.offsetX = 0;
+      live.offsetY = 0;
+      updateStage();
+    });
+
+    overlay.querySelector('#crop-btn-up').addEventListener('click', () => { live.offsetY = Math.max(-150, live.offsetY - 5); updateStage(); });
+    overlay.querySelector('#crop-btn-down').addEventListener('click', () => { live.offsetY = Math.min(150, live.offsetY + 5); updateStage(); });
+    overlay.querySelector('#crop-btn-left').addEventListener('click', () => { live.offsetX = Math.max(-150, live.offsetX - 5); updateStage(); });
+    overlay.querySelector('#crop-btn-right').addEventListener('click', () => { live.offsetX = Math.min(150, live.offsetX + 5); updateStage(); });
+    overlay.querySelector('#crop-btn-center').addEventListener('click', () => { live.offsetX = 0; live.offsetY = 0; live.zoom = 100; updateStage(); });
 
     overlay.querySelector('#crop-save-btn').addEventListener('click', () => {
+      live.fit = 'contain';
       this.setProjectCrop(projId, type, live);
       overlay.remove();
       this.showToast('✅ ¡Encuadre guardado con éxito!');
-      // Actualizar vista previa del modal principal
       this.renderAdminProjectMediaModalContent();
     });
   },
