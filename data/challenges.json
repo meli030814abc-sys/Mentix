@@ -28,7 +28,7 @@
     "accessMode": "private",
     "displayOrder": 1,
     "createdAt": "2026-11-24T02:08:03.167Z",
-    "updatedAt": "2026-11-24T03:01:26.750Z",
+    "updatedAt": "2026-11-24T03:01:32.455Z",
     "landingConfig": {
       "publicName": "Diagnóstico y propuesta de optimización del gobierno de datos en GPC Pharma S.A.S. Empresa del Sector Farmaceutico.",
       "slug": "diagnostico-y-propuesta-de-optimizacion-del-gobierno-de-datos-en-gpc-pharma-s-a-s-empresa-del-sector-farmaceutico",
@@ -289,7 +289,7 @@
       },
       {
         "id": "vis_1795489213611_0",
-        "title": "GovDataNexus Madurez DAMA-DM",
+        "title": "GovDataNexus Madurez DAMA-DMBOK",
         "caption": "Imagen oficial del proyecto.",
         "url": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795489208552_b6o6_asset.jpg",
         "assetType": "gallery",
@@ -297,7 +297,7 @@
       },
       {
         "id": "vis_1795489220708_0",
-        "title": "Imagen4",
+        "title": "GovDataNexus",
         "caption": "Imagen oficial del proyecto.",
         "url": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795489215616_nos1_asset.jpg",
         "assetType": "gallery",
@@ -1264,7 +1264,7 @@
         "collaborators": ""
       },
       "createdAt": "2026-11-24T02:08:03.167Z",
-      "updatedAt": "2026-11-24T03:01:30.215Z",
+      "updatedAt": "2026-11-24T03:01:35.938Z",
       "progress": 95,
       "calculatedProgress": 95,
       "heroBanner": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fdraft%2F1795486058971_9ioo_asset.jpg",
