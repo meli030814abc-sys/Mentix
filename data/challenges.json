@@ -28,7 +28,7 @@
     "accessMode": "private",
     "displayOrder": 1,
     "createdAt": "2026-11-24T02:08:03.167Z",
-    "updatedAt": "2026-11-24T02:20:05.053Z",
+    "updatedAt": "2026-11-24T02:20:46.696Z",
     "landingConfig": {
       "publicName": "Diagnóstico y propuesta de optimización del gobierno de datos en GPC Pharma S.A.S. Empresa del Sector Farmaceutico.",
       "slug": "diagnostico-y-propuesta-de-optimizacion-del-gobierno-de-datos-en-gpc-pharma-s-a-s-empresa-del-sector-farmaceutico",
@@ -123,7 +123,7 @@
     "_clearedThumbImage": false,
     "useDefaultImage": true,
     "targetAudience": "Directivos y responsables de datos, tecnología y cumplimiento en organizaciones del sector farmacéutico; comunidad académica en gobierno de datos.",
-    "problemStatement": "",
+    "problemStatement": "GPC Pharma S.A.S. opera con una gestión de la información distribuida por áreas, apoyada en varias plataformas. Esto representa la oportunidad de formalizar roles de gobierno de datos, contar con un diccionario de metadatos y unificar criterios (por ejemplo, la identificación de clientes entre plataformas), de modo que la trazabilidad y la confianza en los datos acompañen el crecimiento de la operación.",
     "mainObjective": "",
     "benefits": "",
     "teamLead": "Laura Sofía Hernández Chaparro",
@@ -139,8 +139,8 @@
       4,
       5
     ],
-    "progress": 65,
-    "calculatedProgress": 65,
+    "progress": 80,
+    "calculatedProgress": 80,
     "valueProp": {
       "problemSolved": "",
       "howItWorks": "",
@@ -219,7 +219,7 @@
       "categoryName": "Gobierno de Datos",
       "projectSubtype": "Gobierno de Datos e IA",
       "targetAudience": "Directivos y responsables de datos, tecnología y cumplimiento en organizaciones del sector farmacéutico; comunidad académica en gobierno de datos.",
-      "problemStatement": "",
+      "problemStatement": "GPC Pharma S.A.S. opera con una gestión de la información distribuida por áreas, apoyada en varias plataformas. Esto representa la oportunidad de formalizar roles de gobierno de datos, contar con un diccionario de metadatos y unificar criterios (por ejemplo, la identificación de clientes entre plataformas), de modo que la trazabilidad y la confianza en los datos acompañen el crecimiento de la operación.",
       "mainObjective": "",
       "benefits": "",
       "teamLead": "Laura Sofía Hernández Chaparro",
@@ -338,9 +338,9 @@
         "collaborators": ""
       },
       "createdAt": "2026-11-24T02:08:03.167Z",
-      "updatedAt": "2026-11-24T02:20:07.935Z",
-      "progress": 65,
-      "calculatedProgress": 65
+      "updatedAt": "2026-11-24T02:20:49.725Z",
+      "progress": 80,
+      "calculatedProgress": 80
     },
     "ownerId": "user_1795437974586",
     "ownerUsername": "laurasofiahz",
