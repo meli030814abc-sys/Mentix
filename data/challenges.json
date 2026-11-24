@@ -28,7 +28,7 @@
     "accessMode": "private",
     "displayOrder": 1,
     "createdAt": "2026-11-24T02:08:03.167Z",
-    "updatedAt": "2026-11-24T03:25:24.018Z",
+    "updatedAt": "2026-11-24T03:25:26.353Z",
     "landingConfig": {
       "publicName": "Diagnóstico y propuesta de optimización del gobierno de datos en GPC Pharma S.A.S.",
       "slug": "propuesta-gobierno-de-datos-gpc-pharma",
@@ -49,7 +49,8 @@
       "authorsList": "Laura Sofía Hernández Chaparro",
       "authorsEmails": "ing.laurasofiax04@gmail.com",
       "authorsRole": "Estudiante / Creador",
-      "authorsInstitution": "Institución Universitaria Politécnico Grancolombiano"
+      "authorsInstitution": "Institución Universitaria Politécnico Grancolombiano",
+      "collaborators": ""
     },
     "designConfig": {
       "themeId": "cosmos",
@@ -130,7 +131,7 @@
     "submittedForApproval": false,
     "startDate": "2026-08-03",
     "endDate": "2026-11-25",
-    "currentStep": 5,
+    "currentStep": 4,
     "completedSteps": [
       1,
       2,
@@ -1264,7 +1265,7 @@
         14,
         15
       ],
-      "currentStep": 5,
+      "currentStep": 4,
       "author": "Laura Sofía Hernández Chaparro",
       "authorId": "user_1795437974586",
       "ownerId": "user_1795437974586",
@@ -1287,10 +1288,11 @@
         "authorsList": "Laura Sofía Hernández Chaparro",
         "authorsEmails": "ing.laurasofiax04@gmail.com",
         "authorsRole": "Estudiante / Creador",
-        "authorsInstitution": "Institución Universitaria Politécnico Grancolombiano"
+        "authorsInstitution": "Institución Universitaria Politécnico Grancolombiano",
+        "collaborators": ""
       },
       "createdAt": "2026-11-24T02:08:03.167Z",
-      "updatedAt": "2026-11-24T03:25:27.772Z",
+      "updatedAt": "2026-11-24T03:25:30.108Z",
       "progress": 95,
       "calculatedProgress": 95,
       "heroBanner": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795490558177_yj68_asset.jpg",
