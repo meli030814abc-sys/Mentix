@@ -28,7 +28,7 @@
     "accessMode": "private",
     "displayOrder": 1,
     "createdAt": "2026-11-24T02:08:03.167Z",
-    "updatedAt": "2026-11-24T02:27:54.329Z",
+    "updatedAt": "2026-11-24T02:28:00.310Z",
     "landingConfig": {
       "publicName": "Diagnóstico y propuesta de optimización del gobierno de datos en GPC Pharma S.A.S. Empresa del Sector Farmaceutico.",
       "slug": "diagnostico-y-propuesta-de-optimizacion-del-gobierno-de-datos-en-gpc-pharma-s-a-s-empresa-del-sector-farmaceutico",
@@ -173,7 +173,7 @@
         },
         {
           "q": "¿Qué herramientas y marco de referencia se utilizaron?",
-          "a": ""
+          "a": "El diagnóstico se basó en DAMA-DMBOK y la configuración se realizó en GovData Nexus, sobre una base de prueba en Supabase."
         }
       ]
     },
@@ -206,7 +206,7 @@
         },
         {
           "q": "¿Qué herramientas y marco de referencia se utilizaron?",
-          "a": ""
+          "a": "El diagnóstico se basó en DAMA-DMBOK y la configuración se realizó en GovData Nexus, sobre una base de prueba en Supabase."
         }
       ]
     },
@@ -300,7 +300,7 @@
           },
           {
             "q": "¿Qué herramientas y marco de referencia se utilizaron?",
-            "a": ""
+            "a": "El diagnóstico se basó en DAMA-DMBOK y la configuración se realizó en GovData Nexus, sobre una base de prueba en Supabase."
           }
         ]
       },
@@ -407,7 +407,7 @@
         "collaborators": ""
       },
       "createdAt": "2026-11-24T02:08:03.167Z",
-      "updatedAt": "2026-11-24T02:27:57.388Z",
+      "updatedAt": "2026-11-24T02:28:03.319Z",
       "progress": 80,
       "calculatedProgress": 80
     },
