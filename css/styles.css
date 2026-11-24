@@ -1,4 +1,4 @@
-﻿/* ==========================================================================
+/* ==========================================================================
    🔥 TE RETO - HOJA DE ESTILOS PRINCIPAL
    Identidad visual propia: Neón, Gamer, Educativo, Dinámico y Responsivo
    ========================================================================== */
@@ -9495,4 +9495,19 @@ body.light-theme .host-stats-table tr.correct-row {
   body.light-theme #view-game .glass-panel {
     background-color: rgba(15, 23, 42, 0.92) !important;
   }
+}
+
+/* 🧊 Iconos 3D (Fluent) en la barra de navegación */
+.nav3d-ico {
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
+  vertical-align: middle;
+  margin-right: 0.15rem;
+  filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.35));
+  transition: transform 0.2s ease;
+  pointer-events: none;
+}
+.glass-nav .btn:hover .nav3d-ico {
+  transform: translateY(-2px) scale(1.18) rotate(-4deg);
 }
