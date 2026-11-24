@@ -4626,18 +4626,18 @@ body[data-theme="dark"] .plp-lightbox-content {
 .saas-card-banner-wrap {
   position: relative;
   width: 100%;
-  height: 135px;
-  min-height: 135px;
-  max-height: 135px;
+  height: 200px;
+  min-height: 200px;
+  max-height: 200px;
   overflow: hidden;
   background: #0f172a;
 }
 
 .saas-card-banner-img {
   width: 100% !important;
-  height: 135px !important;
-  min-height: 135px !important;
-  max-height: 135px !important;
+  height: 200px !important;
+  min-height: 200px !important;
+  max-height: 200px !important;
   object-fit: cover !important;
   object-position: center !important;
   display: block !important;

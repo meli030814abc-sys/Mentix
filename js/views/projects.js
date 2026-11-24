@@ -2373,9 +2373,9 @@ window.ProjectsView = {
     overlay.id = 'mentix-crop-submodal-overlay';
     overlay.style.cssText = 'position:fixed; inset:0; background:rgba(3,7,18,0.88); backdrop-filter:blur(10px); z-index:999999999; display:flex; align-items:center; justify-content:center; padding:1.1rem; overflow-y:auto; font-family:"Outfit","Inter",sans-serif;';
 
-    // Proporción real del marco visible: Tarjeta (~2.85:1) vs Hero (~4.1:1)
+    // Proporción real del marco visible: Tarjeta (~200px alto) vs Hero (~156px alto)
     const frameWidthCss = isCard ? 'min(480px, 86%)' : 'min(640px, 90%)';
-    const frameHeightPx = isCard ? 168 : 156;
+    const frameHeightPx = isCard ? 200 : 156;
 
     overlay.innerHTML = `
       <div style="background:#ffffff; border:2px solid #00f5d4; border-radius:20px; max-width:900px; width:100%; padding:1.5rem; box-shadow:0 25px 70px rgba(0,0,0,0.7), 0 0 30px rgba(0,245,212,0.25); color:#0f172a; position:relative;">
@@ -4600,13 +4600,13 @@ window.ProjectsView = {
     return `
       <div class="saas-project-card animate-fade-in" data-id="${c.id}" onclick="${cardClickAction}" style="border-radius: 16px; background: #ffffff; border: 1.5px solid #e2e8f0; overflow: hidden; box-shadow: 0 4px 18px rgba(0,0,0,0.04); display: flex; flex-direction: column; cursor: pointer; transition: transform 0.2s ease, box-shadow 0.2s ease; position: relative;">
         
-        <!-- Banner Image Wrapper (Fixed 135px height with object-fit cover) -->
-        <div class="saas-card-banner-wrap" style="position: relative; width: 100%; height: 135px; min-height: 135px; max-height: 135px; overflow: hidden; background: #0f172a;">
+        <!-- Banner Image Wrapper (Generoso 200px height con encuadre personalizable) -->
+        <div class="saas-card-banner-wrap" style="position: relative; width: 100%; height: 200px; min-height: 200px; max-height: 200px; overflow: hidden; background: #0f172a;">
           <img 
             src="${defaultBanner}" 
             alt="${this.escapeHtml(c.title)}" 
             class="saas-card-banner-img"
-            style="width: 100%; height: 135px; min-height: 135px; max-height: 135px; ${cardCropCss} display: block;" 
+            style="width: 100%; height: 200px; min-height: 200px; max-height: 200px; ${cardCropCss} display: block;" 
             onerror="this.onerror=null;this.src='assets/projects_ui/card_data_gov.png';" 
           />
 
