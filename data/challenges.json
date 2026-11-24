@@ -28,7 +28,7 @@
     "accessMode": "public",
     "displayOrder": 1,
     "createdAt": "2026-11-24T02:08:03.167Z",
-    "updatedAt": "2026-11-24T18:32:24.600Z",
+    "updatedAt": "2026-11-24T18:32:26.419Z",
     "landingConfig": {
       "publicName": "Diagnóstico y propuesta de optimización del gobierno de datos en GPC Pharma S.A.S.",
       "slug": "propuesta-gobierno-de-datos-gpc-pharma",
@@ -1310,7 +1310,7 @@
         "authorsInstitution": "Institución Universitaria Politécnico Grancolombiano"
       },
       "createdAt": "2026-11-24T02:08:03.167Z",
-      "updatedAt": "2026-11-24T18:32:25.455Z",
+      "updatedAt": "2026-11-24T18:31:56.040Z",
       "submittedForApproval": true,
       "progress": 100,
       "calculatedProgress": 100,
@@ -1319,7 +1319,7 @@
       "completedAt": "2026-11-24T16:46:38.877Z",
       "isPublic": true,
       "rejectionReason": "",
-      "authorizedAt": "2026-11-24T18:32:25.455Z",
+      "authorizedAt": "2026-11-24T18:28:37.704Z",
       "authorizedBy": "Melisa"
     },
     "ownerId": "user_1795437974586",
@@ -1343,7 +1343,7 @@
     "completedAt": "2026-11-24T16:46:38.877Z",
     "_globalHeroBanner": "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=1600&q=80",
     "stage": "completed",
-    "authorizedAt": "2026-11-24T18:32:25.455Z",
+    "authorizedAt": "2026-11-24T18:28:37.704Z",
     "authorizedBy": "Melisa"
   },
   {
