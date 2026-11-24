@@ -64,22 +64,6 @@
     "createdAt": "2026-11-23T16:23:20.888Z"
   },
   {
-    "id": "user_1795453936224",
-    "name": "GATITAXD2",
-    "username": "Cañon52",
-    "email": "gatitaxd679@gmail.com522",
-    "avatar": "🦊",
-    "role": "student",
-    "xp": 100,
-    "level": 1,
-    "levelName": "Principiante",
-    "institution": "Comunidad MENTIX",
-    "isBlocked": false,
-    "lastLoginAt": "2026-11-23T20:20:15.393Z",
-    "pwd": "2c202f0114f478fee01140e39aaf8408570260b9e5a2c34db3b137c74125297c",
-    "createdAt": "2026-11-23T17:12:17.547Z"
-  },
-  {
     "id": "user_1793449738905",
     "name": "Carlos Canon",
     "username": "Nocturno",
