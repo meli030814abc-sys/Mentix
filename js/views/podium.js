@@ -198,10 +198,10 @@ window.PodiumView = {
                 <div class="avatar-podium" style="border-color: #e0e6ed;">
                   ${window.AvatarEngine ? window.AvatarEngine.renderPlayerIcon(second, 64) : second.avatar}
                 </div>
-                <div style="font-weight: 800; font-size: 1rem; color: var(--text-primary); margin-bottom: 0.25rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 110px;">
+                <div style="font-weight: 800; font-size: 1rem; color: #ffffff !important; text-shadow: 0 2px 6px rgba(0,0,0,0.8); margin-bottom: 0.25rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 110px;">
                   ${second.nickname}
                 </div>
-                <div style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.5rem; font-weight: 700;">
+                <div style="font-size: 0.85rem; color: #e2e8f0 !important; text-shadow: 0 1px 4px rgba(0,0,0,0.8); margin-bottom: 0.5rem; font-weight: 700;">
                   ${(second.score || 0).toLocaleString()} pts
                 </div>
                 <div class="podium-cylinder-3d">
@@ -219,10 +219,10 @@ window.PodiumView = {
                 <div class="crown-icon">👑</div>
                 ${window.AvatarEngine ? window.AvatarEngine.renderPlayerIcon(first, 80) : first.avatar}
               </div>
-              <div style="font-weight: 900; font-size: 1.25rem; color: #ffd700; margin-bottom: 0.25rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 140px;">
+              <div style="font-weight: 900; font-size: 1.25rem; color: #ffd700 !important; text-shadow: 0 2px 8px rgba(0,0,0,0.85); margin-bottom: 0.25rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 140px;">
                 ${first.nickname}
               </div>
-              <div style="font-size: 0.95rem; color: var(--text-primary); margin-bottom: 0.5rem; font-weight: 800;">
+              <div style="font-size: 0.95rem; color: #ffffff !important; text-shadow: 0 1px 6px rgba(0,0,0,0.85); margin-bottom: 0.5rem; font-weight: 800;">
                 ${(first.score || 0).toLocaleString()} pts
               </div>
               <div class="podium-cylinder-3d">
@@ -239,10 +239,10 @@ window.PodiumView = {
                 <div class="avatar-podium" style="border-color: #cd7f32;">
                   ${window.AvatarEngine ? window.AvatarEngine.renderPlayerIcon(third, 64) : third.avatar}
                 </div>
-                <div style="font-weight: 800; font-size: 1rem; color: var(--text-primary); margin-bottom: 0.25rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 110px;">
+                <div style="font-weight: 800; font-size: 1rem; color: #ffffff !important; text-shadow: 0 2px 6px rgba(0,0,0,0.8); margin-bottom: 0.25rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 110px;">
                   ${third.nickname}
                 </div>
-                <div style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.5rem; font-weight: 700;">
+                <div style="font-size: 0.85rem; color: #e2e8f0 !important; text-shadow: 0 1px 4px rgba(0,0,0,0.8); margin-bottom: 0.5rem; font-weight: 700;">
                   ${(third.score || 0).toLocaleString()} pts
                 </div>
                 <div class="podium-cylinder-3d">
@@ -258,21 +258,21 @@ window.PodiumView = {
 
         <!-- Estadísticas Clave del Reto -->
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; margin-bottom: 2.5rem;">
-          <div class="glass-panel" style="padding: 1.25rem;">
-            <div style="font-size: 0.85rem; color: var(--text-muted); font-weight: 700; margin-bottom: 0.25rem;">PREMISAS DE ACIERTO</div>
-            <div style="font-size: 1.8rem; font-weight: 900; color: var(--neon-cyan);">${avgAccuracy}%</div>
+          <div class="glass-panel" style="padding: 1.25rem; background: rgba(15, 23, 42, 0.88) !important; border: 1.5px solid rgba(0, 245, 212, 0.3) !important;">
+            <div style="font-size: 0.85rem; color: #cbd5e1 !important; font-weight: 800; margin-bottom: 0.25rem;">PREMISAS DE ACIERTO</div>
+            <div style="font-size: 1.8rem; font-weight: 900; color: #00f5d4 !important;">${avgAccuracy}%</div>
           </div>
-          <div class="glass-panel" style="padding: 1.25rem;">
-            <div style="font-size: 0.85rem; color: var(--text-muted); font-weight: 700; margin-bottom: 0.25rem;">PUNTAJE MÁXIMO</div>
-            <div style="font-size: 1.8rem; font-weight: 900; color: var(--neon-gold);">${(maxScore || 0).toLocaleString()}</div>
+          <div class="glass-panel" style="padding: 1.25rem; background: rgba(15, 23, 42, 0.88) !important; border: 1.5px solid rgba(255, 183, 3, 0.3) !important;">
+            <div style="font-size: 0.85rem; color: #cbd5e1 !important; font-weight: 800; margin-bottom: 0.25rem;">PUNTAJE MÁXIMO</div>
+            <div style="font-size: 1.8rem; font-weight: 900; color: #ffd700 !important;">${(maxScore || 0).toLocaleString()}</div>
           </div>
-          <div class="glass-panel" style="padding: 1.25rem;">
-            <div style="font-size: 0.85rem; color: var(--text-muted); font-weight: 700; margin-bottom: 0.25rem;">XP GANADA</div>
-            <div style="font-size: 1.8rem; font-weight: 900; color: var(--neon-magenta);">+${xpEarned} XP</div>
+          <div class="glass-panel" style="padding: 1.25rem; background: rgba(15, 23, 42, 0.88) !important; border: 1.5px solid rgba(247, 37, 133, 0.3) !important;">
+            <div style="font-size: 0.85rem; color: #cbd5e1 !important; font-weight: 800; margin-bottom: 0.25rem;">XP GANADA</div>
+            <div style="font-size: 1.8rem; font-weight: 900; color: #f72585 !important;">+${xpEarned} XP</div>
           </div>
-          <div class="glass-panel" style="padding: 1.25rem;">
-            <div style="font-size: 0.85rem; color: var(--text-muted); font-weight: 700; margin-bottom: 0.25rem;">PARTICIPANTES</div>
-            <div style="font-size: 1.8rem; font-weight: 900; color: var(--text-primary);">${playersList.length}</div>
+          <div class="glass-panel" style="padding: 1.25rem; background: rgba(15, 23, 42, 0.88) !important; border: 1.5px solid rgba(255, 255, 255, 0.2) !important;">
+            <div style="font-size: 0.85rem; color: #cbd5e1 !important; font-weight: 800; margin-bottom: 0.25rem;">PARTICIPANTES</div>
+            <div style="font-size: 1.8rem; font-weight: 900; color: #ffffff !important;">${playersList.length}</div>
           </div>
         </div>
 

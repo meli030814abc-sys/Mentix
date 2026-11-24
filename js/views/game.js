@@ -3444,9 +3444,9 @@ window.GameView = {
 
             <!-- 📋 Tabla Resumen de Respuestas por Opción para el Creador -->
             <div class="host-stats-table-wrapper">
-              <div style="padding: 0.85rem 1.25rem; background: rgba(255,255,255,0.03); border-bottom: 1px solid var(--border-color); text-align: left; display: flex; align-items: center; justify-content: space-between;">
-                <span style="font-weight: 800; font-size: 0.9rem; color: var(--neon-cyan); text-transform: uppercase; letter-spacing: 0.5px;">📋 Tabla Detallada de Respuestas</span>
-                <span style="font-size: 0.82rem; color: var(--text-secondary); font-weight: 700;">${totalVotes} votos totales</span>
+              <div style="padding: 0.85rem 1.25rem; background: rgba(255,255,255,0.03); border-bottom: 1px solid rgba(255,255,255,0.12); text-align: left; display: flex; align-items: center; justify-content: space-between;">
+                <span style="font-weight: 800; font-size: 0.9rem; color: #00f5d4 !important; text-transform: uppercase; letter-spacing: 0.5px;">📋 Tabla Detallada de Respuestas</span>
+                <span style="font-size: 0.82rem; color: #cbd5e1 !important; font-weight: 700;">${totalVotes} votos totales</span>
               </div>
               <table class="host-stats-table">
                 <thead>
@@ -3484,16 +3484,16 @@ window.GameView = {
                             <div style="width: 60px; height: 8px; background: rgba(255,255,255,0.1); border-radius: 999px; overflow: hidden;">
                               <div style="width: ${pct}%; height: 100%; background: ${color}; border-radius: 999px;"></div>
                             </div>
-                            <span style="font-weight: 800; font-size: 0.85rem; color: var(--text-secondary);">${pct}%</span>
+                            <span style="font-weight: 800; font-size: 0.85rem; color: #e2e8f0 !important;">${pct}%</span>
                           </div>
                         </td>
                         <td style="text-align: center;">
                           ${isCorr ? `
-                            <span style="display: inline-flex; align-items: center; gap: 0.3rem; background: rgba(6, 214, 160, 0.15); border: 1px solid var(--neon-emerald); color: #06d6a0; font-weight: 800; font-size: 0.8rem; padding: 0.2rem 0.6rem; border-radius: 999px;">
+                            <span style="display: inline-flex; align-items: center; gap: 0.3rem; background: rgba(6, 214, 160, 0.15); border: 1px solid #06d6a0; color: #06d6a0 !important; font-weight: 800; font-size: 0.8rem; padding: 0.2rem 0.6rem; border-radius: 999px;">
                               ✓ Correcta
                             </span>
                           ` : `
-                            <span style="color: var(--text-muted); font-size: 0.8rem; font-weight: 600;">
+                            <span style="color: #94a3b8 !important; font-size: 0.8rem; font-weight: 600;">
                               —
                             </span>
                           `}

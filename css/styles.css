@@ -2906,13 +2906,13 @@ body.light-theme {
   color: var(--text-primary);
 }
 
-/* Títulos y Encabezados en Modo Claro (Excluyendo proyector de diapositivas) */
-body.light-theme h1:not(.gradient-title):not(#presentation-slide-canvas *):not(.slide-custom-title),
-body.light-theme h2:not(.gradient-title):not(#presentation-slide-canvas *),
-body.light-theme h3:not(.gradient-title):not(#presentation-slide-canvas *),
-body.light-theme h4:not(#presentation-slide-canvas *),
-body.light-theme h5:not(#presentation-slide-canvas *),
-body.light-theme h6:not(#presentation-slide-canvas *) {
+/* Títulos y Encabezados en Modo Claro (Excluyendo proyector de diapositivas, podio y pantallas de estadísticas de juego) */
+body.light-theme h1:not(.gradient-title):not(#presentation-slide-canvas *):not(.slide-custom-title):not(#view-podium *):not(#view-game *):not(#view-leaderboard *):not(.podium-title-3d),
+body.light-theme h2:not(.gradient-title):not(#presentation-slide-canvas *):not(#view-podium *):not(#view-game *):not(#view-leaderboard *):not(.podium-table-title),
+body.light-theme h3:not(.gradient-title):not(#presentation-slide-canvas *):not(#view-podium *):not(#view-game *):not(#view-leaderboard *),
+body.light-theme h4:not(#presentation-slide-canvas *):not(#view-podium *):not(#view-game *):not(#view-leaderboard *),
+body.light-theme h5:not(#presentation-slide-canvas *):not(#view-podium *):not(#view-game *):not(#view-leaderboard *),
+body.light-theme h6:not(#presentation-slide-canvas *):not(#view-podium *):not(#view-game *):not(#view-leaderboard *) {
   color: #0f172a !important;
 }
 
@@ -9240,15 +9240,21 @@ body.light-theme #view-podium .podium-table-card-3d {
   border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
 }
 
-.podium-table-title {
+.podium-table-title,
+#view-podium .podium-table-title,
+body.light-theme #view-podium .podium-table-title,
+body.light-theme #view-podium h2.podium-table-title,
+#view-podium .podium-table-title span,
+body.light-theme #view-podium .podium-table-title span {
   font-size: 1.35rem !important;
   font-weight: 900 !important;
   margin: 0 !important;
   color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
   display: flex !important;
   align-items: center !important;
   gap: 0.65rem !important;
-  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8) !important;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.85) !important;
   letter-spacing: 0.02em !important;
 }
 
@@ -9406,12 +9412,20 @@ body.light-theme #view-game .full-stats-card {
 .full-stats-card h3,
 .full-stats-card div,
 .full-stats-card p,
-.full-stats-card span {
-  color: #ffffff;
+.full-stats-card span,
+body.light-theme .full-stats-card h1,
+body.light-theme .full-stats-card h2,
+body.light-theme .full-stats-card h3,
+body.light-theme .full-stats-card div,
+body.light-theme .full-stats-card span,
+#view-game .full-stats-card div,
+#view-game .full-stats-card span {
+  color: #ffffff !important;
   text-shadow: 0 2px 8px rgba(0, 0, 0, 0.85);
 }
 
-.full-stats-card p {
+.full-stats-card p,
+body.light-theme .full-stats-card p {
   color: #cbd5e1 !important;
 }
 
@@ -9439,7 +9453,9 @@ body.light-theme .host-stats-table th {
 }
 
 .host-stats-table td,
-body.light-theme .host-stats-table td {
+body.light-theme .host-stats-table td,
+.host-stats-table td span,
+body.light-theme .host-stats-table td span {
   color: #ffffff !important;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
   text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8) !important;
