@@ -28,7 +28,7 @@
     "accessMode": "private",
     "displayOrder": 1,
     "createdAt": "2026-11-24T02:08:03.167Z",
-    "updatedAt": "2026-11-24T02:32:15.967Z",
+    "updatedAt": "2026-11-24T02:32:29.318Z",
     "landingConfig": {
       "publicName": "Diagnóstico y propuesta de optimización del gobierno de datos en GPC Pharma S.A.S. Empresa del Sector Farmaceutico.",
       "slug": "diagnostico-y-propuesta-de-optimizacion-del-gobierno-de-datos-en-gpc-pharma-s-a-s-empresa-del-sector-farmaceutico",
@@ -131,7 +131,7 @@
     "submittedForApproval": false,
     "startDate": "2026-08-03",
     "endDate": "2026-11-25",
-    "currentStep": 11,
+    "currentStep": 12,
     "completedSteps": [
       1,
       2,
@@ -142,7 +142,8 @@
       7,
       8,
       9,
-      10
+      10,
+      11
     ],
     "progress": 95,
     "calculatedProgress": 95,
@@ -228,7 +229,8 @@
         "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795487474291_765w_slide_1.jpg",
         "notes": "",
         "bgColor": "#ffffff",
-        "themeId": "cosmos"
+        "themeId": "cosmos",
+        "bgImage": ""
       },
       {
         "id": "slide_1795487436607_2",
@@ -243,7 +245,8 @@
         "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795487476404_bqxa_slide_2.jpg",
         "notes": "",
         "bgColor": "#ffffff",
-        "themeId": "cosmos"
+        "themeId": "cosmos",
+        "bgImage": ""
       },
       {
         "id": "slide_1795487437569_3",
@@ -258,7 +261,8 @@
         "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795487478060_xscl_slide_3.jpg",
         "notes": "",
         "bgColor": "#ffffff",
-        "themeId": "cosmos"
+        "themeId": "cosmos",
+        "bgImage": ""
       },
       {
         "id": "slide_1795487438010_4",
@@ -273,7 +277,8 @@
         "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795487479605_9k2x_slide_4.jpg",
         "notes": "",
         "bgColor": "#ffffff",
-        "themeId": "cosmos"
+        "themeId": "cosmos",
+        "bgImage": ""
       },
       {
         "id": "slide_1795487440376_5",
@@ -288,7 +293,8 @@
         "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795487504078_lqsy_slide_5.jpg",
         "notes": "",
         "bgColor": "#ffffff",
-        "themeId": "cosmos"
+        "themeId": "cosmos",
+        "bgImage": ""
       },
       {
         "id": "slide_1795487441385_6",
@@ -303,7 +309,8 @@
         "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795487505650_335c_slide_6.jpg",
         "notes": "",
         "bgColor": "#ffffff",
-        "themeId": "cosmos"
+        "themeId": "cosmos",
+        "bgImage": ""
       },
       {
         "id": "slide_1795487442171_7",
@@ -318,7 +325,8 @@
         "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795487520072_xnaq_slide_7.jpg",
         "notes": "",
         "bgColor": "#ffffff",
-        "themeId": "cosmos"
+        "themeId": "cosmos",
+        "bgImage": ""
       },
       {
         "id": "slide_1795487444622_8",
@@ -333,7 +341,8 @@
         "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795487521559_rln0_slide_8.jpg",
         "notes": "",
         "bgColor": "#ffffff",
-        "themeId": "cosmos"
+        "themeId": "cosmos",
+        "bgImage": ""
       },
       {
         "id": "slide_1795487445648_9",
@@ -348,7 +357,8 @@
         "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795487527046_29ek_slide_9.jpg",
         "notes": "",
         "bgColor": "#ffffff",
-        "themeId": "cosmos"
+        "themeId": "cosmos",
+        "bgImage": ""
       },
       {
         "id": "slide_1795487456249_10",
@@ -363,7 +373,8 @@
         "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795487529087_z2di_slide_10.jpg",
         "notes": "",
         "bgColor": "#ffffff",
-        "themeId": "cosmos"
+        "themeId": "cosmos",
+        "bgImage": ""
       },
       {
         "id": "slide_1795487457379_11",
@@ -374,11 +385,12 @@
         "layout": "full",
         "isFullImage": true,
         "isImported": true,
-        "media": "",
-        "imageUrl": "",
+        "media": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795487534750_qq8d_slide_11.jpg",
+        "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795487534750_qq8d_slide_11.jpg",
         "notes": "",
         "bgColor": "#ffffff",
-        "themeId": "cosmos"
+        "themeId": "cosmos",
+        "bgImage": ""
       },
       {
         "id": "slide_1795487458396_12",
@@ -389,11 +401,12 @@
         "layout": "full",
         "isFullImage": true,
         "isImported": true,
-        "media": "",
-        "imageUrl": "",
+        "media": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795487536459_9lw6_slide_12.jpg",
+        "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795487536459_9lw6_slide_12.jpg",
         "notes": "",
         "bgColor": "#ffffff",
-        "themeId": "cosmos"
+        "themeId": "cosmos",
+        "bgImage": ""
       },
       {
         "id": "slide_1795487459068_13",
@@ -404,11 +417,12 @@
         "layout": "full",
         "isFullImage": true,
         "isImported": true,
-        "media": "",
-        "imageUrl": "",
+        "media": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795487539963_bd6e_slide_13.jpg",
+        "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795487539963_bd6e_slide_13.jpg",
         "notes": "",
         "bgColor": "#ffffff",
-        "themeId": "cosmos"
+        "themeId": "cosmos",
+        "bgImage": ""
       },
       {
         "id": "slide_1795487459727_14",
@@ -419,11 +433,12 @@
         "layout": "full",
         "isFullImage": true,
         "isImported": true,
-        "media": "",
-        "imageUrl": "",
+        "media": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795487541471_60t0_slide_14.jpg",
+        "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795487541471_60t0_slide_14.jpg",
         "notes": "",
         "bgColor": "#ffffff",
-        "themeId": "cosmos"
+        "themeId": "cosmos",
+        "bgImage": ""
       },
       {
         "id": "slide_1795487460818_15",
@@ -434,11 +449,12 @@
         "layout": "full",
         "isFullImage": true,
         "isImported": true,
-        "media": "",
-        "imageUrl": "",
+        "media": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795487543053_fdtc_slide_15.jpg",
+        "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795487543053_fdtc_slide_15.jpg",
         "notes": "",
         "bgColor": "#ffffff",
-        "themeId": "cosmos"
+        "themeId": "cosmos",
+        "bgImage": ""
       },
       {
         "id": "slide_1795487461780_16",
@@ -449,11 +465,12 @@
         "layout": "full",
         "isFullImage": true,
         "isImported": true,
-        "media": "",
-        "imageUrl": "",
+        "media": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795487544748_joac_slide_16.jpg",
+        "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795487544748_joac_slide_16.jpg",
         "notes": "",
         "bgColor": "#ffffff",
-        "themeId": "cosmos"
+        "themeId": "cosmos",
+        "bgImage": ""
       },
       {
         "id": "slide_1795487462664_17",
@@ -464,11 +481,12 @@
         "layout": "full",
         "isFullImage": true,
         "isImported": true,
-        "media": "",
-        "imageUrl": "",
+        "media": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795487546273_qqtg_slide_17.jpg",
+        "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795487546273_qqtg_slide_17.jpg",
         "notes": "",
         "bgColor": "#ffffff",
-        "themeId": "cosmos"
+        "themeId": "cosmos",
+        "bgImage": ""
       },
       {
         "id": "slide_1795487463063_18",
@@ -483,7 +501,8 @@
         "imageUrl": "",
         "notes": "",
         "bgColor": "#ffffff",
-        "themeId": "cosmos"
+        "themeId": "cosmos",
+        "bgImage": ""
       },
       {
         "id": "slide_1795487463783_19",
@@ -498,7 +517,8 @@
         "imageUrl": "",
         "notes": "",
         "bgColor": "#ffffff",
-        "themeId": "cosmos"
+        "themeId": "cosmos",
+        "bgImage": ""
       },
       {
         "id": "slide_1795487464948_20",
@@ -513,7 +533,8 @@
         "imageUrl": "",
         "notes": "",
         "bgColor": "#ffffff",
-        "themeId": "cosmos"
+        "themeId": "cosmos",
+        "bgImage": ""
       },
       {
         "id": "slide_1795487465352_21",
@@ -528,7 +549,8 @@
         "imageUrl": "",
         "notes": "",
         "bgColor": "#ffffff",
-        "themeId": "cosmos"
+        "themeId": "cosmos",
+        "bgImage": ""
       },
       {
         "id": "slide_1795487466627_22",
@@ -543,7 +565,8 @@
         "imageUrl": "",
         "notes": "",
         "bgColor": "#ffffff",
-        "themeId": "cosmos"
+        "themeId": "cosmos",
+        "bgImage": ""
       },
       {
         "id": "slide_1795487467062_23",
@@ -558,7 +581,8 @@
         "imageUrl": "",
         "notes": "",
         "bgColor": "#ffffff",
-        "themeId": "cosmos"
+        "themeId": "cosmos",
+        "bgImage": ""
       }
     ],
     "presentations": [
@@ -579,7 +603,8 @@
             "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795487474291_765w_slide_1.jpg",
             "notes": "",
             "bgColor": "#ffffff",
-            "themeId": "cosmos"
+            "themeId": "cosmos",
+            "bgImage": ""
           },
           {
             "id": "slide_1795487436607_2",
@@ -594,7 +619,8 @@
             "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795487476404_bqxa_slide_2.jpg",
             "notes": "",
             "bgColor": "#ffffff",
-            "themeId": "cosmos"
+            "themeId": "cosmos",
+            "bgImage": ""
           },
           {
             "id": "slide_1795487437569_3",
@@ -609,7 +635,8 @@
             "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795487478060_xscl_slide_3.jpg",
             "notes": "",
             "bgColor": "#ffffff",
-            "themeId": "cosmos"
+            "themeId": "cosmos",
+            "bgImage": ""
           },
           {
             "id": "slide_1795487438010_4",
@@ -624,7 +651,8 @@
             "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795487479605_9k2x_slide_4.jpg",
             "notes": "",
             "bgColor": "#ffffff",
-            "themeId": "cosmos"
+            "themeId": "cosmos",
+            "bgImage": ""
           },
           {
             "id": "slide_1795487440376_5",
@@ -639,7 +667,8 @@
             "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795487504078_lqsy_slide_5.jpg",
             "notes": "",
             "bgColor": "#ffffff",
-            "themeId": "cosmos"
+            "themeId": "cosmos",
+            "bgImage": ""
           },
           {
             "id": "slide_1795487441385_6",
@@ -654,7 +683,8 @@
             "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795487505650_335c_slide_6.jpg",
             "notes": "",
             "bgColor": "#ffffff",
-            "themeId": "cosmos"
+            "themeId": "cosmos",
+            "bgImage": ""
           },
           {
             "id": "slide_1795487442171_7",
@@ -669,7 +699,8 @@
             "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795487520072_xnaq_slide_7.jpg",
             "notes": "",
             "bgColor": "#ffffff",
-            "themeId": "cosmos"
+            "themeId": "cosmos",
+            "bgImage": ""
           },
           {
             "id": "slide_1795487444622_8",
@@ -684,7 +715,8 @@
             "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795487521559_rln0_slide_8.jpg",
             "notes": "",
             "bgColor": "#ffffff",
-            "themeId": "cosmos"
+            "themeId": "cosmos",
+            "bgImage": ""
           },
           {
             "id": "slide_1795487445648_9",
@@ -699,7 +731,8 @@
             "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795487527046_29ek_slide_9.jpg",
             "notes": "",
             "bgColor": "#ffffff",
-            "themeId": "cosmos"
+            "themeId": "cosmos",
+            "bgImage": ""
           },
           {
             "id": "slide_1795487456249_10",
@@ -714,7 +747,8 @@
             "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795487529087_z2di_slide_10.jpg",
             "notes": "",
             "bgColor": "#ffffff",
-            "themeId": "cosmos"
+            "themeId": "cosmos",
+            "bgImage": ""
           },
           {
             "id": "slide_1795487457379_11",
@@ -725,11 +759,12 @@
             "layout": "full",
             "isFullImage": true,
             "isImported": true,
-            "media": "",
-            "imageUrl": "",
+            "media": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795487534750_qq8d_slide_11.jpg",
+            "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795487534750_qq8d_slide_11.jpg",
             "notes": "",
             "bgColor": "#ffffff",
-            "themeId": "cosmos"
+            "themeId": "cosmos",
+            "bgImage": ""
           },
           {
             "id": "slide_1795487458396_12",
@@ -740,11 +775,12 @@
             "layout": "full",
             "isFullImage": true,
             "isImported": true,
-            "media": "",
-            "imageUrl": "",
+            "media": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795487536459_9lw6_slide_12.jpg",
+            "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795487536459_9lw6_slide_12.jpg",
             "notes": "",
             "bgColor": "#ffffff",
-            "themeId": "cosmos"
+            "themeId": "cosmos",
+            "bgImage": ""
           },
           {
             "id": "slide_1795487459068_13",
@@ -755,11 +791,12 @@
             "layout": "full",
             "isFullImage": true,
             "isImported": true,
-            "media": "",
-            "imageUrl": "",
+            "media": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795487539963_bd6e_slide_13.jpg",
+            "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795487539963_bd6e_slide_13.jpg",
             "notes": "",
             "bgColor": "#ffffff",
-            "themeId": "cosmos"
+            "themeId": "cosmos",
+            "bgImage": ""
           },
           {
             "id": "slide_1795487459727_14",
@@ -770,11 +807,12 @@
             "layout": "full",
             "isFullImage": true,
             "isImported": true,
-            "media": "",
-            "imageUrl": "",
+            "media": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795487541471_60t0_slide_14.jpg",
+            "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795487541471_60t0_slide_14.jpg",
             "notes": "",
             "bgColor": "#ffffff",
-            "themeId": "cosmos"
+            "themeId": "cosmos",
+            "bgImage": ""
           },
           {
             "id": "slide_1795487460818_15",
@@ -785,11 +823,12 @@
             "layout": "full",
             "isFullImage": true,
             "isImported": true,
-            "media": "",
-            "imageUrl": "",
+            "media": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795487543053_fdtc_slide_15.jpg",
+            "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795487543053_fdtc_slide_15.jpg",
             "notes": "",
             "bgColor": "#ffffff",
-            "themeId": "cosmos"
+            "themeId": "cosmos",
+            "bgImage": ""
           },
           {
             "id": "slide_1795487461780_16",
@@ -800,11 +839,12 @@
             "layout": "full",
             "isFullImage": true,
             "isImported": true,
-            "media": "",
-            "imageUrl": "",
+            "media": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795487544748_joac_slide_16.jpg",
+            "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795487544748_joac_slide_16.jpg",
             "notes": "",
             "bgColor": "#ffffff",
-            "themeId": "cosmos"
+            "themeId": "cosmos",
+            "bgImage": ""
           },
           {
             "id": "slide_1795487462664_17",
@@ -815,11 +855,12 @@
             "layout": "full",
             "isFullImage": true,
             "isImported": true,
-            "media": "",
-            "imageUrl": "",
+            "media": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795487546273_qqtg_slide_17.jpg",
+            "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795487546273_qqtg_slide_17.jpg",
             "notes": "",
             "bgColor": "#ffffff",
-            "themeId": "cosmos"
+            "themeId": "cosmos",
+            "bgImage": ""
           },
           {
             "id": "slide_1795487463063_18",
@@ -834,7 +875,8 @@
             "imageUrl": "",
             "notes": "",
             "bgColor": "#ffffff",
-            "themeId": "cosmos"
+            "themeId": "cosmos",
+            "bgImage": ""
           },
           {
             "id": "slide_1795487463783_19",
@@ -849,7 +891,8 @@
             "imageUrl": "",
             "notes": "",
             "bgColor": "#ffffff",
-            "themeId": "cosmos"
+            "themeId": "cosmos",
+            "bgImage": ""
           },
           {
             "id": "slide_1795487464948_20",
@@ -864,7 +907,8 @@
             "imageUrl": "",
             "notes": "",
             "bgColor": "#ffffff",
-            "themeId": "cosmos"
+            "themeId": "cosmos",
+            "bgImage": ""
           },
           {
             "id": "slide_1795487465352_21",
@@ -879,7 +923,8 @@
             "imageUrl": "",
             "notes": "",
             "bgColor": "#ffffff",
-            "themeId": "cosmos"
+            "themeId": "cosmos",
+            "bgImage": ""
           },
           {
             "id": "slide_1795487466627_22",
@@ -894,7 +939,8 @@
             "imageUrl": "",
             "notes": "",
             "bgColor": "#ffffff",
-            "themeId": "cosmos"
+            "themeId": "cosmos",
+            "bgImage": ""
           },
           {
             "id": "slide_1795487467062_23",
@@ -909,7 +955,8 @@
             "imageUrl": "",
             "notes": "",
             "bgColor": "#ffffff",
-            "themeId": "cosmos"
+            "themeId": "cosmos",
+            "bgImage": ""
           }
         ]
       }
@@ -1081,9 +1128,10 @@
         7,
         8,
         9,
-        10
+        10,
+        11
       ],
-      "currentStep": 11,
+      "currentStep": 12,
       "author": "Laura Sofía Hernández Chaparro",
       "authorId": "user_1795437974586",
       "ownerId": "user_1795437974586",
@@ -1109,7 +1157,7 @@
         "collaborators": ""
       },
       "createdAt": "2026-11-24T02:08:03.167Z",
-      "updatedAt": "2026-11-24T02:32:14.023Z",
+      "updatedAt": "2026-11-24T02:32:31.985Z",
       "progress": 95,
       "calculatedProgress": 95
     },
