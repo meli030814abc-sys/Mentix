@@ -3196,12 +3196,38 @@ d) Insulina`;
   },
 
   // =========================================================================
-  // 🌐 Motor de Búsqueda Rápida en Vivo (Wikipedia / DuckDuckGo Instant)
-  // Permite a la IA comprender cualquier carrera o tema universitario/escolar al instante
+  // 🌐 Motor de Búsqueda Rápida en Vivo con Verificación de Relevancia (Wikipedia ES + EN)
+  // Garantiza que las preguntas sean 100% sobre el tema exacto que pidió el usuario
   // =========================================================================
+  _cleanTopicForSearch(topic) {
+    return String(topic || '')
+      .replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}]/gu, ' ')
+      .replace(/^(?:examen|cuestionario|evaluaci[oó]n|quiz|test|preguntas|reto|taller)\s+(?:de|sobre|acerca\s+de|del)\s+/i, '')
+      .replace(/^tema\s*[:\-]\s*/i, '')
+      .replace(/[¡!¿?«»"']/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+  },
+
+  _extractTopicKeywords(topic) {
+    const stop = new Set([
+      'el','la','los','las','un','una','unos','unas','de','del','al','a','en','con','por','para','sin','sobre',
+      'entre','hacia','desde','que','cual','cuales','como','cuando','donde','quien','quienes','su','sus','mi','mis',
+      'tu','tus','se','es','son','fue','fueron','era','ser','esta','estan','este','esta','estos','estas','ese','esa',
+      'y','o','u','pero','mas','muy','todo','toda','todos','todas','sigue','siendo','esconde','tema','examen','sobre',
+      'acerca','preguntas','cuestionario','curso','clase','nivel','basico','intermedio','avanzado','introduccion'
+    ]);
+    const norm = (s) => String(s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    return norm(this._cleanTopicForSearch(topic))
+      .split(/[^a-z0-9]+/)
+      .filter(w => w.length >= 3 && !stop.has(w));
+  },
+
   async fetchKnowledgeFromWeb(topic) {
     if (!topic || topic.trim().length < 2) return null;
-    const cleanTopic = topic.trim();
+    const cleanTopic = this._cleanTopicForSearch(topic) || topic.trim();
+    const keywords = this._extractTopicKeywords(cleanTopic);
+    const norm = (s) => String(s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
     const getSig = (ms) => {
       try {
         if (typeof AbortSignal !== 'undefined' && typeof AbortSignal.timeout === 'function') return AbortSignal.timeout(ms);
@@ -3209,54 +3235,91 @@ d) Insulina`;
       return undefined;
     };
 
-    // 1. Búsqueda rápida en Wikipedia en Español (Action API pública CORS)
-    try {
-      const searchUrl = `https://es.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(cleanTopic)}&utf8=&format=json&origin=*`;
-      const searchRes = await fetch(searchUrl, { signal: getSig(2000) });
-      if (searchRes.ok) {
-        const searchData = await searchRes.json();
-        const hits = searchData?.query?.search || [];
-        if (hits.length > 0) {
-          const topHits = hits.slice(0, 2);
-          const titles = topHits.map(h => h.title);
-          const extractUrl = `https://es.wikipedia.org/w/api.php?action=query&prop=extracts&explaintext=1&titles=${encodeURIComponent(titles.join('|'))}&format=json&origin=*`;
-          const extractRes = await fetch(extractUrl, { signal: getSig(2200) });
-          if (extractRes.ok) {
-            const extractData = await extractRes.json();
-            const pages = extractData?.query?.pages || {};
-            let fullText = '';
-            let mainTitle = titles[0];
-            Object.values(pages).forEach(p => {
-              if (p.extract && p.extract.length > 60) {
-                fullText += `\n\n` + p.extract;
-              }
-            });
+    const scoreHit = (hit) => {
+      const titleNorm = norm(hit?.title || '');
+      const snipNorm = norm((hit?.snippet || '').replace(/<[^>]*>/g, ''));
+      if (/\(desambiguaci[oó]n\)/i.test(hit?.title || '')) return -1;
+      if (keywords.length === 0) return titleNorm.includes(norm(cleanTopic)) ? 5 : 1;
+      let score = 0;
+      const fullNorm = norm(cleanTopic);
+      if (titleNorm === fullNorm) score += 12;
+      else if (titleNorm.includes(fullNorm) || fullNorm.includes(titleNorm)) score += 6;
+      keywords.forEach(kw => {
+        const stem = kw.length >= 5 ? kw.slice(0, kw.length - 1) : kw;
+        if (titleNorm.includes(kw) || titleNorm.includes(stem)) score += 4;
+        else if (snipNorm.includes(kw) || snipNorm.includes(stem)) score += 1;
+      });
+      return score;
+    };
 
-            if (fullText.trim().length > 100) {
-              return {
-                title: mainTitle,
-                content: fullText.trim(),
-                snippets: topHits.map(h => (h.snippet || '').replace(/<[^>]*>/g, '')).join('; '),
-                source: 'Wikipedia'
-              };
-            }
-          }
+    const searchWikiLang = async (lang, queryStr) => {
+      const searchUrl = `https://${lang}.wikipedia.org/w/api.php?action=query&list=search&srlimit=6&srsearch=${encodeURIComponent(queryStr)}&utf8=&format=json&origin=*`;
+      const searchRes = await fetch(searchUrl, { signal: getSig(4500) });
+      if (!searchRes.ok) return null;
+      const searchData = await searchRes.json();
+      const hits = searchData?.query?.search || [];
+      if (hits.length === 0) return null;
+
+      const ranked = hits
+        .map(h => ({ hit: h, score: scoreHit(h) }))
+        .filter(x => x.score >= (keywords.length >= 2 ? 3 : 2))
+        .sort((a, b) => b.score - a.score);
+
+      if (ranked.length === 0) return null;
+
+      const topHits = ranked.slice(0, 3).map(x => x.hit);
+      const titles = topHits.map(h => h.title);
+      const extractUrl = `https://${lang}.wikipedia.org/w/api.php?action=query&prop=extracts&explaintext=1&exchars=14000&titles=${encodeURIComponent(titles.join('|'))}&format=json&origin=*`;
+      const extractRes = await fetch(extractUrl, { signal: getSig(4500) });
+      if (!extractRes.ok) return null;
+      const extractData = await extractRes.json();
+      const pages = extractData?.query?.pages || {};
+      let fullText = '';
+      Object.values(pages).forEach(p => {
+        if (p && p.extract && p.extract.length > 80) {
+          fullText += `\n\n` + p.extract;
+        }
+      });
+      if (fullText.trim().length > 100) {
+        return {
+          title: titles[0],
+          content: fullText.trim(),
+          snippets: topHits.map(h => (h.snippet || '').replace(/<[^>]*>/g, '')).join('; '),
+          source: lang === 'es' ? 'Wikipedia ES' : 'Wikipedia'
+        };
+      }
+      return null;
+    };
+
+    // 1. Búsqueda directa en Wikipedia ES con verificación de relevancia
+    try {
+      const direct = await searchWikiLang('es', cleanTopic);
+      if (direct) return direct;
+      // Si la frase era larga (ej. título de proyecto con preguntas), reintentar con las palabras clave principales
+      if (keywords.length >= 2) {
+        const coreQuery = [...keywords].sort((a, b) => b.length - a.length).slice(0, 3).join(' ');
+        if (coreQuery && norm(coreQuery) !== norm(cleanTopic)) {
+          const coreRes = await searchWikiLang('es', coreQuery);
+          if (coreRes) return coreRes;
         }
       }
     } catch (e) {
       console.warn('Búsqueda rápida en Wikipedia ES no disponible:', e);
     }
 
-    // 2. Respaldo DuckDuckGo Instant Answer
+    // 2. Respaldo DuckDuckGo Instant Answer (verificando que coincida con el tema)
     try {
       const ddgUrl = `https://api.duckduckgo.com/?q=${encodeURIComponent(cleanTopic)}&format=json&no_html=1&skip_disambig=1`;
-      const ddgRes = await fetch(ddgUrl, { signal: getSig(1800) });
+      const ddgRes = await fetch(ddgUrl, { signal: getSig(3000) });
       if (ddgRes.ok) {
         const ddgData = await ddgRes.json();
-        const text = ddgData?.AbstractText || ddgData?.Answer;
-        if (text && text.length > 40) {
+        const text = ddgData?.AbstractText || ddgData?.Answer || '';
+        const heading = ddgData?.Heading || '';
+        const combinedNorm = norm(heading + ' ' + text);
+        const matchesTopic = keywords.length === 0 || keywords.some(kw => combinedNorm.includes(kw));
+        if (text && text.length > 50 && matchesTopic) {
           return {
-            title: ddgData?.Heading || cleanTopic,
+            title: heading || cleanTopic,
             content: text,
             snippets: text,
             source: 'DuckDuckGo'
@@ -3268,85 +3331,130 @@ d) Insulina`;
     return null;
   },
 
-  // Sintetizador de preguntas fácticas a partir de contenido extraído de la web
+  // Sintetizador inteligente de preguntas fácticas 100% del tema a partir de contenido verificado
   extractQuestionsFromKnowledge(knowledge, topic, count, type, timeLimit) {
     if (!knowledge || !knowledge.content) return [];
-    
-    // Limpiar títulos de sección de Wikipedia y bibliografía
+    const cleanTopic = this._cleanTopicForSearch(topic) || topic.trim();
+    const keywords = this._extractTopicKeywords(cleanTopic);
+    const norm = (s) => String(s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+
+    // Limpiar secciones de bibliografía/referencias de Wikipedia
     let cleanText = knowledge.content
-      .replace(/==+[^=]+==+/g, ' ')
-      .replace(/[-=~#*_]{2,}\s*[^-\n=]+\s*[-=~#*_]{2,}/g, ' ')
+      .replace(/==\s*(Véase también|Referencias|Bibliografía|Enlaces externos|Notas|Lecturas adicionales)\s*==[\s\S]*$/i, '')
+      .replace(/==+[^=]+==+/g, '. ')
       .replace(/[-=~#*_]{2,}/g, ' ')
       .replace(/\[\d+\]/g, '')
       .replace(/\s+/g, ' ');
 
-    const rawSentences = cleanText
+    const allSentences = cleanText
       .split(/(?<=[.!?])\s+/)
       .map(s => s.trim())
-      .filter(s => s.length >= 35 && s.length <= 260 && !/^(Véase|Enlaces|Referencias|Bibliografía|Categoría|Portal)/i.test(s));
+      .filter(s =>
+        s.length >= 42 && s.length <= 240 &&
+        !/^(Véase|Enlaces|Referencias|Bibliografía|Categoría|Portal|Archivo|Imagen|Nota:|ISBN|ISSN|doi:|http)/i.test(s) &&
+        !/\b(wikipedia|wikimedia|desambiguaci[oó]n)\b/i.test(s)
+      );
 
-    if (rawSentences.length === 0) return [];
+    if (allSentences.length === 0) return [];
+
+    // Priorizar oraciones que contienen palabras clave del tema o definiciones claras
+    const rankedSentences = [...allSentences].sort((a, b) => {
+      const aN = norm(a), bN = norm(b);
+      const aHits = keywords.filter(k => aN.includes(k)).length + (/\b(es|son|fue|consiste|define|caracteriza|permite|produce|representa)\b/i.test(a) ? 1 : 0);
+      const bHits = keywords.filter(k => bN.includes(k)).length + (/\b(es|son|fue|consiste|define|caracteriza|permite|produce|representa)\b/i.test(b) ? 1 : 0);
+      return bHits - aHits;
+    });
+
+    // Extraer conceptos/sujetos reales del mismo texto para distractores coherentes en preguntas de definición
+    const conceptPool = [];
+    const seenConcepts = new Set();
+    rankedSentences.forEach(s => {
+      const dm = s.match(/^([A-ZÁÉÍÓÚÑ][A-Za-zÁÉÍÓÚáéíóúñÑ0-9\s\-]{2,38}?)\s+(?:es|son|fue|fueron|se define como|se conoce como|consiste en|constituye)\s+/);
+      if (dm && dm[1]) {
+        const c = dm[1].trim();
+        const k = norm(c);
+        if (c.length >= 3 && c.length <= 38 && !seenConcepts.has(k) && !/^(Este|Esta|Estos|Estas|El|La|Los|Las|Un|Una|En|Por|Para|Como|Sin|Con|Además|También|Sin embargo)$/i.test(c)) {
+          seenConcepts.add(k);
+          conceptPool.push(c);
+        }
+      }
+    });
+
+    const invertSentenceToFalse = (sent) => {
+      const swaps = [
+        [/\b(siempre)\b/i, 'nunca'],
+        [/\b(nunca)\b/i, 'siempre'],
+        [/\b(mayor|mayores)\b/i, 'menor'],
+        [/\b(menor|menores)\b/i, 'mayor'],
+        [/\b(aumenta|incrementa)\b/i, 'disminuye drásticamente'],
+        [/\b(disminuye|reduce)\b/i, 'aumenta de forma ilimitada'],
+        [/\b(principal|principales)\b/i, 'irrelevante'],
+        [/\b(primero|primera)\b/i, 'último'],
+        [/\b(todos|todas)\b/i, 'ninguno de'],
+        [/\b(permite|permiten)\b/i, 'impide completamente'],
+        [/\b(produce|producen)\b/i, 'detiene por completo'],
+        [/\b(contiene|contienen)\b/i, 'carece totalmente de'],
+        [/\b(esenciales?|fundamentales?|importantes?)\b/i, 'innecesarios y prescindibles'],
+        [/\b(es)\b/i, 'no es en ningún caso'],
+        [/\b(son)\b/i, 'no son bajo ninguna circunstancia']
+      ];
+      for (const [rx, rep] of swaps) {
+        if (rx.test(sent)) return sent.replace(rx, rep);
+      }
+      return `Es completamente falso y contrario a la evidencia sobre ${cleanTopic} que: ${sent.charAt(0).toLowerCase() + sent.slice(1)}`;
+    };
 
     const questions = [];
-    const cleanTopic = topic.trim();
+    const usedSentences = new Set();
 
-    for (let i = 0; i < rawSentences.length && questions.length < count; i++) {
-      const sentence = rawSentences[i];
-      const isBool = type === 'boolean' || (type === 'mixed' && questions.length % 2 === 1);
+    for (let i = 0; i < rankedSentences.length && questions.length < count; i++) {
+      const sentence = rankedSentences[i];
+      if (usedSentences.has(sentence)) continue;
+      usedSentences.add(sentence);
+
+      const isBool = type === 'boolean' || (type === 'mixed' && questions.length % 3 === 2);
 
       if (isBool) {
         const isTrue = questions.length % 2 === 0;
-        let qText = '';
         if (isTrue) {
-          qText = `Respecto a ${cleanTopic} es verdadera la siguiente afirmación: ${sentence}`;
+          const qText = `Sobre ${cleanTopic}, ¿es verdadera la siguiente afirmación? "${sentence}"`;
           questions.push(this.buildQuestionItem(qText, ['Verdadero', 'Falso'], 0, 'boolean', timeLimit));
         } else {
-          // Invertir ligeramente la afirmación
-          let inverted = sentence.replace(/\b(siempre|todos|nunca|aumenta|mayor|principal|primero|directamente|positivo|máximo)\b/i, (m) => {
-            const map = { 
-              siempre: 'rara vez', 
-              todos: 'ninguno', 
-              nunca: 'habitualmente', 
-              aumenta: 'disminuye', 
-              mayor: 'menor', 
-              principal: 'secundario', 
-              primero: 'último',
-              directamente: 'inversamente',
-              positivo: 'negativo',
-              'máximo': 'mínimo'
-            };
-            return map[m.toLowerCase()] || 'no';
-          });
-          if (inverted === sentence) inverted = `En ${cleanTopic} se descarta que: ${sentence}`;
-          qText = `Afirmación sobre ${cleanTopic}: ${inverted}`;
+          const falseStmt = invertSentenceToFalse(sentence);
+          const qText = `Sobre ${cleanTopic}, ¿es verdadera la siguiente afirmación? "${falseStmt}"`;
           questions.push(this.buildQuestionItem(qText, ['Verdadero', 'Falso'], 1, 'boolean', timeLimit));
         }
       } else {
-        // Opción múltiple con distractores académicos completos sin truncar
-        let qText = '';
-        let correctOpt = '';
-        
-        // Detectar si la oración tiene formato de definición: "X es Y..."
-        const defMatch = sentence.match(/^([A-ZÁÉÍÓÚ][\w\s,]{2,45})\s+(es|son|fue|se define como|se refiere a|describe|constituye)\s+(.+)/i);
-        if (defMatch && defMatch[1].length < 40 && defMatch[3].length > 20) {
+        // 1. Pregunta de identificación de concepto si la oración es una definición "X es Y"
+        const defMatch = sentence.match(/^([A-ZÁÉÍÓÚÑ][A-Za-zÁÉÍÓÚáéíóúñÑ0-9\s\-]{2,38}?)\s+(es|son|fue|fueron|se define como|se conoce como|consiste en|constituye)\s+(.+)/);
+        if (defMatch && defMatch[3].length >= 24 && !/^(Este|Esta|Estos|Estas|Además|También|Sin embargo|Por otro lado)$/i.test(defMatch[1].trim())) {
           const concept = defMatch[1].trim();
-          const desc = defMatch[3].trim();
-          qText = `En el ámbito de ${cleanTopic}: Qué concepto se define o describe como: ${desc}`;
-          correctOpt = concept;
+          const desc = defMatch[3].trim().replace(/\.$/, '');
+          const otherConcepts = conceptPool.filter(c => norm(c) !== norm(concept));
+          const distractors = [];
+          for (let k = 0; k < otherConcepts.length && distractors.length < 3; k++) {
+            distractors.push(otherConcepts[(i + k) % otherConcepts.length]);
+          }
+          const fallbacks = [
+            `Un fenómeno ajeno a ${cleanTopic}`,
+            `Una hipótesis descartada sobre ${cleanTopic}`,
+            `Un término sin relación directa con ${cleanTopic}`
+          ];
+          while (distractors.length < 3) distractors.push(fallbacks[distractors.length]);
+          const qText = `En el estudio de ${cleanTopic}, ¿qué concepto o elemento ${defMatch[2]} ${desc}?`;
+          const shuffled = this.shuffleOptions([concept, ...distractors.slice(0, 3)], 0);
+          questions.push(this.buildQuestionItem(qText, shuffled.options, shuffled.correctAnswer, 'single', timeLimit));
         } else {
-          qText = `De acuerdo con los fundamentos documentados de ${cleanTopic}, cuál de los siguientes enunciados es verdadero`;
-          correctOpt = sentence;
+          // 2. Pregunta de afirmación verdadera con 3 distractores REALMENTE FALSOS (contradicciones del mismo tema)
+          const qText = `Según los hechos y fundamentos documentados sobre ${cleanTopic}, ¿cuál de los siguientes enunciados es correcto?`;
+          const s1 = rankedSentences[(i + 1) % rankedSentences.length];
+          const s2 = rankedSentences[(i + 2) % rankedSentences.length];
+          const d1 = (s1 && s1 !== sentence) ? invertSentenceToFalse(s1) : `No existe evidencia documentada que relacione este fenómeno con ${cleanTopic}.`;
+          const d2 = (s2 && s2 !== sentence && s2 !== s1) ? invertSentenceToFalse(s2) : `Los principios fundamentales de ${cleanTopic} contradicen totalmente esta característica.`;
+          const d3 = `En ${cleanTopic}, todos los procesos ocurren de manera inversa y sin relación con los factores descritos.`;
+          const shuffled = this.shuffleOptions([sentence, d1, d2, d3], 0);
+          questions.push(this.buildQuestionItem(qText, shuffled.options, shuffled.correctAnswer, 'single', timeLimit));
         }
-
-        // Distractores plausibles usando otras oraciones o contrastes académicos completos
-        const nextSent1 = rawSentences[(i + 1) % rawSentences.length];
-        const nextSent2 = rawSentences[(i + 2) % rawSentences.length];
-        const d1 = (nextSent1 && nextSent1 !== sentence) ? nextSent1 : 'Es un principio descartado por la evidencia empírica';
-        const d2 = (nextSent2 && nextSent2 !== sentence) ? nextSent2 : 'Aplica únicamente a modelos teóricos sin respaldo real';
-        const d3 = 'Carece de aplicación en la práctica profesional contemporánea';
-
-        const shuffled = this.shuffleOptions([correctOpt, d1, d2, d3], 0);
-        questions.push(this.buildQuestionItem(qText, shuffled.options, shuffled.correctAnswer, 'single', timeLimit));
       }
     }
 
@@ -4477,7 +4585,7 @@ Durante la revisión técnica de evidencias, ${cleanF3.charAt(0).toLowerCase() +
       ];
     }
     // 3. Anatomía / Cuerpo Humano / Medicina / Salud
-    else if (/cuerpo|anatom|coraz[oó]n|cerebro|pulm[oó]n|hueso|m[uú]sculo|sangre|m[eé]dic|salud|enfermedad/i.test(t)) {
+    else if (/\bcuerpo humano\b|\banatom[ií]a\b|\bsistema circulatorio\b|\bsistema respiratorio\b|\bsistema nervioso\b|\b[oó]rganos del cuerpo\b/i.test(t)) {
       candidates = [
         { text: `En relación con ${topic}, ¿cuál es el órgano principal del sistema circulatorio encargado de bombear sangre?`, opts: ['El corazón', 'El hígado', 'El bazo', 'El páncreas'], correct: 0, isBool: false },
         { text: `¿Qué tipo de células sanguíneas tienen como función principal defender al organismo contra agentes infecciosos?`, opts: ['Los leucocitos (glóbulos blancos)', 'Los eritrocitos (glóbulos rojos)', 'Las plaquetas (trombocitos)', 'Los adipocitos'], correct: 0, isBool: false },
@@ -4488,7 +4596,7 @@ Durante la revisión técnica de evidencias, ${cleanF3.charAt(0).toLowerCase() +
       ];
     }
     // 4. Astronomía / Sistema Solar / Espacio
-    else if (/sistema solar|planeta|espacio|universo|estrella|galaxia|marte|jupiter|tierra|luna|astronom|cosmos/i.test(t)) {
+    else if (/\bsistema solar\b|\bplanetas?\b|\bastronom[ií]a\b|\bgalaxias?\b|\buniverso\b|\bcosmos\b|\bespacio exterior\b/i.test(t)) {
       candidates = [
         { text: `Respecto a ${topic}, ¿cuál es el planeta de mayor tamaño en nuestro sistema solar?`, opts: ['Júpiter', 'Saturno', 'Neptuno', 'Urano'], correct: 0, isBool: false },
         { text: `¿Cuál es el objeto celeste central que concentra más del 99% de la masa total del sistema solar?`, opts: ['El Sol', 'Júpiter', 'La Vía Láctea', 'El cinturón de asteroides'], correct: 0, isBool: false },
@@ -4499,7 +4607,7 @@ Durante la revisión técnica de evidencias, ${cleanF3.charAt(0).toLowerCase() +
       ];
     }
     // 5. Física / Fuerzas / Energía / Movimiento
-    else if (/f[ií]sica|gravedad|newton|energ[ií]a|fuerza|movimiento|onda|velocidad|aceleraci|termodin[aá]mic|electricidad/i.test(t)) {
+    else if (/\bf[ií]sica\b|\bleyes de newton\b|\btermodin[aá]mica\b|\belectricidad\b|\belectromagnetismo\b|\bcinem[aá]tica\b/i.test(t)) {
       candidates = [
         { text: `En el ámbito de ${topic}, ¿qué principio enuncia que para toda fuerza de acción existe una reacción de igual magnitud y sentido opuesto?`, opts: ['Tercera Ley de Newton', 'Primera Ley de Newton (Inercia)', 'Ley de Gravitación Universal', 'Principio de Pascal'], correct: 0, isBool: false },
         { text: `¿Qué tipo de energía posee un cuerpo en virtud de su movimiento y velocidad?`, opts: ['Energía cinética', 'Energía potencial gravitatoria', 'Energía química latente', 'Energía estática'], correct: 0, isBool: false },
@@ -4510,7 +4618,7 @@ Durante la revisión técnica de evidencias, ${cleanF3.charAt(0).toLowerCase() +
       ];
     }
     // 6. Química / Materia / Átomos / Reacciones
-    else if (/qu[ií]mica|[aá]tomo|mol[eé]cula|tabla peri[oó]dica|elemento|reacci[oó]n|enlace|compuesto/i.test(t)) {
+    else if (/\bqu[ií]mica\b|\b[aá]tomos?\b|\bmol[eé]culas?\b|\btabla peri[oó]dica\b|\belementos? qu[ií]micos?\b|\breacci[oó]n qu[ií]mica\b|\benlaces? qu[ií]micos?\b/i.test(t)) {
       candidates = [
         { text: `En el estudio de ${topic}, ¿cuáles son las partículas con carga positiva ubicadas en el núcleo del átomo?`, opts: ['Los protones', 'Los electrones', 'Los neutrones', 'Los fotones'], correct: 0, isBool: false },
         { text: `¿Cuál es la fórmula química que representa la molécula del agua?`, opts: ['H2O', 'CO2', 'NaCl', 'CH4'], correct: 0, isBool: false },
@@ -4521,7 +4629,7 @@ Durante la revisión técnica de evidencias, ${cleanF3.charAt(0).toLowerCase() +
       ];
     }
     // 7. Matemáticas / Geometría / Álgebra
-    else if (/matem[aá]tic|[aá]lgebra|geometr|c[aá]lculo|ecuaci|fracci|porcentaje|teorema|tri[aá]ngulo/i.test(t)) {
+    else if (/\bmatem[aá]ticas?\b|\b[aá]lgebra\b|\bgeometr[ií]a\b|\becuaciones?\b|\bfracciones?\b|\btrigonometr[ií]a\b|\bpit[aá]goras\b|\bc[aá]lculo (diferencial|integral|matem[aá]tico)\b/i.test(t)) {
       candidates = [
         { text: `Respecto a ${topic}, ¿qué teorema fundamental establece que en un triángulo rectángulo a² + b² = c²?`, opts: ['Teorema de Pitágoras', 'Teorema de Tales', 'Teorema de Euclides', 'Ley de Senos'], correct: 0, isBool: false },
         { text: `¿Cuánto es el resultado exacto de la operación aritmética: 12 + 6 × 4?`, opts: ['36', '72', '48', '24'], correct: 0, isBool: false },
@@ -4532,7 +4640,7 @@ Durante la revisión técnica de evidencias, ${cleanF3.charAt(0).toLowerCase() +
       ];
     }
     // 8. Geografía / Países / Continentes / Relieve
-    else if (/geograf|capital|pa[ií]s|continente|r[ií]o|monta|oc[eé]ano|cordillera|desierto|clima/i.test(t)) {
+    else if (/\bgeograf[ií]a\b|\bcapitales del mundo\b|\bcapitales de\b|\bcontinentes?\b|\bcordilleras?\b/i.test(t)) {
       candidates = [
         { text: `En relación con ${topic}, ¿cuál es el río más largo y caudaloso del mundo?`, opts: ['Río Amazonas', 'Río Nilo', 'Río Yangtsé', 'Río Misisipi'], correct: 0, isBool: false },
         { text: `¿Cuál es el océano de mayor extensión superficial en el planeta Tierra?`, opts: ['Océano Pacífico', 'Océano Atlántico', 'Océano Índico', 'Océano Ártico'], correct: 0, isBool: false },
@@ -4554,7 +4662,7 @@ Durante la revisión técnica de evidencias, ${cleanF3.charAt(0).toLowerCase() +
       ];
     }
     // 10. Historia Universal / Civilizaciones / Guerras
-    else if (/historia|guerra|\broma\b|romano|egipto|grecia|revoluci|imperio|edad media|renacimiento/i.test(t)) {
+    else if (/\bhistoria (universal|antigua|moderna|contempor[aá]nea)\b|\bimperio romano\b|\bantiguo egipto\b|\bantigua grecia\b|\bsegunda guerra mundial\b|\bprimera guerra mundial\b|\brevoluci[oó]n francesa\b|\bedad media\b|\brenacimiento\b/i.test(t)) {
       candidates = [
         { text: `En el contexto de ${topic}, ¿en qué año dio inicio la Primera Guerra Mundial?`, opts: ['1914', '1918', '1939', '1945'], correct: 0, isBool: false },
         { text: `¿Qué célebre líder militar romano cruzó el río Rubicón y fue proclamado dictador vitalicio?`, opts: ['Julio César', 'César Augusto', 'Nerón', 'Marco Aurelio'], correct: 0, isBool: false },
@@ -4565,7 +4673,7 @@ Durante la revisión técnica de evidencias, ${cleanF3.charAt(0).toLowerCase() +
       ];
     }
     // 11. Música / Instrumentos Musicales / Piano / Cuerdas / Solfeo
-    else if (/piano|m[uú]sica|instrument|guitarra|viol[ií]n|bater[ií]a|canto|solfeo|melod[ií]a|acorde|compositor|orquesta|sonata|partitura|trompeta|flauta/i.test(t)) {
+    else if (/\bpiano\b|\bm[uú]sica\b|\binstrumentos? musicales?\b|\bguitarra\b|\bviol[ií]n\b|\bsolfeo\b|\borquesta\b|\bsonata\b|\bpartitura\b|\btrompeta\b|\bflauta\b/i.test(t)) {
       if (/piano/i.test(t)) {
         candidates = [
           {
@@ -4758,7 +4866,7 @@ Durante la revisión técnica de evidencias, ${cleanF3.charAt(0).toLowerCase() +
       }
     }
     // 12. Tecnología / Programación / Informática / IA
-    else if (/program|c[oó]digo|javascript|python|web|software|computa|html|css|base de datos|algoritmo|\bia\b|inteligencia artificial|ciberseguridad|tecnolog/i.test(t)) {
+    else if (/\bprogramaci[oó]n\b|\bjavascript\b|\bpython\b|\bsoftware\b|\bcomputaci[oó]n\b|\bhtml\b|\bcss\b|\bbases? de datos\b|\balgoritmos?\b|\binteligencia artificial\b|\bciberseguridad\b/i.test(t)) {
       candidates = [
         {
           text: `En 1843, la matemática británica Ada Lovelace tradujo y anotó las memorias sobre la 'Máquina Analítica' de Charles Babbage. ¿Por qué es históricamente celebrada Ada Lovelace en el mundo de la computación?`,
