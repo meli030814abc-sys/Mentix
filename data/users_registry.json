@@ -94,5 +94,21 @@
     "lastLoginAt": "2026-11-24T18:41:54.205Z",
     "pwd": "2071634917e07486538894e208e3e77b900c8102334ca9bac4f92dc65112033d",
     "createdAt": "2026-11-23T23:07:28.379Z"
+  },
+  {
+    "id": "user_1795545770936",
+    "name": "Juan Esteban Rosero Jimenez",
+    "username": "Juanes_RJ",
+    "email": "jeroseroj@gmail.com",
+    "avatar": "🦊",
+    "role": "student",
+    "xp": 100,
+    "level": 1,
+    "levelName": "Principiante",
+    "institution": "Comunidad MENTIX",
+    "isBlocked": false,
+    "lastLoginAt": "2026-11-24T18:42:51.266Z",
+    "pwd": "403bce7bcc19e2bc8e1ac6bd25fe9c03d4567fb62c8f4c3ba63458fc91a9660d",
+    "createdAt": "2026-11-24T18:42:51.266Z"
   }
 ]
