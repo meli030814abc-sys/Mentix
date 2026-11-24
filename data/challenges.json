@@ -168,7 +168,7 @@
     "accessMode": "public",
     "displayOrder": 1,
     "createdAt": "2026-11-24T02:08:03.167Z",
-    "updatedAt": "2026-11-24T20:09:45.469Z",
+    "updatedAt": "2026-11-24T20:12:41.509Z",
     "landingConfig": {
       "publicName": "Diagnóstico y propuesta de optimización del gobierno de datos en GPC Pharma S.A.S.",
       "slug": "propuesta-gobierno-de-datos-gpc-pharma",
@@ -279,7 +279,7 @@
         }
       ],
       "projectId": "proj_video_1795486083167",
-      "updatedAt": 1795547662795
+      "updatedAt": 1795551053579
     },
     "slug": "propuesta-gobierno-de-datos-gpc-pharma",
     "subtitle": "Trazabilidad, calidad y cumplimiento regulatorio en GPC Pharma",
@@ -1350,7 +1350,7 @@
       "zoom": 134
     },
     "_cardCrop": {
-      "zoom": 186,
+      "zoom": 80,
       "offsetX": 1.5,
       "offsetY": -8.3,
       "fit": "contain"
@@ -1361,7 +1361,7 @@
       "offsetY": -14.1,
       "fit": "contain"
     },
-    "_cardCropUpdatedAt": 1795550371191,
+    "_cardCropUpdatedAt": 1795551162463,
     "_heroCropUpdatedAt": 1795550986414,
     "_cardCoverUpdatedAt": 1795550621751,
     "_heroBannerUpdatedAt": 1795550956946
