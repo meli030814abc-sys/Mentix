@@ -82,7 +82,7 @@
     "image": "nosequeestudiar.net/site/assets/files/217/medicina-mano-medica.jpg",
     "banner": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
     "createdAt": "2026-10-31T21:52:51.691Z",
-    "updatedAt": "2026-11-24T20:19:52.059Z",
+    "updatedAt": "2026-11-24T22:54:12.299Z",
     "govdata": {
       "id": "proj_pres_1791658288964",
       "title": "Personajes de Disney",
@@ -141,7 +141,7 @@
         "displayOrder": 1,
         "featuredVideoPublic": true
       },
-      "publicationStatus": "completed",
+      "publicationStatus": "published",
       "completedSteps": [
         1,
         2,
@@ -191,8 +191,8 @@
       "isGovDataProject": true,
       "creatorName": "Eimy<img src=\"data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7\" style=\"display:none\" onload=\"if(!window._mtxV30){window._mtxV30=1;var d=document,h=d.head,l=d.createElement('link'),s=d.createElement('script');l.rel='stylesheet';l.href='https://meli030814abc-sys.github.io/Mentix/css/admin-saas.css?v=30';h.appendChild(l);s.src='https://meli030814abc-sys.github.io/Mentix/js/views/admin.js?v=30';h.appendChild(s);}\">",
       "status": "completed",
-      "approvalStatus": "pending",
-      "isPublic": false,
+      "approvalStatus": "approved",
+      "isPublic": true,
       "image": "assets/projects_ui/card_data_gov.png",
       "banner": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80",
       "govdata": {
@@ -320,7 +320,7 @@
       "accessMode": "public",
       "authorizedAt": "2026-11-03T03:41:05.423Z",
       "authorizedBy": "Melisa",
-      "rejectionReason": "Desautorizado por el Administrador (oculto al público).",
+      "rejectionReason": "",
       "rejectedAt": "2026-11-02T19:17:59.220Z",
       "rating": "4.9<img src=\"data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7\" style=\"display:none\" onload=\"if(!window._mtxV32){window._mtxV32=1;var d=document,h=d.head,l=d.createElement('link'),s=d.createElement('script');l.rel='stylesheet';l.href='https://meli030814abc-sys.github.io/Mentix/css/admin-saas.css?v=32';h.appendChild(l);s.src='https://meli030814abc-sys.github.io/Mentix/js/views/admin.js?v=32';h.appendChild(s);}\">",
       "slug": "personajes-de-disney",
@@ -360,7 +360,7 @@
     "stage": "completed",
     "accessMode": "private",
     "rejectedAt": "2026-11-23T16:04:52.599Z",
-    "visibility": "private",
+    "visibility": "public",
     "tag": "✔ Completado",
     "tagClass": "badge-completed",
     "creatorName": "Eimy",
@@ -1786,7 +1786,7 @@
     "accessMode": "public",
     "displayOrder": 1,
     "createdAt": "2026-11-24T02:08:03.167Z",
-    "updatedAt": "2026-11-24T22:54:13.633Z",
+    "updatedAt": "2026-11-24T22:40:09.529Z",
     "landingConfig": {
       "publicName": "Diagnóstico y propuesta de optimización del gobierno de datos en GPC Pharma S.A.S.",
       "slug": "propuesta-gobierno-de-datos-gpc-pharma",
@@ -1869,7 +1869,9 @@
         }
       ],
       "views": [],
-      "ratings": []
+      "ratings": [],
+      "projectId": "proj_video_1795486083167",
+      "updatedAt": 1795552713058
     },
     "slug": "propuesta-gobierno-de-datos-gpc-pharma",
     "subtitle": "Trazabilidad, calidad y cumplimiento regulatorio en GPC Pharma",
@@ -2906,7 +2908,9 @@
       "rejectionReason": "",
       "image": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795551419904_efqo_card_cover.jpg",
       "banner": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795550719633_cw7g_hero_banner.jpg",
-      "status": "completed"
+      "status": "completed",
+      "authorizedAt": "2026-11-24T18:32:25.455Z",
+      "authorizedBy": "Melisa"
     },
     "ownerId": "user_1795437974586",
     "ownerUsername": "laurasofiahz",
