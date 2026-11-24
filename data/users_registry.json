@@ -110,5 +110,21 @@
     "lastLoginAt": "2026-11-24T18:42:52.766Z",
     "pwd": "403bce7bcc19e2bc8e1ac6bd25fe9c03d4567fb62c8f4c3ba63458fc91a9660d",
     "createdAt": "2026-11-24T18:42:52.766Z"
+  },
+  {
+    "id": "user_1795557081139",
+    "name": "Jhomar Alejandra Cano Ramirez",
+    "username": "Aleja",
+    "email": "jhomaralejandracano@gmail.com",
+    "avatar": "🦊",
+    "role": "student",
+    "xp": 100,
+    "level": 1,
+    "levelName": "Principiante",
+    "institution": "Comunidad MENTIX",
+    "isBlocked": false,
+    "lastLoginAt": "2026-11-24T21:51:20.630Z",
+    "pwd": "4bb2aa52ca31a5747e2eff84b42e86464850bd64f943b60bf74e3753910cd7e4",
+    "createdAt": "2026-11-24T21:51:20.630Z"
   }
 ]
