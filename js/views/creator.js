@@ -3827,8 +3827,250 @@ Durante la revisión técnica de evidencias, ${cleanF3.charAt(0).toLowerCase() +
     return list;
   },
 
+  // =========================================================================
+  // 🤖 MOTOR DE IA REAL (LLM gratuito sin clave) PARA PREGUNTAS PROFUNDAS DEL TEMA EXACTO
+  // Si la IA no responde, el sistema cae automáticamente al generador local anterior.
+  // =========================================================================
+  async callFreeLLM(messages, { temperature = 0.55, timeoutMs = 75000 } = {}) {
+    const attempts = [
+      { url: 'https://text.pollinations.ai/openai', model: 'openai' },
+      { url: 'https://text.pollinations.ai/openai', model: 'openai-large' },
+      { url: 'https://text.pollinations.ai/openai', model: 'openai' }
+    ];
+    for (const ep of attempts) {
+      let tid = null;
+      try {
+        const ctrl = typeof AbortController !== 'undefined' ? new AbortController() : null;
+        if (ctrl) tid = setTimeout(() => ctrl.abort(), timeoutMs);
+        const r = await fetch(ep.url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ model: ep.model, messages, temperature, stream: false }),
+          signal: ctrl ? ctrl.signal : undefined
+        });
+        if (tid) clearTimeout(tid);
+        if (!r.ok) continue;
+        const data = await r.json();
+        const content = data?.choices?.[0]?.message?.content;
+        if (content && String(content).length > 30) return String(content);
+      } catch (e) {
+        if (tid) clearTimeout(tid);
+      }
+      await new Promise(res => setTimeout(res, 600));
+    }
+    return '';
+  },
+
+  _parseLLMJson(raw) {
+    if (!raw) return [];
+    const s = String(raw).replace(/```json/gi, '').replace(/```/g, '').trim();
+    const tryParse = (txt) => {
+      try {
+        const v = JSON.parse(txt);
+        if (Array.isArray(v)) return v;
+        if (v && Array.isArray(v.preguntas)) return v.preguntas;
+        if (v && Array.isArray(v.questions)) return v.questions;
+      } catch (e) {}
+      return null;
+    };
+    let arr = null;
+    const a = s.indexOf('['), b = s.lastIndexOf(']');
+    if (a >= 0 && b > a) arr = tryParse(s.slice(a, b + 1));
+    if (!arr) {
+      const o1 = s.indexOf('{'), o2 = s.lastIndexOf('}');
+      if (o1 >= 0 && o2 > o1) arr = tryParse(s.slice(o1, o2 + 1));
+    }
+    return arr || [];
+  },
+
+  async generateQuestionsViaLLM({ topic, notes, webKnowledge, count, difficulty, type, timeLimit, onProgress }) {
+    const cleanTopic = (this._cleanTopicForSearch ? this._cleanTopicForSearch(topic) : '') || String(topic || '').trim();
+    if (!cleanTopic) return [];
+    const isCase = type === 'case';
+    const maxTotal = isCase ? 12 : 60;
+    const total = Math.max(1, Math.min(count, maxTotal));
+    const perBatch = isCase ? 3 : 8;
+    const norm = (s) => String(s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9 ]/g, ' ').replace(/\s+/g, ' ').trim();
+
+    const diffStr = String(difficulty || '').toLowerCase();
+    const diffLabel = /hard|dif[ií]cil|avanz|experto|dificil/.test(diffStr)
+      ? 'AVANZADO (nivel universitario/profesional: análisis, aplicación y casos complejos, con matices técnicos)'
+      : /easy|f[aá]cil|b[aá]sic|facil/.test(diffStr)
+        ? 'BÁSICO-INTERMEDIO (conceptos claves con precisión, sin ser triviales)'
+        : 'INTERMEDIO-AVANZADO (comprensión profunda, relaciones entre conceptos y aplicación práctica)';
+
+    const refMaterial = (notes && notes.trim().length > 30 ? notes : (webKnowledge?.content || '')).trim().slice(0, 4500);
+    const angles = [
+      'fundamentos, definiciones precisas y conceptos clave',
+      'procesos, mecanismos o procedimientos paso a paso',
+      'aplicación práctica y resolución de situaciones reales',
+      'datos concretos: nombres, fechas, cifras, fórmulas, autores, normas o estándares',
+      'comparaciones, diferencias y relaciones entre conceptos',
+      'causas, consecuencias e impacto',
+      'errores comunes, malentendidos y casos límite',
+      'historia, evolución y contexto del tema',
+      'análisis crítico, razonamiento y detalles avanzados',
+      'clasificaciones, componentes, partes y estructura interna'
+    ];
+
+    const systemPrompt = 'Eres un docente experto y riguroso que diseña exámenes de alta calidad. Respondes ÚNICAMENTE con JSON válido, sin texto adicional, sin markdown, en español.';
+
+    const buildUserPrompt = (n, angle, avoid) => {
+      const typeRule = isCase
+        ? `Genera ${n} CASOS PRÁCTICOS situacionales. Formato de cada elemento: {"titulo":"","contexto":"(2 a 3 párrafos con una situación realista, datos y hechos concretos del tema)","pregunta":"","opciones":["","","",""],"correcta":0,"explicacion":"","norma":"(marco, estándar o referencia aplicable)"}`
+        : type === 'boolean'
+          ? `Genera ${n} afirmaciones de VERDADERO/FALSO profundas y no triviales (mitad verdaderas, mitad falsas, con falsedades sutiles y plausibles). Formato: {"tipo":"vf","pregunta":"(afirmación completa)","correcta":true,"explicacion":""}`
+          : type === 'mixed'
+            ? `Genera ${n} preguntas: aproximadamente 70% de opción múltiple y 30% de verdadero/falso. Formato opción múltiple: {"tipo":"opcion","pregunta":"","opciones":["","","",""],"correcta":0,"explicacion":""}. Formato V/F: {"tipo":"vf","pregunta":"(afirmación)","correcta":true,"explicacion":""}`
+            : `Genera ${n} preguntas de opción múltiple. Formato: {"tipo":"opcion","pregunta":"","opciones":["","","",""],"correcta":0,"explicacion":""}`;
+
+      return `TEMA EXACTO DEL EXAMEN: "${cleanTopic}"
+Nivel de dificultad: ${diffLabel}.
+
+${typeRule}
+
+REGLAS OBLIGATORIAS:
+- TODAS las preguntas deben tratar específicamente sobre "${cleanTopic}" y su contenido real. Prohibido desviarse a otros temas o hacer preguntas genéricas.
+- Preguntas PROFUNDAS: evalúan comprensión, análisis y aplicación; incluyen datos concretos (nombres, fechas, cifras, fórmulas, autores, normas, componentes, ejemplos reales). Nada de preguntas superficiales tipo "¿qué es X?" salvo que pidan precisión técnica.
+- Opción múltiple: exactamente 4 opciones plausibles y de longitud similar, solo UNA correcta, distractores basados en errores conceptuales reales (nunca absurdos), sin "todas las anteriores" ni "ninguna". "correcta" es el índice 0-3 de la opción correcta y varía de posición entre preguntas.
+- Si no estás seguro de un dato, formula la pregunta sobre un hecho que sí conozcas con certeza. No inventes información.
+- "explicacion": 1 a 2 frases que justifican la respuesta correcta.
+- Enfoque de este lote: ${angle}.${avoid.length ? `\n- NO repitas ni parafrasees estas preguntas ya generadas: ${avoid.slice(-14).map(a => '"' + a.slice(0, 90) + '"').join(' | ')}` : ''}
+${refMaterial ? `\nMATERIAL DE APOYO (úsalo como base y complétalo con tu conocimiento experto del tema):\n"""${refMaterial}"""\n` : ''}
+Devuelve SOLO el arreglo JSON de ${n} elementos.`;
+    };
+
+    const accepted = [];
+    const seen = new Set();
+    const avoid = [];
+
+    const convert = (it) => {
+      if (!it || typeof it !== 'object') return null;
+      const qText = String(it.pregunta || it.question || it.enunciado || '').trim();
+      if (qText.length < 15) return null;
+      const key = norm(qText).slice(0, 70);
+      if (!key || seen.has(key)) return null;
+
+      const tipo = String(it.tipo || '').toLowerCase();
+      const explanation = String(it.explicacion || it.explanation || '').trim();
+
+      if (!isCase && (tipo === 'vf' || typeof it.correcta === 'boolean' || type === 'boolean')) {
+        let val = it.correcta;
+        if (typeof val === 'string') val = /^(true|verdadero|v|si|sí)$/i.test(val.trim());
+        if (typeof val !== 'boolean') return null;
+        seen.add(key);
+        const q = this.buildQuestionItem(qText, ['Verdadero', 'Falso'], val ? 0 : 1, 'boolean', timeLimit);
+        q.explanation = explanation;
+        q._llm = true;
+        return q;
+      }
+
+      let opts = Array.isArray(it.opciones) ? it.opciones : (Array.isArray(it.options) ? it.options : []);
+      opts = opts.map(o => String(typeof o === 'string' ? o : (o?.text || '')).replace(/^\s*[A-Da-d][\)\.\-:]\s+/, '').trim()).filter(Boolean);
+      const uniq = new Set(opts.map(o => norm(o)));
+      if (opts.length < 3 || uniq.size !== opts.length) return null;
+      opts = opts.slice(0, 4);
+      let ci = parseInt(it.correcta !== undefined ? it.correcta : it.correctIndex);
+      if (isNaN(ci) && typeof it.correcta === 'string') {
+        const li = 'abcd'.indexOf(it.correcta.trim().toLowerCase());
+        if (li >= 0) ci = li;
+      }
+      if (isNaN(ci) || ci < 0 || ci >= opts.length) return null;
+
+      const shuffled = this.shuffleOptions(opts, ci);
+      seen.add(key);
+      if (isCase) {
+        const ctx = String(it.contexto || it.context || '').trim();
+        if (ctx.length < 60) { seen.delete(key); return null; }
+        const q = this.buildQuestionItem(qText, shuffled.options, shuffled.correctAnswer, 'case',
+          (timeLimit !== undefined && timeLimit !== null) ? timeLimit : 90, 1500, {
+            caseTitle: String(it.titulo || it.title || 'Caso práctico').trim(),
+            caseContext: ctx,
+            explanation,
+            referenceNorm: String(it.norma || it.referenceNorm || '').trim()
+          });
+        q._llm = true;
+        return q;
+      }
+      const q = this.buildQuestionItem(qText, shuffled.options, shuffled.correctAnswer, 'single', timeLimit);
+      q.explanation = explanation;
+      q._llm = true;
+      return q;
+    };
+
+    const batchJobs = [];
+    let remaining = total;
+    let angleIdx = 0;
+    while (remaining > 0) {
+      const n = Math.min(perBatch, remaining);
+      batchJobs.push({ n, angle: angles[angleIdx % angles.length] });
+      angleIdx++;
+      remaining -= n;
+    }
+
+    const runJob = async (job) => {
+      const raw = await this.callFreeLLM([
+        { role: 'system', content: systemPrompt },
+        { role: 'user', content: buildUserPrompt(job.n, job.angle, avoid) }
+      ], { temperature: 0.6 });
+      const items = this._parseLLMJson(raw);
+      let got = 0;
+      items.forEach(it => {
+        if (accepted.length >= total) return;
+        const q = convert(it);
+        if (q) {
+          accepted.push(q);
+          avoid.push(q.text);
+          got++;
+        }
+      });
+      if (typeof onProgress === 'function') onProgress(Math.min(accepted.length, total), total);
+      return got;
+    };
+
+    // Ejecutar en olas de 3 lotes en paralelo
+    const CONCURRENCY = 3;
+    for (let i = 0; i < batchJobs.length; i += CONCURRENCY) {
+      await Promise.all(batchJobs.slice(i, i + CONCURRENCY).map(j => runJob(j).catch(() => 0)));
+    }
+
+    // Reintento: completar las preguntas faltantes con enfoques distintos
+    for (let round = 0; round < 2 && accepted.length < total; round++) {
+      const missing = total - accepted.length;
+      const jobs = [];
+      let m = missing;
+      while (m > 0) {
+        const n = Math.min(perBatch, m);
+        jobs.push({ n: n + 1, angle: angles[(angleIdx++) % angles.length] });
+        m -= n;
+      }
+      await Promise.all(jobs.slice(0, 3).map(j => runJob(j).catch(() => 0)));
+    }
+
+    return accepted.slice(0, total);
+  },
+
   async generateQuestionsWithAI({ topic, notes, webKnowledge, count, difficulty, type, lengthMode = 'balanced', timeLimit, onProgress }) {
     let questions = [];
+
+    // 0. IA real: preguntas profundas y relacionadas con el tema exacto (con respaldo local automático)
+    let llmQuestions = [];
+    try {
+      llmQuestions = await this.generateQuestionsViaLLM({ topic, notes, webKnowledge, count, difficulty, type, timeLimit, onProgress });
+    } catch (e) {
+      console.warn('IA generativa no disponible, usando generador local:', e);
+    }
+    if (llmQuestions.length > 0) {
+      if (type === 'case') {
+        const effTime = (timeLimit !== undefined && timeLimit !== null) ? timeLimit : 90;
+        questions.push(...llmQuestions.map(q => ({ ...q, timeLimit: effTime })));
+      } else {
+        questions.push(...llmQuestions);
+      }
+      if (questions.length >= count) {
+        return questions.slice(0, count);
+      }
+    }
 
     // Si el tipo es 'case', priorizar la generación de casos prácticos situacionales
     if (type === 'case') {
@@ -3987,8 +4229,8 @@ Durante la revisión técnica de evidencias, ${cleanF3.charAt(0).toLowerCase() +
 
   cleanAIQuestionsList(questions, lengthMode = 'balanced', topic = '') {
     return (questions || []).map(q => {
-      if (q.type === 'case') {
-        // Preservar íntegra la narrativa, el caso situacional, la justificación y la normativa
+      if (q.type === 'case' || q._llm) {
+        // Preservar íntegra la narrativa del caso y las preguntas profundas generadas por IA
         return q;
       }
       q.text = this.formatQuestionLength(q.text, lengthMode, topic);
