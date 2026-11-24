@@ -168,7 +168,7 @@
     "accessMode": "public",
     "displayOrder": 1,
     "createdAt": "2026-11-24T02:08:03.167Z",
-    "updatedAt": "2026-11-24T19:11:57.632Z",
+    "updatedAt": "2026-11-24T19:13:26.755Z",
     "landingConfig": {
       "publicName": "Diagnóstico y propuesta de optimización del gobierno de datos en GPC Pharma S.A.S.",
       "slug": "propuesta-gobierno-de-datos-gpc-pharma",
@@ -1289,7 +1289,9 @@
       "isPublic": true,
       "rejectionReason": "",
       "image": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795547141792_xco2_card_cover.jpg",
-      "status": "completed"
+      "status": "completed",
+      "authorizedAt": "2026-11-24T18:32:25.455Z",
+      "authorizedBy": "Melisa"
     },
     "ownerId": "user_1795437974586",
     "ownerUsername": "laurasofiahz",
@@ -1322,9 +1324,9 @@
     },
     "_cardCrop": {
       "zoom": 100,
-      "offsetX": -15.3,
-      "offsetY": 15.4,
-      "fit": "contain"
+      "offsetX": -0.8,
+      "offsetY": 16.8,
+      "fit": "cover"
     }
   },
   {
