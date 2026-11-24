@@ -28,7 +28,7 @@
     "accessMode": "private",
     "displayOrder": 1,
     "createdAt": "2026-11-24T02:08:03.167Z",
-    "updatedAt": "2026-11-24T02:27:26.223Z",
+    "updatedAt": "2026-11-24T02:27:29.123Z",
     "landingConfig": {
       "publicName": "Diagnóstico y propuesta de optimización del gobierno de datos en GPC Pharma S.A.S. Empresa del Sector Farmaceutico.",
       "slug": "diagnostico-y-propuesta-de-optimizacion-del-gobierno-de-datos-en-gpc-pharma-s-a-s-empresa-del-sector-farmaceutico",
@@ -170,6 +170,10 @@
         {
           "q": "¿Los datos utilizados son reales?",
           "a": "El diagnóstico se basó en una entrevista y en fuentes públicas sobre la organización. La base de datos con la que se probó la configuración en GovData Nexus es sintética, por lo que no contiene información real de clientes, empleados ni operaciones."
+        },
+        {
+          "q": "",
+          "a": ""
         }
       ]
     },
@@ -199,6 +203,10 @@
         {
           "q": "¿Los datos utilizados son reales?",
           "a": "El diagnóstico se basó en una entrevista y en fuentes públicas sobre la organización. La base de datos con la que se probó la configuración en GovData Nexus es sintética, por lo que no contiene información real de clientes, empleados ni operaciones."
+        },
+        {
+          "q": "",
+          "a": ""
         }
       ]
     },
@@ -289,6 +297,10 @@
           {
             "q": "¿Los datos utilizados son reales?",
             "a": "El diagnóstico se basó en una entrevista y en fuentes públicas sobre la organización. La base de datos con la que se probó la configuración en GovData Nexus es sintética, por lo que no contiene información real de clientes, empleados ni operaciones."
+          },
+          {
+            "q": "",
+            "a": ""
           }
         ]
       },
@@ -395,7 +407,7 @@
         "collaborators": ""
       },
       "createdAt": "2026-11-24T02:08:03.167Z",
-      "updatedAt": "2026-11-24T02:27:29.226Z",
+      "updatedAt": "2026-11-24T02:27:32.096Z",
       "progress": 80,
       "calculatedProgress": 80
     },
