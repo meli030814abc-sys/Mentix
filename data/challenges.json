@@ -168,7 +168,7 @@
     "accessMode": "public",
     "displayOrder": 1,
     "createdAt": "2026-11-24T02:08:03.167Z",
-    "updatedAt": "2026-11-24T20:07:20.104Z",
+    "updatedAt": "2026-11-24T20:07:30.119Z",
     "landingConfig": {
       "publicName": "Diagnóstico y propuesta de optimización del gobierno de datos en GPC Pharma S.A.S.",
       "slug": "propuesta-gobierno-de-datos-gpc-pharma",
@@ -1356,13 +1356,13 @@
       "fit": "contain"
     },
     "_heroCrop": {
-      "zoom": 164,
-      "offsetX": -22.7,
-      "offsetY": 32,
+      "zoom": 114,
+      "offsetX": -23.8,
+      "offsetY": 14.1,
       "fit": "contain"
     },
     "_cardCropUpdatedAt": 1795550371191,
-    "_heroCropUpdatedAt": 1795550841039,
+    "_heroCropUpdatedAt": 1795550851055,
     "_cardCoverUpdatedAt": 1795550621751,
     "_heroBannerUpdatedAt": 1795550826533
   },
