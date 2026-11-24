@@ -1,4 +1,4 @@
-/**
+﻿/**
  * 🔥 TE RETO - Podio y Celebración Final (Podium View)
  * Podio 3D, animación de confeti explosivo, estadísticas detalladas y exportación.
  */
@@ -189,59 +189,71 @@ window.PodiumView = {
         </p>
 
         <!-- Podio 3D Espectacular -->
-        <div class="podium-wrapper">
-          <!-- 2do Lugar (Plata) -->
-          ${second ? `
-            <div class="podium-step second">
-              <div class="avatar-podium" style="border-color: #e0e6ed;">
-                ${window.AvatarEngine ? window.AvatarEngine.renderPlayerIcon(second, 64) : second.avatar}
+        <div class="podium-stage-3d">
+          <div class="podium-floor-3d"></div>
+          <div class="podium-wrapper">
+            <!-- 2do Lugar (Plata) -->
+            ${second ? `
+              <div class="podium-step second">
+                <div class="avatar-podium" style="border-color: #e0e6ed;">
+                  ${window.AvatarEngine ? window.AvatarEngine.renderPlayerIcon(second, 64) : second.avatar}
+                </div>
+                <div style="font-weight: 800; font-size: 1rem; color: var(--text-primary); margin-bottom: 0.25rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 110px;">
+                  ${second.nickname}
+                </div>
+                <div style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.5rem; font-weight: 700;">
+                  ${(second.score || 0).toLocaleString()} pts
+                </div>
+                <div class="podium-cylinder-3d">
+                  <div class="podium-top-cap"></div>
+                  <div class="podium-pillar">
+                    <div class="podium-rank-badge-3d">2</div>
+                  </div>
+                </div>
               </div>
-              <div style="font-weight: 800; font-size: 1rem; color: var(--text-primary); margin-bottom: 0.25rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 110px;">
-                ${second.nickname}
-              </div>
-              <div style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.5rem; font-weight: 700;">
-                ${(second.score || 0).toLocaleString()} pts
-              </div>
-              <div class="podium-pillar">
-                <span>2</span>
-              </div>
-            </div>
-          ` : ''}
+            ` : ''}
 
-          <!-- 1er Lugar (Oro / Ganador) -->
-          <div class="podium-step first">
-            <div class="avatar-podium">
-              <div class="crown-icon">👑</div>
-              ${window.AvatarEngine ? window.AvatarEngine.renderPlayerIcon(first, 80) : first.avatar}
+            <!-- 1er Lugar (Oro / Ganador) -->
+            <div class="podium-step first">
+              <div class="avatar-podium">
+                <div class="crown-icon">👑</div>
+                ${window.AvatarEngine ? window.AvatarEngine.renderPlayerIcon(first, 80) : first.avatar}
+              </div>
+              <div style="font-weight: 900; font-size: 1.25rem; color: #ffd700; margin-bottom: 0.25rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 140px;">
+                ${first.nickname}
+              </div>
+              <div style="font-size: 0.95rem; color: var(--text-primary); margin-bottom: 0.5rem; font-weight: 800;">
+                ${(first.score || 0).toLocaleString()} pts
+              </div>
+              <div class="podium-cylinder-3d">
+                <div class="podium-top-cap"></div>
+                <div class="podium-pillar">
+                  <div class="podium-rank-badge-3d">1</div>
+                </div>
+              </div>
             </div>
-            <div style="font-weight: 900; font-size: 1.25rem; color: #ffd700; margin-bottom: 0.25rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 140px;">
-              ${first.nickname}
-            </div>
-            <div style="font-size: 0.95rem; color: var(--text-primary); margin-bottom: 0.5rem; font-weight: 800;">
-              ${(first.score || 0).toLocaleString()} pts
-            </div>
-            <div class="podium-pillar">
-              <span>1</span>
-            </div>
+
+            <!-- 3er Lugar (Bronce) -->
+            ${third ? `
+              <div class="podium-step third">
+                <div class="avatar-podium" style="border-color: #cd7f32;">
+                  ${window.AvatarEngine ? window.AvatarEngine.renderPlayerIcon(third, 64) : third.avatar}
+                </div>
+                <div style="font-weight: 800; font-size: 1rem; color: var(--text-primary); margin-bottom: 0.25rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 110px;">
+                  ${third.nickname}
+                </div>
+                <div style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.5rem; font-weight: 700;">
+                  ${(third.score || 0).toLocaleString()} pts
+                </div>
+                <div class="podium-cylinder-3d">
+                  <div class="podium-top-cap"></div>
+                  <div class="podium-pillar">
+                    <div class="podium-rank-badge-3d">3</div>
+                  </div>
+                </div>
+              </div>
+            ` : ''}
           </div>
-
-          <!-- 3er Lugar (Bronce) -->
-          ${third ? `
-            <div class="podium-step third">
-              <div class="avatar-podium" style="border-color: #cd7f32;">
-                ${window.AvatarEngine ? window.AvatarEngine.renderPlayerIcon(third, 64) : third.avatar}
-              </div>
-              <div style="font-weight: 800; font-size: 1rem; color: var(--text-primary); margin-bottom: 0.25rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 110px;">
-                ${third.nickname}
-              </div>
-              <div style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.5rem; font-weight: 700;">
-                ${(third.score || 0).toLocaleString()} pts
-              </div>
-              <div class="podium-pillar">
-                <span>3</span>
-              </div>
-            </div>
-          ` : ''}
         </div>
 
         <!-- Estadísticas Clave del Reto -->

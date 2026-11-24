@@ -8873,3 +8873,255 @@ video {
     0 4px 0 #3730a3,
     inset 0 1px 2px rgba(255, 255, 255, 0.5) !important;
 }
+
+/* ==========================================================================
+   Podio de Resultados 3D Ultra Realista (Exámenes y Retos)
+   ========================================================================== */
+.podium-stage-3d {
+  position: relative;
+  perspective: 1200px;
+  perspective-origin: 50% 30%;
+  padding: 3rem 1rem 2rem;
+  margin: 1rem auto 2.5rem;
+  max-width: 760px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Base de escenario circular reflectante 3D */
+.podium-floor-3d {
+  position: absolute;
+  bottom: 0;
+  width: 95%;
+  max-width: 660px;
+  height: 95px;
+  background: radial-gradient(ellipse at center, rgba(14, 165, 233, 0.4) 0%, rgba(37, 99, 235, 0.18) 45%, rgba(0, 0, 0, 0) 75%);
+  border-radius: 50%;
+  transform: rotateX(72deg) translateZ(-40px);
+  pointer-events: none;
+  filter: blur(8px);
+}
+
+.podium-wrapper {
+  display: flex !important;
+  align-items: flex-end !important;
+  justify-content: center !important;
+  gap: 1.6rem !important;
+  width: 100% !important;
+  transform-style: preserve-3d !important;
+  position: relative !important;
+  z-index: 2 !important;
+  margin: 2.5rem 0 !important;
+  padding-bottom: 1rem !important;
+}
+
+.podium-step {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  width: 150px !important;
+  transform-style: preserve-3d !important;
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+  position: relative !important;
+}
+
+.podium-step:hover {
+  transform: translateY(-8px) scale(1.03) !important;
+}
+
+.podium-step.first {
+  order: 2 !important;
+  width: 180px !important;
+  z-index: 5 !important;
+}
+.podium-step.second {
+  order: 1 !important;
+  z-index: 4 !important;
+}
+.podium-step.third {
+  order: 3 !important;
+  z-index: 3 !important;
+}
+
+/* Contenedor del Pilar Extruido en 3D */
+.podium-cylinder-3d {
+  position: relative;
+  width: 100%;
+  transform-style: preserve-3d;
+  filter: drop-shadow(0 20px 28px rgba(0, 0, 0, 0.65));
+}
+
+/* Superficie Superior (Tapa 3D del Pedestal) */
+.podium-top-cap {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 38px;
+  border-radius: 50%;
+  transform: translateY(-19px) rotateX(25deg);
+  z-index: 3;
+  box-shadow: inset 0 2px 6px rgba(255, 255, 255, 0.7), inset 0 -3px 8px rgba(0, 0, 0, 0.45);
+}
+
+/* Frente y cuerpo cilíndrico del pilar */
+.podium-pillar {
+  width: 100% !important;
+  border-radius: 1.5rem 1.5rem 0.6rem 0.6rem !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  padding-top: 1.5rem !important;
+  position: relative !important;
+  overflow: hidden !important;
+  border: 1px solid rgba(255, 255, 255, 0.4) !important;
+  box-shadow: inset 0 6px 16px rgba(255, 255, 255, 0.45), inset 0 -12px 24px rgba(0, 0, 0, 0.55) !important;
+}
+
+/* Reflejo vertical de luz en el cilindro */
+.podium-pillar::before {
+  content: '' !important;
+  position: absolute !important;
+  top: 0 !important;
+  left: 18% !important;
+  width: 28% !important;
+  height: 100% !important;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.45) 50%, rgba(255, 255, 255, 0) 100%) !important;
+  pointer-events: none !important;
+}
+
+/* Base inferior del cilindro */
+.podium-pillar::after {
+  content: '' !important;
+  position: absolute !important;
+  bottom: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  height: 18px !important;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.65) 100%) !important;
+}
+
+/* Medalla / Número 3D extruido en el pilar */
+.podium-rank-badge-3d {
+  position: relative;
+  z-index: 2;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.65rem;
+  font-weight: 900;
+  margin-bottom: 0.5rem;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.45), inset 0 2px 4px rgba(255, 255, 255, 0.7);
+}
+
+/* 1er Lugar - ORO LÍQUIDO 3D */
+.podium-step.first .podium-pillar {
+  height: 215px !important;
+  background: linear-gradient(135deg, #ffe57f 0%, #ffc107 28%, #ff9800 65%, #b26a00 100%) !important;
+  box-shadow: 0 0 50px rgba(255, 193, 7, 0.55), inset 0 6px 20px rgba(255, 255, 255, 0.7), inset 0 -15px 30px rgba(138, 79, 0, 0.7) !important;
+  border-color: #ffe082 !important;
+}
+.podium-step.first .podium-top-cap {
+  background: radial-gradient(circle at 45% 40%, #fff9c4 0%, #ffca28 50%, #ffa000 100%);
+  border: 1.5px solid #fff59d;
+}
+.podium-step.first .podium-rank-badge-3d {
+  background: linear-gradient(180deg, #ffffff 0%, #ffe082 45%, #ffb300 100%);
+  color: #78350f;
+  border: 2px solid #ffffff;
+  box-shadow: 0 0 22px rgba(255, 215, 0, 0.85), 0 6px 15px rgba(0, 0, 0, 0.4);
+}
+
+/* 2do Lugar - PLATA PULIDA 3D */
+.podium-step.second .podium-pillar {
+  height: 160px !important;
+  background: linear-gradient(135deg, #ffffff 0%, #e2e8f0 30%, #94a3b8 70%, #475569 100%) !important;
+  box-shadow: 0 0 35px rgba(203, 213, 225, 0.45), inset 0 6px 16px rgba(255, 255, 255, 0.7), inset 0 -12px 24px rgba(15, 23, 42, 0.6) !important;
+  border-color: #f8fafc !important;
+}
+.podium-step.second .podium-top-cap {
+  background: radial-gradient(circle at 45% 40%, #ffffff 0%, #cbd5e1 55%, #94a3b8 100%);
+  border: 1.5px solid #ffffff;
+}
+.podium-step.second .podium-rank-badge-3d {
+  background: linear-gradient(180deg, #ffffff 0%, #e2e8f0 45%, #94a3b8 100%);
+  color: #1e293b;
+  border: 2px solid #ffffff;
+  box-shadow: 0 0 18px rgba(226, 232, 240, 0.8), 0 5px 12px rgba(0, 0, 0, 0.35);
+}
+
+/* 3er Lugar - BRONCE METÁLICO 3D */
+.podium-step.third .podium-pillar {
+  height: 125px !important;
+  background: linear-gradient(135deg, #fcd34d 0%, #d97706 28%, #b45309 65%, #78350f 100%) !important;
+  box-shadow: 0 0 30px rgba(217, 119, 6, 0.4), inset 0 5px 14px rgba(255, 255, 255, 0.6), inset 0 -10px 20px rgba(69, 26, 3, 0.65) !important;
+  border-color: #fde68a !important;
+}
+.podium-step.third .podium-top-cap {
+  background: radial-gradient(circle at 45% 40%, #fef3c7 0%, #f59e0b 55%, #b45309 100%);
+  border: 1.5px solid #fef3c7;
+}
+.podium-step.third .podium-rank-badge-3d {
+  background: linear-gradient(180deg, #ffffff 0%, #fde68a 45%, #d97706 100%);
+  color: #451a03;
+  border: 2px solid #ffffff;
+  box-shadow: 0 0 16px rgba(245, 158, 11, 0.7), 0 5px 12px rgba(0, 0, 0, 0.35);
+}
+
+/* Avatares flotantes sobre el pedestal 3D */
+.avatar-podium {
+  width: 82px !important;
+  height: 82px !important;
+  border-radius: 50% !important;
+  border: 4px solid #ffffff !important;
+  margin-bottom: 0.65rem !important;
+  position: relative !important;
+  background: #0f172a !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 2.3rem !important;
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.5), inset 0 2px 4px rgba(255, 255, 255, 0.25) !important;
+  transition: transform 0.3s ease !important;
+}
+
+.podium-step.first .avatar-podium {
+  width: 98px !important;
+  height: 98px !important;
+  border-color: #ffe082 !important;
+  box-shadow: 0 0 35px rgba(255, 215, 0, 0.9), 0 14px 28px rgba(0, 0, 0, 0.6) !important;
+  animation: float-winner 3s ease-in-out infinite !important;
+}
+
+.podium-step.second .avatar-podium {
+  border-color: #e2e8f0 !important;
+  box-shadow: 0 0 22px rgba(226, 232, 240, 0.7), 0 10px 20px rgba(0, 0, 0, 0.5) !important;
+}
+
+.podium-step.third .avatar-podium {
+  border-color: #fde68a !important;
+  box-shadow: 0 0 20px rgba(245, 158, 11, 0.65), 0 10px 20px rgba(0, 0, 0, 0.5) !important;
+}
+
+.crown-icon {
+  position: absolute !important;
+  top: -34px !important;
+  font-size: 2.6rem !important;
+  animation: float-crown 2.2s ease-in-out infinite !important;
+  filter: drop-shadow(0 6px 12px rgba(255, 215, 0, 0.75)) !important;
+}
+
+@keyframes float-winner {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-7px); }
+}
+
+@keyframes float-crown {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-5px) rotate(4deg); }
+}
