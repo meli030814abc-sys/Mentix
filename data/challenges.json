@@ -9,7 +9,7 @@
     "authorEmail": "ing.laurasofiax04@gmail.com",
     "authorAvatar": "🐼",
     "authorRole": "student",
-    "projectType": "video",
+    "projectType": "presentation",
     "category": "gobierno_de__datos",
     "categoryName": "Gobierno de Datos",
     "difficulty": "Medio",
@@ -18,27 +18,27 @@
     "banner": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fdraft%2F1795486058971_9ioo_asset.jpg",
     "mainImage": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fdraft%2F1795486058971_9ioo_asset.jpg",
     "thumbnailImage": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fdraft%2F1795486058971_9ioo_asset.jpg",
-    "shortDescription": "Diagnóstico y propuesta de gobierno de datos para GPC Pharma S.A.S., empresa farmacéutica que abastece a clínicas y hospitales. Define roles, políticas y comités basados en los cargos existentes, con un plan por fases, probado en GovData Nexus con datos sintéticos.",
+    "shortDescription": "Se realizó un diagnóstico de gobierno de datos en GPC Pharma S.A.S., una empresa que fabrica y distribuye medicamentos y suministros médicos para clínicas y hospitales. La compañía cumple con la normativa externa aplicable (INVIMA, FDA, EMA, ISO 9001 y Ley 1581 de 2012), pero sus datos están distribuidos entre ADP, Power BI, una plataforma interna, Excel, Teams y SharePoint. Cada área administra su información de forma independiente, no hay roles formales de gobierno de datos ni diccionario de metadatos, y un mismo cliente puede aparecer con nombres distintos entre plataformas, lo que exige conciliaciones manuales. El trabajo se desarrolló en tres fases: entrevista de diagnóstico y revisión de fuentes públicas; diagnóstico bajo DAMA-DMBOK (11 dimensiones y análisis de brechas); y diseño del modelo y del plan de implementación, configurado en GovData Nexus con una base de prueba de ocho tablas en Supabase. La inteligencia artificial se usó como apoyo y sus resultados fueron validados por la autora. La madurez inicial fue de 48 %, explicada sobre todo por las exigencias normativas externas. El modelo propone un CDO (IT Director), Data Owners, Data Stewards, un CISO dedicado, ocho políticas y cuatro comités, con una primera fase de 13 semanas. En la plataforma se configuraron el catálogo de activos, reglas de calidad, 18 reglas de SLA y ocho riesgos. El gobierno de datos puede iniciar con bajo costo, asignando responsabilidades sobre información que ya existe; definir responsables, reglas de calidad y un lenguaje común reduce reprocesos y fortalece la trazabilidad y la confianza en la información. Este es un ejercicio académico del Politécnico Grancolombiano, realizado por mí, Laura Sofía Hernández Chaparro, con datos sintéticos y sin aprobación de GPC Pharma S.A.S. Puede servir como base para una implementación, pero requiere la revisión y validación de la organización y de especialistas en gobierno de datos. Las cifras salariales que utilicé provienen de la guía salarial 2026 de Michael Page",
     "description": "Se realizó un diagnóstico de gobierno de datos en GPC Pharma S.A.S., una empresa que fabrica y distribuye medicamentos y suministros médicos para clínicas y hospitales. La compañía cumple con la normativa externa aplicable (INVIMA, FDA, EMA, ISO 9001 y Ley 1581 de 2012), pero sus datos están distribuidos entre ADP, Power BI, una plataforma interna, Excel, Teams y SharePoint. Cada área administra su información de forma independiente, no hay roles formales de gobierno de datos ni diccionario de metadatos, y un mismo cliente puede aparecer con nombres distintos entre plataformas, lo que exige conciliaciones manuales. El trabajo se desarrolló en tres fases: entrevista de diagnóstico y revisión de fuentes públicas; diagnóstico bajo DAMA-DMBOK (11 dimensiones y análisis de brechas); y diseño del modelo y del plan de implementación, configurado en GovData Nexus con una base de prueba de ocho tablas en Supabase. La inteligencia artificial se usó como apoyo y sus resultados fueron validados por la autora. La madurez inicial fue de 48 %, explicada sobre todo por las exigencias normativas externas. El modelo propone un CDO (IT Director), Data Owners, Data Stewards, un CISO dedicado, ocho políticas y cuatro comités, con una primera fase de 13 semanas. En la plataforma se configuraron el catálogo de activos, reglas de calidad, 18 reglas de SLA y ocho riesgos. El gobierno de datos puede iniciar con bajo costo, asignando responsabilidades sobre información que ya existe; definir responsables, reglas de calidad y un lenguaje común reduce reprocesos y fortalece la trazabilidad y la confianza en la información. Este es un ejercicio académico del Politécnico Grancolombiano, realizado por mí, Laura Sofía Hernández Chaparro, con datos sintéticos y sin aprobación de GPC Pharma S.A.S. Puede servir como base para una implementación, pero requiere la revisión y validación de la organización y de especialistas en gobierno de datos. Las cifras salariales que utilicé provienen de la guía salarial 2026 de Michael Page",
     "fullDescription": "Se realizó un diagnóstico de gobierno de datos en GPC Pharma S.A.S., una empresa que fabrica y distribuye medicamentos y suministros médicos para clínicas y hospitales. La compañía cumple con la normativa externa aplicable (INVIMA, FDA, EMA, ISO 9001 y Ley 1581 de 2012), pero sus datos están distribuidos entre ADP, Power BI, una plataforma interna, Excel, Teams y SharePoint. Cada área administra su información de forma independiente, no hay roles formales de gobierno de datos ni diccionario de metadatos, y un mismo cliente puede aparecer con nombres distintos entre plataformas, lo que exige conciliaciones manuales. El trabajo se desarrolló en tres fases: entrevista de diagnóstico y revisión de fuentes públicas; diagnóstico bajo DAMA-DMBOK (11 dimensiones y análisis de brechas); y diseño del modelo y del plan de implementación, configurado en GovData Nexus con una base de prueba de ocho tablas en Supabase. La inteligencia artificial se usó como apoyo y sus resultados fueron validados por la autora. La madurez inicial fue de 48 %, explicada sobre todo por las exigencias normativas externas. El modelo propone un CDO (IT Director), Data Owners, Data Stewards, un CISO dedicado, ocho políticas y cuatro comités, con una primera fase de 13 semanas. En la plataforma se configuraron el catálogo de activos, reglas de calidad, 18 reglas de SLA y ocho riesgos. El gobierno de datos puede iniciar con bajo costo, asignando responsabilidades sobre información que ya existe; definir responsables, reglas de calidad y un lenguaje común reduce reprocesos y fortalece la trazabilidad y la confianza en la información. Este es un ejercicio académico del Politécnico Grancolombiano, realizado por mí, Laura Sofía Hernández Chaparro, con datos sintéticos y sin aprobación de GPC Pharma S.A.S. Puede servir como base para una implementación, pero requiere la revisión y validación de la organización y de especialistas en gobierno de datos. Las cifras salariales que utilicé provienen de la guía salarial 2026 de Michael Page",
     "publicationStatus": "pending_approval",
     "approvalStatus": "pending",
-    "status": "review",
+    "status": "in_progress",
     "isPublic": false,
     "accessMode": "private",
     "displayOrder": 1,
     "createdAt": "2026-11-24T02:08:03.167Z",
-    "updatedAt": "2026-11-24T02:09:37.195Z",
+    "updatedAt": "2026-11-24T02:10:51.106Z",
     "landingConfig": {
       "publicName": "Diagnóstico y propuesta de optimización del gobierno de datos en GPC Pharma S.A.S. Empresa del Sector Farmaceutico.",
+      "slug": "diagnostico-y-propuesta-de-optimizacion-del-gobierno-de-datos-en-gpc-pharma-s-a-s-empresa-del-sector-farmaceutico",
       "landingTitle": "Diagnóstico y propuesta de optimización del gobierno de datos en GPC Pharma S.A.S. Empresa del Sector Farmaceutico.",
       "publicDescription": "Diagnóstico y propuesta de gobierno de datos para GPC Pharma S.A.S., empresa farmacéutica que abastece a clínicas y hospitales. Define roles, políticas y comités basados en los cargos existentes, con un plan por fases, probado en GovData Nexus con datos sintéticos.",
-      "slug": "diagnostico-y-propuesta-de-optimizacion-del-gobierno-de-datos-en-gpc-pharma-s-a-s-empresa-del-sector-farmaceutico",
       "visibleCategory": "Administración Pública",
       "tags": [
-        "Estudiantes",
-        "Proyecto",
-        "VIDEO"
+        "Gobierno de Datos",
+        "IA",
+        "Innovación"
       ],
       "ctaText": "Ver Proyecto",
       "ctaUrl": "#",
@@ -48,8 +48,7 @@
     "authorsConfig": {
       "authorsList": "Laura Sofía Hernández Chaparro",
       "authorsEmails": "ing.laurasofiax04@gmail.com",
-      "authorsRole": "Estudiante / Creador",
-      "collaborators": ""
+      "authorsRole": "Estudiante / Creador"
     },
     "designConfig": {
       "themeId": "cosmos",
@@ -62,15 +61,212 @@
     },
     "videoUrl": "https://youtu.be/C-OhiJbay80",
     "videoConfig": {
-      "url": "",
+      "sourceType": "url",
+      "url": "https://youtu.be/C-OhiJbay80",
+      "fileName": "",
       "title": "Diagnóstico y propuesta de optimización del gobierno de datos en GPC Pharma S.A.S. Empresa del Sector Farmaceutico.",
       "description": "Diagnóstico y propuesta de gobierno de datos para GPC Pharma S.A.S., empresa farmacéutica que abastece a clínicas y hospitales. Define roles, políticas y comités basados en los cargos existentes, con un plan por fases, probado en GovData Nexus con datos sintéticos.",
       "thumbnailUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fdraft%2F1795486058971_9ioo_asset.jpg",
-      "chapters": []
+      "isPublic": true,
+      "verified": true
     },
     "duration": "5:00 min",
     "image": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fdraft%2F1795486058971_9ioo_asset.jpg",
-    "heroBanner": ""
+    "heroBanner": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fdraft%2F1795486058971_9ioo_asset.jpg",
+    "customProjectCodes": [
+      {
+        "code": "804263",
+        "author": "Melisa",
+        "authorRole": "admin",
+        "createdAt": "22/11/2026, 9:27:35 p.m."
+      },
+      {
+        "code": "371850",
+        "author": "Melisa",
+        "authorRole": "admin",
+        "createdAt": "22/11/2026, 9:27:35 p.m."
+      },
+      {
+        "code": "926407",
+        "author": "Melisa",
+        "authorRole": "admin",
+        "createdAt": "22/11/2026, 9:23:09 p.m."
+      },
+      {
+        "code": "583194",
+        "author": "Melisa",
+        "authorRole": "admin",
+        "createdAt": "22/11/2026, 9:22:51 p.m."
+      }
+    ],
+    "hub": {
+      "joinRequests": [],
+      "members": [
+        {
+          "name": "Laura Sofía Hernández Chaparro",
+          "email": "ing.laurasofiax04@gmail.com",
+          "role": "owner",
+          "leader": true
+        }
+      ],
+      "views": [],
+      "ratings": []
+    },
+    "slug": "diagnostico-y-propuesta-de-optimizacion-del-gobierno-de-datos-en-gpc-pharma-s-a-s-empresa-del-sector-farmaceutico",
+    "subtitle": "Proyecto Educativo Mentix",
+    "isGovDataProject": true,
+    "projectSubtype": "Gobierno de Datos e IA",
+    "coverImage": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fdraft%2F1795486058971_9ioo_asset.jpg",
+    "_clearedMainImage": false,
+    "_clearedThumbImage": false,
+    "useDefaultImage": true,
+    "targetAudience": "",
+    "problemStatement": "",
+    "mainObjective": "",
+    "benefits": "",
+    "teamLead": "Laura Sofía Hernández Chaparro",
+    "preparationStatus": "en_desarrollo",
+    "submittedForApproval": false,
+    "startDate": "2026-11-24",
+    "endDate": "",
+    "currentStep": 1,
+    "completedSteps": [
+      1
+    ],
+    "progress": 50,
+    "calculatedProgress": 50,
+    "valueProp": {
+      "problemSolved": "",
+      "howItWorks": "",
+      "forWhom": "",
+      "differentiator": "",
+      "keyFeatures": [],
+      "resultsAndBenefits": "",
+      "prerequisites": "",
+      "visitorAction": "Unirse / Colaborar",
+      "commercialPitch": "",
+      "faqs": []
+    },
+    "valueProposition": {
+      "problemSolved": "",
+      "howItWorks": "",
+      "forWhom": "",
+      "differentiator": "",
+      "keyFeatures": [],
+      "resultsAndBenefits": "",
+      "prerequisites": "",
+      "visitorAction": "Unirse / Colaborar",
+      "commercialPitch": "",
+      "faqs": []
+    },
+    "resources": [],
+    "visualAssets": [],
+    "slides": [],
+    "presentations": [],
+    "externalLinks": [],
+    "projectRoadmap": [],
+    "tags": [
+      "Gobierno de Datos",
+      "IA",
+      "Innovación"
+    ],
+    "govdata": {
+      "id": "proj_video_1795486083167",
+      "title": "Diagnóstico y propuesta de optimización del gobierno de datos en GPC Pharma S.A.S. Empresa del Sector Farmaceutico.",
+      "subtitle": "",
+      "shortDescription": "Se realizó un diagnóstico de gobierno de datos en GPC Pharma S.A.S., una empresa que fabrica y distribuye medicamentos y suministros médicos para clínicas y hospitales. La compañía cumple con la normativa externa aplicable (INVIMA, FDA, EMA, ISO 9001 y Ley 1581 de 2012), pero sus datos están distribuidos entre ADP, Power BI, una plataforma interna, Excel, Teams y SharePoint. Cada área administra su información de forma independiente, no hay roles formales de gobierno de datos ni diccionario de metadatos, y un mismo cliente puede aparecer con nombres distintos entre plataformas, lo que exige conciliaciones manuales. El trabajo se desarrolló en tres fases: entrevista de diagnóstico y revisión de fuentes públicas; diagnóstico bajo DAMA-DMBOK (11 dimensiones y análisis de brechas); y diseño del modelo y del plan de implementación, configurado en GovData Nexus con una base de prueba de ocho tablas en Supabase. La inteligencia artificial se usó como apoyo y sus resultados fueron validados por la autora. La madurez inicial fue de 48 %, explicada sobre todo por las exigencias normativas externas. El modelo propone un CDO (IT Director), Data Owners, Data Stewards, un CISO dedicado, ocho políticas y cuatro comités, con una primera fase de 13 semanas. En la plataforma se configuraron el catálogo de activos, reglas de calidad, 18 reglas de SLA y ocho riesgos. El gobierno de datos puede iniciar con bajo costo, asignando responsabilidades sobre información que ya existe; definir responsables, reglas de calidad y un lenguaje común reduce reprocesos y fortalece la trazabilidad y la confianza en la información. Este es un ejercicio académico del Politécnico Grancolombiano, realizado por mí, Laura Sofía Hernández Chaparro, con datos sintéticos y sin aprobación de GPC Pharma S.A.S. Puede servir como base para una implementación, pero requiere la revisión y validación de la organización y de especialistas en gobierno de datos. Las cifras salariales que utilicé provienen de la guía salarial 2026 de Michael Page",
+      "fullDescription": "Se realizó un diagnóstico de gobierno de datos en GPC Pharma S.A.S., una empresa que fabrica y distribuye medicamentos y suministros médicos para clínicas y hospitales. La compañía cumple con la normativa externa aplicable (INVIMA, FDA, EMA, ISO 9001 y Ley 1581 de 2012), pero sus datos están distribuidos entre ADP, Power BI, una plataforma interna, Excel, Teams y SharePoint. Cada área administra su información de forma independiente, no hay roles formales de gobierno de datos ni diccionario de metadatos, y un mismo cliente puede aparecer con nombres distintos entre plataformas, lo que exige conciliaciones manuales. El trabajo se desarrolló en tres fases: entrevista de diagnóstico y revisión de fuentes públicas; diagnóstico bajo DAMA-DMBOK (11 dimensiones y análisis de brechas); y diseño del modelo y del plan de implementación, configurado en GovData Nexus con una base de prueba de ocho tablas en Supabase. La inteligencia artificial se usó como apoyo y sus resultados fueron validados por la autora. La madurez inicial fue de 48 %, explicada sobre todo por las exigencias normativas externas. El modelo propone un CDO (IT Director), Data Owners, Data Stewards, un CISO dedicado, ocho políticas y cuatro comités, con una primera fase de 13 semanas. En la plataforma se configuraron el catálogo de activos, reglas de calidad, 18 reglas de SLA y ocho riesgos. El gobierno de datos puede iniciar con bajo costo, asignando responsabilidades sobre información que ya existe; definir responsables, reglas de calidad y un lenguaje común reduce reprocesos y fortalece la trazabilidad y la confianza en la información. Este es un ejercicio académico del Politécnico Grancolombiano, realizado por mí, Laura Sofía Hernández Chaparro, con datos sintéticos y sin aprobación de GPC Pharma S.A.S. Puede servir como base para una implementación, pero requiere la revisión y validación de la organización y de especialistas en gobierno de datos. Las cifras salariales que utilicé provienen de la guía salarial 2026 de Michael Page",
+      "category": "gobierno_de__datos",
+      "categoryName": "Gobierno de Datos",
+      "projectSubtype": "Gobierno de Datos e IA",
+      "targetAudience": "",
+      "problemStatement": "",
+      "mainObjective": "",
+      "benefits": "",
+      "teamLead": "Laura Sofía Hernández Chaparro",
+      "preparationStatus": "en_desarrollo",
+      "startDate": "2026-11-24",
+      "endDate": "",
+      "valueProp": {
+        "problemSolved": "",
+        "howItWorks": "",
+        "forWhom": "",
+        "differentiator": "",
+        "keyFeatures": [],
+        "resultsAndBenefits": "",
+        "prerequisites": "",
+        "visitorAction": "Unirse / Colaborar",
+        "commercialPitch": "",
+        "faqs": []
+      },
+      "videoConfig": {
+        "sourceType": "url",
+        "url": "https://youtu.be/C-OhiJbay80",
+        "fileName": "",
+        "title": "Diagnóstico y propuesta de optimización del gobierno de datos en GPC Pharma S.A.S. Empresa del Sector Farmaceutico.",
+        "description": "Diagnóstico y propuesta de gobierno de datos para GPC Pharma S.A.S., empresa farmacéutica que abastece a clínicas y hospitales. Define roles, políticas y comités basados en los cargos existentes, con un plan por fases, probado en GovData Nexus con datos sintéticos.",
+        "thumbnailUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fdraft%2F1795486058971_9ioo_asset.jpg",
+        "isPublic": true,
+        "verified": true
+      },
+      "mainImage": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fdraft%2F1795486058971_9ioo_asset.jpg",
+      "thumbnailImage": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fdraft%2F1795486058971_9ioo_asset.jpg",
+      "_clearedMainImage": false,
+      "_clearedThumbImage": false,
+      "useDefaultImage": true,
+      "externalLinks": [],
+      "landingConfig": {
+        "publicName": "Diagnóstico y propuesta de optimización del gobierno de datos en GPC Pharma S.A.S. Empresa del Sector Farmaceutico.",
+        "slug": "diagnostico-y-propuesta-de-optimizacion-del-gobierno-de-datos-en-gpc-pharma-s-a-s-empresa-del-sector-farmaceutico",
+        "landingTitle": "Diagnóstico y propuesta de optimización del gobierno de datos en GPC Pharma S.A.S. Empresa del Sector Farmaceutico.",
+        "publicDescription": "Diagnóstico y propuesta de gobierno de datos para GPC Pharma S.A.S., empresa farmacéutica que abastece a clínicas y hospitales. Define roles, políticas y comités basados en los cargos existentes, con un plan por fases, probado en GovData Nexus con datos sintéticos.",
+        "visibleCategory": "Administración Pública",
+        "tags": [
+          "Gobierno de Datos",
+          "IA",
+          "Innovación"
+        ],
+        "ctaText": "Ver Proyecto",
+        "ctaUrl": "#",
+        "displayOrder": 1,
+        "featuredVideoPublic": true
+      },
+      "publicationStatus": "pending_approval",
+      "completedSteps": [
+        1
+      ],
+      "currentStep": 1,
+      "author": "Laura Sofía Hernández Chaparro",
+      "authorId": "user_1795437974586",
+      "ownerId": "user_1795437974586",
+      "ownerUsername": "laurasofiahz",
+      "authorEmail": "ing.laurasofiax04@gmail.com",
+      "authorAvatar": "🐼",
+      "authorRole": "student",
+      "joinCode": "",
+      "accessCode": "",
+      "designConfig": {
+        "themeId": "cosmos",
+        "fontFamily": "Montserrat",
+        "titleColor": "#ffffff",
+        "textColor": "#cbd5e1",
+        "accentColor": "#00f5d4",
+        "bannerStyle": "gradient-cosmos"
+      },
+      "authorsConfig": {
+        "authorsList": "Laura Sofía Hernández Chaparro",
+        "authorsEmails": "ing.laurasofiax04@gmail.com",
+        "authorsRole": "Estudiante / Creador"
+      },
+      "createdAt": "2026-11-24T02:08:03.167Z",
+      "updatedAt": "2026-11-24T02:10:53.752Z",
+      "progress": 50,
+      "calculatedProgress": 50
+    },
+    "ownerId": "user_1795437974586",
+    "ownerUsername": "laurasofiahz",
+    "joinCode": "",
+    "accessCode": ""
   },
   {
     "id": "proj_1792971445678",
