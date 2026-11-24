@@ -222,8 +222,7 @@ window.ProjectHub = {
     const projAuthorKeys = [proj.author, proj.creatorName, proj.teamLead, proj.authorEmail, proj.authorId].map(clean).filter(Boolean);
     const isDirectAuthor = myKeys.some(k => projAuthorKeys.includes(k));
     const isOwner = isDirectAuthor
-      || (window.appRouter && typeof window.appRouter.isChallengeOwner === 'function' && window.appRouter.isChallengeOwner(proj))
-      || (window.ProjectsView && typeof window.ProjectsView.canUserEditProject === 'function' && window.ProjectsView.canUserEditProject(proj));
+      || (window.appRouter && typeof window.appRouter.isChallengeOwner === 'function' && window.appRouter.isChallengeOwner(proj));
     if (isOwner) return 'owner';
     const hub = this.getHub(proj.id);
     const m = this.getMember(proj, hub);

@@ -1079,7 +1079,7 @@ window.ProjectsView = {
   ],
 
   canUserEditProject(projectOrId) {
-    if (!projectOrId) return false;
+    if (!projectOrId || this._checkingEditPerm) return false;
     const proj = typeof projectOrId === 'object' && projectOrId !== null
       ? projectOrId
       : (this.getMergedProjectRecord(projectOrId) || (window.appState?.challenges || []).find(c => c && String(c.id) === String(projectOrId)));
@@ -1089,8 +1089,13 @@ window.ProjectsView = {
       return true;
     }
     if (window.ProjectHub && typeof window.ProjectHub.getRole === 'function') {
-      const r = window.ProjectHub.getRole(proj);
-      if (r === 'owner' || r === 'editor') return true;
+      try {
+        this._checkingEditPerm = true;
+        const r = window.ProjectHub.getRole(proj);
+        if (r === 'owner' || r === 'editor') return true;
+      } finally {
+        this._checkingEditPerm = false;
+      }
     }
     return false;
   },
