@@ -1337,7 +1337,8 @@
     "rejectionReason": "",
     "tag": "⏳ Pendiente de Autorización",
     "tagClass": "badge-review",
-    "completedAt": "2026-11-24T16:46:38.877Z"
+    "completedAt": "2026-11-24T16:46:38.877Z",
+    "_globalHeroBanner": "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=1600&q=80"
   },
   {
     "id": "proj_1792971445678",
@@ -2575,7 +2576,7 @@
     "benefits": "hfhkjl",
     "teamLead": "Melisa",
     "preparationStatus": "idea",
-    "publicationStatus": "pending_approval",
+    "publicationStatus": "completed",
     "approvalStatus": "pending",
     "submittedForApproval": true,
     "status": "completed",
@@ -2667,7 +2668,7 @@
         "fileName": "o.pdf",
         "description": "Recurso oficial en formato PDF (412.2 KB).",
         "type": "pdf",
-        "url": "",
+        "url": "https://mentixs.vercel.app/api/challenges?file=data%2Fuploads%2Fgovdata_code_mentilona_804263%2F1795468183081_atra_o.pdf",
         "format": "PDF",
         "sizeBytes": 422142,
         "sizeLabel": "412.2 KB",
@@ -2818,7 +2819,8 @@
         "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fgovdata_code_mentilona_804263%2F1795468069741_rebn_slide_1.jpg",
         "notes": "",
         "bgColor": "#ffffff",
-        "themeId": "cosmos"
+        "themeId": "cosmos",
+        "bgImage": ""
       },
       {
         "id": "slide_1795468070127_1",
@@ -2833,7 +2835,8 @@
         "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fgovdata_code_mentilona_804263%2F1795468072414_km40_slide_2.jpg",
         "notes": "",
         "bgColor": "#ffffff",
-        "themeId": "cosmos"
+        "themeId": "cosmos",
+        "bgImage": ""
       },
       {
         "id": "slide_1795468070127_2",
@@ -2848,7 +2851,8 @@
         "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fgovdata_code_mentilona_804263%2F1795468073903_qofj_slide_3.jpg",
         "notes": "",
         "bgColor": "#ffffff",
-        "themeId": "cosmos"
+        "themeId": "cosmos",
+        "bgImage": ""
       },
       {
         "id": "slide_1795468070127_3",
@@ -2863,7 +2867,8 @@
         "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fgovdata_code_mentilona_804263%2F1795468075636_wp26_slide_4.jpg",
         "notes": "",
         "bgColor": "#ffffff",
-        "themeId": "cosmos"
+        "themeId": "cosmos",
+        "bgImage": ""
       },
       {
         "id": "slide_1795468070127_4",
@@ -2878,7 +2883,8 @@
         "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fgovdata_code_mentilona_804263%2F1795468078998_zoel_slide_5.jpg",
         "notes": "",
         "bgColor": "#ffffff",
-        "themeId": "cosmos"
+        "themeId": "cosmos",
+        "bgImage": ""
       },
       {
         "id": "slide_1795468070127_5",
@@ -2893,7 +2899,8 @@
         "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fgovdata_code_mentilona_804263%2F1795468080841_jjys_slide_6.jpg",
         "notes": "",
         "bgColor": "#ffffff",
-        "themeId": "cosmos"
+        "themeId": "cosmos",
+        "bgImage": ""
       },
       {
         "id": "slide_1795468070127_6",
@@ -2908,7 +2915,8 @@
         "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fgovdata_code_mentilona_804263%2F1795468082390_kj0c_slide_7.jpg",
         "notes": "",
         "bgColor": "#ffffff",
-        "themeId": "cosmos"
+        "themeId": "cosmos",
+        "bgImage": ""
       },
       {
         "id": "slide_1795468070127_7",
@@ -2923,7 +2931,8 @@
         "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fgovdata_code_mentilona_804263%2F1795468083811_o3cv_slide_8.jpg",
         "notes": "",
         "bgColor": "#ffffff",
-        "themeId": "cosmos"
+        "themeId": "cosmos",
+        "bgImage": ""
       }
     ],
     "externalLinks": [
@@ -3115,7 +3124,7 @@
         "displayOrder": 1,
         "featuredVideoPublic": true
       },
-      "publicationStatus": "pending_approval",
+      "publicationStatus": "completed",
       "completedSteps": [
         1,
         2,
@@ -3168,7 +3177,8 @@
       "approvalStatus": "pending",
       "status": "completed",
       "completedAt": "2026-11-23T21:13:31.234Z",
-      "isPublic": false
+      "isPublic": false,
+      "rejectionReason": "Desautorizado por el Administrador."
     },
     "author": "Melisa",
     "authorId": "user_1792184134006",
@@ -3180,7 +3190,7 @@
     "authorAvatar": "🐯",
     "authorRole": "Líder del Proyecto",
     "createdAt": "2026-11-23T03:09:16.957Z",
-    "updatedAt": "2026-11-23T21:13:32.229Z",
+    "updatedAt": "2026-11-24T16:56:05.214Z",
     "image": "https://static.vecteezy.com/system/resources/thumbnails/060/843/811/small/close-up-of-raindrops-on-leaves-hd-background-luxury-hd-wallpaper-image-trendy-background-illustration-free-photo.jpg",
     "rejectionReason": "Desautorizado por el Administrador.",
     "tag": "✔ Completado",
@@ -3248,7 +3258,7 @@
     "stage": "completed",
     "visibility": "private",
     "accessMode": "private",
-    "rejectedAt": "2026-11-23T21:13:28.997Z",
+    "rejectedAt": "2026-11-24T16:46:16.037Z",
     "heroBanner": "https://static.vecteezy.com/system/resources/thumbnails/060/843/811/small/close-up-of-raindrops-on-leaves-hd-background-luxury-hd-wallpaper-image-trendy-background-illustration-free-photo.jpg",
     "coverImage": "https://static.vecteezy.com/system/resources/thumbnails/060/843/811/small/close-up-of-raindrops-on-leaves-hd-background-luxury-hd-wallpaper-image-trendy-background-illustration-free-photo.jpg",
     "_clearedMainImage": false,
@@ -3379,6 +3389,11 @@
             "themeId": "cosmos"
           }
         ]
+      },
+      {
+        "id": "pres_1795468108116_66fr",
+        "title": "Presentación Empresarial MasterClassNow I Fundamentos y Diagnóstico  v1.0",
+        "slides": []
       }
     ]
   }
