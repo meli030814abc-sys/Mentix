@@ -28,7 +28,7 @@
     "accessMode": "private",
     "displayOrder": 1,
     "createdAt": "2026-11-24T02:08:03.167Z",
-    "updatedAt": "2026-11-24T03:01:08.098Z",
+    "updatedAt": "2026-11-24T03:01:10.391Z",
     "landingConfig": {
       "publicName": "Diagnóstico y propuesta de optimización del gobierno de datos en GPC Pharma S.A.S. Empresa del Sector Farmaceutico.",
       "slug": "diagnostico-y-propuesta-de-optimizacion-del-gobierno-de-datos-en-gpc-pharma-s-a-s-empresa-del-sector-farmaceutico",
@@ -1218,7 +1218,7 @@
         "collaborators": ""
       },
       "createdAt": "2026-11-24T02:08:03.167Z",
-      "updatedAt": "2026-11-24T03:01:11.511Z",
+      "updatedAt": "2026-11-24T03:01:13.649Z",
       "progress": 95,
       "calculatedProgress": 95,
       "heroBanner": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fdraft%2F1795486058971_9ioo_asset.jpg",
