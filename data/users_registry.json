@@ -110,21 +110,5 @@
     "lastLoginAt": "2026-11-24T18:42:52.766Z",
     "pwd": "403bce7bcc19e2bc8e1ac6bd25fe9c03d4567fb62c8f4c3ba63458fc91a9660d",
     "createdAt": "2026-11-24T18:42:52.766Z"
-  },
-  {
-    "id": "user_1795548234464",
-    "name": "hkgk",
-    "username": "g",
-    "email": "kgfjgh454655@655222",
-    "avatar": "🦊",
-    "role": "student",
-    "xp": 100,
-    "level": 1,
-    "levelName": "Principiante",
-    "institution": "Comunidad MENTIX",
-    "isBlocked": false,
-    "lastLoginAt": "2026-11-24T19:23:55.413Z",
-    "pwd": "b1061eb6bc04914865a2562a75a3fc010d10f9e0d844eacf7c276ec16571032f",
-    "createdAt": "2026-11-24T19:23:55.413Z"
   }
 ]
