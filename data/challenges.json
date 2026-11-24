@@ -28,7 +28,7 @@
     "accessMode": "private",
     "displayOrder": 1,
     "createdAt": "2026-11-24T02:08:03.167Z",
-    "updatedAt": "2026-11-24T03:22:40.240Z",
+    "updatedAt": "2026-11-24T03:22:51.759Z",
     "landingConfig": {
       "publicName": "Diagnóstico y propuesta de optimización del gobierno de datos en GPC Pharma S.A.S.",
       "slug": "propuesta-gobierno-de-datos-gpc-pharma",
@@ -120,7 +120,7 @@
     "coverImage": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795490558177_yj68_asset.jpg",
     "_clearedMainImage": false,
     "_clearedThumbImage": false,
-    "useDefaultImage": false,
+    "useDefaultImage": true,
     "targetAudience": "Directivos y responsables de datos, tecnología y cumplimiento en organizaciones del sector farmacéutico; comunidad académica en gobierno de datos.",
     "problemStatement": "GPC Pharma S.A.S. opera con una gestión de la información distribuida por áreas, apoyada en varias plataformas. Esto representa la oportunidad de formalizar roles de gobierno de datos, contar con un diccionario de metadatos y unificar criterios (por ejemplo, la identificación de clientes entre plataformas), de modo que la trazabilidad y la confianza en los datos acompañen el crecimiento de la operación.",
     "mainObjective": "Diseñar un modelo de gobierno de datos para GPC Pharma S.A.S., con roles, políticas, comités y un plan de implementación por fases, basado en los cargos existentes y probado en GovData Nexus con datos sintéticos.",
@@ -1137,7 +1137,7 @@
       "thumbnailImage": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795490558177_yj68_asset.jpg",
       "_clearedMainImage": false,
       "_clearedThumbImage": false,
-      "useDefaultImage": false,
+      "useDefaultImage": true,
       "externalLinks": [
         {
           "id": "lnk_1795489746267",
@@ -1244,7 +1244,7 @@
         "authorsInstitution": "Institución Universitaria Politécnico Grancolombiano"
       },
       "createdAt": "2026-11-24T02:08:03.167Z",
-      "updatedAt": "2026-11-24T03:22:43.785Z",
+      "updatedAt": "2026-11-24T03:22:55.366Z",
       "progress": 95,
       "calculatedProgress": 95,
       "heroBanner": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795490558177_yj68_asset.jpg",
