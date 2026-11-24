@@ -28,7 +28,7 @@
     "accessMode": "private",
     "displayOrder": 1,
     "createdAt": "2026-11-24T02:08:03.167Z",
-    "updatedAt": "2026-11-24T02:25:49.750Z",
+    "updatedAt": "2026-11-24T02:26:00.644Z",
     "landingConfig": {
       "publicName": "Diagnóstico y propuesta de optimización del gobierno de datos en GPC Pharma S.A.S. Empresa del Sector Farmaceutico.",
       "slug": "diagnostico-y-propuesta-de-optimizacion-del-gobierno-de-datos-en-gpc-pharma-s-a-s-empresa-del-sector-farmaceutico",
@@ -168,7 +168,7 @@
           "a": "Es el conjunto de roles, políticas y reglas que definen quién es responsable de los datos de una organización y cómo se gestionan, para asegurar su calidad, trazabilidad y seguridad."
         },
         {
-          "q": "",
+          "q": "¿Los datos utilizados son reales?",
           "a": ""
         }
       ]
@@ -197,7 +197,7 @@
           "a": "Es el conjunto de roles, políticas y reglas que definen quién es responsable de los datos de una organización y cómo se gestionan, para asegurar su calidad, trazabilidad y seguridad."
         },
         {
-          "q": "",
+          "q": "¿Los datos utilizados son reales?",
           "a": ""
         }
       ]
@@ -287,7 +287,7 @@
             "a": "Es el conjunto de roles, políticas y reglas que definen quién es responsable de los datos de una organización y cómo se gestionan, para asegurar su calidad, trazabilidad y seguridad."
           },
           {
-            "q": "",
+            "q": "¿Los datos utilizados son reales?",
             "a": ""
           }
         ]
@@ -395,7 +395,7 @@
         "collaborators": ""
       },
       "createdAt": "2026-11-24T02:08:03.167Z",
-      "updatedAt": "2026-11-24T02:25:52.775Z",
+      "updatedAt": "2026-11-24T02:26:03.674Z",
       "progress": 80,
       "calculatedProgress": 80
     },
