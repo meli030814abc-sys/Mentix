@@ -28,7 +28,7 @@
     "accessMode": "private",
     "displayOrder": 1,
     "createdAt": "2026-11-24T02:08:03.167Z",
-    "updatedAt": "2026-11-24T02:17:44.425Z",
+    "updatedAt": "2026-11-24T02:18:11.336Z",
     "landingConfig": {
       "publicName": "Diagnóstico y propuesta de optimización del gobierno de datos en GPC Pharma S.A.S. Empresa del Sector Farmaceutico.",
       "slug": "diagnostico-y-propuesta-de-optimizacion-del-gobierno-de-datos-en-gpc-pharma-s-a-s-empresa-del-sector-farmaceutico",
@@ -169,7 +169,7 @@
     "projectRoadmap": [
       {
         "title": "Planeación",
-        "description": "Conformación del equipo y definición de objetivos.",
+        "description": "Definición del caso de estudio (GPC Pharma S.A.S.), de los objetivos del diagnóstico y del alcance, y selección del marco de referencia DAMA-DMBOK y de la plataforma GovDataNexus.",
         "status": "completed",
         "progress": 100,
         "emoji": "📋",
@@ -253,7 +253,7 @@
       "projectRoadmap": [
         {
           "title": "Planeación",
-          "description": "Conformación del equipo y definición de objetivos.",
+          "description": "Definición del caso de estudio (GPC Pharma S.A.S.), de los objetivos del diagnóstico y del alcance, y selección del marco de referencia DAMA-DMBOK y de la plataforma GovDataNexus.",
           "status": "completed",
           "progress": 100,
           "emoji": "📋",
@@ -330,7 +330,7 @@
         "authorsRole": "Estudiante / Creador"
       },
       "createdAt": "2026-11-24T02:08:03.167Z",
-      "updatedAt": "2026-11-24T02:17:46.583Z",
+      "updatedAt": "2026-11-24T02:18:14.343Z",
       "progress": 65,
       "calculatedProgress": 65
     },
