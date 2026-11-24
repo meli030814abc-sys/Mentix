@@ -1,5 +1,144 @@
 [
   {
+    "id": "reto_1795285823963",
+    "title": "2",
+    "description": "",
+    "category": "tecnologia",
+    "difficulty": "Medio",
+    "banner": "https://images.unsplash.com/photo-1518770660439-4636190af475?w=800",
+    "timePerQuestion": 20,
+    "pointsStandard": 1000,
+    "isPublic": false,
+    "accessMode": "private",
+    "accessCode": "",
+    "expiresAt": null,
+    "temporalDuration": "24h",
+    "questions": [
+      {
+        "id": "q_1795285826871_0w9t",
+        "text": "32\n",
+        "type": "case",
+        "media": "",
+        "mediaType": "none",
+        "timeLimit": 60,
+        "points": 1000,
+        "caseTitle": "",
+        "caseContext": "1615165654j4jk\nñ\n\n{.32\n23111333333333333333333333333333333333333333333333",
+        "options": [
+          {
+            "text": "2323\n32",
+            "shape": "✦",
+            "color": "opt-1"
+          },
+          {
+            "text": "3\n23",
+            "shape": "⬢",
+            "color": "opt-2"
+          },
+          {
+            "text": "3\n2",
+            "shape": "⚡",
+            "color": "opt-3"
+          },
+          {
+            "text": "32\n",
+            "shape": "🛡️",
+            "color": "opt-4"
+          }
+        ],
+        "correctAnswer": 0,
+        "explanation": "",
+        "referenceNorm": ""
+      }
+    ],
+    "entityName": "",
+    "categoryName": "Tecnología & Programación",
+    "author": "Melisa",
+    "authorAvatar": "🐯",
+    "authorId": "user_1792184134006",
+    "authorEmail": "gatitaxd6f79@gmail.com",
+    "authorRole": "admin",
+    "plays": 0,
+    "projectType": "quiz",
+    "updatedAt": "2026-11-24T19:08:15.373Z",
+    "createdAt": "2026-11-21T18:31:08.560Z",
+    "mainImage": "",
+    "thumbnailImage": "",
+    "image": "",
+    "slides": [],
+    "resources": [],
+    "externalLinks": [],
+    "visualAssets": [],
+    "completedSteps": [],
+    "videoConfig": {
+      "thumbnailUrl": "",
+      "url": ""
+    },
+    "videoUrl": "",
+    "rejectionReason": "",
+    "hub": {
+      "joinRequests": [],
+      "members": [
+        {
+          "name": "Melisa",
+          "email": "melisa@mentix.edu",
+          "role": "owner",
+          "leader": true
+        },
+        {
+          "name": "Elena Morales",
+          "email": "elena.morales@mentix.edu",
+          "role": "collaborator"
+        },
+        {
+          "name": "David Soto",
+          "email": "david.soto@mentix.edu",
+          "role": "viewer"
+        }
+      ],
+      "views": [],
+      "ratings": []
+    },
+    "_globalHeroBannerStyle": {
+      "fit": "cover",
+      "offsetX": 4.8,
+      "offsetY": 8,
+      "zoom": 134
+    },
+    "presentations": [],
+    "approvalStatus": "pending",
+    "publicationStatus": "completed",
+    "status": "completed",
+    "visibility": "private",
+    "rejectedAt": "",
+    "customProjectCodes": [
+      {
+        "code": "804263",
+        "author": "Melisa",
+        "authorRole": "admin",
+        "createdAt": "22/11/2026, 9:27:35 p.m."
+      },
+      {
+        "code": "371850",
+        "author": "Melisa",
+        "authorRole": "admin",
+        "createdAt": "22/11/2026, 9:27:35 p.m."
+      },
+      {
+        "code": "926407",
+        "author": "Melisa",
+        "authorRole": "admin",
+        "createdAt": "22/11/2026, 9:23:09 p.m."
+      },
+      {
+        "code": "583194",
+        "author": "Melisa",
+        "authorRole": "admin",
+        "createdAt": "22/11/2026, 9:22:51 p.m."
+      }
+    ]
+  },
+  {
     "id": "proj_video_1795486083167",
     "fromStudentCreate": true,
     "_isStudentDraft": true,
