@@ -28,7 +28,7 @@
     "accessMode": "private",
     "displayOrder": 1,
     "createdAt": "2026-11-24T02:08:03.167Z",
-    "updatedAt": "2026-11-24T02:18:49.902Z",
+    "updatedAt": "2026-11-24T02:19:20.588Z",
     "landingConfig": {
       "publicName": "Diagnóstico y propuesta de optimización del gobierno de datos en GPC Pharma S.A.S. Empresa del Sector Farmaceutico.",
       "slug": "diagnostico-y-propuesta-de-optimizacion-del-gobierno-de-datos-en-gpc-pharma-s-a-s-empresa-del-sector-farmaceutico",
@@ -193,11 +193,11 @@
       },
       {
         "title": "Publicación",
-        "description": "Despliegue en la Landing Page y comunicación.",
-        "progress": 0,
-        "status": "pending",
-        "icon": "rocket",
-        "emoji": "🚀"
+        "description": "Elaboración del documento final, el video y la presentación, y publicación en la plataforma del curso para su comunicación y revisión.",
+        "status": "active",
+        "progress": 50,
+        "emoji": "🚀",
+        "icon": "clipboard"
       }
     ],
     "tags": [
@@ -277,11 +277,11 @@
         },
         {
           "title": "Publicación",
-          "description": "Despliegue en la Landing Page y comunicación.",
-          "progress": 0,
-          "status": "pending",
-          "icon": "rocket",
-          "emoji": "🚀"
+          "description": "Elaboración del documento final, el video y la presentación, y publicación en la plataforma del curso para su comunicación y revisión.",
+          "status": "active",
+          "progress": 50,
+          "emoji": "🚀",
+          "icon": "clipboard"
         }
       ],
       "landingConfig": {
@@ -330,7 +330,7 @@
         "authorsRole": "Estudiante / Creador"
       },
       "createdAt": "2026-11-24T02:08:03.167Z",
-      "updatedAt": "2026-11-24T02:18:52.758Z",
+      "updatedAt": "2026-11-24T02:19:23.590Z",
       "progress": 65,
       "calculatedProgress": 65
     },
