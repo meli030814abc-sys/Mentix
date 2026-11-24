@@ -28,7 +28,7 @@
     "accessMode": "private",
     "displayOrder": 1,
     "createdAt": "2026-11-24T02:08:03.167Z",
-    "updatedAt": "2026-11-24T02:22:15.664Z",
+    "updatedAt": "2026-11-24T02:22:20.667Z",
     "landingConfig": {
       "publicName": "Diagnóstico y propuesta de optimización del gobierno de datos en GPC Pharma S.A.S. Empresa del Sector Farmaceutico.",
       "slug": "diagnostico-y-propuesta-de-optimizacion-del-gobierno-de-datos-en-gpc-pharma-s-a-s-empresa-del-sector-farmaceutico",
@@ -129,7 +129,7 @@
     "teamLead": "Laura Sofía Hernández Chaparro",
     "preparationStatus": "piloto",
     "submittedForApproval": false,
-    "startDate": "2026-09-24",
+    "startDate": "2026-08-24",
     "endDate": "",
     "currentStep": 8,
     "completedSteps": [
@@ -242,7 +242,7 @@
       "benefits": "Facilita definir responsables y reglas claras sobre los datos, fortalecer la calidad, la trazabilidad y la confianza en la información, y optimizar procesos de consolidación. Además, ofrece una base para implementar el gobierno de datos de forma gradual y de bajo costo.",
       "teamLead": "Laura Sofía Hernández Chaparro",
       "preparationStatus": "piloto",
-      "startDate": "2026-09-24",
+      "startDate": "2026-08-24",
       "endDate": "",
       "valueProp": {
         "problemSolved": "GPC Pharma S.A.S. opera con una gestión de la información distribuida por áreas, apoyada en varias plataformas. Esto representa la oportunidad de formalizar roles de gobierno de datos, contar con un diccionario de metadatos y unificar criterios (por ejemplo, la identificación de clientes entre plataformas), de modo que la trazabilidad y la confianza en los datos acompañen el crecimiento de la operación.",
@@ -366,7 +366,7 @@
         "collaborators": ""
       },
       "createdAt": "2026-11-24T02:08:03.167Z",
-      "updatedAt": "2026-11-24T02:22:18.646Z",
+      "updatedAt": "2026-11-24T02:22:23.673Z",
       "progress": 80,
       "calculatedProgress": 80
     },
