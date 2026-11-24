@@ -126,5 +126,21 @@
     "lastLoginAt": "2026-11-24T19:23:55.413Z",
     "pwd": "b1061eb6bc04914865a2562a75a3fc010d10f9e0d844eacf7c276ec16571032f",
     "createdAt": "2026-11-24T19:23:55.413Z"
+  },
+  {
+    "id": "user_1795548270885",
+    "name": "Eimy",
+    "username": "Cañon",
+    "email": "gatitaxd679@gmail.com",
+    "avatar": "🦊",
+    "role": "admin",
+    "xp": 100,
+    "level": 1,
+    "levelName": "Principiante",
+    "institution": "Comunidad MENTIX",
+    "isBlocked": false,
+    "lastLoginAt": "2026-11-24T19:24:31.562Z",
+    "pwd": "6f3f95e727ea5b1c338909ef3a6c347a833c9b1ea5d3035335141fca9f2c1374",
+    "createdAt": "2026-11-24T19:24:31.562Z"
   }
 ]
