@@ -28,7 +28,7 @@
     "accessMode": "private",
     "displayOrder": 1,
     "createdAt": "2026-11-24T02:08:03.167Z",
-    "updatedAt": "2026-11-24T02:32:11.984Z",
+    "updatedAt": "2026-11-24T02:32:15.967Z",
     "landingConfig": {
       "publicName": "Diagnóstico y propuesta de optimización del gobierno de datos en GPC Pharma S.A.S. Empresa del Sector Farmaceutico.",
       "slug": "diagnostico-y-propuesta-de-optimizacion-del-gobierno-de-datos-en-gpc-pharma-s-a-s-empresa-del-sector-farmaceutico",
@@ -228,8 +228,7 @@
         "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795487474291_765w_slide_1.jpg",
         "notes": "",
         "bgColor": "#ffffff",
-        "themeId": "cosmos",
-        "bgImage": ""
+        "themeId": "cosmos"
       },
       {
         "id": "slide_1795487436607_2",
@@ -244,8 +243,7 @@
         "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795487476404_bqxa_slide_2.jpg",
         "notes": "",
         "bgColor": "#ffffff",
-        "themeId": "cosmos",
-        "bgImage": ""
+        "themeId": "cosmos"
       },
       {
         "id": "slide_1795487437569_3",
@@ -260,8 +258,7 @@
         "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795487478060_xscl_slide_3.jpg",
         "notes": "",
         "bgColor": "#ffffff",
-        "themeId": "cosmos",
-        "bgImage": ""
+        "themeId": "cosmos"
       },
       {
         "id": "slide_1795487438010_4",
@@ -276,8 +273,7 @@
         "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795487479605_9k2x_slide_4.jpg",
         "notes": "",
         "bgColor": "#ffffff",
-        "themeId": "cosmos",
-        "bgImage": ""
+        "themeId": "cosmos"
       },
       {
         "id": "slide_1795487440376_5",
@@ -292,8 +288,7 @@
         "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795487504078_lqsy_slide_5.jpg",
         "notes": "",
         "bgColor": "#ffffff",
-        "themeId": "cosmos",
-        "bgImage": ""
+        "themeId": "cosmos"
       },
       {
         "id": "slide_1795487441385_6",
@@ -308,8 +303,7 @@
         "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795487505650_335c_slide_6.jpg",
         "notes": "",
         "bgColor": "#ffffff",
-        "themeId": "cosmos",
-        "bgImage": ""
+        "themeId": "cosmos"
       },
       {
         "id": "slide_1795487442171_7",
@@ -324,8 +318,7 @@
         "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795487520072_xnaq_slide_7.jpg",
         "notes": "",
         "bgColor": "#ffffff",
-        "themeId": "cosmos",
-        "bgImage": ""
+        "themeId": "cosmos"
       },
       {
         "id": "slide_1795487444622_8",
@@ -340,8 +333,7 @@
         "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795487521559_rln0_slide_8.jpg",
         "notes": "",
         "bgColor": "#ffffff",
-        "themeId": "cosmos",
-        "bgImage": ""
+        "themeId": "cosmos"
       },
       {
         "id": "slide_1795487445648_9",
@@ -356,8 +348,7 @@
         "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795487527046_29ek_slide_9.jpg",
         "notes": "",
         "bgColor": "#ffffff",
-        "themeId": "cosmos",
-        "bgImage": ""
+        "themeId": "cosmos"
       },
       {
         "id": "slide_1795487456249_10",
@@ -368,12 +359,11 @@
         "layout": "full",
         "isFullImage": true,
         "isImported": true,
-        "media": "",
-        "imageUrl": "",
+        "media": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795487529087_z2di_slide_10.jpg",
+        "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795487529087_z2di_slide_10.jpg",
         "notes": "",
         "bgColor": "#ffffff",
-        "themeId": "cosmos",
-        "bgImage": ""
+        "themeId": "cosmos"
       },
       {
         "id": "slide_1795487457379_11",
@@ -388,8 +378,7 @@
         "imageUrl": "",
         "notes": "",
         "bgColor": "#ffffff",
-        "themeId": "cosmos",
-        "bgImage": ""
+        "themeId": "cosmos"
       },
       {
         "id": "slide_1795487458396_12",
@@ -404,8 +393,7 @@
         "imageUrl": "",
         "notes": "",
         "bgColor": "#ffffff",
-        "themeId": "cosmos",
-        "bgImage": ""
+        "themeId": "cosmos"
       },
       {
         "id": "slide_1795487459068_13",
@@ -420,8 +408,7 @@
         "imageUrl": "",
         "notes": "",
         "bgColor": "#ffffff",
-        "themeId": "cosmos",
-        "bgImage": ""
+        "themeId": "cosmos"
       },
       {
         "id": "slide_1795487459727_14",
@@ -436,8 +423,7 @@
         "imageUrl": "",
         "notes": "",
         "bgColor": "#ffffff",
-        "themeId": "cosmos",
-        "bgImage": ""
+        "themeId": "cosmos"
       },
       {
         "id": "slide_1795487460818_15",
@@ -452,8 +438,7 @@
         "imageUrl": "",
         "notes": "",
         "bgColor": "#ffffff",
-        "themeId": "cosmos",
-        "bgImage": ""
+        "themeId": "cosmos"
       },
       {
         "id": "slide_1795487461780_16",
@@ -468,8 +453,7 @@
         "imageUrl": "",
         "notes": "",
         "bgColor": "#ffffff",
-        "themeId": "cosmos",
-        "bgImage": ""
+        "themeId": "cosmos"
       },
       {
         "id": "slide_1795487462664_17",
@@ -484,8 +468,7 @@
         "imageUrl": "",
         "notes": "",
         "bgColor": "#ffffff",
-        "themeId": "cosmos",
-        "bgImage": ""
+        "themeId": "cosmos"
       },
       {
         "id": "slide_1795487463063_18",
@@ -500,8 +483,7 @@
         "imageUrl": "",
         "notes": "",
         "bgColor": "#ffffff",
-        "themeId": "cosmos",
-        "bgImage": ""
+        "themeId": "cosmos"
       },
       {
         "id": "slide_1795487463783_19",
@@ -516,8 +498,7 @@
         "imageUrl": "",
         "notes": "",
         "bgColor": "#ffffff",
-        "themeId": "cosmos",
-        "bgImage": ""
+        "themeId": "cosmos"
       },
       {
         "id": "slide_1795487464948_20",
@@ -532,8 +513,7 @@
         "imageUrl": "",
         "notes": "",
         "bgColor": "#ffffff",
-        "themeId": "cosmos",
-        "bgImage": ""
+        "themeId": "cosmos"
       },
       {
         "id": "slide_1795487465352_21",
@@ -548,8 +528,7 @@
         "imageUrl": "",
         "notes": "",
         "bgColor": "#ffffff",
-        "themeId": "cosmos",
-        "bgImage": ""
+        "themeId": "cosmos"
       },
       {
         "id": "slide_1795487466627_22",
@@ -564,8 +543,7 @@
         "imageUrl": "",
         "notes": "",
         "bgColor": "#ffffff",
-        "themeId": "cosmos",
-        "bgImage": ""
+        "themeId": "cosmos"
       },
       {
         "id": "slide_1795487467062_23",
@@ -580,8 +558,7 @@
         "imageUrl": "",
         "notes": "",
         "bgColor": "#ffffff",
-        "themeId": "cosmos",
-        "bgImage": ""
+        "themeId": "cosmos"
       }
     ],
     "presentations": [
@@ -602,8 +579,7 @@
             "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795487474291_765w_slide_1.jpg",
             "notes": "",
             "bgColor": "#ffffff",
-            "themeId": "cosmos",
-            "bgImage": ""
+            "themeId": "cosmos"
           },
           {
             "id": "slide_1795487436607_2",
@@ -618,8 +594,7 @@
             "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795487476404_bqxa_slide_2.jpg",
             "notes": "",
             "bgColor": "#ffffff",
-            "themeId": "cosmos",
-            "bgImage": ""
+            "themeId": "cosmos"
           },
           {
             "id": "slide_1795487437569_3",
@@ -634,8 +609,7 @@
             "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795487478060_xscl_slide_3.jpg",
             "notes": "",
             "bgColor": "#ffffff",
-            "themeId": "cosmos",
-            "bgImage": ""
+            "themeId": "cosmos"
           },
           {
             "id": "slide_1795487438010_4",
@@ -650,8 +624,7 @@
             "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795487479605_9k2x_slide_4.jpg",
             "notes": "",
             "bgColor": "#ffffff",
-            "themeId": "cosmos",
-            "bgImage": ""
+            "themeId": "cosmos"
           },
           {
             "id": "slide_1795487440376_5",
@@ -666,8 +639,7 @@
             "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795487504078_lqsy_slide_5.jpg",
             "notes": "",
             "bgColor": "#ffffff",
-            "themeId": "cosmos",
-            "bgImage": ""
+            "themeId": "cosmos"
           },
           {
             "id": "slide_1795487441385_6",
@@ -682,8 +654,7 @@
             "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795487505650_335c_slide_6.jpg",
             "notes": "",
             "bgColor": "#ffffff",
-            "themeId": "cosmos",
-            "bgImage": ""
+            "themeId": "cosmos"
           },
           {
             "id": "slide_1795487442171_7",
@@ -698,8 +669,7 @@
             "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795487520072_xnaq_slide_7.jpg",
             "notes": "",
             "bgColor": "#ffffff",
-            "themeId": "cosmos",
-            "bgImage": ""
+            "themeId": "cosmos"
           },
           {
             "id": "slide_1795487444622_8",
@@ -714,8 +684,7 @@
             "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795487521559_rln0_slide_8.jpg",
             "notes": "",
             "bgColor": "#ffffff",
-            "themeId": "cosmos",
-            "bgImage": ""
+            "themeId": "cosmos"
           },
           {
             "id": "slide_1795487445648_9",
@@ -730,8 +699,7 @@
             "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795487527046_29ek_slide_9.jpg",
             "notes": "",
             "bgColor": "#ffffff",
-            "themeId": "cosmos",
-            "bgImage": ""
+            "themeId": "cosmos"
           },
           {
             "id": "slide_1795487456249_10",
@@ -742,12 +710,11 @@
             "layout": "full",
             "isFullImage": true,
             "isImported": true,
-            "media": "",
-            "imageUrl": "",
+            "media": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795487529087_z2di_slide_10.jpg",
+            "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795487529087_z2di_slide_10.jpg",
             "notes": "",
             "bgColor": "#ffffff",
-            "themeId": "cosmos",
-            "bgImage": ""
+            "themeId": "cosmos"
           },
           {
             "id": "slide_1795487457379_11",
@@ -762,8 +729,7 @@
             "imageUrl": "",
             "notes": "",
             "bgColor": "#ffffff",
-            "themeId": "cosmos",
-            "bgImage": ""
+            "themeId": "cosmos"
           },
           {
             "id": "slide_1795487458396_12",
@@ -778,8 +744,7 @@
             "imageUrl": "",
             "notes": "",
             "bgColor": "#ffffff",
-            "themeId": "cosmos",
-            "bgImage": ""
+            "themeId": "cosmos"
           },
           {
             "id": "slide_1795487459068_13",
@@ -794,8 +759,7 @@
             "imageUrl": "",
             "notes": "",
             "bgColor": "#ffffff",
-            "themeId": "cosmos",
-            "bgImage": ""
+            "themeId": "cosmos"
           },
           {
             "id": "slide_1795487459727_14",
@@ -810,8 +774,7 @@
             "imageUrl": "",
             "notes": "",
             "bgColor": "#ffffff",
-            "themeId": "cosmos",
-            "bgImage": ""
+            "themeId": "cosmos"
           },
           {
             "id": "slide_1795487460818_15",
@@ -826,8 +789,7 @@
             "imageUrl": "",
             "notes": "",
             "bgColor": "#ffffff",
-            "themeId": "cosmos",
-            "bgImage": ""
+            "themeId": "cosmos"
           },
           {
             "id": "slide_1795487461780_16",
@@ -842,8 +804,7 @@
             "imageUrl": "",
             "notes": "",
             "bgColor": "#ffffff",
-            "themeId": "cosmos",
-            "bgImage": ""
+            "themeId": "cosmos"
           },
           {
             "id": "slide_1795487462664_17",
@@ -858,8 +819,7 @@
             "imageUrl": "",
             "notes": "",
             "bgColor": "#ffffff",
-            "themeId": "cosmos",
-            "bgImage": ""
+            "themeId": "cosmos"
           },
           {
             "id": "slide_1795487463063_18",
@@ -874,8 +834,7 @@
             "imageUrl": "",
             "notes": "",
             "bgColor": "#ffffff",
-            "themeId": "cosmos",
-            "bgImage": ""
+            "themeId": "cosmos"
           },
           {
             "id": "slide_1795487463783_19",
@@ -890,8 +849,7 @@
             "imageUrl": "",
             "notes": "",
             "bgColor": "#ffffff",
-            "themeId": "cosmos",
-            "bgImage": ""
+            "themeId": "cosmos"
           },
           {
             "id": "slide_1795487464948_20",
@@ -906,8 +864,7 @@
             "imageUrl": "",
             "notes": "",
             "bgColor": "#ffffff",
-            "themeId": "cosmos",
-            "bgImage": ""
+            "themeId": "cosmos"
           },
           {
             "id": "slide_1795487465352_21",
@@ -922,8 +879,7 @@
             "imageUrl": "",
             "notes": "",
             "bgColor": "#ffffff",
-            "themeId": "cosmos",
-            "bgImage": ""
+            "themeId": "cosmos"
           },
           {
             "id": "slide_1795487466627_22",
@@ -938,8 +894,7 @@
             "imageUrl": "",
             "notes": "",
             "bgColor": "#ffffff",
-            "themeId": "cosmos",
-            "bgImage": ""
+            "themeId": "cosmos"
           },
           {
             "id": "slide_1795487467062_23",
@@ -954,8 +909,7 @@
             "imageUrl": "",
             "notes": "",
             "bgColor": "#ffffff",
-            "themeId": "cosmos",
-            "bgImage": ""
+            "themeId": "cosmos"
           }
         ]
       }
