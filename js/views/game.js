@@ -3367,10 +3367,10 @@ window.GameView = {
 
         <!-- Tarjeta de Estadísticas e Histograma Desahogado -->
         <div class="full-stats-card">
-          <div style="font-size: 1.4rem; font-weight: 900; color: var(--text-primary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.4rem;">
+          <div style="font-size: 1.45rem; font-weight: 900; color: #ffffff !important; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.4rem; text-shadow: 0 2px 8px rgba(0,0,0,0.9) !important;">
             📊 ${q.type === 'open' ? 'Ideas y Reflexiones Compartidas' : 'Estadísticas de Respuestas'}
           </div>
-          <p style="color: var(--text-secondary); font-size: 0.95rem; margin-bottom: 1.75rem; font-weight: 600;">
+          <p style="color: #cbd5e1 !important; font-size: 0.95rem; margin-bottom: 1.75rem; font-weight: 600; text-shadow: 0 1px 4px rgba(0,0,0,0.8) !important;">
             ${Object.keys(responses || {}).length} ${(Object.keys(responses || {}).length === 1) ? 'estudiante participó' : 'estudiantes participaron'} en esta pregunta
           </p>
 
@@ -3471,7 +3471,7 @@ window.GameView = {
                             <span style="display: inline-flex; width: 24px; height: 24px; border-radius: 6px; background: ${color}; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 2px 6px rgba(0,0,0,0.3);">
                               ${shapeDef.svg}
                             </span>
-                            <span style="font-weight: 700; color: var(--text-primary); line-height: 1.3;">
+                            <span style="font-weight: 700; color: #ffffff !important; line-height: 1.3; text-shadow: 0 1px 4px rgba(0,0,0,0.8) !important;">
                               ${this.escapeHtml(opt.text)}
                             </span>
                           </div>

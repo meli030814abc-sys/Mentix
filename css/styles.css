@@ -3361,39 +3361,50 @@ body.light-theme .full-stats-card {
   box-shadow: 0 15px 40px rgba(0, 0, 0, 0.08);
 }
 
+/* La tarjeta de estadísticas en pantallas de resultados y gráficos siempre es de fondo cósmico oscuro de alta legibilidad */
+.full-stats-card,
+#view-game .full-stats-card,
+body.light-theme #view-game .full-stats-card,
+body.light-theme .full-stats-card {
+  background: linear-gradient(160deg, #091226 0%, #060b18 100%) !important;
+  border: 1.5px solid rgba(0, 245, 212, 0.4) !important;
+  color: #ffffff !important;
+}
+
 body.light-theme .full-stats-card div[style*="color: white"],
 body.light-theme .full-stats-card div[style*="color: #ffffff"] {
-  color: #0f172a !important;
+  color: #ffffff !important;
 }
 
 body.light-theme .full-stats-card p {
-  color: #475569 !important;
+  color: #94a3b8 !important;
 }
 
 body.light-theme .full-stats-label {
-  color: #1e293b !important;
+  color: #ffffff !important;
   font-weight: 800;
-  background: rgba(0, 0, 0, 0.04) !important;
+  background: rgba(15, 23, 42, 0.92) !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.25) !important;
 }
 
 body.light-theme .host-stats-table-wrapper {
-  background: #f8fafc;
-  border-color: rgba(0, 0, 0, 0.1);
+  background: rgba(10, 16, 32, 0.95) !important;
+  border-color: rgba(0, 245, 212, 0.3) !important;
 }
 
 body.light-theme .host-stats-table th {
-  background: #f1f5f9;
-  color: #64748b;
-  border-bottom-color: rgba(0, 0, 0, 0.1);
+  background: rgba(255, 255, 255, 0.08) !important;
+  color: #38bdf8 !important;
+  border-bottom-color: rgba(255, 255, 255, 0.1) !important;
 }
 
 body.light-theme .host-stats-table td {
-  color: #0f172a;
-  border-bottom-color: rgba(0, 0, 0, 0.06);
+  color: #ffffff !important;
+  border-bottom-color: rgba(255, 255, 255, 0.08) !important;
 }
 
 body.light-theme .host-stats-table tr.correct-row {
-  background: rgba(0, 245, 212, 0.08);
+  background: rgba(0, 245, 212, 0.12) !important;
 }
 
 /* La tarjeta de retroalimentación del alumno siempre es negra y neón */

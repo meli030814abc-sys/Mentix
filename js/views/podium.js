@@ -298,8 +298,8 @@ window.PodiumView = {
         <!-- Tabla Completa de Calificaciones 3D -->
         <div class="podium-table-card-3d">
           <div class="podium-table-header-bar">
-            <h2 class="podium-table-title">
-              <span style="font-size: 1.35rem; filter: drop-shadow(0 2px 6px rgba(0,0,0,0.4));">📋</span> Desglose Completo de Calificaciones
+            <h2 class="podium-table-title" style="color: #ffffff !important; font-size: 1.35rem !important; font-weight: 900 !important; text-shadow: 0 2px 10px rgba(0,0,0,0.9) !important;">
+              <span style="font-size: 1.45rem; filter: drop-shadow(0 2px 6px rgba(0,0,0,0.5));">📋</span> <span style="color: #ffffff !important;">Desglose Completo de Calificaciones</span>
             </h2>
             <button class="btn btn-outline" style="padding: 0.55rem 1.15rem; font-size: 0.88rem; border-color: #10b981; color: #34d399; background: rgba(16, 185, 129, 0.18); font-weight: 800; border-radius: 12px; box-shadow: 0 4px 14px rgba(16, 185, 129, 0.25);" onclick="window.PodiumView.exportExcel(window.PodiumView.getReportRoom())">
               <span>📗</span> Descargar Excel (.xlsx)
