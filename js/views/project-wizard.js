@@ -1434,7 +1434,7 @@ collectCurrentStepInputs() {
             </div>
 
             <div style="width: 100%; height: 8px; background: var(--gdn-subtle); border-radius: 999px; overflow: hidden;">
-              <div style="width: ${Math.max(6, progressPct)}%; height: 100%; background: linear-gradient(90deg, #0ea5e9, #10b981); border-radius: 999px; transition: width 0.35s ease;"></div>
+              <div style="width: ${progressPct > 0 ? progressPct : 0}%; height: 100%; background: linear-gradient(90deg, #0ea5e9, #10b981); border-radius: 999px; transition: width 0.35s ease;"></div>
             </div>
           </div>
 

@@ -961,10 +961,10 @@ window.AdminView = {
                   <div class="dash3d-cat-item">
                     <div class="dash3d-cat-head">
                       <span class="dash3d-cat-name">${cat.icon || '🏷️'} ${cat.name}</span>
-                      <span class="dash3d-cat-pill" style="color:${c2}; border-color:${c1};"><b>${count}</b> proyectos (${pct}%)</span>
+                      <span class="dash3d-cat-pill" style="color:${c2}; border-color:${c1};"><b>${count}</b> ${count === 1 ? 'proyecto' : 'proyectos'} (${pct}%)</span>
                     </div>
                     <div class="dash3d-bar-track">
-                      <div class="dash3d-bar-fill" style="width: ${Math.max(pct, 6)}%; background: linear-gradient(180deg, ${c1} 0%, ${c2} 100%); box-shadow: 0 3px 0 ${c2}aa, inset 0 2px 0 rgba(255,255,255,0.45);"></div>
+                      <div class="dash3d-bar-fill" style="width: ${count > 0 ? pct : 0}%; ${count > 0 ? `background: linear-gradient(180deg, ${c1} 0%, ${c2} 100%); box-shadow: 0 3px 0 ${c2}aa, inset 0 2px 0 rgba(255,255,255,0.45);` : 'background: transparent; box-shadow: none;'}"></div>
                     </div>
                   </div>
                 `;
@@ -2201,7 +2201,9 @@ window.AdminView = {
 
     // Métricas clave en porcentaje
     const globalCompletionPct = stats.overallCompletionRate;
-    const weeklyGoalPct = Math.min(100, Math.max(20, Math.round((stats.currentWeek.completedCount / Math.max(stats.currentWeek.newCount, 1)) * 100) || 85));
+    const weeklyGoalPct = stats.currentWeek.newCount > 0
+      ? Math.min(100, Math.round((stats.currentWeek.completedCount / stats.currentWeek.newCount) * 100))
+      : 0;
     const studentRetentionPct = 94.8;
     const excellenceApprovalPct = 91.2;
 
@@ -2216,14 +2218,15 @@ window.AdminView = {
       const circumference = 2 * Math.PI * radius; // ~251.33
       const arcLen = (Math.min(100, Math.max(0, pct)) / 100) * circumference;
       const strokeDashoffset = circumference - arcLen;
+      const arcCap = pct > 0 ? 'round' : 'butt'; // 0% no debe dibujar ningun punto/barra
       const gradId = `gGrad_${gradKey}`;
       const domeId = `gDome_${gradKey}`;
 
-      const extrudeArcs = [5, 4, 3, 2, 1].map(dy => `
+      const extrudeArcs = pct > 0 ? [5, 4, 3, 2, 1].map(dy => `
         <circle cx="55" cy="${55 + dy}" r="${radius}" fill="none" stroke="${color2}" stroke-width="11"
           stroke-dasharray="${circumference}" stroke-dashoffset="${strokeDashoffset}"
-          stroke-linecap="round" transform="rotate(-90 55 ${55 + dy})" opacity="${dy === 5 ? 0.55 : 0.85}" />
-      `).join('');
+          stroke-linecap="${arcCap}" transform="rotate(-90 55 ${55 + dy})" opacity="${dy === 5 ? 0.55 : 0.85}" />
+      `).join('') : '';
 
       return `
         <div class="rep3d-gauge-card ${themeCls}">
@@ -2259,11 +2262,11 @@ window.AdminView = {
                 <!-- Cara superior brillante del tubo 3D -->
                 <circle cx="55" cy="55" r="${radius}" fill="none" stroke="url(#${gradId})" stroke-width="11"
                   stroke-dasharray="${circumference}" stroke-dashoffset="${strokeDashoffset}"
-                  stroke-linecap="round" transform="rotate(-90 55 55)" class="round-gauge-arc" />
+                  stroke-linecap="${arcCap}" transform="rotate(-90 55 55)" class="round-gauge-arc" />
                 <!-- Brillo especular superior -->
                 <circle cx="55" cy="53.5" r="${radius}" fill="none" stroke="rgba(255,255,255,0.48)" stroke-width="3.2"
                   stroke-dasharray="${circumference}" stroke-dashoffset="${strokeDashoffset}"
-                  stroke-linecap="round" transform="rotate(-90 55 53.5)" />
+                  stroke-linecap="${arcCap}" transform="rotate(-90 55 53.5)" />
               </g>
               <!-- Domo central 3D elevado -->
               <circle cx="55" cy="58" r="29" fill="#94a3b8" opacity="0.22" />
@@ -2288,7 +2291,11 @@ window.AdminView = {
 
       const buildSliceLayer = (cy, useSideColor) => {
         let acc = 0;
-        return items.map(item => {
+        const visibleItems = items.filter(it => it && Number(it.pct) > 0);
+        if (visibleItems.length === 0) {
+          return `<circle cx="95" cy="${cy}" r="${radius}" fill="none" stroke="${useSideColor ? '#94a3b8' : '#cbd5e1'}" stroke-width="22" />`;
+        }
+        return visibleItems.map(item => {
           const arcLen = (item.pct / 100) * circumference;
           const gapLen = circumference - arcLen;
           const strokeDasharray = `${arcLen} ${gapLen}`;
@@ -2389,11 +2396,12 @@ window.AdminView = {
       const dialToneCls = w.isCurrent ? 'is-current' : (w.completionRate >= 80 ? 'dial-green' : (w.completionRate >= 50 ? 'dial-blue' : 'dial-amber'));
       const dialGradId = `dialGrad_${idx}`;
       const dialDomeId = `dialDome_${idx}`;
-      const dialExtrude = [4, 3, 2, 1].map(dy => `
+      const dialCap = w.completionRate > 0 ? 'round' : 'butt'; // 0% no dibuja ningun punto
+      const dialExtrude = w.completionRate > 0 ? [4, 3, 2, 1].map(dy => `
         <circle cx="45" cy="${45 + dy}" r="${radius}" fill="none" stroke="${color2}" stroke-width="9"
           stroke-dasharray="${circ}" stroke-dashoffset="${offset}"
-          stroke-linecap="round" transform="rotate(-90 45 ${45 + dy})" opacity="${dy === 4 ? 0.55 : 0.85}" />
-      `).join('');
+          stroke-linecap="${dialCap}" transform="rotate(-90 45 ${45 + dy})" opacity="${dy === 4 ? 0.55 : 0.85}" />
+      `).join('') : '';
 
       return `
         <div class="rep3d-dial-card ${dialToneCls}">
@@ -2421,10 +2429,10 @@ window.AdminView = {
               ${dialExtrude}
               <circle cx="45" cy="45" r="${radius}" fill="none" stroke="url(#${dialGradId})" stroke-width="9"
                 stroke-dasharray="${circ}" stroke-dashoffset="${offset}"
-                stroke-linecap="round" transform="rotate(-90 45 45)" class="dial-progress-arc" />
+                stroke-linecap="${dialCap}" transform="rotate(-90 45 45)" class="dial-progress-arc" />
               <circle cx="45" cy="43.8" r="${radius}" fill="none" stroke="rgba(255,255,255,0.48)" stroke-width="2.6"
                 stroke-dasharray="${circ}" stroke-dashoffset="${offset}"
-                stroke-linecap="round" transform="rotate(-90 45 43.8)" />
+                stroke-linecap="${dialCap}" transform="rotate(-90 45 43.8)" />
               <circle cx="45" cy="47.5" r="24" fill="#94a3b8" opacity="0.20" />
               <circle cx="45" cy="45" r="24" fill="url(#${dialDomeId})" stroke="#ffffff" stroke-width="1.6" class="rep3d-dome-coin" />
               <text x="45" y="46" text-anchor="middle" font-size="15.5" font-weight="900" class="rep3d-pct-num">${w.completionRate}%</text>
@@ -2627,7 +2635,7 @@ window.AdminView = {
                             <circle cx="18" cy="18" r="14" fill="none" stroke="rgba(148,163,184,0.25)" stroke-width="3.8" />
                             <circle cx="18" cy="18" r="14" fill="none" stroke="${strokeMini}" stroke-width="3.8"
                               stroke-dasharray="${circMini}" stroke-dashoffset="${offsetMini}"
-                              stroke-linecap="round" transform="rotate(-90 18 18)" />
+                              stroke-linecap="${w.completionRate > 0 ? 'round' : 'butt'}" transform="rotate(-90 18 18)" />
                           </svg>
                           <strong style="color: ${strokeMini};">${w.completionRate}%</strong>
                         </div>

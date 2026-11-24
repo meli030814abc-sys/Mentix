@@ -968,12 +968,12 @@ window.ProjectHub = {
               </linearGradient>
             </defs>
             <circle cx="60" cy="60" r="${r}" fill="none" stroke="#e2e8f0" stroke-width="11" opacity="0.75"/>
-            <circle cx="60" cy="60" r="${r}" fill="none" stroke="url(#${gid})" stroke-width="11"
+            ${safePct > 0 ? `<circle cx="60" cy="60" r="${r}" fill="none" stroke="url(#${gid})" stroke-width="11"
               stroke-linecap="round"
               stroke-dasharray="${circ.toFixed(1)}"
               stroke-dashoffset="${offset.toFixed(1)}"
               transform="rotate(-90 60 60)"
-              class="phub-gauge-arc"/>
+              class="phub-gauge-arc"/>` : ''}
           </svg>
           <div class="phub-gauge-inner">
             <span class="phub-gauge-ico">${icon}</span>
@@ -1224,7 +1224,7 @@ window.ProjectHub = {
           <div class="phub-bars phub-bars-3d">
             ${days.map((d, idx) => {
               const pal = barPalette[idx % barPalette.length];
-              const hPx = d.n > 0 ? Math.max(26, Math.round((d.n / max) * 140)) : 10;
+              const hPx = d.n > 0 ? Math.max(20, Math.round((d.n / max) * 140)) : 0;
               return `
               <div class="phub-bar-col phub-bar-col-3d" style="--i:${idx}; --b-top:${pal[0]}; --b-mid:${pal[1]}; --b-side:${pal[2]};">
                 <span class="phub-bar-n phub-bar-n-3d ${d.n > 0 ? 'has-val' : ''}">${d.n}</span>
