@@ -28,7 +28,7 @@
     "accessMode": "private",
     "displayOrder": 1,
     "createdAt": "2026-11-24T02:08:03.167Z",
-    "updatedAt": "2026-11-24T02:15:08.899Z",
+    "updatedAt": "2026-11-24T02:15:17.384Z",
     "landingConfig": {
       "publicName": "Diagnóstico y propuesta de optimización del gobierno de datos en GPC Pharma S.A.S. Empresa del Sector Farmaceutico.",
       "slug": "diagnostico-y-propuesta-de-optimizacion-del-gobierno-de-datos-en-gpc-pharma-s-a-s-empresa-del-sector-farmaceutico",
@@ -259,7 +259,7 @@
         "authorsRole": "Estudiante / Creador"
       },
       "createdAt": "2026-11-24T02:08:03.167Z",
-      "updatedAt": "2026-11-24T02:15:11.877Z",
+      "updatedAt": "2026-11-24T02:15:20.234Z",
       "progress": 55,
       "calculatedProgress": 55
     },
