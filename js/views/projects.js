@@ -1621,7 +1621,530 @@ window.ProjectsView = {
     return true;
   },
 
-  BANNER_MIN_WIDTH: 1200,
+  /**
+   * Obtiene la portada / miniatura específica de la tarjeta de un proyecto
+   */
+  getProjectCardCover(projId, selected) {
+    if (!projId && selected && selected.id) projId = selected.id;
+    let proj = selected;
+    if (!proj && projId) {
+      proj = this.getMergedProjectRecord(projId);
+      if (!proj) proj = (window.appState?.challenges || []).find(c => c && String(c.id) === String(projId));
+    }
+    const isGenericDef = (u) => {
+      const s = String(u || '').trim();
+      return !s || s.includes('photo-1451187580459-43490279c0fa') || s.includes('card_data_gov.png') || s.includes('card_ai_society.png') || s.includes('hero_banner.png');
+    };
+    const normalizeImg = (u) => {
+      let s = String(u || '').trim();
+      if (!s) return '';
+      if (window.ProjectWizard && typeof window.ProjectWizard.normalizeImageUrl === 'function') {
+        s = window.ProjectWizard.normalizeImageUrl(s);
+      }
+      return s;
+    };
+
+    // 1. Priorizar portada explícitamente guardada
+    const explicitCover = projId ? localStorage.getItem('mentix_card_cover_explicit_' + projId) === '1' : false;
+    const savedCover = projId ? localStorage.getItem('mentix_card_cover_' + projId) : null;
+    if (explicitCover && savedCover && savedCover.trim()) {
+      return normalizeImg(savedCover);
+    }
+    if (savedCover && savedCover.trim() && !isGenericDef(savedCover)) {
+      return normalizeImg(savedCover);
+    }
+
+    if (proj) {
+      const candidates = [
+        proj.thumbnailImage,
+        proj.image,
+        proj.coverImage,
+        proj.mainImage,
+        proj.govdata?.thumbnailImage,
+        proj.govdata?.image,
+        proj.govdata?.mainImage,
+        proj.banner,
+        proj.heroBanner,
+        proj.designConfig?.bannerUrl
+      ];
+      const realCustom = candidates.find(u => typeof u === 'string' && !isGenericDef(u));
+      if (realCustom) return normalizeImg(realCustom);
+    }
+
+    if (savedCover && savedCover.trim()) {
+      return normalizeImg(savedCover);
+    }
+
+    if (proj) {
+      if (proj.id === 'proj_ai_society' || proj.id === 'demo-ai-society') return 'assets/projects_ui/card_ai_society.png';
+      if (proj.id === 'proj_open_data' || proj.id === 'demo-open-data') return 'assets/projects_ui/card_open_data.png';
+      const fallbackProj = proj.thumbnailImage || proj.image || proj.coverImage || proj.mainImage || proj.banner || proj.heroBanner;
+      if (fallbackProj && typeof fallbackProj === 'string' && fallbackProj.trim()) {
+        return normalizeImg(fallbackProj);
+      }
+    }
+    return 'assets/projects_ui/card_data_gov.png';
+  },
+
+  /**
+   * Guarda exclusivamente la portada / miniatura de la tarjeta del proyecto
+   */
+  setProjectCardCover(projId, coverUrl) {
+    if (!coverUrl || !projId) return false;
+    let cleanUrl = coverUrl.trim();
+    if (window.ProjectWizard && typeof window.ProjectWizard.normalizeImageUrl === 'function') {
+      cleanUrl = window.ProjectWizard.normalizeImageUrl(cleanUrl);
+    }
+    try {
+      localStorage.setItem('mentix_card_cover_ts_' + projId, String(Date.now()));
+      localStorage.setItem('mentix_card_cover_explicit_' + projId, '1');
+      localStorage.setItem('mentix_card_cover_' + projId, cleanUrl);
+    } catch (e) {
+      try {
+        localStorage.removeItem('mentix_card_cover_' + projId);
+        localStorage.setItem('mentix_card_cover_' + projId, cleanUrl);
+      } catch (e2) {}
+    }
+
+    let proj = null;
+    if (window.appState && Array.isArray(window.appState.challenges)) {
+      proj = window.appState.challenges.find(c => c && String(c.id) === String(projId));
+    }
+    if (!proj) proj = this.getMergedProjectRecord(projId);
+
+    if (proj) {
+      proj.image = cleanUrl;
+      proj.thumbnailImage = cleanUrl;
+      proj.coverImage = cleanUrl;
+      if (!proj.govdata) proj.govdata = {};
+      proj.govdata.thumbnailImage = cleanUrl;
+      proj.govdata.image = cleanUrl;
+      proj._clearedThumbImage = false;
+      proj.updatedAt = new Date().toISOString();
+    }
+
+    try {
+      const drafts = JSON.parse(localStorage.getItem('mentix_govdata_wizard_drafts') || '[]');
+      const d = drafts.find(x => x && String(x.id) === String(projId));
+      if (d) {
+        d.image = cleanUrl;
+        d.thumbnailImage = cleanUrl;
+        d.coverImage = cleanUrl;
+        if (!d.govdata) d.govdata = {};
+        d.govdata.thumbnailImage = cleanUrl;
+        d.govdata.image = cleanUrl;
+        localStorage.setItem('mentix_govdata_wizard_drafts', JSON.stringify(drafts));
+      }
+    } catch (e) {}
+
+    try {
+      const activeRaw = localStorage.getItem('mentix_active_landing_project');
+      if (activeRaw) {
+        const active = JSON.parse(activeRaw);
+        if (active && String(active.id) === String(projId)) {
+          active.image = cleanUrl;
+          active.thumbnailImage = cleanUrl;
+          active.coverImage = cleanUrl;
+          if (!active.govdata) active.govdata = {};
+          active.govdata.thumbnailImage = cleanUrl;
+          active.govdata.image = cleanUrl;
+          localStorage.setItem('mentix_active_landing_project', JSON.stringify(active));
+        }
+      }
+    } catch (e) {}
+
+    if (typeof saveGlobalState === 'function' && window.appState) {
+      saveGlobalState(window.appState);
+    }
+
+    if (proj && window.appRouter && typeof window.appRouter.pushChallengeToCloud === 'function') {
+      try { window.appRouter.pushChallengeToCloud(proj); } catch (err) {}
+    }
+    if (proj && window.supabaseService && typeof window.supabaseService.saveChallengeToSupabase === 'function') {
+      try { window.supabaseService.saveChallengeToSupabase(proj); } catch (e) {}
+    }
+
+    // Actualizar en el DOM de tarjetas si existen
+    document.querySelectorAll(`.saas-project-card[data-id="${projId}"] img.saas-card-banner-img, .admin-project-card[data-id="${projId}"] img.admin-card-cover-img`).forEach(img => {
+      img.src = cleanUrl;
+    });
+
+    try {
+      window.dispatchEvent(new CustomEvent('mentix:card-cover-changed', { detail: { projId, coverUrl: cleanUrl } }));
+    } catch (e) {}
+
+    return true;
+  },
+
+  /**
+   * Modal Administrador: Editar Banner Hero y Portadas Individualmente
+   */
+  openAdminProjectMediaModal(projectId, defaultTab = 'card') {
+    if (!this.isAdminUser()) {
+      alert('🔒 Permiso exclusivo: Solo los administradores pueden editar portadas y banners.');
+      return;
+    }
+
+    const projId = projectId || this.selectedProjectId || 'main_hero';
+    if (!projId || projId === 'main_hero') {
+      this.openHeroBannerPicker('main_hero');
+      return;
+    }
+
+    const proj = this.getMergedProjectRecord(projId) || (window.appState?.challenges || []).find(c => c && String(c.id) === String(projId));
+    const projTitle = proj ? (proj.title || 'Proyecto') : 'Proyecto';
+
+    const currentCardCover = this.getProjectCardCover(projId, proj);
+    const currentHeroBanner = this.getProjectHeroBanner(projId, proj);
+
+    this._mediaModalData = {
+      projId,
+      projTitle,
+      activeTab: defaultTab, // 'card' o 'hero'
+      cardCover: currentCardCover,
+      heroBanner: currentHeroBanner
+    };
+
+    const existing = document.getElementById('mentix-admin-media-modal-overlay');
+    if (existing) existing.remove();
+
+    const overlay = document.createElement('div');
+    overlay.id = 'mentix-admin-media-modal-overlay';
+    overlay.style.cssText = 'position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(7,17,39,0.78); backdrop-filter:blur(8px); z-index:99999999; display:flex; align-items:center; justify-content:center; padding:1.2rem; overflow-y:auto;';
+
+    document.body.appendChild(overlay);
+    this.renderAdminProjectMediaModalContent();
+  },
+
+  closeAdminProjectMediaModal() {
+    const existing = document.getElementById('mentix-admin-media-modal-overlay');
+    if (existing) existing.remove();
+    this._mediaModalData = null;
+  },
+
+  switchAdminMediaTab(tabName) {
+    if (!this._mediaModalData) return;
+    this._mediaModalData.activeTab = tabName;
+    this.renderAdminProjectMediaModalContent();
+  },
+
+  renderAdminProjectMediaModalContent() {
+    const overlay = document.getElementById('mentix-admin-media-modal-overlay');
+    if (!overlay || !this._mediaModalData) return;
+
+    const { projId, projTitle, activeTab, cardCover, heroBanner } = this._mediaModalData;
+    const isCard = activeTab === 'card';
+
+    const currentImg = isCard ? cardCover : heroBanner;
+    const activeLabel = isCard ? 'Portada de la Tarjeta del Proyecto' : 'Banner Hero de la Landing Page';
+    const activeDesc = isCard 
+      ? 'Esta imagen se muestra en el catálogo de proyectos y en el panel de administración como portada superior de la tarjeta (proporción rectangular recomendada 16:9 o 1200×630 px).' 
+      : 'Esta imagen se muestra como el gran fondo hero de la landing page oficial del proyecto (proporción panorámica 5:1 o 2000×400 px / 1376×768 px).';
+
+    overlay.innerHTML = `
+      <div style="background: #ffffff; border: 2px solid #00f5d4; border-radius: 22px; max-width: 980px; width: 100%; max-height: 92vh; overflow-y: auto; padding: 1.85rem; box-shadow: 0 25px 75px rgba(0,0,0,0.5), 0 0 35px rgba(0,245,212,0.25); color: #0f172a; position: relative; font-family: 'Outfit','Inter',sans-serif;">
+        
+        <!-- Header -->
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:1.15rem; border-bottom:1.5px solid #e2e8f0; padding-bottom:1rem;">
+          <div>
+            <div style="display:inline-flex; align-items:center; gap:0.4rem; background:#071739; border:1px solid #00f5d4; padding:0.25rem 0.85rem; border-radius:999px; font-size:0.75rem; font-weight:900; color:#00f5d4; margin-bottom:0.5rem; letter-spacing:0.04em;">
+              👑 PANEL EXCLUSIVO DE ADMINISTRADOR
+            </div>
+            <h2 style="margin:0; font-size:1.45rem; font-weight:900; color:#0f172a; display:flex; align-items:center; gap:0.55rem;">
+              <span>🎨</span> <span>Editar Banner o Portadas Individualmente</span>
+            </h2>
+            <p style="margin:0.25rem 0 0; font-size:0.86rem; color:#475569;">
+              Edita por separado la <b>portada de la tarjeta</b> y el <b>banner hero de la landing</b> para: <b style="color:#0284c7;">“${this.escapeHtml(projTitle)}”</b>
+            </p>
+          </div>
+          <button type="button" onclick="window.ProjectsView.closeAdminProjectMediaModal()" style="background:#f1f5f9; border:1.5px solid #cbd5e1; border-radius:50%; width:36px; height:36px; color:#334155; font-size:1.2rem; font-weight:800; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:background 0.15s ease;" title="Cerrar">✕</button>
+        </div>
+
+        <!-- Selector de Pestañas / Elemento a Editar Individualmente -->
+        <div style="display:flex; gap:0.6rem; margin-bottom:1.25rem; background:#f8fafc; padding:0.45rem; border-radius:14px; border:1.5px solid #e2e8f0;">
+          <button 
+            type="button" 
+            onclick="window.ProjectsView.switchAdminMediaTab('card')" 
+            style="flex:1; padding:0.65rem 1rem; border-radius:10px; font-size:0.88rem; font-weight:900; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:0.5rem; transition:all 0.2s ease; ${isCard ? 'background:#0047cc; color:#ffffff; border:none; box-shadow:0 4px 14px rgba(0,71,204,0.3);' : 'background:transparent; color:#475569; border:none;'}"
+          >
+            <span>🎴</span>
+            <span>1. Portada de la Tarjeta (Miniatura)</span>
+            ${isCard ? '<span style="background:rgba(255,255,255,0.22); padding:0.1rem 0.45rem; border-radius:999px; font-size:0.72rem;">EDITANDO</span>' : ''}
+          </button>
+
+          <button 
+            type="button" 
+            onclick="window.ProjectsView.switchAdminMediaTab('hero')" 
+            style="flex:1; padding:0.65rem 1rem; border-radius:10px; font-size:0.88rem; font-weight:900; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:0.5rem; transition:all 0.2s ease; ${!isCard ? 'background:#0047cc; color:#ffffff; border:none; box-shadow:0 4px 14px rgba(0,71,204,0.3);' : 'background:transparent; color:#475569; border:none;'}"
+          >
+            <span>🖼️</span>
+            <span>2. Banner Hero (Fondo Landing)</span>
+            ${!isCard ? '<span style="background:rgba(255,255,255,0.22); padding:0.1rem 0.45rem; border-radius:999px; font-size:0.72rem;">EDITANDO</span>' : ''}
+          </button>
+        </div>
+
+        <!-- Banner Informativo del Elemento Seleccionado -->
+        <div style="background:${isCard ? 'linear-gradient(135deg, #eff6ff 0%, #f0fdf4 100%)' : 'linear-gradient(135deg, #f0f9ff 0%, #faf5ff 100%)'}; border:1.5px solid ${isCard ? '#93c5fd' : '#38bdf8'}; border-radius:14px; padding:0.85rem 1.15rem; margin-bottom:1.25rem; display:flex; align-items:center; gap:0.85rem;">
+          <div style="font-size:2rem; line-height:1; flex-shrink:0;">${isCard ? '🎴' : '📐'}</div>
+          <div style="flex:1;">
+            <div style="font-size:0.88rem; font-weight:900; color:#0369a1; text-transform:uppercase; letter-spacing:0.02em;">
+              ${activeLabel}
+            </div>
+            <p style="margin:0.2rem 0 0; font-size:0.82rem; color:#1e293b; line-height:1.45;">
+              ${activeDesc}
+            </p>
+          </div>
+        </div>
+
+        <!-- Vista Previa en Vivo -->
+        <div style="margin-bottom:1.25rem;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.45rem;">
+            <label style="font-size:0.82rem; font-weight:800; color:#0369a1; text-transform:uppercase; letter-spacing:0.04em;">
+              👁️ Vista Previa en Vivo: ${activeLabel}
+            </label>
+            <span style="font-size:0.76rem; color:#64748b; font-weight:600;">Se actualiza en tiempo real</span>
+          </div>
+
+          <div style="position:relative; width:100%; height:${isCard ? '180px' : '150px'}; border-radius:16px; overflow:hidden; border:2.5px solid #0284c7; background-color:#071739; box-shadow:0 8px 24px rgba(15,23,42,0.12);">
+            <img 
+              id="admin-media-preview-img" 
+              src="${this.escapeHtml(currentImg)}" 
+              alt="Vista previa" 
+              style="width:100%; height:100%; object-fit:cover; object-position:center; display:block;"
+              onerror="this.src='assets/projects_ui/card_data_gov.png';"
+            />
+            <div style="position:absolute; inset:0; background:linear-gradient(to right, rgba(5, 14, 30, 0.75) 0%, rgba(5, 14, 30, 0.25) 50%, transparent 100%); display:flex; align-items:center; padding:1.2rem 1.6rem; pointer-events:none;">
+              <div style="color:#ffffff;">
+                <span style="background:#00f5d4; color:#071739; padding:0.2rem 0.6rem; border-radius:999px; font-size:0.72rem; font-weight:900; letter-spacing:0.02em;">
+                  ${isCard ? 'PORTADA DE TARJETA' : 'BANNER HERO DE LANDING'}
+                </span>
+                <div style="font-size:1.2rem; font-weight:900; margin-top:0.35rem; text-shadow:0 2px 8px rgba(0,0,0,0.6);">${this.escapeHtml(projTitle)}</div>
+                <div style="font-size:0.78rem; opacity:0.9; margin-top:0.2rem;">${isCard ? 'Vista en catálogo de proyectos' : 'Vista en encabezado de landing page'}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Controles para Subir Archivo o Pegar URL -->
+        <div style="background:#f8fafc; border:1.5px solid #e2e8f0; border-radius:14px; padding:1.05rem; margin-bottom:1.25rem;">
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.1rem;">
+            <div>
+              <label style="display:block; font-size:0.82rem; font-weight:800; color:#0f172a; margin-bottom:0.4rem;">
+                📤 Subir Imagen desde el Computador:
+              </label>
+              <input 
+                type="file" 
+                id="admin-media-file-input" 
+                accept="image/*" 
+                onchange="window.ProjectsView.handleAdminMediaFileUpload(this.files[0])"
+                style="display:block; width:100%; font-size:0.82rem; color:#334155; background:#ffffff; border:1.5px dashed #94a3b8; border-radius:10px; padding:0.45rem; cursor:pointer;"
+              />
+              <small style="display:block; color:#64748b; font-size:0.74rem; margin-top:0.35rem;">
+                Sube JPG, PNG o WebP. Se optimiza y guarda permanentemente en la BD.
+              </small>
+            </div>
+
+            <div>
+              <label style="display:block; font-size:0.82rem; font-weight:800; color:#0f172a; margin-bottom:0.4rem;">
+                🔗 O Pega un Enlace Directo (URL):
+              </label>
+              <div style="display:flex; gap:0.45rem;">
+                <input 
+                  type="text" 
+                  id="admin-media-url-input" 
+                  placeholder="https://.../mi-imagen.jpg" 
+                  value=""
+                  oninput="window.ProjectsView.previewAdminMediaUrl(this.value)"
+                  onkeydown="if(event.key==='Enter'){event.preventDefault(); window.ProjectsView.saveCurrentAdminMedia();}"
+                  style="flex:1; background:#ffffff; border:1.5px solid #cbd5e1; border-radius:10px; padding:0.48rem 0.75rem; color:#0f172a; font-size:0.84rem; outline:none;"
+                />
+                <button type="button" onclick="window.ProjectsView.previewAdminMediaUrl(document.getElementById('admin-media-url-input').value, true)" style="background:#0284c7; color:#ffffff; border:none; border-radius:10px; padding:0.48rem 0.9rem; font-size:0.8rem; font-weight:800; cursor:pointer; white-space:nowrap;">
+                  Probar
+                </button>
+              </div>
+              <small style="display:block; color:#64748b; font-size:0.74rem; margin-top:0.35rem;">
+                Puedes pegar cualquier enlace público de imagen.
+              </small>
+            </div>
+          </div>
+        </div>
+
+        <!-- Presets Temáticos Oficiales -->
+        <div style="margin-bottom:1.35rem;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.55rem;">
+            <label style="font-size:0.84rem; font-weight:900; color:#0f172a; text-transform:uppercase; letter-spacing:0.03em;">
+              🎨 Presets Temáticos Oficiales Mentix
+            </label>
+            <span style="font-size:0.76rem; color:#64748b; font-weight:600;">Haz clic en uno para aplicarlo de inmediato</span>
+          </div>
+
+          <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(210px, 1fr)); gap:0.75rem; max-height:220px; overflow-y:auto; padding-right:0.3rem;">
+            ${this.HERO_BANNER_THEMES.map(theme => {
+              const isSelected = currentImg === theme.url;
+              return `
+                <div 
+                  onclick="window.ProjectsView.selectAdminMediaPreset('${theme.url}')"
+                  style="border-radius:12px; overflow:hidden; background:#ffffff; border:${isSelected ? '2.5px solid #0284c7' : '1.5px solid #e2e8f0'}; cursor:pointer; transition:transform 0.15s ease; position:relative; box-shadow:${isSelected ? '0 6px 16px rgba(2,132,199,0.22)' : '0 2px 6px rgba(15,23,42,0.05)'};"
+                  onmouseenter="this.style.transform='translateY(-2px)';"
+                  onmouseleave="this.style.transform='none';"
+                >
+                  <div style="height:70px; background-image:url('${theme.url}'); background-size:cover; background-position:center; position:relative;">
+                    <span style="position:absolute; top:5px; left:5px; background:rgba(15,23,42,0.85); color:#ffffff; font-size:0.66rem; font-weight:800; padding:0.16rem 0.45rem; border-radius:999px;">
+                      ${theme.icon} ${this.escapeHtml(theme.category)}
+                    </span>
+                    ${isSelected ? `<span style="position:absolute; top:5px; right:5px; background:#0284c7; color:#ffffff; font-size:0.68rem; font-weight:900; padding:0.12rem 0.45rem; border-radius:999px;">✓ ACTIVO</span>` : ''}
+                  </div>
+                  <div style="padding:0.45rem 0.65rem; background:#ffffff;">
+                    <div style="font-weight:800; font-size:0.8rem; color:#0f172a; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+                      ${this.escapeHtml(theme.name)}
+                    </div>
+                  </div>
+                </div>
+              `;
+            }).join('')}
+          </div>
+        </div>
+
+        <!-- Acciones Inferiores -->
+        <div style="display:flex; justify-content:space-between; align-items:center; border-top:1.5px solid #e2e8f0; padding-top:1.1rem; flex-wrap:wrap; gap:0.75rem;">
+          <div style="font-size:0.82rem; color:#64748b;">
+            Editando individualmente: <b style="color:#0f172a;">${activeLabel}</b>
+          </div>
+
+          <div style="display:flex; gap:0.7rem;">
+            <button 
+              type="button" 
+              onclick="window.ProjectsView.closeAdminProjectMediaModal()" 
+              style="background:#ffffff; border:1.5px solid #cbd5e1; color:#334155; border-radius:999px; padding:0.6rem 1.3rem; font-size:0.86rem; font-weight:800; cursor:pointer;"
+            >
+              Cerrar
+            </button>
+            <button 
+              type="button" 
+              id="admin-media-save-btn"
+              onclick="window.ProjectsView.saveCurrentAdminMedia()" 
+              style="background:linear-gradient(135deg, #06b6d4 0%, #0284c7 50%, #2563eb 100%); color:#ffffff; border:2px solid #38bdf8; border-radius:999px; padding:0.62rem 1.6rem; font-size:0.9rem; font-weight:900; cursor:pointer; display:inline-flex; align-items:center; gap:0.45rem; box-shadow:0 6px 18px rgba(2,132,199,0.35);"
+            >
+              <span>💾</span> <span>Guardar ${isCard ? 'Portada' : 'Banner'}</span>
+            </button>
+          </div>
+        </div>
+
+      </div>
+    `;
+  },
+
+  previewAdminMediaUrl(url, notify = false) {
+    if (!this._mediaModalData || !url) return;
+    const clean = url.trim();
+    if (!clean) return;
+    const imgEl = document.getElementById('admin-media-preview-img');
+    if (imgEl) imgEl.src = clean;
+    if (this._mediaModalData.activeTab === 'card') {
+      this._mediaModalData.cardCover = clean;
+    } else {
+      this._mediaModalData.heroBanner = clean;
+    }
+    if (notify) this.showToast('🌐 Vista previa actualizada.');
+  },
+
+  selectAdminMediaPreset(presetUrl) {
+    if (!this._mediaModalData || !presetUrl) return;
+    const urlInput = document.getElementById('admin-media-url-input');
+    if (urlInput) urlInput.value = presetUrl;
+    this.previewAdminMediaUrl(presetUrl, true);
+  },
+
+  async handleAdminMediaFileUpload(file) {
+    if (!file || !this._mediaModalData) return;
+    if (!file.type.startsWith('image/')) {
+      alert('⚠️ Por favor selecciona un archivo de imagen válido (PNG, JPG, WEBP).');
+      return;
+    }
+    const saveBtn = document.getElementById('admin-media-save-btn');
+    if (saveBtn) {
+      saveBtn.disabled = true;
+      saveBtn.innerHTML = '<span>⏳</span> <span>Procesando...</span>';
+    }
+
+    try {
+      const reader = new FileReader();
+      const dataUrl = await new Promise((resolve, reject) => {
+        reader.onload = (e) => resolve(e.target.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+
+      this.previewAdminMediaUrl(dataUrl);
+
+      this.showToast('☁️ Subiendo imagen a la nube de Mentix...');
+      const uploadedUrl = await this.uploadImageToMentixCloud(
+        dataUrl, 
+        String(this._mediaModalData.projId), 
+        this._mediaModalData.activeTab === 'card' ? 'card_cover' : 'hero_banner'
+      );
+
+      const finalUrl = uploadedUrl || dataUrl;
+      this.previewAdminMediaUrl(finalUrl);
+      this.showToast('✅ Imagen cargada y lista para guardar.');
+    } catch (e) {
+      console.warn('Error leyendo archivo para media modal:', e);
+      alert('No se pudo cargar la imagen seleccionada.');
+    } finally {
+      if (saveBtn) {
+        saveBtn.disabled = false;
+        saveBtn.innerHTML = `<span>💾</span> <span>Guardar ${this._mediaModalData?.activeTab === 'card' ? 'Portada' : 'Banner'}</span>`;
+      }
+    }
+  },
+
+  async saveCurrentAdminMedia() {
+    if (!this._mediaModalData) return;
+    const { projId, activeTab, cardCover, heroBanner } = this._mediaModalData;
+    const urlInput = document.getElementById('admin-media-url-input');
+    const typedUrl = urlInput ? urlInput.value.trim() : '';
+
+    const isCard = activeTab === 'card';
+    let targetUrl = (typedUrl && !typedUrl.startsWith('(')) ? typedUrl : (isCard ? cardCover : heroBanner);
+
+    if (window.ProjectWizard && typeof window.ProjectWizard.normalizeImageUrl === 'function') {
+      targetUrl = window.ProjectWizard.normalizeImageUrl(targetUrl);
+    }
+
+    if (!targetUrl) {
+      alert('⚠️ Por favor sube una imagen, pega una URL o selecciona un preset temático.');
+      return;
+    }
+
+    if (targetUrl.startsWith('data:image/')) {
+      if (typeof this.compressBannerDataUrl === 'function') {
+        targetUrl = await this.compressBannerDataUrl(targetUrl, 1400, 0.8);
+      }
+      this.showToast('☁️ Guardando imagen permanente...');
+      targetUrl = await this.uploadImageToMentixCloud(targetUrl, String(projId), isCard ? 'card_cover' : 'hero_banner');
+    }
+
+    if (isCard) {
+      // Guardar Portada / Miniatura de Tarjeta
+      this.setProjectCardCover(projId, targetUrl);
+      this._mediaModalData.cardCover = targetUrl;
+      this.showToast('🎴 ¡Portada de la tarjeta guardada con éxito!');
+    } else {
+      // Guardar Banner Hero de Landing
+      this.setProjectHeroBanner(projId, targetUrl);
+      this._mediaModalData.heroBanner = targetUrl;
+      const heroSec = document.getElementById('inno-sec-hero');
+      if (heroSec) {
+        heroSec.style.setProperty('background-image', `linear-gradient(to right, rgba(5, 14, 30, 0.72) 0%, rgba(5, 14, 30, 0.35) 45%, rgba(5, 14, 30, 0.08) 78%, transparent 100%), url("${targetUrl}")`, 'important');
+      }
+      const heroBgImg = document.getElementById('inno-hero-bg-img-el');
+      if (heroBgImg) heroBgImg.src = targetUrl;
+      this.showToast('🖼️ ¡Banner hero de la landing guardado con éxito!');
+    }
+
+    // Actualizar vista previa
+    this.renderAdminProjectMediaModalContent();
+  },
   BANNER_MIN_HEIGHT: 400,
   BANNER_REC_WIDTH: 1920,
   BANNER_REC_HEIGHT: 600,
@@ -3635,9 +4158,14 @@ window.ProjectsView = {
       ? 'background: #ffffff; color: #0f172a; border: 1.5px solid #cbd5e1;'
       : 'background: #0047cc; color: #ffffff; border: none; box-shadow: 0 2px 8px rgba(0, 71, 204, 0.25);';
 
-    const projectOverrideBanner = (typeof this.getProjectHeroBanner === 'function') ? this.getProjectHeroBanner(c.id, c) : null;
-    if (projectOverrideBanner) {
-      defaultBanner = projectOverrideBanner;
+    const projectCardCover = (typeof this.getProjectCardCover === 'function') ? this.getProjectCardCover(c.id, c) : null;
+    if (projectCardCover) {
+      defaultBanner = projectCardCover;
+    } else {
+      const projectOverrideBanner = (typeof this.getProjectHeroBanner === 'function') ? this.getProjectHeroBanner(c.id, c) : null;
+      if (projectOverrideBanner) {
+        defaultBanner = projectOverrideBanner;
+      }
     }
 
     return `
@@ -3663,14 +4191,14 @@ window.ProjectsView = {
           <div style="position: absolute; top: 10px; right: 10px; z-index: 2; display: flex; gap: 6px; align-items: center;">
             ${isAdmin ? `
               <button 
-                title="Cambiar Banner de este Proyecto (Exclusivo Administradores)" 
-                onclick="event.stopPropagation(); window.ProjectsView.openHeroBannerPicker('${c.id}')"
-                style="height: 30px; padding: 0 0.65rem; border-radius: 8px; background: rgba(7, 23, 57, 0.92); backdrop-filter: blur(6px); display: inline-flex; align-items: center; gap: 0.35rem; cursor: pointer; border: 1.5px solid #00f5d4; font-size: 0.74rem; font-weight: 900; color: #00f5d4; box-shadow: 0 2px 10px rgba(0, 245, 212, 0.35); transition: transform 0.2s ease;"
+                title="Editar banner o portadas individualmente (Exclusivo Administradores)" 
+                onclick="event.stopPropagation(); window.ProjectsView.openAdminProjectMediaModal('${c.id}')"
+                style="height: 30px; padding: 0 0.65rem; border-radius: 8px; background: rgba(7, 23, 57, 0.94); backdrop-filter: blur(6px); display: inline-flex; align-items: center; gap: 0.35rem; cursor: pointer; border: 1.5px solid #00f5d4; font-size: 0.74rem; font-weight: 900; color: #00f5d4; box-shadow: 0 2px 10px rgba(0, 245, 212, 0.35); transition: transform 0.2s ease;"
                 onmouseenter="this.style.transform='scale(1.05)';"
                 onmouseleave="this.style.transform='scale(1)';"
               >
                 <span>🎨</span>
-                <span>Banner</span>
+                <span>Editar banner o portadas</span>
               </button>
             ` : ''}
             ${canEditProj ? `
@@ -7866,11 +8394,15 @@ window.ProjectsView = {
               <button type="button" class="plp-mentix-btn inno-theme-toggle-btn" onclick="window.ProjectsView.toggleLandingTheme()" title="Alternar entre Modo Claro y Modo Oscuro">
                 <span id="plp-theme-btn-label">${currentTheme === 'light' ? '🌙 Modo Oscuro' : '☀️ Modo Claro'}</span>
               </button>
-              ${canEditBanner ? `
+              ${this.isAdminUser() ? `
+                <button type="button" class="plp-mentix-btn" onclick="window.ProjectsView.openAdminProjectMediaModal('${this.escapeHtml(targetProjId)}')" title="Editar por separado el banner hero y la portada de este proyecto" style="background:rgba(7,23,57,0.95); border:1.5px solid #00f5d4; color:#00f5d4; font-weight:800;">
+                  <span>🎨</span> Editar banner o portadas
+                </button>
+              ` : (canEditBanner ? `
                 <button type="button" class="plp-mentix-btn" onclick="window.ProjectsView.openHeroBannerPicker('${this.escapeHtml(targetProjId)}')" title="Cambiar la imagen o fondo del banner de este proyecto">
                   <span>🎨</span> Fondo del Banner
                 </button>
-              ` : ''}
+              ` : '')}
               ${this.isWizardPreview ? `
                 <button type="button" class="plp-mentix-btn" onclick="window.ProjectsView.isWizardPreview = false; window.ProjectsView.switchViewMode('wizard')">
                   <span>←</span> Volver al Asistente (Paso 8)
@@ -7898,9 +8430,9 @@ window.ProjectsView = {
           </div>
 
           <!-- ================================================================
-               1. HEADER / NAVEGACIÓN (MOCKUP EXACTO)
+               1. HEADER / NAVEGACIÓN (Oculto según solicitud del usuario)
                ================================================================ -->
-          <header class="inno-header" role="banner">
+          <header class="inno-header" role="banner" style="display: none !important;">
             <div class="inno-brand" onclick="window.ProjectsView.scrollToLandingSection('inno-sec-hero')">
               <div class="inno-logo-icon">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.3">
@@ -7956,8 +8488,21 @@ window.ProjectsView = {
             <!-- Imagen de fondo idéntica al banner de la tarjeta del proyecto -->
             <img id="inno-hero-bg-img-el" src="${this.escapeHtml(projHeroBanner)}" alt="" aria-hidden="true" referrerpolicy="no-referrer" data-orig="${this.escapeHtml(projHeroBanner)}" onerror="window.ProjectsView.heroImgFallback(this)" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:center; z-index:0; pointer-events:none; display:block;" />
             <div aria-hidden="true" style="position:absolute; inset:0; background:linear-gradient(to right, rgba(5, 14, 30, 0.72) 0%, rgba(5, 14, 30, 0.36) 44%, rgba(5, 14, 30, 0.08) 76%, transparent 100%); z-index:1; pointer-events:none;"></div>
-            <!-- Botón interactivo para cambiar el fondo del banner de atrás (Solo Admin, Creador o Editores) -->
-            ${canEditBanner ? `
+            <!-- Botón interactivo para cambiar el fondo del banner o portadas (Solo Admin, Creador o Editores) -->
+            ${this.isAdminUser() ? `
+              <button 
+                type="button" 
+                class="inno-btn-change-hero-bg" 
+                onclick="window.ProjectsView.openAdminProjectMediaModal('${this.escapeHtml(targetProjId)}', 'hero')" 
+                title="Editar individualmente el banner hero y la portada de este proyecto"
+                style="position:absolute; top:18px; right:24px; z-index:25; background:rgba(7, 23, 57, 0.92); border:1.5px solid #00f5d4; color:#00f5d4; border-radius:999px; padding:0.45rem 1.05rem; font-size:0.82rem; font-weight:800; cursor:pointer; backdrop-filter:blur(8px); display:inline-flex; align-items:center; gap:0.4rem; box-shadow:0 4px 16px rgba(0,0,0,0.45); transition:all 0.18s ease;"
+                onmouseenter="this.style.transform='scale(1.06)'; this.style.background='rgba(0,245,212,0.18)';"
+                onmouseleave="this.style.transform='none'; this.style.background='rgba(7, 23, 57, 0.92)';"
+              >
+                <span style="font-size:1rem;">🎨</span>
+                <span>Editar banner o portadas</span>
+              </button>
+            ` : (canEditBanner ? `
               <button 
                 type="button" 
                 class="inno-btn-change-hero-bg" 
@@ -7970,7 +8515,7 @@ window.ProjectsView = {
                 <span style="font-size:1rem;">🎨</span>
                 <span>Cambiar fondo del banner</span>
               </button>
-            ` : ''}
+            ` : '')}
 
             <div class="inno-hero-grid">
               <!-- Columna Izquierda: Información Principal -->
