@@ -28,7 +28,7 @@
     "accessMode": "private",
     "displayOrder": 1,
     "createdAt": "2026-11-24T02:08:03.167Z",
-    "updatedAt": "2026-11-24T03:07:48.971Z",
+    "updatedAt": "2026-11-24T03:08:07.620Z",
     "landingConfig": {
       "publicName": "Diagnóstico y propuesta de optimización del gobierno de datos en GPC Pharma S.A.S. Empresa del Sector Farmaceutico.",
       "slug": "diagnostico-y-propuesta-de-optimizacion-del-gobierno-de-datos-en-gpc-pharma-s-a-s-empresa-del-sector-farmaceutico",
@@ -1070,7 +1070,7 @@
     "externalLinks": [
       {
         "id": "lnk_1795489533927",
-        "title": "",
+        "title": "GovData Nexus: plataforma de gobierno de datos",
         "url": "https://www.govdatanexus.com/login?reason=unauthorized",
         "description": "",
         "category": "Página web oficial",
@@ -1186,7 +1186,7 @@
       "externalLinks": [
         {
           "id": "lnk_1795489533927",
-          "title": "",
+          "title": "GovData Nexus: plataforma de gobierno de datos",
           "url": "https://www.govdatanexus.com/login?reason=unauthorized",
           "description": "",
           "category": "Página web oficial",
@@ -1287,7 +1287,7 @@
         "collaborators": ""
       },
       "createdAt": "2026-11-24T02:08:03.167Z",
-      "updatedAt": "2026-11-24T03:07:52.467Z",
+      "updatedAt": "2026-11-24T03:08:11.168Z",
       "progress": 95,
       "calculatedProgress": 95,
       "heroBanner": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795489503001_hhxo_asset.jpg",
