@@ -917,7 +917,48 @@ window.ProjectsView = {
       return;
     }
 
-    const bannerUrl = (data.bannerUrl || '').trim();
+    const bannerUrl = (data.bannerUrl || data.coverUrl || '').trim();
+
+    if (target === 'project_crop') {
+      const projId = data.projId;
+      const cropType = data.cropType === 'hero' ? 'hero' : 'card';
+      const crop = data.crop;
+      if (!projId || !crop) return;
+      const incomingCropTs = Number(data.timestamp || 0);
+      let localCropTs = 0;
+      try { localCropTs = Number(localStorage.getItem(`mentix_crop_ts_${cropType}_${projId}`) || 0); } catch (e) {}
+      if (incomingCropTs && incomingCropTs <= localCropTs) return;
+
+      try {
+        localStorage.setItem(`mentix_crop_${cropType}_${projId}`, JSON.stringify(crop));
+        if (incomingCropTs) localStorage.setItem(`mentix_crop_ts_${cropType}_${projId}`, String(incomingCropTs));
+      } catch (e) {}
+
+      if (window.appState && Array.isArray(window.appState.challenges)) {
+        const p = window.appState.challenges.find(c => c && String(c.id) === String(projId));
+        if (p) {
+          if (cropType === 'card') { p._cardCrop = crop; p._cardCropUpdatedAt = incomingCropTs || Date.now(); }
+          else { p._heroCrop = crop; p._heroCropUpdatedAt = incomingCropTs || Date.now(); }
+        }
+      }
+      const tf = `translate(${crop.offsetX || 0}%, ${crop.offsetY || 0}%) scale(${((crop.zoom || 100) / 100).toFixed(2)})`;
+      if (cropType === 'card') {
+        document.querySelectorAll(`.saas-project-card[data-id="${projId}"] img.saas-card-banner-img, .admin-project-card[data-id="${projId}"] img.admin-card-cover-img`).forEach(img => {
+          img.style.setProperty('object-fit', crop.fit === 'contain' ? 'contain' : 'cover', 'important');
+          img.style.setProperty('transform', tf, 'important');
+          img.style.setProperty('transform-origin', 'center center', 'important');
+        });
+      } else if (this.selectedProjectId === projId) {
+        const heroBgImg = document.getElementById('inno-hero-bg-img-el');
+        if (heroBgImg) {
+          heroBgImg.style.setProperty('object-fit', crop.fit === 'contain' ? 'contain' : 'cover', 'important');
+          heroBgImg.style.setProperty('transform', tf, 'important');
+          heroBgImg.style.setProperty('transform-origin', 'center center', 'important');
+        }
+      }
+      return;
+    }
+
     if (!bannerUrl) return;
 
     if (target === 'hero') {
@@ -932,6 +973,36 @@ window.ProjectsView = {
         window.appState.projectsHeroBannerStyle = data.style;
         this.applyHeroBannerStyleToDom(data.style);
       }
+    } else if (target === 'project_card') {
+      const projId = data.projId;
+      if (!projId) return;
+      const incomingCardTs = Number(data.timestamp || 0);
+      let localCardTs = 0;
+      try { localCardTs = Number(localStorage.getItem('mentix_card_cover_ts_' + projId) || 0); } catch (e) {}
+      if (incomingCardTs && incomingCardTs <= localCardTs) return;
+
+      try {
+        localStorage.setItem('mentix_card_cover_' + projId, bannerUrl);
+        localStorage.setItem('mentix_card_cover_explicit_' + projId, '1');
+        if (incomingCardTs) localStorage.setItem('mentix_card_cover_ts_' + projId, String(incomingCardTs));
+      } catch (e) {}
+
+      if (window.appState && Array.isArray(window.appState.challenges)) {
+        const p = window.appState.challenges.find(c => c && String(c.id) === String(projId));
+        if (p) {
+          p.image = bannerUrl;
+          p.thumbnailImage = bannerUrl;
+          p.coverImage = bannerUrl;
+          p._cardCoverUpdatedAt = incomingCardTs || Date.now();
+          if (!p.govdata) p.govdata = {};
+          p.govdata.thumbnailImage = bannerUrl;
+          p.govdata.image = bannerUrl;
+        }
+      }
+
+      document.querySelectorAll(`.saas-project-card[data-id="${projId}"] img.saas-card-banner-img, .admin-project-card[data-id="${projId}"] img.admin-card-cover-img`).forEach(img => {
+        img.src = bannerUrl;
+      });
     } else if (target === 'project') {
       const projId = data.projId;
       if (!projId) return;
@@ -942,23 +1013,20 @@ window.ProjectsView = {
       try { localProjTs = Number(localStorage.getItem('mentix_hero_banner_ts_' + projId) || 0); } catch (e) {}
       if (incomingProjTs && incomingProjTs <= localProjTs) return;
 
-      // 1. Guardar en storage local
+      // 1. Guardar en storage local (solo hero banner, sin tocar portada de tarjeta)
       try {
         localStorage.setItem('mentix_hero_banner_' + projId, bannerUrl);
         localStorage.setItem('mentix_hero_banner_explicit_' + projId, '1');
         if (incomingProjTs) localStorage.setItem('mentix_hero_banner_ts_' + projId, String(incomingProjTs));
       } catch (e) {}
 
-      // 2. Actualizar en window.appState.challenges
+      // 2. Actualizar en window.appState.challenges (solo campos de hero banner)
       if (window.appState && Array.isArray(window.appState.challenges)) {
         const p = window.appState.challenges.find(c => c && String(c.id) === String(projId));
         if (p) {
           p.banner = bannerUrl;
           p.heroBanner = bannerUrl;
-          p.mainImage = bannerUrl;
-          p.thumbnailImage = bannerUrl;
-          p.image = bannerUrl;
-          p.coverImage = bannerUrl;
+          p._heroBannerUpdatedAt = incomingProjTs || Date.now();
           if (!p.govdata) p.govdata = {};
           p.govdata.banner = bannerUrl;
           p.govdata.heroBanner = bannerUrl;
@@ -967,16 +1035,7 @@ window.ProjectsView = {
         }
       }
 
-      // 3. Actualizar tarjeta en la cuadrícula si está visible en pantalla
-      const cardImgs = document.querySelectorAll(`.saas-project-card[data-id="${projId}"] img.saas-card-banner-img`);
-      cardImgs.forEach(img => {
-        img.style.transition = 'opacity 0.3s ease';
-        img.style.opacity = '0.6';
-        img.src = bannerUrl;
-        img.onload = () => { img.style.opacity = '1'; };
-      });
-
-      // 4. Si el usuario está viendo la landing page de este proyecto en vivo, actualizar el fondo del hero
+      // 3. Si el usuario está viendo la landing page de este proyecto en vivo, actualizar el fondo del hero
       if (this.selectedProjectId === projId) {
         const heroSec = document.getElementById('inno-sec-hero');
         if (heroSec) {
@@ -986,7 +1045,7 @@ window.ProjectsView = {
         if (heroBgImg) heroBgImg.src = bannerUrl;
       }
 
-      // 5. Actualizar mentix_active_landing_project si corresponde
+      // 4. Actualizar mentix_active_landing_project si corresponde
       try {
         const raw = localStorage.getItem('mentix_active_landing_project');
         if (raw) {
@@ -994,7 +1053,6 @@ window.ProjectsView = {
           if (act && String(act.id) === String(projId)) {
             act.banner = bannerUrl;
             act.heroBanner = bannerUrl;
-            act.coverImage = bannerUrl;
             if (!act.govdata) act.govdata = {};
             act.govdata.banner = bannerUrl;
             act.govdata.heroBanner = bannerUrl;
@@ -1447,9 +1505,23 @@ window.ProjectsView = {
       return s;
     };
 
-    // 1. Priorizar el banner recién aplicado localmente o la imagen personalizada del proyecto
+    // 1. Verificar si el registro en la nube tiene un banner más reciente que el guardado localmente
     const saved = projId ? localStorage.getItem('mentix_hero_banner_' + projId) : null;
-    // Si el administrador eligió explícitamente un banner, ese SIEMPRE manda (aunque recargue la página o llegue una copia vieja de la nube)
+    const localTs = projId ? Number(localStorage.getItem('mentix_hero_banner_ts_' + projId) || 0) : 0;
+    const cloudHeroTs = proj ? Number(proj._heroBannerUpdatedAt || Date.parse(proj.updatedAt || '') || 0) : 0;
+    const cloudExplicitHero = proj ? (proj.heroBanner || proj.designConfig?.bannerUrl || proj.landingConfig?.heroBanner || proj.govdata?.heroBanner || proj.govdata?.designConfig?.bannerUrl || '') : '';
+
+    // Si la nube trae un banner más nuevo del Admin (o el usuario no tiene un guardado local explícito más reciente), prevalece la nube!
+    if (cloudExplicitHero && !isGenericDef(cloudExplicitHero) && (!localTs || cloudHeroTs > localTs)) {
+      try {
+        if (projId) {
+          localStorage.setItem('mentix_hero_banner_' + projId, cloudExplicitHero);
+          if (cloudHeroTs) localStorage.setItem('mentix_hero_banner_ts_' + projId, String(cloudHeroTs));
+        }
+      } catch (e) {}
+      return normalizeImg(cloudExplicitHero);
+    }
+
     const explicitSaved = projId ? localStorage.getItem('mentix_hero_banner_explicit_' + projId) === '1' : false;
     if (explicitSaved && saved && saved.trim()) {
       return normalizeImg(saved);
@@ -1522,6 +1594,7 @@ window.ProjectsView = {
     if (proj) {
       proj.heroBanner = cleanUrl;
       proj.banner = cleanUrl;
+      proj._heroBannerUpdatedAt = bannerChangeTs;
       if (!proj.govdata) proj.govdata = {};
       proj.govdata.heroBanner = cleanUrl;
       proj.govdata.banner = cleanUrl;
@@ -1623,9 +1696,23 @@ window.ProjectsView = {
       return s;
     };
 
-    // 1. Priorizar portada explícitamente guardada
-    const explicitCover = projId ? localStorage.getItem('mentix_card_cover_explicit_' + projId) === '1' : false;
+    // 1. Verificar si la nube trae una portada de tarjeta más reciente que el guardado localmente
     const savedCover = projId ? localStorage.getItem('mentix_card_cover_' + projId) : null;
+    const localCardTs = projId ? Number(localStorage.getItem('mentix_card_cover_ts_' + projId) || 0) : 0;
+    const cloudCardTs = proj ? Number(proj._cardCoverUpdatedAt || Date.parse(proj.updatedAt || '') || 0) : 0;
+    const cloudExplicitCard = proj ? (proj.thumbnailImage || proj.image || proj.coverImage || proj.govdata?.thumbnailImage || proj.govdata?.image || '') : '';
+
+    if (cloudExplicitCard && !isGenericDef(cloudExplicitCard) && (!localCardTs || cloudCardTs > localCardTs)) {
+      try {
+        if (projId) {
+          localStorage.setItem('mentix_card_cover_' + projId, cloudExplicitCard);
+          if (cloudCardTs) localStorage.setItem('mentix_card_cover_ts_' + projId, String(cloudCardTs));
+        }
+      } catch (e) {}
+      return normalizeImg(cloudExplicitCard);
+    }
+
+    const explicitCover = projId ? localStorage.getItem('mentix_card_cover_explicit_' + projId) === '1' : false;
     if (explicitCover && savedCover && savedCover.trim()) {
       return normalizeImg(savedCover);
     }
@@ -1671,8 +1758,9 @@ window.ProjectsView = {
     if (window.ProjectWizard && typeof window.ProjectWizard.normalizeImageUrl === 'function') {
       cleanUrl = window.ProjectWizard.normalizeImageUrl(cleanUrl);
     }
+    const cardChangeTs = Date.now();
     try {
-      localStorage.setItem('mentix_card_cover_ts_' + projId, String(Date.now()));
+      localStorage.setItem('mentix_card_cover_ts_' + projId, String(cardChangeTs));
       localStorage.setItem('mentix_card_cover_explicit_' + projId, '1');
       localStorage.setItem('mentix_card_cover_' + projId, cleanUrl);
     } catch (e) {
@@ -1692,6 +1780,7 @@ window.ProjectsView = {
       proj.image = cleanUrl;
       proj.thumbnailImage = cleanUrl;
       proj.coverImage = cleanUrl;
+      proj._cardCoverUpdatedAt = cardChangeTs;
       if (!proj.govdata) proj.govdata = {};
       proj.govdata.thumbnailImage = cleanUrl;
       proj.govdata.image = cleanUrl;
@@ -1740,6 +1829,13 @@ window.ProjectsView = {
       try { window.supabaseService.saveChallengeToSupabase(proj); } catch (e) {}
     }
 
+    // Publicación mundial en tiempo real por MQTT Backbone para la portada de tarjeta
+    if (window.realtimeEngine && typeof window.realtimeEngine.publishGlobalBanner === 'function') {
+      try {
+        window.realtimeEngine.publishGlobalBanner({ target: 'project_card', projId, coverUrl: cleanUrl, bannerUrl: cleanUrl, timestamp: cardChangeTs });
+      } catch (e) {}
+    }
+
     // Actualizar en el DOM de tarjetas si existen
     document.querySelectorAll(`.saas-project-card[data-id="${projId}"] img.saas-card-banner-img, .admin-project-card[data-id="${projId}"] img.admin-card-cover-img`).forEach(img => {
       img.src = cleanUrl;
@@ -1758,25 +1854,36 @@ window.ProjectsView = {
   getProjectCrop(projId, type = 'card') {
     if (!projId) return { zoom: 100, offsetX: 0, offsetY: 0, fit: 'cover' };
     const key = `mentix_crop_${type}_${projId}`;
+    const tsKey = `mentix_crop_ts_${type}_${projId}`;
+    const proj = (window.appState?.challenges || []).find(c => c && String(c.id) === String(projId)) || this.getMergedProjectRecord(projId);
+    const cloudCrop = proj ? (type === 'card' ? proj._cardCrop : proj._heroCrop) : null;
+    const cloudCropTs = proj ? Number((type === 'card' ? proj._cardCropUpdatedAt : proj._heroCropUpdatedAt) || 0) : 0;
+    const localCropTs = Number(localStorage.getItem(tsKey) || 0);
+
+    // Si la nube trae un encuadre más reciente del Admin, prevalece sobre el localStorage
+    if (cloudCrop && (!localCropTs || cloudCropTs > localCropTs)) {
+      try {
+        localStorage.setItem(key, JSON.stringify(cloudCrop));
+        if (cloudCropTs) localStorage.setItem(tsKey, String(cloudCropTs));
+      } catch (e) {}
+      return cloudCrop;
+    }
+
     try {
       const saved = localStorage.getItem(key);
       if (saved) return JSON.parse(saved);
     } catch (e) {}
 
-    // Fallback desde el objeto del proyecto si viene en la nube o appState
-    const proj = (window.appState?.challenges || []).find(c => c && String(c.id) === String(projId)) || this.getMergedProjectRecord(projId);
-    if (proj) {
-      if (type === 'card' && proj._cardCrop) return proj._cardCrop;
-      if (type === 'hero' && proj._heroCrop) return proj._heroCrop;
-    }
+    if (cloudCrop) return cloudCrop;
     return { zoom: 100, offsetX: 0, offsetY: 0, fit: 'cover' };
   },
 
   /**
-   * Guarda y aplica el encuadre permanente
+   * Guarda y aplica el encuadre permanente para TODOS los usuarios
    */
   setProjectCrop(projId, type = 'card', cropObj = {}) {
     if (!projId) return;
+    const cropTs = Date.now();
     const clean = {
       zoom: Math.max(30, Math.min(400, Number(cropObj.zoom ?? 100) || 100)),
       offsetX: Math.max(-150, Math.min(150, Math.round((Number(cropObj.offsetX ?? 0) || 0) * 10) / 10)),
@@ -1784,21 +1891,51 @@ window.ProjectsView = {
       fit: cropObj.fit === 'contain' ? 'contain' : 'cover'
     };
     const key = `mentix_crop_${type}_${projId}`;
+    const tsKey = `mentix_crop_ts_${type}_${projId}`;
     try {
       localStorage.setItem(key, JSON.stringify(clean));
+      localStorage.setItem(tsKey, String(cropTs));
     } catch (e) {}
 
-    // Actualizar en memoria de appState y proyectos
+    // Actualizar en memoria de appState, drafts, activeLanding y nube
     const proj = (window.appState?.challenges || []).find(c => c && String(c.id) === String(projId)) || this.getMergedProjectRecord(projId);
     if (proj) {
-      if (type === 'card') proj._cardCrop = clean;
-      if (type === 'hero') proj._heroCrop = clean;
+      if (type === 'card') {
+        proj._cardCrop = clean;
+        proj._cardCropUpdatedAt = cropTs;
+      } else {
+        proj._heroCrop = clean;
+        proj._heroCropUpdatedAt = cropTs;
+      }
+      proj.updatedAt = new Date().toISOString();
       if (typeof saveGlobalState === 'function' && window.appState) {
         saveGlobalState(window.appState);
       }
       if (window.appRouter && typeof window.appRouter.pushChallengeToCloud === 'function') {
         try { window.appRouter.pushChallengeToCloud(proj); } catch (e) {}
       }
+      if (window.supabaseService && typeof window.supabaseService.saveChallengeToSupabase === 'function') {
+        try { window.supabaseService.saveChallengeToSupabase(proj); } catch (e) {}
+      }
+    }
+
+    try {
+      const activeRaw = localStorage.getItem('mentix_active_landing_project');
+      if (activeRaw) {
+        const active = JSON.parse(activeRaw);
+        if (active && String(active.id) === String(projId)) {
+          if (type === 'card') { active._cardCrop = clean; active._cardCropUpdatedAt = cropTs; }
+          else { active._heroCrop = clean; active._heroCropUpdatedAt = cropTs; }
+          localStorage.setItem('mentix_active_landing_project', JSON.stringify(active));
+        }
+      }
+    } catch (e) {}
+
+    // Publicar en tiempo real por MQTT para todos los usuarios conectados
+    if (window.realtimeEngine && typeof window.realtimeEngine.publishGlobalBanner === 'function') {
+      try {
+        window.realtimeEngine.publishGlobalBanner({ target: 'project_crop', projId, cropType: type, crop: clean, timestamp: cropTs });
+      } catch (e) {}
     }
 
     // Aplicar inmediatamente en el DOM de tarjetas o de landing hero

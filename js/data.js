@@ -847,26 +847,68 @@ window.mergeProjectPreservingImages = function(existing, incoming) {
   };
 
   const merged = { ...existing, ...incoming };
+  const existingTs = Number(existing._heroBannerUpdatedAt || existing._cardCoverUpdatedAt || Date.parse(existing.updatedAt || '') || 0);
+  const incomingTs = Number(incoming._heroBannerUpdatedAt || incoming._cardCoverUpdatedAt || Date.parse(incoming.updatedAt || '') || 0);
+  const incomingIsNewer = incomingTs > existingTs;
 
-  // 1. Portadas y Banners principales
+  // 1. Portadas de Tarjeta y Banners Hero (totalmente independientes)
   if (incoming._clearedMainImage) {
     merged.mainImage = '';
     merged.banner = '';
-    merged.image = '';
+    merged.heroBanner = '';
     merged._clearedMainImage = true;
   } else {
-    merged.mainImage = pickImage(existing.mainImage, incoming.mainImage);
-    merged.banner = pickImage(existing.banner, incoming.banner) || merged.mainImage;
-    merged.image = pickImage(existing.image, incoming.image) || merged.mainImage;
+    if (incomingIsNewer && incoming.heroBanner && !isPlaceholderCover(incoming.heroBanner)) {
+      merged.heroBanner = incoming.heroBanner;
+    } else {
+      merged.heroBanner = pickImage(existing.heroBanner, incoming.heroBanner);
+    }
+    if (incomingIsNewer && incoming.mainImage && !isPlaceholderCover(incoming.mainImage)) {
+      merged.mainImage = incoming.mainImage;
+    } else {
+      merged.mainImage = pickImage(existing.mainImage, incoming.mainImage);
+    }
+    if (incomingIsNewer && incoming.banner && !isPlaceholderCover(incoming.banner)) {
+      merged.banner = incoming.banner;
+    } else {
+      merged.banner = pickImage(existing.banner, incoming.banner) || merged.heroBanner || merged.mainImage;
+    }
   }
+
   if (incoming._clearedThumbImage) {
     merged.thumbnailImage = '';
+    merged.image = '';
     merged._clearedThumbImage = true;
   } else {
-    merged.thumbnailImage = pickImage(existing.thumbnailImage, incoming.thumbnailImage);
+    const incomingCardTs = Number(incoming._cardCoverUpdatedAt || incomingTs || 0);
+    const existingCardTs = Number(existing._cardCoverUpdatedAt || existingTs || 0);
+    if (incomingCardTs >= existingCardTs && incoming.thumbnailImage && !isPlaceholderCover(incoming.thumbnailImage)) {
+      merged.thumbnailImage = incoming.thumbnailImage;
+    } else {
+      merged.thumbnailImage = pickImage(existing.thumbnailImage, incoming.thumbnailImage);
+    }
+    if (incomingCardTs >= existingCardTs && incoming.image && !isPlaceholderCover(incoming.image)) {
+      merged.image = incoming.image;
+    } else {
+      merged.image = pickImage(existing.image, incoming.image) || merged.thumbnailImage;
+    }
   }
   if (existing.entityLogo || incoming.entityLogo) {
     merged.entityLogo = pickImage(existing.entityLogo, incoming.entityLogo);
+  }
+
+  // Preservar el encuadre (_cardCrop y _heroCrop) más reciente
+  if (incoming._cardCrop || existing._cardCrop) {
+    const inCTs = Number(incoming._cardCropUpdatedAt || incomingTs || 0);
+    const exCTs = Number(existing._cardCropUpdatedAt || existingTs || 0);
+    merged._cardCrop = (inCTs >= exCTs && incoming._cardCrop) ? incoming._cardCrop : (existing._cardCrop || incoming._cardCrop);
+    merged._cardCropUpdatedAt = Math.max(inCTs, exCTs);
+  }
+  if (incoming._heroCrop || existing._heroCrop) {
+    const inHTs = Number(incoming._heroCropUpdatedAt || incomingTs || 0);
+    const exHTs = Number(existing._heroCropUpdatedAt || existingTs || 0);
+    merged._heroCrop = (inHTs >= exHTs && incoming._heroCrop) ? incoming._heroCrop : (existing._heroCrop || incoming._heroCrop);
+    merged._heroCropUpdatedAt = Math.max(inHTs, exHTs);
   }
 
   // 2. Configuración de Diseño y Banner
@@ -875,10 +917,16 @@ window.mergeProjectPreservingImages = function(existing, incoming) {
       ...(existing.designConfig || {}),
       ...(incoming.designConfig || {})
     };
-    merged.designConfig.bannerUrl = pickImage(
-      existing.designConfig?.bannerUrl,
-      incoming.designConfig?.bannerUrl
-    );
+    const inHeroTs = Number(incoming._heroBannerUpdatedAt || incomingTs || 0);
+    const exHeroTs = Number(existing._heroBannerUpdatedAt || existingTs || 0);
+    if (inHeroTs >= exHeroTs && incoming.designConfig?.bannerUrl && !isPlaceholderCover(incoming.designConfig.bannerUrl)) {
+      merged.designConfig.bannerUrl = incoming.designConfig.bannerUrl;
+    } else {
+      merged.designConfig.bannerUrl = pickImage(
+        existing.designConfig?.bannerUrl,
+        incoming.designConfig?.bannerUrl
+      );
+    }
   }
 
   // 3. Configuración de Video
