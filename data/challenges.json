@@ -28,7 +28,7 @@
     "accessMode": "private",
     "displayOrder": 1,
     "createdAt": "2026-11-24T02:08:03.167Z",
-    "updatedAt": "2026-11-24T02:18:14.949Z",
+    "updatedAt": "2026-11-24T02:18:30.395Z",
     "landingConfig": {
       "publicName": "Diagnóstico y propuesta de optimización del gobierno de datos en GPC Pharma S.A.S. Empresa del Sector Farmaceutico.",
       "slug": "diagnostico-y-propuesta-de-optimizacion-del-gobierno-de-datos-en-gpc-pharma-s-a-s-empresa-del-sector-farmaceutico",
@@ -177,11 +177,11 @@
       },
       {
         "title": "Investigación",
-        "description": "Recopilación de datos e información relevante.",
-        "progress": 100,
+        "description": "Entrevista de diagnóstico con el área de tecnología, revisión de fuentes públicas y normativa aplicable (INVIMA, ISO 9001, Ley 1581) y recopilación de la guía salarial 2026 de Michael Page para la estimación de costos.",
         "status": "completed",
-        "icon": "search",
-        "emoji": "🔍"
+        "progress": 100,
+        "emoji": "🔍",
+        "icon": "clipboard"
       },
       {
         "title": "Desarrollo",
@@ -261,11 +261,11 @@
         },
         {
           "title": "Investigación",
-          "description": "Recopilación de datos e información relevante.",
-          "progress": 100,
+          "description": "Entrevista de diagnóstico con el área de tecnología, revisión de fuentes públicas y normativa aplicable (INVIMA, ISO 9001, Ley 1581) y recopilación de la guía salarial 2026 de Michael Page para la estimación de costos.",
           "status": "completed",
-          "icon": "search",
-          "emoji": "🔍"
+          "progress": 100,
+          "emoji": "🔍",
+          "icon": "clipboard"
         },
         {
           "title": "Desarrollo",
@@ -330,7 +330,7 @@
         "authorsRole": "Estudiante / Creador"
       },
       "createdAt": "2026-11-24T02:08:03.167Z",
-      "updatedAt": "2026-11-24T02:18:17.521Z",
+      "updatedAt": "2026-11-24T02:18:33.273Z",
       "progress": 65,
       "calculatedProgress": 65
     },
