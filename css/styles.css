@@ -9467,3 +9467,32 @@ body.light-theme .host-stats-table tr.correct-row {
   border-left: 3px solid #00f5d4 !important;
 }
 
+
+/* ==========================================================================
+   📱 MODO CLARO EN CELULAR: mantiene el diseño blanco de MENTIX (sin forzar fondos oscuros)
+   ========================================================================== */
+@media (max-width: 900px), (pointer: coarse) {
+  body.light-theme .glass-panel,
+  body.light-theme .challenge-card,
+  body.light-theme .modal-content,
+  body.light-theme .entity-badge-box {
+    background-color: #ffffff !important;
+    color: #0f172a;
+  }
+
+  body.light-theme .glass-nav {
+    background-color: rgba(255, 255, 255, 0.98) !important;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1) !important;
+  }
+
+  body.light-theme,
+  html:not(.mentix-boot-dark) body.light-theme {
+    background-color: #f8fafc !important;
+  }
+
+  /* Podio y estadísticas siguen oscuros/legibles como pantallas de juego */
+  body.light-theme #view-podium .glass-panel,
+  body.light-theme #view-game .glass-panel {
+    background-color: rgba(15, 23, 42, 0.92) !important;
+  }
+}
