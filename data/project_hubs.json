@@ -100,5 +100,19 @@
     "joinRequests": [],
     "ratings": [],
     "updatedAt": 1795478312692
+  },
+  "proj_video_1795486083167": {
+    "projectId": "proj_video_1795486083167",
+    "members": [
+      {
+        "name": "Laura Sofía Hernández Chaparro",
+        "email": "ing.laurasofiax04@gmail.com",
+        "role": "owner",
+        "leader": true
+      }
+    ],
+    "joinRequests": [],
+    "ratings": [],
+    "updatedAt": 1795545461475
   }
 }
