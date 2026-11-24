@@ -28,7 +28,7 @@
     "accessMode": "private",
     "displayOrder": 1,
     "createdAt": "2026-11-24T02:08:03.167Z",
-    "updatedAt": "2026-11-24T02:19:42.328Z",
+    "updatedAt": "2026-11-24T02:19:43.432Z",
     "landingConfig": {
       "publicName": "Diagnóstico y propuesta de optimización del gobierno de datos en GPC Pharma S.A.S. Empresa del Sector Farmaceutico.",
       "slug": "diagnostico-y-propuesta-de-optimizacion-del-gobierno-de-datos-en-gpc-pharma-s-a-s-empresa-del-sector-farmaceutico",
@@ -49,7 +49,7 @@
       "authorsList": "Laura Sofía Hernández Chaparro",
       "authorsEmails": "ing.laurasofiax04@gmail.com",
       "authorsRole": "Estudiante / Creador",
-      "authorsInstitution": "Institución Universitaria Politéc",
+      "authorsInstitution": "Institución Universitaria Politécn",
       "collaborators": ""
     },
     "designConfig": {
@@ -332,11 +332,11 @@
         "authorsList": "Laura Sofía Hernández Chaparro",
         "authorsEmails": "ing.laurasofiax04@gmail.com",
         "authorsRole": "Estudiante / Creador",
-        "authorsInstitution": "Institución Universitaria Politéc",
+        "authorsInstitution": "Institución Universitaria Politécn",
         "collaborators": ""
       },
       "createdAt": "2026-11-24T02:08:03.167Z",
-      "updatedAt": "2026-11-24T02:19:45.289Z",
+      "updatedAt": "2026-11-24T02:19:46.448Z",
       "progress": 65,
       "calculatedProgress": 65
     },
