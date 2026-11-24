@@ -28,7 +28,7 @@
     "accessMode": "private",
     "displayOrder": 1,
     "createdAt": "2026-11-24T02:08:03.167Z",
-    "updatedAt": "2026-11-24T02:25:40.465Z",
+    "updatedAt": "2026-11-24T02:25:45.759Z",
     "landingConfig": {
       "publicName": "Diagnóstico y propuesta de optimización del gobierno de datos en GPC Pharma S.A.S. Empresa del Sector Farmaceutico.",
       "slug": "diagnostico-y-propuesta-de-optimizacion-del-gobierno-de-datos-en-gpc-pharma-s-a-s-empresa-del-sector-farmaceutico",
@@ -165,7 +165,7 @@
       "faqs": [
         {
           "q": "¿Qué es el gobierno de datos?",
-          "a": ""
+          "a": "Es el conjunto de roles, políticas y reglas que definen quién es responsable de los datos de una organización y cómo se gestionan, para asegurar su calidad, trazabilidad y seguridad."
         }
       ]
     },
@@ -190,7 +190,7 @@
       "faqs": [
         {
           "q": "¿Qué es el gobierno de datos?",
-          "a": ""
+          "a": "Es el conjunto de roles, políticas y reglas que definen quién es responsable de los datos de una organización y cómo se gestionan, para asegurar su calidad, trazabilidad y seguridad."
         }
       ]
     },
@@ -276,7 +276,7 @@
         "faqs": [
           {
             "q": "¿Qué es el gobierno de datos?",
-            "a": ""
+            "a": "Es el conjunto de roles, políticas y reglas que definen quién es responsable de los datos de una organización y cómo se gestionan, para asegurar su calidad, trazabilidad y seguridad."
           }
         ]
       },
@@ -383,7 +383,7 @@
         "collaborators": ""
       },
       "createdAt": "2026-11-24T02:08:03.167Z",
-      "updatedAt": "2026-11-24T02:25:43.462Z",
+      "updatedAt": "2026-11-24T02:25:48.870Z",
       "progress": 80,
       "calculatedProgress": 80
     },
