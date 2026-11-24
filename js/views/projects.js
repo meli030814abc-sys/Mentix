@@ -1459,20 +1459,19 @@ window.ProjectsView = {
     }
 
     if (proj) {
+      // Priorizar explícitamente los campos del Hero Banner de la Landing
       const candidates = [
-        proj.mainImage,
-        proj.thumbnailImage,
         proj.heroBanner,
         proj.designConfig?.bannerUrl,
         proj.landingConfig?.heroBanner,
-        proj.govdata?.mainImage,
-        proj.govdata?.thumbnailImage,
         proj.govdata?.heroBanner,
         proj.govdata?.designConfig?.bannerUrl,
         proj.banner,
+        proj.mainImage,
+        (Array.isArray(proj.visualAssets) && proj.visualAssets[0] && proj.visualAssets[0].url) ? proj.visualAssets[0].url : '',
         proj.coverImage,
-        proj.image,
-        (Array.isArray(proj.visualAssets) && proj.visualAssets[0] && proj.visualAssets[0].url) ? proj.visualAssets[0].url : ''
+        proj.thumbnailImage,
+        proj.image
       ];
       const realCustom = candidates.find(u => typeof u === 'string' && !isGenericDef(u));
       if (realCustom) return normalizeImg(realCustom);
@@ -1523,19 +1522,9 @@ window.ProjectsView = {
     if (proj) {
       proj.heroBanner = cleanUrl;
       proj.banner = cleanUrl;
-      proj.coverImage = cleanUrl;
-      proj.mainImage = cleanUrl;
-      proj.thumbnailImage = cleanUrl;
-      proj.image = cleanUrl;
-      proj._clearedMainImage = false;
-      proj._clearedThumbImage = false;
       if (!proj.govdata) proj.govdata = {};
       proj.govdata.heroBanner = cleanUrl;
       proj.govdata.banner = cleanUrl;
-      proj.govdata.mainImage = cleanUrl;
-      proj.govdata.thumbnailImage = cleanUrl;
-      proj.govdata._clearedMainImage = false;
-      proj.govdata._clearedThumbImage = false;
       if (!proj.designConfig) proj.designConfig = {};
       proj.designConfig.bannerUrl = cleanUrl;
       if (!proj.landingConfig) proj.landingConfig = {};
@@ -1548,15 +1537,9 @@ window.ProjectsView = {
       if (d) {
         d.heroBanner = cleanUrl;
         d.banner = cleanUrl;
-        d.coverImage = cleanUrl;
-        d.mainImage = cleanUrl;
-        d.thumbnailImage = cleanUrl;
-        d._clearedMainImage = false;
-        d._clearedThumbImage = false;
         if (!d.govdata) d.govdata = {};
         d.govdata.heroBanner = cleanUrl;
-        d.govdata.mainImage = cleanUrl;
-        d.govdata.thumbnailImage = cleanUrl;
+        d.govdata.banner = cleanUrl;
         if (!d.designConfig) d.designConfig = {};
         d.designConfig.bannerUrl = cleanUrl;
         localStorage.setItem('mentix_govdata_wizard_drafts', JSON.stringify(drafts));
@@ -1570,13 +1553,9 @@ window.ProjectsView = {
         if (active && (!projId || String(active.id) === String(projId))) {
           active.heroBanner = cleanUrl;
           active.banner = cleanUrl;
-          active.coverImage = cleanUrl;
-          active.mainImage = cleanUrl;
-          active.thumbnailImage = cleanUrl;
           if (!active.govdata) active.govdata = {};
           active.govdata.heroBanner = cleanUrl;
-          active.govdata.mainImage = cleanUrl;
-          active.govdata.thumbnailImage = cleanUrl;
+          active.govdata.banner = cleanUrl;
           if (!active.designConfig) active.designConfig = {};
           active.designConfig.bannerUrl = cleanUrl;
           localStorage.setItem('mentix_active_landing_project', JSON.stringify(active));
@@ -1659,13 +1638,10 @@ window.ProjectsView = {
         proj.thumbnailImage,
         proj.image,
         proj.coverImage,
-        proj.mainImage,
         proj.govdata?.thumbnailImage,
         proj.govdata?.image,
-        proj.govdata?.mainImage,
-        proj.banner,
-        proj.heroBanner,
-        proj.designConfig?.bannerUrl
+        proj.mainImage,
+        proj.govdata?.mainImage
       ];
       const realCustom = candidates.find(u => typeof u === 'string' && !isGenericDef(u));
       if (realCustom) return normalizeImg(realCustom);
@@ -1678,7 +1654,7 @@ window.ProjectsView = {
     if (proj) {
       if (proj.id === 'proj_ai_society' || proj.id === 'demo-ai-society') return 'assets/projects_ui/card_ai_society.png';
       if (proj.id === 'proj_open_data' || proj.id === 'demo-open-data') return 'assets/projects_ui/card_open_data.png';
-      const fallbackProj = proj.thumbnailImage || proj.image || proj.coverImage || proj.mainImage || proj.banner || proj.heroBanner;
+      const fallbackProj = proj.thumbnailImage || proj.image || proj.coverImage || proj.mainImage;
       if (fallbackProj && typeof fallbackProj === 'string' && fallbackProj.trim()) {
         return normalizeImg(fallbackProj);
       }
@@ -1774,6 +1750,85 @@ window.ProjectsView = {
     } catch (e) {}
 
     return true;
+  },
+
+  /**
+   * Obtiene la configuración de encuadre (crop/transform) para la tarjeta o hero de un proyecto
+   */
+  getProjectCrop(projId, type = 'card') {
+    if (!projId) return { zoom: 100, offsetX: 0, offsetY: 0, fit: 'cover' };
+    const key = `mentix_crop_${type}_${projId}`;
+    try {
+      const saved = localStorage.getItem(key);
+      if (saved) return JSON.parse(saved);
+    } catch (e) {}
+
+    // Fallback desde el objeto del proyecto si viene en la nube o appState
+    const proj = (window.appState?.challenges || []).find(c => c && String(c.id) === String(projId)) || this.getMergedProjectRecord(projId);
+    if (proj) {
+      if (type === 'card' && proj._cardCrop) return proj._cardCrop;
+      if (type === 'hero' && proj._heroCrop) return proj._heroCrop;
+    }
+    return { zoom: 100, offsetX: 0, offsetY: 0, fit: 'cover' };
+  },
+
+  /**
+   * Guarda y aplica el encuadre permanente
+   */
+  setProjectCrop(projId, type = 'card', cropObj = {}) {
+    if (!projId) return;
+    const clean = {
+      zoom: Math.max(50, Math.min(250, Number(cropObj.zoom ?? 100) || 100)),
+      offsetX: Math.max(-80, Math.min(80, Number(cropObj.offsetX ?? 0) || 0)),
+      offsetY: Math.max(-80, Math.min(80, Number(cropObj.offsetY ?? 0) || 0)),
+      fit: cropObj.fit === 'contain' ? 'contain' : 'cover'
+    };
+    const key = `mentix_crop_${type}_${projId}`;
+    try {
+      localStorage.setItem(key, JSON.stringify(clean));
+    } catch (e) {}
+
+    // Actualizar en memoria de appState y proyectos
+    const proj = (window.appState?.challenges || []).find(c => c && String(c.id) === String(projId)) || this.getMergedProjectRecord(projId);
+    if (proj) {
+      if (type === 'card') proj._cardCrop = clean;
+      if (type === 'hero') proj._heroCrop = clean;
+      if (typeof saveGlobalState === 'function' && window.appState) {
+        saveGlobalState(window.appState);
+      }
+      if (window.appRouter && typeof window.appRouter.pushChallengeToCloud === 'function') {
+        try { window.appRouter.pushChallengeToCloud(proj); } catch (e) {}
+      }
+    }
+
+    // Aplicar inmediatamente en el DOM de tarjetas o de landing hero
+    if (type === 'card') {
+      const tf = `translate(${clean.offsetX}%, ${clean.offsetY}%) scale(${(clean.zoom / 100).toFixed(2)})`;
+      document.querySelectorAll(`.saas-project-card[data-id="${projId}"] img.saas-card-banner-img, .admin-project-card[data-id="${projId}"] img.admin-card-cover-img`).forEach(img => {
+        img.style.setProperty('object-fit', clean.fit, 'important');
+        img.style.setProperty('transform', tf, 'important');
+        img.style.setProperty('transform-origin', 'center center', 'important');
+      });
+    } else if (type === 'hero') {
+      const tf = `translate(${clean.offsetX}%, ${clean.offsetY}%) scale(${(clean.zoom / 100).toFixed(2)})`;
+      const heroBgImg = document.getElementById('inno-hero-bg-img-el');
+      if (heroBgImg) {
+        heroBgImg.style.setProperty('object-fit', clean.fit, 'important');
+        heroBgImg.style.setProperty('transform', tf, 'important');
+        heroBgImg.style.setProperty('transform-origin', 'center center', 'important');
+      }
+    }
+
+    return clean;
+  },
+
+  /**
+   * Genera el estilo CSS inline de encuadre
+   */
+  buildProjectCropCss(projId, type = 'card') {
+    const c = this.getProjectCrop(projId, type);
+    const tf = `translate(${c.offsetX}%, ${c.offsetY}%) scale(${(c.zoom / 100).toFixed(2)})`;
+    return `object-fit: ${c.fit}; transform: ${tf}; transform-origin: center center;`;
   },
 
   /**
@@ -1896,24 +1951,34 @@ window.ProjectsView = {
           </div>
         </div>
 
-        <!-- Vista Previa en Vivo -->
+        <!-- Vista Previa en Vivo y Controles de Encuadre Integrados -->
         <div style="margin-bottom:1.25rem;">
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.45rem;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.45rem; flex-wrap:wrap; gap:0.4rem;">
             <label style="font-size:0.82rem; font-weight:800; color:#0369a1; text-transform:uppercase; letter-spacing:0.04em;">
-              👁️ Vista Previa en Vivo: ${activeLabel}
+              👁️ Vista Previa y Encuadre: ${activeLabel}
             </label>
-            <span style="font-size:0.76rem; color:#64748b; font-weight:600;">Se actualiza en tiempo real</span>
+            <div style="display:flex; align-items:center; gap:0.4rem;">
+              <span style="font-size:0.75rem; color:#64748b; font-weight:700;">🖱️ Arrastra sobre la imagen o usa:</span>
+              <button 
+                type="button" 
+                onclick="window.ProjectsView.openProjectCropAdjuster('${this.escapeHtml(projId)}', '${isCard ? 'card' : 'hero'}')" 
+                style="background:#071739; color:#00f5d4; border:1.5px solid #00f5d4; border-radius:999px; padding:0.25rem 0.75rem; font-size:0.76rem; font-weight:900; cursor:pointer; display:inline-flex; align-items:center; gap:0.35rem; box-shadow:0 2px 8px rgba(0,245,212,0.25);"
+                title="Ajustar y encuadrar imagen (zoom, posición y encaje)"
+              >
+                <span>📐</span> <span>Encuadrar</span>
+              </button>
+            </div>
           </div>
 
-          <div style="position:relative; width:100%; height:${isCard ? '180px' : '150px'}; border-radius:16px; overflow:hidden; border:2.5px solid #0284c7; background-color:#071739; box-shadow:0 8px 24px rgba(15,23,42,0.12);">
+          <div id="admin-media-preview-container" style="position:relative; width:100%; height:${isCard ? '185px' : '155px'}; border-radius:16px; overflow:hidden; border:2.5px solid #0284c7; background-color:#071739; box-shadow:0 8px 24px rgba(15,23,42,0.12); user-select:none;">
             <img 
               id="admin-media-preview-img" 
               src="${this.escapeHtml(currentImg)}" 
               alt="Vista previa" 
-              style="width:100%; height:100%; object-fit:cover; object-position:center; display:block;"
+              style="width:100%; height:100%; ${this.buildProjectCropCss(projId, isCard ? 'card' : 'hero')} display:block;"
               onerror="this.src='assets/projects_ui/card_data_gov.png';"
             />
-            <div style="position:absolute; inset:0; background:linear-gradient(to right, rgba(5, 14, 30, 0.75) 0%, rgba(5, 14, 30, 0.25) 50%, transparent 100%); display:flex; align-items:center; padding:1.2rem 1.6rem; pointer-events:none;">
+            <div style="position:absolute; inset:0; background:linear-gradient(to right, rgba(5, 14, 30, 0.75) 0%, rgba(5, 14, 30, 0.22) 50%, transparent 100%); display:flex; align-items:center; padding:1.2rem 1.6rem; pointer-events:none;">
               <div style="color:#ffffff;">
                 <span style="background:#00f5d4; color:#071739; padding:0.2rem 0.6rem; border-radius:999px; font-size:0.72rem; font-weight:900; letter-spacing:0.02em;">
                   ${isCard ? 'PORTADA DE TARJETA' : 'BANNER HERO DE LANDING'}
@@ -2144,6 +2209,194 @@ window.ProjectsView = {
 
     // Actualizar vista previa
     this.renderAdminProjectMediaModalContent();
+  },
+
+  /**
+   * Modal Interactivo de Encuadre para Portada o Hero
+   */
+  openProjectCropAdjuster(projId, type = 'card') {
+    const isCard = type === 'card';
+    const label = isCard ? 'Portada de la Tarjeta' : 'Banner Hero de la Landing';
+    const imgEl = document.getElementById('admin-media-preview-img');
+    const imgSrc = imgEl ? imgEl.src : (isCard ? this.getProjectCardCover(projId) : this.getProjectHeroBanner(projId));
+
+    const currentCrop = this.getProjectCrop(projId, type);
+    const live = { ...currentCrop };
+
+    const existing = document.getElementById('mentix-crop-submodal-overlay');
+    if (existing) existing.remove();
+
+    const overlay = document.createElement('div');
+    overlay.id = 'mentix-crop-submodal-overlay';
+    overlay.style.cssText = 'position:fixed; inset:0; background:rgba(3,7,18,0.85); backdrop-filter:blur(10px); z-index:999999999; display:flex; align-items:center; justify-content:center; padding:1.2rem; overflow-y:auto; font-family:"Outfit","Inter",sans-serif;';
+
+    overlay.innerHTML = `
+      <div style="background:#ffffff; border:2px solid #00f5d4; border-radius:20px; max-width:820px; width:100%; padding:1.6rem; box-shadow:0 25px 70px rgba(0,0,0,0.7), 0 0 30px rgba(0,245,212,0.25); color:#0f172a; position:relative;">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:1rem; border-bottom:1.5px solid #e2e8f0; padding-bottom:0.75rem;">
+          <div>
+            <div style="display:inline-flex; align-items:center; gap:0.35rem; background:#071739; border:1px solid #00f5d4; color:#00f5d4; padding:0.2rem 0.65rem; border-radius:999px; font-size:0.72rem; font-weight:900;">
+              📐 MODO ENCUADRE DE PRECISIÓN
+            </div>
+            <h3 style="margin:0.35rem 0 0; font-size:1.3rem; font-weight:900; color:#0f172a;">
+              Encuadrar: ${label}
+            </h3>
+            <p style="margin:0.2rem 0 0; font-size:0.82rem; color:#64748b;">
+              Arrastra directamente sobre la imagen, haz zoom o usa las flechas para encuadrarla exactamente como deseas.
+            </p>
+          </div>
+          <button type="button" onclick="document.getElementById('mentix-crop-submodal-overlay').remove()" style="background:#f1f5f9; border:1px solid #cbd5e1; border-radius:50%; width:34px; height:34px; font-size:1.1rem; cursor:pointer; font-weight:800; color:#475569;">✕</button>
+        </div>
+
+        <!-- Área de Encuadre Interactivo con Canvas/Img -->
+        <div id="crop-stage-container" style="position:relative; width:100%; height:${isCard ? '220px' : '170px'}; border-radius:14px; overflow:hidden; border:2.5px dashed #0284c7; background:#071739; cursor:grab; user-select:none; touch-action:none; margin-bottom:1rem; display:flex; align-items:center; justify-content:center;">
+          <img 
+            id="crop-stage-img" 
+            src="${this.escapeHtml(imgSrc)}" 
+            alt="" 
+            style="width:100%; height:100%; object-fit:${live.fit}; object-position:center center; transform:translate(${live.offsetX}%, ${live.offsetY}%) scale(${(live.zoom / 100).toFixed(2)}); transform-origin:center center; pointer-events:none; transition:none;"
+          />
+          <div style="position:absolute; bottom:8px; left:10px; background:rgba(7,23,57,0.85); color:#00f5d4; font-size:0.72rem; font-weight:800; padding:0.2rem 0.6rem; border-radius:999px; pointer-events:none;">
+            🖱️ Mantén presionado y arrastra para mover
+          </div>
+        </div>
+
+        <!-- Toolbar de Controles de Encuadre -->
+        <div style="background:#f8fafc; border:1.5px solid #e2e8f0; border-radius:14px; padding:0.85rem 1.1rem; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:0.6rem; margin-bottom:1.2rem;">
+          <div style="display:flex; align-items:center; gap:0.4rem; flex-wrap:wrap;">
+            <button type="button" id="crop-btn-fit-cover" style="padding:0.4rem 0.8rem; border-radius:9px; border:1.5px solid #cbd5e1; background:${live.fit === 'cover' ? '#0047cc' : '#ffffff'}; color:${live.fit === 'cover' ? '#ffffff' : '#0f172a'}; font-size:0.78rem; font-weight:800; cursor:pointer;">
+              📐 Llenar marco
+            </button>
+            <button type="button" id="crop-btn-fit-contain" style="padding:0.4rem 0.8rem; border-radius:9px; border:1.5px solid #cbd5e1; background:${live.fit === 'contain' ? '#0047cc' : '#ffffff'}; color:${live.fit === 'contain' ? '#ffffff' : '#0f172a'}; font-size:0.78rem; font-weight:800; cursor:pointer;">
+              🖼️ Ver completa
+            </button>
+
+            <!-- Flechas de Ajuste Fino -->
+            <button type="button" id="crop-btn-up" style="padding:0.38rem 0.6rem; border-radius:8px; border:1px solid #cbd5e1; background:#ffffff; cursor:pointer; font-weight:800;" title="Subir">⬆️</button>
+            <button type="button" id="crop-btn-down" style="padding:0.38rem 0.6rem; border-radius:8px; border:1px solid #cbd5e1; background:#ffffff; cursor:pointer; font-weight:800;" title="Bajar">⬇️</button>
+            <button type="button" id="crop-btn-left" style="padding:0.38rem 0.6rem; border-radius:8px; border:1px solid #cbd5e1; background:#ffffff; cursor:pointer; font-weight:800;" title="Izquierda">⬅️</button>
+            <button type="button" id="crop-btn-right" style="padding:0.38rem 0.6rem; border-radius:8px; border:1px solid #cbd5e1; background:#ffffff; cursor:pointer; font-weight:800;" title="Derecha">➡️</button>
+            <button type="button" id="crop-btn-center" style="padding:0.38rem 0.75rem; border-radius:8px; border:1px solid #cbd5e1; background:#ffffff; cursor:pointer; font-weight:800; font-size:0.78rem;" title="Centrar">🎯 Centrar</button>
+          </div>
+
+          <!-- Slider de Zoom -->
+          <div style="display:flex; align-items:center; gap:0.45rem;">
+            <span style="font-size:0.8rem; font-weight:800; color:#334155;">🔍 Zoom:</span>
+            <input 
+              type="range" 
+              id="crop-zoom-slider" 
+              min="50" 
+              max="240" 
+              step="2" 
+              value="${live.zoom}" 
+              style="width:90px; accent-color:#0047cc; cursor:pointer;"
+            />
+            <span id="crop-zoom-val" style="font-size:0.82rem; font-weight:900; color:#0047cc; min-width:38px;">${Math.round(live.zoom)}%</span>
+          </div>
+        </div>
+
+        <!-- Botones de Acción -->
+        <div style="display:flex; justify-content:flex-end; gap:0.7rem; border-top:1.5px solid #e2e8f0; padding-top:0.95rem;">
+          <button 
+            type="button" 
+            onclick="document.getElementById('mentix-crop-submodal-overlay').remove()" 
+            style="background:#ffffff; border:1.5px solid #cbd5e1; color:#334155; border-radius:999px; padding:0.55rem 1.25rem; font-size:0.85rem; font-weight:800; cursor:pointer;"
+          >
+            Cancelar
+          </button>
+          <button 
+            type="button" 
+            id="crop-save-btn" 
+            style="background:linear-gradient(135deg, #00f5d4 0%, #0284c7 100%); color:#071739; border:none; border-radius:999px; padding:0.55rem 1.55rem; font-size:0.88rem; font-weight:900; cursor:pointer; box-shadow:0 4px 14px rgba(0,245,212,0.35); display:inline-flex; align-items:center; gap:0.4rem;"
+          >
+            <span>💾</span> <span>Guardar Encuadre</span>
+          </button>
+        </div>
+      </div>
+    `;
+
+    document.body.appendChild(overlay);
+
+    const stageContainer = overlay.querySelector('#crop-stage-container');
+    const stageImg = overlay.querySelector('#crop-stage-img');
+    const zoomSlider = overlay.querySelector('#crop-zoom-slider');
+    const zoomVal = overlay.querySelector('#crop-zoom-val');
+    const btnCover = overlay.querySelector('#crop-btn-fit-cover');
+    const btnContain = overlay.querySelector('#crop-btn-fit-contain');
+
+    const updateStage = () => {
+      stageImg.style.objectFit = live.fit;
+      stageImg.style.transform = `translate(${live.offsetX}%, ${live.offsetY}%) scale(${(live.zoom / 100).toFixed(2)})`;
+      zoomVal.textContent = `${Math.round(live.zoom)}%`;
+      btnCover.style.background = live.fit === 'cover' ? '#0047cc' : '#ffffff';
+      btnCover.style.color = live.fit === 'cover' ? '#ffffff' : '#0f172a';
+      btnContain.style.background = live.fit === 'contain' ? '#0047cc' : '#ffffff';
+      btnContain.style.color = live.fit === 'contain' ? '#ffffff' : '#0f172a';
+    };
+
+    // Arrastre con puntero/mouse
+    let isDragging = false;
+    let sX = 0, sY = 0, sOx = live.offsetX, sOy = live.offsetY;
+
+    stageContainer.addEventListener('pointerdown', (e) => {
+      isDragging = true;
+      stageContainer.style.cursor = 'grabbing';
+      try { stageContainer.setPointerCapture(e.pointerId); } catch (err) {}
+      sX = e.clientX;
+      sY = e.clientY;
+      sOx = live.offsetX;
+      sOy = live.offsetY;
+      e.preventDefault();
+    });
+
+    stageContainer.addEventListener('pointermove', (e) => {
+      if (!isDragging) return;
+      const rect = stageContainer.getBoundingClientRect();
+      const dx = ((e.clientX - sX) / Math.max(100, rect.width)) * 100;
+      const dy = ((e.clientY - sY) / Math.max(80, rect.height)) * 100;
+      live.offsetX = Math.max(-80, Math.min(80, Math.round((sOx + dx) * 10) / 10));
+      live.offsetY = Math.max(-80, Math.min(80, Math.round((sOy + dy) * 10) / 10));
+      updateStage();
+    });
+
+    const stopDrag = (e) => {
+      if (!isDragging) return;
+      isDragging = false;
+      stageContainer.style.cursor = 'grab';
+      try { stageContainer.releasePointerCapture(e.pointerId); } catch (err) {}
+    };
+    stageContainer.addEventListener('pointerup', stopDrag);
+    stageContainer.addEventListener('pointercancel', stopDrag);
+
+    // Zoom con rueda del ratón
+    stageContainer.addEventListener('wheel', (e) => {
+      e.preventDefault();
+      const delta = e.deltaY < 0 ? 6 : -6;
+      live.zoom = Math.max(50, Math.min(240, live.zoom + delta));
+      zoomSlider.value = live.zoom;
+      updateStage();
+    }, { passive: false });
+
+    zoomSlider.addEventListener('input', (e) => {
+      live.zoom = Number(e.target.value) || 100;
+      updateStage();
+    });
+
+    btnCover.addEventListener('click', () => { live.fit = 'cover'; updateStage(); });
+    btnContain.addEventListener('click', () => { live.fit = 'contain'; live.offsetX = 0; live.offsetY = 0; live.zoom = 100; zoomSlider.value = 100; updateStage(); });
+
+    overlay.querySelector('#crop-btn-up').addEventListener('click', () => { live.offsetY = Math.max(-80, live.offsetY - 4); updateStage(); });
+    overlay.querySelector('#crop-btn-down').addEventListener('click', () => { live.offsetY = Math.min(80, live.offsetY + 4); updateStage(); });
+    overlay.querySelector('#crop-btn-left').addEventListener('click', () => { live.offsetX = Math.max(-80, live.offsetX - 4); updateStage(); });
+    overlay.querySelector('#crop-btn-right').addEventListener('click', () => { live.offsetX = Math.min(80, live.offsetX + 4); updateStage(); });
+    overlay.querySelector('#crop-btn-center').addEventListener('click', () => { live.offsetX = 0; live.offsetY = 0; live.zoom = 100; zoomSlider.value = 100; updateStage(); });
+
+    overlay.querySelector('#crop-save-btn').addEventListener('click', () => {
+      this.setProjectCrop(projId, type, live);
+      overlay.remove();
+      this.showToast('✅ ¡Encuadre guardado con éxito!');
+      // Actualizar vista previa del modal principal
+      this.renderAdminProjectMediaModalContent();
+    });
   },
   BANNER_MIN_HEIGHT: 400,
   BANNER_REC_WIDTH: 1920,
@@ -4168,6 +4421,8 @@ window.ProjectsView = {
       }
     }
 
+    const cardCropCss = (typeof this.buildProjectCropCss === 'function') ? this.buildProjectCropCss(c.id, 'card') : 'object-fit: cover; object-position: center;';
+
     return `
       <div class="saas-project-card animate-fade-in" data-id="${c.id}" onclick="${cardClickAction}" style="border-radius: 16px; background: #ffffff; border: 1.5px solid #e2e8f0; overflow: hidden; box-shadow: 0 4px 18px rgba(0,0,0,0.04); display: flex; flex-direction: column; cursor: pointer; transition: transform 0.2s ease, box-shadow 0.2s ease; position: relative;">
         
@@ -4177,7 +4432,7 @@ window.ProjectsView = {
             src="${defaultBanner}" 
             alt="${this.escapeHtml(c.title)}" 
             class="saas-card-banner-img"
-            style="width: 100%; height: 135px; min-height: 135px; max-height: 135px; object-fit: cover; object-position: center; display: block;" 
+            style="width: 100%; height: 135px; min-height: 135px; max-height: 135px; ${cardCropCss} display: block;" 
             onerror="this.onerror=null;this.src='assets/projects_ui/card_data_gov.png';" 
           />
 
@@ -8486,7 +8741,7 @@ window.ProjectsView = {
                ================================================================ -->
           <section class="inno-hero" id="inno-sec-hero" style="${heroStyle}">
             <!-- Imagen de fondo idéntica al banner de la tarjeta del proyecto -->
-            <img id="inno-hero-bg-img-el" src="${this.escapeHtml(projHeroBanner)}" alt="" aria-hidden="true" referrerpolicy="no-referrer" data-orig="${this.escapeHtml(projHeroBanner)}" onerror="window.ProjectsView.heroImgFallback(this)" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:center; z-index:0; pointer-events:none; display:block;" />
+            <img id="inno-hero-bg-img-el" src="${this.escapeHtml(projHeroBanner)}" alt="" aria-hidden="true" referrerpolicy="no-referrer" data-orig="${this.escapeHtml(projHeroBanner)}" onerror="window.ProjectsView.heroImgFallback(this)" style="position:absolute; inset:0; width:100%; height:100%; ${this.buildProjectCropCss(targetProjId, 'hero')} z-index:0; pointer-events:none; display:block;" />
             <div aria-hidden="true" style="position:absolute; inset:0; background:linear-gradient(to right, rgba(5, 14, 30, 0.72) 0%, rgba(5, 14, 30, 0.36) 44%, rgba(5, 14, 30, 0.08) 76%, transparent 100%); z-index:1; pointer-events:none;"></div>
             <!-- Botón interactivo para cambiar el fondo del banner o portadas (Solo Admin, Creador o Editores) -->
             ${this.isAdminUser() ? `

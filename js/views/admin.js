@@ -1247,7 +1247,12 @@ window.AdminView = {
           const isApproved = p.approvalStatus === 'approved' && !p.rejectionReason;
           const isPendingApproval = !isApproved;
           const isCompleted = isApproved && (p.status === 'completed' || p.stage === 'completed');
-          const coverImage = p.image || p.cover || p.banner || 'assets/student_create_bg.jpg';
+          const coverImage = (window.ProjectsView && typeof window.ProjectsView.getProjectCardCover === 'function') 
+            ? window.ProjectsView.getProjectCardCover(p.id, p) 
+            : (p.thumbnailImage || p.image || p.cover || p.banner || 'assets/student_create_bg.jpg');
+          const cardCropCss = (window.ProjectsView && typeof window.ProjectsView.buildProjectCropCss === 'function') 
+            ? window.ProjectsView.buildProjectCropCss(p.id, 'card') 
+            : 'object-fit: cover; object-position: center;';
           const title = p.title || 'Gobierno de Datos en la Práctica';
           const description = p.description || 'Metodologías ágiles para la gobernanza moderna de información y toma de decisiones.';
           
@@ -1265,10 +1270,10 @@ window.AdminView = {
           const rating = p.rating || '4.8';
 
           return `
-            <div class="admin-project-card proj3d-card ${isPendingApproval ? 'pcard-amber' : 'pcard-blue'}">
+            <div class="admin-project-card proj3d-card ${isPendingApproval ? 'pcard-amber' : 'pcard-blue'}" data-id="${p.id}">
               <!-- Portada 3D con Badges y Acciones Flotantes Superiores -->
               <div class="admin-card-banner proj3d-card-banner">
-                <img src="${coverImage}" alt="${title}" class="admin-card-cover-img" onerror="this.onerror=null; this.src='assets/student_create_bg.jpg';">
+                <img src="${coverImage}" alt="${title}" class="admin-card-cover-img" style="${cardCropCss}" onerror="this.onerror=null; this.src='assets/student_create_bg.jpg';">
                 
                 <div class="admin-card-badge-row">
                   <!-- Badge Izquierdo de Estado -->
