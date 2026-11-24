@@ -28,7 +28,7 @@
     "accessMode": "private",
     "displayOrder": 1,
     "createdAt": "2026-11-24T02:08:03.167Z",
-    "updatedAt": "2026-11-24T16:56:07.757Z",
+    "updatedAt": "2026-11-24T17:04:26.218Z",
     "landingConfig": {
       "publicName": "Diagnóstico y propuesta de optimización del gobierno de datos en GPC Pharma S.A.S.",
       "slug": "propuesta-gobierno-de-datos-gpc-pharma",
@@ -1334,7 +1334,7 @@
     ],
     "joinRequests": [],
     "visibility": "private",
-    "rejectedAt": "2026-11-24T16:46:46.215Z",
+    "rejectedAt": "2026-11-24T16:57:59.283Z",
     "rejectionReason": "Desautorizado por el Administrador.",
     "tag": "⏳ Pendiente de Autorización",
     "tagClass": "badge-review",
