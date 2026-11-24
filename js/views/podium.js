@@ -176,15 +176,15 @@ window.PodiumView = {
     container.innerHTML = `
       <div style="max-width: 900px; margin: 0 auto; padding: 2rem 1.25rem 5rem; text-align: center;">
         
-        <div style="display: inline-flex; align-items: center; gap: 0.5rem; background: rgba(255, 183, 3, 0.15); border: 1px solid var(--neon-gold); padding: 0.4rem 1.2rem; border-radius: 9999px; margin-bottom: 1rem;">
-          <span>🎉</span>
-          <span style="font-weight: 800; font-size: 0.9rem; color: var(--neon-gold); text-transform: uppercase;">¡Fin del Encuentro!</span>
+        <div style="display: inline-flex; align-items: center; gap: 0.5rem; background: rgba(255, 183, 3, 0.15); border: 1px solid var(--neon-gold); padding: 0.45rem 1.4rem; border-radius: 9999px; margin-bottom: 1.25rem; box-shadow: 0 0 20px rgba(255, 183, 3, 0.25);">
+          <span style="font-size: 1.2rem;">🎉</span>
+          <span style="font-weight: 900; font-size: 0.95rem; color: #ffd700; text-transform: uppercase; letter-spacing: 0.08em; text-shadow: 0 2px 8px rgba(0,0,0,0.8);">¡Fin del Encuentro!</span>
         </div>
 
-        <h1 style="font-size: clamp(2.4rem, 6vw, 3.8rem); line-height: 1.1; margin-bottom: 0.5rem;" class="glow-text-gold">
-          🏆 ¡RETO COMPLETADO!
+        <h1 class="podium-title-3d">
+          <span class="podium-trophy-3d">🏆</span> ¡RETO COMPLETADO!
         </h1>
-        <p style="color: var(--text-secondary); font-size: 1.15rem; max-width: 600px; margin: 0 auto 2.5rem;">
+        <p class="podium-subtitle-3d">
           ${room.challenge.title}
         </p>
 
@@ -295,43 +295,60 @@ window.PodiumView = {
           </button>
         </div>
 
-        <!-- Tabla Completa de Calificaciones -->
-        <div class="glass-panel" style="padding: 1.75rem; text-align: left;">
-          <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem; margin-bottom: 1rem;">
-            <h2 style="font-size: 1.2rem; margin: 0; display: flex; align-items: center; gap: 0.5rem;">
-              <span>📋</span> Desglose Completo de Calificaciones
+        <!-- Tabla Completa de Calificaciones 3D -->
+        <div class="podium-table-card-3d">
+          <div class="podium-table-header-bar">
+            <h2 class="podium-table-title">
+              <span style="font-size: 1.35rem; filter: drop-shadow(0 2px 6px rgba(0,0,0,0.4));">📋</span> Desglose Completo de Calificaciones
             </h2>
-            <button class="btn btn-outline" style="padding: 0.4rem 0.85rem; font-size: 0.82rem; border-color: #10b981; color: #34d399; background: rgba(16, 185, 129, 0.12); font-weight: 800;" onclick="window.PodiumView.exportExcel(window.PodiumView.getReportRoom())">
+            <button class="btn btn-outline" style="padding: 0.55rem 1.15rem; font-size: 0.88rem; border-color: #10b981; color: #34d399; background: rgba(16, 185, 129, 0.18); font-weight: 800; border-radius: 12px; box-shadow: 0 4px 14px rgba(16, 185, 129, 0.25);" onclick="window.PodiumView.exportExcel(window.PodiumView.getReportRoom())">
               <span>📗</span> Descargar Excel (.xlsx)
             </button>
           </div>
 
           <div style="overflow-x: auto;">
-            <table style="width: 100%; border-collapse: collapse; font-size: 0.95rem;">
+            <table class="podium-table-3d">
               <thead>
-                <tr style="border-bottom: 1px solid var(--border-color); color: var(--text-secondary); text-align: left;">
-                  <th style="padding: 0.75rem 0.5rem;">#</th>
-                  <th style="padding: 0.75rem;">Jugador</th>
-                  <th style="padding: 0.75rem;">Puntos</th>
-                  <th style="padding: 0.75rem;">Aciertos</th>
-                  <th style="padding: 0.75rem;">Racha Máx</th>
-                  ${this.isRoomCreator() ? '<th style="padding: 0.75rem; color: #4da3ff;">Detalle de Errores</th>' : ''}
+                <tr>
+                  <th style="width: 70px; text-align: center;">#</th>
+                  <th>Jugador</th>
+                  <th style="text-align: center;">Puntos</th>
+                  <th style="text-align: center;">Aciertos</th>
+                  <th style="text-align: center;">Racha Máx</th>
+                  ${this.isRoomCreator() ? '<th style="text-align: right; color: #38bdf8;">Detalle de Errores</th>' : ''}
                 </tr>
               </thead>
               <tbody>
-                ${sorted.map((p, i) => `
-                  <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
-                    <td style="padding: 0.75rem 0.5rem; font-weight: 800;">${i + 1}</td>
-                    <td style="padding: 0.75rem; font-weight: 700;">
-                      <span style="font-size: 1.2rem; margin-right: 0.35rem;">${window.AvatarEngine ? window.AvatarEngine.renderPlayerIcon(p, 30) : p.avatar}</span>
-                      ${p.nickname}
-                    </td>
-                    <td style="padding: 0.75rem; font-weight: 800; color: var(--neon-cyan);">${(p.score || 0).toLocaleString()}</td>
-                    <td style="padding: 0.75rem; color: var(--text-secondary);">${p.correctCount || 0} / ${totalQuestions}</td>
-                    <td style="padding: 0.75rem; color: #ff9e00; font-weight: 700;">🔥 ${p.maxStreak || p.streak || 0}</td>
-                    ${this.isRoomCreator() ? `<td style="padding: 0.75rem;">${this.failuresLink(p, room)}</td>` : ''}
-                  </tr>
-                `).join('')}
+                ${sorted.map((p, i) => {
+                  const trClass = i === 0 ? 'podium-tr-gold' : i === 1 ? 'podium-tr-silver' : i === 2 ? 'podium-tr-bronze' : '';
+                  const badgeClass = i === 0 ? 'gold' : i === 1 ? 'silver' : i === 2 ? 'bronze' : 'normal';
+                  const badgeContent = i === 0 ? '1' : i === 1 ? '2' : i === 2 ? '3' : (i + 1);
+                  return `
+                    <tr class="${trClass}">
+                      <td style="text-align: center;">
+                        <span class="podium-pos-badge-3d ${badgeClass}">${badgeContent}</span>
+                      </td>
+                      <td style="font-weight: 800; font-size: 1.05rem;">
+                        <div style="display: flex; align-items: center; gap: 0.65rem;">
+                          <span style="display: inline-flex; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.4));">${window.AvatarEngine ? window.AvatarEngine.renderPlayerIcon(p, 36) : p.avatar}</span>
+                          <span style="color: #ffffff; text-shadow: 0 2px 6px rgba(0,0,0,0.8);">${p.nickname}</span>
+                        </div>
+                      </td>
+                      <td style="text-align: center; font-weight: 900; font-size: 1.15rem; color: #00f5d4; text-shadow: 0 0 12px rgba(0, 245, 212, 0.6);">
+                        ${(p.score || 0).toLocaleString()}
+                      </td>
+                      <td style="text-align: center; font-weight: 800; color: #cbd5e1;">
+                        <span style="background: rgba(255,255,255,0.08); padding: 0.3rem 0.75rem; border-radius: 999px; border: 1px solid rgba(255,255,255,0.12);">
+                          ${p.correctCount || 0} / ${totalQuestions}
+                        </span>
+                      </td>
+                      <td style="text-align: center; color: #ffb703; font-weight: 900; font-size: 1.05rem; text-shadow: 0 0 10px rgba(255, 183, 3, 0.5);">
+                        🔥 ${p.maxStreak || p.streak || 0}
+                      </td>
+                      ${this.isRoomCreator() ? `<td style="text-align: right;">${this.failuresLink(p, room)}</td>` : ''}
+                    </tr>
+                  `;
+                }).join('')}
               </tbody>
             </table>
           </div>

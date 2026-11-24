@@ -1,4 +1,4 @@
-/* ==========================================================================
+﻿/* ==========================================================================
    🔥 TE RETO - HOJA DE ESTILOS PRINCIPAL
    Identidad visual propia: Neón, Gamer, Educativo, Dinámico y Responsivo
    ========================================================================== */
@@ -3462,13 +3462,9 @@ body.light-theme #view-leaderboard .glass-panel {
   text-shadow: 0 2px 10px rgba(0, 0, 0, 0.9) !important;
 }
 
-#view-podium h1,
-#view-podium h2,
 #view-podium p,
 #view-podium td,
 #view-podium th,
-body.light-theme #view-podium h1,
-body.light-theme #view-podium h2,
 body.light-theme #view-podium p,
 body.light-theme #view-podium td,
 body.light-theme #view-podium th {
@@ -9125,3 +9121,322 @@ video {
   0%, 100% { transform: translateY(0) rotate(0deg); }
   50% { transform: translateY(-5px) rotate(4deg); }
 }
+
+/* ==========================================================================
+   ✨ TÍTULO Y TABLAS 3D ESPECTACULARES DE PODIO Y RETOS
+   ========================================================================== */
+
+/* Título de Podio 3D Dorado Ultrallamativo */
+.podium-title-3d,
+#view-podium .podium-title-3d,
+body.light-theme #view-podium .podium-title-3d {
+  font-family: var(--font-display, 'Gagalin', 'Montserrat', sans-serif) !important;
+  font-size: clamp(2.6rem, 7vw, 4.2rem) !important;
+  font-weight: 900 !important;
+  line-height: 1.15 !important;
+  margin: 0 auto 0.75rem !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.04em !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.75rem !important;
+  
+  /* Gradiente Dorado Metálico en Oro Pulido */
+  background: linear-gradient(180deg, #ffffff 0%, #fff3b0 22%, #ffd700 50%, #ff9800 75%, #b26a00 100%) !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  color: #ffd700 !important;
+  
+  /* Relieve 3D y resplandor volumétrico */
+  filter: drop-shadow(0 2px 0 #8a4f00) 
+          drop-shadow(0 5px 0 #5c3400) 
+          drop-shadow(0 9px 18px rgba(0, 0, 0, 0.85)) 
+          drop-shadow(0 0 28px rgba(255, 215, 0, 0.65)) !important;
+  animation: pulse-title-3d 3.5s ease-in-out infinite !important;
+}
+
+@keyframes pulse-title-3d {
+  0%, 100% {
+    filter: drop-shadow(0 2px 0 #8a4f00) drop-shadow(0 5px 0 #5c3400) drop-shadow(0 9px 18px rgba(0, 0, 0, 0.85)) drop-shadow(0 0 25px rgba(255, 215, 0, 0.55));
+    transform: translateY(0);
+  }
+  50% {
+    filter: drop-shadow(0 3px 0 #8a4f00) drop-shadow(0 7px 0 #5c3400) drop-shadow(0 14px 26px rgba(0, 0, 0, 0.95)) drop-shadow(0 0 45px rgba(255, 215, 0, 0.9));
+    transform: translateY(-3px);
+  }
+}
+
+/* Icono del trofeo con efecto 3D */
+.podium-trophy-3d {
+  font-size: 1.15em !important;
+  filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.5)) drop-shadow(0 0 20px rgba(255, 215, 0, 0.8)) !important;
+  display: inline-block !important;
+  transform-origin: center bottom !important;
+  animation: float-winner 3s ease-in-out infinite !important;
+}
+
+/* Subtítulo elegante del podio */
+.podium-subtitle-3d {
+  font-size: 1.25rem !important;
+  font-weight: 700 !important;
+  color: #e2e8f0 !important;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8) !important;
+  max-width: 650px !important;
+  margin: 0 auto 2.5rem !important;
+  letter-spacing: 0.02em !important;
+}
+
+/* Panel Contenedor de la Tabla 3D */
+.podium-table-card-3d,
+#view-podium .podium-table-card-3d,
+body.light-theme #view-podium .podium-table-card-3d {
+  background: linear-gradient(165deg, rgba(15, 23, 42, 0.92) 0%, rgba(9, 14, 28, 0.96) 60%, rgba(5, 9, 20, 0.98) 100%) !important;
+  border: 1.5px solid rgba(0, 245, 212, 0.35) !important;
+  border-radius: 24px !important;
+  padding: 2rem !important;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.85),
+              0 0 40px rgba(0, 245, 212, 0.15),
+              inset 0 1px 2px rgba(255, 255, 255, 0.2),
+              inset 0 -2px 6px rgba(0, 0, 0, 0.5) !important;
+  position: relative !important;
+  overflow: hidden !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+}
+
+.podium-table-card-3d::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, #00f5d4 25%, #ffb703 50%, #f72585 75%, transparent);
+  pointer-events: none;
+}
+
+/* Cabecera del título de la tabla */
+.podium-table-header-bar {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  flex-wrap: wrap !important;
+  gap: 1rem !important;
+  margin-bottom: 1.5rem !important;
+  padding-bottom: 1rem !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+.podium-table-title {
+  font-size: 1.35rem !important;
+  font-weight: 900 !important;
+  margin: 0 !important;
+  color: #ffffff !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.65rem !important;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8) !important;
+  letter-spacing: 0.02em !important;
+}
+
+/* Tabla 3D con Filas en Tarjeta Extruida */
+.podium-table-3d {
+  width: 100% !important;
+  border-collapse: separate !important;
+  border-spacing: 0 10px !important;
+  font-size: 0.98rem !important;
+}
+
+.podium-table-3d thead tr th {
+  padding: 0.75rem 1.15rem !important;
+  color: #94a3b8 !important;
+  font-weight: 800 !important;
+  font-size: 0.85rem !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.08em !important;
+  border: none !important;
+  background: transparent !important;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.9) !important;
+}
+
+.podium-table-3d tbody tr {
+  background: linear-gradient(90deg, rgba(30, 41, 59, 0.85) 0%, rgba(15, 23, 42, 0.9) 100%) !important;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.12) !important;
+  border-radius: 14px !important;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease !important;
+}
+
+.podium-table-3d tbody tr:hover {
+  transform: translateY(-3px) scale(1.008) !important;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.7), 0 0 22px rgba(0, 245, 212, 0.25), inset 0 1px 2px rgba(255, 255, 255, 0.25) !important;
+  background: linear-gradient(90deg, rgba(30, 58, 110, 0.9) 0%, rgba(15, 30, 65, 0.95) 100%) !important;
+}
+
+.podium-table-3d tbody td {
+  padding: 1.1rem 1.15rem !important;
+  border: none !important;
+  color: #ffffff !important;
+  vertical-align: middle !important;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.8) !important;
+}
+
+.podium-table-3d tbody td:first-child {
+  border-top-left-radius: 14px !important;
+  border-bottom-left-radius: 14px !important;
+}
+
+.podium-table-3d tbody td:last-child {
+  border-top-right-radius: 14px !important;
+  border-bottom-right-radius: 14px !important;
+}
+
+/* Destacado 3D para los 3 primeros lugares en la tabla */
+.podium-table-3d tbody tr.podium-tr-gold {
+  background: linear-gradient(90deg, rgba(255, 183, 3, 0.22) 0%, rgba(30, 41, 59, 0.92) 80%) !important;
+  border-left: 4px solid #ffd700 !important;
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.6), 0 0 24px rgba(255, 215, 0, 0.25), inset 0 1px 2px rgba(255, 255, 255, 0.25) !important;
+}
+
+.podium-table-3d tbody tr.podium-tr-silver {
+  background: linear-gradient(90deg, rgba(203, 213, 225, 0.18) 0%, rgba(30, 41, 59, 0.92) 80%) !important;
+  border-left: 4px solid #e2e8f0 !important;
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.6), 0 0 18px rgba(226, 232, 240, 0.2), inset 0 1px 2px rgba(255, 255, 255, 0.2) !important;
+}
+
+.podium-table-3d tbody tr.podium-tr-bronze {
+  background: linear-gradient(90deg, rgba(217, 119, 6, 0.18) 0%, rgba(30, 41, 59, 0.92) 80%) !important;
+  border-left: 4px solid #f59e0b !important;
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.6), 0 0 18px rgba(217, 119, 6, 0.2), inset 0 1px 2px rgba(255, 255, 255, 0.18) !important;
+}
+
+/* Medallas 3D para la columna de posición */
+.podium-pos-badge-3d {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 38px !important;
+  height: 38px !important;
+  border-radius: 50% !important;
+  font-weight: 900 !important;
+  font-size: 1.1rem !important;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5), inset 0 1px 2px rgba(255, 255, 255, 0.4) !important;
+}
+
+.podium-pos-badge-3d.gold {
+  background: linear-gradient(135deg, #ffe57f 0%, #ffc107 50%, #b26a00 100%) !important;
+  color: #5c3400 !important;
+  border: 1.5px solid #ffffff !important;
+  box-shadow: 0 0 16px rgba(255, 215, 0, 0.7), 0 4px 10px rgba(0, 0, 0, 0.5) !important;
+}
+
+.podium-pos-badge-3d.silver {
+  background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 50%, #64748b 100%) !important;
+  color: #0f172a !important;
+  border: 1.5px solid #ffffff !important;
+  box-shadow: 0 0 14px rgba(226, 232, 240, 0.6), 0 4px 10px rgba(0, 0, 0, 0.5) !important;
+}
+
+.podium-pos-badge-3d.bronze {
+  background: linear-gradient(135deg, #fde68a 0%, #d97706 50%, #78350f 100%) !important;
+  color: #ffffff !important;
+  border: 1.5px solid #ffffff !important;
+  box-shadow: 0 0 14px rgba(217, 119, 6, 0.6), 0 4px 10px rgba(0, 0, 0, 0.5) !important;
+}
+
+.podium-pos-badge-3d.normal {
+  background: rgba(255, 255, 255, 0.08) !important;
+  color: #94a3b8 !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+}
+
+/* ==========================================================================
+   📊 GRÁFICAS DE EXÁMENES: TEXTOS 100% VISIBLES, NÍTIDOS Y BRILLANTES
+   ========================================================================== */
+
+/* Asegurar que las etiquetas bajo las barras de respuesta sean siempre legibles */
+.full-stats-label,
+#view-game .full-stats-label,
+body.light-theme #view-game .full-stats-label,
+.full-stats-card .full-stats-label {
+  font-size: 0.92rem !important;
+  font-weight: 800 !important;
+  color: #ffffff !important;
+  background: rgba(15, 23, 42, 0.88) !important;
+  border: 1px solid rgba(255, 255, 255, 0.22) !important;
+  border-radius: 10px !important;
+  padding: 0.65rem 0.75rem !important;
+  margin-top: 0.85rem !important;
+  text-align: center !important;
+  line-height: 1.4 !important;
+  max-width: 100% !important;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.9) !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5) !important;
+  display: block !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+/* Tarjeta contenedora de estadísticas y gráficas */
+.full-stats-card,
+#view-game .full-stats-card,
+body.light-theme #view-game .full-stats-card {
+  background: linear-gradient(160deg, rgba(8, 20, 52, 0.94) 0%, rgba(4, 12, 36, 0.97) 100%) !important;
+  border: 2px solid rgba(0, 245, 212, 0.45) !important;
+  border-radius: 22px !important;
+  box-shadow: 0 0 45px rgba(0, 245, 212, 0.25), 0 25px 60px rgba(0, 0, 0, 0.85) !important;
+  color: #ffffff !important;
+}
+
+/* Títulos y párrafos dentro de la gráfica de estadísticas */
+.full-stats-card h1,
+.full-stats-card h2,
+.full-stats-card h3,
+.full-stats-card div,
+.full-stats-card p,
+.full-stats-card span {
+  color: #ffffff;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.85);
+}
+
+.full-stats-card p {
+  color: #cbd5e1 !important;
+}
+
+/* Tabla de estadísticas de preguntas 3D para el creador */
+.host-stats-table-wrapper,
+#view-game .host-stats-table-wrapper,
+body.light-theme #view-game .host-stats-table-wrapper {
+  margin-top: 2rem !important;
+  border-radius: 18px !important;
+  background: rgba(10, 16, 32, 0.9) !important;
+  border: 1.5px solid rgba(0, 245, 212, 0.3) !important;
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.65), inset 0 1px 2px rgba(255, 255, 255, 0.15) !important;
+  overflow: hidden !important;
+}
+
+.host-stats-table th,
+body.light-theme .host-stats-table th {
+  background: rgba(255, 255, 255, 0.08) !important;
+  color: #38bdf8 !important;
+  font-weight: 800 !important;
+  font-size: 0.88rem !important;
+  letter-spacing: 0.06em !important;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12) !important;
+}
+
+.host-stats-table td,
+body.light-theme .host-stats-table td {
+  color: #ffffff !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8) !important;
+}
+
+.host-stats-table tr.correct-row,
+body.light-theme .host-stats-table tr.correct-row {
+  background: rgba(0, 245, 212, 0.12) !important;
+  border-left: 3px solid #00f5d4 !important;
+}
+

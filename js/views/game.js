@@ -1,4 +1,4 @@
-/**
+﻿/**
  * 🔥 TE RETO - Experiencia de Juego en Vivo (Game Play)
  * Temporizador visual dinámico, combos de fuego (x2, x3, x5, x10),
  * bloqueo anti-trampas, gráficos de respuestas y animaciones de acierto.
@@ -3434,7 +3434,7 @@ window.GameView = {
                       <span>${count}</span>
                       ${isCorr ? `<span class="histogram-check" title="Respuesta Correcta">✓</span>` : ''}
                     </div>
-                    <div class="full-stats-label">
+                    <div class="full-stats-label" style="color: #ffffff !important; background: rgba(15, 23, 42, 0.9) !important; border: 1.5px solid rgba(255, 255, 255, 0.25) !important; text-shadow: 0 2px 6px rgba(0, 0, 0, 0.9) !important; box-shadow: 0 4px 14px rgba(0, 0, 0, 0.6) !important; opacity: 1 !important; visibility: visible !important;">
                       ${this.escapeHtml(opt.text)}
                     </div>
                   </div>
