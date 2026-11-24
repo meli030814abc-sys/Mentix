@@ -28,7 +28,7 @@
     "accessMode": "private",
     "displayOrder": 1,
     "createdAt": "2026-11-24T02:08:03.167Z",
-    "updatedAt": "2026-11-24T02:16:18.733Z",
+    "updatedAt": "2026-11-24T02:16:47.903Z",
     "landingConfig": {
       "publicName": "Diagnóstico y propuesta de optimización del gobierno de datos en GPC Pharma S.A.S. Empresa del Sector Farmaceutico.",
       "slug": "diagnostico-y-propuesta-de-optimizacion-del-gobierno-de-datos-en-gpc-pharma-s-a-s-empresa-del-sector-farmaceutico",
@@ -166,7 +166,40 @@
     "slides": [],
     "presentations": [],
     "externalLinks": [],
-    "projectRoadmap": [],
+    "projectRoadmap": [
+      {
+        "title": "Planeación",
+        "description": "Conformación del equipo y definición de objetivos.",
+        "status": "completed",
+        "progress": 100,
+        "emoji": "📋",
+        "icon": "clipboard"
+      },
+      {
+        "title": "Investigación",
+        "description": "Recopilación de datos e información relevante.",
+        "progress": 100,
+        "status": "completed",
+        "icon": "search",
+        "emoji": "🔍"
+      },
+      {
+        "title": "Desarrollo",
+        "description": "Construcción de la solución y prototipos.",
+        "progress": 0,
+        "status": "pending",
+        "icon": "code",
+        "emoji": "💻"
+      },
+      {
+        "title": "Publicación",
+        "description": "Despliegue en la Landing Page y comunicación.",
+        "progress": 0,
+        "status": "pending",
+        "icon": "rocket",
+        "emoji": "🚀"
+      }
+    ],
     "tags": [
       "Gobierno de Datos",
       "IA",
@@ -217,6 +250,40 @@
       "_clearedThumbImage": false,
       "useDefaultImage": true,
       "externalLinks": [],
+      "projectRoadmap": [
+        {
+          "title": "Planeación",
+          "description": "Conformación del equipo y definición de objetivos.",
+          "status": "completed",
+          "progress": 100,
+          "emoji": "📋",
+          "icon": "clipboard"
+        },
+        {
+          "title": "Investigación",
+          "description": "Recopilación de datos e información relevante.",
+          "progress": 100,
+          "status": "completed",
+          "icon": "search",
+          "emoji": "🔍"
+        },
+        {
+          "title": "Desarrollo",
+          "description": "Construcción de la solución y prototipos.",
+          "progress": 0,
+          "status": "pending",
+          "icon": "code",
+          "emoji": "💻"
+        },
+        {
+          "title": "Publicación",
+          "description": "Despliegue en la Landing Page y comunicación.",
+          "progress": 0,
+          "status": "pending",
+          "icon": "rocket",
+          "emoji": "🚀"
+        }
+      ],
       "landingConfig": {
         "publicName": "Diagnóstico y propuesta de optimización del gobierno de datos en GPC Pharma S.A.S. Empresa del Sector Farmaceutico.",
         "slug": "diagnostico-y-propuesta-de-optimizacion-del-gobierno-de-datos-en-gpc-pharma-s-a-s-empresa-del-sector-farmaceutico",
@@ -263,7 +330,7 @@
         "authorsRole": "Estudiante / Creador"
       },
       "createdAt": "2026-11-24T02:08:03.167Z",
-      "updatedAt": "2026-11-24T02:16:21.442Z",
+      "updatedAt": "2026-11-24T02:16:50.878Z",
       "progress": 65,
       "calculatedProgress": 65
     },
