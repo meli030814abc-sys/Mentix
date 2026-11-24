@@ -28,7 +28,7 @@
     "accessMode": "private",
     "displayOrder": 1,
     "createdAt": "2026-11-24T02:08:03.167Z",
-    "updatedAt": "2026-11-24T02:22:24.476Z",
+    "updatedAt": "2026-11-24T02:22:32.172Z",
     "landingConfig": {
       "publicName": "Diagnóstico y propuesta de optimización del gobierno de datos en GPC Pharma S.A.S. Empresa del Sector Farmaceutico.",
       "slug": "diagnostico-y-propuesta-de-optimizacion-del-gobierno-de-datos-en-gpc-pharma-s-a-s-empresa-del-sector-farmaceutico",
@@ -130,7 +130,7 @@
     "preparationStatus": "piloto",
     "submittedForApproval": false,
     "startDate": "2026-08-03",
-    "endDate": "",
+    "endDate": "2026-11-24",
     "currentStep": 8,
     "completedSteps": [
       1,
@@ -243,7 +243,7 @@
       "teamLead": "Laura Sofía Hernández Chaparro",
       "preparationStatus": "piloto",
       "startDate": "2026-08-03",
-      "endDate": "",
+      "endDate": "2026-11-24",
       "valueProp": {
         "problemSolved": "GPC Pharma S.A.S. opera con una gestión de la información distribuida por áreas, apoyada en varias plataformas. Esto representa la oportunidad de formalizar roles de gobierno de datos, contar con un diccionario de metadatos y unificar criterios (por ejemplo, la identificación de clientes entre plataformas), de modo que la trazabilidad y la confianza en los datos acompañen el crecimiento de la operación.",
         "howItWorks": "Parte de un diagnóstico de madurez bajo DAMA-DMBOK, identifica brechas y define un modelo de roles, políticas y comités basado en los cargos existentes. Luego se configura en GovData Nexus (catálogo de activos, reglas de calidad, reglas de SLA y riesgos) y se implementa mediante un plan por fases.",
@@ -366,7 +366,7 @@
         "collaborators": ""
       },
       "createdAt": "2026-11-24T02:08:03.167Z",
-      "updatedAt": "2026-11-24T02:22:27.453Z",
+      "updatedAt": "2026-11-24T02:22:35.237Z",
       "progress": 80,
       "calculatedProgress": 80
     },
