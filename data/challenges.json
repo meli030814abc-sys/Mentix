@@ -28,7 +28,7 @@
     "accessMode": "private",
     "displayOrder": 1,
     "createdAt": "2026-11-24T02:08:03.167Z",
-    "updatedAt": "2026-11-24T02:34:48.221Z",
+    "updatedAt": "2026-11-24T02:38:10.234Z",
     "landingConfig": {
       "publicName": "Diagnóstico y propuesta de optimización del gobierno de datos en GPC Pharma S.A.S. Empresa del Sector Farmaceutico.",
       "slug": "diagnostico-y-propuesta-de-optimizacion-del-gobierno-de-datos-en-gpc-pharma-s-a-s-empresa-del-sector-farmaceutico",
@@ -213,7 +213,26 @@
         }
       ]
     },
-    "resources": [],
+    "resources": [
+      {
+        "id": "res_1795487893383_dulj",
+        "name": "Documentacion Gobierno de Datos GPC Pharma",
+        "fileName": "Documentacion_Gobierno_de_Datos_GPC_Pharma.pdf",
+        "description": "Recurso oficial en formato PDF (5.35 MB).",
+        "type": "pdf",
+        "url": "blob:https://mentixs.vercel.app/2230b115-1e84-4030-85eb-f0c34bac1d8f",
+        "format": "PDF",
+        "sizeBytes": 5606477,
+        "sizeLabel": "5.35 MB",
+        "category": "Documentación",
+        "visibility": "public",
+        "order": 1,
+        "status": "verified",
+        "extractedText": "",
+        "uploadedAt": "2026-11-24T02:38:13.383Z",
+        "thumbnailUrl": ""
+      }
+    ],
     "visualAssets": [],
     "slides": [
       {
@@ -1157,7 +1176,7 @@
         "collaborators": ""
       },
       "createdAt": "2026-11-24T02:08:03.167Z",
-      "updatedAt": "2026-11-24T02:34:51.313Z",
+      "updatedAt": "2026-11-24T02:38:13.383Z",
       "progress": 95,
       "calculatedProgress": 95
     },
