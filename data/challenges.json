@@ -2568,7 +2568,7 @@
     "isGovDataProject": true,
     "projectSubtype": "Gobierno de Datos e IA",
     "difficulty": "Medio",
-    "banner": "https://static.vecteezy.com/system/resources/thumbnails/060/843/811/small/close-up-of-raindrops-on-leaves-hd-background-luxury-hd-wallpaper-image-trendy-background-illustration-free-photo.jpg",
+    "banner": "https://www.google.com/imgres?q=imagen&imgurl=https%3A%2F%2Fstatic.vecteezy.com%2Fsystem%2Fresources%2Fthumbnails%2F060%2F843%2F811%2Fsmall%2Fclose-up-of-raindrops-on-leaves-hd-background-luxury-hd-wallpaper-image-trendy-background-illustration-free-photo.jpg&imgrefurl=https%3A%2F%2Fes.vecteezy.com%2Ffotos-gratis%2Fimagen&docid=FjgWdyaU7OHLOM&tbnid=XfSoVrwZgQjJsM&vet=12ahUKEwiv0c2nl52YAxUomYQIHTZzLVUQnPAOegQINxAA..i&w=625&h=350&hcb=2&ved=2ahUKEwiv0c2nl52YAxUomYQIHTZzLVUQnPAOegQINxAA",
     "mainImage": "https://static.vecteezy.com/system/resources/thumbnails/060/843/811/small/close-up-of-raindrops-on-leaves-hd-background-luxury-hd-wallpaper-image-trendy-background-illustration-free-photo.jpg",
     "thumbnailImage": "https://static.vecteezy.com/system/resources/thumbnails/060/843/811/small/close-up-of-raindrops-on-leaves-hd-background-luxury-hd-wallpaper-image-trendy-background-illustration-free-photo.jpg",
     "useDefaultImage": true,
@@ -2628,7 +2628,7 @@
       "keyFeatures": [
         "kglghljj"
       ],
-      "resultsAndBenefits": "hfhkjl",
+      "resultsAndBenefits": "",
       "prerequisites": "",
       "visitorAction": "Unirse / Colaborar",
       "commercialPitch": "12123322",
@@ -3033,7 +3033,7 @@
       "mainObjective": "fjhl",
       "benefits": "hfhkjl",
       "teamLead": "Melisa",
-      "preparationStatus": "idea",
+      "preparationStatus": "completado",
       "startDate": "2026-11-23",
       "endDate": "2026-11-11",
       "valueProp": {
@@ -3044,7 +3044,7 @@
         "keyFeatures": [
           "kglghljj"
         ],
-        "resultsAndBenefits": "hfhkjl",
+        "resultsAndBenefits": "",
         "prerequisites": "",
         "visitorAction": "Unirse / Colaborar",
         "commercialPitch": "12123322",
@@ -3060,10 +3060,8 @@
         "isPublic": true,
         "verified": true
       },
-      "mainImage": "https://static.vecteezy.com/system/resources/thumbnails/060/843/811/small/close-up-of-raindrops-on-leaves-hd-background-luxury-hd-wallpaper-image-trendy-background-illustration-free-photo.jpg",
-      "thumbnailImage": "https://static.vecteezy.com/system/resources/thumbnails/060/843/811/small/close-up-of-raindrops-on-leaves-hd-background-luxury-hd-wallpaper-image-trendy-background-illustration-free-photo.jpg",
-      "_clearedMainImage": false,
-      "_clearedThumbImage": false,
+      "mainImage": "https://www.google.com/imgres?q=imagen&imgurl=https%3A%2F%2Fstatic.vecteezy.com%2Fsystem%2Fresources%2Fthumbnails%2F060%2F843%2F811%2Fsmall%2Fclose-up-of-raindrops-on-leaves-hd-background-luxury-hd-wallpaper-image-trendy-background-illustration-free-photo.jpg&imgrefurl=https%3A%2F%2Fes.vecteezy.com%2Ffotos-gratis%2Fimagen&docid=FjgWdyaU7OHLOM&tbnid=XfSoVrwZgQjJsM&vet=12ahUKEwiv0c2nl52YAxUomYQIHTZzLVUQnPAOegQINxAA..i&w=625&h=350&hcb=2&ved=2ahUKEwiv0c2nl52YAxUomYQIHTZzLVUQnPAOegQINxAA",
+      "thumbnailImage": "https://www.google.com/imgres?q=imagen&imgurl=https%3A%2F%2Fstatic.vecteezy.com%2Fsystem%2Fresources%2Fthumbnails%2F060%2F843%2F811%2Fsmall%2Fclose-up-of-raindrops-on-leaves-hd-background-luxury-hd-wallpaper-image-trendy-background-illustration-free-photo.jpg&imgrefurl=https%3A%2F%2Fes.vecteezy.com%2Ffotos-gratis%2Fimagen&docid=FjgWdyaU7OHLOM&tbnid=XfSoVrwZgQjJsM&vet=12ahUKEwiv0c2nl52YAxUomYQIHTZzLVUQnPAOegQINxAA..i&w=625&h=350&hcb=2&ved=2ahUKEwiv0c2nl52YAxUomYQIHTZzLVUQnPAOegQINxAA",
       "useDefaultImage": true,
       "externalLinks": [
         {
@@ -3073,8 +3071,7 @@
           "description": "",
           "category": "Página web oficial",
           "visibility": "public",
-          "verified": false,
-          "thumbnailUrl": ""
+          "verified": false
         }
       ],
       "projectRoadmap": [
@@ -3172,15 +3169,17 @@
         "collaborators": "hdfud"
       },
       "createdAt": "2026-11-23T03:09:16.957Z",
-      "updatedAt": "2026-11-23T21:13:31.234Z",
-      "submittedForApproval": true,
+      "updatedAt": "2026-11-23T04:27:18.568Z",
       "progress": 100,
       "calculatedProgress": 100,
+      "submittedForApproval": true,
       "approvalStatus": "pending",
       "status": "completed",
-      "completedAt": "2026-11-23T21:13:31.234Z",
+      "completedAt": "2026-11-23T04:12:17.867Z",
       "isPublic": false,
-      "rejectionReason": "Desautorizado por el Administrador."
+      "rejectionReason": "Desautorizado por el Administrador.",
+      "authorizedAt": "2026-11-23T04:27:18.568Z",
+      "authorizedBy": "Melisa"
     },
     "author": "Melisa",
     "authorId": "user_1792184134006",
@@ -3192,11 +3191,11 @@
     "authorAvatar": "🐯",
     "authorRole": "Líder del Proyecto",
     "createdAt": "2026-11-23T03:09:16.957Z",
-    "updatedAt": "2026-11-24T16:56:05.214Z",
-    "image": "https://static.vecteezy.com/system/resources/thumbnails/060/843/811/small/close-up-of-raindrops-on-leaves-hd-background-luxury-hd-wallpaper-image-trendy-background-illustration-free-photo.jpg",
+    "updatedAt": "2026-11-24T17:04:23.854Z",
+    "image": "https://www.google.com/imgres?q=imagen&imgurl=https%3A%2F%2Fstatic.vecteezy.com%2Fsystem%2Fresources%2Fthumbnails%2F060%2F843%2F811%2Fsmall%2Fclose-up-of-raindrops-on-leaves-hd-background-luxury-hd-wallpaper-image-trendy-background-illustration-free-photo.jpg&imgrefurl=https%3A%2F%2Fes.vecteezy.com%2Ffotos-gratis%2Fimagen&docid=FjgWdyaU7OHLOM&tbnid=XfSoVrwZgQjJsM&vet=12ahUKEwiv0c2nl52YAxUomYQIHTZzLVUQnPAOegQINxAA..i&w=625&h=350&hcb=2&ved=2ahUKEwiv0c2nl52YAxUomYQIHTZzLVUQnPAOegQINxAA",
     "rejectionReason": "Desautorizado por el Administrador.",
-    "tag": "✔ Completado",
-    "tagClass": "badge-completed",
+    "tag": "⏳ Pendiente de Autorización",
+    "tagClass": "badge-review",
     "hub": {
       "joinRequests": [],
       "members": [
@@ -3210,7 +3209,7 @@
       "views": [],
       "ratings": [],
       "projectId": "govdata_code_mentilona_804263",
-      "updatedAt": 1795467685309
+      "updatedAt": 1795405784959
     },
     "_globalHeroBanner": "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=1600&q=80",
     "joinRequests": [],
@@ -3260,9 +3259,9 @@
     "stage": "completed",
     "visibility": "private",
     "accessMode": "private",
-    "rejectedAt": "2026-11-24T16:46:16.037Z",
-    "heroBanner": "https://static.vecteezy.com/system/resources/thumbnails/060/843/811/small/close-up-of-raindrops-on-leaves-hd-background-luxury-hd-wallpaper-image-trendy-background-illustration-free-photo.jpg",
-    "coverImage": "https://static.vecteezy.com/system/resources/thumbnails/060/843/811/small/close-up-of-raindrops-on-leaves-hd-background-luxury-hd-wallpaper-image-trendy-background-illustration-free-photo.jpg",
+    "rejectedAt": "2026-11-24T16:57:59.131Z",
+    "heroBanner": "https://www.google.com/imgres?q=imagen&imgurl=https%3A%2F%2Fstatic.vecteezy.com%2Fsystem%2Fresources%2Fthumbnails%2F060%2F843%2F811%2Fsmall%2Fclose-up-of-raindrops-on-leaves-hd-background-luxury-hd-wallpaper-image-trendy-background-illustration-free-photo.jpg&imgrefurl=https%3A%2F%2Fes.vecteezy.com%2Ffotos-gratis%2Fimagen&docid=FjgWdyaU7OHLOM&tbnid=XfSoVrwZgQjJsM&vet=12ahUKEwiv0c2nl52YAxUomYQIHTZzLVUQnPAOegQINxAA..i&w=625&h=350&hcb=2&ved=2ahUKEwiv0c2nl52YAxUomYQIHTZzLVUQnPAOegQINxAA",
+    "coverImage": "https://www.google.com/imgres?q=imagen&imgurl=https%3A%2F%2Fstatic.vecteezy.com%2Fsystem%2Fresources%2Fthumbnails%2F060%2F843%2F811%2Fsmall%2Fclose-up-of-raindrops-on-leaves-hd-background-luxury-hd-wallpaper-image-trendy-background-illustration-free-photo.jpg&imgrefurl=https%3A%2F%2Fes.vecteezy.com%2Ffotos-gratis%2Fimagen&docid=FjgWdyaU7OHLOM&tbnid=XfSoVrwZgQjJsM&vet=12ahUKEwiv0c2nl52YAxUomYQIHTZzLVUQnPAOegQINxAA..i&w=625&h=350&hcb=2&ved=2ahUKEwiv0c2nl52YAxUomYQIHTZzLVUQnPAOegQINxAA",
     "_clearedMainImage": false,
     "_clearedThumbImage": false,
     "presentations": [
