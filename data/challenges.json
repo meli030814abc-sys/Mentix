@@ -1,5 +1,69 @@
 [
   {
+    "id": "reto_1795552054552",
+    "title": "j",
+    "description": "",
+    "category": "admin",
+    "difficulty": "Medio",
+    "banner": "https://images.unsplash.com/photo-1518770660439-4636190af475?w=800",
+    "timePerQuestion": 20,
+    "pointsStandard": 1000,
+    "isPublic": true,
+    "accessMode": "public",
+    "accessCode": "",
+    "expiresAt": null,
+    "temporalDuration": "24h",
+    "questions": [
+      {
+        "id": "q_1795552054552_rz4e",
+        "text": "hhh",
+        "type": "single",
+        "media": "",
+        "mediaType": "none",
+        "timeLimit": 0,
+        "points": 1000,
+        "options": [
+          {
+            "text": "hhh",
+            "shape": "✦",
+            "color": "opt-1"
+          },
+          {
+            "text": "hh",
+            "shape": "⬢",
+            "color": "opt-2"
+          },
+          {
+            "text": "hh",
+            "shape": "⚡",
+            "color": "opt-3"
+          },
+          {
+            "text": "hh",
+            "shape": "🛡️",
+            "color": "opt-4"
+          }
+        ],
+        "correctAnswer": 0
+      }
+    ],
+    "entityName": "",
+    "categoryName": "Administración Pública",
+    "author": "Melisa",
+    "authorAvatar": "🐯",
+    "authorId": "user_1792184134006",
+    "authorEmail": "gatitaxd6f79@gmail.com",
+    "authorRole": "admin",
+    "plays": 0,
+    "projectType": "quiz",
+    "updatedAt": "2026-11-24T20:27:47.135Z",
+    "createdAt": "2026-11-24T20:27:48.144Z",
+    "heroBanner": "",
+    "mainImage": "",
+    "thumbnailImage": "",
+    "image": ""
+  },
+  {
     "id": "proj_pres_1791658288964",
     "title": "Personajes de Disney",
     "subtitle": "Disney app",
