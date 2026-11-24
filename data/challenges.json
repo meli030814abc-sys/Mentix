@@ -28,7 +28,7 @@
     "accessMode": "private",
     "displayOrder": 1,
     "createdAt": "2026-11-24T02:08:03.167Z",
-    "updatedAt": "2026-11-24T02:20:47.926Z",
+    "updatedAt": "2026-11-24T02:20:54.189Z",
     "landingConfig": {
       "publicName": "Diagnóstico y propuesta de optimización del gobierno de datos en GPC Pharma S.A.S. Empresa del Sector Farmaceutico.",
       "slug": "diagnostico-y-propuesta-de-optimizacion-del-gobierno-de-datos-en-gpc-pharma-s-a-s-empresa-del-sector-farmaceutico",
@@ -124,7 +124,7 @@
     "useDefaultImage": true,
     "targetAudience": "Directivos y responsables de datos, tecnología y cumplimiento en organizaciones del sector farmacéutico; comunidad académica en gobierno de datos.",
     "problemStatement": "GPC Pharma S.A.S. opera con una gestión de la información distribuida por áreas, apoyada en varias plataformas. Esto representa la oportunidad de formalizar roles de gobierno de datos, contar con un diccionario de metadatos y unificar criterios (por ejemplo, la identificación de clientes entre plataformas), de modo que la trazabilidad y la confianza en los datos acompañen el crecimiento de la operación.",
-    "mainObjective": "",
+    "mainObjective": "Diseñar un modelo de gobierno de datos para GPC Pharma S.A.S., con roles, políticas, comités y un plan de implementación por fases, basado en los cargos existentes y probado en GovData Nexus con datos sintéticos.",
     "benefits": "",
     "teamLead": "Laura Sofía Hernández Chaparro",
     "preparationStatus": "en_desarrollo",
@@ -220,7 +220,7 @@
       "projectSubtype": "Gobierno de Datos e IA",
       "targetAudience": "Directivos y responsables de datos, tecnología y cumplimiento en organizaciones del sector farmacéutico; comunidad académica en gobierno de datos.",
       "problemStatement": "GPC Pharma S.A.S. opera con una gestión de la información distribuida por áreas, apoyada en varias plataformas. Esto representa la oportunidad de formalizar roles de gobierno de datos, contar con un diccionario de metadatos y unificar criterios (por ejemplo, la identificación de clientes entre plataformas), de modo que la trazabilidad y la confianza en los datos acompañen el crecimiento de la operación.",
-      "mainObjective": "",
+      "mainObjective": "Diseñar un modelo de gobierno de datos para GPC Pharma S.A.S., con roles, políticas, comités y un plan de implementación por fases, basado en los cargos existentes y probado en GovData Nexus con datos sintéticos.",
       "benefits": "",
       "teamLead": "Laura Sofía Hernández Chaparro",
       "preparationStatus": "en_desarrollo",
@@ -338,7 +338,7 @@
         "collaborators": ""
       },
       "createdAt": "2026-11-24T02:08:03.167Z",
-      "updatedAt": "2026-11-24T02:20:50.900Z",
+      "updatedAt": "2026-11-24T02:20:57.138Z",
       "progress": 80,
       "calculatedProgress": 80
     },
