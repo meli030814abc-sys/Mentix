@@ -370,28 +370,44 @@ window.AdminView = {
         <aside class="mentix-admin-sidebar" id="admin-sidebar">
           <div class="admin-sidebar-header">
             <div class="admin-brand-wrap" onclick="window.AdminView.switchTab('dashboard')">
-              <div class="admin-brain-logo">
-                <svg viewBox="0 0 100 100" class="admin-brain-svg" width="38" height="38">
+              <div class="admin-brain-logo" aria-label="Logo Mentix">
+                <svg viewBox="0 0 100 100" class="admin-brain-svg" width="40" height="40" aria-hidden="true">
                   <defs>
-                    <linearGradient id="brainGradPink" x1="0%" y1="0%" x2="100%" y2="100%">
-                      <stop offset="0%" stop-color="#ff007f" />
-                      <stop offset="100%" stop-color="#d946ef" />
+                    <linearGradient id="mxBrainL" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stop-color="#ffffff" />
+                      <stop offset="45%" stop-color="#ffd1ec" />
+                      <stop offset="100%" stop-color="#ff5cb8" />
                     </linearGradient>
-                    <linearGradient id="brainGradCyan" x1="0%" y1="0%" x2="100%" y2="100%">
-                      <stop offset="0%" stop-color="#00f5d4" />
-                      <stop offset="100%" stop-color="#0066ff" />
+                    <linearGradient id="mxBrainR" x1="100%" y1="0%" x2="0%" y2="100%">
+                      <stop offset="0%" stop-color="#ffffff" />
+                      <stop offset="45%" stop-color="#c8f7ff" />
+                      <stop offset="100%" stop-color="#38d6ff" />
                     </linearGradient>
-                    <filter id="brainGlow" x="-20%" y="-20%" width="140%" height="140%">
-                      <feGaussianBlur stdDeviation="2.5" result="blur" />
-                      <feComposite in="SourceGraphic" in2="blur" operator="over" />
-                    </filter>
                   </defs>
-                  <!-- Hemisferio Izquierdo Magenta/Rosa -->
-                  <path d="M 47,15 C 38,15 28,18 22,25 C 16,32 15,40 18,48 C 14,53 14,61 17,68 C 20,75 27,82 36,84 C 42,85 46,81 47,78 Z" fill="url(#brainGradPink)" filter="url(#brainGlow)"/>
-                  <path d="M 28,32 C 34,30 40,36 44,38 M 24,52 C 30,50 36,54 44,53 M 28,70 C 35,68 40,73 45,71" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" fill="none" opacity="0.85"/>
-                  <!-- Hemisferio Derecho Cyan/Azul Eléctrico -->
-                  <path d="M 53,15 C 62,15 72,18 78,25 C 84,32 85,40 82,48 C 86,53 86,61 83,68 C 80,75 73,82 64,84 C 58,85 54,81 53,78 Z" fill="url(#brainGradCyan)" filter="url(#brainGlow)"/>
-                  <path d="M 72,32 C 66,30 60,36 56,38 M 76,52 C 70,50 64,54 56,53 M 72,70 C 65,68 60,73 55,71" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" fill="none" opacity="0.85"/>
+                  <!-- Hemisferio izquierdo -->
+                  <path d="M 48,17 C 38,14 26,17 20,26 C 14,34 14,42 18,49 C 13,55 14,64 19,70 C 24,77 32,82 41,82 C 45,82 48,80 48,77 Z" fill="url(#mxBrainL)"/>
+                  <!-- Hemisferio derecho -->
+                  <path d="M 52,17 C 62,14 74,17 80,26 C 86,34 86,42 82,49 C 87,55 86,64 81,70 C 76,77 68,82 59,82 C 55,82 52,80 52,77 Z" fill="url(#mxBrainR)"/>
+                  <!-- Circunvoluciones -->
+                  <g stroke="#3b3fc4" stroke-width="2.6" stroke-linecap="round" fill="none" opacity="0.55">
+                    <path d="M 27,33 C 33,30 39,35 44,36"/>
+                    <path d="M 23,50 C 30,47 37,52 44,50"/>
+                    <path d="M 28,67 C 34,64 39,69 44,67"/>
+                    <path d="M 73,33 C 67,30 61,35 56,36"/>
+                    <path d="M 77,50 C 70,47 63,52 56,50"/>
+                    <path d="M 72,67 C 66,64 61,69 56,67"/>
+                  </g>
+                  <!-- Conexiones neuronales -->
+                  <g fill="#ffffff">
+                    <circle cx="44" cy="36" r="2.6"/>
+                    <circle cx="44" cy="50" r="2.6"/>
+                    <circle cx="44" cy="67" r="2.6"/>
+                    <circle cx="56" cy="36" r="2.6"/>
+                    <circle cx="56" cy="50" r="2.6"/>
+                    <circle cx="56" cy="67" r="2.6"/>
+                  </g>
+                  <!-- Destello -->
+                  <path d="M 84,10 L 86.2,16.2 L 92.5,18.4 L 86.2,20.6 L 84,26.8 L 81.8,20.6 L 75.5,18.4 L 81.8,16.2 Z" fill="#fde047"/>
                 </svg>
               </div>
               <div class="admin-brand-text sidebar-hideable">

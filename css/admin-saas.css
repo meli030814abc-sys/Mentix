@@ -7216,3 +7216,112 @@
   .cfg3d-colors-grid,
   .cfg3d-fonts-grid { grid-template-columns: 1fr; }
 }
+
+
+/* ==========================================================================
+   LOGO MENTIX DEL ADMIN - EMBLEMA 3D PULIDO (V181)
+   ========================================================================== */
+.admin-brand-wrap {
+  gap: 0.8rem;
+}
+
+.admin-brain-logo {
+  position: relative;
+  width: 54px;
+  height: 54px;
+  border-radius: 17px;
+  background:
+    radial-gradient(circle at 28% 22%, rgba(255, 255, 255, 0.35) 0%, rgba(255, 255, 255, 0) 55%),
+    linear-gradient(145deg, #7c3aed 0%, #4f46e5 45%, #0ea5e9 100%);
+  border: 2px solid rgba(255, 255, 255, 0.55);
+  box-shadow:
+    0 5px 0 #312e81,
+    0 12px 22px rgba(79, 70, 229, 0.38),
+    inset 0 2px 3px rgba(255, 255, 255, 0.55),
+    inset 0 -3px 6px rgba(30, 27, 75, 0.35);
+  filter: none;
+  overflow: hidden;
+}
+
+.admin-brain-logo::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 48%;
+  border-radius: 15px 15px 60% 60% / 15px 15px 28% 28%;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.42) 0%, rgba(255, 255, 255, 0.04) 100%);
+  pointer-events: none;
+}
+
+.admin-brain-logo .admin-brain-svg {
+  position: relative;
+  z-index: 1;
+  width: 40px;
+  height: 40px;
+  filter: drop-shadow(0 2px 3px rgba(30, 27, 75, 0.45));
+}
+
+.admin-brand-wrap:hover .admin-brain-logo {
+  transform: translateY(-2px) scale(1.06) rotate(-3deg);
+  box-shadow:
+    0 7px 0 #312e81,
+    0 16px 28px rgba(79, 70, 229, 0.5),
+    inset 0 2px 3px rgba(255, 255, 255, 0.6),
+    inset 0 -3px 6px rgba(30, 27, 75, 0.35);
+}
+
+.admin-brand-title {
+  font-size: 1.55rem;
+  font-weight: 900;
+  letter-spacing: 0.05em;
+  text-shadow: 0 2px 0 rgba(15, 23, 42, 0.35);
+}
+
+.admin-brand-title span {
+  background: linear-gradient(135deg, #22d3ee 0%, #38bdf8 50%, #818cf8 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: #22d3ee;
+  text-shadow: none;
+  filter: drop-shadow(0 0 8px rgba(34, 211, 238, 0.45));
+}
+
+.admin-brand-slogan {
+  display: inline-block;
+  align-self: flex-start;
+  margin-top: 0.3rem;
+  padding: 0.14rem 0.55rem;
+  border-radius: 999px;
+  font-size: 0.6rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  color: #c7d2fe;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  white-space: nowrap;
+}
+
+.mentix-admin-layout.theme-light .admin-brand-title {
+  color: #0f172a !important;
+  text-shadow: 0 2px 0 rgba(148, 163, 184, 0.35) !important;
+}
+.mentix-admin-layout.theme-light .admin-brand-title span {
+  background: linear-gradient(135deg, #0891b2 0%, #2563eb 60%, #6d28d9 100%) !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  color: #0284c7 !important;
+  filter: none !important;
+}
+.mentix-admin-layout.theme-light .admin-brand-slogan {
+  color: #4338ca !important;
+  background: #eef2ff !important;
+  border: 1px solid #c7d2fe !important;
+}
+
+.mentix-admin-layout.sidebar-collapsed .admin-brain-logo {
+  margin: 0 auto;
+}
