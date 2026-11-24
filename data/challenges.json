@@ -15,9 +15,9 @@
     "difficulty": "Medio",
     "timePerQuestion": 25,
     "plays": 0,
-    "banner": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fdraft%2F1795486058971_9ioo_asset.jpg",
-    "mainImage": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fdraft%2F1795486058971_9ioo_asset.jpg",
-    "thumbnailImage": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fdraft%2F1795486058971_9ioo_asset.jpg",
+    "banner": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795489349022_yhsq_asset.jpg",
+    "mainImage": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795489349022_yhsq_asset.jpg",
+    "thumbnailImage": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795489349022_yhsq_asset.jpg",
     "shortDescription": "Propuesta de gobierno de datos para GPC Pharma S.A.S., empresa farmacéutica que abastece a clínicas y hospitales, a partir de un diagnóstico de su situación actual. Define roles, políticas y comités basados en los cargos existentes, con un plan de implementación por fases, probado en GovData Nexus con datos sintéticos.",
     "description": "Propuesta de gobierno de datos para GPC Pharma S.A.S., empresa farmacéutica que abastece a clínicas y hospitales, a partir de un diagnóstico de su situación actual. Define roles, políticas y comités basados en los cargos existentes, con un plan de implementación por fases, probado en GovData Nexus con datos sintéticos.",
     "fullDescription": "Se realizó un diagnóstico de gobierno de datos en GPC Pharma S.A.S. mediante una entrevista con el área de tecnología y la revisión de fuentes públicas. Bajo el marco DAMA-DMBOK se obtuvo una madurez inicial de 48 %, explicada principalmente por las exigencias normativas externas. Con base en este resultado se diseñó un modelo de roles, políticas y comités, con una primera fase de 13 semanas, configurado en GovData Nexus. La inteligencia artificial se utilizó como apoyo y sus resultados fueron validados por la autora. Se concluye que el gobierno de datos puede iniciar con bajo costo y fortalece la trazabilidad y la confianza en la información. Este trabajo, desarrollado por mí, Laura Sofía Hernández Chaparro, en el marco del Politécnico Grancolombiano, utilizó datos sintéticos y no ha sido aprobado por GPC Pharma S.A.S. Constituye una base para una futura implementación, sujeta a la revisión y validación de la organización y de especialistas en gobierno de datos. Las cifras salariales provienen de la guía salarial 2026 de Michael Page.",
@@ -28,7 +28,7 @@
     "accessMode": "private",
     "displayOrder": 1,
     "createdAt": "2026-11-24T02:08:03.167Z",
-    "updatedAt": "2026-11-24T03:02:04.719Z",
+    "updatedAt": "2026-11-24T03:02:30.886Z",
     "landingConfig": {
       "publicName": "Diagnóstico y propuesta de optimización del gobierno de datos en GPC Pharma S.A.S. Empresa del Sector Farmaceutico.",
       "slug": "diagnostico-y-propuesta-de-optimizacion-del-gobierno-de-datos-en-gpc-pharma-s-a-s-empresa-del-sector-farmaceutico",
@@ -59,7 +59,7 @@
       "textColor": "#cbd5e1",
       "accentColor": "#00f5d4",
       "bannerStyle": "gradient-cosmos",
-      "bannerUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fdraft%2F1795486058971_9ioo_asset.jpg"
+      "bannerUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795489349022_yhsq_asset.jpg"
     },
     "videoUrl": "https://youtu.be/C-OhiJbay80",
     "videoConfig": {
@@ -73,8 +73,8 @@
       "verified": true
     },
     "duration": "5:00 min",
-    "image": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fdraft%2F1795486058971_9ioo_asset.jpg",
-    "heroBanner": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fdraft%2F1795486058971_9ioo_asset.jpg",
+    "image": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795489349022_yhsq_asset.jpg",
+    "heroBanner": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795489349022_yhsq_asset.jpg",
     "customProjectCodes": [
       {
         "code": "804263",
@@ -118,7 +118,7 @@
     "subtitle": "Trazabilidad, calidad y cumplimiento regulatorio en GPC Pharma",
     "isGovDataProject": true,
     "projectSubtype": "Gobierno de Datos e IA",
-    "coverImage": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fdraft%2F1795486058971_9ioo_asset.jpg",
+    "coverImage": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795489349022_yhsq_asset.jpg",
     "_clearedMainImage": false,
     "_clearedThumbImage": false,
     "useDefaultImage": true,
@@ -1120,8 +1120,8 @@
         "isPublic": true,
         "verified": true
       },
-      "mainImage": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fdraft%2F1795486058971_9ioo_asset.jpg",
-      "thumbnailImage": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fdraft%2F1795486058971_9ioo_asset.jpg",
+      "mainImage": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795489349022_yhsq_asset.jpg",
+      "thumbnailImage": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795489349022_yhsq_asset.jpg",
       "_clearedMainImage": false,
       "_clearedThumbImage": false,
       "useDefaultImage": true,
@@ -1208,7 +1208,7 @@
         "textColor": "#cbd5e1",
         "accentColor": "#00f5d4",
         "bannerStyle": "gradient-cosmos",
-        "bannerUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fdraft%2F1795486058971_9ioo_asset.jpg"
+        "bannerUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795489349022_yhsq_asset.jpg"
       },
       "authorsConfig": {
         "authorsList": "Laura Sofía Hernández Chaparro",
@@ -1218,13 +1218,13 @@
         "collaborators": ""
       },
       "createdAt": "2026-11-24T02:08:03.167Z",
-      "updatedAt": "2026-11-24T03:02:08.114Z",
+      "updatedAt": "2026-11-24T03:02:34.236Z",
       "progress": 95,
       "calculatedProgress": 95,
-      "heroBanner": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fdraft%2F1795486058971_9ioo_asset.jpg",
-      "banner": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fdraft%2F1795486058971_9ioo_asset.jpg",
-      "image": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fdraft%2F1795486058971_9ioo_asset.jpg",
-      "coverImage": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fdraft%2F1795486058971_9ioo_asset.jpg"
+      "heroBanner": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795489349022_yhsq_asset.jpg",
+      "banner": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795489349022_yhsq_asset.jpg",
+      "image": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795489349022_yhsq_asset.jpg",
+      "coverImage": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795489349022_yhsq_asset.jpg"
     },
     "ownerId": "user_1795437974586",
     "ownerUsername": "laurasofiahz",
