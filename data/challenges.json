@@ -28,7 +28,7 @@
     "accessMode": "private",
     "displayOrder": 1,
     "createdAt": "2026-11-24T02:08:03.167Z",
-    "updatedAt": "2026-11-24T02:40:07.146Z",
+    "updatedAt": "2026-11-24T02:40:15.859Z",
     "landingConfig": {
       "publicName": "Diagnóstico y propuesta de optimización del gobierno de datos en GPC Pharma S.A.S. Empresa del Sector Farmaceutico.",
       "slug": "diagnostico-y-propuesta-de-optimizacion-del-gobierno-de-datos-en-gpc-pharma-s-a-s-empresa-del-sector-farmaceutico",
@@ -231,23 +231,6 @@
         "extractedText": "",
         "uploadedAt": "2026-11-24T02:38:13.383Z",
         "thumbnailUrl": "preset:governance"
-      },
-      {
-        "id": "res_1795488008780_n0yg",
-        "name": "Roadmap con Costos",
-        "fileName": "Roadmap_con_Costos.docx",
-        "description": "Recurso oficial en formato DOCX (13.2 KB).",
-        "type": "word",
-        "url": "https://mentixs.vercel.app/api/challenges?file=data%2Fuploads%2Fproj_video_1795486083167%2F1795488005465_7gxs_Roadmap_con_Costos.docx",
-        "format": "DOCX",
-        "sizeBytes": 13512,
-        "sizeLabel": "13.2 KB",
-        "category": "Guías y manuales",
-        "visibility": "public",
-        "order": 2,
-        "status": "verified",
-        "extractedText": "",
-        "uploadedAt": "2026-11-24T02:40:10.080Z"
       }
     ],
     "visualAssets": [],
@@ -1147,7 +1130,7 @@
         "collaborators": ""
       },
       "createdAt": "2026-11-24T02:08:03.167Z",
-      "updatedAt": "2026-11-24T02:40:10.080Z",
+      "updatedAt": "2026-11-24T02:40:19.004Z",
       "progress": 95,
       "calculatedProgress": 95
     },
