@@ -7301,6 +7301,7 @@ body[data-theme="light"] .btn-outline:hover {
 .saas-card-btn-landing,
 .saas-card-btn-authorize,
 .saas-card-btn-primary,
+.saas-card-btn-media,
 .btn-card-details,
 .btn-card-landing,
 .btn-card-authorize,
@@ -7333,6 +7334,7 @@ body[data-theme="light"] .btn-outline:hover {
 .saas-card-btn-landing:active,
 .saas-card-btn-authorize:active,
 .saas-card-btn-primary:active,
+.saas-card-btn-media:active,
 .saas-create-btn:active {
   transform: translateY(2px) scale(0.96) !important;
 }
@@ -7343,6 +7345,7 @@ body[data-theme="light"] .btn-outline:hover {
 .saas-card-btn-landing::before,
 .saas-card-btn-authorize::before,
 .saas-card-btn-primary::before,
+.saas-card-btn-media::before,
 .saas-create-btn::before {
   content: "" !important;
   position: absolute !important;
@@ -7362,6 +7365,7 @@ body[data-theme="light"] .btn-outline:hover {
 .saas-card-btn-landing::after,
 .saas-card-btn-authorize::after,
 .saas-card-btn-primary::after,
+.saas-card-btn-media::after,
 .saas-create-btn::after {
   content: "" !important;
   position: absolute !important;
@@ -7379,6 +7383,7 @@ body[data-theme="light"] .btn-outline:hover {
 .saas-card-btn-landing > *,
 .saas-card-btn-authorize > *,
 .saas-card-btn-primary > *,
+.saas-card-btn-media > *,
 .saas-create-btn > * {
   position: relative !important;
   z-index: 2 !important;
@@ -7446,6 +7451,19 @@ body[data-theme="light"] .btn-outline:hover {
 .saas-card-btn-primary:hover {
   transform: translateY(-2px) scale(1.03) !important;
   box-shadow: 0 0 24px rgba(216, 180, 254, 0.85), 0 10px 24px rgba(139, 92, 246, 0.55) !important;
+}
+
+/* 5b. Botón "Editar banner o portadas" (Admin) -> Cápsula Verde Azulado / Teal Neón 3D */
+.saas-card-btn-media {
+  background: linear-gradient(180deg, #2dd4bf 0%, #0d9488 55%, #115e59 100%) !important;
+  border: 2px solid #5eead4 !important;
+  color: #ffffff !important;
+  box-shadow: 0 0 16px rgba(94, 234, 212, 0.65), 0 6px 18px rgba(13, 148, 136, 0.4), inset 0 2px 4px rgba(255, 255, 255, 0.8), inset 0 -3px 8px #134e4a !important;
+  text-shadow: 0 2px 4px rgba(6, 78, 59, 0.8) !important;
+}
+.saas-card-btn-media:hover {
+  transform: translateY(-2px) scale(1.03) !important;
+  box-shadow: 0 0 24px rgba(94, 234, 212, 0.85), 0 10px 24px rgba(13, 148, 136, 0.55) !important;
 }
 
 /* 6. Botón "+ Nuevo Proyecto" -> Cápsula Cian Turquesa Neón 3D */

@@ -4671,7 +4671,8 @@ body[data-theme="dark"] .plp-lightbox-content {
 }
 
 .saas-card-actions > button:only-child,
-.saas-card-actions > button:nth-child(3):last-child {
+.saas-card-actions > button:nth-child(3):last-child,
+.saas-card-actions > button.saas-card-btn-media {
   grid-column: 1 / -1 !important;
 }
 

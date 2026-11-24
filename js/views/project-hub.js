@@ -1303,34 +1303,8 @@ window.ProjectHub = {
 
   ensureInitialReviews(hub, proj) {
     if (!Array.isArray(hub.ratings)) hub.ratings = [];
-    if (hub.ratings.length === 0) {
-      hub.ratings = [
-        {
-          who: 'usr_sample_1',
-          name: 'Sofía Morales',
-          stars: 5,
-          comment: '¡Increíble trabajo en equipo! La propuesta visual, la temática y los recursos interactivos están extraordinarios.',
-          tag: '🎨 Gran diseño',
-          t: Date.now() - 3600000 * 28
-        },
-        {
-          who: 'usr_sample_2',
-          name: 'Mateo Delgado',
-          stars: 5,
-          comment: 'Un proyecto sumamente inspirador para toda la comunidad. Gran dominio temático, claridad y propuesta pedagógica.',
-          tag: '🚀 Gran impacto',
-          t: Date.now() - 3600000 * 72
-        },
-        {
-          who: 'usr_sample_3',
-          name: 'Camila Ríos',
-          stars: 4,
-          comment: 'Muy bien estructurado. Me encantó la metodología ágil y la documentación de las etapas de trabajo.',
-          tag: '💡 Idea innovadora',
-          t: Date.now() - 3600000 * 120
-        }
-      ];
-    }
+    // Limpiar comentarios/calificaciones simuladas si existían previamente
+    hub.ratings = hub.ratings.filter(r => r && !String(r.who || '').startsWith('usr_sample_'));
   },
 
   closeReviewPage() {

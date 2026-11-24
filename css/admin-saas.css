@@ -5758,6 +5758,14 @@
 }
 .proj3d-gloss-btn.gloss-indigo:active { box-shadow: 0 1.5px 0 #312e81; }
 
+.proj3d-gloss-btn.gloss-teal {
+  background: linear-gradient(180deg, #2dd4bf 0%, #0d9488 55%, #115e59 100%);
+  color: #ffffff;
+  border: 2px solid #5eead4;
+  box-shadow: 0 5px 0 #134e4a, 0 12px 24px rgba(13, 148, 136, 0.38), inset 0 2px 1px rgba(255, 255, 255, 0.45);
+}
+.proj3d-gloss-btn.gloss-teal:active { box-shadow: 0 1.5px 0 #134e4a; }
+
 /* Header y Barra de Filtros 3D */
 .proj3d-header-bar {
   display: flex;
@@ -5934,6 +5942,10 @@
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 0.6rem;
   margin-top: auto;
+}
+
+.proj3d-card-actions-grid.has-admin-media > .proj3d-card-btn-media-full {
+  grid-column: 1 / -1;
 }
 
 .proj3d-card-btn {

@@ -1155,14 +1155,7 @@
         hub = JSON.parse(localStorage.getItem(hubKey) || '{"joinRequests":[],"members":[],"views":[],"ratings":[]}');
       } catch (e) {}
       if (!Array.isArray(hub.ratings)) hub.ratings = [];
-
-      if (hub.ratings.length === 0) {
-        hub.ratings = [
-          { who: 'u1', name: 'Sofía Morales', stars: 5, comment: '¡Increíble trabajo en equipo! La propuesta visual y los recursos interactivos están extraordinarios.', tag: '🎨 Gran diseño', t: Date.now() - 3600000 * 28 },
-          { who: 'u2', name: 'Mateo Delgado', stars: 5, comment: 'Un proyecto sumamente inspirador para toda la comunidad. Gran dominio temático y claridad.', tag: '🚀 Gran impacto', t: Date.now() - 3600000 * 72 }
-        ];
-        try { localStorage.setItem(hubKey, JSON.stringify(hub)); } catch (e) {}
-      }
+      hub.ratings = hub.ratings.filter(r => r && !String(r.who || '').startsWith('u') && !String(r.who || '').startsWith('usr_sample_'));
 
       const totalCount = hub.ratings.length;
       const sum = hub.ratings.reduce((acc, r) => acc + (parseInt(r.stars, 10) || 5), 0);

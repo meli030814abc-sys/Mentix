@@ -1324,8 +1324,8 @@ window.AdminView = {
                   </div>
                 </div>
 
-                <!-- 4 Botones Inferiores 3D Glossy Pill: Detalles, Ver Landing, Autorizar y Compartir -->
-                <div class="proj3d-card-actions-grid">
+                <!-- 4 Botones Inferiores 3D Glossy Pill: Detalles, Ver Landing, Autorizar y Compartir (+ 5to Botón de Admin: Editar banner o portadas) -->
+                <div class="proj3d-card-actions-grid has-admin-media">
                   <button type="button" class="proj3d-gloss-btn gloss-white proj3d-card-btn" onclick="window.ProjectHub ? window.ProjectHub.open('${p.id}') : window.AdminView.openProjectDetailModal('${p.id}')" title="Ver detalles y panel del proyecto">
                     <span>Detalles →</span>
                   </button>
@@ -1340,6 +1340,10 @@ window.AdminView = {
                   <button type="button" class="proj3d-gloss-btn gloss-blue proj3d-card-btn" onclick="window.AdminView.shareProject('${p.id}')">
                     <span>Compartir</span>
                     ${pIco('Link/3D/link_3d.png', '', 16)}
+                  </button>
+                  <button type="button" class="proj3d-gloss-btn gloss-teal proj3d-card-btn proj3d-card-btn-media-full" onclick="event.stopPropagation(); if (window.ProjectsView && typeof window.ProjectsView.openAdminProjectMediaModal === 'function') { window.ProjectsView.openAdminProjectMediaModal('${p.id}'); } else { window.AdminView.switchTab('design'); }" title="Editar banner o portadas individualmente (Exclusivo Administrador)">
+                    ${pIco('Artist%20palette/3D/artist_palette_3d.png', '🎨', 17)}
+                    <span>Editar banner o portadas</span>
                   </button>
                 </div>
               </div>
