@@ -28,7 +28,7 @@
     "accessMode": "private",
     "displayOrder": 1,
     "createdAt": "2026-11-25T00:29:14.804Z",
-    "updatedAt": "2026-11-25T00:49:17.150Z",
+    "updatedAt": "2026-11-25T00:50:13.351Z",
     "landingConfig": {
       "publicName": "Diagnóstico de Gobierno de Datos – Universidad Colegio Mayor de Cundinamarca",
       "slug": "diagnostico-de-gobierno-de-datos-universidad-colegio-mayor-de-cundinamarca",
@@ -114,7 +114,7 @@
     "_clearedMainImage": false,
     "_clearedThumbImage": false,
     "useDefaultImage": true,
-    "targetAudience": "Consejo Superior, directivos y jefes de área de la UCMC, Oficina de Planeación, OTIC y Gestión Documental",
+    "targetAudience": "",
     "problemStatement": "",
     "mainObjective": "",
     "benefits": "",
@@ -128,8 +128,8 @@
       1,
       2
     ],
-    "progress": 70,
-    "calculatedProgress": 70,
+    "progress": 60,
+    "calculatedProgress": 60,
     "valueProp": {
       "problemSolved": "",
       "howItWorks": "",
@@ -223,7 +223,7 @@
       "category": "gobierno_de__datos",
       "categoryName": "Gobierno de Datos",
       "projectSubtype": "Gobierno de Datos e IA",
-      "targetAudience": "Consejo Superior, directivos y jefes de área de la UCMC, Oficina de Planeación, OTIC y Gestión Documental",
+      "targetAudience": "",
       "problemStatement": "",
       "mainObjective": "",
       "benefits": "",
@@ -304,9 +304,9 @@
         "authorsRole": "Estudiante / Creador"
       },
       "createdAt": "2026-11-25T00:29:14.804Z",
-      "updatedAt": "2026-11-25T00:49:16.939Z",
-      "progress": 70,
-      "calculatedProgress": 70
+      "updatedAt": "2026-11-25T00:50:17.509Z",
+      "progress": 60,
+      "calculatedProgress": 60
     },
     "ownerId": "user_1795545770936",
     "ownerUsername": "Juanes_RJ",
@@ -355,7 +355,16 @@
       ],
       "views": [],
       "ratings": []
-    }
+    },
+    "members": [
+      {
+        "name": "Juan Esteban Rosero Jimenez",
+        "email": "jeroseroj@gmail.com",
+        "role": "owner",
+        "leader": true
+      }
+    ],
+    "joinRequests": []
   },
   {
     "id": "reto_1795552054552",
