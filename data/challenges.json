@@ -18,7 +18,7 @@
     "image": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fdraft%2F1795607078265_tkil_asset.jpg",
     "banner": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fdraft%2F1795607078265_tkil_asset.jpg",
     "createdAt": "2026-11-25T11:45:30.865Z",
-    "updatedAt": "2026-11-25T11:49:01.149Z",
+    "updatedAt": "2026-11-25T11:49:26.148Z",
     "govdata": {
       "id": "proj_presentation_1795607130865",
       "title": "Diagnostico gobierno de datos Colegio Tecnico Jaime Pardo Leal IED",
@@ -64,6 +64,40 @@
       "_clearedThumbImage": false,
       "useDefaultImage": true,
       "externalLinks": [],
+      "projectRoadmap": [
+        {
+          "title": "Planeación",
+          "description": "Conformación del equipo y definición de objetivos.",
+          "progress": 40,
+          "status": "active",
+          "icon": "clipboard",
+          "emoji": "📋"
+        },
+        {
+          "title": "Investigación",
+          "description": "Recopilación de datos e información relevante.",
+          "progress": 100,
+          "status": "completed",
+          "icon": "search",
+          "emoji": "🔍"
+        },
+        {
+          "title": "Desarrollo",
+          "description": "Construcción de la solución y prototipos.",
+          "progress": 0,
+          "status": "pending",
+          "icon": "code",
+          "emoji": "💻"
+        },
+        {
+          "title": "Publicación",
+          "description": "Despliegue en la Landing Page y comunicación.",
+          "progress": 0,
+          "status": "pending",
+          "icon": "rocket",
+          "emoji": "🚀"
+        }
+      ],
       "landingConfig": {
         "publicName": "Diagnostico gobierno de datos Colegio Tecnico Jaime Pardo Leal IED",
         "slug": "diagnostico-gobierno-de-datos-colegio-tecnico-jaime-pardo-leal-ied",
@@ -83,9 +117,11 @@
       "publicationStatus": "pending_approval",
       "completedSteps": [
         1,
-        2
+        2,
+        3,
+        4
       ],
-      "currentStep": 3,
+      "currentStep": 5,
       "author": "Jhomar Alejandra Cano Ramirez",
       "authorId": "user_1795557081139",
       "ownerId": "user_1795557081139",
@@ -109,7 +145,7 @@
         "authorsRole": "Estudiante / Creador"
       },
       "createdAt": "2026-11-25T11:45:30.865Z",
-      "updatedAt": "2026-11-25T11:49:01.298Z",
+      "updatedAt": "2026-11-25T11:49:26.273Z",
       "progress": 70,
       "calculatedProgress": 70
     },
@@ -255,10 +291,12 @@
     "preparationStatus": "en_desarrollo",
     "startDate": "2026-11-25",
     "endDate": "",
-    "currentStep": 3,
+    "currentStep": 5,
     "completedSteps": [
       1,
-      2
+      2,
+      3,
+      4
     ],
     "progress": 70,
     "calculatedProgress": 70,
@@ -339,7 +377,40 @@
       }
     ],
     "externalLinks": [],
-    "projectRoadmap": [],
+    "projectRoadmap": [
+      {
+        "title": "Planeación",
+        "description": "Conformación del equipo y definición de objetivos.",
+        "progress": 40,
+        "status": "active",
+        "icon": "clipboard",
+        "emoji": "📋"
+      },
+      {
+        "title": "Investigación",
+        "description": "Recopilación de datos e información relevante.",
+        "progress": 100,
+        "status": "completed",
+        "icon": "search",
+        "emoji": "🔍"
+      },
+      {
+        "title": "Desarrollo",
+        "description": "Construcción de la solución y prototipos.",
+        "progress": 0,
+        "status": "pending",
+        "icon": "code",
+        "emoji": "💻"
+      },
+      {
+        "title": "Publicación",
+        "description": "Despliegue en la Landing Page y comunicación.",
+        "progress": 0,
+        "status": "pending",
+        "icon": "rocket",
+        "emoji": "🚀"
+      }
+    ],
     "tags": [
       "Gobierno de Datos",
       "IA",
