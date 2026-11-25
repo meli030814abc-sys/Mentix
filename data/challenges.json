@@ -18,7 +18,7 @@
     "image": "assets/projects_ui/card_data_gov.png",
     "banner": "assets/projects_ui/card_data_gov.png",
     "createdAt": "2026-11-25T02:55:49.043Z",
-    "updatedAt": "2026-11-25T03:11:59.859Z",
+    "updatedAt": "2026-11-25T03:17:03.567Z",
     "govdata": {
       "id": "proj_video_1795575349043",
       "title": "Diagnóstico de Gobierno de Datos - Afiancol S.A.S.",
@@ -130,8 +130,8 @@
       "authorEmail": "boadavillamil09@gmail.com",
       "authorAvatar": "🦄",
       "authorRole": "Estudiante / Creador",
-      "joinCode": "",
-      "accessCode": "",
+      "joinCode": "804263",
+      "accessCode": "804263",
       "designConfig": {
         "themeId": "cosmos",
         "fontFamily": "Montserrat",
@@ -149,7 +149,7 @@
         "collaborators": "Extiendo mis agradecimientos al profesor Carlos Caño ya que con su guía y acompañamiento fue posible ejecutar un correcto proceso de implementación de Gobierno de Datos de manera teórico práctico."
       },
       "createdAt": "2026-11-25T02:55:49.043Z",
-      "updatedAt": "2026-11-25T03:11:59.676Z",
+      "updatedAt": "2026-11-25T03:17:04.171Z",
       "progress": 65,
       "calculatedProgress": 65
     },
@@ -358,8 +358,8 @@
     ],
     "ownerId": "user_1795574386910",
     "ownerUsername": "dan_boa27",
-    "joinCode": "",
-    "accessCode": "",
+    "joinCode": "804263",
+    "accessCode": "804263",
     "duration": "5:00 min",
     "tag": "⏳ Pendiente de Autorización",
     "tagClass": "badge-review"
@@ -386,14 +386,14 @@
     "shortDescription": "Diagnóstico de gobierno de datos de la Universidad Colegio Mayor de Cundinamarca. Con base en DAMA-DMBOK se midió una madurez de 2 sobre 5 y se propuso un modelo de roles, comité y políticas que fija reglas a los proyectos de datos ya aprobados. El modelo se implementó en la plataforma GovData Nexus.",
     "description": "Diagnóstico de gobierno de datos de la Universidad Colegio Mayor de Cundinamarca. Con base en DAMA-DMBOK se midió una madurez de 2 sobre 5 y se propuso un modelo de roles, comité y políticas que fija reglas a los proyectos de datos ya aprobados. El modelo se implementó en la plataforma GovData Nexus.",
     "fullDescription": "PROBLEMA\nLa UCMC tiene cuatro sedes y datos duplicados entre sistemas: un mismo estudiante puede aparecer varias veces. Su madurez en gobierno de datos es de 2 sobre 5 y 74 de 100 prácticas DAMA no existen.\n\nMETODOLOGÍA\n1. Diagnóstico con DAMA-DMBOK a partir del PDI, el PETI, el FURAG y los archivos públicos de la universidad.\n2. Diseño del modelo: 12 dominios con responsables, un comité, ocho políticas y un plan de 24 meses por $106 millones, sin cargos nuevos.\n3. Implementación en GovData Nexus: catálogo de 22 activos, 11 datos maestros, calidad con 37 reglas, flujos de aprobación y acuerdos de nivel de servicio.\n\nRESULTADOS\nSin reglas, la herramienta calificó la calidad en 85 %; con las reglas del negocio aparecieron 1.605 incidentes.\n\nCONCLUSIÓN\nA la UCMC no le faltan proyectos ni tecnología: le faltan reglas. El gobierno de datos las define; el negocio decide y los custodios ejecutan.",
-    "publicationStatus": "published",
-    "approvalStatus": "approved",
+    "publicationStatus": "completed",
+    "approvalStatus": "pending",
     "status": "completed",
-    "isPublic": true,
-    "accessMode": "public",
+    "isPublic": false,
+    "accessMode": "private",
     "displayOrder": 1,
     "createdAt": "2026-11-25T00:29:14.804Z",
-    "updatedAt": "2026-11-25T03:16:51.204Z",
+    "updatedAt": "2026-11-25T02:57:16.320Z",
     "landingConfig": {
       "publicName": "Diagnóstico de Gobierno de Datos – Universidad Colegio Mayor de Cundinamarca",
       "slug": "diagnostico-de-gobierno-de-datos-universidad-colegio-mayor-de-cu",
@@ -1295,7 +1295,7 @@
         "displayOrder": 1,
         "featuredVideoPublic": true
       },
-      "publicationStatus": "published",
+      "publicationStatus": "completed",
       "completedSteps": [
         1,
         2,
@@ -1348,11 +1348,11 @@
       "image": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fdraft%2F1795566538564_r3c9_asset.jpg",
       "coverImage": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fdraft%2F1795566538564_r3c9_asset.jpg",
       "submittedForApproval": true,
-      "approvalStatus": "approved",
+      "approvalStatus": "pending",
       "status": "completed",
       "completedAt": "2026-11-25T01:23:06.413Z",
-      "isPublic": true,
-      "rejectionReason": "",
+      "isPublic": false,
+      "rejectionReason": "Desautorizado por el Administrador.",
       "authorizedAt": "2026-11-25T01:27:10.305Z",
       "authorizedBy": "Melisa"
     },
@@ -1386,9 +1386,9 @@
         "createdAt": "22/11/2026, 9:22:51 p.m."
       }
     ],
-    "visibility": "public",
-    "rejectedAt": "",
-    "rejectionReason": "",
+    "visibility": "private",
+    "rejectedAt": "2026-11-25T02:53:09.114Z",
+    "rejectionReason": "Desautorizado por el Administrador.",
     "tag": "⏳ Pendiente de Autorización",
     "tagClass": "badge-review",
     "hub": {
