@@ -1,4 +1,4 @@
-/**
+﻿/**
  * 🔥 MENTIX - Vista de Proyectos & Retos (Projects View)
  * Gestión integral de proyectos educativos: Diapositivas, Videos interactivos y Quizzes gamificados.
  */
@@ -4618,18 +4618,6 @@ window.ProjectsView = {
 
           <!-- Three Dots / Menu Button Floating Top-Right -->
           <div style="position: absolute; top: 10px; right: 10px; z-index: 2; display: flex; gap: 6px; align-items: center;">
-            ${isAdmin ? `
-              <button 
-                title="Editar banner o portadas individualmente (Exclusivo Administradores)" 
-                onclick="event.stopPropagation(); window.ProjectsView.openAdminProjectMediaModal('${c.id}')"
-                style="height: 30px; padding: 0 0.65rem; border-radius: 8px; background: rgba(7, 23, 57, 0.94); backdrop-filter: blur(6px); display: inline-flex; align-items: center; gap: 0.35rem; cursor: pointer; border: 1.5px solid #00f5d4; font-size: 0.74rem; font-weight: 900; color: #00f5d4; box-shadow: 0 2px 10px rgba(0, 245, 212, 0.35); transition: transform 0.2s ease;"
-                onmouseenter="this.style.transform='scale(1.05)';"
-                onmouseleave="this.style.transform='scale(1)';"
-              >
-                <span>🎨</span>
-                <span>Editar banner o portadas</span>
-              </button>
-            ` : ''}
             ${canEditProj ? `
               <button 
                 title="Editar este proyecto" 

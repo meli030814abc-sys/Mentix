@@ -1,4 +1,4 @@
-/**
+﻿/**
  * 🛡️ MENTIX ACADEMY - Backend Administrativo SaaS de Alta Calidad
  * Panel ejecutivo para supervisión de proyectos, usuarios, categorías,
  * analítica visual, auditoría y personalización del sistema.
@@ -1284,9 +1284,6 @@ window.AdminView = {
 
                   <!-- Botones Flotantes Derechos -->
                   <div class="admin-card-top-actions">
-                    <button class="btn-card-robot-banner" title="Editar banner o portadas individualmente" onclick="event.stopPropagation(); if (window.ProjectsView && typeof window.ProjectsView.openAdminProjectMediaModal === 'function') { window.ProjectsView.openAdminProjectMediaModal('${p.id}'); } else { window.AdminView.switchTab('design'); }">
-                      <span>🎨</span> Editar banner o portadas
-                    </button>
                     <button class="btn-card-review" title="Revisar Landing Page y Autorización" onclick="window.AdminView.reviewProjectInLanding('${p.id}')">
                       <span>🔍</span> Revisar
                     </button>
