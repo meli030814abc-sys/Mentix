@@ -18,7 +18,7 @@
     "image": "assets/projects_ui/card_data_gov.png",
     "banner": "assets/projects_ui/card_data_gov.png",
     "createdAt": "2026-11-25T02:55:49.043Z",
-    "updatedAt": "2026-11-25T03:03:16.260Z",
+    "updatedAt": "2026-11-25T03:05:40.575Z",
     "govdata": {
       "id": "proj_video_1795575349043",
       "title": "Diagnóstico de Gobierno de Datos - Afiancol S.A.S.",
@@ -67,11 +67,11 @@
       "projectRoadmap": [
         {
           "title": "Planeación",
-          "description": "Conformación del equipo y definición de objetivos.",
-          "progress": 100,
+          "description": "Definición del caso de estudio (Afiancol S.A.S.) y del alcance, selección de artefactos de evaluación y del marco de referencia DAMA-DMBOK, en conjunto con la plataforma GovData Nexus.",
           "status": "completed",
-          "icon": "clipboard",
-          "emoji": "🔍"
+          "progress": 100,
+          "emoji": "🔍",
+          "icon": "clipboard"
         },
         {
           "title": "Investigación",
@@ -145,7 +145,7 @@
         "authorsRole": "Estudiante / Creador"
       },
       "createdAt": "2026-11-25T02:55:49.043Z",
-      "updatedAt": "2026-11-25T03:03:16.536Z",
+      "updatedAt": "2026-11-25T03:05:40.783Z",
       "progress": 65,
       "calculatedProgress": 65
     },
@@ -312,11 +312,11 @@
     "projectRoadmap": [
       {
         "title": "Planeación",
-        "description": "Conformación del equipo y definición de objetivos.",
-        "progress": 100,
+        "description": "Definición del caso de estudio (Afiancol S.A.S.) y del alcance, selección de artefactos de evaluación y del marco de referencia DAMA-DMBOK, en conjunto con la plataforma GovData Nexus.",
         "status": "completed",
-        "icon": "clipboard",
-        "emoji": "🔍"
+        "progress": 100,
+        "emoji": "🔍",
+        "icon": "clipboard"
       },
       {
         "title": "Investigación",
