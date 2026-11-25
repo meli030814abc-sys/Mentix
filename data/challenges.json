@@ -23,7 +23,7 @@
     "_clearedThumbImage": false,
     "useDefaultImage": true,
     "targetAudience": "Directivos docentes (rectoría y coordinaciones), personal administrativo y de secretaría académica, docentes.",
-    "problemStatement": "Falta de claridad, estandarización y trazabilidad en la gestióny protección de los datos personales y académicos de los estudiantes y la comunidad educativa, lo que genera brechas frente a la responsabilidad institucional y el cumplimiento normativo en un colegio oficial.",
+    "problemStatement": "Falta de claridad, estandarización y trazabilidad en la gestióny protección de los datos personales y académicos de los estudiantes y la comunidad educativa, brechas frente a la responsabilidad institucional y el cumplimiento normativo en un colegio oficial.",
     "mainObjective": "",
     "benefits": "",
     "teamLead": "Jhomar Alejandra Cano Ramirez",
@@ -244,7 +244,7 @@
       "categoryName": "Administración Pública",
       "projectSubtype": "Gobierno de Datos e IA",
       "targetAudience": "Directivos docentes (rectoría y coordinaciones), personal administrativo y de secretaría académica, docentes.",
-      "problemStatement": "Falta de claridad, estandarización y trazabilidad en la gestióny protección de los datos personales y académicos de los estudiantes y la comunidad educativa, lo que genera brechas frente a la responsabilidad institucional y el cumplimiento normativo en un colegio oficial.",
+      "problemStatement": "Falta de claridad, estandarización y trazabilidad en la gestióny protección de los datos personales y académicos de los estudiantes y la comunidad educativa, brechas frente a la responsabilidad institucional y el cumplimiento normativo en un colegio oficial.",
       "mainObjective": "",
       "benefits": "",
       "teamLead": "Jhomar Alejandra Cano Ramirez",
@@ -363,7 +363,7 @@
         "collaborators": ""
       },
       "createdAt": "2026-11-25T11:45:30.865Z",
-      "updatedAt": "2026-11-25T11:50:33.691Z",
+      "updatedAt": "2026-11-25T11:50:40.201Z",
       "progress": 85,
       "calculatedProgress": 85
     },
@@ -377,7 +377,7 @@
     "authorAvatar": "🦊",
     "authorRole": "Estudiante / Creador",
     "createdAt": "2026-11-25T11:45:30.865Z",
-    "updatedAt": "2026-11-25T11:50:33.577Z"
+    "updatedAt": "2026-11-25T11:50:40.124Z"
   },
   {
     "id": "proj_video_1795575349043",
