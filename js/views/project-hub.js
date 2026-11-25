@@ -1,4 +1,4 @@
-/* ==========================================================================
+﻿/* ==========================================================================
    MENTIX · PROJECT HUB
    Panel del Creador / Vista de Estudiante, Reportes, Solicitudes de unión y roles.
    Datos guardados en proyecto.hub = { joinRequests, members, views, ratings }
@@ -1747,7 +1747,8 @@ window.ProjectHub = {
     const pid = projectId || this.currentId;
     const proj = this.getProject(pid);
     if (!this.canEdit(proj)) { this.toast('🔒 Tu rol no permite editar este proyecto.'); return; }
-    this.close();
+    // Cerrar el overlay SIN disparar history.back(), para evitar que un popstate asíncrono sobrescriba el asistente
+    this.close(false);
     const launchWizard = () => {
       if (window.ProjectWizard && typeof window.ProjectWizard.openWizard === 'function') {
         window.ProjectWizard.openWizard(pid, 1, true);
@@ -1766,7 +1767,7 @@ window.ProjectHub = {
     }
   },
   openLanding(projectId) {
-    this.close();
+    this.close(false);
     if (window.ProjectsView && typeof window.ProjectsView.openProjectLanding === 'function') window.ProjectsView.openProjectLanding(projectId);
   },
   share(projectId) {
