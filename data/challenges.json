@@ -47,9 +47,9 @@
     "progress": 85,
     "calculatedProgress": 85,
     "valueProp": {
-      "problemSolved": "",
-      "howItWorks": "",
-      "forWhom": "",
+      "problemSolved": "Falta de claridad, estandarización y trazabilidad en la gestióny protección de los datos personales y académicos de los estudiantes y la comunidad educativa, generando brechas frente a la responsabilidad institucional y el cumplimiento normativo en un colegio oficial.",
+      "howItWorks": "Levanta y mapea fuentes de datos escolares, evalúa roles, accesos y cumplimiento normativo, y entrega un diagnóstico con brechas priorizadas y plan de acción.",
+      "forWhom": "Directivos docentes (rectoría y coordinaciones), personal administrativo y de secretaría académica, docentes.",
       "differentiator": "",
       "keyFeatures": [],
       "resultsAndBenefits": "",
@@ -59,9 +59,9 @@
       "faqs": []
     },
     "valueProposition": {
-      "problemSolved": "",
-      "howItWorks": "",
-      "forWhom": "",
+      "problemSolved": "Falta de claridad, estandarización y trazabilidad en la gestióny protección de los datos personales y académicos de los estudiantes y la comunidad educativa, generando brechas frente a la responsabilidad institucional y el cumplimiento normativo en un colegio oficial.",
+      "howItWorks": "Levanta y mapea fuentes de datos escolares, evalúa roles, accesos y cumplimiento normativo, y entrega un diagnóstico con brechas priorizadas y plan de acción.",
+      "forWhom": "Directivos docentes (rectoría y coordinaciones), personal administrativo y de secretaría académica, docentes.",
       "differentiator": "",
       "keyFeatures": [],
       "resultsAndBenefits": "",
@@ -121,7 +121,9 @@
         "bulletsFont": "'Outfit', sans-serif",
         "bulletStyle": "✦",
         "isFullImage": true,
-        "isImported": true
+        "isImported": true,
+        "imageUrl": "",
+        "bgImage": ""
       }
     ],
     "presentations": [
@@ -157,7 +159,9 @@
             "bulletsFont": "'Outfit', sans-serif",
             "bulletStyle": "✦",
             "isFullImage": true,
-            "isImported": true
+            "isImported": true,
+            "imageUrl": "",
+            "bgImage": ""
           }
         ]
       }
@@ -253,9 +257,9 @@
       "startDate": "2026-11-25",
       "endDate": "",
       "valueProp": {
-        "problemSolved": "",
-        "howItWorks": "",
-        "forWhom": "",
+        "problemSolved": "Falta de claridad, estandarización y trazabilidad en la gestióny protección de los datos personales y académicos de los estudiantes y la comunidad educativa, generando brechas frente a la responsabilidad institucional y el cumplimiento normativo en un colegio oficial.",
+        "howItWorks": "Levanta y mapea fuentes de datos escolares, evalúa roles, accesos y cumplimiento normativo, y entrega un diagnóstico con brechas priorizadas y plan de acción.",
+        "forWhom": "Directivos docentes (rectoría y coordinaciones), personal administrativo y de secretaría académica, docentes.",
         "differentiator": "",
         "keyFeatures": [],
         "resultsAndBenefits": "",
@@ -365,7 +369,7 @@
         "collaborators": ""
       },
       "createdAt": "2026-11-25T11:45:30.865Z",
-      "updatedAt": "2026-11-25T11:51:14.561Z",
+      "updatedAt": "2026-11-25T11:51:54.720Z",
       "progress": 85,
       "calculatedProgress": 85
     },
@@ -379,7 +383,54 @@
     "authorAvatar": "🦊",
     "authorRole": "Estudiante / Creador",
     "createdAt": "2026-11-25T11:45:30.865Z",
-    "updatedAt": "2026-11-25T11:51:14.480Z"
+    "updatedAt": "2026-11-25T11:51:54.579Z",
+    "fromStudentCreate": true,
+    "_isStudentDraft": true,
+    "timePerQuestion": 25,
+    "plays": 0,
+    "accessMode": "private",
+    "hub": {
+      "joinRequests": [],
+      "members": [
+        {
+          "name": "Jhomar Alejandra Cano Ramirez",
+          "email": "jhomaralejandracano@gmail.com",
+          "role": "owner",
+          "leader": true
+        }
+      ],
+      "views": [],
+      "ratings": []
+    },
+    "customProjectCodes": [
+      {
+        "code": "804263",
+        "author": "Melisa",
+        "authorRole": "admin",
+        "createdAt": "22/11/2026, 9:27:35 p.m."
+      },
+      {
+        "code": "371850",
+        "author": "Melisa",
+        "authorRole": "admin",
+        "createdAt": "22/11/2026, 9:27:35 p.m."
+      },
+      {
+        "code": "926407",
+        "author": "Melisa",
+        "authorRole": "admin",
+        "createdAt": "22/11/2026, 9:23:09 p.m."
+      },
+      {
+        "code": "583194",
+        "author": "Melisa",
+        "authorRole": "admin",
+        "createdAt": "22/11/2026, 9:22:51 p.m."
+      }
+    ],
+    "visibility": "private",
+    "rejectedAt": "",
+    "rejectionReason": ""
   },
   {
     "id": "proj_video_1795575349043",
