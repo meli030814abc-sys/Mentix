@@ -28,7 +28,7 @@
     "accessMode": "public",
     "displayOrder": 1,
     "createdAt": "2026-11-25T00:29:14.804Z",
-    "updatedAt": "2026-11-25T01:27:40.254Z",
+    "updatedAt": "2026-11-25T01:27:40.986Z",
     "landingConfig": {
       "publicName": "Diagnóstico de Gobierno de Datos – Universidad Colegio Mayor de Cundinamarca",
       "slug": "diagnostico-de-gobierno-de-datos-universidad-colegio-mayor-de-cu",
@@ -67,26 +67,15 @@
         "subtitle": "",
         "content": "",
         "bullets": [],
-        "media": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_presentation_1795566554804%2F1795568586836_l6j7_slide_1.jpg",
-        "videoUrl": "",
         "layout": "full",
-        "teacherNotes": "",
-        "titleColor": "#ffffff",
-        "subtitleColor": "#00f5d4",
-        "contentColor": "#cbd5e1",
-        "bulletsColor": "#ffffff",
-        "titleFont": "'Outfit', sans-serif",
-        "subtitleFont": "'Outfit', sans-serif",
-        "contentFont": "'Outfit', sans-serif",
-        "bulletsFont": "'Outfit', sans-serif",
-        "bulletStyle": "✦",
-        "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_presentation_1795566554804%2F1795568586836_l6j7_slide_1.jpg",
-        "bgImage": "",
-        "bgColor": "#ffffff",
         "isFullImage": true,
         "isImported": true,
+        "media": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_presentation_1795566554804%2F1795568586836_l6j7_slide_1.jpg",
+        "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_presentation_1795566554804%2F1795568586836_l6j7_slide_1.jpg",
         "notes": "Propuesta ejecutiva al Consejo Superior Universitario. Mensaje central: la universidad ya tiene la gente, el comité y los proyectos; falta fijar las reglas de juego de los datos. El gobierno de datos pone las reglas; los proyectos del PETI ejecutan.",
-        "themeId": "cosmos"
+        "bgColor": "#ffffff",
+        "themeId": "cosmos",
+        "bgImage": ""
       },
       {
         "id": "slide_1795568586215_1",
@@ -513,26 +502,15 @@
             "subtitle": "",
             "content": "",
             "bullets": [],
-            "media": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_presentation_1795566554804%2F1795568586836_l6j7_slide_1.jpg",
-            "videoUrl": "",
             "layout": "full",
-            "teacherNotes": "",
-            "titleColor": "#ffffff",
-            "subtitleColor": "#00f5d4",
-            "contentColor": "#cbd5e1",
-            "bulletsColor": "#ffffff",
-            "titleFont": "'Outfit', sans-serif",
-            "subtitleFont": "'Outfit', sans-serif",
-            "contentFont": "'Outfit', sans-serif",
-            "bulletsFont": "'Outfit', sans-serif",
-            "bulletStyle": "✦",
-            "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_presentation_1795566554804%2F1795568586836_l6j7_slide_1.jpg",
-            "bgImage": "",
-            "bgColor": "#ffffff",
             "isFullImage": true,
             "isImported": true,
+            "media": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_presentation_1795566554804%2F1795568586836_l6j7_slide_1.jpg",
+            "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_presentation_1795566554804%2F1795568586836_l6j7_slide_1.jpg",
             "notes": "Propuesta ejecutiva al Consejo Superior Universitario. Mensaje central: la universidad ya tiene la gente, el comité y los proyectos; falta fijar las reglas de juego de los datos. El gobierno de datos pone las reglas; los proyectos del PETI ejecutan.",
-            "themeId": "cosmos"
+            "bgColor": "#ffffff",
+            "themeId": "cosmos",
+            "bgImage": ""
           },
           {
             "id": "slide_1795568586215_1",
@@ -1037,9 +1015,7 @@
         }
       ],
       "views": [],
-      "ratings": [],
-      "projectId": "proj_presentation_1795566554804",
-      "updatedAt": 1795569991275
+      "ratings": []
     },
     "members": [
       {
@@ -1051,9 +1027,9 @@
     ],
     "joinRequests": [],
     "completedAt": "2026-11-25T01:23:06.413Z",
+    "stage": "completed",
     "authorizedAt": "2026-11-25T01:27:10.305Z",
-    "authorizedBy": "Melisa",
-    "stage": "completed"
+    "authorizedBy": "Melisa"
   },
   {
     "id": "reto_1795552054552",
