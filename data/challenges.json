@@ -1,123 +1,24 @@
 [
   {
     "id": "proj_video_1795575349043",
-    "slug": "diagnostico-de-gobierno-de-datos-afiancol-s-a-s",
     "title": "Diagnóstico de Gobierno de Datos - Afiancol S.A.S.",
     "subtitle": "Proyecto Educativo Mentix",
     "description": "Afiancol, una compañía colombiana fundada en 2007 y especializada en fianzas y garantías para el sector solidario, vive de la confianza, pero sus datos se producían sin ser gestionados como un activo: faltaban responsables, reglas de decisión y control de calidad, y por eso no servían de base para decidir. Para abordarlo, se realizo un diagnóstico de gobierno de datos con la metodología DAMA-DMBOK2, a partir de entrevistas y documentos oficiales, midiendo la madurez en seis dimensiones y desarrollando una solución en cuatro fases, consolidada en Supabase y en la herramienta GovData Nexus, cuyas métricas se actualizan de forma continua. El resultado es una madurez global del 65 % al último corte, con una base sólida en Calidad, Seguridad y Organización, y con brechas prioritarias en Estrategia y Compliance (30 %), que marcan la ruta para convertir los datos en un activo estratégico y cumplir con Habeas Data. El principal aprendizaje es que gobernar datos es tanto un tema de personas como de tecnología: medir convierte una percepción en un punto de partida, y sostener ese gobierno día a día es lo que demuestra su valor a la dirección.",
-    "shortDescription": "Afiancol, una compañía colombiana fundada en 2007 y especializada en fianzas y garantías para el sector solidario, vive de la confianza, pero sus datos se producían sin ser gestionados como un activo: faltaban responsables, reglas de decisión y control de calidad, y por eso no servían de base para decidir. Para abordarlo, se realizo un diagnóstico de gobierno de datos con la metodología DAMA-DMBOK2, a partir de entrevistas y documentos oficiales, midiendo la madurez en seis dimensiones y desarrollando una solución en cuatro fases, consolidada en Supabase y en la herramienta GovData Nexus, cuyas métricas se actualizan de forma continua. El resultado es una madurez global del 65 % al último corte, con una base sólida en Calidad, Seguridad y Organización, y con brechas prioritarias en Estrategia y Compliance (30 %), que marcan la ruta para convertir los datos en un activo estratégico y cumplir con Habeas Data. El principal aprendizaje es que gobernar datos es tanto un tema de personas como de tecnología: medir convierte una percepción en un punto de partida, y sostener ese gobierno día a día es lo que demuestra su valor a la dirección.",
-    "fullDescription": "Afiancol, una compañía colombiana fundada en 2007 y especializada en fianzas y garantías para el sector solidario, vive de la confianza, pero sus datos se producían sin ser gestionados como un activo: faltaban responsables, reglas de decisión y control de calidad, y por eso no servían de base para decidir. Para abordarlo, se realizo un diagnóstico de gobierno de datos con la metodología DAMA-DMBOK2, a partir de entrevistas y documentos oficiales, midiendo la madurez en seis dimensiones y desarrollando una solución en cuatro fases, consolidada en Supabase y en la herramienta GovData Nexus, cuyas métricas se actualizan de forma continua. El resultado es una madurez global del 65 % al último corte, con una base sólida en Calidad, Seguridad y Organización, y con brechas prioritarias en Estrategia y Compliance (30 %), que marcan la ruta para convertir los datos en un activo estratégico y cumplir con Habeas Data. El principal aprendizaje es que gobernar datos es tanto un tema de personas como de tecnología: medir convierte una percepción en un punto de partida, y sostener ese gobierno día a día es lo que demuestra su valor a la dirección.",
-    "category": "gobierno_de__datos",
-    "categoryName": "Gobierno de Datos",
     "projectType": "presentation",
     "isGovDataProject": true,
-    "projectSubtype": "Gobierno de Datos e IA",
-    "difficulty": "Medio",
-    "heroBanner": "assets/projects_ui/card_data_gov.png",
-    "banner": "assets/projects_ui/card_data_gov.png",
-    "image": "assets/projects_ui/card_data_gov.png",
-    "coverImage": "assets/projects_ui/card_data_gov.png",
-    "mainImage": "assets/projects_ui/card_data_gov.png",
-    "thumbnailImage": "assets/projects_ui/card_data_gov.png",
-    "_clearedMainImage": false,
-    "_clearedThumbImage": false,
-    "useDefaultImage": true,
-    "targetAudience": "",
-    "problemStatement": "",
-    "mainObjective": "",
-    "benefits": "",
-    "teamLead": "Danna Boada",
-    "preparationStatus": "en_desarrollo",
-    "publicationStatus": "pending_approval",
-    "approvalStatus": "pending",
-    "submittedForApproval": false,
+    "category": "gobierno_de__datos",
+    "categoryName": "Gobierno de Datos",
+    "author": "Danna Boada",
+    "authorRole": "student",
     "status": "in_progress",
+    "publicationStatus": "pending_approval",
+    "submittedForApproval": false,
+    "approvalStatus": "pending",
     "isPublic": false,
-    "startDate": "2026-11-25",
-    "endDate": "",
-    "currentStep": 1,
-    "completedSteps": [
-      1
-    ],
-    "progress": 55,
-    "calculatedProgress": 55,
-    "valueProp": {
-      "problemSolved": "",
-      "howItWorks": "",
-      "forWhom": "",
-      "differentiator": "",
-      "keyFeatures": [],
-      "resultsAndBenefits": "",
-      "prerequisites": "",
-      "visitorAction": "Unirse / Colaborar",
-      "commercialPitch": "",
-      "faqs": []
-    },
-    "valueProposition": {
-      "problemSolved": "",
-      "howItWorks": "",
-      "forWhom": "",
-      "differentiator": "",
-      "keyFeatures": [],
-      "resultsAndBenefits": "",
-      "prerequisites": "",
-      "visitorAction": "Unirse / Colaborar",
-      "commercialPitch": "",
-      "faqs": []
-    },
-    "videoUrl": "https://youtu.be/j9dX1jtgO4A",
-    "videoConfig": {
-      "sourceType": "url",
-      "url": "https://youtu.be/j9dX1jtgO4A",
-      "fileName": "",
-      "title": "Diagnóstico de Gobierno de Datos - Afiancol S.A.S.",
-      "description": "Se hace medición de la madurez con DAMA-DMBOK2, identificando las brechas y definiendo por dónde empezar a convertir los datos en un activo estratégico para la organización.",
-      "thumbnailUrl": "",
-      "isPublic": true,
-      "verified": true
-    },
-    "resources": [],
-    "visualAssets": [],
-    "slides": [],
-    "presentations": [],
-    "externalLinks": [],
-    "landingConfig": {
-      "publicName": "Diagnóstico de Gobierno de Datos - Afiancol S.A.S.",
-      "slug": "diagnostico-de-gobierno-de-datos-afiancol-s-a-s",
-      "landingTitle": "Diagnóstico de Gobierno de Datos - Afiancol S.A.S.",
-      "publicDescription": "Se hace medición de la madurez con DAMA-DMBOK2, identificando las brechas y definiendo por dónde empezar a convertir los datos en un activo estratégico para la organización.",
-      "visibleCategory": "Administración Pública",
-      "tags": [
-        "Gobierno de Datos",
-        "IA",
-        "Innovación"
-      ],
-      "ctaText": "Ver Proyecto",
-      "ctaUrl": "#",
-      "displayOrder": 1,
-      "featuredVideoPublic": true
-    },
-    "projectRoadmap": [],
-    "designConfig": {
-      "themeId": "cosmos",
-      "fontFamily": "Montserrat",
-      "titleColor": "#ffffff",
-      "textColor": "#cbd5e1",
-      "accentColor": "#00f5d4",
-      "bannerStyle": "gradient-cosmos",
-      "bannerUrl": "assets/projects_ui/card_data_gov.png"
-    },
-    "authorsConfig": {
-      "authorsList": "Danna Boada",
-      "authorsEmails": "boadavillamil09@gmail.com",
-      "authorsRole": "Estudiante / Creador"
-    },
-    "tags": [
-      "Gobierno de Datos",
-      "IA",
-      "Innovación"
-    ],
-    "displayOrder": 1,
+    "image": "assets/projects_ui/card_data_gov.png",
+    "banner": "assets/projects_ui/card_data_gov.png",
+    "createdAt": "2026-11-25T02:55:49.043Z",
+    "updatedAt": "2026-11-25T02:59:57.505Z",
     "govdata": {
       "id": "proj_video_1795575349043",
       "title": "Diagnóstico de Gobierno de Datos - Afiancol S.A.S.",
@@ -208,21 +109,181 @@
         "authorsRole": "Estudiante / Creador"
       },
       "createdAt": "2026-11-25T02:55:49.043Z",
-      "updatedAt": "2026-11-25T02:59:43.075Z",
+      "updatedAt": "2026-11-25T02:59:57.777Z",
       "progress": 55,
       "calculatedProgress": 55
     },
-    "author": "Danna Boada",
     "authorId": "user_1795574386910",
+    "authorEmail": "boadavillamil09@gmail.com",
+    "authorAvatar": "🦄",
+    "difficulty": "Medio",
+    "timePerQuestion": 25,
+    "plays": 0,
+    "mainImage": "assets/projects_ui/card_data_gov.png",
+    "thumbnailImage": "assets/projects_ui/card_data_gov.png",
+    "shortDescription": "Afiancol, una compañía colombiana fundada en 2007 y especializada en fianzas y garantías para el sector solidario, vive de la confianza, pero sus datos se producían sin ser gestionados como un activo: faltaban responsables, reglas de decisión y control de calidad, y por eso no servían de base para decidir. Para abordarlo, se realizo un diagnóstico de gobierno de datos con la metodología DAMA-DMBOK2, a partir de entrevistas y documentos oficiales, midiendo la madurez en seis dimensiones y desarrollando una solución en cuatro fases, consolidada en Supabase y en la herramienta GovData Nexus, cuyas métricas se actualizan de forma continua. El resultado es una madurez global del 65 % al último corte, con una base sólida en Calidad, Seguridad y Organización, y con brechas prioritarias en Estrategia y Compliance (30 %), que marcan la ruta para convertir los datos en un activo estratégico y cumplir con Habeas Data. El principal aprendizaje es que gobernar datos es tanto un tema de personas como de tecnología: medir convierte una percepción en un punto de partida, y sostener ese gobierno día a día es lo que demuestra su valor a la dirección.",
+    "fullDescription": "Afiancol, una compañía colombiana fundada en 2007 y especializada en fianzas y garantías para el sector solidario, vive de la confianza, pero sus datos se producían sin ser gestionados como un activo: faltaban responsables, reglas de decisión y control de calidad, y por eso no servían de base para decidir. Para abordarlo, se realizo un diagnóstico de gobierno de datos con la metodología DAMA-DMBOK2, a partir de entrevistas y documentos oficiales, midiendo la madurez en seis dimensiones y desarrollando una solución en cuatro fases, consolidada en Supabase y en la herramienta GovData Nexus, cuyas métricas se actualizan de forma continua. El resultado es una madurez global del 65 % al último corte, con una base sólida en Calidad, Seguridad y Organización, y con brechas prioritarias en Estrategia y Compliance (30 %), que marcan la ruta para convertir los datos en un activo estratégico y cumplir con Habeas Data. El principal aprendizaje es que gobernar datos es tanto un tema de personas como de tecnología: medir convierte una percepción en un punto de partida, y sostener ese gobierno día a día es lo que demuestra su valor a la dirección.",
+    "accessMode": "private",
+    "displayOrder": 1,
+    "landingConfig": {
+      "publicName": "Diagnóstico de Gobierno de Datos - Afiancol S.A.S.",
+      "slug": "diagnostico-de-gobierno-de-datos-afiancol-s-a-s",
+      "landingTitle": "Diagnóstico de Gobierno de Datos - Afiancol S.A.S.",
+      "publicDescription": "Se hace medición de la madurez con DAMA-DMBOK2, identificando las brechas y definiendo por dónde empezar a convertir los datos en un activo estratégico para la organización.",
+      "visibleCategory": "Administración Pública",
+      "tags": [
+        "Gobierno de Datos",
+        "IA",
+        "Innovación"
+      ],
+      "ctaText": "Ver Proyecto",
+      "ctaUrl": "#",
+      "displayOrder": 1,
+      "featuredVideoPublic": true
+    },
+    "authorsConfig": {
+      "authorsList": "Danna Boada",
+      "authorsEmails": "boadavillamil09@gmail.com",
+      "authorsRole": "Estudiante / Creador"
+    },
+    "designConfig": {
+      "themeId": "cosmos",
+      "fontFamily": "Montserrat",
+      "titleColor": "#ffffff",
+      "textColor": "#cbd5e1",
+      "accentColor": "#00f5d4",
+      "bannerStyle": "gradient-cosmos",
+      "bannerUrl": "assets/projects_ui/card_data_gov.png"
+    },
+    "videoUrl": "https://youtu.be/j9dX1jtgO4A",
+    "videoConfig": {
+      "sourceType": "url",
+      "url": "https://youtu.be/j9dX1jtgO4A",
+      "fileName": "",
+      "title": "Diagnóstico de Gobierno de Datos - Afiancol S.A.S.",
+      "description": "Se hace medición de la madurez con DAMA-DMBOK2, identificando las brechas y definiendo por dónde empezar a convertir los datos en un activo estratégico para la organización.",
+      "thumbnailUrl": "",
+      "isPublic": true,
+      "verified": true
+    },
+    "duration": "5:00 min",
+    "heroBanner": "assets/projects_ui/card_data_gov.png",
+    "hub": {
+      "joinRequests": [],
+      "members": [
+        {
+          "name": "Danna Boada",
+          "email": "boadavillamil09@gmail.com",
+          "role": "owner",
+          "leader": true
+        }
+      ],
+      "views": [
+        {
+          "t": 1795575548199,
+          "who": "user_1795574386910",
+          "name": "Danna Boada"
+        }
+      ],
+      "ratings": []
+    },
+    "customProjectCodes": [
+      {
+        "code": "804263",
+        "author": "Melisa",
+        "authorRole": "admin",
+        "createdAt": "22/11/2026, 9:27:35 p.m."
+      },
+      {
+        "code": "371850",
+        "author": "Melisa",
+        "authorRole": "admin",
+        "createdAt": "22/11/2026, 9:27:35 p.m."
+      },
+      {
+        "code": "926407",
+        "author": "Melisa",
+        "authorRole": "admin",
+        "createdAt": "22/11/2026, 9:23:09 p.m."
+      },
+      {
+        "code": "583194",
+        "author": "Melisa",
+        "authorRole": "admin",
+        "createdAt": "22/11/2026, 9:22:51 p.m."
+      }
+    ],
+    "slug": "diagnostico-de-gobierno-de-datos-afiancol-s-a-s",
+    "projectSubtype": "Gobierno de Datos e IA",
+    "coverImage": "assets/projects_ui/card_data_gov.png",
+    "_clearedMainImage": false,
+    "_clearedThumbImage": false,
+    "useDefaultImage": true,
+    "targetAudience": "",
+    "problemStatement": "",
+    "mainObjective": "",
+    "benefits": "",
+    "teamLead": "Danna Boada",
+    "preparationStatus": "en_desarrollo",
+    "startDate": "2026-11-25",
+    "endDate": "",
+    "currentStep": 1,
+    "completedSteps": [
+      1
+    ],
+    "progress": 55,
+    "calculatedProgress": 55,
+    "valueProp": {
+      "problemSolved": "",
+      "howItWorks": "",
+      "forWhom": "",
+      "differentiator": "",
+      "keyFeatures": [],
+      "resultsAndBenefits": "",
+      "prerequisites": "",
+      "visitorAction": "Unirse / Colaborar",
+      "commercialPitch": "",
+      "faqs": []
+    },
+    "valueProposition": {
+      "problemSolved": "",
+      "howItWorks": "",
+      "forWhom": "",
+      "differentiator": "",
+      "keyFeatures": [],
+      "resultsAndBenefits": "",
+      "prerequisites": "",
+      "visitorAction": "Unirse / Colaborar",
+      "commercialPitch": "",
+      "faqs": []
+    },
+    "resources": [],
+    "visualAssets": [],
+    "slides": [],
+    "presentations": [],
+    "externalLinks": [],
+    "projectRoadmap": [],
+    "tags": [
+      "Gobierno de Datos",
+      "IA",
+      "Innovación"
+    ],
     "ownerId": "user_1795574386910",
     "ownerUsername": "dan_boa27",
     "joinCode": "",
     "accessCode": "",
-    "authorEmail": "boadavillamil09@gmail.com",
-    "authorAvatar": "🦄",
-    "authorRole": "student",
-    "createdAt": "2026-11-25T02:55:49.043Z",
-    "updatedAt": "2026-11-25T02:59:43.577Z"
+    "visibility": "private",
+    "rejectedAt": "",
+    "rejectionReason": "",
+    "joinRequests": [],
+    "members": [
+      {
+        "name": "Danna Boada",
+        "email": "boadavillamil09@gmail.com",
+        "role": "owner",
+        "leader": true
+      }
+    ]
   },
   {
     "id": "proj_presentation_1795566554804",
