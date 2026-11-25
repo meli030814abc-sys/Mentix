@@ -92,18 +92,18 @@
       "email": "gatitaxd6f79@gmail.com",
       "role": "admin",
       "joinedAt": "2026-11-23T04:35:10.065Z",
-      "updatedAt": "2026-11-25T01:19:26.495Z",
+      "updatedAt": "2026-11-25T01:26:38.545Z",
       "projectId": "proj_presentation_1795566554804",
       "projectTitle": "Diagnóstico de Gobierno de Datos – Universidad Colegio Mayor de Cundinamarca",
       "projectDescription": "Diagnóstico de gobierno de datos de la Universidad Colegio Mayor de Cundinamarca. Con base en DAMA-DMBOK se midió una madurez de 2 sobre 5 y se propuso un modelo de roles, comité y políticas que fija reglas a los proyectos de datos ya aprobados. El modelo se implementó en la plataforma GovData Nexus.",
-      "currentStep": 9,
-      "completedStepsCount": 13,
+      "currentStep": 1,
+      "completedStepsCount": 16,
       "progress": 100,
       "status": "submitted",
       "approvalStatus": "pending",
-      "publicationStatus": "pending_approval",
+      "publicationStatus": "completed",
       "slidesCount": 1,
-      "resourcesCount": 3,
+      "resourcesCount": 4,
       "snapshot": {
         "id": "proj_presentation_1795566554804",
         "title": "Diagnóstico de Gobierno de Datos – Universidad Colegio Mayor de Cundinamarca",
@@ -116,9 +116,9 @@
         "projectType": "presentation",
         "isGovDataProject": true,
         "status": "completed",
-        "publicationStatus": "pending_approval",
+        "publicationStatus": "completed",
         "approvalStatus": "pending",
-        "currentStep": 9,
+        "currentStep": 1,
         "completedSteps": [
           1,
           2,
@@ -132,7 +132,10 @@
           10,
           11,
           12,
-          13
+          13,
+          14,
+          15,
+          16
         ],
         "progress": 100,
         "banner": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fdraft%2F1795566538564_r3c9_asset.jpg",
@@ -141,10 +144,10 @@
         "benefits": "Datos únicos y confiables para tomar decisiones y reportar a entes externos, responsables claros por cada dato y protección de los datos personales, con el personal que la universidad ya tiene.",
         "targetAudience": "Universidades públicas, directivos y equipos de tecnología, y comunidad académica",
         "slidesCount": 1,
-        "resourcesCount": 3,
+        "resourcesCount": 4,
         "landingConfig": {
           "publicName": "Diagnóstico de Gobierno de Datos – Universidad Colegio Mayor de Cundinamarca",
-          "slug": "diagnostico-de-gobierno-de-datos-universidad-colegio-mayor-de-cundinamarca",
+          "slug": "diagnostico-de-gobierno-de-datos-universidad-colegio-mayor-de-cu",
           "landingTitle": "Diagnóstico de Gobierno de Datos – Universidad Colegio Mayor de Cundinamarca",
           "publicDescription": "Diagnóstico de gobierno de datos de la Universidad Colegio Mayor de Cundinamarca. Con base en DAMA-DMBOK se midió una madurez de 2 sobre 5 y se propuso un modelo de roles, comité y políticas que fija reglas a los proyectos de datos ya aprobados. El modelo se implementó en la plataforma GovData Nexus.",
           "visibleCategory": "Gobierno de Datos",
@@ -174,10 +177,31 @@
           "resultsAndBenefits": "Datos únicos y confiables para tomar decisiones y reportar a entes externos, responsables claros por cada dato y protección de los datos personales, con el personal que la universidad ya tiene.",
           "prerequisites": "",
           "visitorAction": "Unirse / Colaborar",
-          "commercialPitch": "",
-          "faqs": []
+          "commercialPitch": "Reglas claras para que una universidad confíe en sus datos",
+          "faqs": [
+            {
+              "q": "¿Qué es el gobierno de datos?",
+              "a": "Es el conjunto de reglas, roles y responsabilidades que definen quién decide sobre los datos de una organización, qué estándares deben cumplir y cómo se verifica."
+            },
+            {
+              "q": "¿Por qué la Universidad Colegio Mayor de Cundinamarca?",
+              "a": "Es una universidad pública con cuatro sedes cuyos datos están dispersos y duplicados entre sistemas, sin responsables formales ni reglas de calidad."
+            },
+            {
+              "q": "¿Cuánto cuesta implementar el modelo?",
+              "a": "El escenario recomendado cuesta $106 millones en 24 meses, menos del 2 % de lo que la universidad ya aprobó para sus proyectos de datos, y no crea cargos nuevos."
+            },
+            {
+              "q": "¿Qué es GovData Nexus y para qué se usó?",
+              "a": "Es una plataforma de gobierno de datos. En ella se cargó el catálogo de datos, el glosario, las reglas de calidad y los flujos de aprobación para probar el modelo."
+            },
+            {
+              "q": "¿Se usaron datos reales de estudiantes?",
+              "a": "No. La prueba de calidad se hizo con una base de datos sintética de 2.000 estudiantes que reproduce los problemas reales de la universidad, para proteger los datos personales."
+            }
+          ]
         },
-        "updatedAt": "2026-11-25T01:19:26.495Z"
+        "updatedAt": "2026-11-25T01:26:38.545Z"
       }
     },
     {
