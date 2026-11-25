@@ -9,7 +9,7 @@
     "category": "gobierno_de__datos",
     "categoryName": "Gobierno de Datos",
     "author": "Danna Boada",
-    "authorRole": "student",
+    "authorRole": "Estudiante / Creador",
     "status": "in_progress",
     "publicationStatus": "pending_approval",
     "submittedForApproval": false,
@@ -18,7 +18,7 @@
     "image": "assets/projects_ui/card_data_gov.png",
     "banner": "assets/projects_ui/card_data_gov.png",
     "createdAt": "2026-11-25T02:55:49.043Z",
-    "updatedAt": "2026-11-25T03:08:36.668Z",
+    "updatedAt": "2026-11-25T03:08:47.185Z",
     "govdata": {
       "id": "proj_video_1795575349043",
       "title": "Diagnóstico de Gobierno de Datos - Afiancol S.A.S.",
@@ -128,7 +128,7 @@
       "ownerUsername": "dan_boa27",
       "authorEmail": "boadavillamil09@gmail.com",
       "authorAvatar": "🦄",
-      "authorRole": "student",
+      "authorRole": "Estudiante / Creador",
       "joinCode": "",
       "accessCode": "",
       "designConfig": {
@@ -143,10 +143,12 @@
       "authorsConfig": {
         "authorsList": "Danna Boada",
         "authorsEmails": "boadavillamil09@gmail.com",
-        "authorsRole": "Estudiante / Creador"
+        "authorsRole": "Estudiante / Creador",
+        "authorsInstitution": "Politécnico Gr",
+        "collaborators": ""
       },
       "createdAt": "2026-11-25T02:55:49.043Z",
-      "updatedAt": "2026-11-25T03:08:36.516Z",
+      "updatedAt": "2026-11-25T03:08:47.435Z",
       "progress": 65,
       "calculatedProgress": 65
     },
@@ -183,7 +185,9 @@
     "authorsConfig": {
       "authorsList": "Danna Boada",
       "authorsEmails": "boadavillamil09@gmail.com",
-      "authorsRole": "Estudiante / Creador"
+      "authorsRole": "Estudiante / Creador",
+      "authorsInstitution": "Politécnico Gr",
+      "collaborators": ""
     },
     "designConfig": {
       "themeId": "cosmos",
