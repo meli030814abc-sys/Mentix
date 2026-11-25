@@ -47,8 +47,8 @@
       8,
       9
     ],
-    "progress": 85,
-    "calculatedProgress": 85,
+    "progress": 90,
+    "calculatedProgress": 90,
     "valueProp": {
       "problemSolved": "Falta de claridad, estandarización y trazabilidad en la gestióny protección de los datos personales y académicos de los estudiantes y la comunidad educativa, generando brechas frente a la responsabilidad institucional y el cumplimiento normativo en un colegio oficial.",
       "howItWorks": "Levanta y mapea fuentes de datos escolares, evalúa roles, accesos y cumplimiento normativo, y entrega un diagnóstico con brechas priorizadas y plan de acción.",
@@ -81,16 +81,16 @@
       "commercialPitch": "Diagnóstico claro para proteger los datos escolares y guiar decisiones responsables en el colegio.",
       "faqs": []
     },
-    "videoUrl": "",
+    "videoUrl": "https://youtu.be/SdGHvD2MG_o",
     "videoConfig": {
       "sourceType": "url",
-      "url": "",
+      "url": "https://youtu.be/SdGHvD2MG_o",
       "fileName": "",
       "title": "Diagnóstico de Gobierno de Datos: Colegio Técnico Jaime Pardo Leal IED",
       "description": "Presentación del diagnóstico, hallazgos clave y lineamientos de protección de datos escolares.",
       "thumbnailUrl": "",
       "isPublic": true,
-      "verified": false
+      "verified": true
     },
     "resources": [
       {
@@ -132,9 +132,7 @@
         "bulletsFont": "'Outfit', sans-serif",
         "bulletStyle": "✦",
         "isFullImage": true,
-        "isImported": true,
-        "imageUrl": "",
-        "bgImage": ""
+        "isImported": true
       }
     ],
     "presentations": [
@@ -170,9 +168,7 @@
             "bulletsFont": "'Outfit', sans-serif",
             "bulletStyle": "✦",
             "isFullImage": true,
-            "isImported": true,
-            "imageUrl": "",
-            "bgImage": ""
+            "isImported": true
           }
         ]
       }
@@ -285,13 +281,13 @@
       },
       "videoConfig": {
         "sourceType": "url",
-        "url": "",
+        "url": "https://youtu.be/SdGHvD2MG_o",
         "fileName": "",
         "title": "Diagnóstico de Gobierno de Datos: Colegio Técnico Jaime Pardo Leal IED",
         "description": "Presentación del diagnóstico, hallazgos clave y lineamientos de protección de datos escolares.",
         "thumbnailUrl": "",
         "isPublic": true,
-        "verified": false
+        "verified": true
       },
       "mainImage": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fdraft%2F1795607078265_tkil_asset.jpg",
       "thumbnailImage": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fdraft%2F1795607078265_tkil_asset.jpg",
@@ -387,9 +383,9 @@
         "collaborators": ""
       },
       "createdAt": "2026-11-25T11:45:30.865Z",
-      "updatedAt": "2026-11-25T12:25:16.802Z",
-      "progress": 85,
-      "calculatedProgress": 85
+      "updatedAt": "2026-11-25T12:26:59.792Z",
+      "progress": 90,
+      "calculatedProgress": 90
     },
     "author": "Jhomar Alejandra Cano Ramirez",
     "authorId": "user_1795557081139",
@@ -401,7 +397,7 @@
     "authorAvatar": "🦊",
     "authorRole": "Estudiante / Creador",
     "createdAt": "2026-11-25T11:45:30.865Z",
-    "updatedAt": "2026-11-25T12:25:16.575Z",
+    "updatedAt": "2026-11-25T12:26:59.591Z",
     "fromStudentCreate": true,
     "_isStudentDraft": true,
     "timePerQuestion": 25,
@@ -448,16 +444,7 @@
     ],
     "visibility": "private",
     "rejectedAt": "",
-    "rejectionReason": "",
-    "members": [
-      {
-        "name": "Jhomar Alejandra Cano Ramirez",
-        "email": "jhomaralejandracano@gmail.com",
-        "role": "owner",
-        "leader": true
-      }
-    ],
-    "joinRequests": []
+    "rejectionReason": ""
   },
   {
     "id": "proj_video_1795575349043",
