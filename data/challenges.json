@@ -28,7 +28,7 @@
     "accessMode": "private",
     "displayOrder": 1,
     "createdAt": "2026-11-25T00:29:14.804Z",
-    "updatedAt": "2026-11-25T00:59:45.185Z",
+    "updatedAt": "2026-11-25T00:59:43.684Z",
     "landingConfig": {
       "publicName": "Diagnóstico de Gobierno de Datos – Universidad Colegio Mayor de Cundinamarca",
       "slug": "diagnostico-de-gobierno-de-datos-universidad-colegio-mayor-de-cundinamarca",
@@ -163,10 +163,6 @@
         {
           "q": "¿Por qué la Universidad Colegio Mayor de Cundinamarca?",
           "a": "Es una universidad pública con cuatro sedes cuyos datos están dispersos y duplicados entre sistemas, sin responsables formales ni reglas de calidad."
-        },
-        {
-          "q": "",
-          "a": ""
         }
       ]
     },
@@ -195,10 +191,6 @@
         {
           "q": "¿Por qué la Universidad Colegio Mayor de Cundinamarca?",
           "a": "Es una universidad pública con cuatro sedes cuyos datos están dispersos y duplicados entre sistemas, sin responsables formales ni reglas de calidad."
-        },
-        {
-          "q": "",
-          "a": ""
         }
       ]
     },
@@ -353,10 +345,6 @@
           {
             "q": "¿Por qué la Universidad Colegio Mayor de Cundinamarca?",
             "a": "Es una universidad pública con cuatro sedes cuyos datos están dispersos y duplicados entre sistemas, sin responsables formales ni reglas de calidad."
-          },
-          {
-            "q": "",
-            "a": ""
           }
         ]
       },
@@ -479,7 +467,7 @@
         "collaborators": ""
       },
       "createdAt": "2026-11-25T00:29:14.804Z",
-      "updatedAt": "2026-11-25T00:59:44.972Z",
+      "updatedAt": "2026-11-25T00:59:43.476Z",
       "progress": 85,
       "calculatedProgress": 85
     },
