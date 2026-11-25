@@ -65,7 +65,7 @@
         "Evaluación de madurez, calidad y privacidad",
         "Hoja de ruta de cumplimiento y mejora"
       ],
-      "resultsAndBenefits": "",
+      "resultsAndBenefits": "Facilita la toma de decisiones directivas y administrativas con información más confiable, reduce riesgos de mal manejo de datos escolares y fortalece una cultura de cuidado y protección de los datos de niños, niñas, adolescentes y funcionarios.",
       "prerequisites": "",
       "visitorAction": "Unirse / Colaborar",
       "commercialPitch": "Diagnóstico claro para proteger los datos escolares y guiar decisiones responsables en el colegio.",
@@ -81,7 +81,7 @@
         "Evaluación de madurez, calidad y privacidad",
         "Hoja de ruta de cumplimiento y mejora"
       ],
-      "resultsAndBenefits": "",
+      "resultsAndBenefits": "Facilita la toma de decisiones directivas y administrativas con información más confiable, reduce riesgos de mal manejo de datos escolares y fortalece una cultura de cuidado y protección de los datos de niños, niñas, adolescentes y funcionarios.",
       "prerequisites": "",
       "visitorAction": "Unirse / Colaborar",
       "commercialPitch": "Diagnóstico claro para proteger los datos escolares y guiar decisiones responsables en el colegio.",
@@ -1309,8 +1309,7 @@
       "authorsList": "Jhomar Alejandra Cano Ramirez",
       "authorsEmails": "jhomaralejandracano@gmail.com",
       "authorsRole": "Estudiante / Creador",
-      "authorsInstitution": "Universidad Politecnico Grancolombiano",
-      "collaborators": ""
+      "authorsInstitution": "Universidad Politecnico Grancolombiano"
     },
     "tags": [
       "Gobierno de Datos",
@@ -1345,7 +1344,7 @@
           "Evaluación de madurez, calidad y privacidad",
           "Hoja de ruta de cumplimiento y mejora"
         ],
-        "resultsAndBenefits": "",
+        "resultsAndBenefits": "Facilita la toma de decisiones directivas y administrativas con información más confiable, reduce riesgos de mal manejo de datos escolares y fortalece una cultura de cuidado y protección de los datos de niños, niñas, adolescentes y funcionarios.",
         "prerequisites": "",
         "visitorAction": "Unirse / Colaborar",
         "commercialPitch": "Diagnóstico claro para proteger los datos escolares y guiar decisiones responsables en el colegio.",
@@ -1468,17 +1467,12 @@
         "authorsList": "Jhomar Alejandra Cano Ramirez",
         "authorsEmails": "jhomaralejandracano@gmail.com",
         "authorsRole": "Estudiante / Creador",
-        "authorsInstitution": "Universidad Politecnico Grancolombiano",
-        "collaborators": ""
+        "authorsInstitution": "Universidad Politecnico Grancolombiano"
       },
       "createdAt": "2026-11-25T11:45:30.865Z",
-      "updatedAt": "2026-11-25T12:41:28.400Z",
+      "updatedAt": "2026-11-25T12:41:48.971Z",
       "progress": 95,
-      "calculatedProgress": 95,
-      "heroBanner": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fdraft%2F1795607078265_tkil_asset.jpg",
-      "banner": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fdraft%2F1795607078265_tkil_asset.jpg",
-      "image": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fdraft%2F1795607078265_tkil_asset.jpg",
-      "coverImage": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fdraft%2F1795607078265_tkil_asset.jpg"
+      "calculatedProgress": 95
     },
     "author": "Jhomar Alejandra Cano Ramirez",
     "authorId": "user_1795557081139",
@@ -1490,7 +1484,7 @@
     "authorAvatar": "🦊",
     "authorRole": "Estudiante / Creador",
     "createdAt": "2026-11-25T11:45:30.865Z",
-    "updatedAt": "2026-11-25T12:41:34.397Z",
+    "updatedAt": "2026-11-25T12:41:48.953Z",
     "fromStudentCreate": true,
     "_isStudentDraft": true,
     "timePerQuestion": 25,
