@@ -35,7 +35,7 @@
     "isPublic": false,
     "startDate": "2026-08-30",
     "endDate": "2026-11-25",
-    "currentStep": 10,
+    "currentStep": 11,
     "completedSteps": [
       1,
       2,
@@ -45,7 +45,8 @@
       6,
       7,
       8,
-      9
+      9,
+      10
     ],
     "progress": 90,
     "calculatedProgress": 90,
@@ -132,9 +133,7 @@
         "bulletsFont": "'Outfit', sans-serif",
         "bulletStyle": "✦",
         "isFullImage": true,
-        "isImported": true,
-        "imageUrl": "",
-        "bgImage": ""
+        "isImported": true
       }
     ],
     "presentations": [
@@ -170,9 +169,7 @@
             "bulletsFont": "'Outfit', sans-serif",
             "bulletStyle": "✦",
             "isFullImage": true,
-            "isImported": true,
-            "imageUrl": "",
-            "bgImage": ""
+            "isImported": true
           }
         ]
       }
@@ -359,9 +356,10 @@
         6,
         7,
         8,
-        9
+        9,
+        10
       ],
-      "currentStep": 10,
+      "currentStep": 11,
       "author": "Jhomar Alejandra Cano Ramirez",
       "authorId": "user_1795557081139",
       "ownerId": "user_1795557081139",
@@ -387,7 +385,7 @@
         "collaborators": ""
       },
       "createdAt": "2026-11-25T11:45:30.865Z",
-      "updatedAt": "2026-11-25T12:29:07.118Z",
+      "updatedAt": "2026-11-25T12:29:18.969Z",
       "progress": 90,
       "calculatedProgress": 90
     },
@@ -401,7 +399,7 @@
     "authorAvatar": "🦊",
     "authorRole": "Estudiante / Creador",
     "createdAt": "2026-11-25T11:45:30.865Z",
-    "updatedAt": "2026-11-25T12:29:06.881Z",
+    "updatedAt": "2026-11-25T12:29:19.088Z",
     "fromStudentCreate": true,
     "_isStudentDraft": true,
     "timePerQuestion": 25,
@@ -448,16 +446,7 @@
     ],
     "visibility": "private",
     "rejectedAt": "",
-    "rejectionReason": "",
-    "members": [
-      {
-        "name": "Jhomar Alejandra Cano Ramirez",
-        "email": "jhomaralejandracano@gmail.com",
-        "role": "owner",
-        "leader": true
-      }
-    ],
-    "joinRequests": []
+    "rejectionReason": ""
   },
   {
     "id": "proj_video_1795575349043",
