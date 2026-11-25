@@ -8,7 +8,7 @@
     "authorId": "user_1795545770936",
     "authorEmail": "jeroseroj@gmail.com",
     "authorAvatar": "🦊",
-    "authorRole": "student",
+    "authorRole": "Estudiante / Creador",
     "projectType": "presentation",
     "category": "gobierno_de__datos",
     "categoryName": "Gobierno de Datos",
@@ -28,7 +28,7 @@
     "accessMode": "private",
     "displayOrder": 1,
     "createdAt": "2026-11-25T00:29:14.804Z",
-    "updatedAt": "2026-11-25T00:58:21.462Z",
+    "updatedAt": "2026-11-25T00:58:27.805Z",
     "landingConfig": {
       "publicName": "Diagnóstico de Gobierno de Datos – Universidad Colegio Mayor de Cundinamarca",
       "slug": "diagnostico-de-gobierno-de-datos-universidad-colegio-mayor-de-cundinamarca",
@@ -48,7 +48,9 @@
     "authorsConfig": {
       "authorsList": "Juan Esteban Rosero Jimenez",
       "authorsEmails": "jeroseroj@gmail.com",
-      "authorsRole": "Estudiante / Creador"
+      "authorsRole": "Estudiante / Creador",
+      "authorsInstitution": "Politecnico Gran Colombiano",
+      "collaborators": ""
     },
     "designConfig": {
       "themeId": "cosmos",
@@ -114,29 +116,40 @@
     "_clearedMainImage": false,
     "_clearedThumbImage": false,
     "useDefaultImage": true,
-    "targetAudience": "",
-    "problemStatement": "",
-    "mainObjective": "",
-    "benefits": "",
+    "targetAudience": "Universidades públicas, directivos y equipos de tecnología, y comunidad académica",
+    "problemStatement": "La universidad tiene sus datos dispersos y duplicados entre cuatro sedes y varios sistemas, sin responsables ni reglas que garanticen su calidad. Su madurez en gobierno de datos es de 2 sobre 5.",
+    "mainObjective": "Diseñar un modelo de gobierno de datos con roles, políticas y un plan de 24 meses que fije reglas a los proyectos de datos ya aprobados, y probarlo en la plataforma GovData Nexus.",
+    "benefits": "Datos únicos y confiables para tomar decisiones y reportar a entes externos, responsables claros por cada dato y protección de los datos personales, con el personal que la universidad ya tiene.",
     "teamLead": "Juan Esteban Rosero Jimenez",
     "preparationStatus": "en_desarrollo",
     "submittedForApproval": false,
     "startDate": "2026-11-25",
-    "endDate": "",
-    "currentStep": 3,
+    "endDate": "2029-08-05",
+    "currentStep": 8,
     "completedSteps": [
       1,
       2,
-      3
+      3,
+      4,
+      5,
+      6,
+      7
     ],
-    "progress": 60,
-    "calculatedProgress": 60,
+    "progress": 85,
+    "calculatedProgress": 85,
     "valueProp": {
-      "problemSolved": "",
-      "howItWorks": "",
-      "forWhom": "",
-      "differentiator": "",
-      "keyFeatures": [],
+      "problemSolved": "La universidad tiene sus datos dispersos y duplicados entre cuatro sedes y varios sistemas, sin responsables ni reglas que garanticen su calidad. Su madurez en gobierno de datos es de 2 sobre 5.",
+      "howItWorks": "Diagnostica la madurez con DAMA-DMBOK, asigna responsables a cada dominio de datos, define políticas y reglas de calidad, y las aplica en GovData Nexus con catálogo, flujos de aprobación y acuerdos de nivel de servicio.",
+      "forWhom": "Universidades públicas, directivos y equipos de tecnología, y comunidad académica",
+      "differentiator": "No compra tecnología ni crea cargos: pone reglas a los proyectos ya aprobados y usa al personal que la universidad ya tiene.",
+      "keyFeatures": [
+        "Diagnóstico de madurez DAMA-DMBOK",
+        "Roles y comité de gobierno de datos",
+        "Ocho políticas de datos",
+        "Catálogo de datos y datos maestros",
+        "Reglas de calidad de datos",
+        "Flujos de aprobación con SLA"
+      ],
       "resultsAndBenefits": "",
       "prerequisites": "",
       "visitorAction": "Unirse / Colaborar",
@@ -144,11 +157,18 @@
       "faqs": []
     },
     "valueProposition": {
-      "problemSolved": "",
-      "howItWorks": "",
-      "forWhom": "",
-      "differentiator": "",
-      "keyFeatures": [],
+      "problemSolved": "La universidad tiene sus datos dispersos y duplicados entre cuatro sedes y varios sistemas, sin responsables ni reglas que garanticen su calidad. Su madurez en gobierno de datos es de 2 sobre 5.",
+      "howItWorks": "Diagnostica la madurez con DAMA-DMBOK, asigna responsables a cada dominio de datos, define políticas y reglas de calidad, y las aplica en GovData Nexus con catálogo, flujos de aprobación y acuerdos de nivel de servicio.",
+      "forWhom": "Universidades públicas, directivos y equipos de tecnología, y comunidad académica",
+      "differentiator": "No compra tecnología ni crea cargos: pone reglas a los proyectos ya aprobados y usa al personal que la universidad ya tiene.",
+      "keyFeatures": [
+        "Diagnóstico de madurez DAMA-DMBOK",
+        "Roles y comité de gobierno de datos",
+        "Ocho políticas de datos",
+        "Catálogo de datos y datos maestros",
+        "Reglas de calidad de datos",
+        "Flujos de aprobación con SLA"
+      ],
       "resultsAndBenefits": "",
       "prerequisites": "",
       "visitorAction": "Unirse / Colaborar",
@@ -209,7 +229,56 @@
       }
     ],
     "externalLinks": [],
-    "projectRoadmap": [],
+    "projectRoadmap": [
+      {
+        "title": "Diagnóstico",
+        "description": "Revisión del PDI, el PETI, el FURAG y los archivos públicos con DAMA-DMBOK: madurez de 1,7 sobre 5.",
+        "status": "completed",
+        "progress": 100,
+        "emoji": "🔍",
+        "icon": "clipboard"
+      },
+      {
+        "title": "Diseño del modelo",
+        "description": "Recopilación de datos e información relevante.12 dominios con Owner, Steward y Custodio, Comité de Gobierno de Datos, matriz RACI y ocho políticas.",
+        "status": "completed",
+        "progress": 100,
+        "emoji": "🧩",
+        "icon": "clipboard"
+      },
+      {
+        "title": "Plan y presupuesto",
+        "description": "Hoja de ruta de 24 meses en cuatro fases y presupuesto base de $106 millones, sin cargos nuevos.",
+        "status": "completed",
+        "progress": 100,
+        "emoji": "📊",
+        "icon": "clipboard"
+      },
+      {
+        "title": "Implementación en GovData Nexus",
+        "description": "Catálogo de 22 activos, diccionario, glosario, 11 datos maestros y políticas en la plataforma.",
+        "status": "completed",
+        "progress": 100,
+        "emoji": "💻",
+        "icon": "clipboard"
+      },
+      {
+        "title": "Calidad y operación",
+        "description": "Medición de calidad con 37 reglas sobre datos sintéticos, flujos de aprobación con SLA e incidentes.",
+        "status": "completed",
+        "progress": 100,
+        "emoji": "⚙️",
+        "icon": "clipboard"
+      },
+      {
+        "title": "Publicación",
+        "description": "Documento final, presentación, video y publicación del proyecto en la plataforma.",
+        "status": "completed",
+        "progress": 100,
+        "emoji": "🚀",
+        "icon": "clipboard"
+      }
+    ],
     "tags": [
       "Gobierno de Datos",
       "IA",
@@ -224,20 +293,27 @@
       "category": "gobierno_de__datos",
       "categoryName": "Gobierno de Datos",
       "projectSubtype": "Gobierno de Datos e IA",
-      "targetAudience": "",
-      "problemStatement": "",
-      "mainObjective": "",
-      "benefits": "",
+      "targetAudience": "Universidades públicas, directivos y equipos de tecnología, y comunidad académica",
+      "problemStatement": "La universidad tiene sus datos dispersos y duplicados entre cuatro sedes y varios sistemas, sin responsables ni reglas que garanticen su calidad. Su madurez en gobierno de datos es de 2 sobre 5.",
+      "mainObjective": "Diseñar un modelo de gobierno de datos con roles, políticas y un plan de 24 meses que fije reglas a los proyectos de datos ya aprobados, y probarlo en la plataforma GovData Nexus.",
+      "benefits": "Datos únicos y confiables para tomar decisiones y reportar a entes externos, responsables claros por cada dato y protección de los datos personales, con el personal que la universidad ya tiene.",
       "teamLead": "Juan Esteban Rosero Jimenez",
       "preparationStatus": "en_desarrollo",
       "startDate": "2026-11-25",
-      "endDate": "",
+      "endDate": "2029-08-05",
       "valueProp": {
-        "problemSolved": "",
-        "howItWorks": "",
-        "forWhom": "",
-        "differentiator": "",
-        "keyFeatures": [],
+        "problemSolved": "La universidad tiene sus datos dispersos y duplicados entre cuatro sedes y varios sistemas, sin responsables ni reglas que garanticen su calidad. Su madurez en gobierno de datos es de 2 sobre 5.",
+        "howItWorks": "Diagnostica la madurez con DAMA-DMBOK, asigna responsables a cada dominio de datos, define políticas y reglas de calidad, y las aplica en GovData Nexus con catálogo, flujos de aprobación y acuerdos de nivel de servicio.",
+        "forWhom": "Universidades públicas, directivos y equipos de tecnología, y comunidad académica",
+        "differentiator": "No compra tecnología ni crea cargos: pone reglas a los proyectos ya aprobados y usa al personal que la universidad ya tiene.",
+        "keyFeatures": [
+          "Diagnóstico de madurez DAMA-DMBOK",
+          "Roles y comité de gobierno de datos",
+          "Ocho políticas de datos",
+          "Catálogo de datos y datos maestros",
+          "Reglas de calidad de datos",
+          "Flujos de aprobación con SLA"
+        ],
         "resultsAndBenefits": "",
         "prerequisites": "",
         "visitorAction": "Unirse / Colaborar",
@@ -260,6 +336,56 @@
       "_clearedThumbImage": false,
       "useDefaultImage": true,
       "externalLinks": [],
+      "projectRoadmap": [
+        {
+          "title": "Diagnóstico",
+          "description": "Revisión del PDI, el PETI, el FURAG y los archivos públicos con DAMA-DMBOK: madurez de 1,7 sobre 5.",
+          "status": "completed",
+          "progress": 100,
+          "emoji": "🔍",
+          "icon": "clipboard"
+        },
+        {
+          "title": "Diseño del modelo",
+          "description": "Recopilación de datos e información relevante.12 dominios con Owner, Steward y Custodio, Comité de Gobierno de Datos, matriz RACI y ocho políticas.",
+          "status": "completed",
+          "progress": 100,
+          "emoji": "🧩",
+          "icon": "clipboard"
+        },
+        {
+          "title": "Plan y presupuesto",
+          "description": "Hoja de ruta de 24 meses en cuatro fases y presupuesto base de $106 millones, sin cargos nuevos.",
+          "status": "completed",
+          "progress": 100,
+          "emoji": "📊",
+          "icon": "clipboard"
+        },
+        {
+          "title": "Implementación en GovData Nexus",
+          "description": "Catálogo de 22 activos, diccionario, glosario, 11 datos maestros y políticas en la plataforma.",
+          "status": "completed",
+          "progress": 100,
+          "emoji": "💻",
+          "icon": "clipboard"
+        },
+        {
+          "title": "Calidad y operación",
+          "description": "Medición de calidad con 37 reglas sobre datos sintéticos, flujos de aprobación con SLA e incidentes.",
+          "status": "completed",
+          "progress": 100,
+          "emoji": "⚙️",
+          "icon": "clipboard"
+        },
+        {
+          "title": "Publicación",
+          "description": "Documento final, presentación, video y publicación del proyecto en la plataforma.",
+          "status": "completed",
+          "progress": 100,
+          "emoji": "🚀",
+          "icon": "clipboard"
+        }
+      ],
       "landingConfig": {
         "publicName": "Diagnóstico de Gobierno de Datos – Universidad Colegio Mayor de Cundinamarca",
         "slug": "diagnostico-de-gobierno-de-datos-universidad-colegio-mayor-de-cundinamarca",
@@ -280,16 +406,20 @@
       "completedSteps": [
         1,
         2,
-        3
+        3,
+        4,
+        5,
+        6,
+        7
       ],
-      "currentStep": 3,
+      "currentStep": 8,
       "author": "Juan Esteban Rosero Jimenez",
       "authorId": "user_1795545770936",
       "ownerId": "user_1795545770936",
       "ownerUsername": "Juanes_RJ",
       "authorEmail": "jeroseroj@gmail.com",
       "authorAvatar": "🦊",
-      "authorRole": "student",
+      "authorRole": "Estudiante / Creador",
       "joinCode": "",
       "accessCode": "",
       "designConfig": {
@@ -303,12 +433,14 @@
       "authorsConfig": {
         "authorsList": "Juan Esteban Rosero Jimenez",
         "authorsEmails": "jeroseroj@gmail.com",
-        "authorsRole": "Estudiante / Creador"
+        "authorsRole": "Estudiante / Creador",
+        "authorsInstitution": "Politecnico Gran Colombiano",
+        "collaborators": ""
       },
       "createdAt": "2026-11-25T00:29:14.804Z",
-      "updatedAt": "2026-11-25T00:58:25.591Z",
-      "progress": 60,
-      "calculatedProgress": 60
+      "updatedAt": "2026-11-25T00:58:27.593Z",
+      "progress": 85,
+      "calculatedProgress": 85
     },
     "ownerId": "user_1795545770936",
     "ownerUsername": "Juanes_RJ",
@@ -357,16 +489,7 @@
       ],
       "views": [],
       "ratings": []
-    },
-    "members": [
-      {
-        "name": "Juan Esteban Rosero Jimenez",
-        "email": "jeroseroj@gmail.com",
-        "role": "owner",
-        "leader": true
-      }
-    ],
-    "joinRequests": []
+    }
   },
   {
     "id": "reto_1795552054552",
