@@ -28,7 +28,7 @@
     "accessMode": "private",
     "displayOrder": 1,
     "createdAt": "2026-11-25T00:29:14.804Z",
-    "updatedAt": "2026-11-25T00:51:10.456Z",
+    "updatedAt": "2026-11-25T00:51:55.709Z",
     "landingConfig": {
       "publicName": "Diagnóstico de Gobierno de Datos – Universidad Colegio Mayor de Cundinamarca",
       "slug": "diagnostico-de-gobierno-de-datos-universidad-colegio-mayor-de-cundinamarca",
@@ -114,7 +114,7 @@
     "_clearedMainImage": false,
     "_clearedThumbImage": false,
     "useDefaultImage": true,
-    "targetAudience": "Universidades públicas, directivos y equipos de tecnología, y comunidad académica",
+    "targetAudience": "",
     "problemStatement": "",
     "mainObjective": "",
     "benefits": "",
@@ -123,14 +123,13 @@
     "submittedForApproval": false,
     "startDate": "2026-11-25",
     "endDate": "",
-    "currentStep": 4,
+    "currentStep": 3,
     "completedSteps": [
       1,
-      2,
-      3
+      2
     ],
-    "progress": 70,
-    "calculatedProgress": 70,
+    "progress": 60,
+    "calculatedProgress": 60,
     "valueProp": {
       "problemSolved": "",
       "howItWorks": "",
@@ -209,40 +208,7 @@
       }
     ],
     "externalLinks": [],
-    "projectRoadmap": [
-      {
-        "title": "Planeación",
-        "description": "Conformación del equipo y definición de objetivos.",
-        "status": "completed",
-        "progress": 100,
-        "emoji": "📋",
-        "icon": "clipboard"
-      },
-      {
-        "title": "Investigación",
-        "description": "Recopilación de datos e información relevante.",
-        "progress": 100,
-        "status": "completed",
-        "icon": "search",
-        "emoji": "🔍"
-      },
-      {
-        "title": "Desarrollo",
-        "description": "Construcción de la solución y prototipos.",
-        "progress": 0,
-        "status": "pending",
-        "icon": "code",
-        "emoji": "💻"
-      },
-      {
-        "title": "Publicación",
-        "description": "Despliegue en la Landing Page y comunicación.",
-        "progress": 0,
-        "status": "pending",
-        "icon": "rocket",
-        "emoji": "🚀"
-      }
-    ],
+    "projectRoadmap": [],
     "tags": [
       "Gobierno de Datos",
       "IA",
@@ -257,7 +223,7 @@
       "category": "gobierno_de__datos",
       "categoryName": "Gobierno de Datos",
       "projectSubtype": "Gobierno de Datos e IA",
-      "targetAudience": "Universidades públicas, directivos y equipos de tecnología, y comunidad académica",
+      "targetAudience": "",
       "problemStatement": "",
       "mainObjective": "",
       "benefits": "",
@@ -293,40 +259,6 @@
       "_clearedThumbImage": false,
       "useDefaultImage": true,
       "externalLinks": [],
-      "projectRoadmap": [
-        {
-          "title": "Planeación",
-          "description": "Conformación del equipo y definición de objetivos.",
-          "status": "completed",
-          "progress": 100,
-          "emoji": "📋",
-          "icon": "clipboard"
-        },
-        {
-          "title": "Investigación",
-          "description": "Recopilación de datos e información relevante.",
-          "progress": 100,
-          "status": "completed",
-          "icon": "search",
-          "emoji": "🔍"
-        },
-        {
-          "title": "Desarrollo",
-          "description": "Construcción de la solución y prototipos.",
-          "progress": 0,
-          "status": "pending",
-          "icon": "code",
-          "emoji": "💻"
-        },
-        {
-          "title": "Publicación",
-          "description": "Despliegue en la Landing Page y comunicación.",
-          "progress": 0,
-          "status": "pending",
-          "icon": "rocket",
-          "emoji": "🚀"
-        }
-      ],
       "landingConfig": {
         "publicName": "Diagnóstico de Gobierno de Datos – Universidad Colegio Mayor de Cundinamarca",
         "slug": "diagnostico-de-gobierno-de-datos-universidad-colegio-mayor-de-cundinamarca",
@@ -346,10 +278,9 @@
       "publicationStatus": "pending_approval",
       "completedSteps": [
         1,
-        2,
-        3
+        2
       ],
-      "currentStep": 4,
+      "currentStep": 3,
       "author": "Juan Esteban Rosero Jimenez",
       "authorId": "user_1795545770936",
       "ownerId": "user_1795545770936",
@@ -373,9 +304,9 @@
         "authorsRole": "Estudiante / Creador"
       },
       "createdAt": "2026-11-25T00:29:14.804Z",
-      "updatedAt": "2026-11-25T00:51:10.224Z",
-      "progress": 70,
-      "calculatedProgress": 70
+      "updatedAt": "2026-11-25T00:51:59.862Z",
+      "progress": 60,
+      "calculatedProgress": 60
     },
     "ownerId": "user_1795545770936",
     "ownerUsername": "Juanes_RJ",
