@@ -35,9 +35,10 @@
     "isPublic": false,
     "startDate": "2026-11-25",
     "endDate": "",
-    "currentStep": 2,
+    "currentStep": 3,
     "completedSteps": [
-      1
+      1,
+      2
     ],
     "progress": 55,
     "calculatedProgress": 55,
@@ -181,9 +182,10 @@
       },
       "publicationStatus": "pending_approval",
       "completedSteps": [
-        1
+        1,
+        2
       ],
-      "currentStep": 2,
+      "currentStep": 3,
       "author": "Danna Boada",
       "authorId": "user_1795574386910",
       "ownerId": "user_1795574386910",
@@ -208,7 +210,7 @@
         "authorsRole": "Estudiante / Creador"
       },
       "createdAt": "2026-11-25T02:55:49.043Z",
-      "updatedAt": "2026-11-25T03:00:10.238Z",
+      "updatedAt": "2026-11-25T03:00:12.830Z",
       "progress": 55,
       "calculatedProgress": 55
     },
@@ -222,7 +224,7 @@
     "authorAvatar": "🦄",
     "authorRole": "student",
     "createdAt": "2026-11-25T02:55:49.043Z",
-    "updatedAt": "2026-11-25T03:00:10.692Z"
+    "updatedAt": "2026-11-25T03:00:13.093Z"
   },
   {
     "id": "proj_presentation_1795566554804",
