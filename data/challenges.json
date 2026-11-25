@@ -120,6 +120,24 @@
         "extractedText": "",
         "uploadedAt": "2026-11-25T12:33:46.785Z",
         "thumbnailUrl": ""
+      },
+      {
+        "id": "res_1795610212322_54gk",
+        "name": "Diagnóstico de Gobierno de Datos v3 (Taller)",
+        "fileName": "Diagnóstico de Gobierno de Datos_v3 (Taller).zip",
+        "description": "Recurso oficial en formato ZIP (163.6 KB).",
+        "type": "zip",
+        "url": "https://mentixs.vercel.app/api/challenges?file=data%2Fuploads%2Fproj_presentation_1795607130865%2F1795610212350_kbrd_Diagn_stico_de_Gobierno_de_Datos_v3__Tal.zip",
+        "format": "ZIP",
+        "sizeBytes": 167572,
+        "sizeLabel": "163.6 KB",
+        "category": "Otros recursos",
+        "visibility": "public",
+        "order": 3,
+        "status": "verified",
+        "extractedText": "",
+        "uploadedAt": "2026-11-25T12:36:53.976Z",
+        "thumbnailUrl": ""
       }
     ],
     "visualAssets": [],
@@ -1401,7 +1419,7 @@
         "collaborators": ""
       },
       "createdAt": "2026-11-25T11:45:30.865Z",
-      "updatedAt": "2026-11-25T12:36:52.906Z",
+      "updatedAt": "2026-11-25T12:36:58.328Z",
       "progress": 95,
       "calculatedProgress": 95
     },
@@ -1415,7 +1433,7 @@
     "authorAvatar": "🦊",
     "authorRole": "Estudiante / Creador",
     "createdAt": "2026-11-25T11:45:30.865Z",
-    "updatedAt": "2026-11-25T12:36:52.717Z",
+    "updatedAt": "2026-11-25T12:36:58.263Z",
     "fromStudentCreate": true,
     "_isStudentDraft": true,
     "timePerQuestion": 25,
