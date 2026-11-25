@@ -120,7 +120,9 @@
         "bulletsFont": "'Outfit', sans-serif",
         "bulletStyle": "✦",
         "isFullImage": true,
-        "isImported": true
+        "isImported": true,
+        "imageUrl": "",
+        "bgImage": ""
       }
     ],
     "presentations": [
@@ -156,7 +158,9 @@
             "bulletsFont": "'Outfit', sans-serif",
             "bulletStyle": "✦",
             "isFullImage": true,
-            "isImported": true
+            "isImported": true,
+            "imageUrl": "",
+            "bgImage": ""
           }
         ]
       }
@@ -377,7 +381,54 @@
     "authorAvatar": "🦊",
     "authorRole": "Estudiante / Creador",
     "createdAt": "2026-11-25T11:45:30.865Z",
-    "updatedAt": "2026-11-25T11:50:26.231Z"
+    "updatedAt": "2026-11-25T11:50:26.188Z",
+    "fromStudentCreate": true,
+    "_isStudentDraft": true,
+    "timePerQuestion": 25,
+    "plays": 0,
+    "accessMode": "private",
+    "hub": {
+      "joinRequests": [],
+      "members": [
+        {
+          "name": "Jhomar Alejandra Cano Ramirez",
+          "email": "jhomaralejandracano@gmail.com",
+          "role": "owner",
+          "leader": true
+        }
+      ],
+      "views": [],
+      "ratings": []
+    },
+    "customProjectCodes": [
+      {
+        "code": "804263",
+        "author": "Melisa",
+        "authorRole": "admin",
+        "createdAt": "22/11/2026, 9:27:35 p.m."
+      },
+      {
+        "code": "371850",
+        "author": "Melisa",
+        "authorRole": "admin",
+        "createdAt": "22/11/2026, 9:27:35 p.m."
+      },
+      {
+        "code": "926407",
+        "author": "Melisa",
+        "authorRole": "admin",
+        "createdAt": "22/11/2026, 9:23:09 p.m."
+      },
+      {
+        "code": "583194",
+        "author": "Melisa",
+        "authorRole": "admin",
+        "createdAt": "22/11/2026, 9:22:51 p.m."
+      }
+    ],
+    "visibility": "private",
+    "rejectedAt": "",
+    "rejectionReason": ""
   },
   {
     "id": "proj_video_1795575349043",
