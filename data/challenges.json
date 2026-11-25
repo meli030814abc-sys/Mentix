@@ -18,7 +18,7 @@
     "image": "assets/projects_ui/card_data_gov.png",
     "banner": "assets/projects_ui/card_data_gov.png",
     "createdAt": "2026-11-25T02:55:49.043Z",
-    "updatedAt": "2026-11-25T03:19:26.655Z",
+    "updatedAt": "2026-11-25T03:24:30.620Z",
     "govdata": {
       "id": "proj_video_1795575349043",
       "title": "Diagnóstico de Gobierno de Datos - Afiancol S.A.S.",
@@ -29,15 +29,15 @@
       "categoryName": "Gobierno de Datos",
       "projectSubtype": "Gobierno de Datos e IA",
       "targetAudience": "Público General",
-      "problemStatement": "AFIANCOL presenta una gestión de datos poco estructurada, caracterizada por información dispersa, ausencia de responsabilidades formales sobre los datos e inconsistencias en la información. Esto genera reprocesos, dificultades en el seguimiento de procesos como cartera y siniestralidad, y limita la toma de decisiones basada en información confiable.",
-      "mainObjective": "Establecer un modelo de Gobierno de Datos para AFIANCOL, basado en DAMA-DMBOK, que fortalezca la gestión de la información mediante la definición de roles, políticas, estándares y procesos orientados a mejorar su calidad, organización, disponibilidad y aprovechamiento estratégico.",
-      "benefits": "El modelo permitirá a AFIANCOL mejorar la calidad, organización y confiabilidad de sus datos, reducir reprocesos e inconsistencias, establecer responsabilidades claras en su gestión y fortalecer el seguimiento de procesos e indicadores. Esto facilitará el acceso a información oportuna, optimizará los procesos internos y permitirá tomar decisiones más informadas, consolidando una cultura organizacional orientada al aprovechamiento estratégico de los datos.",
+      "problemStatement": "",
+      "mainObjective": "",
+      "benefits": "",
       "teamLead": "Danna Boada",
       "preparationStatus": "en_desarrollo",
       "startDate": "2026-11-25",
       "endDate": "",
       "valueProp": {
-        "problemSolved": "AFIANCOL presenta una gestión de datos poco estructurada, caracterizada por información dispersa, ausencia de responsabilidades formales sobre los datos e inconsistencias en la información. Esto genera reprocesos, dificultades en el seguimiento de procesos como cartera y siniestralidad, y limita la toma de decisiones basada en información confiable.",
+        "problemSolved": "",
         "howItWorks": "",
         "forWhom": "Público General",
         "differentiator": "",
@@ -123,7 +123,7 @@
         5,
         6
       ],
-      "currentStep": 7,
+      "currentStep": 6,
       "author": "Danna Boada",
       "authorId": "user_1795574386910",
       "ownerId": "user_1795574386910",
@@ -131,8 +131,8 @@
       "authorEmail": "boadavillamil09@gmail.com",
       "authorAvatar": "🦄",
       "authorRole": "Estudiante / Creador",
-      "joinCode": "",
-      "accessCode": "",
+      "joinCode": "804263",
+      "accessCode": "804263",
       "designConfig": {
         "themeId": "cosmos",
         "fontFamily": "Montserrat",
@@ -150,9 +150,9 @@
         "collaborators": "Extiendo mis agradecimientos al profesor Carlos Caño ya que con su guía y acompañamiento fue posible ejecutar un correcto proceso de implementación de Gobierno de Datos de manera teórico práctico."
       },
       "createdAt": "2026-11-25T02:55:49.043Z",
-      "updatedAt": "2026-11-25T03:19:26.866Z",
-      "progress": 80,
-      "calculatedProgress": 80
+      "updatedAt": "2026-11-25T03:24:31.319Z",
+      "progress": 65,
+      "calculatedProgress": 65
     },
     "fromStudentCreate": true,
     "_isStudentDraft": true,
@@ -224,7 +224,7 @@
       "views": [],
       "ratings": [],
       "projectId": "proj_video_1795575349043",
-      "updatedAt": 1795575548208
+      "updatedAt": 1795575717917
     },
     "customProjectCodes": [
       {
@@ -272,14 +272,14 @@
     "_clearedThumbImage": false,
     "useDefaultImage": true,
     "targetAudience": "Público General",
-    "problemStatement": "AFIANCOL presenta una gestión de datos poco estructurada, caracterizada por información dispersa, ausencia de responsabilidades formales sobre los datos e inconsistencias en la información. Esto genera reprocesos, dificultades en el seguimiento de procesos como cartera y siniestralidad, y limita la toma de decisiones basada en información confiable.",
-    "mainObjective": "Establecer un modelo de Gobierno de Datos para AFIANCOL, basado en DAMA-DMBOK, que fortalezca la gestión de la información mediante la definición de roles, políticas, estándares y procesos orientados a mejorar su calidad, organización, disponibilidad y aprovechamiento estratégico.",
-    "benefits": "El modelo permitirá a AFIANCOL mejorar la calidad, organización y confiabilidad de sus datos, reducir reprocesos e inconsistencias, establecer responsabilidades claras en su gestión y fortalecer el seguimiento de procesos e indicadores. Esto facilitará el acceso a información oportuna, optimizará los procesos internos y permitirá tomar decisiones más informadas, consolidando una cultura organizacional orientada al aprovechamiento estratégico de los datos.",
+    "problemStatement": "",
+    "mainObjective": "",
+    "benefits": "",
     "teamLead": "Danna Boada",
     "preparationStatus": "en_desarrollo",
     "startDate": "2026-11-25",
     "endDate": "",
-    "currentStep": 7,
+    "currentStep": 6,
     "completedSteps": [
       1,
       2,
@@ -288,10 +288,10 @@
       5,
       6
     ],
-    "progress": 80,
-    "calculatedProgress": 80,
+    "progress": 65,
+    "calculatedProgress": 65,
     "valueProp": {
-      "problemSolved": "AFIANCOL presenta una gestión de datos poco estructurada, caracterizada por información dispersa, ausencia de responsabilidades formales sobre los datos e inconsistencias en la información. Esto genera reprocesos, dificultades en el seguimiento de procesos como cartera y siniestralidad, y limita la toma de decisiones basada en información confiable.",
+      "problemSolved": "",
       "howItWorks": "",
       "forWhom": "Público General",
       "differentiator": "",
@@ -303,7 +303,7 @@
       "faqs": []
     },
     "valueProposition": {
-      "problemSolved": "AFIANCOL presenta una gestión de datos poco estructurada, caracterizada por información dispersa, ausencia de responsabilidades formales sobre los datos e inconsistencias en la información. Esto genera reprocesos, dificultades en el seguimiento de procesos como cartera y siniestralidad, y limita la toma de decisiones basada en información confiable.",
+      "problemSolved": "",
       "howItWorks": "",
       "forWhom": "Público General",
       "differentiator": "",
@@ -360,8 +360,8 @@
     ],
     "ownerId": "user_1795574386910",
     "ownerUsername": "dan_boa27",
-    "joinCode": "",
-    "accessCode": "",
+    "joinCode": "804263",
+    "accessCode": "804263",
     "duration": "5:00 min",
     "tag": "⏳ Pendiente de Autorización",
     "tagClass": "badge-review"
