@@ -92,7 +92,7 @@
       "email": "gatitaxd6f79@gmail.com",
       "role": "admin",
       "joinedAt": "2026-11-23T04:35:10.065Z",
-      "updatedAt": "2026-11-25T01:12:11.286Z",
+      "updatedAt": "2026-11-25T01:12:15.296Z",
       "projectId": "proj_presentation_1795566554804",
       "projectTitle": "Diagnóstico de Gobierno de Datos – Universidad Colegio Mayor de Cundinamarca",
       "projectDescription": "Diagnóstico de gobierno de datos de la Universidad Colegio Mayor de Cundinamarca. Con base en DAMA-DMBOK se midió una madurez de 2 sobre 5 y se propuso un modelo de roles, comité y políticas que fija reglas a los proyectos de datos ya aprobados. El modelo se implementó en la plataforma GovData Nexus.",
@@ -175,7 +175,7 @@
           "commercialPitch": "",
           "faqs": []
         },
-        "updatedAt": "2026-11-25T01:12:11.286Z"
+        "updatedAt": "2026-11-25T01:12:15.296Z"
       }
     },
     {
