@@ -1,5 +1,110 @@
 [
   {
+    "id": "proj_presentation_1795566554804",
+    "fromStudentCreate": true,
+    "_isStudentDraft": true,
+    "title": "Diagnóstico de Gobierno de Datos – Universidad Colegio Mayor de Cundinamarca",
+    "author": "Juan Esteban Rosero Jimenez",
+    "authorId": "user_1795545770936",
+    "authorEmail": "jeroseroj@gmail.com",
+    "authorAvatar": "🦊",
+    "authorRole": "student",
+    "projectType": "presentation",
+    "category": "admin",
+    "categoryName": "Administración Pública",
+    "difficulty": "Medio",
+    "timePerQuestion": 25,
+    "plays": 0,
+    "banner": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fdraft%2F1795566538564_r3c9_asset.jpg",
+    "mainImage": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fdraft%2F1795566538564_r3c9_asset.jpg",
+    "thumbnailImage": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fdraft%2F1795566538564_r3c9_asset.jpg",
+    "shortDescription": "Diagnóstico de gobierno de datos de la Universidad Colegio Mayor de Cundinamarca. Con base en DAMA-DMBOK se midió una madurez de 2 sobre 5 y se propuso un modelo de roles, comité y políticas que fija reglas a los proyectos de datos ya aprobados. El modelo se implementó en la plataforma GovData Nexus.",
+    "description": "PROBLEMA\nLa UCMC tiene cuatro sedes y datos duplicados entre sistemas: un mismo estudiante puede aparecer varias veces. Su madurez en gobierno de datos es de 2 sobre 5 y 74 de 100 prácticas DAMA no existen.\n\nMETODOLOGÍA\n1. Diagnóstico con DAMA-DMBOK a partir del PDI, el PETI, el FURAG y los archivos públicos de la universidad.\n2. Diseño del modelo: 12 dominios con responsables, un comité, ocho políticas y un plan de 24 meses por $106 millones, sin cargos nuevos.\n3. Implementación en GovData Nexus: catálogo de 22 activos, 11 datos maestros, calidad con 37 reglas, flujos de aprobación y acuerdos de nivel de servicio.\n\nRESULTADOS\nSin reglas, la herramienta calificó la calidad en 85 %; con las reglas del negocio aparecieron 1.605 incidentes.\n\nCONCLUSIÓN\nA la UCMC no le faltan proyectos ni tecnología: le faltan reglas. El gobierno de datos las define; el negocio decide y los custodios ejecutan.",
+    "fullDescription": "PROBLEMA\nLa UCMC tiene cuatro sedes y datos duplicados entre sistemas: un mismo estudiante puede aparecer varias veces. Su madurez en gobierno de datos es de 2 sobre 5 y 74 de 100 prácticas DAMA no existen.\n\nMETODOLOGÍA\n1. Diagnóstico con DAMA-DMBOK a partir del PDI, el PETI, el FURAG y los archivos públicos de la universidad.\n2. Diseño del modelo: 12 dominios con responsables, un comité, ocho políticas y un plan de 24 meses por $106 millones, sin cargos nuevos.\n3. Implementación en GovData Nexus: catálogo de 22 activos, 11 datos maestros, calidad con 37 reglas, flujos de aprobación y acuerdos de nivel de servicio.\n\nRESULTADOS\nSin reglas, la herramienta calificó la calidad en 85 %; con las reglas del negocio aparecieron 1.605 incidentes.\n\nCONCLUSIÓN\nA la UCMC no le faltan proyectos ni tecnología: le faltan reglas. El gobierno de datos las define; el negocio decide y los custodios ejecutan.",
+    "publicationStatus": "pending_approval",
+    "approvalStatus": "pending",
+    "status": "review",
+    "isPublic": false,
+    "accessMode": "private",
+    "displayOrder": 1,
+    "createdAt": "2026-11-25T00:29:14.804Z",
+    "updatedAt": "2026-11-25T00:29:14.974Z",
+    "landingConfig": {
+      "publicName": "Diagnóstico de Gobierno de Datos – Universidad Colegio Mayor de Cundinamarca",
+      "landingTitle": "Diagnóstico de Gobierno de Datos – Universidad Colegio Mayor de Cundinamarca",
+      "publicDescription": "Diagnóstico de gobierno de datos de la Universidad Colegio Mayor de Cundinamarca. Con base en DAMA-DMBOK se midió una madurez de 2 sobre 5 y se propuso un modelo de roles, comité y políticas que fija reglas a los proyectos de datos ya aprobados. El modelo se implementó en la plataforma GovData Nexus.",
+      "slug": "diagnostico-de-gobierno-de-datos-universidad-colegio-mayor-de-cundinamarca",
+      "visibleCategory": "Administración Pública",
+      "tags": [
+        "Estudiantes",
+        "Proyecto",
+        "PRESENTATION"
+      ],
+      "ctaText": "Ver Proyecto",
+      "ctaUrl": "#",
+      "displayOrder": 1,
+      "featuredVideoPublic": true
+    },
+    "authorsConfig": {
+      "authorsList": "Juan Esteban Rosero Jimenez",
+      "authorsEmails": "jeroseroj@gmail.com",
+      "authorsRole": "Estudiante / Creador",
+      "collaborators": ""
+    },
+    "designConfig": {
+      "themeId": "cosmos",
+      "fontFamily": "Montserrat",
+      "titleColor": "#ffffff",
+      "textColor": "#cbd5e1",
+      "accentColor": "#00f5d4",
+      "bannerStyle": "gradient-cosmos",
+      "bannerUrl": ""
+    },
+    "slides": [
+      {
+        "id": "slide_1",
+        "title": "Diagnóstico de Gobierno de Datos – Universidad Colegio Mayor de Cundinamarca",
+        "subtitle": "Por Juan Esteban Rosero Jimenez",
+        "content": "Diagnóstico de gobierno de datos de la Universidad Colegio Mayor de Cundinamarca. Con base en DAMA-DMBOK se midió una madurez de 2 sobre 5 y se propuso un modelo de roles, comité y políticas que fija reglas a los proyectos de datos ya aprobados. El modelo se implementó en la plataforma GovData Nexus.",
+        "bullets": [
+          "PROBLEMA",
+          "La UCMC tiene cuatro sedes y datos duplicados entre sistemas: un mismo estudiante puede aparecer varias veces. Su madurez en gobierno de datos es de 2 sobre 5 y 74 de 100 prácticas DAMA no existen.",
+          "METODOLOGÍA",
+          "Diagnóstico con DAMA-DMBOK a partir del PDI, el PETI, el FURAG y los archivos públicos de la universidad.",
+          "Diseño del modelo: 12 dominios con responsables, un comité, ocho políticas y un plan de 24 meses por $106 millones, sin cargos nuevos.",
+          "Implementación en GovData Nexus: catálogo de 22 activos, 11 datos maestros, calidad con 37 reglas, flujos de aprobación y acuerdos de nivel de servicio.",
+          "RESULTADOS",
+          "Sin reglas, la herramienta calificó la calidad en 85 %; con las reglas del negocio aparecieron 1.605 incidentes.",
+          "CONCLUSIÓN",
+          "A la UCMC no le faltan proyectos ni tecnología: le faltan reglas. El gobierno de datos las define; el negocio decide y los custodios ejecutan."
+        ],
+        "media": "",
+        "videoUrl": "",
+        "layout": "split",
+        "teacherNotes": "",
+        "titleColor": "#ffffff",
+        "subtitleColor": "#00f5d4",
+        "contentColor": "#cbd5e1",
+        "bulletsColor": "#ffffff",
+        "titleFont": "'Outfit', sans-serif",
+        "subtitleFont": "'Outfit', sans-serif",
+        "contentFont": "'Outfit', sans-serif",
+        "bulletsFont": "'Outfit', sans-serif",
+        "bulletStyle": "✦"
+      }
+    ],
+    "resources": [
+      {
+        "name": "Presentación del Proyecto",
+        "url": "",
+        "type": "ppt",
+        "format": "PPT",
+        "thumbnailUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fdraft%2F1795566538564_r3c9_asset.jpg",
+        "description": "Diagnóstico de gobierno de datos de la Universidad Colegio Mayor de Cundinamarca. Con base en DAMA-DMBOK se midió una madurez de 2 sobre 5 y se propuso un modelo de roles, comité y políticas que fija reglas a los proyectos de datos ya aprobados. El modelo se implementó en la plataforma GovData Nexus."
+      }
+    ]
+  },
+  {
     "id": "reto_1795552054552",
     "title": "j",
     "description": "",
