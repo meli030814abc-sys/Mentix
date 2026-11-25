@@ -92,25 +92,25 @@
       "email": "gatitaxd6f79@gmail.com",
       "role": "admin",
       "joinedAt": "2026-11-23T04:35:10.065Z",
-      "updatedAt": "2026-11-24T16:46:38.944Z",
-      "projectId": "proj_video_1795486083167",
-      "projectTitle": "Diagnóstico y propuesta de optimización del gobierno de datos en GPC Pharma S.A.S. Empresa del Sector Farmaceutico.",
-      "projectDescription": "Propuesta de gobierno de datos para GPC Pharma S.A.S., empresa farmacéutica que abastece a clínicas y hospitales, a partir de un diagnóstico de su situación actual. Define roles, políticas y comités basados en los cargos existentes, con un plan de implementación por fases, probado en GovData Nexus con datos sintéticos.",
-      "currentStep": 16,
-      "completedStepsCount": 16,
+      "updatedAt": "2026-11-25T01:03:03.170Z",
+      "projectId": "proj_presentation_1795566554804",
+      "projectTitle": "Diagnóstico de Gobierno de Datos – Universidad Colegio Mayor de Cundinamarca",
+      "projectDescription": "Diagnóstico de gobierno de datos de la Universidad Colegio Mayor de Cundinamarca. Con base en DAMA-DMBOK se midió una madurez de 2 sobre 5 y se propuso un modelo de roles, comité y políticas que fija reglas a los proyectos de datos ya aprobados. El modelo se implementó en la plataforma GovData Nexus.",
+      "currentStep": 9,
+      "completedStepsCount": 8,
       "progress": 100,
       "status": "submitted",
       "approvalStatus": "pending",
       "publicationStatus": "pending_approval",
-      "slidesCount": 23,
-      "resourcesCount": 4,
+      "slidesCount": 1,
+      "resourcesCount": 1,
       "snapshot": {
-        "id": "proj_video_1795486083167",
-        "title": "Diagnóstico y propuesta de optimización del gobierno de datos en GPC Pharma S.A.S. Empresa del Sector Farmaceutico.",
-        "subtitle": "Trazabilidad, calidad y cumplimiento regulatorio en GPC Pharma",
-        "description": "Propuesta de gobierno de datos para GPC Pharma S.A.S., empresa farmacéutica que abastece a clínicas y hospitales, a partir de un diagnóstico de su situación actual. Define roles, políticas y comités basados en los cargos existentes, con un plan de implementación por fases, probado en GovData Nexus con datos sintéticos.",
-        "author": "Laura Sofía Hernández Chaparro",
-        "authorEmail": "ing.laurasofiax04@gmail.com",
+        "id": "proj_presentation_1795566554804",
+        "title": "Diagnóstico de Gobierno de Datos – Universidad Colegio Mayor de Cundinamarca",
+        "subtitle": "Reglas claras para datos únicos, confiables y verificables",
+        "description": "Diagnóstico de gobierno de datos de la Universidad Colegio Mayor de Cundinamarca. Con base en DAMA-DMBOK se midió una madurez de 2 sobre 5 y se propuso un modelo de roles, comité y políticas que fija reglas a los proyectos de datos ya aprobados. El modelo se implementó en la plataforma GovData Nexus.",
+        "author": "Juan Esteban Rosero Jimenez",
+        "authorEmail": "jeroseroj@gmail.com",
         "joinCode": "804263",
         "accessCode": "804263",
         "projectType": "presentation",
@@ -118,7 +118,7 @@
         "status": "completed",
         "publicationStatus": "pending_approval",
         "approvalStatus": "pending",
-        "currentStep": 16,
+        "currentStep": 9,
         "completedSteps": [
           1,
           2,
@@ -127,29 +127,21 @@
           5,
           6,
           7,
-          8,
-          9,
-          10,
-          11,
-          12,
-          13,
-          14,
-          15,
-          16
+          8
         ],
         "progress": 100,
-        "banner": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795490558177_yj68_asset.jpg",
-        "problemStatement": "GPC Pharma S.A.S. opera con una gestión de la información distribuida por áreas, apoyada en varias plataformas. Esto representa la oportunidad de formalizar roles de gobierno de datos, contar con un diccionario de metadatos y unificar criterios (por ejemplo, la identificación de clientes entre plataformas), de modo que la trazabilidad y la confianza en los datos acompañen el crecimiento de la operación.",
-        "mainObjective": "Diseñar un modelo de gobierno de datos para GPC Pharma S.A.S., con roles, políticas, comités y un plan de implementación por fases, basado en los cargos existentes y probado en GovData Nexus con datos sintéticos.",
-        "benefits": "Facilita definir responsables y reglas claras sobre los datos, fortalecer la calidad, la trazabilidad y la confianza en la información, y optimizar procesos de consolidación. Además, ofrece una base para implementar el gobierno de datos de forma gradual y de bajo costo.",
-        "targetAudience": "Directivos y responsables de datos, tecnología y cumplimiento en organizaciones del sector farmacéutico; comunidad académica en gobierno de datos.",
-        "slidesCount": 23,
-        "resourcesCount": 4,
+        "banner": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fdraft%2F1795566538564_r3c9_asset.jpg",
+        "problemStatement": "La universidad tiene sus datos dispersos y duplicados entre cuatro sedes y varios sistemas, sin responsables ni reglas que garanticen su calidad. Su madurez en gobierno de datos es de 2 sobre 5.",
+        "mainObjective": "Diseñar un modelo de gobierno de datos con roles, políticas y un plan de 24 meses que fije reglas a los proyectos de datos ya aprobados, y probarlo en la plataforma GovData Nexus.",
+        "benefits": "Datos únicos y confiables para tomar decisiones y reportar a entes externos, responsables claros por cada dato y protección de los datos personales, con el personal que la universidad ya tiene.",
+        "targetAudience": "Universidades públicas, directivos y equipos de tecnología, y comunidad académica",
+        "slidesCount": 1,
+        "resourcesCount": 1,
         "landingConfig": {
-          "publicName": "Diagnóstico y propuesta de optimización del gobierno de datos en GPC Pharma S.A.S.",
-          "slug": "propuesta-gobierno-de-datos-gpc-pharma",
-          "landingTitle": "Diagnóstico y propuesta de optimización del gobierno de datos en GPC Pharma S.A.S.",
-          "publicDescription": "Diagnóstico y propuesta de gobierno de datos para GPC Pharma S.A.S., empresa farmacéutica que abastece a clínicas y hospitales. Define roles, políticas y comités basados en los cargos existentes, con un plan por fases, probado en GovData Nexus con datos sintéticos.",
+          "publicName": "Diagnóstico de Gobierno de Datos – Universidad Colegio Mayor de Cundinamarca",
+          "slug": "diagnostico-de-gobierno-de-datos-universidad-colegio-mayor-de-cundinamarca",
+          "landingTitle": "Diagnóstico de Gobierno de Datos – Universidad Colegio Mayor de Cundinamarca",
+          "publicDescription": "Diagnóstico de gobierno de datos de la Universidad Colegio Mayor de Cundinamarca. Con base en DAMA-DMBOK se midió una madurez de 2 sobre 5 y se propuso un modelo de roles, comité y políticas que fija reglas a los proyectos de datos ya aprobados. El modelo se implementó en la plataforma GovData Nexus.",
           "visibleCategory": "Gobierno de Datos",
           "tags": [
             "Gobierno de Datos",
@@ -162,39 +154,25 @@
           "featuredVideoPublic": true
         },
         "valueProp": {
-          "problemSolved": "GPC Pharma S.A.S. opera con una gestión de la información distribuida por áreas, apoyada en varias plataformas. Esto representa la oportunidad de formalizar roles de gobierno de datos, contar con un diccionario de metadatos y unificar criterios (por ejemplo, la identificación de clientes entre plataformas), de modo que la trazabilidad y la confianza en los datos acompañen el crecimiento de la operación.",
-          "howItWorks": "Parte de un diagnóstico de madurez bajo DAMA-DMBOK, identifica brechas y define un modelo de roles, políticas y comités basado en los cargos existentes. Luego se configura en GovData Nexus (catálogo de activos, reglas de calidad, reglas de SLA y riesgos) y se implementa mediante un plan por fases.",
-          "forWhom": "Directivos y responsables de datos, tecnología y cumplimiento en organizaciones del sector farmacéutico; comunidad académica en gobierno de datos.",
-          "differentiator": "Aprovecha los cargos y la información que la organización ya tiene, por lo que puede iniciar de forma gradual y con bajo costo. Integra diagnóstico, modelo, estimación de costos y configuración práctica en una plataforma, y está alineado con las exigencias regulatorias del sector farmacéutico.",
+          "problemSolved": "La universidad tiene sus datos dispersos y duplicados entre cuatro sedes y varios sistemas, sin responsables ni reglas que garanticen su calidad. Su madurez en gobierno de datos es de 2 sobre 5.",
+          "howItWorks": "Diagnostica la madurez con DAMA-DMBOK, asigna responsables a cada dominio de datos, define políticas y reglas de calidad, y las aplica en GovData Nexus con catálogo, flujos de aprobación y acuerdos de nivel de servicio.",
+          "forWhom": "Universidades públicas, directivos y equipos de tecnología, y comunidad académica",
+          "differentiator": "No compra tecnología ni crea cargos: pone reglas a los proyectos ya aprobados y usa al personal que la universidad ya tiene.",
           "keyFeatures": [
             "Diagnóstico de madurez DAMA-DMBOK",
-            "Roles y responsabilidades basados en cargos existentes",
-            "Políticas y comités de gobierno de datos",
-            "Catálogo de activos de datos",
-            "Reglas de calidad y SLA",
-            "Gestión de riesgos",
-            "Roadmap de implementación por fases"
+            "Roles y comité de gobierno de datos",
+            "Ocho políticas de datos",
+            "Catálogo de datos y datos maestros",
+            "Reglas de calidad de datos",
+            "Flujos de aprobación con SLA"
           ],
-          "resultsAndBenefits": "Facilita definir responsables y reglas claras sobre los datos, fortalecer la calidad, la trazabilidad y la confianza en la información, y optimizar procesos de consolidación. Además, ofrece una base para implementar el gobierno de datos de forma gradual y de bajo costo.",
+          "resultsAndBenefits": "Datos únicos y confiables para tomar decisiones y reportar a entes externos, responsables claros por cada dato y protección de los datos personales, con el personal que la universidad ya tiene.",
           "prerequisites": "",
           "visitorAction": "Unirse / Colaborar",
-          "commercialPitch": "Datos gobernados para una industria farmacéutica confiable.",
-          "faqs": [
-            {
-              "q": "¿Qué es el gobierno de datos?",
-              "a": "Es el conjunto de roles, políticas y reglas que definen quién es responsable de los datos de una organización y cómo se gestionan, para asegurar su calidad, trazabilidad y seguridad."
-            },
-            {
-              "q": "¿Los datos utilizados son reales?",
-              "a": "El diagnóstico se basó en una entrevista y en fuentes públicas sobre la organización. La base de datos con la que se probó la configuración en GovDataNexus es sintética, por lo que no contiene información real de clientes, empleados ni operaciones."
-            },
-            {
-              "q": "¿Qué herramientas y marco de referencia se utilizaron?",
-              "a": "El diagnóstico se basó en DAMA-DMBOK y la configuración se realizó en GovData Nexus, sobre una base de prueba en Supabase."
-            }
-          ]
+          "commercialPitch": "",
+          "faqs": []
         },
-        "updatedAt": "2026-11-24T16:46:38.944Z"
+        "updatedAt": "2026-11-25T01:03:03.170Z"
       }
     },
     {
