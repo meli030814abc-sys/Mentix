@@ -24,7 +24,7 @@
     "useDefaultImage": true,
     "targetAudience": "Directivos docentes (rectoría y coordinaciones), personal administrativo y de secretaría académica, docentes.",
     "problemStatement": "Falta de claridad, estandarización y trazabilidad en la gestióny protección de los datos personales y académicos de los estudiantes y la comunidad educativa, generando brechas frente a la responsabilidad institucional y el cumplimiento normativo en un colegio oficial.",
-    "mainObjective": "",
+    "mainObjective": "Realizar un diagnóstico integral del estado actual del gobierno de datos en el Colegio Técnico Jaime Pardo Leal IED para identificar brechas de calidad, acceso, seguridad y responsabilidad, y proponer lineamientos prácticos de mejora.",
     "benefits": "",
     "teamLead": "Jhomar Alejandra Cano Ramirez",
     "preparationStatus": "en_desarrollo",
@@ -120,9 +120,7 @@
         "bulletsFont": "'Outfit', sans-serif",
         "bulletStyle": "✦",
         "isFullImage": true,
-        "isImported": true,
-        "imageUrl": "",
-        "bgImage": ""
+        "isImported": true
       }
     ],
     "presentations": [
@@ -158,9 +156,7 @@
             "bulletsFont": "'Outfit', sans-serif",
             "bulletStyle": "✦",
             "isFullImage": true,
-            "isImported": true,
-            "imageUrl": "",
-            "bgImage": ""
+            "isImported": true
           }
         ]
       }
@@ -249,7 +245,7 @@
       "projectSubtype": "Gobierno de Datos e IA",
       "targetAudience": "Directivos docentes (rectoría y coordinaciones), personal administrativo y de secretaría académica, docentes.",
       "problemStatement": "Falta de claridad, estandarización y trazabilidad en la gestióny protección de los datos personales y académicos de los estudiantes y la comunidad educativa, generando brechas frente a la responsabilidad institucional y el cumplimiento normativo en un colegio oficial.",
-      "mainObjective": "",
+      "mainObjective": "Realizar un diagnóstico integral del estado actual del gobierno de datos en el Colegio Técnico Jaime Pardo Leal IED para identificar brechas de calidad, acceso, seguridad y responsabilidad, y proponer lineamientos prácticos de mejora.",
       "benefits": "",
       "teamLead": "Jhomar Alejandra Cano Ramirez",
       "preparationStatus": "en_desarrollo",
@@ -367,7 +363,7 @@
         "collaborators": ""
       },
       "createdAt": "2026-11-25T11:45:30.865Z",
-      "updatedAt": "2026-11-25T11:50:42.127Z",
+      "updatedAt": "2026-11-25T11:50:53.319Z",
       "progress": 85,
       "calculatedProgress": 85
     },
@@ -381,54 +377,7 @@
     "authorAvatar": "🦊",
     "authorRole": "Estudiante / Creador",
     "createdAt": "2026-11-25T11:45:30.865Z",
-    "updatedAt": "2026-11-25T11:50:41.984Z",
-    "fromStudentCreate": true,
-    "_isStudentDraft": true,
-    "timePerQuestion": 25,
-    "plays": 0,
-    "accessMode": "private",
-    "hub": {
-      "joinRequests": [],
-      "members": [
-        {
-          "name": "Jhomar Alejandra Cano Ramirez",
-          "email": "jhomaralejandracano@gmail.com",
-          "role": "owner",
-          "leader": true
-        }
-      ],
-      "views": [],
-      "ratings": []
-    },
-    "customProjectCodes": [
-      {
-        "code": "804263",
-        "author": "Melisa",
-        "authorRole": "admin",
-        "createdAt": "22/11/2026, 9:27:35 p.m."
-      },
-      {
-        "code": "371850",
-        "author": "Melisa",
-        "authorRole": "admin",
-        "createdAt": "22/11/2026, 9:27:35 p.m."
-      },
-      {
-        "code": "926407",
-        "author": "Melisa",
-        "authorRole": "admin",
-        "createdAt": "22/11/2026, 9:23:09 p.m."
-      },
-      {
-        "code": "583194",
-        "author": "Melisa",
-        "authorRole": "admin",
-        "createdAt": "22/11/2026, 9:22:51 p.m."
-      }
-    ],
-    "visibility": "private",
-    "rejectedAt": "",
-    "rejectionReason": ""
+    "updatedAt": "2026-11-25T11:50:53.200Z"
   },
   {
     "id": "proj_video_1795575349043",
