@@ -132,9 +132,7 @@
         "bulletsFont": "'Outfit', sans-serif",
         "bulletStyle": "✦",
         "isFullImage": true,
-        "isImported": true,
-        "imageUrl": "",
-        "bgImage": ""
+        "isImported": true
       }
     ],
     "presentations": [
@@ -170,9 +168,7 @@
             "bulletsFont": "'Outfit', sans-serif",
             "bulletStyle": "✦",
             "isFullImage": true,
-            "isImported": true,
-            "imageUrl": "",
-            "bgImage": ""
+            "isImported": true
           }
         ]
       }
@@ -401,7 +397,7 @@
     "authorAvatar": "🦊",
     "authorRole": "Estudiante / Creador",
     "createdAt": "2026-11-25T11:45:30.865Z",
-    "updatedAt": "2026-11-25T11:54:40.224Z",
+    "updatedAt": "2026-11-25T11:54:40.273Z",
     "fromStudentCreate": true,
     "_isStudentDraft": true,
     "timePerQuestion": 25,
