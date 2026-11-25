@@ -28,7 +28,7 @@
     "accessMode": "private",
     "displayOrder": 1,
     "createdAt": "2026-11-25T00:29:14.804Z",
-    "updatedAt": "2026-11-25T01:03:08.460Z",
+    "updatedAt": "2026-11-25T01:03:18.015Z",
     "landingConfig": {
       "publicName": "Diagnóstico de Gobierno de Datos – Universidad Colegio Mayor de Cundinamarca",
       "slug": "diagnostico-de-gobierno-de-datos-universidad-colegio-mayor-de-cundinamarca",
@@ -71,8 +71,8 @@
         "layout": "full",
         "isFullImage": true,
         "isImported": true,
-        "media": "",
-        "imageUrl": "",
+        "media": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_presentation_1795566554804%2F1795568586836_l6j7_slide_1.jpg",
+        "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_presentation_1795566554804%2F1795568586836_l6j7_slide_1.jpg",
         "notes": "Propuesta ejecutiva al Consejo Superior Universitario. Mensaje central: la universidad ya tiene la gente, el comité y los proyectos; falta fijar las reglas de juego de los datos. El gobierno de datos pone las reglas; los proyectos del PETI ejecutan.",
         "bgColor": "#ffffff",
         "themeId": "cosmos"
@@ -86,8 +86,8 @@
         "layout": "full",
         "isFullImage": true,
         "isImported": true,
-        "media": "",
-        "imageUrl": "",
+        "media": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_presentation_1795566554804%2F1795568590937_jqbu_slide_2.jpg",
+        "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_presentation_1795566554804%2F1795568590937_jqbu_slide_2.jpg",
         "notes": "Hoy la universidad está en 1,7 sobre 5 (cerca de 2): existe lo que la norma exige, falta lo que depende de una decisión propia. Cuatro señales lo muestran en nuestros propios archivos públicos: un inventario congelado en 2021, 9 filas del Índice con fórmulas rotas, 66 citas de la Ley 1712 mal escritas y un índice de gestión documental de 38,8 sobre 100. No son fallas de personas, son fallas de reglas.",
         "bgColor": "#ffffff",
         "themeId": "cosmos"
@@ -101,8 +101,8 @@
         "layout": "full",
         "isFullImage": true,
         "isImported": true,
-        "media": "",
-        "imageUrl": "",
+        "media": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_presentation_1795566554804%2F1795568594935_fguf_slide_3.jpg",
+        "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_presentation_1795566554804%2F1795568594935_fguf_slide_3.jpg",
         "notes": "Tres objetivos verificables. Y una regla que nace de la retroalimentación del profesor: el gobierno de datos no ejecuta, pone las reglas. Por eso el presupuesto que pedimos es pequeño y casi todo es tiempo del personal propio; los proyectos del PETI conservan su ejecución y su presupuesto.",
         "bgColor": "#ffffff",
         "themeId": "cosmos"
@@ -240,6 +240,18 @@
         "imageUrl": "",
         "notes": "",
         "bgColor": "#ffffff",
+        "themeId": "cosmos"
+      },
+      {
+        "id": "slide_1795568597237_27sn",
+        "title": "Diapositiva #13",
+        "subtitle": "",
+        "content": "",
+        "bullets": [],
+        "layout": "split",
+        "media": "",
+        "notes": "",
+        "bgColor": "#0b091a",
         "themeId": "cosmos"
       }
     ],
@@ -393,8 +405,8 @@
             "layout": "full",
             "isFullImage": true,
             "isImported": true,
-            "media": "",
-            "imageUrl": "",
+            "media": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_presentation_1795566554804%2F1795568586836_l6j7_slide_1.jpg",
+            "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_presentation_1795566554804%2F1795568586836_l6j7_slide_1.jpg",
             "notes": "Propuesta ejecutiva al Consejo Superior Universitario. Mensaje central: la universidad ya tiene la gente, el comité y los proyectos; falta fijar las reglas de juego de los datos. El gobierno de datos pone las reglas; los proyectos del PETI ejecutan.",
             "bgColor": "#ffffff",
             "themeId": "cosmos"
@@ -408,8 +420,8 @@
             "layout": "full",
             "isFullImage": true,
             "isImported": true,
-            "media": "",
-            "imageUrl": "",
+            "media": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_presentation_1795566554804%2F1795568590937_jqbu_slide_2.jpg",
+            "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_presentation_1795566554804%2F1795568590937_jqbu_slide_2.jpg",
             "notes": "Hoy la universidad está en 1,7 sobre 5 (cerca de 2): existe lo que la norma exige, falta lo que depende de una decisión propia. Cuatro señales lo muestran en nuestros propios archivos públicos: un inventario congelado en 2021, 9 filas del Índice con fórmulas rotas, 66 citas de la Ley 1712 mal escritas y un índice de gestión documental de 38,8 sobre 100. No son fallas de personas, son fallas de reglas.",
             "bgColor": "#ffffff",
             "themeId": "cosmos"
@@ -423,8 +435,8 @@
             "layout": "full",
             "isFullImage": true,
             "isImported": true,
-            "media": "",
-            "imageUrl": "",
+            "media": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_presentation_1795566554804%2F1795568594935_fguf_slide_3.jpg",
+            "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_presentation_1795566554804%2F1795568594935_fguf_slide_3.jpg",
             "notes": "Tres objetivos verificables. Y una regla que nace de la retroalimentación del profesor: el gobierno de datos no ejecuta, pone las reglas. Por eso el presupuesto que pedimos es pequeño y casi todo es tiempo del personal propio; los proyectos del PETI conservan su ejecución y su presupuesto.",
             "bgColor": "#ffffff",
             "themeId": "cosmos"
@@ -562,6 +574,18 @@
             "imageUrl": "",
             "notes": "",
             "bgColor": "#ffffff",
+            "themeId": "cosmos"
+          },
+          {
+            "id": "slide_1795568597237_27sn",
+            "title": "Diapositiva #13",
+            "subtitle": "",
+            "content": "",
+            "bullets": [],
+            "layout": "split",
+            "media": "",
+            "notes": "",
+            "bgColor": "#0b091a",
             "themeId": "cosmos"
           }
         ]
@@ -801,7 +825,7 @@
         "collaborators": ""
       },
       "createdAt": "2026-11-25T00:29:14.804Z",
-      "updatedAt": "2026-11-25T01:03:06.215Z",
+      "updatedAt": "2026-11-25T01:03:17.237Z",
       "progress": 95,
       "calculatedProgress": 95
     },
