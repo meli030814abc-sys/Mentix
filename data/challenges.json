@@ -87,7 +87,7 @@
       "url": "",
       "fileName": "",
       "title": "Diagnóstico de Gobierno de Datos: Colegio Técnico Jaime Pardo Leal IED",
-      "description": "",
+      "description": "Presentación del diagnóstico, hallazgos clave y lineamientos de protección de datos escolares.",
       "thumbnailUrl": "",
       "isPublic": true,
       "verified": false
@@ -288,7 +288,7 @@
         "url": "",
         "fileName": "",
         "title": "Diagnóstico de Gobierno de Datos: Colegio Técnico Jaime Pardo Leal IED",
-        "description": "",
+        "description": "Presentación del diagnóstico, hallazgos clave y lineamientos de protección de datos escolares.",
         "thumbnailUrl": "",
         "isPublic": true,
         "verified": false
@@ -387,7 +387,7 @@
         "collaborators": ""
       },
       "createdAt": "2026-11-25T11:45:30.865Z",
-      "updatedAt": "2026-11-25T11:55:42.197Z",
+      "updatedAt": "2026-11-25T11:55:47.202Z",
       "progress": 85,
       "calculatedProgress": 85
     },
@@ -401,7 +401,7 @@
     "authorAvatar": "🦊",
     "authorRole": "Estudiante / Creador",
     "createdAt": "2026-11-25T11:45:30.865Z",
-    "updatedAt": "2026-11-25T11:55:42.089Z",
+    "updatedAt": "2026-11-25T11:55:47.056Z",
     "fromStudentCreate": true,
     "_isStudentDraft": true,
     "timePerQuestion": 25,
