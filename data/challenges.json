@@ -33,7 +33,7 @@
     "submittedForApproval": false,
     "status": "in_progress",
     "isPublic": false,
-    "startDate": "2026-11-25",
+    "startDate": "2026-10-25",
     "endDate": "2026-11-25",
     "currentStep": 8,
     "completedSteps": [
@@ -259,7 +259,7 @@
       "benefits": "Facilita la toma de decisiones directivas y administrativas con información más confiable, reduce riesgos de mal manejo de datos escolares y fortalece una cultura de cuidado y protección de los datos de niños, niñas, adolescentes y funcionarios.",
       "teamLead": "Jhomar Alejandra Cano Ramirez",
       "preparationStatus": "finalizado",
-      "startDate": "2026-11-25",
+      "startDate": "2026-10-25",
       "endDate": "2026-11-25",
       "valueProp": {
         "problemSolved": "Falta de claridad, estandarización y trazabilidad en la gestióny protección de los datos personales y académicos de los estudiantes y la comunidad educativa, generando brechas frente a la responsabilidad institucional y el cumplimiento normativo en un colegio oficial.",
@@ -379,7 +379,7 @@
         "collaborators": ""
       },
       "createdAt": "2026-11-25T11:45:30.865Z",
-      "updatedAt": "2026-11-25T11:52:53.786Z",
+      "updatedAt": "2026-11-25T11:53:00.567Z",
       "progress": 85,
       "calculatedProgress": 85
     },
@@ -393,7 +393,7 @@
     "authorAvatar": "🦊",
     "authorRole": "Estudiante / Creador",
     "createdAt": "2026-11-25T11:45:30.865Z",
-    "updatedAt": "2026-11-25T11:52:53.650Z"
+    "updatedAt": "2026-11-25T11:53:00.441Z"
   },
   {
     "id": "proj_video_1795575349043",
