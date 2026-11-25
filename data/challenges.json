@@ -28,7 +28,7 @@
     "accessMode": "private",
     "displayOrder": 1,
     "createdAt": "2026-11-25T00:29:14.804Z",
-    "updatedAt": "2026-11-25T00:36:17.396Z",
+    "updatedAt": "2026-11-25T00:36:44.153Z",
     "landingConfig": {
       "publicName": "Diagnóstico de Gobierno de Datos – Universidad Colegio Mayor de Cundinamarca",
       "slug": "diagnostico-de-gobierno-de-datos-universidad-colegio-mayor-de-cundinamarca",
@@ -104,34 +104,67 @@
         "description": "Diagnóstico de gobierno de datos de la Universidad Colegio Mayor de Cundinamarca. Con base en DAMA-DMBOK se midió una madurez de 2 sobre 5 y se propuso un modelo de roles, comité y políticas que fija reglas a los proyectos de datos ya aprobados. El modelo se implementó en la plataforma GovData Nexus."
       }
     ],
-    "customProjectCodes": [
-      {
-        "code": "804263",
-        "author": "Melisa",
-        "authorRole": "admin",
-        "createdAt": "22/11/2026, 9:27:35 p.m."
-      },
-      {
-        "code": "371850",
-        "author": "Melisa",
-        "authorRole": "admin",
-        "createdAt": "22/11/2026, 9:27:35 p.m."
-      },
-      {
-        "code": "926407",
-        "author": "Melisa",
-        "authorRole": "admin",
-        "createdAt": "22/11/2026, 9:23:09 p.m."
-      },
-      {
-        "code": "583194",
-        "author": "Melisa",
-        "authorRole": "admin",
-        "createdAt": "22/11/2026, 9:22:51 p.m."
-      }
-    ],
+    "slug": "diagnostico-de-gobierno-de-datos-universidad-colegio-mayor-de-cundinamarca",
+    "subtitle": "Proyecto Educativo Mentix",
+    "isGovDataProject": true,
+    "projectSubtype": "Gobierno de Datos e IA",
     "heroBanner": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fdraft%2F1795566538564_r3c9_asset.jpg",
     "image": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fdraft%2F1795566538564_r3c9_asset.jpg",
+    "coverImage": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fdraft%2F1795566538564_r3c9_asset.jpg",
+    "_clearedMainImage": false,
+    "_clearedThumbImage": false,
+    "useDefaultImage": true,
+    "targetAudience": "",
+    "problemStatement": "",
+    "mainObjective": "",
+    "benefits": "",
+    "teamLead": "Juan Esteban Rosero Jimenez",
+    "preparationStatus": "en_desarrollo",
+    "submittedForApproval": false,
+    "startDate": "2026-11-25",
+    "endDate": "",
+    "currentStep": 1,
+    "completedSteps": [
+      1
+    ],
+    "progress": 55,
+    "calculatedProgress": 55,
+    "valueProp": {
+      "problemSolved": "",
+      "howItWorks": "",
+      "forWhom": "",
+      "differentiator": "",
+      "keyFeatures": [],
+      "resultsAndBenefits": "",
+      "prerequisites": "",
+      "visitorAction": "Unirse / Colaborar",
+      "commercialPitch": "",
+      "faqs": []
+    },
+    "valueProposition": {
+      "problemSolved": "",
+      "howItWorks": "",
+      "forWhom": "",
+      "differentiator": "",
+      "keyFeatures": [],
+      "resultsAndBenefits": "",
+      "prerequisites": "",
+      "visitorAction": "Unirse / Colaborar",
+      "commercialPitch": "",
+      "faqs": []
+    },
+    "videoUrl": "",
+    "videoConfig": {
+      "sourceType": "url",
+      "url": "",
+      "fileName": "",
+      "title": "",
+      "description": "",
+      "thumbnailUrl": "",
+      "isPublic": true,
+      "verified": false
+    },
+    "visualAssets": [],
     "presentations": [
       {
         "id": "pres_1",
@@ -174,83 +207,6 @@
       }
     ],
     "externalLinks": [],
-    "visualAssets": [],
-    "completedSteps": [
-      1
-    ],
-    "videoConfig": {
-      "sourceType": "url",
-      "url": "",
-      "fileName": "",
-      "title": "",
-      "description": "",
-      "thumbnailUrl": "",
-      "isPublic": true,
-      "verified": false
-    },
-    "videoUrl": "",
-    "visibility": "private",
-    "rejectedAt": "",
-    "rejectionReason": "",
-    "tag": "⏳ Pendiente de Autorización",
-    "tagClass": "badge-review",
-    "hub": {
-      "joinRequests": [],
-      "members": [
-        {
-          "name": "Juan Esteban Rosero Jimenez",
-          "email": "jeroseroj@gmail.com",
-          "role": "owner",
-          "leader": true
-        }
-      ],
-      "views": [],
-      "ratings": []
-    },
-    "slug": "diagnostico-de-gobierno-de-datos-universidad-colegio-mayor-de-cundinamarca",
-    "subtitle": "Proyecto Educativo Mentix",
-    "isGovDataProject": true,
-    "projectSubtype": "Gobierno de Datos e IA",
-    "coverImage": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fdraft%2F1795566538564_r3c9_asset.jpg",
-    "_clearedMainImage": false,
-    "_clearedThumbImage": false,
-    "useDefaultImage": true,
-    "targetAudience": "",
-    "problemStatement": "",
-    "mainObjective": "",
-    "benefits": "",
-    "teamLead": "Juan Esteban Rosero Jimenez",
-    "preparationStatus": "en_desarrollo",
-    "submittedForApproval": false,
-    "startDate": "2026-11-25",
-    "endDate": "",
-    "currentStep": 1,
-    "progress": 55,
-    "calculatedProgress": 55,
-    "valueProp": {
-      "problemSolved": "",
-      "howItWorks": "",
-      "forWhom": "",
-      "differentiator": "",
-      "keyFeatures": [],
-      "resultsAndBenefits": "",
-      "prerequisites": "",
-      "visitorAction": "Unirse / Colaborar",
-      "commercialPitch": "",
-      "faqs": []
-    },
-    "valueProposition": {
-      "problemSolved": "",
-      "howItWorks": "",
-      "forWhom": "",
-      "differentiator": "",
-      "keyFeatures": [],
-      "resultsAndBenefits": "",
-      "prerequisites": "",
-      "visitorAction": "Unirse / Colaborar",
-      "commercialPitch": "",
-      "faqs": []
-    },
     "projectRoadmap": [],
     "tags": [
       "Gobierno de Datos",
@@ -346,7 +302,7 @@
         "authorsRole": "Estudiante / Creador"
       },
       "createdAt": "2026-11-25T00:29:14.804Z",
-      "updatedAt": "2026-11-25T00:36:17.173Z",
+      "updatedAt": "2026-11-25T00:36:43.925Z",
       "progress": 55,
       "calculatedProgress": 55
     },
