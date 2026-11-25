@@ -18,7 +18,7 @@
     "image": "assets/projects_ui/card_data_gov.png",
     "banner": "assets/projects_ui/card_data_gov.png",
     "createdAt": "2026-11-25T02:55:49.043Z",
-    "updatedAt": "2026-11-25T03:09:20.859Z",
+    "updatedAt": "2026-11-25T03:09:25.695Z",
     "govdata": {
       "id": "proj_video_1795575349043",
       "title": "Diagnóstico de Gobierno de Datos - Afiancol S.A.S.",
@@ -145,10 +145,10 @@
         "authorsEmails": "boadavillamil09@gmail.com",
         "authorsRole": "Estudiante / Creador",
         "authorsInstitution": "Politécnico Grancolombiano",
-        "collaborators": "Extiendo mis agradecimientos al profesor Carlos Caño ya que con su gu"
+        "collaborators": "Extiendo mis agradecimientos al profesor Carlos Caño ya que con su guia y acompañamineto"
       },
       "createdAt": "2026-11-25T02:55:49.043Z",
-      "updatedAt": "2026-11-25T03:09:21.132Z",
+      "updatedAt": "2026-11-25T03:09:25.771Z",
       "progress": 65,
       "calculatedProgress": 65
     },
@@ -187,7 +187,7 @@
       "authorsEmails": "boadavillamil09@gmail.com",
       "authorsRole": "Estudiante / Creador",
       "authorsInstitution": "Politécnico Grancolombiano",
-      "collaborators": "Extiendo mis agradecimientos al profesor Carlos Caño ya que con su gu"
+      "collaborators": "Extiendo mis agradecimientos al profesor Carlos Caño ya que con su guia y acompañamineto"
     },
     "designConfig": {
       "themeId": "cosmos",
