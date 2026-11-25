@@ -18,7 +18,7 @@
     "image": "assets/projects_ui/card_data_gov.png",
     "banner": "assets/projects_ui/card_data_gov.png",
     "createdAt": "2026-11-25T02:55:49.043Z",
-    "updatedAt": "2026-11-25T03:08:33.100Z",
+    "updatedAt": "2026-11-25T03:08:36.235Z",
     "govdata": {
       "id": "proj_video_1795575349043",
       "title": "Diagnóstico de Gobierno de Datos - Afiancol S.A.S.",
@@ -118,9 +118,10 @@
       "completedSteps": [
         1,
         2,
-        3
+        3,
+        4
       ],
-      "currentStep": 4,
+      "currentStep": 5,
       "author": "Danna Boada",
       "authorId": "user_1795574386910",
       "ownerId": "user_1795574386910",
@@ -145,7 +146,7 @@
         "authorsRole": "Estudiante / Creador"
       },
       "createdAt": "2026-11-25T02:55:49.043Z",
-      "updatedAt": "2026-11-25T03:08:33.316Z",
+      "updatedAt": "2026-11-25T03:08:36.516Z",
       "progress": 65,
       "calculatedProgress": 65
     },
@@ -272,11 +273,12 @@
     "preparationStatus": "en_desarrollo",
     "startDate": "2026-11-25",
     "endDate": "",
-    "currentStep": 4,
+    "currentStep": 5,
     "completedSteps": [
       1,
       2,
-      3
+      3,
+      4
     ],
     "progress": 65,
     "calculatedProgress": 65,
