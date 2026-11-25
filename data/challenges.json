@@ -18,7 +18,7 @@
     "image": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fdraft%2F1795607078265_tkil_asset.jpg",
     "banner": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fdraft%2F1795607078265_tkil_asset.jpg",
     "createdAt": "2026-11-25T11:45:30.865Z",
-    "updatedAt": "2026-11-25T11:48:57.722Z",
+    "updatedAt": "2026-11-25T11:49:01.149Z",
     "govdata": {
       "id": "proj_presentation_1795607130865",
       "title": "Diagnostico gobierno de datos Colegio Tecnico Jaime Pardo Leal IED",
@@ -28,7 +28,7 @@
       "category": "admin",
       "categoryName": "Administración Pública",
       "projectSubtype": "Gobierno de Datos e IA",
-      "targetAudience": "Directivos docentes (rectoría y coordinaciones), personal administrativo y de secretaría académica, docentes",
+      "targetAudience": "Directivos docentes (rectoría y coordinaciones), personal administrativo y de secretaría académica, docentes.",
       "problemStatement": "",
       "mainObjective": "",
       "benefits": "",
@@ -109,7 +109,7 @@
         "authorsRole": "Estudiante / Creador"
       },
       "createdAt": "2026-11-25T11:45:30.865Z",
-      "updatedAt": "2026-11-25T11:48:57.862Z",
+      "updatedAt": "2026-11-25T11:49:01.298Z",
       "progress": 70,
       "calculatedProgress": 70
     },
@@ -247,7 +247,7 @@
     "_clearedMainImage": false,
     "_clearedThumbImage": false,
     "useDefaultImage": true,
-    "targetAudience": "Directivos docentes (rectoría y coordinaciones), personal administrativo y de secretaría académica, docentes",
+    "targetAudience": "Directivos docentes (rectoría y coordinaciones), personal administrativo y de secretaría académica, docentes.",
     "problemStatement": "",
     "mainObjective": "",
     "benefits": "",
