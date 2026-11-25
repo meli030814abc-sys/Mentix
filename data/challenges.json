@@ -102,6 +102,23 @@
         "format": "PPT",
         "thumbnailUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fdraft%2F1795607078265_tkil_asset.jpg",
         "description": "Diagnostico de gobierno y gestion de datos bajo el marco DAMA-DMBOK para el Colegio Técnico Jaime Pardo Leal IED (Bogotá). Dirigido a directivos, docentes y area administrativa con el objetivo de formalizar roles y politicas, inventariar activos de la información y proteger los datos sensibles de niños, niñas y adolecentes (NNA)."
+      },
+      {
+        "id": "res_1795610023727_o5uh",
+        "name": "Diagnostico v4",
+        "fileName": "Diagnostico v4.docx",
+        "description": "Recurso oficial en formato DOCX (0 B).",
+        "type": "word",
+        "url": "data:application/vnd.openxmlformats-officedocument.wordprocessingml.document;base64,",
+        "format": "DOCX",
+        "sizeBytes": 0,
+        "sizeLabel": "0 B",
+        "category": "Guías y manuales",
+        "visibility": "public",
+        "order": 2,
+        "status": "verified",
+        "extractedText": "",
+        "uploadedAt": "2026-11-25T12:33:46.785Z"
       }
     ],
     "visualAssets": [],
@@ -1339,7 +1356,7 @@
         "collaborators": ""
       },
       "createdAt": "2026-11-25T11:45:30.865Z",
-      "updatedAt": "2026-11-25T12:33:44.319Z",
+      "updatedAt": "2026-11-25T12:33:46.786Z",
       "progress": 95,
       "calculatedProgress": 95
     },
@@ -1353,7 +1370,7 @@
     "authorAvatar": "🦊",
     "authorRole": "Estudiante / Creador",
     "createdAt": "2026-11-25T11:45:30.865Z",
-    "updatedAt": "2026-11-25T12:33:44.149Z",
+    "updatedAt": "2026-11-25T12:33:46.627Z",
     "fromStudentCreate": true,
     "_isStudentDraft": true,
     "timePerQuestion": 25,
