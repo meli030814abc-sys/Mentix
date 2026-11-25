@@ -35,7 +35,7 @@
     "isPublic": false,
     "startDate": "2026-08-30",
     "endDate": "2026-11-25",
-    "currentStep": 12,
+    "currentStep": 13,
     "completedSteps": [
       1,
       2,
@@ -47,7 +47,8 @@
       8,
       9,
       10,
-      11
+      11,
+      12
     ],
     "progress": 95,
     "calculatedProgress": 95,
@@ -104,24 +105,33 @@
         "description": "Diagnostico de gobierno y gestion de datos bajo el marco DAMA-DMBOK para el Colegio Técnico Jaime Pardo Leal IED (Bogotá). Dirigido a directivos, docentes y area administrativa con el objetivo de formalizar roles y politicas, inventariar activos de la información y proteger los datos sensibles de niños, niñas y adolecentes (NNA)."
       },
       {
-        "id": "res_1795610023727_o5uh",
-        "name": "Diagnostico v4",
-        "fileName": "Diagnostico v4.docx",
-        "description": "Recurso oficial en formato DOCX (0 B).",
-        "type": "word",
-        "url": "data:application/vnd.openxmlformats-officedocument.wordprocessingml.document;base64,",
-        "format": "DOCX",
-        "sizeBytes": 0,
-        "sizeLabel": "0 B",
-        "category": "Guías y manuales",
+        "id": "res_1795610217734_h6xw",
+        "name": "Diagnóstico de Gobierno de Datos v3 (Taller)",
+        "fileName": "Diagnóstico de Gobierno de Datos_v3 (Taller).zip",
+        "description": "Recurso oficial en formato ZIP (163.6 KB).",
+        "type": "zip",
+        "url": "https://mentixs.vercel.app/api/challenges?file=data%2Fuploads%2Fproj_presentation_1795607130865%2F1795610217715_dmqo_Diagn_stico_de_Gobierno_de_Datos_v3__Tal.zip",
+        "format": "ZIP",
+        "sizeBytes": 167572,
+        "sizeLabel": "163.6 KB",
+        "category": "Otros recursos",
         "visibility": "public",
-        "order": 2,
+        "order": 4,
         "status": "verified",
         "extractedText": "",
-        "uploadedAt": "2026-11-25T12:33:46.785Z"
+        "uploadedAt": "2026-11-25T12:36:59.449Z"
       }
     ],
-    "visualAssets": [],
+    "visualAssets": [
+      {
+        "id": "vis_1795610314939_0",
+        "title": "Captura de pantalla 2026 11 25 073818",
+        "caption": "Imagen oficial del proyecto.",
+        "url": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_presentation_1795607130865%2F1795610313378_55le_asset.jpg",
+        "assetType": "gallery",
+        "visibility": "public"
+      }
+    ],
     "slides": [
       {
         "id": "slide_1795609857643_0",
@@ -1202,7 +1212,7 @@
       "textColor": "#cbd5e1",
       "accentColor": "#00f5d4",
       "bannerStyle": "gradient-cosmos",
-      "bannerUrl": ""
+      "bannerUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fdraft%2F1795607078265_tkil_asset.jpg"
     },
     "authorsConfig": {
       "authorsList": "Jhomar Alejandra Cano Ramirez",
@@ -1328,9 +1338,10 @@
         8,
         9,
         10,
-        11
+        11,
+        12
       ],
-      "currentStep": 12,
+      "currentStep": 13,
       "author": "Jhomar Alejandra Cano Ramirez",
       "authorId": "user_1795557081139",
       "ownerId": "user_1795557081139",
@@ -1346,7 +1357,8 @@
         "titleColor": "#ffffff",
         "textColor": "#cbd5e1",
         "accentColor": "#00f5d4",
-        "bannerStyle": "gradient-cosmos"
+        "bannerStyle": "gradient-cosmos",
+        "bannerUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fdraft%2F1795607078265_tkil_asset.jpg"
       },
       "authorsConfig": {
         "authorsList": "Jhomar Alejandra Cano Ramirez",
@@ -1356,9 +1368,13 @@
         "collaborators": ""
       },
       "createdAt": "2026-11-25T11:45:30.865Z",
-      "updatedAt": "2026-11-25T12:34:49.702Z",
+      "updatedAt": "2026-11-25T12:38:57.936Z",
       "progress": 95,
-      "calculatedProgress": 95
+      "calculatedProgress": 95,
+      "heroBanner": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fdraft%2F1795607078265_tkil_asset.jpg",
+      "banner": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fdraft%2F1795607078265_tkil_asset.jpg",
+      "image": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fdraft%2F1795607078265_tkil_asset.jpg",
+      "coverImage": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fdraft%2F1795607078265_tkil_asset.jpg"
     },
     "author": "Jhomar Alejandra Cano Ramirez",
     "authorId": "user_1795557081139",
@@ -1370,7 +1386,7 @@
     "authorAvatar": "🦊",
     "authorRole": "Estudiante / Creador",
     "createdAt": "2026-11-25T11:45:30.865Z",
-    "updatedAt": "2026-11-25T12:34:52.337Z",
+    "updatedAt": "2026-11-25T12:38:57.934Z",
     "fromStudentCreate": true,
     "_isStudentDraft": true,
     "timePerQuestion": 25,
@@ -1447,7 +1463,7 @@
     "image": "assets/projects_ui/card_data_gov.png",
     "banner": "assets/projects_ui/card_data_gov.png",
     "createdAt": "2026-11-25T02:55:49.043Z",
-    "updatedAt": "2026-11-25T12:38:44.723Z",
+    "updatedAt": "2026-11-25T04:58:19.361Z",
     "govdata": {
       "id": "proj_video_1795575349043",
       "title": "Diagnóstico de Gobierno de Datos - Afiancol S.A.S.",
@@ -1458,20 +1474,20 @@
       "categoryName": "Gobierno de Datos",
       "projectSubtype": "Gobierno de Datos e IA",
       "targetAudience": "Público General",
-      "problemStatement": "AFIANCOL presenta una gestión de datos poco estructurada, caracterizada por información dispersa, ausencia de responsabilidades formales sobre los datos e inconsistencias en la información. Esto genera reprocesos, dificultades en el seguimiento de procesos como cartera y siniestralidad, y limita la toma de decisiones basada en información confiable.",
-      "mainObjective": "Establecer un modelo de Gobierno de Datos para AFIANCOL, basado en DAMA-DMBOK, que fortalezca la gestión de la información mediante la definición de roles, políticas, estándares y procesos orientados a mejorar su calidad, organización, disponibilidad y aprovechamiento estratégico.",
-      "benefits": "El modelo permitirá a AFIANCOL mejorar la calidad, organización y confiabilidad de sus datos, reducir reprocesos e inconsistencias, establecer responsabilidades claras en su gestión y fortalecer el seguimiento de procesos e indicadores. Esto facilitará el acceso a información oportuna, optimizará los procesos internos y permitirá tomar decisiones más informadas, consolidando una cultura organizacional orientada al aprovechamiento estratégico de los datos.",
+      "problemStatement": "",
+      "mainObjective": "",
+      "benefits": "",
       "teamLead": "Danna Boada",
       "preparationStatus": "en_desarrollo",
       "startDate": "2026-11-25",
       "endDate": "",
       "valueProp": {
-        "problemSolved": "AFIANCOL presenta una gestión de datos poco estructurada, caracterizada por información dispersa, ausencia de responsabilidades formales sobre los datos e inconsistencias en la información. Esto genera reprocesos, dificultades en el seguimiento de procesos como cartera y siniestralidad, y limita la toma de decisiones basada en información confiable.",
+        "problemSolved": "",
         "howItWorks": "",
         "forWhom": "Público General",
         "differentiator": "",
         "keyFeatures": [],
-        "resultsAndBenefits": "El modelo permitirá a AFIANCOL mejorar la calidad, organización y confiabilidad de sus datos, reducir reprocesos e inconsistencias, establecer responsabilidades claras en su gestión y fortalecer el seguimiento de procesos e indicadores. Esto facilitará el acceso a información oportuna, optimizará los procesos internos y permitirá tomar decisiones más informadas, consolidando una cultura organizacional orientada al aprovechamiento estratégico de los datos.",
+        "resultsAndBenefits": "",
         "prerequisites": "",
         "visitorAction": "Unirse / Colaborar",
         "commercialPitch": "",
@@ -1488,7 +1504,7 @@
         "verified": true
       },
       "mainImage": "",
-      "thumbnailImage": "",
+      "thumbnailImage": "assets/projects_ui/robot_hero_banner.png",
       "_clearedMainImage": false,
       "_clearedThumbImage": false,
       "useDefaultImage": true,
@@ -1552,7 +1568,7 @@
         5,
         6
       ],
-      "currentStep": 7,
+      "currentStep": 6,
       "author": "Danna Boada",
       "authorId": "user_1795574386910",
       "ownerId": "user_1795574386910",
@@ -1560,8 +1576,8 @@
       "authorEmail": "boadavillamil09@gmail.com",
       "authorAvatar": "🦄",
       "authorRole": "Estudiante / Creador",
-      "joinCode": "",
-      "accessCode": "",
+      "joinCode": "804263",
+      "accessCode": "804263",
       "designConfig": {
         "themeId": "cosmos",
         "fontFamily": "Montserrat",
@@ -1579,9 +1595,9 @@
         "collaborators": "Extiendo mis agradecimientos al profesor Carlos Caño ya que con su guía y acompañamiento fue posible ejecutar un correcto proceso de implementación de Gobierno de Datos de manera teórico práctico."
       },
       "createdAt": "2026-11-25T02:55:49.043Z",
-      "updatedAt": "2026-11-25T12:38:31.920Z",
-      "progress": 80,
-      "calculatedProgress": 80
+      "updatedAt": "2026-11-25T04:58:19.864Z",
+      "progress": 65,
+      "calculatedProgress": 65
     },
     "fromStudentCreate": true,
     "_isStudentDraft": true,
@@ -1592,7 +1608,7 @@
     "timePerQuestion": 25,
     "plays": 0,
     "mainImage": "assets/projects_ui/card_data_gov.png",
-    "thumbnailImage": "assets/projects_ui/card_data_gov.png",
+    "thumbnailImage": "assets/projects_ui/robot_hero_banner.png",
     "shortDescription": "Afiancol, una compañía colombiana fundada en 2007 y especializada en fianzas y garantías para el sector solidario, vive de la confianza, pero sus datos se producían sin ser gestionados como un activo: faltaban responsables, reglas de decisión y control de calidad, y por eso no servían de base para decidir. Para abordarlo, se realizo un diagnóstico de gobierno de datos con la metodología DAMA-DMBOK2, a partir de entrevistas y documentos oficiales, midiendo la madurez en seis dimensiones y desarrollando una solución en cuatro fases, consolidada en Supabase y en la herramienta GovData Nexus, cuyas métricas se actualizan de forma continua. El resultado es una madurez global del 65 % al último corte, con una base sólida en Calidad, Seguridad y Organización, y con brechas prioritarias en Estrategia y Compliance (30 %), que marcan la ruta para convertir los datos en un activo estratégico y cumplir con Habeas Data. El principal aprendizaje es que gobernar datos es tanto un tema de personas como de tecnología: medir convierte una percepción en un punto de partida, y sostener ese gobierno día a día es lo que demuestra su valor a la dirección.",
     "fullDescription": "Afiancol, una compañía colombiana fundada en 2007 y especializada en fianzas y garantías para el sector solidario, vive de la confianza, pero sus datos se producían sin ser gestionados como un activo: faltaban responsables, reglas de decisión y control de calidad, y por eso no servían de base para decidir. Para abordarlo, se realizo un diagnóstico de gobierno de datos con la metodología DAMA-DMBOK2, a partir de entrevistas y documentos oficiales, midiendo la madurez en seis dimensiones y desarrollando una solución en cuatro fases, consolidada en Supabase y en la herramienta GovData Nexus, cuyas métricas se actualizan de forma continua. El resultado es una madurez global del 65 % al último corte, con una base sólida en Calidad, Seguridad y Organización, y con brechas prioritarias en Estrategia y Compliance (30 %), que marcan la ruta para convertir los datos en un activo estratégico y cumplir con Habeas Data. El principal aprendizaje es que gobernar datos es tanto un tema de personas como de tecnología: medir convierte una percepción en un punto de partida, y sostener ese gobierno día a día es lo que demuestra su valor a la dirección.",
     "accessMode": "private",
@@ -1701,14 +1717,14 @@
     "_clearedThumbImage": false,
     "useDefaultImage": true,
     "targetAudience": "Público General",
-    "problemStatement": "AFIANCOL presenta una gestión de datos poco estructurada, caracterizada por información dispersa, ausencia de responsabilidades formales sobre los datos e inconsistencias en la información. Esto genera reprocesos, dificultades en el seguimiento de procesos como cartera y siniestralidad, y limita la toma de decisiones basada en información confiable.",
-    "mainObjective": "Establecer un modelo de Gobierno de Datos para AFIANCOL, basado en DAMA-DMBOK, que fortalezca la gestión de la información mediante la definición de roles, políticas, estándares y procesos orientados a mejorar su calidad, organización, disponibilidad y aprovechamiento estratégico.",
-    "benefits": "El modelo permitirá a AFIANCOL mejorar la calidad, organización y confiabilidad de sus datos, reducir reprocesos e inconsistencias, establecer responsabilidades claras en su gestión y fortalecer el seguimiento de procesos e indicadores. Esto facilitará el acceso a información oportuna, optimizará los procesos internos y permitirá tomar decisiones más informadas, consolidando una cultura organizacional orientada al aprovechamiento estratégico de los datos.",
+    "problemStatement": "",
+    "mainObjective": "",
+    "benefits": "",
     "teamLead": "Danna Boada",
     "preparationStatus": "en_desarrollo",
     "startDate": "2026-11-25",
     "endDate": "",
-    "currentStep": 7,
+    "currentStep": 6,
     "completedSteps": [
       1,
       2,
@@ -1717,27 +1733,27 @@
       5,
       6
     ],
-    "progress": 80,
-    "calculatedProgress": 80,
+    "progress": 65,
+    "calculatedProgress": 65,
     "valueProp": {
-      "problemSolved": "AFIANCOL presenta una gestión de datos poco estructurada, caracterizada por información dispersa, ausencia de responsabilidades formales sobre los datos e inconsistencias en la información. Esto genera reprocesos, dificultades en el seguimiento de procesos como cartera y siniestralidad, y limita la toma de decisiones basada en información confiable.",
+      "problemSolved": "",
       "howItWorks": "",
       "forWhom": "Público General",
       "differentiator": "",
       "keyFeatures": [],
-      "resultsAndBenefits": "El modelo permitirá a AFIANCOL mejorar la calidad, organización y confiabilidad de sus datos, reducir reprocesos e inconsistencias, establecer responsabilidades claras en su gestión y fortalecer el seguimiento de procesos e indicadores. Esto facilitará el acceso a información oportuna, optimizará los procesos internos y permitirá tomar decisiones más informadas, consolidando una cultura organizacional orientada al aprovechamiento estratégico de los datos.",
+      "resultsAndBenefits": "",
       "prerequisites": "",
       "visitorAction": "Unirse / Colaborar",
       "commercialPitch": "",
       "faqs": []
     },
     "valueProposition": {
-      "problemSolved": "AFIANCOL presenta una gestión de datos poco estructurada, caracterizada por información dispersa, ausencia de responsabilidades formales sobre los datos e inconsistencias en la información. Esto genera reprocesos, dificultades en el seguimiento de procesos como cartera y siniestralidad, y limita la toma de decisiones basada en información confiable.",
+      "problemSolved": "",
       "howItWorks": "",
       "forWhom": "Público General",
       "differentiator": "",
       "keyFeatures": [],
-      "resultsAndBenefits": "El modelo permitirá a AFIANCOL mejorar la calidad, organización y confiabilidad de sus datos, reducir reprocesos e inconsistencias, establecer responsabilidades claras en su gestión y fortalecer el seguimiento de procesos e indicadores. Esto facilitará el acceso a información oportuna, optimizará los procesos internos y permitirá tomar decisiones más informadas, consolidando una cultura organizacional orientada al aprovechamiento estratégico de los datos.",
+      "resultsAndBenefits": "",
       "prerequisites": "",
       "visitorAction": "Unirse / Colaborar",
       "commercialPitch": "",
@@ -1789,8 +1805,8 @@
     ],
     "ownerId": "user_1795574386910",
     "ownerUsername": "dan_boa27",
-    "joinCode": "",
-    "accessCode": "",
+    "joinCode": "804263",
+    "accessCode": "804263",
     "duration": "5:00 min",
     "tag": "⏳ Pendiente de Autorización",
     "tagClass": "badge-review",
