@@ -123,8 +123,7 @@
         "order": 4,
         "status": "verified",
         "extractedText": "",
-        "uploadedAt": "2026-11-25T12:36:59.449Z",
-        "thumbnailUrl": ""
+        "uploadedAt": "2026-11-25T12:36:59.449Z"
       }
     ],
     "visualAssets": [
@@ -191,8 +190,7 @@
         "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_presentation_1795607130865%2F1795609857970_nt2r_slide_1.jpg",
         "notes": "Apertura. Preséntate, nombra el colegio (oficial y distrital, Bogotá, localidad Antonio Nariño, adscrito a la SED) y di que esta versión recorre el proceso completo con la institución: qué se encontró, cómo se midió, qué se diseñó y qué se llevó a GovData Nexus. Tiempo sugerido: 20 segundos.",
         "bgColor": "#ffffff",
-        "themeId": "cosmos",
-        "bgImage": ""
+        "themeId": "cosmos"
       },
       {
         "id": "slide_1795609857643_1",
@@ -215,8 +213,7 @@
         "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_presentation_1795607130865%2F1795609863680_1yhb_slide_2.jpg",
         "notes": "Explica la ruta en una frase por paso. Insiste en que no se empezó por la tecnología: primero se entendió cómo circulan los datos de los menores, luego se midió, luego se diseñó el gobierno y solo después se registró en la plataforma. Tiempo sugerido: 30 segundos.",
         "bgColor": "#ffffff",
-        "themeId": "cosmos",
-        "bgImage": ""
+        "themeId": "cosmos"
       },
       {
         "id": "slide_1795609857643_2",
@@ -239,8 +236,7 @@
         "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_presentation_1795607130865%2F1795609865237_b9g9_slide_3.jpg",
         "notes": "Contexto breve. El colegio es oficial y distrital, adscrito a la SED. Sus procesos son estratégicos (gestión directiva), misionales (formación académica y convivencial), de apoyo (matrícula, inclusión, orientación) y de evaluación (SIEE). Casi todo su valor se apoya en datos de menores. Dato pendiente: [COMPLETAR: número de estudiantes, sedes, jornadas, cursos y docentes]. Tiempo sugerido: 30 segundos.",
         "bgColor": "#ffffff",
-        "themeId": "cosmos",
-        "bgImage": ""
+        "themeId": "cosmos"
       },
       {
         "id": "slide_1795609857643_3",
@@ -263,8 +259,7 @@
         "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_presentation_1795607130865%2F1795609866702_073m_slide_4.jpg",
         "notes": "Muestra que los datos del colegio no son solo internos: se reportan a SIMAT, ICBF, SED y SENA. Esto justifica que los roles y las reglas se definan una sola vez y se usen igual en todos los procesos. Tiempo sugerido: 25 segundos.",
         "bgColor": "#ffffff",
-        "themeId": "cosmos",
-        "bgImage": ""
+        "themeId": "cosmos"
       },
       {
         "id": "slide_1795609857643_4",
@@ -287,8 +282,7 @@
         "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_presentation_1795607130865%2F1795609868712_xbaj_slide_5.jpg",
         "notes": "Este inventario salió de cruzar el diagnóstico con los activos reales: Drive, SIMAT, observador físico, plataforma de notas, planillas y SENA. También figura GovData Nexus (Supabase) como capa de integración propuesta, que debe recibir solo agregados. Pendiente por confirmar: cuentas de Drive (institucionales o personales), número de carpetas y con quién se comparten. Tiempo sugerido: 35 segundos.",
         "bgColor": "#ffffff",
-        "themeId": "cosmos",
-        "bgImage": ""
+        "themeId": "cosmos"
       },
       {
         "id": "slide_1795609857643_5",
@@ -311,8 +305,7 @@
         "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_presentation_1795607130865%2F1795609870239_avzz_slide_6.jpg",
         "notes": "La clave es el último cuadro. Las carpetas de Drive existen por una razón válida: poder actuar en una urgencia. Por eso la solución no es prohibirlas sin más, sino reemplazarlas por una ficha de emergencia mínima con acceso registrado. Tiempo sugerido: 30 segundos.",
         "bgColor": "#ffffff",
-        "themeId": "cosmos",
-        "bgImage": ""
+        "themeId": "cosmos"
       },
       {
         "id": "slide_1795609857643_6",
@@ -335,8 +328,7 @@
         "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_presentation_1795607130865%2F1795609871786_s1ol_slide_7.jpg",
         "notes": "Muestra cómo el diagnóstico se convierte en controles concretos. El riesgo más alto, la exposición de datos sensibles, nace de Drive compartido sin control por rol y de papel sin custodia uniforme. Hay siete riesgos más en el diagnóstico, entre ellos la dependencia de una sola persona (enlace TIC) y los terceros sin contrato de transmisión. Tiempo sugerido: 35 segundos.",
         "bgColor": "#ffffff",
-        "themeId": "cosmos",
-        "bgImage": ""
+        "themeId": "cosmos"
       },
       {
         "id": "slide_1795609857643_7",
@@ -359,8 +351,7 @@
         "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_presentation_1795607130865%2F1795609873349_oftr_slide_8.jpg",
         "notes": "Aclara la escala, porque de ella depende cómo leer las metas. Nivel 3 significa borrador o diseño sin aprobar; nivel 4 significa aprobado por acto administrativo y aplicado. Registrar algo en una plataforma no sube el puntaje por sí solo: hace falta evidencia formal. Las 11 dimensiones son: estrategia, gobierno y roles, cultura, políticas, calidad, riesgos, seguridad y privacidad, arquitectura, datos maestros, metadatos y linaje, y procesos de información. Tiempo sugerido: 35 segundos.",
         "bgColor": "#ffffff",
-        "themeId": "cosmos",
-        "bgImage": ""
+        "themeId": "cosmos"
       },
       {
         "id": "slide_1795609857643_8",
@@ -383,8 +374,7 @@
         "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_presentation_1795607130865%2F1795609875022_ixo8_slide_9.jpg",
         "notes": "Lectura de la tabla: seis dimensiones están en nivel 1 y son las que habilitan a las demás (estrategia, gobierno, riesgos, arquitectura, datos maestros y metadatos). Ejemplos de evidencia: no existen actas ni resoluciones de roles de datos; no hay diccionario ni registro auditable de cambios en notas; no hay matriz de riesgos de información ni plan de respuesta a incidentes. Nota: en Políticas y normativa el diagnóstico tiene un pendiente: si el colegio ya adoptó la política de tratamiento de la SED, esa dimensión podría ser 3 [COMPLETAR]. Tiempo sugerido: 40 segundos.",
         "bgColor": "#ffffff",
-        "themeId": "cosmos",
-        "bgImage": ""
+        "themeId": "cosmos"
       },
       {
         "id": "slide_1795609857643_9",
@@ -407,8 +397,7 @@
         "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_presentation_1795607130865%2F1795609876624_rzv4_slide_10.jpg",
         "notes": "Este es el único modelo de roles del trabajo: se usa igual en políticas, catálogo, flujos y RACI. Antes había dos modelos distintos entre el diagnóstico y Nexus. El punto débil que debes nombrar: el enlace TIC necesita horas asignadas y un reemplazo con nombre, o es un punto único de falla. También hay que designar por escrito quién atiende consultas y reclamos de habeas data (se propone Secretaría Académica). Tiempo sugerido: 40 segundos.",
         "bgColor": "#ffffff",
-        "themeId": "cosmos",
-        "bgImage": ""
+        "themeId": "cosmos"
       },
       {
         "id": "slide_1795609857643_10",
@@ -431,8 +420,7 @@
         "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_presentation_1795607130865%2F1795609878232_nvxa_slide_11.jpg",
         "notes": "Se diseñó liviano para no sobrecargar al personal: solo dos sesiones ordinarias. La mesa técnica de calidad y seguridad (enlace TIC, Secretaría, Orientación) sesiona dentro del comité, sin reuniones aparte. El Consejo Directivo aprueba la estrategia y el acto que lo crea. Pendiente: [COMPLETAR: si ya existe resolución o acuerdo y si el Comité Escolar de Convivencia está conformado]. Tiempo sugerido: 30 segundos.",
         "bgColor": "#ffffff",
-        "themeId": "cosmos",
-        "bgImage": ""
+        "themeId": "cosmos"
       },
       {
         "id": "slide_1795609857643_11",
@@ -455,8 +443,7 @@
         "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_presentation_1795607130865%2F1795609879834_uhs2_slide_12.jpg",
         "notes": "La RACI completa tiene 15 actividades; aquí se muestran las más representativas. Correcciones frente a la versión anterior: la captura primaria ya no tiene como A a la célula técnica sino al Owner del dominio; el CDO deja de ser A de calidad, accesos y analítica de cada dominio y conserva políticas, incidentes, reclamos, requerimientos de autoridad y retención; se agregaron filas de PIAR, notas tras el cierre, reclamos, requerimientos de autoridad y retención. Tiempo sugerido: 40 segundos.",
         "bgColor": "#ffffff",
-        "themeId": "cosmos",
-        "bgImage": ""
+        "themeId": "cosmos"
       },
       {
         "id": "slide_1795609857643_12",
@@ -479,8 +466,7 @@
         "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_presentation_1795607130865%2F1795609881517_mhwl_slide_13.jpg",
         "notes": "Este marco quedó corregido en la versión final: se incorporó el Decreto 1421 de 2017 para el PIAR y se aclaró que la Ley 1581 admite excepciones para proteger la vida o la integridad del titular y para órdenes de autoridad, que son la base del acceso de emergencia. El documento aclara que no es asesoría legal y que las referencias se validan con la oficina jurídica de la SED. Tiempo sugerido: 30 segundos.",
         "bgColor": "#ffffff",
-        "themeId": "cosmos",
-        "bgImage": ""
+        "themeId": "cosmos"
       },
       {
         "id": "slide_1795609857643_13",
@@ -503,8 +489,7 @@
         "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_presentation_1795607130865%2F1795609883421_bzsl_slide_14.jpg",
         "notes": "Este es uno de los ajustes de fondo. La versión anterior trataba todo como consentimiento opcional, lo que es incorrecto para la matrícula, las notas o el reporte a SIMAT, que son obligatorios por mandato legal y no admiten supresión de lo que el colegio debe conservar. Lo opcional y lo sensible sí requieren autorización específica, con la advertencia de que responder es opcional. Tiempo sugerido: 40 segundos.",
         "bgColor": "#ffffff",
-        "themeId": "cosmos",
-        "bgImage": ""
+        "themeId": "cosmos"
       },
       {
         "id": "slide_1795609857643_14",
@@ -527,8 +512,7 @@
         "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_presentation_1795607130865%2F1795609885017_8k9g_slide_15.jpg",
         "notes": "Corrección clave frente a la versión anterior, ahora alineada con el Decreto 1421 de 2017: el PIAR es un instrumento pedagógico que hace parte de la historia escolar, y los docentes necesitan los ajustes para aplicarlos. Lo que se protege es la capa clínica. La capa C solo sale como conteo y con supresión de celdas pequeñas, porque un curso con un solo estudiante PIAR lo identificaría. Tiempo sugerido: 45 segundos.",
         "bgColor": "#ffffff",
-        "themeId": "cosmos",
-        "bgImage": ""
+        "themeId": "cosmos"
       },
       {
         "id": "slide_1795609857643_15",
@@ -551,8 +535,7 @@
         "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_presentation_1795607130865%2F1795609886465_52h3_slide_16.jpg",
         "notes": "Esto resuelve el problema de las carpetas de Drive en emergencias: se reemplazan por una ficha mínima con acceso autorizado y registro inmediato de quién, qué dato, por qué y cuándo. Las solicitudes de autoridades (ICBF, Comisaría, Defensoría, Fiscalía) se atienden por escrito, validando competencia y entregando solo lo pedido. Quien atiende los reclamos verifica la identidad y que quien pide sea el representante legal. Tiempo sugerido: 40 segundos.",
         "bgColor": "#ffffff",
-        "themeId": "cosmos",
-        "bgImage": ""
+        "themeId": "cosmos"
       },
       {
         "id": "slide_1795609857643_16",
@@ -575,8 +558,7 @@
         "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_presentation_1795607130865%2F1795609888614_tu5h_slide_17.jpg",
         "notes": "Las ocho políticas usan el modelo único de roles y están numeradas igual que en GovData Nexus. Las excepciones de emergencia se regulan en un solo lugar, la política 3, no en cada una. En incidentes no se mide «cero incidentes», porque eso penalizaría el reporte; se mide que se reporten en 24 horas. Las políticas 3, 5, 7 y 8 fueron las que se reescribieron en Nexus. Tiempo sugerido: 35 segundos.",
         "bgColor": "#ffffff",
-        "themeId": "cosmos",
-        "bgImage": ""
+        "themeId": "cosmos"
       },
       {
         "id": "slide_1795609857643_17",
@@ -599,8 +581,7 @@
         "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_presentation_1795607130865%2F1795609890049_58ta_slide_18.jpg",
         "notes": "No se propone una plataforma grande, sino decidir cuál es el sistema de registro de cada dato y eliminar las copias editables. Esto ataca la duplicidad entre papel, Drive, planillas y plataforma que apareció en el diagnóstico. Dos decisiones siguen abiertas: dónde se registra la asistencia y si continúa la plataforma contratada o se usa un aplicativo propio. Tiempo sugerido: 40 segundos.",
         "bgColor": "#ffffff",
-        "themeId": "cosmos",
-        "bgImage": ""
+        "themeId": "cosmos"
       },
       {
         "id": "slide_1795609857643_18",
@@ -623,8 +604,7 @@
         "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_presentation_1795607130865%2F1795609891500_0f1h_slide_19.jpg",
         "notes": "Las dos capas centrales son las únicas que reciben datos seudonimizados o agregados. Las reglas de calidad que necesitan leer datos sensibles se ejecutan en el colegio y a Nexus viaja solo el resultado. El identificador interno resuelve que el número de documento cambia (RC, TI, CC, PEP o PPT) o se corrige, y el PROV concilia la excepción de migrantes sin documento con la prohibición de números genéricos. Honestidad: esta es la arquitectura objetivo; [COMPLETAR: qué capas están implementadas hoy]. Tiempo sugerido: 45 segundos.",
         "bgColor": "#ffffff",
-        "themeId": "cosmos",
-        "bgImage": ""
+        "themeId": "cosmos"
       },
       {
         "id": "slide_1795609857643_19",
@@ -647,8 +627,7 @@
         "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_presentation_1795607130865%2F1795609893153_4agp_slide_20.jpg",
         "notes": "Un solo roadmap, sin las versiones contradictorias de antes. Lo primero es lo que no depende de tecnología: firmar la resolución, ordenar Drive y escribir el diccionario. Los conectores y el tablero de alertas quedan para el final porque solo valen si los datos de origen ya son confiables. Tiempo sugerido: 40 segundos.",
         "bgColor": "#ffffff",
-        "themeId": "cosmos",
-        "bgImage": ""
+        "themeId": "cosmos"
       },
       {
         "id": "slide_1795609857643_20",
@@ -671,8 +650,7 @@
         "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_presentation_1795607130865%2F1795609894638_otoy_slide_21.jpg",
         "notes": "Cómo leer las metas con la escala de la lámina 8: nivel 3 es un borrador o diseño sin aprobar; nivel 4 es aprobado por acto administrativo y aplicado. Por eso subir de nivel 1 a 3 en un año es posible si el trabajo es documental (roles, aviso de privacidad, matriz de riesgos), y llegar al 4 en dos años exige que esos documentos se aprueben y se apliquen. El avance por dimensión se mide en la reevaluación a 12 y 24 meses. Las metas son propuestas, no resultados. Tiempo sugerido: 40 segundos.",
         "bgColor": "#ffffff",
-        "themeId": "cosmos",
-        "bgImage": ""
+        "themeId": "cosmos"
       },
       {
         "id": "slide_1795609857643_21",
@@ -695,8 +673,7 @@
         "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_presentation_1795607130865%2F1795609896412_pbfh_slide_22.jpg",
         "notes": "Cierra con franqueza: lo hecho es el diagnóstico, el diseño del gobierno y el plan para llevarlo a Nexus. Lo que falta son los actos formales y la operación sostenida. Si te preguntan por qué no está todo implementado: el gobierno de datos es un cambio de prácticas, y el puntaje solo sube con evidencia. Termina agradeciendo y abriendo preguntas. Tiempo sugerido: 40 segundos.",
         "bgColor": "#ffffff",
-        "themeId": "cosmos",
-        "bgImage": ""
+        "themeId": "cosmos"
       }
     ],
     "presentations": [
@@ -725,8 +702,7 @@
             "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_presentation_1795607130865%2F1795609857970_nt2r_slide_1.jpg",
             "notes": "Apertura. Preséntate, nombra el colegio (oficial y distrital, Bogotá, localidad Antonio Nariño, adscrito a la SED) y di que esta versión recorre el proceso completo con la institución: qué se encontró, cómo se midió, qué se diseñó y qué se llevó a GovData Nexus. Tiempo sugerido: 20 segundos.",
             "bgColor": "#ffffff",
-            "themeId": "cosmos",
-            "bgImage": ""
+            "themeId": "cosmos"
           },
           {
             "id": "slide_1795609857643_1",
@@ -749,8 +725,7 @@
             "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_presentation_1795607130865%2F1795609863680_1yhb_slide_2.jpg",
             "notes": "Explica la ruta en una frase por paso. Insiste en que no se empezó por la tecnología: primero se entendió cómo circulan los datos de los menores, luego se midió, luego se diseñó el gobierno y solo después se registró en la plataforma. Tiempo sugerido: 30 segundos.",
             "bgColor": "#ffffff",
-            "themeId": "cosmos",
-            "bgImage": ""
+            "themeId": "cosmos"
           },
           {
             "id": "slide_1795609857643_2",
@@ -773,8 +748,7 @@
             "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_presentation_1795607130865%2F1795609865237_b9g9_slide_3.jpg",
             "notes": "Contexto breve. El colegio es oficial y distrital, adscrito a la SED. Sus procesos son estratégicos (gestión directiva), misionales (formación académica y convivencial), de apoyo (matrícula, inclusión, orientación) y de evaluación (SIEE). Casi todo su valor se apoya en datos de menores. Dato pendiente: [COMPLETAR: número de estudiantes, sedes, jornadas, cursos y docentes]. Tiempo sugerido: 30 segundos.",
             "bgColor": "#ffffff",
-            "themeId": "cosmos",
-            "bgImage": ""
+            "themeId": "cosmos"
           },
           {
             "id": "slide_1795609857643_3",
@@ -797,8 +771,7 @@
             "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_presentation_1795607130865%2F1795609866702_073m_slide_4.jpg",
             "notes": "Muestra que los datos del colegio no son solo internos: se reportan a SIMAT, ICBF, SED y SENA. Esto justifica que los roles y las reglas se definan una sola vez y se usen igual en todos los procesos. Tiempo sugerido: 25 segundos.",
             "bgColor": "#ffffff",
-            "themeId": "cosmos",
-            "bgImage": ""
+            "themeId": "cosmos"
           },
           {
             "id": "slide_1795609857643_4",
@@ -821,8 +794,7 @@
             "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_presentation_1795607130865%2F1795609868712_xbaj_slide_5.jpg",
             "notes": "Este inventario salió de cruzar el diagnóstico con los activos reales: Drive, SIMAT, observador físico, plataforma de notas, planillas y SENA. También figura GovData Nexus (Supabase) como capa de integración propuesta, que debe recibir solo agregados. Pendiente por confirmar: cuentas de Drive (institucionales o personales), número de carpetas y con quién se comparten. Tiempo sugerido: 35 segundos.",
             "bgColor": "#ffffff",
-            "themeId": "cosmos",
-            "bgImage": ""
+            "themeId": "cosmos"
           },
           {
             "id": "slide_1795609857643_5",
@@ -845,8 +817,7 @@
             "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_presentation_1795607130865%2F1795609870239_avzz_slide_6.jpg",
             "notes": "La clave es el último cuadro. Las carpetas de Drive existen por una razón válida: poder actuar en una urgencia. Por eso la solución no es prohibirlas sin más, sino reemplazarlas por una ficha de emergencia mínima con acceso registrado. Tiempo sugerido: 30 segundos.",
             "bgColor": "#ffffff",
-            "themeId": "cosmos",
-            "bgImage": ""
+            "themeId": "cosmos"
           },
           {
             "id": "slide_1795609857643_6",
@@ -869,8 +840,7 @@
             "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_presentation_1795607130865%2F1795609871786_s1ol_slide_7.jpg",
             "notes": "Muestra cómo el diagnóstico se convierte en controles concretos. El riesgo más alto, la exposición de datos sensibles, nace de Drive compartido sin control por rol y de papel sin custodia uniforme. Hay siete riesgos más en el diagnóstico, entre ellos la dependencia de una sola persona (enlace TIC) y los terceros sin contrato de transmisión. Tiempo sugerido: 35 segundos.",
             "bgColor": "#ffffff",
-            "themeId": "cosmos",
-            "bgImage": ""
+            "themeId": "cosmos"
           },
           {
             "id": "slide_1795609857643_7",
@@ -893,8 +863,7 @@
             "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_presentation_1795607130865%2F1795609873349_oftr_slide_8.jpg",
             "notes": "Aclara la escala, porque de ella depende cómo leer las metas. Nivel 3 significa borrador o diseño sin aprobar; nivel 4 significa aprobado por acto administrativo y aplicado. Registrar algo en una plataforma no sube el puntaje por sí solo: hace falta evidencia formal. Las 11 dimensiones son: estrategia, gobierno y roles, cultura, políticas, calidad, riesgos, seguridad y privacidad, arquitectura, datos maestros, metadatos y linaje, y procesos de información. Tiempo sugerido: 35 segundos.",
             "bgColor": "#ffffff",
-            "themeId": "cosmos",
-            "bgImage": ""
+            "themeId": "cosmos"
           },
           {
             "id": "slide_1795609857643_8",
@@ -917,8 +886,7 @@
             "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_presentation_1795607130865%2F1795609875022_ixo8_slide_9.jpg",
             "notes": "Lectura de la tabla: seis dimensiones están en nivel 1 y son las que habilitan a las demás (estrategia, gobierno, riesgos, arquitectura, datos maestros y metadatos). Ejemplos de evidencia: no existen actas ni resoluciones de roles de datos; no hay diccionario ni registro auditable de cambios en notas; no hay matriz de riesgos de información ni plan de respuesta a incidentes. Nota: en Políticas y normativa el diagnóstico tiene un pendiente: si el colegio ya adoptó la política de tratamiento de la SED, esa dimensión podría ser 3 [COMPLETAR]. Tiempo sugerido: 40 segundos.",
             "bgColor": "#ffffff",
-            "themeId": "cosmos",
-            "bgImage": ""
+            "themeId": "cosmos"
           },
           {
             "id": "slide_1795609857643_9",
@@ -941,8 +909,7 @@
             "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_presentation_1795607130865%2F1795609876624_rzv4_slide_10.jpg",
             "notes": "Este es el único modelo de roles del trabajo: se usa igual en políticas, catálogo, flujos y RACI. Antes había dos modelos distintos entre el diagnóstico y Nexus. El punto débil que debes nombrar: el enlace TIC necesita horas asignadas y un reemplazo con nombre, o es un punto único de falla. También hay que designar por escrito quién atiende consultas y reclamos de habeas data (se propone Secretaría Académica). Tiempo sugerido: 40 segundos.",
             "bgColor": "#ffffff",
-            "themeId": "cosmos",
-            "bgImage": ""
+            "themeId": "cosmos"
           },
           {
             "id": "slide_1795609857643_10",
@@ -965,8 +932,7 @@
             "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_presentation_1795607130865%2F1795609878232_nvxa_slide_11.jpg",
             "notes": "Se diseñó liviano para no sobrecargar al personal: solo dos sesiones ordinarias. La mesa técnica de calidad y seguridad (enlace TIC, Secretaría, Orientación) sesiona dentro del comité, sin reuniones aparte. El Consejo Directivo aprueba la estrategia y el acto que lo crea. Pendiente: [COMPLETAR: si ya existe resolución o acuerdo y si el Comité Escolar de Convivencia está conformado]. Tiempo sugerido: 30 segundos.",
             "bgColor": "#ffffff",
-            "themeId": "cosmos",
-            "bgImage": ""
+            "themeId": "cosmos"
           },
           {
             "id": "slide_1795609857643_11",
@@ -989,8 +955,7 @@
             "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_presentation_1795607130865%2F1795609879834_uhs2_slide_12.jpg",
             "notes": "La RACI completa tiene 15 actividades; aquí se muestran las más representativas. Correcciones frente a la versión anterior: la captura primaria ya no tiene como A a la célula técnica sino al Owner del dominio; el CDO deja de ser A de calidad, accesos y analítica de cada dominio y conserva políticas, incidentes, reclamos, requerimientos de autoridad y retención; se agregaron filas de PIAR, notas tras el cierre, reclamos, requerimientos de autoridad y retención. Tiempo sugerido: 40 segundos.",
             "bgColor": "#ffffff",
-            "themeId": "cosmos",
-            "bgImage": ""
+            "themeId": "cosmos"
           },
           {
             "id": "slide_1795609857643_12",
@@ -1013,8 +978,7 @@
             "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_presentation_1795607130865%2F1795609881517_mhwl_slide_13.jpg",
             "notes": "Este marco quedó corregido en la versión final: se incorporó el Decreto 1421 de 2017 para el PIAR y se aclaró que la Ley 1581 admite excepciones para proteger la vida o la integridad del titular y para órdenes de autoridad, que son la base del acceso de emergencia. El documento aclara que no es asesoría legal y que las referencias se validan con la oficina jurídica de la SED. Tiempo sugerido: 30 segundos.",
             "bgColor": "#ffffff",
-            "themeId": "cosmos",
-            "bgImage": ""
+            "themeId": "cosmos"
           },
           {
             "id": "slide_1795609857643_13",
@@ -1037,8 +1001,7 @@
             "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_presentation_1795607130865%2F1795609883421_bzsl_slide_14.jpg",
             "notes": "Este es uno de los ajustes de fondo. La versión anterior trataba todo como consentimiento opcional, lo que es incorrecto para la matrícula, las notas o el reporte a SIMAT, que son obligatorios por mandato legal y no admiten supresión de lo que el colegio debe conservar. Lo opcional y lo sensible sí requieren autorización específica, con la advertencia de que responder es opcional. Tiempo sugerido: 40 segundos.",
             "bgColor": "#ffffff",
-            "themeId": "cosmos",
-            "bgImage": ""
+            "themeId": "cosmos"
           },
           {
             "id": "slide_1795609857643_14",
@@ -1061,8 +1024,7 @@
             "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_presentation_1795607130865%2F1795609885017_8k9g_slide_15.jpg",
             "notes": "Corrección clave frente a la versión anterior, ahora alineada con el Decreto 1421 de 2017: el PIAR es un instrumento pedagógico que hace parte de la historia escolar, y los docentes necesitan los ajustes para aplicarlos. Lo que se protege es la capa clínica. La capa C solo sale como conteo y con supresión de celdas pequeñas, porque un curso con un solo estudiante PIAR lo identificaría. Tiempo sugerido: 45 segundos.",
             "bgColor": "#ffffff",
-            "themeId": "cosmos",
-            "bgImage": ""
+            "themeId": "cosmos"
           },
           {
             "id": "slide_1795609857643_15",
@@ -1085,8 +1047,7 @@
             "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_presentation_1795607130865%2F1795609886465_52h3_slide_16.jpg",
             "notes": "Esto resuelve el problema de las carpetas de Drive en emergencias: se reemplazan por una ficha mínima con acceso autorizado y registro inmediato de quién, qué dato, por qué y cuándo. Las solicitudes de autoridades (ICBF, Comisaría, Defensoría, Fiscalía) se atienden por escrito, validando competencia y entregando solo lo pedido. Quien atiende los reclamos verifica la identidad y que quien pide sea el representante legal. Tiempo sugerido: 40 segundos.",
             "bgColor": "#ffffff",
-            "themeId": "cosmos",
-            "bgImage": ""
+            "themeId": "cosmos"
           },
           {
             "id": "slide_1795609857643_16",
@@ -1109,8 +1070,7 @@
             "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_presentation_1795607130865%2F1795609888614_tu5h_slide_17.jpg",
             "notes": "Las ocho políticas usan el modelo único de roles y están numeradas igual que en GovData Nexus. Las excepciones de emergencia se regulan en un solo lugar, la política 3, no en cada una. En incidentes no se mide «cero incidentes», porque eso penalizaría el reporte; se mide que se reporten en 24 horas. Las políticas 3, 5, 7 y 8 fueron las que se reescribieron en Nexus. Tiempo sugerido: 35 segundos.",
             "bgColor": "#ffffff",
-            "themeId": "cosmos",
-            "bgImage": ""
+            "themeId": "cosmos"
           },
           {
             "id": "slide_1795609857643_17",
@@ -1133,8 +1093,7 @@
             "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_presentation_1795607130865%2F1795609890049_58ta_slide_18.jpg",
             "notes": "No se propone una plataforma grande, sino decidir cuál es el sistema de registro de cada dato y eliminar las copias editables. Esto ataca la duplicidad entre papel, Drive, planillas y plataforma que apareció en el diagnóstico. Dos decisiones siguen abiertas: dónde se registra la asistencia y si continúa la plataforma contratada o se usa un aplicativo propio. Tiempo sugerido: 40 segundos.",
             "bgColor": "#ffffff",
-            "themeId": "cosmos",
-            "bgImage": ""
+            "themeId": "cosmos"
           },
           {
             "id": "slide_1795609857643_18",
@@ -1157,8 +1116,7 @@
             "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_presentation_1795607130865%2F1795609891500_0f1h_slide_19.jpg",
             "notes": "Las dos capas centrales son las únicas que reciben datos seudonimizados o agregados. Las reglas de calidad que necesitan leer datos sensibles se ejecutan en el colegio y a Nexus viaja solo el resultado. El identificador interno resuelve que el número de documento cambia (RC, TI, CC, PEP o PPT) o se corrige, y el PROV concilia la excepción de migrantes sin documento con la prohibición de números genéricos. Honestidad: esta es la arquitectura objetivo; [COMPLETAR: qué capas están implementadas hoy]. Tiempo sugerido: 45 segundos.",
             "bgColor": "#ffffff",
-            "themeId": "cosmos",
-            "bgImage": ""
+            "themeId": "cosmos"
           },
           {
             "id": "slide_1795609857643_19",
@@ -1181,8 +1139,7 @@
             "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_presentation_1795607130865%2F1795609893153_4agp_slide_20.jpg",
             "notes": "Un solo roadmap, sin las versiones contradictorias de antes. Lo primero es lo que no depende de tecnología: firmar la resolución, ordenar Drive y escribir el diccionario. Los conectores y el tablero de alertas quedan para el final porque solo valen si los datos de origen ya son confiables. Tiempo sugerido: 40 segundos.",
             "bgColor": "#ffffff",
-            "themeId": "cosmos",
-            "bgImage": ""
+            "themeId": "cosmos"
           },
           {
             "id": "slide_1795609857643_20",
@@ -1205,8 +1162,7 @@
             "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_presentation_1795607130865%2F1795609894638_otoy_slide_21.jpg",
             "notes": "Cómo leer las metas con la escala de la lámina 8: nivel 3 es un borrador o diseño sin aprobar; nivel 4 es aprobado por acto administrativo y aplicado. Por eso subir de nivel 1 a 3 en un año es posible si el trabajo es documental (roles, aviso de privacidad, matriz de riesgos), y llegar al 4 en dos años exige que esos documentos se aprueben y se apliquen. El avance por dimensión se mide en la reevaluación a 12 y 24 meses. Las metas son propuestas, no resultados. Tiempo sugerido: 40 segundos.",
             "bgColor": "#ffffff",
-            "themeId": "cosmos",
-            "bgImage": ""
+            "themeId": "cosmos"
           },
           {
             "id": "slide_1795609857643_21",
@@ -1229,8 +1185,7 @@
             "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_presentation_1795607130865%2F1795609896412_pbfh_slide_22.jpg",
             "notes": "Cierra con franqueza: lo hecho es el diagnóstico, el diseño del gobierno y el plan para llevarlo a Nexus. Lo que falta son los actos formales y la operación sostenida. Si te preguntan por qué no está todo implementado: el gobierno de datos es un cambio de prácticas, y el puntaje solo sube con evidencia. Termina agradeciendo y abriendo preguntas. Tiempo sugerido: 40 segundos.",
             "bgColor": "#ffffff",
-            "themeId": "cosmos",
-            "bgImage": ""
+            "themeId": "cosmos"
           }
         ]
       }
@@ -1243,8 +1198,7 @@
         "description": "",
         "category": "Página web oficial",
         "visibility": "public",
-        "verified": false,
-        "thumbnailUrl": ""
+        "verified": false
       }
     ],
     "landingConfig": {
@@ -1472,10 +1426,14 @@
         "authorsInstitution": "Universidad Politecnico Grancolombiano"
       },
       "createdAt": "2026-11-25T11:45:30.865Z",
-      "updatedAt": "2026-11-25T12:41:48.971Z",
+      "updatedAt": "2026-11-25T12:41:53.079Z",
       "progress": 100,
       "calculatedProgress": 100,
-      "submittedForApproval": true
+      "submittedForApproval": true,
+      "approvalStatus": "pending",
+      "status": "completed",
+      "completedAt": "2026-11-25T12:41:53.079Z",
+      "isPublic": false
     },
     "author": "Jhomar Alejandra Cano Ramirez",
     "authorId": "user_1795557081139",
@@ -1487,7 +1445,7 @@
     "authorAvatar": "🦊",
     "authorRole": "Estudiante / Creador",
     "createdAt": "2026-11-25T11:45:30.865Z",
-    "updatedAt": "2026-11-25T12:41:53.097Z",
+    "updatedAt": "2026-11-25T12:41:56.382Z",
     "fromStudentCreate": true,
     "_isStudentDraft": true,
     "timePerQuestion": 25,
@@ -1544,7 +1502,7 @@
       }
     ],
     "joinRequests": [],
-    "completedAt": "2026-11-25T12:41:53.062Z"
+    "completedAt": "2026-11-25T12:41:53.079Z"
   },
   {
     "id": "proj_video_1795575349043",
