@@ -28,7 +28,7 @@
     "accessMode": "private",
     "displayOrder": 1,
     "createdAt": "2026-11-25T00:29:14.804Z",
-    "updatedAt": "2026-11-25T00:59:40.806Z",
+    "updatedAt": "2026-11-25T00:59:45.185Z",
     "landingConfig": {
       "publicName": "Diagnóstico de Gobierno de Datos – Universidad Colegio Mayor de Cundinamarca",
       "slug": "diagnostico-de-gobierno-de-datos-universidad-colegio-mayor-de-cundinamarca",
@@ -162,6 +162,10 @@
         },
         {
           "q": "¿Por qué la Universidad Colegio Mayor de Cundinamarca?",
+          "a": "Es una universidad pública con cuatro sedes cuyos datos están dispersos y duplicados entre sistemas, sin responsables formales ni reglas de calidad."
+        },
+        {
+          "q": "",
           "a": ""
         }
       ]
@@ -190,6 +194,10 @@
         },
         {
           "q": "¿Por qué la Universidad Colegio Mayor de Cundinamarca?",
+          "a": "Es una universidad pública con cuatro sedes cuyos datos están dispersos y duplicados entre sistemas, sin responsables formales ni reglas de calidad."
+        },
+        {
+          "q": "",
           "a": ""
         }
       ]
@@ -344,6 +352,10 @@
           },
           {
             "q": "¿Por qué la Universidad Colegio Mayor de Cundinamarca?",
+            "a": "Es una universidad pública con cuatro sedes cuyos datos están dispersos y duplicados entre sistemas, sin responsables formales ni reglas de calidad."
+          },
+          {
+            "q": "",
             "a": ""
           }
         ]
@@ -467,7 +479,7 @@
         "collaborators": ""
       },
       "createdAt": "2026-11-25T00:29:14.804Z",
-      "updatedAt": "2026-11-25T00:59:40.581Z",
+      "updatedAt": "2026-11-25T00:59:44.972Z",
       "progress": 85,
       "calculatedProgress": 85
     },
@@ -518,16 +530,7 @@
       ],
       "views": [],
       "ratings": []
-    },
-    "members": [
-      {
-        "name": "Juan Esteban Rosero Jimenez",
-        "email": "jeroseroj@gmail.com",
-        "role": "owner",
-        "leader": true
-      }
-    ],
-    "joinRequests": []
+    }
   },
   {
     "id": "reto_1795552054552",
