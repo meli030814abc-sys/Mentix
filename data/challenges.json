@@ -28,7 +28,7 @@
     "accessMode": "private",
     "displayOrder": 1,
     "createdAt": "2026-11-25T00:29:14.804Z",
-    "updatedAt": "2026-11-25T00:53:21.144Z",
+    "updatedAt": "2026-11-25T00:53:38.223Z",
     "landingConfig": {
       "publicName": "Diagnóstico de Gobierno de Datos – Universidad Colegio Mayor de Cundinamarca",
       "slug": "diagnostico-de-gobierno-de-datos-universidad-colegio-mayor-de-cundinamarca",
@@ -251,11 +251,11 @@
         "icon": "clipboard"
       },
       {
-        "title": "Etapa 6",
-        "description": "Descripción de las metas y actividades de esta etapa.",
-        "progress": 0,
-        "status": "pending",
-        "emoji": "💡",
+        "title": "Publicación",
+        "description": "Documento final, presentación, video y publicación del proyecto en la plataforma.",
+        "status": "completed",
+        "progress": 100,
+        "emoji": "🚀",
         "icon": "clipboard"
       }
     ],
@@ -351,11 +351,11 @@
           "icon": "clipboard"
         },
         {
-          "title": "Etapa 6",
-          "description": "Descripción de las metas y actividades de esta etapa.",
-          "progress": 0,
-          "status": "pending",
-          "emoji": "💡",
+          "title": "Publicación",
+          "description": "Documento final, presentación, video y publicación del proyecto en la plataforma.",
+          "status": "completed",
+          "progress": 100,
+          "emoji": "🚀",
           "icon": "clipboard"
         }
       ],
@@ -405,7 +405,7 @@
         "authorsRole": "Estudiante / Creador"
       },
       "createdAt": "2026-11-25T00:29:14.804Z",
-      "updatedAt": "2026-11-25T00:53:20.937Z",
+      "updatedAt": "2026-11-25T00:53:38.010Z",
       "progress": 70,
       "calculatedProgress": 70
     },
@@ -456,7 +456,16 @@
       ],
       "views": [],
       "ratings": []
-    }
+    },
+    "members": [
+      {
+        "name": "Juan Esteban Rosero Jimenez",
+        "email": "jeroseroj@gmail.com",
+        "role": "owner",
+        "leader": true
+      }
+    ],
+    "joinRequests": []
   },
   {
     "id": "reto_1795552054552",
