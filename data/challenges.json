@@ -28,7 +28,7 @@
     "accessMode": "public",
     "displayOrder": 1,
     "createdAt": "2026-11-25T00:29:14.804Z",
-    "updatedAt": "2026-11-25T01:28:13.473Z",
+    "updatedAt": "2026-11-25T01:28:33.859Z",
     "landingConfig": {
       "publicName": "Diagnóstico de Gobierno de Datos – Universidad Colegio Mayor de Cundinamarca",
       "slug": "diagnostico-de-gobierno-de-datos-universidad-colegio-mayor-de-cu",
@@ -1037,7 +1037,9 @@
         }
       ],
       "views": [],
-      "ratings": []
+      "ratings": [],
+      "projectId": "proj_presentation_1795566554804",
+      "updatedAt": 1795569991275
     },
     "members": [
       {
@@ -1049,9 +1051,9 @@
     ],
     "joinRequests": [],
     "completedAt": "2026-11-25T01:23:06.413Z",
-    "stage": "completed",
     "authorizedAt": "2026-11-25T01:27:10.305Z",
-    "authorizedBy": "Melisa"
+    "authorizedBy": "Melisa",
+    "stage": "completed"
   },
   {
     "id": "reto_1795552054552",
