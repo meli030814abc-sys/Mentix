@@ -35,7 +35,7 @@
     "isPublic": false,
     "startDate": "2026-08-30",
     "endDate": "2026-11-25",
-    "currentStep": 9,
+    "currentStep": 10,
     "completedSteps": [
       1,
       2,
@@ -44,7 +44,8 @@
       5,
       6,
       7,
-      8
+      8,
+      9
     ],
     "progress": 85,
     "calculatedProgress": 85,
@@ -131,9 +132,7 @@
         "bulletsFont": "'Outfit', sans-serif",
         "bulletStyle": "✦",
         "isFullImage": true,
-        "isImported": true,
-        "imageUrl": "",
-        "bgImage": ""
+        "isImported": true
       }
     ],
     "presentations": [
@@ -169,9 +168,7 @@
             "bulletsFont": "'Outfit', sans-serif",
             "bulletStyle": "✦",
             "isFullImage": true,
-            "isImported": true,
-            "imageUrl": "",
-            "bgImage": ""
+            "isImported": true
           }
         ]
       }
@@ -357,9 +354,10 @@
         5,
         6,
         7,
-        8
+        8,
+        9
       ],
-      "currentStep": 9,
+      "currentStep": 10,
       "author": "Jhomar Alejandra Cano Ramirez",
       "authorId": "user_1795557081139",
       "ownerId": "user_1795557081139",
@@ -385,7 +383,7 @@
         "collaborators": ""
       },
       "createdAt": "2026-11-25T11:45:30.865Z",
-      "updatedAt": "2026-11-25T11:54:33.265Z",
+      "updatedAt": "2026-11-25T11:54:35.351Z",
       "progress": 85,
       "calculatedProgress": 85
     },
@@ -399,7 +397,7 @@
     "authorAvatar": "🦊",
     "authorRole": "Estudiante / Creador",
     "createdAt": "2026-11-25T11:45:30.865Z",
-    "updatedAt": "2026-11-25T11:54:33.143Z",
+    "updatedAt": "2026-11-25T11:54:35.337Z",
     "fromStudentCreate": true,
     "_isStudentDraft": true,
     "timePerQuestion": 25,
