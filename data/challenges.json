@@ -28,7 +28,7 @@
     "accessMode": "private",
     "displayOrder": 1,
     "createdAt": "2026-11-25T00:29:14.804Z",
-    "updatedAt": "2026-11-25T01:00:00.914Z",
+    "updatedAt": "2026-11-25T01:00:05.194Z",
     "landingConfig": {
       "publicName": "Diagnóstico de Gobierno de Datos – Universidad Colegio Mayor de Cundinamarca",
       "slug": "diagnostico-de-gobierno-de-datos-universidad-colegio-mayor-de-cundinamarca",
@@ -170,6 +170,10 @@
         },
         {
           "q": "¿Qué es GovData Nexus y para qué se usó?",
+          "a": "Es una plataforma de gobierno de datos. En ella se cargó el catálogo de datos, el glosario, las reglas de calidad y los flujos de aprobación para probar el modelo."
+        },
+        {
+          "q": "",
           "a": ""
         }
       ]
@@ -206,6 +210,10 @@
         },
         {
           "q": "¿Qué es GovData Nexus y para qué se usó?",
+          "a": "Es una plataforma de gobierno de datos. En ella se cargó el catálogo de datos, el glosario, las reglas de calidad y los flujos de aprobación para probar el modelo."
+        },
+        {
+          "q": "",
           "a": ""
         }
       ]
@@ -368,6 +376,10 @@
           },
           {
             "q": "¿Qué es GovData Nexus y para qué se usó?",
+            "a": "Es una plataforma de gobierno de datos. En ella se cargó el catálogo de datos, el glosario, las reglas de calidad y los flujos de aprobación para probar el modelo."
+          },
+          {
+            "q": "",
             "a": ""
           }
         ]
@@ -491,7 +503,7 @@
         "collaborators": ""
       },
       "createdAt": "2026-11-25T00:29:14.804Z",
-      "updatedAt": "2026-11-25T01:00:00.704Z",
+      "updatedAt": "2026-11-25T01:00:04.984Z",
       "progress": 85,
       "calculatedProgress": 85
     },
@@ -542,16 +554,7 @@
       ],
       "views": [],
       "ratings": []
-    },
-    "members": [
-      {
-        "name": "Juan Esteban Rosero Jimenez",
-        "email": "jeroseroj@gmail.com",
-        "role": "owner",
-        "leader": true
-      }
-    ],
-    "joinRequests": []
+    }
   },
   {
     "id": "reto_1795552054552",
