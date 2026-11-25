@@ -28,7 +28,7 @@
     "accessMode": "private",
     "displayOrder": 1,
     "createdAt": "2026-11-25T00:29:14.804Z",
-    "updatedAt": "2026-11-25T00:36:01.906Z",
+    "updatedAt": "2026-11-25T00:36:03.751Z",
     "landingConfig": {
       "publicName": "Diagnóstico de Gobierno de Datos – Universidad Colegio Mayor de Cundinamarca",
       "slug": "diagnostico-de-gobierno-de-datos-universidad-colegio-mayor-de-cundinamarca",
@@ -302,7 +302,7 @@
         "authorsRole": "Estudiante / Creador"
       },
       "createdAt": "2026-11-25T00:29:14.804Z",
-      "updatedAt": "2026-11-25T00:36:01.683Z",
+      "updatedAt": "2026-11-25T00:36:03.491Z",
       "progress": 55,
       "calculatedProgress": 55
     },
