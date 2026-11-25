@@ -28,7 +28,7 @@
     "accessMode": "private",
     "displayOrder": 1,
     "createdAt": "2026-11-25T00:29:14.804Z",
-    "updatedAt": "2026-11-25T00:57:35.534Z",
+    "updatedAt": "2026-11-25T00:57:40.223Z",
     "landingConfig": {
       "publicName": "Diagnóstico de Gobierno de Datos – Universidad Colegio Mayor de Cundinamarca",
       "slug": "diagnostico-de-gobierno-de-datos-universidad-colegio-mayor-de-cundinamarca",
@@ -141,7 +141,14 @@
       "howItWorks": "Diagnostica la madurez con DAMA-DMBOK, asigna responsables a cada dominio de datos, define políticas y reglas de calidad, y las aplica en GovData Nexus con catálogo, flujos de aprobación y acuerdos de nivel de servicio.",
       "forWhom": "Universidades públicas, directivos y equipos de tecnología, y comunidad académica",
       "differentiator": "No compra tecnología ni crea cargos: pone reglas a los proyectos ya aprobados y usa al personal que la universidad ya tiene.",
-      "keyFeatures": [],
+      "keyFeatures": [
+        "Diagnóstico de madurez DAMA-DMBOK",
+        "Roles y comité de gobierno de datos",
+        "Ocho políticas de datos",
+        "Catálogo de datos y datos maestros",
+        "Reglas de calidad de datos",
+        "Flujos de aprobación con SLA"
+      ],
       "resultsAndBenefits": "",
       "prerequisites": "",
       "visitorAction": "Unirse / Colaborar",
@@ -153,7 +160,14 @@
       "howItWorks": "Diagnostica la madurez con DAMA-DMBOK, asigna responsables a cada dominio de datos, define políticas y reglas de calidad, y las aplica en GovData Nexus con catálogo, flujos de aprobación y acuerdos de nivel de servicio.",
       "forWhom": "Universidades públicas, directivos y equipos de tecnología, y comunidad académica",
       "differentiator": "No compra tecnología ni crea cargos: pone reglas a los proyectos ya aprobados y usa al personal que la universidad ya tiene.",
-      "keyFeatures": [],
+      "keyFeatures": [
+        "Diagnóstico de madurez DAMA-DMBOK",
+        "Roles y comité de gobierno de datos",
+        "Ocho políticas de datos",
+        "Catálogo de datos y datos maestros",
+        "Reglas de calidad de datos",
+        "Flujos de aprobación con SLA"
+      ],
       "resultsAndBenefits": "",
       "prerequisites": "",
       "visitorAction": "Unirse / Colaborar",
@@ -291,7 +305,14 @@
         "howItWorks": "Diagnostica la madurez con DAMA-DMBOK, asigna responsables a cada dominio de datos, define políticas y reglas de calidad, y las aplica en GovData Nexus con catálogo, flujos de aprobación y acuerdos de nivel de servicio.",
         "forWhom": "Universidades públicas, directivos y equipos de tecnología, y comunidad académica",
         "differentiator": "No compra tecnología ni crea cargos: pone reglas a los proyectos ya aprobados y usa al personal que la universidad ya tiene.",
-        "keyFeatures": [],
+        "keyFeatures": [
+          "Diagnóstico de madurez DAMA-DMBOK",
+          "Roles y comité de gobierno de datos",
+          "Ocho políticas de datos",
+          "Catálogo de datos y datos maestros",
+          "Reglas de calidad de datos",
+          "Flujos de aprobación con SLA"
+        ],
         "resultsAndBenefits": "",
         "prerequisites": "",
         "visitorAction": "Unirse / Colaborar",
@@ -415,7 +436,7 @@
         "collaborators": ""
       },
       "createdAt": "2026-11-25T00:29:14.804Z",
-      "updatedAt": "2026-11-25T00:57:35.312Z",
+      "updatedAt": "2026-11-25T00:57:39.999Z",
       "progress": 85,
       "calculatedProgress": 85
     },
