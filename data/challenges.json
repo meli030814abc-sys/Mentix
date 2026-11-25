@@ -28,7 +28,7 @@
     "accessMode": "private",
     "displayOrder": 1,
     "createdAt": "2026-11-25T00:29:14.804Z",
-    "updatedAt": "2026-11-25T01:09:01.548Z",
+    "updatedAt": "2026-11-25T01:08:58.463Z",
     "landingConfig": {
       "publicName": "Diagnóstico de Gobierno de Datos – Universidad Colegio Mayor de Cundinamarca",
       "slug": "diagnostico-de-gobierno-de-datos-universidad-colegio-mayor-de-cundinamarca",
@@ -428,16 +428,7 @@
       "isPublic": true,
       "verified": true
     },
-    "visualAssets": [
-      {
-        "id": "vis_1795568938950_0",
-        "title": "imagen 2026 11 24 200857404",
-        "caption": "Imagen oficial del proyecto.",
-        "url": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_presentation_1795566554804%2F1795568937681_jjer_asset.jpg",
-        "assetType": "gallery",
-        "visibility": "public"
-      }
-    ],
+    "visualAssets": [],
     "presentations": [
       {
         "id": "pres_1",
@@ -875,7 +866,7 @@
         "collaborators": ""
       },
       "createdAt": "2026-11-25T00:29:14.804Z",
-      "updatedAt": "2026-11-25T01:09:01.075Z",
+      "updatedAt": "2026-11-25T01:08:58.012Z",
       "progress": 95,
       "calculatedProgress": 95,
       "heroBanner": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fdraft%2F1795566538564_r3c9_asset.jpg",
