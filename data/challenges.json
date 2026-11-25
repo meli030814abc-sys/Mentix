@@ -2,7 +2,7 @@
   {
     "id": "proj_video_1795575349043",
     "title": "Diagnóstico de Gobierno de Datos - Afiancol S.A.S.",
-    "subtitle": "Proyecto Educativo Mentix",
+    "subtitle": "De la producción de datos a la gestión como activo estratégico",
     "description": "Afiancol, una compañía colombiana fundada en 2007 y especializada en fianzas y garantías para el sector solidario, vive de la confianza, pero sus datos se producían sin ser gestionados como un activo: faltaban responsables, reglas de decisión y control de calidad, y por eso no servían de base para decidir. Para abordarlo, se realizo un diagnóstico de gobierno de datos con la metodología DAMA-DMBOK2, a partir de entrevistas y documentos oficiales, midiendo la madurez en seis dimensiones y desarrollando una solución en cuatro fases, consolidada en Supabase y en la herramienta GovData Nexus, cuyas métricas se actualizan de forma continua. El resultado es una madurez global del 65 % al último corte, con una base sólida en Calidad, Seguridad y Organización, y con brechas prioritarias en Estrategia y Compliance (30 %), que marcan la ruta para convertir los datos en un activo estratégico y cumplir con Habeas Data. El principal aprendizaje es que gobernar datos es tanto un tema de personas como de tecnología: medir convierte una percepción en un punto de partida, y sostener ese gobierno día a día es lo que demuestra su valor a la dirección.",
     "projectType": "presentation",
     "isGovDataProject": true,
@@ -18,11 +18,11 @@
     "image": "assets/projects_ui/card_data_gov.png",
     "banner": "assets/projects_ui/card_data_gov.png",
     "createdAt": "2026-11-25T02:55:49.043Z",
-    "updatedAt": "2026-11-25T02:59:57.469Z",
+    "updatedAt": "2026-11-25T03:00:07.753Z",
     "govdata": {
       "id": "proj_video_1795575349043",
       "title": "Diagnóstico de Gobierno de Datos - Afiancol S.A.S.",
-      "subtitle": "Proyecto Educativo Mentix",
+      "subtitle": "De la producción de datos a la gestión como activo estratégico",
       "shortDescription": "Afiancol, una compañía colombiana fundada en 2007 y especializada en fianzas y garantías para el sector solidario, vive de la confianza, pero sus datos se producían sin ser gestionados como un activo: faltaban responsables, reglas de decisión y control de calidad, y por eso no servían de base para decidir. Para abordarlo, se realizo un diagnóstico de gobierno de datos con la metodología DAMA-DMBOK2, a partir de entrevistas y documentos oficiales, midiendo la madurez en seis dimensiones y desarrollando una solución en cuatro fases, consolidada en Supabase y en la herramienta GovData Nexus, cuyas métricas se actualizan de forma continua. El resultado es una madurez global del 65 % al último corte, con una base sólida en Calidad, Seguridad y Organización, y con brechas prioritarias en Estrategia y Compliance (30 %), que marcan la ruta para convertir los datos en un activo estratégico y cumplir con Habeas Data. El principal aprendizaje es que gobernar datos es tanto un tema de personas como de tecnología: medir convierte una percepción en un punto de partida, y sostener ese gobierno día a día es lo que demuestra su valor a la dirección.",
       "fullDescription": "Afiancol, una compañía colombiana fundada en 2007 y especializada en fianzas y garantías para el sector solidario, vive de la confianza, pero sus datos se producían sin ser gestionados como un activo: faltaban responsables, reglas de decisión y control de calidad, y por eso no servían de base para decidir. Para abordarlo, se realizo un diagnóstico de gobierno de datos con la metodología DAMA-DMBOK2, a partir de entrevistas y documentos oficiales, midiendo la madurez en seis dimensiones y desarrollando una solución en cuatro fases, consolidada en Supabase y en la herramienta GovData Nexus, cuyas métricas se actualizan de forma continua. El resultado es una madurez global del 65 % al último corte, con una base sólida en Calidad, Seguridad y Organización, y con brechas prioritarias en Estrategia y Compliance (30 %), que marcan la ruta para convertir los datos en un activo estratégico y cumplir con Habeas Data. El principal aprendizaje es que gobernar datos es tanto un tema de personas como de tecnología: medir convierte una percepción en un punto de partida, y sostener ese gobierno día a día es lo que demuestra su valor a la dirección.",
       "category": "gobierno_de__datos",
@@ -109,10 +109,12 @@
         "authorsRole": "Estudiante / Creador"
       },
       "createdAt": "2026-11-25T02:55:49.043Z",
-      "updatedAt": "2026-11-25T02:59:57.752Z",
+      "updatedAt": "2026-11-25T03:00:08.043Z",
       "progress": 55,
       "calculatedProgress": 55
     },
+    "fromStudentCreate": true,
+    "_isStudentDraft": true,
     "authorId": "user_1795574386910",
     "authorEmail": "boadavillamil09@gmail.com",
     "authorAvatar": "🦄",
@@ -166,8 +168,6 @@
       "isPublic": true,
       "verified": true
     },
-    "duration": "5:00 min",
-    "heroBanner": "assets/projects_ui/card_data_gov.png",
     "hub": {
       "joinRequests": [],
       "members": [
@@ -178,14 +178,10 @@
           "leader": true
         }
       ],
-      "views": [
-        {
-          "t": 1795575548199,
-          "who": "user_1795574386910",
-          "name": "Danna Boada"
-        }
-      ],
-      "ratings": []
+      "views": [],
+      "ratings": [],
+      "projectId": "proj_video_1795575349043",
+      "updatedAt": 1795575548208
     },
     "customProjectCodes": [
       {
@@ -213,8 +209,21 @@
         "createdAt": "22/11/2026, 9:22:51 p.m."
       }
     ],
+    "visibility": "private",
+    "rejectedAt": "",
+    "rejectionReason": "",
+    "members": [
+      {
+        "name": "Danna Boada",
+        "email": "boadavillamil09@gmail.com",
+        "role": "owner",
+        "leader": true
+      }
+    ],
+    "joinRequests": [],
     "slug": "diagnostico-de-gobierno-de-datos-afiancol-s-a-s",
     "projectSubtype": "Gobierno de Datos e IA",
+    "heroBanner": "assets/projects_ui/card_data_gov.png",
     "coverImage": "assets/projects_ui/card_data_gov.png",
     "_clearedMainImage": false,
     "_clearedThumbImage": false,
@@ -271,19 +280,7 @@
     "ownerId": "user_1795574386910",
     "ownerUsername": "dan_boa27",
     "joinCode": "",
-    "accessCode": "",
-    "visibility": "private",
-    "rejectedAt": "",
-    "rejectionReason": "",
-    "joinRequests": [],
-    "members": [
-      {
-        "name": "Danna Boada",
-        "email": "boadavillamil09@gmail.com",
-        "role": "owner",
-        "leader": true
-      }
-    ]
+    "accessCode": ""
   },
   {
     "id": "proj_presentation_1795566554804",
