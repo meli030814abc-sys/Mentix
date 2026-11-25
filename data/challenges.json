@@ -28,7 +28,7 @@
     "accessMode": "private",
     "displayOrder": 1,
     "createdAt": "2026-11-25T00:29:14.804Z",
-    "updatedAt": "2026-11-25T00:54:48.657Z",
+    "updatedAt": "2026-11-25T00:54:47.722Z",
     "landingConfig": {
       "publicName": "Diagnóstico de Gobierno de Datos – Universidad Colegio Mayor de Cundinamarca",
       "slug": "diagnostico-de-gobierno-de-datos-universidad-colegio-mayor-de-cundinamarca",
@@ -137,9 +137,9 @@
     "progress": 85,
     "calculatedProgress": 85,
     "valueProp": {
-      "problemSolved": "La universidad tiene sus datos dispersos y duplicados entre cuatro sedes y varios sistemas, sin responsables ni reglas que garanticen su calidad. Su madurez en gobierno de datos es de 2 sobre 5.",
+      "problemSolved": "",
       "howItWorks": "",
-      "forWhom": "Universidades públicas, directivos y equipos de tecnología, y comunidad académica",
+      "forWhom": "",
       "differentiator": "",
       "keyFeatures": [],
       "resultsAndBenefits": "",
@@ -149,9 +149,9 @@
       "faqs": []
     },
     "valueProposition": {
-      "problemSolved": "La universidad tiene sus datos dispersos y duplicados entre cuatro sedes y varios sistemas, sin responsables ni reglas que garanticen su calidad. Su madurez en gobierno de datos es de 2 sobre 5.",
+      "problemSolved": "",
       "howItWorks": "",
-      "forWhom": "Universidades públicas, directivos y equipos de tecnología, y comunidad académica",
+      "forWhom": "",
       "differentiator": "",
       "keyFeatures": [],
       "resultsAndBenefits": "",
@@ -287,9 +287,9 @@
       "startDate": "2026-11-25",
       "endDate": "",
       "valueProp": {
-        "problemSolved": "La universidad tiene sus datos dispersos y duplicados entre cuatro sedes y varios sistemas, sin responsables ni reglas que garanticen su calidad. Su madurez en gobierno de datos es de 2 sobre 5.",
+        "problemSolved": "",
         "howItWorks": "",
-        "forWhom": "Universidades públicas, directivos y equipos de tecnología, y comunidad académica",
+        "forWhom": "",
         "differentiator": "",
         "keyFeatures": [],
         "resultsAndBenefits": "",
@@ -415,7 +415,7 @@
         "collaborators": ""
       },
       "createdAt": "2026-11-25T00:29:14.804Z",
-      "updatedAt": "2026-11-25T00:54:48.448Z",
+      "updatedAt": "2026-11-25T00:54:47.462Z",
       "progress": 85,
       "calculatedProgress": 85
     },
@@ -466,16 +466,7 @@
       ],
       "views": [],
       "ratings": []
-    },
-    "members": [
-      {
-        "name": "Juan Esteban Rosero Jimenez",
-        "email": "jeroseroj@gmail.com",
-        "role": "owner",
-        "leader": true
-      }
-    ],
-    "joinRequests": []
+    }
   },
   {
     "id": "reto_1795552054552",
