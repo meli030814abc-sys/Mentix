@@ -15,10 +15,10 @@
     "submittedForApproval": false,
     "approvalStatus": "pending",
     "isPublic": false,
-    "image": "assets/projects_ui/robot_hero_banner.png",
+    "image": "assets/projects_ui/card_data_gov.png",
     "banner": "assets/projects_ui/card_data_gov.png",
     "createdAt": "2026-11-25T02:55:49.043Z",
-    "updatedAt": "2026-11-25T04:52:35.510Z",
+    "updatedAt": "2026-11-25T04:57:51.315Z",
     "govdata": {
       "id": "proj_video_1795575349043",
       "title": "Diagnóstico de Gobierno de Datos - Afiancol S.A.S.",
@@ -123,7 +123,7 @@
         5,
         6
       ],
-      "currentStep": 1,
+      "currentStep": 3,
       "author": "Danna Boada",
       "authorId": "user_1795574386910",
       "ownerId": "user_1795574386910",
@@ -150,10 +150,9 @@
         "collaborators": "Extiendo mis agradecimientos al profesor Carlos Caño ya que con su guía y acompañamiento fue posible ejecutar un correcto proceso de implementación de Gobierno de Datos de manera teórico práctico."
       },
       "createdAt": "2026-11-25T02:55:49.043Z",
-      "updatedAt": "2026-11-25T04:51:54.100Z",
+      "updatedAt": "2026-11-25T04:57:51.954Z",
       "progress": 65,
-      "calculatedProgress": 65,
-      "image": "assets/projects_ui/robot_hero_banner.png"
+      "calculatedProgress": 65
     },
     "fromStudentCreate": true,
     "_isStudentDraft": true,
@@ -268,7 +267,7 @@
     "slug": "diagnostico-de-gobierno-de-datos-afiancol-s-a-s",
     "projectSubtype": "Gobierno de Datos e IA",
     "heroBanner": "assets/projects_ui/card_data_gov.png",
-    "coverImage": "assets/projects_ui/robot_hero_banner.png",
+    "coverImage": "assets/projects_ui/card_data_gov.png",
     "_clearedMainImage": false,
     "_clearedThumbImage": false,
     "useDefaultImage": true,
@@ -280,7 +279,7 @@
     "preparationStatus": "en_desarrollo",
     "startDate": "2026-11-25",
     "endDate": "",
-    "currentStep": 1,
+    "currentStep": 3,
     "completedSteps": [
       1,
       2,
