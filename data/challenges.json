@@ -18,7 +18,7 @@
     "image": "assets/projects_ui/card_data_gov.png",
     "banner": "assets/projects_ui/card_data_gov.png",
     "createdAt": "2026-11-25T02:55:49.043Z",
-    "updatedAt": "2026-11-25T03:06:50.272Z",
+    "updatedAt": "2026-11-25T03:07:46.933Z",
     "govdata": {
       "id": "proj_video_1795575349043",
       "title": "Diagnóstico de Gobierno de Datos - Afiancol S.A.S.",
@@ -83,11 +83,11 @@
         },
         {
           "title": "Desarrollo",
-          "description": "Construcción de la solución y prototipos.",
-          "progress": 50,
-          "status": "active",
-          "icon": "code",
-          "emoji": "💻"
+          "description": "Evaluación de madurez con DAMA-DMBOK (100 preguntas), análisis de brechas y priorización; diseño del modelo de roles, políticas, comités y roadmap; y configuración en GovData Nexus del catálogo, reglas de calidad, reglas de SLA y riesgos, con datos sintéticos.",
+          "status": "completed",
+          "progress": 100,
+          "emoji": "💻",
+          "icon": "clipboard"
         },
         {
           "title": "Publicación",
@@ -145,7 +145,7 @@
         "authorsRole": "Estudiante / Creador"
       },
       "createdAt": "2026-11-25T02:55:49.043Z",
-      "updatedAt": "2026-11-25T03:06:50.556Z",
+      "updatedAt": "2026-11-25T03:07:47.133Z",
       "progress": 65,
       "calculatedProgress": 65
     },
@@ -328,11 +328,11 @@
       },
       {
         "title": "Desarrollo",
-        "description": "Construcción de la solución y prototipos.",
-        "progress": 50,
-        "status": "active",
-        "icon": "code",
-        "emoji": "💻"
+        "description": "Evaluación de madurez con DAMA-DMBOK (100 preguntas), análisis de brechas y priorización; diseño del modelo de roles, políticas, comités y roadmap; y configuración en GovData Nexus del catálogo, reglas de calidad, reglas de SLA y riesgos, con datos sintéticos.",
+        "status": "completed",
+        "progress": 100,
+        "emoji": "💻",
+        "icon": "clipboard"
       },
       {
         "title": "Publicación",
