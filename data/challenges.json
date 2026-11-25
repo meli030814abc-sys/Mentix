@@ -61,7 +61,7 @@
       "resultsAndBenefits": "",
       "prerequisites": "",
       "visitorAction": "Unirse / Colaborar",
-      "commercialPitch": "",
+      "commercialPitch": "Diagnóstico claro para proteger los datos escolares y guiar decisiones responsables en el colegio.",
       "faqs": []
     },
     "valueProposition": {
@@ -77,7 +77,7 @@
       "resultsAndBenefits": "",
       "prerequisites": "",
       "visitorAction": "Unirse / Colaborar",
-      "commercialPitch": "",
+      "commercialPitch": "Diagnóstico claro para proteger los datos escolares y guiar decisiones responsables en el colegio.",
       "faqs": []
     },
     "videoUrl": "",
@@ -279,7 +279,7 @@
         "resultsAndBenefits": "",
         "prerequisites": "",
         "visitorAction": "Unirse / Colaborar",
-        "commercialPitch": "",
+        "commercialPitch": "Diagnóstico claro para proteger los datos escolares y guiar decisiones responsables en el colegio.",
         "faqs": []
       },
       "videoConfig": {
@@ -385,7 +385,7 @@
         "collaborators": ""
       },
       "createdAt": "2026-11-25T11:45:30.865Z",
-      "updatedAt": "2026-11-25T11:54:10.778Z",
+      "updatedAt": "2026-11-25T11:54:33.265Z",
       "progress": 85,
       "calculatedProgress": 85
     },
@@ -399,7 +399,7 @@
     "authorAvatar": "🦊",
     "authorRole": "Estudiante / Creador",
     "createdAt": "2026-11-25T11:45:30.865Z",
-    "updatedAt": "2026-11-25T11:54:10.615Z",
+    "updatedAt": "2026-11-25T11:54:33.143Z",
     "fromStudentCreate": true,
     "_isStudentDraft": true,
     "timePerQuestion": 25,
