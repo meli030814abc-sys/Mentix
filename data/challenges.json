@@ -18,7 +18,7 @@
     "image": "assets/projects_ui/card_data_gov.png",
     "banner": "assets/projects_ui/card_data_gov.png",
     "createdAt": "2026-11-25T02:55:49.043Z",
-    "updatedAt": "2026-11-25T03:05:45.138Z",
+    "updatedAt": "2026-11-25T03:06:37.841Z",
     "govdata": {
       "id": "proj_video_1795575349043",
       "title": "Diagnóstico de Gobierno de Datos - Afiancol S.A.S.",
@@ -75,11 +75,11 @@
         },
         {
           "title": "Investigación",
-          "description": "Recopilación de datos e información relevante.",
-          "progress": 100,
+          "description": "Entrevista de diagnóstico con el director de TI, revisión de fuentes públicas y normativa.",
           "status": "completed",
-          "icon": "search",
-          "emoji": "🔍"
+          "progress": 100,
+          "emoji": "🔍",
+          "icon": "clipboard"
         },
         {
           "title": "Desarrollo",
@@ -145,7 +145,7 @@
         "authorsRole": "Estudiante / Creador"
       },
       "createdAt": "2026-11-25T02:55:49.043Z",
-      "updatedAt": "2026-11-25T03:05:45.338Z",
+      "updatedAt": "2026-11-25T03:06:38.094Z",
       "progress": 65,
       "calculatedProgress": 65
     },
@@ -320,11 +320,11 @@
       },
       {
         "title": "Investigación",
-        "description": "Recopilación de datos e información relevante.",
-        "progress": 100,
+        "description": "Entrevista de diagnóstico con el director de TI, revisión de fuentes públicas y normativa.",
         "status": "completed",
-        "icon": "search",
-        "emoji": "🔍"
+        "progress": 100,
+        "emoji": "🔍",
+        "icon": "clipboard"
       },
       {
         "title": "Desarrollo",
