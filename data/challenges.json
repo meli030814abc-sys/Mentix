@@ -18,7 +18,7 @@
     "image": "assets/projects_ui/card_data_gov.png",
     "banner": "assets/projects_ui/card_data_gov.png",
     "createdAt": "2026-11-25T02:55:49.043Z",
-    "updatedAt": "2026-11-25T03:01:19.901Z",
+    "updatedAt": "2026-11-25T03:01:23.832Z",
     "govdata": {
       "id": "proj_video_1795575349043",
       "title": "Diagnóstico de Gobierno de Datos - Afiancol S.A.S.",
@@ -39,7 +39,7 @@
       "valueProp": {
         "problemSolved": "",
         "howItWorks": "",
-        "forWhom": "Público General",
+        "forWhom": "",
         "differentiator": "",
         "keyFeatures": [],
         "resultsAndBenefits": "",
@@ -145,7 +145,7 @@
         "authorsRole": "Estudiante / Creador"
       },
       "createdAt": "2026-11-25T02:55:49.043Z",
-      "updatedAt": "2026-11-25T03:01:20.159Z",
+      "updatedAt": "2026-11-25T03:01:24.108Z",
       "progress": 65,
       "calculatedProgress": 65
     },
@@ -283,7 +283,7 @@
     "valueProp": {
       "problemSolved": "",
       "howItWorks": "",
-      "forWhom": "Público General",
+      "forWhom": "",
       "differentiator": "",
       "keyFeatures": [],
       "resultsAndBenefits": "",
@@ -295,7 +295,7 @@
     "valueProposition": {
       "problemSolved": "",
       "howItWorks": "",
-      "forWhom": "Público General",
+      "forWhom": "",
       "differentiator": "",
       "keyFeatures": [],
       "resultsAndBenefits": "",
@@ -351,10 +351,7 @@
     "ownerId": "user_1795574386910",
     "ownerUsername": "dan_boa27",
     "joinCode": "",
-    "accessCode": "",
-    "duration": "5:00 min",
-    "tag": "⏳ Pendiente de Autorización",
-    "tagClass": "badge-review"
+    "accessCode": ""
   },
   {
     "id": "proj_presentation_1795566554804",
