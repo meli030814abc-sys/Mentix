@@ -92,64 +92,53 @@
       "email": "gatitaxd6f79@gmail.com",
       "role": "admin",
       "joinedAt": "2026-11-23T04:35:10.065Z",
-      "updatedAt": "2026-11-25T01:26:38.736Z",
-      "projectId": "proj_presentation_1795566554804",
-      "projectTitle": "Diagnóstico de Gobierno de Datos – Universidad Colegio Mayor de Cundinamarca",
-      "projectDescription": "Diagnóstico de gobierno de datos de la Universidad Colegio Mayor de Cundinamarca. Con base en DAMA-DMBOK se midió una madurez de 2 sobre 5 y se propuso un modelo de roles, comité y políticas que fija reglas a los proyectos de datos ya aprobados. El modelo se implementó en la plataforma GovData Nexus.",
-      "currentStep": 1,
-      "completedStepsCount": 16,
+      "updatedAt": "2026-11-25T03:17:04.233Z",
+      "projectId": "proj_video_1795575349043",
+      "projectTitle": "Diagnóstico de Gobierno de Datos - Afiancol S.A.S.",
+      "projectDescription": "Afiancol, una compañía colombiana fundada en 2007 y especializada en fianzas y garantías para el sector solidario, vive de la confianza, pero sus datos se producían sin ser gestionados como un activo: faltaban responsables, reglas de decisión y control de calidad, y por eso no servían de base para decidir. Para abordarlo, se realizo un diagnóstico de gobierno de datos con la metodología DAMA-DMBOK2, a partir de entrevistas y documentos oficiales, midiendo la madurez en seis dimensiones y desarrollando una solución en cuatro fases, consolidada en Supabase y en la herramienta GovData Nexus, cuyas métricas se actualizan de forma continua. El resultado es una madurez global del 65 % al último corte, con una base sólida en Calidad, Seguridad y Organización, y con brechas prioritarias en Estrategia y Compliance (30 %), que marcan la ruta para convertir los datos en un activo estratégico y cumplir con Habeas Data. El principal aprendizaje es que gobernar datos es tanto un tema de personas como de tecnología: medir convierte una percepción en un punto de partida, y sostener ese gobierno día a día es lo que demuestra su valor a la dirección.",
+      "currentStep": 6,
+      "completedStepsCount": 5,
       "progress": 100,
       "status": "submitted",
       "approvalStatus": "pending",
-      "publicationStatus": "completed",
-      "slidesCount": 1,
-      "resourcesCount": 4,
+      "publicationStatus": "pending_approval",
+      "slidesCount": 0,
+      "resourcesCount": 0,
       "snapshot": {
-        "id": "proj_presentation_1795566554804",
-        "title": "Diagnóstico de Gobierno de Datos – Universidad Colegio Mayor de Cundinamarca",
-        "subtitle": "Reglas claras para datos únicos, confiables y verificables",
-        "description": "Diagnóstico de gobierno de datos de la Universidad Colegio Mayor de Cundinamarca. Con base en DAMA-DMBOK se midió una madurez de 2 sobre 5 y se propuso un modelo de roles, comité y políticas que fija reglas a los proyectos de datos ya aprobados. El modelo se implementó en la plataforma GovData Nexus.",
-        "author": "Juan Esteban Rosero Jimenez",
-        "authorEmail": "jeroseroj@gmail.com",
+        "id": "proj_video_1795575349043",
+        "title": "Diagnóstico de Gobierno de Datos - Afiancol S.A.S.",
+        "subtitle": "De la producción de datos a la gestión como activo estratégico",
+        "description": "Afiancol, una compañía colombiana fundada en 2007 y especializada en fianzas y garantías para el sector solidario, vive de la confianza, pero sus datos se producían sin ser gestionados como un activo: faltaban responsables, reglas de decisión y control de calidad, y por eso no servían de base para decidir. Para abordarlo, se realizo un diagnóstico de gobierno de datos con la metodología DAMA-DMBOK2, a partir de entrevistas y documentos oficiales, midiendo la madurez en seis dimensiones y desarrollando una solución en cuatro fases, consolidada en Supabase y en la herramienta GovData Nexus, cuyas métricas se actualizan de forma continua. El resultado es una madurez global del 65 % al último corte, con una base sólida en Calidad, Seguridad y Organización, y con brechas prioritarias en Estrategia y Compliance (30 %), que marcan la ruta para convertir los datos en un activo estratégico y cumplir con Habeas Data. El principal aprendizaje es que gobernar datos es tanto un tema de personas como de tecnología: medir convierte una percepción en un punto de partida, y sostener ese gobierno día a día es lo que demuestra su valor a la dirección.",
+        "author": "Danna Boada",
+        "authorEmail": "boadavillamil09@gmail.com",
         "joinCode": "804263",
         "accessCode": "804263",
         "projectType": "presentation",
         "isGovDataProject": true,
         "status": "completed",
-        "publicationStatus": "completed",
+        "publicationStatus": "pending_approval",
         "approvalStatus": "pending",
-        "currentStep": 1,
+        "currentStep": 6,
         "completedSteps": [
           1,
           2,
           3,
           4,
-          5,
-          6,
-          7,
-          8,
-          9,
-          10,
-          11,
-          12,
-          13,
-          14,
-          15,
-          16
+          5
         ],
         "progress": 100,
-        "banner": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fdraft%2F1795566538564_r3c9_asset.jpg",
-        "problemStatement": "La universidad tiene sus datos dispersos y duplicados entre cuatro sedes y varios sistemas, sin responsables ni reglas que garanticen su calidad. Su madurez en gobierno de datos es de 2 sobre 5.",
-        "mainObjective": "Diseñar un modelo de gobierno de datos con roles, políticas y un plan de 24 meses que fije reglas a los proyectos de datos ya aprobados, y probarlo en la plataforma GovData Nexus.",
-        "benefits": "Datos únicos y confiables para tomar decisiones y reportar a entes externos, responsables claros por cada dato y protección de los datos personales, con el personal que la universidad ya tiene.",
-        "targetAudience": "Universidades públicas, directivos y equipos de tecnología, y comunidad académica",
-        "slidesCount": 1,
-        "resourcesCount": 4,
+        "banner": "assets/projects_ui/card_data_gov.png",
+        "problemStatement": "",
+        "mainObjective": "",
+        "benefits": "",
+        "targetAudience": "Público General",
+        "slidesCount": 0,
+        "resourcesCount": 0,
         "landingConfig": {
-          "publicName": "Diagnóstico de Gobierno de Datos – Universidad Colegio Mayor de Cundinamarca",
-          "slug": "diagnostico-de-gobierno-de-datos-universidad-colegio-mayor-de-cu",
-          "landingTitle": "Diagnóstico de Gobierno de Datos – Universidad Colegio Mayor de Cundinamarca",
-          "publicDescription": "Diagnóstico de gobierno de datos de la Universidad Colegio Mayor de Cundinamarca. Con base en DAMA-DMBOK se midió una madurez de 2 sobre 5 y se propuso un modelo de roles, comité y políticas que fija reglas a los proyectos de datos ya aprobados. El modelo se implementó en la plataforma GovData Nexus.",
+          "publicName": "Diagnóstico de Gobierno de Datos - Afiancol S.A.S.",
+          "slug": "diagnostico-de-gobierno-de-datos-afiancol-s-a-s",
+          "landingTitle": "Diagnóstico de Gobierno de Datos - Afiancol S.A.S.",
+          "publicDescription": "Se hace medición de la madurez con DAMA-DMBOK2, identificando las brechas y definiendo por dónde empezar a convertir los datos en un activo estratégico para la organización.",
           "visibleCategory": "Gobierno de Datos",
           "tags": [
             "Gobierno de Datos",
@@ -162,46 +151,18 @@
           "featuredVideoPublic": true
         },
         "valueProp": {
-          "problemSolved": "La universidad tiene sus datos dispersos y duplicados entre cuatro sedes y varios sistemas, sin responsables ni reglas que garanticen su calidad. Su madurez en gobierno de datos es de 2 sobre 5.",
-          "howItWorks": "Diagnostica la madurez con DAMA-DMBOK, asigna responsables a cada dominio de datos, define políticas y reglas de calidad, y las aplica en GovData Nexus con catálogo, flujos de aprobación y acuerdos de nivel de servicio.",
-          "forWhom": "Universidades públicas, directivos y equipos de tecnología, y comunidad académica",
-          "differentiator": "No compra tecnología ni crea cargos: pone reglas a los proyectos ya aprobados y usa al personal que la universidad ya tiene.",
-          "keyFeatures": [
-            "Diagnóstico de madurez DAMA-DMBOK",
-            "Roles y comité de gobierno de datos",
-            "Ocho políticas de datos",
-            "Catálogo de datos y datos maestros",
-            "Reglas de calidad de datos",
-            "Flujos de aprobación con SLA"
-          ],
-          "resultsAndBenefits": "Datos únicos y confiables para tomar decisiones y reportar a entes externos, responsables claros por cada dato y protección de los datos personales, con el personal que la universidad ya tiene.",
+          "problemSolved": "",
+          "howItWorks": "",
+          "forWhom": "Público General",
+          "differentiator": "",
+          "keyFeatures": [],
+          "resultsAndBenefits": "",
           "prerequisites": "",
           "visitorAction": "Unirse / Colaborar",
-          "commercialPitch": "Reglas claras para que una universidad confíe en sus datos",
-          "faqs": [
-            {
-              "q": "¿Qué es el gobierno de datos?",
-              "a": "Es el conjunto de reglas, roles y responsabilidades que definen quién decide sobre los datos de una organización, qué estándares deben cumplir y cómo se verifica."
-            },
-            {
-              "q": "¿Por qué la Universidad Colegio Mayor de Cundinamarca?",
-              "a": "Es una universidad pública con cuatro sedes cuyos datos están dispersos y duplicados entre sistemas, sin responsables formales ni reglas de calidad."
-            },
-            {
-              "q": "¿Cuánto cuesta implementar el modelo?",
-              "a": "El escenario recomendado cuesta $106 millones en 24 meses, menos del 2 % de lo que la universidad ya aprobó para sus proyectos de datos, y no crea cargos nuevos."
-            },
-            {
-              "q": "¿Qué es GovData Nexus y para qué se usó?",
-              "a": "Es una plataforma de gobierno de datos. En ella se cargó el catálogo de datos, el glosario, las reglas de calidad y los flujos de aprobación para probar el modelo."
-            },
-            {
-              "q": "¿Se usaron datos reales de estudiantes?",
-              "a": "No. La prueba de calidad se hizo con una base de datos sintética de 2.000 estudiantes que reproduce los problemas reales de la universidad, para proteger los datos personales."
-            }
-          ]
+          "commercialPitch": "",
+          "faqs": []
         },
-        "updatedAt": "2026-11-25T01:26:38.736Z"
+        "updatedAt": "2026-11-25T03:17:04.233Z"
       }
     },
     {
