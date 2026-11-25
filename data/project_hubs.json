@@ -114,5 +114,19 @@
     "joinRequests": [],
     "ratings": [],
     "updatedAt": 1795552713058
+  },
+  "proj_presentation_1795566554804": {
+    "projectId": "proj_presentation_1795566554804",
+    "members": [
+      {
+        "name": "Juan Esteban Rosero Jimenez",
+        "email": "jeroseroj@gmail.com",
+        "role": "owner",
+        "leader": true
+      }
+    ],
+    "joinRequests": [],
+    "ratings": [],
+    "updatedAt": 1795569991275
   }
 }
