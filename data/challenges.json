@@ -28,7 +28,7 @@
     "accessMode": "private",
     "displayOrder": 1,
     "createdAt": "2026-11-25T00:29:14.804Z",
-    "updatedAt": "2026-11-25T00:59:43.684Z",
+    "updatedAt": "2026-11-25T00:59:49.096Z",
     "landingConfig": {
       "publicName": "Diagnóstico de Gobierno de Datos – Universidad Colegio Mayor de Cundinamarca",
       "slug": "diagnostico-de-gobierno-de-datos-universidad-colegio-mayor-de-cundinamarca",
@@ -163,6 +163,10 @@
         {
           "q": "¿Por qué la Universidad Colegio Mayor de Cundinamarca?",
           "a": "Es una universidad pública con cuatro sedes cuyos datos están dispersos y duplicados entre sistemas, sin responsables formales ni reglas de calidad."
+        },
+        {
+          "q": "¿Cuánto cuesta implementar el modelo?",
+          "a": ""
         }
       ]
     },
@@ -191,6 +195,10 @@
         {
           "q": "¿Por qué la Universidad Colegio Mayor de Cundinamarca?",
           "a": "Es una universidad pública con cuatro sedes cuyos datos están dispersos y duplicados entre sistemas, sin responsables formales ni reglas de calidad."
+        },
+        {
+          "q": "¿Cuánto cuesta implementar el modelo?",
+          "a": ""
         }
       ]
     },
@@ -345,6 +353,10 @@
           {
             "q": "¿Por qué la Universidad Colegio Mayor de Cundinamarca?",
             "a": "Es una universidad pública con cuatro sedes cuyos datos están dispersos y duplicados entre sistemas, sin responsables formales ni reglas de calidad."
+          },
+          {
+            "q": "¿Cuánto cuesta implementar el modelo?",
+            "a": ""
           }
         ]
       },
@@ -467,7 +479,7 @@
         "collaborators": ""
       },
       "createdAt": "2026-11-25T00:29:14.804Z",
-      "updatedAt": "2026-11-25T00:59:43.476Z",
+      "updatedAt": "2026-11-25T00:59:48.880Z",
       "progress": 85,
       "calculatedProgress": 85
     },
@@ -518,7 +530,16 @@
       ],
       "views": [],
       "ratings": []
-    }
+    },
+    "members": [
+      {
+        "name": "Juan Esteban Rosero Jimenez",
+        "email": "jeroseroj@gmail.com",
+        "role": "owner",
+        "leader": true
+      }
+    ],
+    "joinRequests": []
   },
   {
     "id": "reto_1795552054552",
