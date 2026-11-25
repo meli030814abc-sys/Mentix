@@ -18,7 +18,7 @@
     "image": "assets/projects_ui/card_data_gov.png",
     "banner": "assets/projects_ui/card_data_gov.png",
     "createdAt": "2026-11-25T02:55:49.043Z",
-    "updatedAt": "2026-11-25T03:00:44.675Z",
+    "updatedAt": "2026-11-25T03:00:46.073Z",
     "govdata": {
       "id": "proj_video_1795575349043",
       "title": "Diagnóstico de Gobierno de Datos - Afiancol S.A.S.",
@@ -28,7 +28,7 @@
       "category": "gobierno_de__datos",
       "categoryName": "Gobierno de Datos",
       "projectSubtype": "Gobierno de Datos e IA",
-      "targetAudience": "Público Gene",
+      "targetAudience": "Público General",
       "problemStatement": "",
       "mainObjective": "",
       "benefits": "",
@@ -110,7 +110,7 @@
         "authorsRole": "Estudiante / Creador"
       },
       "createdAt": "2026-11-25T02:55:49.043Z",
-      "updatedAt": "2026-11-25T03:00:44.978Z",
+      "updatedAt": "2026-11-25T03:00:46.374Z",
       "progress": 65,
       "calculatedProgress": 65
     },
@@ -229,7 +229,7 @@
     "_clearedMainImage": false,
     "_clearedThumbImage": false,
     "useDefaultImage": true,
-    "targetAudience": "Público Gene",
+    "targetAudience": "Público General",
     "problemStatement": "",
     "mainObjective": "",
     "benefits": "",
