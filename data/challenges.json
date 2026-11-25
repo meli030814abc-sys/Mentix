@@ -28,7 +28,7 @@
     "accessMode": "private",
     "displayOrder": 1,
     "createdAt": "2026-11-25T00:29:14.804Z",
-    "updatedAt": "2026-11-25T01:03:18.015Z",
+    "updatedAt": "2026-11-25T01:03:26.968Z",
     "landingConfig": {
       "publicName": "Diagnóstico de Gobierno de Datos – Universidad Colegio Mayor de Cundinamarca",
       "slug": "diagnostico-de-gobierno-de-datos-universidad-colegio-mayor-de-cundinamarca",
@@ -116,8 +116,8 @@
         "layout": "full",
         "isFullImage": true,
         "isImported": true,
-        "media": "",
-        "imageUrl": "",
+        "media": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_presentation_1795566554804%2F1795568596986_kkn9_slide_4.jpg",
+        "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_presentation_1795566554804%2F1795568596986_kkn9_slide_4.jpg",
         "notes": "Doce dominios, cada uno con un responsable (el jefe de la dependencia) y un gestor del dato (un profesional de la misma dependencia con el 20 % de su tiempo reservado por resolución). Dos custodios, los dos oficiales y Control Interno como auditor. Ningún cargo nuevo: los roles se asignan al cargo y sobreviven a la rotación de contratistas.",
         "bgColor": "#ffffff",
         "themeId": "cosmos"
@@ -131,8 +131,8 @@
         "layout": "full",
         "isFullImage": true,
         "isImported": true,
-        "media": "",
-        "imageUrl": "",
+        "media": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_presentation_1795566554804%2F1795568598806_hdly_slide_5.jpg",
+        "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_presentation_1795566554804%2F1795568598806_hdly_slide_5.jpg",
         "notes": "Cuatro fases en 24 meses, escenario Base. Dorado: dinero nuevo. Gris: valor del tiempo del personal propio, que no requiere caja. En la fase 4 el modelo opera sin apoyo externo. Los proyectos PETI aparecen solo como contexto: no se suman ni se les ponen fechas, porque el PETI no las fija.",
         "bgColor": "#ffffff",
         "themeId": "cosmos"
@@ -146,8 +146,8 @@
         "layout": "full",
         "isFullImage": true,
         "isImported": true,
-        "media": "",
-        "imageUrl": "",
+        "media": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_presentation_1795566554804%2F1795568600706_n5b8_slide_6.jpg",
+        "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_presentation_1795566554804%2F1795568600706_n5b8_slide_6.jpg",
         "notes": "Gantt exclusivo de la Fase 1 (hoja Gantt Fase 1 del Excel, con horas, costos y dependencias). Tres hitos verificables: a los 30 días la resolución, a los 60 los archivos públicos corregidos y la plantilla de la ficha técnica, a los 90 el piloto de Investigación y el informe al Consejo.",
         "bgColor": "#ffffff",
         "themeId": "cosmos"
@@ -161,8 +161,8 @@
         "layout": "full",
         "isFullImage": true,
         "isImported": true,
-        "media": "",
-        "imageUrl": "",
+        "media": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_presentation_1795566554804%2F1795568602382_539n_slide_7.jpg",
+        "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_presentation_1795566554804%2F1795568602382_539n_slide_7.jpg",
         "notes": "Tres escenarios para la Fase 1. Recomendamos el Base: $24,6 millones de desembolso. La mayor parte es un analista que sostiene el Comité, los catálogos y los indicadores; sin él, el modelo depende solo de dedicaciones parciales, que es la causa más común de que estos comités dejen de sesionar. Además, la universidad aporta $76 millones en tiempo de su personal, que ya está en la nómina.",
         "bgColor": "#ffffff",
         "themeId": "cosmos"
@@ -229,7 +229,7 @@
       },
       {
         "id": "slide_1795568586215_11",
-        "title": "Diapositiva 12",
+        "title": "Diapositiva #13",
         "subtitle": "",
         "content": "",
         "bullets": [],
@@ -240,18 +240,6 @@
         "imageUrl": "",
         "notes": "",
         "bgColor": "#ffffff",
-        "themeId": "cosmos"
-      },
-      {
-        "id": "slide_1795568597237_27sn",
-        "title": "Diapositiva #13",
-        "subtitle": "",
-        "content": "",
-        "bullets": [],
-        "layout": "split",
-        "media": "",
-        "notes": "",
-        "bgColor": "#0b091a",
         "themeId": "cosmos"
       }
     ],
@@ -450,8 +438,8 @@
             "layout": "full",
             "isFullImage": true,
             "isImported": true,
-            "media": "",
-            "imageUrl": "",
+            "media": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_presentation_1795566554804%2F1795568596986_kkn9_slide_4.jpg",
+            "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_presentation_1795566554804%2F1795568596986_kkn9_slide_4.jpg",
             "notes": "Doce dominios, cada uno con un responsable (el jefe de la dependencia) y un gestor del dato (un profesional de la misma dependencia con el 20 % de su tiempo reservado por resolución). Dos custodios, los dos oficiales y Control Interno como auditor. Ningún cargo nuevo: los roles se asignan al cargo y sobreviven a la rotación de contratistas.",
             "bgColor": "#ffffff",
             "themeId": "cosmos"
@@ -465,8 +453,8 @@
             "layout": "full",
             "isFullImage": true,
             "isImported": true,
-            "media": "",
-            "imageUrl": "",
+            "media": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_presentation_1795566554804%2F1795568598806_hdly_slide_5.jpg",
+            "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_presentation_1795566554804%2F1795568598806_hdly_slide_5.jpg",
             "notes": "Cuatro fases en 24 meses, escenario Base. Dorado: dinero nuevo. Gris: valor del tiempo del personal propio, que no requiere caja. En la fase 4 el modelo opera sin apoyo externo. Los proyectos PETI aparecen solo como contexto: no se suman ni se les ponen fechas, porque el PETI no las fija.",
             "bgColor": "#ffffff",
             "themeId": "cosmos"
@@ -480,8 +468,8 @@
             "layout": "full",
             "isFullImage": true,
             "isImported": true,
-            "media": "",
-            "imageUrl": "",
+            "media": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_presentation_1795566554804%2F1795568600706_n5b8_slide_6.jpg",
+            "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_presentation_1795566554804%2F1795568600706_n5b8_slide_6.jpg",
             "notes": "Gantt exclusivo de la Fase 1 (hoja Gantt Fase 1 del Excel, con horas, costos y dependencias). Tres hitos verificables: a los 30 días la resolución, a los 60 los archivos públicos corregidos y la plantilla de la ficha técnica, a los 90 el piloto de Investigación y el informe al Consejo.",
             "bgColor": "#ffffff",
             "themeId": "cosmos"
@@ -495,8 +483,8 @@
             "layout": "full",
             "isFullImage": true,
             "isImported": true,
-            "media": "",
-            "imageUrl": "",
+            "media": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_presentation_1795566554804%2F1795568602382_539n_slide_7.jpg",
+            "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_presentation_1795566554804%2F1795568602382_539n_slide_7.jpg",
             "notes": "Tres escenarios para la Fase 1. Recomendamos el Base: $24,6 millones de desembolso. La mayor parte es un analista que sostiene el Comité, los catálogos y los indicadores; sin él, el modelo depende solo de dedicaciones parciales, que es la causa más común de que estos comités dejen de sesionar. Además, la universidad aporta $76 millones en tiempo de su personal, que ya está en la nómina.",
             "bgColor": "#ffffff",
             "themeId": "cosmos"
@@ -563,7 +551,7 @@
           },
           {
             "id": "slide_1795568586215_11",
-            "title": "Diapositiva 12",
+            "title": "Diapositiva #13",
             "subtitle": "",
             "content": "",
             "bullets": [],
@@ -574,18 +562,6 @@
             "imageUrl": "",
             "notes": "",
             "bgColor": "#ffffff",
-            "themeId": "cosmos"
-          },
-          {
-            "id": "slide_1795568597237_27sn",
-            "title": "Diapositiva #13",
-            "subtitle": "",
-            "content": "",
-            "bullets": [],
-            "layout": "split",
-            "media": "",
-            "notes": "",
-            "bgColor": "#0b091a",
             "themeId": "cosmos"
           }
         ]
@@ -825,7 +801,7 @@
         "collaborators": ""
       },
       "createdAt": "2026-11-25T00:29:14.804Z",
-      "updatedAt": "2026-11-25T01:03:17.237Z",
+      "updatedAt": "2026-11-25T01:03:26.301Z",
       "progress": 95,
       "calculatedProgress": 95
     },
