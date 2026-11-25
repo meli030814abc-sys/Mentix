@@ -28,7 +28,7 @@
     "accessMode": "public",
     "displayOrder": 1,
     "createdAt": "2026-11-25T00:29:14.804Z",
-    "updatedAt": "2026-11-25T02:53:00.002Z",
+    "updatedAt": "2026-11-25T02:52:59.927Z",
     "landingConfig": {
       "publicName": "Diagnóstico de Gobierno de Datos – Universidad Colegio Mayor de Cundinamarca",
       "slug": "diagnostico-de-gobierno-de-datos-universidad-colegio-mayor-de-cu",
@@ -953,14 +953,10 @@
         "authorsInstitution": "Politecnico Gran Colombiano"
       },
       "createdAt": "2026-11-25T00:29:14.804Z",
-      "updatedAt": "2026-11-25T02:52:59.945Z",
+      "updatedAt": "2026-11-25T02:49:28.065Z",
       "submittedForApproval": true,
       "progress": 100,
-      "calculatedProgress": 100,
-      "approvalStatus": "pending",
-      "status": "completed",
-      "completedAt": "2026-11-25T02:52:59.945Z",
-      "isPublic": false
+      "calculatedProgress": 100
     },
     "ownerId": "user_1795545770936",
     "ownerUsername": "Juanes_RJ",
@@ -1021,7 +1017,7 @@
       }
     ],
     "joinRequests": [],
-    "completedAt": "2026-11-25T02:52:59.945Z",
+    "completedAt": "2026-11-25T01:23:06.413Z",
     "authorizedAt": "2026-11-25T01:27:10.305Z",
     "authorizedBy": "Melisa",
     "stage": "completed"
