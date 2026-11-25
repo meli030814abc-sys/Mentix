@@ -28,7 +28,7 @@
     "accessMode": "private",
     "displayOrder": 1,
     "createdAt": "2026-11-25T00:29:14.804Z",
-    "updatedAt": "2026-11-25T01:02:56.246Z",
+    "updatedAt": "2026-11-25T01:03:02.528Z",
     "landingConfig": {
       "publicName": "Diagnóstico de Gobierno de Datos – Universidad Colegio Mayor de Cundinamarca",
       "slug": "diagnostico-de-gobierno-de-datos-universidad-colegio-mayor-de-cundinamarca",
@@ -49,8 +49,7 @@
       "authorsList": "Juan Esteban Rosero Jimenez",
       "authorsEmails": "jeroseroj@gmail.com",
       "authorsRole": "Estudiante / Creador",
-      "authorsInstitution": "Politecnico Gran Colombiano",
-      "collaborators": ""
+      "authorsInstitution": "Politecnico Gran Colombiano"
     },
     "designConfig": {
       "themeId": "cosmos",
@@ -125,7 +124,7 @@
     "submittedForApproval": false,
     "startDate": "2026-11-25",
     "endDate": "2029-08-05",
-    "currentStep": 11,
+    "currentStep": 9,
     "completedSteps": [
       1,
       2,
@@ -134,12 +133,10 @@
       5,
       6,
       7,
-      8,
-      9,
-      10
+      8
     ],
-    "progress": 90,
-    "calculatedProgress": 90,
+    "progress": 85,
+    "calculatedProgress": 85,
     "valueProp": {
       "problemSolved": "La universidad tiene sus datos dispersos y duplicados entre cuatro sedes y varios sistemas, sin responsables ni reglas que garanticen su calidad. Su madurez en gobierno de datos es de 2 sobre 5.",
       "howItWorks": "Diagnostica la madurez con DAMA-DMBOK, asigna responsables a cada dominio de datos, define políticas y reglas de calidad, y las aplica en GovData Nexus con catálogo, flujos de aprobación y acuerdos de nivel de servicio.",
@@ -153,32 +150,11 @@
         "Reglas de calidad de datos",
         "Flujos de aprobación con SLA"
       ],
-      "resultsAndBenefits": "",
+      "resultsAndBenefits": "Datos únicos y confiables para tomar decisiones y reportar a entes externos, responsables claros por cada dato y protección de los datos personales, con el personal que la universidad ya tiene.",
       "prerequisites": "",
       "visitorAction": "Unirse / Colaborar",
-      "commercialPitch": "Reglas claras para que una universidad confíe en sus datos",
-      "faqs": [
-        {
-          "q": "¿Qué es el gobierno de datos?",
-          "a": "Es el conjunto de reglas, roles y responsabilidades que definen quién decide sobre los datos de una organización, qué estándares deben cumplir y cómo se verifica."
-        },
-        {
-          "q": "¿Por qué la Universidad Colegio Mayor de Cundinamarca?",
-          "a": "Es una universidad pública con cuatro sedes cuyos datos están dispersos y duplicados entre sistemas, sin responsables formales ni reglas de calidad."
-        },
-        {
-          "q": "¿Cuánto cuesta implementar el modelo?",
-          "a": "El escenario recomendado cuesta $106 millones en 24 meses, menos del 2 % de lo que la universidad ya aprobó para sus proyectos de datos, y no crea cargos nuevos."
-        },
-        {
-          "q": "¿Qué es GovData Nexus y para qué se usó?",
-          "a": "Es una plataforma de gobierno de datos. En ella se cargó el catálogo de datos, el glosario, las reglas de calidad y los flujos de aprobación para probar el modelo."
-        },
-        {
-          "q": "¿Se usaron datos reales de estudiantes?",
-          "a": "No. La prueba de calidad se hizo con una base de datos sintética de 2.000 estudiantes que reproduce los problemas reales de la universidad, para proteger los datos personales."
-        }
-      ]
+      "commercialPitch": "",
+      "faqs": []
     },
     "valueProposition": {
       "problemSolved": "La universidad tiene sus datos dispersos y duplicados entre cuatro sedes y varios sistemas, sin responsables ni reglas que garanticen su calidad. Su madurez en gobierno de datos es de 2 sobre 5.",
@@ -193,43 +169,22 @@
         "Reglas de calidad de datos",
         "Flujos de aprobación con SLA"
       ],
-      "resultsAndBenefits": "",
+      "resultsAndBenefits": "Datos únicos y confiables para tomar decisiones y reportar a entes externos, responsables claros por cada dato y protección de los datos personales, con el personal que la universidad ya tiene.",
       "prerequisites": "",
       "visitorAction": "Unirse / Colaborar",
-      "commercialPitch": "Reglas claras para que una universidad confíe en sus datos",
-      "faqs": [
-        {
-          "q": "¿Qué es el gobierno de datos?",
-          "a": "Es el conjunto de reglas, roles y responsabilidades que definen quién decide sobre los datos de una organización, qué estándares deben cumplir y cómo se verifica."
-        },
-        {
-          "q": "¿Por qué la Universidad Colegio Mayor de Cundinamarca?",
-          "a": "Es una universidad pública con cuatro sedes cuyos datos están dispersos y duplicados entre sistemas, sin responsables formales ni reglas de calidad."
-        },
-        {
-          "q": "¿Cuánto cuesta implementar el modelo?",
-          "a": "El escenario recomendado cuesta $106 millones en 24 meses, menos del 2 % de lo que la universidad ya aprobó para sus proyectos de datos, y no crea cargos nuevos."
-        },
-        {
-          "q": "¿Qué es GovData Nexus y para qué se usó?",
-          "a": "Es una plataforma de gobierno de datos. En ella se cargó el catálogo de datos, el glosario, las reglas de calidad y los flujos de aprobación para probar el modelo."
-        },
-        {
-          "q": "¿Se usaron datos reales de estudiantes?",
-          "a": "No. La prueba de calidad se hizo con una base de datos sintética de 2.000 estudiantes que reproduce los problemas reales de la universidad, para proteger los datos personales."
-        }
-      ]
+      "commercialPitch": "",
+      "faqs": []
     },
-    "videoUrl": "https://youtu.be/Cgel4vZV4CU",
+    "videoUrl": "",
     "videoConfig": {
       "sourceType": "url",
-      "url": "https://youtu.be/Cgel4vZV4CU",
+      "url": "",
       "fileName": "",
       "title": "",
       "description": "",
-      "thumbnailUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_presentation_1795566554804%2F1795568466156_d3vj_asset.jpg",
+      "thumbnailUrl": "",
       "isPublic": true,
-      "verified": true
+      "verified": false
     },
     "visualAssets": [],
     "presentations": [
@@ -359,42 +314,21 @@
           "Reglas de calidad de datos",
           "Flujos de aprobación con SLA"
         ],
-        "resultsAndBenefits": "",
+        "resultsAndBenefits": "Datos únicos y confiables para tomar decisiones y reportar a entes externos, responsables claros por cada dato y protección de los datos personales, con el personal que la universidad ya tiene.",
         "prerequisites": "",
         "visitorAction": "Unirse / Colaborar",
-        "commercialPitch": "Reglas claras para que una universidad confíe en sus datos",
-        "faqs": [
-          {
-            "q": "¿Qué es el gobierno de datos?",
-            "a": "Es el conjunto de reglas, roles y responsabilidades que definen quién decide sobre los datos de una organización, qué estándares deben cumplir y cómo se verifica."
-          },
-          {
-            "q": "¿Por qué la Universidad Colegio Mayor de Cundinamarca?",
-            "a": "Es una universidad pública con cuatro sedes cuyos datos están dispersos y duplicados entre sistemas, sin responsables formales ni reglas de calidad."
-          },
-          {
-            "q": "¿Cuánto cuesta implementar el modelo?",
-            "a": "El escenario recomendado cuesta $106 millones en 24 meses, menos del 2 % de lo que la universidad ya aprobó para sus proyectos de datos, y no crea cargos nuevos."
-          },
-          {
-            "q": "¿Qué es GovData Nexus y para qué se usó?",
-            "a": "Es una plataforma de gobierno de datos. En ella se cargó el catálogo de datos, el glosario, las reglas de calidad y los flujos de aprobación para probar el modelo."
-          },
-          {
-            "q": "¿Se usaron datos reales de estudiantes?",
-            "a": "No. La prueba de calidad se hizo con una base de datos sintética de 2.000 estudiantes que reproduce los problemas reales de la universidad, para proteger los datos personales."
-          }
-        ]
+        "commercialPitch": "",
+        "faqs": []
       },
       "videoConfig": {
         "sourceType": "url",
-        "url": "https://youtu.be/Cgel4vZV4CU",
+        "url": "",
         "fileName": "",
         "title": "",
         "description": "",
-        "thumbnailUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_presentation_1795566554804%2F1795568466156_d3vj_asset.jpg",
+        "thumbnailUrl": "",
         "isPublic": true,
-        "verified": true
+        "verified": false
       },
       "mainImage": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fdraft%2F1795566538564_r3c9_asset.jpg",
       "thumbnailImage": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fdraft%2F1795566538564_r3c9_asset.jpg",
@@ -477,11 +411,9 @@
         5,
         6,
         7,
-        8,
-        9,
-        10
+        8
       ],
-      "currentStep": 11,
+      "currentStep": 9,
       "author": "Juan Esteban Rosero Jimenez",
       "authorId": "user_1795545770936",
       "ownerId": "user_1795545770936",
@@ -489,8 +421,8 @@
       "authorEmail": "jeroseroj@gmail.com",
       "authorAvatar": "🦊",
       "authorRole": "Estudiante / Creador",
-      "joinCode": "",
-      "accessCode": "",
+      "joinCode": "804263",
+      "accessCode": "804263",
       "designConfig": {
         "themeId": "cosmos",
         "fontFamily": "Montserrat",
@@ -503,18 +435,17 @@
         "authorsList": "Juan Esteban Rosero Jimenez",
         "authorsEmails": "jeroseroj@gmail.com",
         "authorsRole": "Estudiante / Creador",
-        "authorsInstitution": "Politecnico Gran Colombiano",
-        "collaborators": ""
+        "authorsInstitution": "Politecnico Gran Colombiano"
       },
       "createdAt": "2026-11-25T00:29:14.804Z",
-      "updatedAt": "2026-11-25T01:02:56.020Z",
-      "progress": 90,
-      "calculatedProgress": 90
+      "updatedAt": "2026-11-25T01:03:03.108Z",
+      "progress": 85,
+      "calculatedProgress": 85
     },
     "ownerId": "user_1795545770936",
     "ownerUsername": "Juanes_RJ",
-    "joinCode": "",
-    "accessCode": "",
+    "joinCode": "804263",
+    "accessCode": "804263",
     "customProjectCodes": [
       {
         "code": "804263",
@@ -558,16 +489,7 @@
       ],
       "views": [],
       "ratings": []
-    },
-    "members": [
-      {
-        "name": "Juan Esteban Rosero Jimenez",
-        "email": "jeroseroj@gmail.com",
-        "role": "owner",
-        "leader": true
-      }
-    ],
-    "joinRequests": []
+    }
   },
   {
     "id": "reto_1795552054552",
