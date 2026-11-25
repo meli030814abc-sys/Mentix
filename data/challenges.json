@@ -27,7 +27,7 @@
     "mainObjective": "Realizar un diagnóstico integral del estado actual del gobierno de datos en el Colegio Técnico Jaime Pardo Leal IED para identificar brechas de calidad, acceso, seguridad y responsabilidad, y proponer lineamientos prácticos de mejora.",
     "benefits": "Facilita la toma de decisiones directivas y administrativas con información más confiable, reduce riesgos de mal manejo de datos escolares y fortalece una cultura de cuidado y protección de los datos de niños, niñas, adolescentes y funcionarios.",
     "teamLead": "Jhomar Alejandra Cano Ramirez",
-    "preparationStatus": "en_desarrollo",
+    "preparationStatus": "finalizado",
     "publicationStatus": "pending_approval",
     "approvalStatus": "pending",
     "submittedForApproval": false,
@@ -258,7 +258,7 @@
       "mainObjective": "Realizar un diagnóstico integral del estado actual del gobierno de datos en el Colegio Técnico Jaime Pardo Leal IED para identificar brechas de calidad, acceso, seguridad y responsabilidad, y proponer lineamientos prácticos de mejora.",
       "benefits": "Facilita la toma de decisiones directivas y administrativas con información más confiable, reduce riesgos de mal manejo de datos escolares y fortalece una cultura de cuidado y protección de los datos de niños, niñas, adolescentes y funcionarios.",
       "teamLead": "Jhomar Alejandra Cano Ramirez",
-      "preparationStatus": "en_desarrollo",
+      "preparationStatus": "finalizado",
       "startDate": "2026-11-25",
       "endDate": "",
       "valueProp": {
@@ -379,7 +379,7 @@
         "collaborators": ""
       },
       "createdAt": "2026-11-25T11:45:30.865Z",
-      "updatedAt": "2026-11-25T11:52:37.954Z",
+      "updatedAt": "2026-11-25T11:52:47.892Z",
       "progress": 85,
       "calculatedProgress": 85
     },
@@ -393,7 +393,7 @@
     "authorAvatar": "🦊",
     "authorRole": "Estudiante / Creador",
     "createdAt": "2026-11-25T11:45:30.865Z",
-    "updatedAt": "2026-11-25T11:52:37.936Z"
+    "updatedAt": "2026-11-25T11:52:47.813Z"
   },
   {
     "id": "proj_video_1795575349043",
