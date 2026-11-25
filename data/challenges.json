@@ -51,7 +51,11 @@
       "howItWorks": "Levanta y mapea fuentes de datos escolares, evalúa roles, accesos y cumplimiento normativo, y entrega un diagnóstico con brechas priorizadas y plan de acción.",
       "forWhom": "Directivos docentes (rectoría y coordinaciones), personal administrativo y de secretaría académica, docentes.",
       "differentiator": "Enfoque práctico adaptado a un colegio oficial, priorizando la protección de datos de niños, niñas y adolescentes, la claridad de responsabilidades y acciones viables.",
-      "keyFeatures": [],
+      "keyFeatures": [
+        "Mapeo de datos, flujos y responsables",
+        "Evaluación de madurez, calidad y privacidad",
+        "Hoja de ruta de cumplimiento y mejora"
+      ],
       "resultsAndBenefits": "",
       "prerequisites": "",
       "visitorAction": "Unirse / Colaborar",
@@ -63,7 +67,11 @@
       "howItWorks": "Levanta y mapea fuentes de datos escolares, evalúa roles, accesos y cumplimiento normativo, y entrega un diagnóstico con brechas priorizadas y plan de acción.",
       "forWhom": "Directivos docentes (rectoría y coordinaciones), personal administrativo y de secretaría académica, docentes.",
       "differentiator": "Enfoque práctico adaptado a un colegio oficial, priorizando la protección de datos de niños, niñas y adolescentes, la claridad de responsabilidades y acciones viables.",
-      "keyFeatures": [],
+      "keyFeatures": [
+        "Mapeo de datos, flujos y responsables",
+        "Evaluación de madurez, calidad y privacidad",
+        "Hoja de ruta de cumplimiento y mejora"
+      ],
       "resultsAndBenefits": "",
       "prerequisites": "",
       "visitorAction": "Unirse / Colaborar",
@@ -121,7 +129,9 @@
         "bulletsFont": "'Outfit', sans-serif",
         "bulletStyle": "✦",
         "isFullImage": true,
-        "isImported": true
+        "isImported": true,
+        "imageUrl": "",
+        "bgImage": ""
       }
     ],
     "presentations": [
@@ -157,7 +167,9 @@
             "bulletsFont": "'Outfit', sans-serif",
             "bulletStyle": "✦",
             "isFullImage": true,
-            "isImported": true
+            "isImported": true,
+            "imageUrl": "",
+            "bgImage": ""
           }
         ]
       }
@@ -257,7 +269,11 @@
         "howItWorks": "Levanta y mapea fuentes de datos escolares, evalúa roles, accesos y cumplimiento normativo, y entrega un diagnóstico con brechas priorizadas y plan de acción.",
         "forWhom": "Directivos docentes (rectoría y coordinaciones), personal administrativo y de secretaría académica, docentes.",
         "differentiator": "Enfoque práctico adaptado a un colegio oficial, priorizando la protección de datos de niños, niñas y adolescentes, la claridad de responsabilidades y acciones viables.",
-        "keyFeatures": [],
+        "keyFeatures": [
+          "Mapeo de datos, flujos y responsables",
+          "Evaluación de madurez, calidad y privacidad",
+          "Hoja de ruta de cumplimiento y mejora"
+        ],
         "resultsAndBenefits": "",
         "prerequisites": "",
         "visitorAction": "Unirse / Colaborar",
@@ -365,7 +381,7 @@
         "collaborators": ""
       },
       "createdAt": "2026-11-25T11:45:30.865Z",
-      "updatedAt": "2026-11-25T11:52:12.021Z",
+      "updatedAt": "2026-11-25T11:52:26.199Z",
       "progress": 85,
       "calculatedProgress": 85
     },
@@ -379,7 +395,54 @@
     "authorAvatar": "🦊",
     "authorRole": "Estudiante / Creador",
     "createdAt": "2026-11-25T11:45:30.865Z",
-    "updatedAt": "2026-11-25T11:52:11.924Z"
+    "updatedAt": "2026-11-25T11:52:26.090Z",
+    "fromStudentCreate": true,
+    "_isStudentDraft": true,
+    "timePerQuestion": 25,
+    "plays": 0,
+    "accessMode": "private",
+    "hub": {
+      "joinRequests": [],
+      "members": [
+        {
+          "name": "Jhomar Alejandra Cano Ramirez",
+          "email": "jhomaralejandracano@gmail.com",
+          "role": "owner",
+          "leader": true
+        }
+      ],
+      "views": [],
+      "ratings": []
+    },
+    "customProjectCodes": [
+      {
+        "code": "804263",
+        "author": "Melisa",
+        "authorRole": "admin",
+        "createdAt": "22/11/2026, 9:27:35 p.m."
+      },
+      {
+        "code": "371850",
+        "author": "Melisa",
+        "authorRole": "admin",
+        "createdAt": "22/11/2026, 9:27:35 p.m."
+      },
+      {
+        "code": "926407",
+        "author": "Melisa",
+        "authorRole": "admin",
+        "createdAt": "22/11/2026, 9:23:09 p.m."
+      },
+      {
+        "code": "583194",
+        "author": "Melisa",
+        "authorRole": "admin",
+        "createdAt": "22/11/2026, 9:22:51 p.m."
+      }
+    ],
+    "visibility": "private",
+    "rejectedAt": "",
+    "rejectionReason": ""
   },
   {
     "id": "proj_video_1795575349043",
