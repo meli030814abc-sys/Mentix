@@ -28,7 +28,7 @@
     "accessMode": "private",
     "displayOrder": 1,
     "createdAt": "2026-11-25T00:29:14.804Z",
-    "updatedAt": "2026-11-25T01:00:11.645Z",
+    "updatedAt": "2026-11-25T01:00:15.140Z",
     "landingConfig": {
       "publicName": "Diagnóstico de Gobierno de Datos – Universidad Colegio Mayor de Cundinamarca",
       "slug": "diagnostico-de-gobierno-de-datos-universidad-colegio-mayor-de-cundinamarca",
@@ -125,7 +125,7 @@
     "submittedForApproval": false,
     "startDate": "2026-11-25",
     "endDate": "2029-08-05",
-    "currentStep": 9,
+    "currentStep": 10,
     "completedSteps": [
       1,
       2,
@@ -134,7 +134,8 @@
       5,
       6,
       7,
-      8
+      8,
+      9
     ],
     "progress": 85,
     "calculatedProgress": 85,
@@ -475,9 +476,10 @@
         5,
         6,
         7,
-        8
+        8,
+        9
       ],
-      "currentStep": 9,
+      "currentStep": 10,
       "author": "Juan Esteban Rosero Jimenez",
       "authorId": "user_1795545770936",
       "ownerId": "user_1795545770936",
@@ -503,7 +505,7 @@
         "collaborators": ""
       },
       "createdAt": "2026-11-25T00:29:14.804Z",
-      "updatedAt": "2026-11-25T01:00:11.437Z",
+      "updatedAt": "2026-11-25T01:00:14.890Z",
       "progress": 85,
       "calculatedProgress": 85
     },
