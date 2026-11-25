@@ -147,6 +147,14 @@
         "url": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_presentation_1795607130865%2F1795610357095_xq8l_asset.jpg",
         "assetType": "gallery",
         "visibility": "public"
+      },
+      {
+        "id": "vis_1795610378486_0",
+        "title": "Captura de pantalla 2026 11 25 073929",
+        "caption": "Imagen oficial del proyecto.",
+        "url": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_presentation_1795607130865%2F1795610376707_unro_asset.jpg",
+        "assetType": "gallery",
+        "visibility": "public"
       }
     ],
     "slides": [
@@ -1429,7 +1437,7 @@
         "collaborators": ""
       },
       "createdAt": "2026-11-25T11:45:30.865Z",
-      "updatedAt": "2026-11-25T12:39:37.524Z",
+      "updatedAt": "2026-11-25T12:39:54.909Z",
       "progress": 95,
       "calculatedProgress": 95,
       "heroBanner": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fdraft%2F1795607078265_tkil_asset.jpg",
@@ -1447,7 +1455,7 @@
     "authorAvatar": "🦊",
     "authorRole": "Estudiante / Creador",
     "createdAt": "2026-11-25T11:45:30.865Z",
-    "updatedAt": "2026-11-25T12:39:37.482Z",
+    "updatedAt": "2026-11-25T12:39:54.848Z",
     "fromStudentCreate": true,
     "_isStudentDraft": true,
     "timePerQuestion": 25,
