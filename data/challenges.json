@@ -28,7 +28,7 @@
     "accessMode": "private",
     "displayOrder": 1,
     "createdAt": "2026-11-25T00:29:14.804Z",
-    "updatedAt": "2026-11-25T01:03:26.968Z",
+    "updatedAt": "2026-11-25T01:03:26.667Z",
     "landingConfig": {
       "publicName": "Diagnóstico de Gobierno de Datos – Universidad Colegio Mayor de Cundinamarca",
       "slug": "diagnostico-de-gobierno-de-datos-universidad-colegio-mayor-de-cundinamarca",
@@ -75,7 +75,8 @@
         "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_presentation_1795566554804%2F1795568586836_l6j7_slide_1.jpg",
         "notes": "Propuesta ejecutiva al Consejo Superior Universitario. Mensaje central: la universidad ya tiene la gente, el comité y los proyectos; falta fijar las reglas de juego de los datos. El gobierno de datos pone las reglas; los proyectos del PETI ejecutan.",
         "bgColor": "#ffffff",
-        "themeId": "cosmos"
+        "themeId": "cosmos",
+        "bgImage": ""
       },
       {
         "id": "slide_1795568586215_1",
@@ -90,7 +91,8 @@
         "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_presentation_1795566554804%2F1795568590937_jqbu_slide_2.jpg",
         "notes": "Hoy la universidad está en 1,7 sobre 5 (cerca de 2): existe lo que la norma exige, falta lo que depende de una decisión propia. Cuatro señales lo muestran en nuestros propios archivos públicos: un inventario congelado en 2021, 9 filas del Índice con fórmulas rotas, 66 citas de la Ley 1712 mal escritas y un índice de gestión documental de 38,8 sobre 100. No son fallas de personas, son fallas de reglas.",
         "bgColor": "#ffffff",
-        "themeId": "cosmos"
+        "themeId": "cosmos",
+        "bgImage": ""
       },
       {
         "id": "slide_1795568586215_2",
@@ -105,7 +107,8 @@
         "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_presentation_1795566554804%2F1795568594935_fguf_slide_3.jpg",
         "notes": "Tres objetivos verificables. Y una regla que nace de la retroalimentación del profesor: el gobierno de datos no ejecuta, pone las reglas. Por eso el presupuesto que pedimos es pequeño y casi todo es tiempo del personal propio; los proyectos del PETI conservan su ejecución y su presupuesto.",
         "bgColor": "#ffffff",
-        "themeId": "cosmos"
+        "themeId": "cosmos",
+        "bgImage": ""
       },
       {
         "id": "slide_1795568586215_3",
@@ -120,7 +123,8 @@
         "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_presentation_1795566554804%2F1795568596986_kkn9_slide_4.jpg",
         "notes": "Doce dominios, cada uno con un responsable (el jefe de la dependencia) y un gestor del dato (un profesional de la misma dependencia con el 20 % de su tiempo reservado por resolución). Dos custodios, los dos oficiales y Control Interno como auditor. Ningún cargo nuevo: los roles se asignan al cargo y sobreviven a la rotación de contratistas.",
         "bgColor": "#ffffff",
-        "themeId": "cosmos"
+        "themeId": "cosmos",
+        "bgImage": ""
       },
       {
         "id": "slide_1795568586215_4",
@@ -135,7 +139,8 @@
         "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_presentation_1795566554804%2F1795568598806_hdly_slide_5.jpg",
         "notes": "Cuatro fases en 24 meses, escenario Base. Dorado: dinero nuevo. Gris: valor del tiempo del personal propio, que no requiere caja. En la fase 4 el modelo opera sin apoyo externo. Los proyectos PETI aparecen solo como contexto: no se suman ni se les ponen fechas, porque el PETI no las fija.",
         "bgColor": "#ffffff",
-        "themeId": "cosmos"
+        "themeId": "cosmos",
+        "bgImage": ""
       },
       {
         "id": "slide_1795568586215_5",
@@ -150,7 +155,8 @@
         "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_presentation_1795566554804%2F1795568600706_n5b8_slide_6.jpg",
         "notes": "Gantt exclusivo de la Fase 1 (hoja Gantt Fase 1 del Excel, con horas, costos y dependencias). Tres hitos verificables: a los 30 días la resolución, a los 60 los archivos públicos corregidos y la plantilla de la ficha técnica, a los 90 el piloto de Investigación y el informe al Consejo.",
         "bgColor": "#ffffff",
-        "themeId": "cosmos"
+        "themeId": "cosmos",
+        "bgImage": ""
       },
       {
         "id": "slide_1795568586215_6",
@@ -161,11 +167,12 @@
         "layout": "full",
         "isFullImage": true,
         "isImported": true,
-        "media": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_presentation_1795566554804%2F1795568602382_539n_slide_7.jpg",
-        "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_presentation_1795566554804%2F1795568602382_539n_slide_7.jpg",
+        "media": "",
+        "imageUrl": "",
         "notes": "Tres escenarios para la Fase 1. Recomendamos el Base: $24,6 millones de desembolso. La mayor parte es un analista que sostiene el Comité, los catálogos y los indicadores; sin él, el modelo depende solo de dedicaciones parciales, que es la causa más común de que estos comités dejen de sesionar. Además, la universidad aporta $76 millones en tiempo de su personal, que ya está en la nómina.",
         "bgColor": "#ffffff",
-        "themeId": "cosmos"
+        "themeId": "cosmos",
+        "bgImage": ""
       },
       {
         "id": "slide_1795568586215_7",
@@ -180,7 +187,8 @@
         "imageUrl": "",
         "notes": "En 24 meses la universidad pone $106 millones de caja nueva, el 1,9 % de lo que ya aprobó en el PETI, y $622 millones en tiempo de su gente. La mitad del esfuerzo es el tiempo reservado de los gestores: es lo que hace que la información se mantenga al día después del proyecto. En la fase 4 casi no hay desembolso: el modelo queda operando con personal propio.",
         "bgColor": "#ffffff",
-        "themeId": "cosmos"
+        "themeId": "cosmos",
+        "bgImage": ""
       },
       {
         "id": "slide_1795568586215_8",
@@ -195,7 +203,8 @@
         "imageUrl": "",
         "notes": "El plan completo está en la hoja Gestión cambio y capacitación: 13 grupos de interés con impacto, mensaje y canal, formación por rol, riesgos de resistencia y cómo responder. El apoyo externo es decreciente: al cerrar el primer año, Talento Humano opera el plan. Complementa el PRY-18 sin duplicarlo.",
         "bgColor": "#ffffff",
-        "themeId": "cosmos"
+        "themeId": "cosmos",
+        "bgImage": ""
       },
       {
         "id": "slide_1795568586215_9",
@@ -210,7 +219,8 @@
         "imageUrl": "",
         "notes": "Cada pago está atado a un entregable verificable. La banda del 30 % se calcula solo sobre lo negociable: consultor de cambio y experto. Costo de ejecución $23,1 millones; techo $26,6 millones, que es lo que se reserva en el CDP; piso $19,6 millones. El analista no entra en la banda porque su honorario sale de la tabla de la universidad.",
         "bgColor": "#ffffff",
-        "themeId": "cosmos"
+        "themeId": "cosmos",
+        "bgImage": ""
       },
       {
         "id": "slide_1795568586215_10",
@@ -225,7 +235,8 @@
         "imageUrl": "",
         "notes": "Cerramos con lo que se obtiene en cada horizonte y la decisión concreta: aprobar la Fase 1 con $24,6 millones y encargar la resolución. Se retira el Administrador de Datos de la versión anterior (no existe en el modelo) y la meta intermedia de 2,5, que no tenía sustento: la meta es 8 de 11 frentes en nivel 3 a 24 meses.",
         "bgColor": "#ffffff",
-        "themeId": "cosmos"
+        "themeId": "cosmos",
+        "bgImage": ""
       },
       {
         "id": "slide_1795568586215_11",
@@ -240,7 +251,8 @@
         "imageUrl": "",
         "notes": "",
         "bgColor": "#ffffff",
-        "themeId": "cosmos"
+        "themeId": "cosmos",
+        "bgImage": ""
       }
     ],
     "resources": [
@@ -397,7 +409,8 @@
             "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_presentation_1795566554804%2F1795568586836_l6j7_slide_1.jpg",
             "notes": "Propuesta ejecutiva al Consejo Superior Universitario. Mensaje central: la universidad ya tiene la gente, el comité y los proyectos; falta fijar las reglas de juego de los datos. El gobierno de datos pone las reglas; los proyectos del PETI ejecutan.",
             "bgColor": "#ffffff",
-            "themeId": "cosmos"
+            "themeId": "cosmos",
+            "bgImage": ""
           },
           {
             "id": "slide_1795568586215_1",
@@ -412,7 +425,8 @@
             "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_presentation_1795566554804%2F1795568590937_jqbu_slide_2.jpg",
             "notes": "Hoy la universidad está en 1,7 sobre 5 (cerca de 2): existe lo que la norma exige, falta lo que depende de una decisión propia. Cuatro señales lo muestran en nuestros propios archivos públicos: un inventario congelado en 2021, 9 filas del Índice con fórmulas rotas, 66 citas de la Ley 1712 mal escritas y un índice de gestión documental de 38,8 sobre 100. No son fallas de personas, son fallas de reglas.",
             "bgColor": "#ffffff",
-            "themeId": "cosmos"
+            "themeId": "cosmos",
+            "bgImage": ""
           },
           {
             "id": "slide_1795568586215_2",
@@ -427,7 +441,8 @@
             "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_presentation_1795566554804%2F1795568594935_fguf_slide_3.jpg",
             "notes": "Tres objetivos verificables. Y una regla que nace de la retroalimentación del profesor: el gobierno de datos no ejecuta, pone las reglas. Por eso el presupuesto que pedimos es pequeño y casi todo es tiempo del personal propio; los proyectos del PETI conservan su ejecución y su presupuesto.",
             "bgColor": "#ffffff",
-            "themeId": "cosmos"
+            "themeId": "cosmos",
+            "bgImage": ""
           },
           {
             "id": "slide_1795568586215_3",
@@ -442,7 +457,8 @@
             "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_presentation_1795566554804%2F1795568596986_kkn9_slide_4.jpg",
             "notes": "Doce dominios, cada uno con un responsable (el jefe de la dependencia) y un gestor del dato (un profesional de la misma dependencia con el 20 % de su tiempo reservado por resolución). Dos custodios, los dos oficiales y Control Interno como auditor. Ningún cargo nuevo: los roles se asignan al cargo y sobreviven a la rotación de contratistas.",
             "bgColor": "#ffffff",
-            "themeId": "cosmos"
+            "themeId": "cosmos",
+            "bgImage": ""
           },
           {
             "id": "slide_1795568586215_4",
@@ -457,7 +473,8 @@
             "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_presentation_1795566554804%2F1795568598806_hdly_slide_5.jpg",
             "notes": "Cuatro fases en 24 meses, escenario Base. Dorado: dinero nuevo. Gris: valor del tiempo del personal propio, que no requiere caja. En la fase 4 el modelo opera sin apoyo externo. Los proyectos PETI aparecen solo como contexto: no se suman ni se les ponen fechas, porque el PETI no las fija.",
             "bgColor": "#ffffff",
-            "themeId": "cosmos"
+            "themeId": "cosmos",
+            "bgImage": ""
           },
           {
             "id": "slide_1795568586215_5",
@@ -472,7 +489,8 @@
             "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_presentation_1795566554804%2F1795568600706_n5b8_slide_6.jpg",
             "notes": "Gantt exclusivo de la Fase 1 (hoja Gantt Fase 1 del Excel, con horas, costos y dependencias). Tres hitos verificables: a los 30 días la resolución, a los 60 los archivos públicos corregidos y la plantilla de la ficha técnica, a los 90 el piloto de Investigación y el informe al Consejo.",
             "bgColor": "#ffffff",
-            "themeId": "cosmos"
+            "themeId": "cosmos",
+            "bgImage": ""
           },
           {
             "id": "slide_1795568586215_6",
@@ -483,11 +501,12 @@
             "layout": "full",
             "isFullImage": true,
             "isImported": true,
-            "media": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_presentation_1795566554804%2F1795568602382_539n_slide_7.jpg",
-            "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_presentation_1795566554804%2F1795568602382_539n_slide_7.jpg",
+            "media": "",
+            "imageUrl": "",
             "notes": "Tres escenarios para la Fase 1. Recomendamos el Base: $24,6 millones de desembolso. La mayor parte es un analista que sostiene el Comité, los catálogos y los indicadores; sin él, el modelo depende solo de dedicaciones parciales, que es la causa más común de que estos comités dejen de sesionar. Además, la universidad aporta $76 millones en tiempo de su personal, que ya está en la nómina.",
             "bgColor": "#ffffff",
-            "themeId": "cosmos"
+            "themeId": "cosmos",
+            "bgImage": ""
           },
           {
             "id": "slide_1795568586215_7",
@@ -502,7 +521,8 @@
             "imageUrl": "",
             "notes": "En 24 meses la universidad pone $106 millones de caja nueva, el 1,9 % de lo que ya aprobó en el PETI, y $622 millones en tiempo de su gente. La mitad del esfuerzo es el tiempo reservado de los gestores: es lo que hace que la información se mantenga al día después del proyecto. En la fase 4 casi no hay desembolso: el modelo queda operando con personal propio.",
             "bgColor": "#ffffff",
-            "themeId": "cosmos"
+            "themeId": "cosmos",
+            "bgImage": ""
           },
           {
             "id": "slide_1795568586215_8",
@@ -517,7 +537,8 @@
             "imageUrl": "",
             "notes": "El plan completo está en la hoja Gestión cambio y capacitación: 13 grupos de interés con impacto, mensaje y canal, formación por rol, riesgos de resistencia y cómo responder. El apoyo externo es decreciente: al cerrar el primer año, Talento Humano opera el plan. Complementa el PRY-18 sin duplicarlo.",
             "bgColor": "#ffffff",
-            "themeId": "cosmos"
+            "themeId": "cosmos",
+            "bgImage": ""
           },
           {
             "id": "slide_1795568586215_9",
@@ -532,7 +553,8 @@
             "imageUrl": "",
             "notes": "Cada pago está atado a un entregable verificable. La banda del 30 % se calcula solo sobre lo negociable: consultor de cambio y experto. Costo de ejecución $23,1 millones; techo $26,6 millones, que es lo que se reserva en el CDP; piso $19,6 millones. El analista no entra en la banda porque su honorario sale de la tabla de la universidad.",
             "bgColor": "#ffffff",
-            "themeId": "cosmos"
+            "themeId": "cosmos",
+            "bgImage": ""
           },
           {
             "id": "slide_1795568586215_10",
@@ -547,7 +569,8 @@
             "imageUrl": "",
             "notes": "Cerramos con lo que se obtiene en cada horizonte y la decisión concreta: aprobar la Fase 1 con $24,6 millones y encargar la resolución. Se retira el Administrador de Datos de la versión anterior (no existe en el modelo) y la meta intermedia de 2,5, que no tenía sustento: la meta es 8 de 11 frentes en nivel 3 a 24 meses.",
             "bgColor": "#ffffff",
-            "themeId": "cosmos"
+            "themeId": "cosmos",
+            "bgImage": ""
           },
           {
             "id": "slide_1795568586215_11",
@@ -562,7 +585,8 @@
             "imageUrl": "",
             "notes": "",
             "bgColor": "#ffffff",
-            "themeId": "cosmos"
+            "themeId": "cosmos",
+            "bgImage": ""
           }
         ]
       }
@@ -852,7 +876,16 @@
       ],
       "views": [],
       "ratings": []
-    }
+    },
+    "members": [
+      {
+        "name": "Juan Esteban Rosero Jimenez",
+        "email": "jeroseroj@gmail.com",
+        "role": "owner",
+        "leader": true
+      }
+    ],
+    "joinRequests": []
   },
   {
     "id": "reto_1795552054552",
