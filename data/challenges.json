@@ -1894,14 +1894,14 @@
     "shortDescription": "Diagnóstico de gobierno de datos de la Universidad Colegio Mayor de Cundinamarca. Con base en DAMA-DMBOK se midió una madurez de 2 sobre 5 y se propuso un modelo de roles, comité y políticas que fija reglas a los proyectos de datos ya aprobados. El modelo se implementó en la plataforma GovData Nexus.",
     "description": "Diagnóstico de gobierno de datos de la Universidad Colegio Mayor de Cundinamarca. Con base en DAMA-DMBOK se midió una madurez de 2 sobre 5 y se propuso un modelo de roles, comité y políticas que fija reglas a los proyectos de datos ya aprobados. El modelo se implementó en la plataforma GovData Nexus.",
     "fullDescription": "PROBLEMA\nLa UCMC tiene cuatro sedes y datos duplicados entre sistemas: un mismo estudiante puede aparecer varias veces. Su madurez en gobierno de datos es de 2 sobre 5 y 74 de 100 prácticas DAMA no existen.\n\nMETODOLOGÍA\n1. Diagnóstico con DAMA-DMBOK a partir del PDI, el PETI, el FURAG y los archivos públicos de la universidad.\n2. Diseño del modelo: 12 dominios con responsables, un comité, ocho políticas y un plan de 24 meses por $106 millones, sin cargos nuevos.\n3. Implementación en GovData Nexus: catálogo de 22 activos, 11 datos maestros, calidad con 37 reglas, flujos de aprobación y acuerdos de nivel de servicio.\n\nRESULTADOS\nSin reglas, la herramienta calificó la calidad en 85 %; con las reglas del negocio aparecieron 1.605 incidentes.\n\nCONCLUSIÓN\nA la UCMC no le faltan proyectos ni tecnología: le faltan reglas. El gobierno de datos las define; el negocio decide y los custodios ejecutan.",
-    "publicationStatus": "completed",
-    "approvalStatus": "pending",
+    "publicationStatus": "published",
+    "approvalStatus": "approved",
     "status": "completed",
-    "isPublic": false,
-    "accessMode": "private",
+    "isPublic": true,
+    "accessMode": "public",
     "displayOrder": 1,
     "createdAt": "2026-11-25T00:29:14.804Z",
-    "updatedAt": "2026-11-25T18:54:44.109Z",
+    "updatedAt": "2026-11-25T18:54:44.611Z",
     "landingConfig": {
       "publicName": "Diagnóstico de Gobierno de Datos – Universidad Colegio Mayor de Cundinamarca",
       "slug": "diagnostico-de-gobierno-de-datos-universidad-colegio-mayor-de-cu",
@@ -2667,7 +2667,7 @@
       "mainObjective": "Diseñar un modelo de gobierno de datos con roles, políticas y un plan de 24 meses que fije reglas a los proyectos de datos ya aprobados, y probarlo en la plataforma GovData Nexus.",
       "benefits": "Datos únicos y confiables para tomar decisiones y reportar a entes externos, responsables claros por cada dato y protección de los datos personales, con el personal que la universidad ya tiene.",
       "teamLead": "Juan Esteban Rosero Jimenez",
-      "preparationStatus": "en_desarrollo",
+      "preparationStatus": "completado",
       "startDate": "2026-11-25",
       "endDate": "2029-08-05",
       "valueProp": {
@@ -2803,7 +2803,7 @@
         "displayOrder": 1,
         "featuredVideoPublic": true
       },
-      "publicationStatus": "completed",
+      "publicationStatus": "published",
       "completedSteps": [
         1,
         2,
@@ -2848,7 +2848,7 @@
         "authorsInstitution": "Politecnico Gran Colombiano"
       },
       "createdAt": "2026-11-25T00:29:14.804Z",
-      "updatedAt": "2026-11-25T18:54:43.852Z",
+      "updatedAt": "2026-11-25T18:54:44.979Z",
       "progress": 100,
       "calculatedProgress": 100,
       "heroBanner": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fdraft%2F1795566538564_r3c9_asset.jpg",
@@ -2856,12 +2856,12 @@
       "image": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fdraft%2F1795566538564_r3c9_asset.jpg",
       "coverImage": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fdraft%2F1795566538564_r3c9_asset.jpg",
       "submittedForApproval": true,
-      "approvalStatus": "pending",
+      "approvalStatus": "approved",
       "status": "completed",
       "completedAt": "2026-11-25T01:23:06.413Z",
-      "isPublic": false,
-      "rejectionReason": "Desautorizado por el Administrador (oculto al público).",
-      "authorizedAt": "2026-11-25T01:27:10.305Z",
+      "isPublic": true,
+      "rejectionReason": "",
+      "authorizedAt": "2026-11-25T18:54:44.979Z",
       "authorizedBy": "Melisa"
     },
     "ownerId": "user_1795545770936",
@@ -2894,11 +2894,11 @@
         "createdAt": "22/11/2026, 9:22:51 p.m."
       }
     ],
-    "visibility": "private",
-    "rejectedAt": "2026-11-25T18:54:43.852Z",
-    "rejectionReason": "Desautorizado por el Administrador (oculto al público).",
-    "tag": "⏳ Pendiente de Autorización",
-    "tagClass": "badge-review",
+    "visibility": "public",
+    "rejectedAt": "",
+    "rejectionReason": "",
+    "tag": "✔ Completado",
+    "tagClass": "badge-completed",
     "hub": {
       "joinRequests": [],
       "members": [
@@ -2924,7 +2924,7 @@
     ],
     "joinRequests": [],
     "completedAt": "2026-11-25T01:23:06.413Z",
-    "authorizedAt": "2026-11-25T01:27:10.305Z",
+    "authorizedAt": "2026-11-25T18:54:44.979Z",
     "authorizedBy": "Melisa",
     "stage": "completed"
   },
