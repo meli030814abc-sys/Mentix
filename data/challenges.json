@@ -28,7 +28,7 @@
     "accessMode": "private",
     "displayOrder": 1,
     "createdAt": "2026-11-25T00:29:14.804Z",
-    "updatedAt": "2026-11-25T00:54:09.345Z",
+    "updatedAt": "2026-11-25T00:54:29.946Z",
     "landingConfig": {
       "publicName": "Diagnóstico de Gobierno de Datos – Universidad Colegio Mayor de Cundinamarca",
       "slug": "diagnostico-de-gobierno-de-datos-universidad-colegio-mayor-de-cundinamarca",
@@ -117,7 +117,7 @@
     "_clearedThumbImage": false,
     "useDefaultImage": true,
     "targetAudience": "Universidades públicas, directivos y equipos de tecnología, y comunidad académica",
-    "problemStatement": "",
+    "problemStatement": "La universidad tiene sus datos dispersos y duplicados entre cuatro sedes y varios sistemas, sin responsables ni reglas que garanticen su calidad. Su madurez en gobierno de datos es de 1,7 sobre 5.",
     "mainObjective": "",
     "benefits": "",
     "teamLead": "Juan Esteban Rosero Jimenez",
@@ -133,8 +133,8 @@
       4,
       5
     ],
-    "progress": 70,
-    "calculatedProgress": 70,
+    "progress": 85,
+    "calculatedProgress": 85,
     "valueProp": {
       "problemSolved": "",
       "howItWorks": "",
@@ -278,7 +278,7 @@
       "categoryName": "Gobierno de Datos",
       "projectSubtype": "Gobierno de Datos e IA",
       "targetAudience": "Universidades públicas, directivos y equipos de tecnología, y comunidad académica",
-      "problemStatement": "",
+      "problemStatement": "La universidad tiene sus datos dispersos y duplicados entre cuatro sedes y varios sistemas, sin responsables ni reglas que garanticen su calidad. Su madurez en gobierno de datos es de 1,7 sobre 5.",
       "mainObjective": "",
       "benefits": "",
       "teamLead": "Juan Esteban Rosero Jimenez",
@@ -413,9 +413,9 @@
         "collaborators": ""
       },
       "createdAt": "2026-11-25T00:29:14.804Z",
-      "updatedAt": "2026-11-25T00:54:09.112Z",
-      "progress": 70,
-      "calculatedProgress": 70
+      "updatedAt": "2026-11-25T00:54:29.721Z",
+      "progress": 85,
+      "calculatedProgress": 85
     },
     "ownerId": "user_1795545770936",
     "ownerUsername": "Juanes_RJ",
@@ -464,7 +464,16 @@
       ],
       "views": [],
       "ratings": []
-    }
+    },
+    "members": [
+      {
+        "name": "Juan Esteban Rosero Jimenez",
+        "email": "jeroseroj@gmail.com",
+        "role": "owner",
+        "leader": true
+      }
+    ],
+    "joinRequests": []
   },
   {
     "id": "reto_1795552054552",
