@@ -28,7 +28,7 @@
     "accessMode": "private",
     "displayOrder": 1,
     "createdAt": "2026-11-25T00:29:14.804Z",
-    "updatedAt": "2026-11-25T00:50:13.410Z",
+    "updatedAt": "2026-11-25T00:50:18.063Z",
     "landingConfig": {
       "publicName": "Diagnóstico de Gobierno de Datos – Universidad Colegio Mayor de Cundinamarca",
       "slug": "diagnostico-de-gobierno-de-datos-universidad-colegio-mayor-de-cundinamarca",
@@ -114,7 +114,7 @@
     "_clearedMainImage": false,
     "_clearedThumbImage": false,
     "useDefaultImage": true,
-    "targetAudience": "",
+    "targetAudience": "Universidades públicas, directivos y equipos de tecnología, y comunidad académica",
     "problemStatement": "",
     "mainObjective": "",
     "benefits": "",
@@ -128,8 +128,8 @@
       1,
       2
     ],
-    "progress": 60,
-    "calculatedProgress": 60,
+    "progress": 70,
+    "calculatedProgress": 70,
     "valueProp": {
       "problemSolved": "",
       "howItWorks": "",
@@ -223,7 +223,7 @@
       "category": "gobierno_de__datos",
       "categoryName": "Gobierno de Datos",
       "projectSubtype": "Gobierno de Datos e IA",
-      "targetAudience": "",
+      "targetAudience": "Universidades públicas, directivos y equipos de tecnología, y comunidad académica",
       "problemStatement": "",
       "mainObjective": "",
       "benefits": "",
@@ -304,9 +304,9 @@
         "authorsRole": "Estudiante / Creador"
       },
       "createdAt": "2026-11-25T00:29:14.804Z",
-      "updatedAt": "2026-11-25T00:50:17.509Z",
-      "progress": 60,
-      "calculatedProgress": 60
+      "updatedAt": "2026-11-25T00:50:17.854Z",
+      "progress": 70,
+      "calculatedProgress": 70
     },
     "ownerId": "user_1795545770936",
     "ownerUsername": "Juanes_RJ",
