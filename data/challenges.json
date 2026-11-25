@@ -1,7 +1,7 @@
 [
   {
     "id": "proj_presentation_1795607130865",
-    "slug": "diagnostico-gobierno-de-datos-colegio-tecnico-jaime-pardo-leal-ied",
+    "slug": "diagnostico-gobierno-de-datos-colegio-tecnico-jaime-pardo-leal-i",
     "title": "Diagnostico gobierno de datos Colegio Tecnico Jaime Pardo Leal IED",
     "subtitle": "¿Quién responde por los datos de los estudiantes?",
     "description": "Antecedentes y problema identificado\nEl Colegio Técnico Jaime Pardo Leal  IED gestiona la información critica y sensible de los niños, niñas y adolecentes (NNA) de manera fragmentada en diversos sistemas aislados (plataforma de notas, carpetas informales en Google Drive, planillas locales, obserbadores fisicos), esta desarticulación crea una falta de trazabilidad del proceso y riesgos legales.\nMetodología\nSe realizo una investigación de la arquitectura actual y un inventario de activos de la información.\nPosteriormente, se aplico un instrumento de evaluación de madurez basado en las 11 dimensiones del marco DAMA-DMBOK (en una escala del 1 al 5) determinando una linea base inicial de 1,64 (nivel 1) y proyectado con metas de 12 meses (nivel 2) y 24 meses (nivel 3).\nPropuesta\nLa prioridad no trata de adquirir software sino formalizar el gobierno antes de integrar.El proyecto define un modelo único de roles y matriz RACI sobre la estructura actual, un esquema de protección del PIAR en tres capas (clínica, pedagógica y estadística), seudonomización mediante HMAC-SHA-256 y un roadmap en cuatro faases con compuestas de control e indicadores con fórmula.",
@@ -28,7 +28,7 @@
     "benefits": "Facilita la toma de decisiones directivas y administrativas con información más confiable, reduce riesgos de mal manejo de datos escolares y fortalece una cultura de cuidado y protección de los datos de niños, niñas, adolescentes y funcionarios.",
     "teamLead": "Jhomar Alejandra Cano Ramirez",
     "preparationStatus": "finalizado",
-    "publicationStatus": "pending_approval",
+    "publicationStatus": "draft",
     "approvalStatus": "pending",
     "submittedForApproval": false,
     "status": "in_progress",
@@ -1201,7 +1201,7 @@
     ],
     "landingConfig": {
       "publicName": "Diagnostico gobierno de datos Colegio Tecnico Jaime Pardo Leal IED",
-      "slug": "diagnostico-gobierno-de-datos-colegio-tecnico-jaime-pardo-leal-ied",
+      "slug": "diagnostico-gobierno-de-datos-colegio-tecnico-jaime-pardo-leal-i",
       "landingTitle": "Diagnostico gobierno de datos Colegio Tecnico Jaime Pardo Leal IED",
       "publicDescription": "Diagnostico de gobierno y gestion de datos bajo el marco DAMA-DMBOK para el Colegio Técnico Jaime Pardo Leal IED (Bogotá). Dirigido a directivos, docentes y area administrativa con el objetivo de formalizar roles y politicas, inventariar activos de la información y proteger los datos sensibles de niños, niñas y adolecentes (NNA).",
       "visibleCategory": "Administración Pública",
@@ -1366,7 +1366,7 @@
       ],
       "landingConfig": {
         "publicName": "Diagnostico gobierno de datos Colegio Tecnico Jaime Pardo Leal IED",
-        "slug": "diagnostico-gobierno-de-datos-colegio-tecnico-jaime-pardo-leal-ied",
+        "slug": "diagnostico-gobierno-de-datos-colegio-tecnico-jaime-pardo-leal-i",
         "landingTitle": "Diagnostico gobierno de datos Colegio Tecnico Jaime Pardo Leal IED",
         "publicDescription": "Diagnostico de gobierno y gestion de datos bajo el marco DAMA-DMBOK para el Colegio Técnico Jaime Pardo Leal IED (Bogotá). Dirigido a directivos, docentes y area administrativa con el objetivo de formalizar roles y politicas, inventariar activos de la información y proteger los datos sensibles de niños, niñas y adolecentes (NNA).",
         "visibleCategory": "Administración Pública",
@@ -1380,7 +1380,7 @@
         "displayOrder": 1,
         "featuredVideoPublic": true
       },
-      "publicationStatus": "pending_approval",
+      "publicationStatus": "draft",
       "completedSteps": [
         1,
         2,
@@ -1424,7 +1424,7 @@
         "collaborators": ""
       },
       "createdAt": "2026-11-25T11:45:30.865Z",
-      "updatedAt": "2026-11-25T12:40:31.408Z",
+      "updatedAt": "2026-11-25T12:40:43.540Z",
       "progress": 95,
       "calculatedProgress": 95,
       "heroBanner": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fdraft%2F1795607078265_tkil_asset.jpg",
@@ -1442,7 +1442,7 @@
     "authorAvatar": "🦊",
     "authorRole": "Estudiante / Creador",
     "createdAt": "2026-11-25T11:45:30.865Z",
-    "updatedAt": "2026-11-25T12:40:31.617Z",
+    "updatedAt": "2026-11-25T12:40:43.584Z",
     "fromStudentCreate": true,
     "_isStudentDraft": true,
     "timePerQuestion": 25,
