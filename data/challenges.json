@@ -383,7 +383,7 @@
         "collaborators": ""
       },
       "createdAt": "2026-11-25T11:45:30.865Z",
-      "updatedAt": "2026-11-25T12:27:01.037Z",
+      "updatedAt": "2026-11-25T12:29:07.118Z",
       "progress": 90,
       "calculatedProgress": 90
     },
@@ -397,7 +397,7 @@
     "authorAvatar": "🦊",
     "authorRole": "Estudiante / Creador",
     "createdAt": "2026-11-25T11:45:30.865Z",
-    "updatedAt": "2026-11-25T12:27:00.805Z",
+    "updatedAt": "2026-11-25T12:29:06.885Z",
     "fromStudentCreate": true,
     "_isStudentDraft": true,
     "timePerQuestion": 25,
