@@ -28,7 +28,7 @@
     "accessMode": "private",
     "displayOrder": 1,
     "createdAt": "2026-11-25T00:29:14.804Z",
-    "updatedAt": "2026-11-25T01:03:02.645Z",
+    "updatedAt": "2026-11-25T01:03:08.460Z",
     "landingConfig": {
       "publicName": "Diagnóstico de Gobierno de Datos – Universidad Colegio Mayor de Cundinamarca",
       "slug": "diagnostico-de-gobierno-de-datos-universidad-colegio-mayor-de-cundinamarca",
@@ -49,7 +49,8 @@
       "authorsList": "Juan Esteban Rosero Jimenez",
       "authorsEmails": "jeroseroj@gmail.com",
       "authorsRole": "Estudiante / Creador",
-      "authorsInstitution": "Politecnico Gran Colombiano"
+      "authorsInstitution": "Politecnico Gran Colombiano",
+      "collaborators": ""
     },
     "designConfig": {
       "themeId": "cosmos",
@@ -62,37 +63,184 @@
     },
     "slides": [
       {
-        "id": "slide_1",
-        "title": "La UCMC tiene cuatro sedes y datos duplicados entre sistemas: un mismo estudiante puede aparecer varias veces. Su madurez en gobierno de datos es de 2 sobre 5 y 74 de 100 prácticas DAMA no existen",
-        "subtitle": "Por Juan Esteban Rosero Jimenez",
-        "content": "Diagnóstico de gobierno de datos de la Universidad Colegio Mayor de Cundinamarca. Con base en DAMA-DMBOK se midió una madurez de 2 sobre 5 y se propuso un modelo de roles, comité y políticas que fija reglas a los proyectos de datos ya aprobados. El modelo se implementó en la plataforma GovData Nexus.",
-        "bullets": [
-          "PROBLEMA",
-          "METODOLOGÍA",
-          "Diagnóstico con DAMA-DMBOK a partir del PDI, el PETI, el FURAG y los archivos públicos de la universidad.",
-          "Diseño del modelo: 12 dominios con responsables, un comité, ocho políticas y un plan de 24 meses por $106 millones, sin cargos nuevos.",
-          "Implementación en GovData Nexus: catálogo de 22 activos, 11 datos maestros, calidad con 37 reglas, flujos de aprobación y acuerdos de nivel de servicio.",
-          "RESULTADOS",
-          "Sin reglas, la herramienta calificó la calidad en 85 %; con las reglas del negocio aparecieron 1.605 incidentes.",
-          "CONCLUSIÓN",
-          "A la UCMC no le faltan proyectos ni tecnología: le faltan reglas. El gobierno de datos las define; el negocio decide y los custodios ejecutan."
-        ],
+        "id": "slide_1795568586215_0",
+        "title": "Diapositiva 1",
+        "subtitle": "",
+        "content": "",
+        "bullets": [],
+        "layout": "full",
+        "isFullImage": true,
+        "isImported": true,
         "media": "",
-        "videoUrl": "",
-        "layout": "split",
-        "teacherNotes": "",
-        "titleColor": "#ffffff",
-        "subtitleColor": "#00f5d4",
-        "contentColor": "#cbd5e1",
-        "bulletsColor": "#ffffff",
-        "titleFont": "'Outfit', sans-serif",
-        "subtitleFont": "'Outfit', sans-serif",
-        "contentFont": "'Outfit', sans-serif",
-        "bulletsFont": "'Outfit', sans-serif",
-        "bulletStyle": "✦",
         "imageUrl": "",
-        "bgImage": "",
-        "bgColor": "#090e1a"
+        "notes": "Propuesta ejecutiva al Consejo Superior Universitario. Mensaje central: la universidad ya tiene la gente, el comité y los proyectos; falta fijar las reglas de juego de los datos. El gobierno de datos pone las reglas; los proyectos del PETI ejecutan.",
+        "bgColor": "#ffffff",
+        "themeId": "cosmos"
+      },
+      {
+        "id": "slide_1795568586215_1",
+        "title": "Diapositiva 2",
+        "subtitle": "",
+        "content": "",
+        "bullets": [],
+        "layout": "full",
+        "isFullImage": true,
+        "isImported": true,
+        "media": "",
+        "imageUrl": "",
+        "notes": "Hoy la universidad está en 1,7 sobre 5 (cerca de 2): existe lo que la norma exige, falta lo que depende de una decisión propia. Cuatro señales lo muestran en nuestros propios archivos públicos: un inventario congelado en 2021, 9 filas del Índice con fórmulas rotas, 66 citas de la Ley 1712 mal escritas y un índice de gestión documental de 38,8 sobre 100. No son fallas de personas, son fallas de reglas.",
+        "bgColor": "#ffffff",
+        "themeId": "cosmos"
+      },
+      {
+        "id": "slide_1795568586215_2",
+        "title": "Diapositiva 3",
+        "subtitle": "",
+        "content": "",
+        "bullets": [],
+        "layout": "full",
+        "isFullImage": true,
+        "isImported": true,
+        "media": "",
+        "imageUrl": "",
+        "notes": "Tres objetivos verificables. Y una regla que nace de la retroalimentación del profesor: el gobierno de datos no ejecuta, pone las reglas. Por eso el presupuesto que pedimos es pequeño y casi todo es tiempo del personal propio; los proyectos del PETI conservan su ejecución y su presupuesto.",
+        "bgColor": "#ffffff",
+        "themeId": "cosmos"
+      },
+      {
+        "id": "slide_1795568586215_3",
+        "title": "Diapositiva 4",
+        "subtitle": "",
+        "content": "",
+        "bullets": [],
+        "layout": "full",
+        "isFullImage": true,
+        "isImported": true,
+        "media": "",
+        "imageUrl": "",
+        "notes": "Doce dominios, cada uno con un responsable (el jefe de la dependencia) y un gestor del dato (un profesional de la misma dependencia con el 20 % de su tiempo reservado por resolución). Dos custodios, los dos oficiales y Control Interno como auditor. Ningún cargo nuevo: los roles se asignan al cargo y sobreviven a la rotación de contratistas.",
+        "bgColor": "#ffffff",
+        "themeId": "cosmos"
+      },
+      {
+        "id": "slide_1795568586215_4",
+        "title": "Diapositiva 5",
+        "subtitle": "",
+        "content": "",
+        "bullets": [],
+        "layout": "full",
+        "isFullImage": true,
+        "isImported": true,
+        "media": "",
+        "imageUrl": "",
+        "notes": "Cuatro fases en 24 meses, escenario Base. Dorado: dinero nuevo. Gris: valor del tiempo del personal propio, que no requiere caja. En la fase 4 el modelo opera sin apoyo externo. Los proyectos PETI aparecen solo como contexto: no se suman ni se les ponen fechas, porque el PETI no las fija.",
+        "bgColor": "#ffffff",
+        "themeId": "cosmos"
+      },
+      {
+        "id": "slide_1795568586215_5",
+        "title": "Diapositiva 6",
+        "subtitle": "",
+        "content": "",
+        "bullets": [],
+        "layout": "full",
+        "isFullImage": true,
+        "isImported": true,
+        "media": "",
+        "imageUrl": "",
+        "notes": "Gantt exclusivo de la Fase 1 (hoja Gantt Fase 1 del Excel, con horas, costos y dependencias). Tres hitos verificables: a los 30 días la resolución, a los 60 los archivos públicos corregidos y la plantilla de la ficha técnica, a los 90 el piloto de Investigación y el informe al Consejo.",
+        "bgColor": "#ffffff",
+        "themeId": "cosmos"
+      },
+      {
+        "id": "slide_1795568586215_6",
+        "title": "Diapositiva 7",
+        "subtitle": "",
+        "content": "",
+        "bullets": [],
+        "layout": "full",
+        "isFullImage": true,
+        "isImported": true,
+        "media": "",
+        "imageUrl": "",
+        "notes": "Tres escenarios para la Fase 1. Recomendamos el Base: $24,6 millones de desembolso. La mayor parte es un analista que sostiene el Comité, los catálogos y los indicadores; sin él, el modelo depende solo de dedicaciones parciales, que es la causa más común de que estos comités dejen de sesionar. Además, la universidad aporta $76 millones en tiempo de su personal, que ya está en la nómina.",
+        "bgColor": "#ffffff",
+        "themeId": "cosmos"
+      },
+      {
+        "id": "slide_1795568586215_7",
+        "title": "Diapositiva 8",
+        "subtitle": "",
+        "content": "",
+        "bullets": [],
+        "layout": "full",
+        "isFullImage": true,
+        "isImported": true,
+        "media": "",
+        "imageUrl": "",
+        "notes": "En 24 meses la universidad pone $106 millones de caja nueva, el 1,9 % de lo que ya aprobó en el PETI, y $622 millones en tiempo de su gente. La mitad del esfuerzo es el tiempo reservado de los gestores: es lo que hace que la información se mantenga al día después del proyecto. En la fase 4 casi no hay desembolso: el modelo queda operando con personal propio.",
+        "bgColor": "#ffffff",
+        "themeId": "cosmos"
+      },
+      {
+        "id": "slide_1795568586215_8",
+        "title": "Diapositiva 9",
+        "subtitle": "",
+        "content": "",
+        "bullets": [],
+        "layout": "full",
+        "isFullImage": true,
+        "isImported": true,
+        "media": "",
+        "imageUrl": "",
+        "notes": "El plan completo está en la hoja Gestión cambio y capacitación: 13 grupos de interés con impacto, mensaje y canal, formación por rol, riesgos de resistencia y cómo responder. El apoyo externo es decreciente: al cerrar el primer año, Talento Humano opera el plan. Complementa el PRY-18 sin duplicarlo.",
+        "bgColor": "#ffffff",
+        "themeId": "cosmos"
+      },
+      {
+        "id": "slide_1795568586215_9",
+        "title": "Diapositiva 10",
+        "subtitle": "",
+        "content": "",
+        "bullets": [],
+        "layout": "full",
+        "isFullImage": true,
+        "isImported": true,
+        "media": "",
+        "imageUrl": "",
+        "notes": "Cada pago está atado a un entregable verificable. La banda del 30 % se calcula solo sobre lo negociable: consultor de cambio y experto. Costo de ejecución $23,1 millones; techo $26,6 millones, que es lo que se reserva en el CDP; piso $19,6 millones. El analista no entra en la banda porque su honorario sale de la tabla de la universidad.",
+        "bgColor": "#ffffff",
+        "themeId": "cosmos"
+      },
+      {
+        "id": "slide_1795568586215_10",
+        "title": "Diapositiva 11",
+        "subtitle": "",
+        "content": "",
+        "bullets": [],
+        "layout": "full",
+        "isFullImage": true,
+        "isImported": true,
+        "media": "",
+        "imageUrl": "",
+        "notes": "Cerramos con lo que se obtiene en cada horizonte y la decisión concreta: aprobar la Fase 1 con $24,6 millones y encargar la resolución. Se retira el Administrador de Datos de la versión anterior (no existe en el modelo) y la meta intermedia de 2,5, que no tenía sustento: la meta es 8 de 11 frentes en nivel 3 a 24 meses.",
+        "bgColor": "#ffffff",
+        "themeId": "cosmos"
+      },
+      {
+        "id": "slide_1795568586215_11",
+        "title": "Diapositiva 12",
+        "subtitle": "",
+        "content": "",
+        "bullets": [],
+        "layout": "full",
+        "isFullImage": true,
+        "isImported": true,
+        "media": "",
+        "imageUrl": "",
+        "notes": "",
+        "bgColor": "#ffffff",
+        "themeId": "cosmos"
       }
     ],
     "resources": [
@@ -124,7 +272,7 @@
     "submittedForApproval": false,
     "startDate": "2026-11-25",
     "endDate": "2029-08-05",
-    "currentStep": 9,
+    "currentStep": 11,
     "completedSteps": [
       1,
       2,
@@ -133,10 +281,12 @@
       5,
       6,
       7,
-      8
+      8,
+      9,
+      10
     ],
-    "progress": 85,
-    "calculatedProgress": 85,
+    "progress": 95,
+    "calculatedProgress": 95,
     "valueProp": {
       "problemSolved": "La universidad tiene sus datos dispersos y duplicados entre cuatro sedes y varios sistemas, sin responsables ni reglas que garanticen su calidad. Su madurez en gobierno de datos es de 2 sobre 5.",
       "howItWorks": "Diagnostica la madurez con DAMA-DMBOK, asigna responsables a cada dominio de datos, define políticas y reglas de calidad, y las aplica en GovData Nexus con catálogo, flujos de aprobación y acuerdos de nivel de servicio.",
@@ -150,11 +300,32 @@
         "Reglas de calidad de datos",
         "Flujos de aprobación con SLA"
       ],
-      "resultsAndBenefits": "Datos únicos y confiables para tomar decisiones y reportar a entes externos, responsables claros por cada dato y protección de los datos personales, con el personal que la universidad ya tiene.",
+      "resultsAndBenefits": "",
       "prerequisites": "",
       "visitorAction": "Unirse / Colaborar",
-      "commercialPitch": "",
-      "faqs": []
+      "commercialPitch": "Reglas claras para que una universidad confíe en sus datos",
+      "faqs": [
+        {
+          "q": "¿Qué es el gobierno de datos?",
+          "a": "Es el conjunto de reglas, roles y responsabilidades que definen quién decide sobre los datos de una organización, qué estándares deben cumplir y cómo se verifica."
+        },
+        {
+          "q": "¿Por qué la Universidad Colegio Mayor de Cundinamarca?",
+          "a": "Es una universidad pública con cuatro sedes cuyos datos están dispersos y duplicados entre sistemas, sin responsables formales ni reglas de calidad."
+        },
+        {
+          "q": "¿Cuánto cuesta implementar el modelo?",
+          "a": "El escenario recomendado cuesta $106 millones en 24 meses, menos del 2 % de lo que la universidad ya aprobó para sus proyectos de datos, y no crea cargos nuevos."
+        },
+        {
+          "q": "¿Qué es GovData Nexus y para qué se usó?",
+          "a": "Es una plataforma de gobierno de datos. En ella se cargó el catálogo de datos, el glosario, las reglas de calidad y los flujos de aprobación para probar el modelo."
+        },
+        {
+          "q": "¿Se usaron datos reales de estudiantes?",
+          "a": "No. La prueba de calidad se hizo con una base de datos sintética de 2.000 estudiantes que reproduce los problemas reales de la universidad, para proteger los datos personales."
+        }
+      ]
     },
     "valueProposition": {
       "problemSolved": "La universidad tiene sus datos dispersos y duplicados entre cuatro sedes y varios sistemas, sin responsables ni reglas que garanticen su calidad. Su madurez en gobierno de datos es de 2 sobre 5.",
@@ -169,22 +340,43 @@
         "Reglas de calidad de datos",
         "Flujos de aprobación con SLA"
       ],
-      "resultsAndBenefits": "Datos únicos y confiables para tomar decisiones y reportar a entes externos, responsables claros por cada dato y protección de los datos personales, con el personal que la universidad ya tiene.",
+      "resultsAndBenefits": "",
       "prerequisites": "",
       "visitorAction": "Unirse / Colaborar",
-      "commercialPitch": "",
-      "faqs": []
+      "commercialPitch": "Reglas claras para que una universidad confíe en sus datos",
+      "faqs": [
+        {
+          "q": "¿Qué es el gobierno de datos?",
+          "a": "Es el conjunto de reglas, roles y responsabilidades que definen quién decide sobre los datos de una organización, qué estándares deben cumplir y cómo se verifica."
+        },
+        {
+          "q": "¿Por qué la Universidad Colegio Mayor de Cundinamarca?",
+          "a": "Es una universidad pública con cuatro sedes cuyos datos están dispersos y duplicados entre sistemas, sin responsables formales ni reglas de calidad."
+        },
+        {
+          "q": "¿Cuánto cuesta implementar el modelo?",
+          "a": "El escenario recomendado cuesta $106 millones en 24 meses, menos del 2 % de lo que la universidad ya aprobó para sus proyectos de datos, y no crea cargos nuevos."
+        },
+        {
+          "q": "¿Qué es GovData Nexus y para qué se usó?",
+          "a": "Es una plataforma de gobierno de datos. En ella se cargó el catálogo de datos, el glosario, las reglas de calidad y los flujos de aprobación para probar el modelo."
+        },
+        {
+          "q": "¿Se usaron datos reales de estudiantes?",
+          "a": "No. La prueba de calidad se hizo con una base de datos sintética de 2.000 estudiantes que reproduce los problemas reales de la universidad, para proteger los datos personales."
+        }
+      ]
     },
-    "videoUrl": "",
+    "videoUrl": "https://youtu.be/Cgel4vZV4CU",
     "videoConfig": {
       "sourceType": "url",
-      "url": "",
+      "url": "https://youtu.be/Cgel4vZV4CU",
       "fileName": "",
       "title": "",
       "description": "",
-      "thumbnailUrl": "",
+      "thumbnailUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_presentation_1795566554804%2F1795568466156_d3vj_asset.jpg",
       "isPublic": true,
-      "verified": false
+      "verified": true
     },
     "visualAssets": [],
     "presentations": [
@@ -193,37 +385,184 @@
         "title": "Presentación: Diagnóstico de Gobierno de Datos – Universidad Colegio Mayor de Cundinamarca",
         "slides": [
           {
-            "id": "slide_1",
-            "title": "La UCMC tiene cuatro sedes y datos duplicados entre sistemas: un mismo estudiante puede aparecer varias veces. Su madurez en gobierno de datos es de 2 sobre 5 y 74 de 100 prácticas DAMA no existen",
-            "subtitle": "Por Juan Esteban Rosero Jimenez",
-            "content": "Diagnóstico de gobierno de datos de la Universidad Colegio Mayor de Cundinamarca. Con base en DAMA-DMBOK se midió una madurez de 2 sobre 5 y se propuso un modelo de roles, comité y políticas que fija reglas a los proyectos de datos ya aprobados. El modelo se implementó en la plataforma GovData Nexus.",
-            "bullets": [
-              "PROBLEMA",
-              "METODOLOGÍA",
-              "Diagnóstico con DAMA-DMBOK a partir del PDI, el PETI, el FURAG y los archivos públicos de la universidad.",
-              "Diseño del modelo: 12 dominios con responsables, un comité, ocho políticas y un plan de 24 meses por $106 millones, sin cargos nuevos.",
-              "Implementación en GovData Nexus: catálogo de 22 activos, 11 datos maestros, calidad con 37 reglas, flujos de aprobación y acuerdos de nivel de servicio.",
-              "RESULTADOS",
-              "Sin reglas, la herramienta calificó la calidad en 85 %; con las reglas del negocio aparecieron 1.605 incidentes.",
-              "CONCLUSIÓN",
-              "A la UCMC no le faltan proyectos ni tecnología: le faltan reglas. El gobierno de datos las define; el negocio decide y los custodios ejecutan."
-            ],
+            "id": "slide_1795568586215_0",
+            "title": "Diapositiva 1",
+            "subtitle": "",
+            "content": "",
+            "bullets": [],
+            "layout": "full",
+            "isFullImage": true,
+            "isImported": true,
             "media": "",
-            "videoUrl": "",
-            "layout": "split",
-            "teacherNotes": "",
-            "titleColor": "#ffffff",
-            "subtitleColor": "#00f5d4",
-            "contentColor": "#cbd5e1",
-            "bulletsColor": "#ffffff",
-            "titleFont": "'Outfit', sans-serif",
-            "subtitleFont": "'Outfit', sans-serif",
-            "contentFont": "'Outfit', sans-serif",
-            "bulletsFont": "'Outfit', sans-serif",
-            "bulletStyle": "✦",
             "imageUrl": "",
-            "bgImage": "",
-            "bgColor": "#090e1a"
+            "notes": "Propuesta ejecutiva al Consejo Superior Universitario. Mensaje central: la universidad ya tiene la gente, el comité y los proyectos; falta fijar las reglas de juego de los datos. El gobierno de datos pone las reglas; los proyectos del PETI ejecutan.",
+            "bgColor": "#ffffff",
+            "themeId": "cosmos"
+          },
+          {
+            "id": "slide_1795568586215_1",
+            "title": "Diapositiva 2",
+            "subtitle": "",
+            "content": "",
+            "bullets": [],
+            "layout": "full",
+            "isFullImage": true,
+            "isImported": true,
+            "media": "",
+            "imageUrl": "",
+            "notes": "Hoy la universidad está en 1,7 sobre 5 (cerca de 2): existe lo que la norma exige, falta lo que depende de una decisión propia. Cuatro señales lo muestran en nuestros propios archivos públicos: un inventario congelado en 2021, 9 filas del Índice con fórmulas rotas, 66 citas de la Ley 1712 mal escritas y un índice de gestión documental de 38,8 sobre 100. No son fallas de personas, son fallas de reglas.",
+            "bgColor": "#ffffff",
+            "themeId": "cosmos"
+          },
+          {
+            "id": "slide_1795568586215_2",
+            "title": "Diapositiva 3",
+            "subtitle": "",
+            "content": "",
+            "bullets": [],
+            "layout": "full",
+            "isFullImage": true,
+            "isImported": true,
+            "media": "",
+            "imageUrl": "",
+            "notes": "Tres objetivos verificables. Y una regla que nace de la retroalimentación del profesor: el gobierno de datos no ejecuta, pone las reglas. Por eso el presupuesto que pedimos es pequeño y casi todo es tiempo del personal propio; los proyectos del PETI conservan su ejecución y su presupuesto.",
+            "bgColor": "#ffffff",
+            "themeId": "cosmos"
+          },
+          {
+            "id": "slide_1795568586215_3",
+            "title": "Diapositiva 4",
+            "subtitle": "",
+            "content": "",
+            "bullets": [],
+            "layout": "full",
+            "isFullImage": true,
+            "isImported": true,
+            "media": "",
+            "imageUrl": "",
+            "notes": "Doce dominios, cada uno con un responsable (el jefe de la dependencia) y un gestor del dato (un profesional de la misma dependencia con el 20 % de su tiempo reservado por resolución). Dos custodios, los dos oficiales y Control Interno como auditor. Ningún cargo nuevo: los roles se asignan al cargo y sobreviven a la rotación de contratistas.",
+            "bgColor": "#ffffff",
+            "themeId": "cosmos"
+          },
+          {
+            "id": "slide_1795568586215_4",
+            "title": "Diapositiva 5",
+            "subtitle": "",
+            "content": "",
+            "bullets": [],
+            "layout": "full",
+            "isFullImage": true,
+            "isImported": true,
+            "media": "",
+            "imageUrl": "",
+            "notes": "Cuatro fases en 24 meses, escenario Base. Dorado: dinero nuevo. Gris: valor del tiempo del personal propio, que no requiere caja. En la fase 4 el modelo opera sin apoyo externo. Los proyectos PETI aparecen solo como contexto: no se suman ni se les ponen fechas, porque el PETI no las fija.",
+            "bgColor": "#ffffff",
+            "themeId": "cosmos"
+          },
+          {
+            "id": "slide_1795568586215_5",
+            "title": "Diapositiva 6",
+            "subtitle": "",
+            "content": "",
+            "bullets": [],
+            "layout": "full",
+            "isFullImage": true,
+            "isImported": true,
+            "media": "",
+            "imageUrl": "",
+            "notes": "Gantt exclusivo de la Fase 1 (hoja Gantt Fase 1 del Excel, con horas, costos y dependencias). Tres hitos verificables: a los 30 días la resolución, a los 60 los archivos públicos corregidos y la plantilla de la ficha técnica, a los 90 el piloto de Investigación y el informe al Consejo.",
+            "bgColor": "#ffffff",
+            "themeId": "cosmos"
+          },
+          {
+            "id": "slide_1795568586215_6",
+            "title": "Diapositiva 7",
+            "subtitle": "",
+            "content": "",
+            "bullets": [],
+            "layout": "full",
+            "isFullImage": true,
+            "isImported": true,
+            "media": "",
+            "imageUrl": "",
+            "notes": "Tres escenarios para la Fase 1. Recomendamos el Base: $24,6 millones de desembolso. La mayor parte es un analista que sostiene el Comité, los catálogos y los indicadores; sin él, el modelo depende solo de dedicaciones parciales, que es la causa más común de que estos comités dejen de sesionar. Además, la universidad aporta $76 millones en tiempo de su personal, que ya está en la nómina.",
+            "bgColor": "#ffffff",
+            "themeId": "cosmos"
+          },
+          {
+            "id": "slide_1795568586215_7",
+            "title": "Diapositiva 8",
+            "subtitle": "",
+            "content": "",
+            "bullets": [],
+            "layout": "full",
+            "isFullImage": true,
+            "isImported": true,
+            "media": "",
+            "imageUrl": "",
+            "notes": "En 24 meses la universidad pone $106 millones de caja nueva, el 1,9 % de lo que ya aprobó en el PETI, y $622 millones en tiempo de su gente. La mitad del esfuerzo es el tiempo reservado de los gestores: es lo que hace que la información se mantenga al día después del proyecto. En la fase 4 casi no hay desembolso: el modelo queda operando con personal propio.",
+            "bgColor": "#ffffff",
+            "themeId": "cosmos"
+          },
+          {
+            "id": "slide_1795568586215_8",
+            "title": "Diapositiva 9",
+            "subtitle": "",
+            "content": "",
+            "bullets": [],
+            "layout": "full",
+            "isFullImage": true,
+            "isImported": true,
+            "media": "",
+            "imageUrl": "",
+            "notes": "El plan completo está en la hoja Gestión cambio y capacitación: 13 grupos de interés con impacto, mensaje y canal, formación por rol, riesgos de resistencia y cómo responder. El apoyo externo es decreciente: al cerrar el primer año, Talento Humano opera el plan. Complementa el PRY-18 sin duplicarlo.",
+            "bgColor": "#ffffff",
+            "themeId": "cosmos"
+          },
+          {
+            "id": "slide_1795568586215_9",
+            "title": "Diapositiva 10",
+            "subtitle": "",
+            "content": "",
+            "bullets": [],
+            "layout": "full",
+            "isFullImage": true,
+            "isImported": true,
+            "media": "",
+            "imageUrl": "",
+            "notes": "Cada pago está atado a un entregable verificable. La banda del 30 % se calcula solo sobre lo negociable: consultor de cambio y experto. Costo de ejecución $23,1 millones; techo $26,6 millones, que es lo que se reserva en el CDP; piso $19,6 millones. El analista no entra en la banda porque su honorario sale de la tabla de la universidad.",
+            "bgColor": "#ffffff",
+            "themeId": "cosmos"
+          },
+          {
+            "id": "slide_1795568586215_10",
+            "title": "Diapositiva 11",
+            "subtitle": "",
+            "content": "",
+            "bullets": [],
+            "layout": "full",
+            "isFullImage": true,
+            "isImported": true,
+            "media": "",
+            "imageUrl": "",
+            "notes": "Cerramos con lo que se obtiene en cada horizonte y la decisión concreta: aprobar la Fase 1 con $24,6 millones y encargar la resolución. Se retira el Administrador de Datos de la versión anterior (no existe en el modelo) y la meta intermedia de 2,5, que no tenía sustento: la meta es 8 de 11 frentes en nivel 3 a 24 meses.",
+            "bgColor": "#ffffff",
+            "themeId": "cosmos"
+          },
+          {
+            "id": "slide_1795568586215_11",
+            "title": "Diapositiva 12",
+            "subtitle": "",
+            "content": "",
+            "bullets": [],
+            "layout": "full",
+            "isFullImage": true,
+            "isImported": true,
+            "media": "",
+            "imageUrl": "",
+            "notes": "",
+            "bgColor": "#ffffff",
+            "themeId": "cosmos"
           }
         ]
       }
@@ -314,21 +653,42 @@
           "Reglas de calidad de datos",
           "Flujos de aprobación con SLA"
         ],
-        "resultsAndBenefits": "Datos únicos y confiables para tomar decisiones y reportar a entes externos, responsables claros por cada dato y protección de los datos personales, con el personal que la universidad ya tiene.",
+        "resultsAndBenefits": "",
         "prerequisites": "",
         "visitorAction": "Unirse / Colaborar",
-        "commercialPitch": "",
-        "faqs": []
+        "commercialPitch": "Reglas claras para que una universidad confíe en sus datos",
+        "faqs": [
+          {
+            "q": "¿Qué es el gobierno de datos?",
+            "a": "Es el conjunto de reglas, roles y responsabilidades que definen quién decide sobre los datos de una organización, qué estándares deben cumplir y cómo se verifica."
+          },
+          {
+            "q": "¿Por qué la Universidad Colegio Mayor de Cundinamarca?",
+            "a": "Es una universidad pública con cuatro sedes cuyos datos están dispersos y duplicados entre sistemas, sin responsables formales ni reglas de calidad."
+          },
+          {
+            "q": "¿Cuánto cuesta implementar el modelo?",
+            "a": "El escenario recomendado cuesta $106 millones en 24 meses, menos del 2 % de lo que la universidad ya aprobó para sus proyectos de datos, y no crea cargos nuevos."
+          },
+          {
+            "q": "¿Qué es GovData Nexus y para qué se usó?",
+            "a": "Es una plataforma de gobierno de datos. En ella se cargó el catálogo de datos, el glosario, las reglas de calidad y los flujos de aprobación para probar el modelo."
+          },
+          {
+            "q": "¿Se usaron datos reales de estudiantes?",
+            "a": "No. La prueba de calidad se hizo con una base de datos sintética de 2.000 estudiantes que reproduce los problemas reales de la universidad, para proteger los datos personales."
+          }
+        ]
       },
       "videoConfig": {
         "sourceType": "url",
-        "url": "",
+        "url": "https://youtu.be/Cgel4vZV4CU",
         "fileName": "",
         "title": "",
         "description": "",
-        "thumbnailUrl": "",
+        "thumbnailUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_presentation_1795566554804%2F1795568466156_d3vj_asset.jpg",
         "isPublic": true,
-        "verified": false
+        "verified": true
       },
       "mainImage": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fdraft%2F1795566538564_r3c9_asset.jpg",
       "thumbnailImage": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fdraft%2F1795566538564_r3c9_asset.jpg",
@@ -411,9 +771,11 @@
         5,
         6,
         7,
-        8
+        8,
+        9,
+        10
       ],
-      "currentStep": 9,
+      "currentStep": 11,
       "author": "Juan Esteban Rosero Jimenez",
       "authorId": "user_1795545770936",
       "ownerId": "user_1795545770936",
@@ -421,8 +783,8 @@
       "authorEmail": "jeroseroj@gmail.com",
       "authorAvatar": "🦊",
       "authorRole": "Estudiante / Creador",
-      "joinCode": "804263",
-      "accessCode": "804263",
+      "joinCode": "",
+      "accessCode": "",
       "designConfig": {
         "themeId": "cosmos",
         "fontFamily": "Montserrat",
@@ -435,17 +797,18 @@
         "authorsList": "Juan Esteban Rosero Jimenez",
         "authorsEmails": "jeroseroj@gmail.com",
         "authorsRole": "Estudiante / Creador",
-        "authorsInstitution": "Politecnico Gran Colombiano"
+        "authorsInstitution": "Politecnico Gran Colombiano",
+        "collaborators": ""
       },
       "createdAt": "2026-11-25T00:29:14.804Z",
-      "updatedAt": "2026-11-25T01:03:03.339Z",
-      "progress": 85,
-      "calculatedProgress": 85
+      "updatedAt": "2026-11-25T01:03:06.215Z",
+      "progress": 95,
+      "calculatedProgress": 95
     },
     "ownerId": "user_1795545770936",
     "ownerUsername": "Juanes_RJ",
-    "joinCode": "804263",
-    "accessCode": "804263",
+    "joinCode": "",
+    "accessCode": "",
     "customProjectCodes": [
       {
         "code": "804263",
@@ -489,16 +852,7 @@
       ],
       "views": [],
       "ratings": []
-    },
-    "members": [
-      {
-        "name": "Juan Esteban Rosero Jimenez",
-        "email": "jeroseroj@gmail.com",
-        "role": "owner",
-        "leader": true
-      }
-    ],
-    "joinRequests": []
+    }
   },
   {
     "id": "reto_1795552054552",
