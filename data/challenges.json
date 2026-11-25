@@ -28,7 +28,7 @@
     "accessMode": "private",
     "displayOrder": 1,
     "createdAt": "2026-11-25T11:45:30.865Z",
-    "updatedAt": "2026-11-25T11:46:32.261Z",
+    "updatedAt": "2026-11-25T11:46:41.795Z",
     "landingConfig": {
       "publicName": "Diagnostico gobierno de datos Colegio Tecnico Jaime Pardo Leal IED",
       "slug": "diagnostico-gobierno-de-datos-colegio-tecnico-jaime-pardo-leal-ied",
@@ -143,7 +143,7 @@
       }
     ],
     "slug": "diagnostico-gobierno-de-datos-colegio-tecnico-jaime-pardo-leal-ied",
-    "subtitle": "Quien tiene",
+    "subtitle": "Quien tiene la res",
     "isGovDataProject": true,
     "projectSubtype": "Gobierno de Datos e IA",
     "heroBanner": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fdraft%2F1795607078265_tkil_asset.jpg",
@@ -253,7 +253,7 @@
     "govdata": {
       "id": "proj_presentation_1795607130865",
       "title": "Diagnostico gobierno de datos Colegio Tecnico Jaime Pardo Leal IED",
-      "subtitle": "Quien tiene",
+      "subtitle": "Quien tiene la res",
       "shortDescription": "Antecedentes y problema identificado\nEl Colegio Técnico Jaime Pardo Leal  IED gestiona la información critica y sensible de los niños, niñas y adolecentes (NNA) de manera fragmentada en diversos sistemas aislados (plataforma de notas, carpetas informales en Google Drive, planillas locales, obserbadores fisicos), esta desarticulación crea una falta de trazabilidad del proceso y riesgos legales.\nMetodología\nSe realizo una investigación de la arquitectura actual y un inventario de activos de la información.\nPosteriormente, se aplico un instrumento de evaluación de madurez basado en las 11 dimensiones del marco DAMA-DMBOK (en una escala del 1 al 5) determinando una linea base inicial de 1,64 (nivel 1) y proyectado con metas de 12 meses (nivel 2) y 24 meses (nivel 3).\nPropuesta\nLa prioridad no trata de adquirir software sino formalizar el gobierno antes de integrar.El proyecto define un modelo único de roles y matriz RACI sobre la estructura actual, un esquema de protección del PIAR en tres capas (clínica, pedagógica y estadística), seudonomización mediante HMAC-SHA-256 y un roadmap en cuatro faases con compuestas de control e indicadores con fórmula.",
       "fullDescription": "Antecedentes y problema identificado\nEl Colegio Técnico Jaime Pardo Leal  IED gestiona la información critica y sensible de los niños, niñas y adolecentes (NNA) de manera fragmentada en diversos sistemas aislados (plataforma de notas, carpetas informales en Google Drive, planillas locales, obserbadores fisicos), esta desarticulación crea una falta de trazabilidad del proceso y riesgos legales.\nMetodología\nSe realizo una investigación de la arquitectura actual y un inventario de activos de la información.\nPosteriormente, se aplico un instrumento de evaluación de madurez basado en las 11 dimensiones del marco DAMA-DMBOK (en una escala del 1 al 5) determinando una linea base inicial de 1,64 (nivel 1) y proyectado con metas de 12 meses (nivel 2) y 24 meses (nivel 3).\nPropuesta\nLa prioridad no trata de adquirir software sino formalizar el gobierno antes de integrar.El proyecto define un modelo único de roles y matriz RACI sobre la estructura actual, un esquema de protección del PIAR en tres capas (clínica, pedagógica y estadística), seudonomización mediante HMAC-SHA-256 y un roadmap en cuatro faases con compuestas de control e indicadores con fórmula.",
       "category": "admin",
@@ -339,7 +339,7 @@
         "authorsRole": "Estudiante / Creador"
       },
       "createdAt": "2026-11-25T11:45:30.865Z",
-      "updatedAt": "2026-11-25T11:46:32.394Z",
+      "updatedAt": "2026-11-25T11:46:41.937Z",
       "progress": 60,
       "calculatedProgress": 60
     },
