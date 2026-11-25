@@ -28,7 +28,7 @@
     "accessMode": "private",
     "displayOrder": 1,
     "createdAt": "2026-11-25T00:29:14.804Z",
-    "updatedAt": "2026-11-25T01:11:07.437Z",
+    "updatedAt": "2026-11-25T01:11:12.137Z",
     "landingConfig": {
       "publicName": "Diagnóstico de Gobierno de Datos – Universidad Colegio Mayor de Cundinamarca",
       "slug": "diagnostico-de-gobierno-de-datos-universidad-colegio-mayor-de-cundinamarca",
@@ -433,7 +433,7 @@
       },
       {
         "id": "vis_1795568986132_0",
-        "title": "GovDataNexus ",
+        "title": "GovDataNexus R",
         "caption": "Imagen oficial del proyecto.",
         "url": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_presentation_1795566554804%2F1795568984783_m6ie_asset.jpg",
         "assetType": "gallery",
@@ -881,7 +881,7 @@
         "collaborators": ""
       },
       "createdAt": "2026-11-25T00:29:14.804Z",
-      "updatedAt": "2026-11-25T01:11:06.713Z",
+      "updatedAt": "2026-11-25T01:11:11.544Z",
       "progress": 95,
       "calculatedProgress": 95,
       "heroBanner": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fdraft%2F1795566538564_r3c9_asset.jpg",
