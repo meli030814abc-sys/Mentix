@@ -28,7 +28,7 @@
     "accessMode": "private",
     "displayOrder": 1,
     "createdAt": "2026-11-25T00:29:14.804Z",
-    "updatedAt": "2026-11-25T00:58:58.589Z",
+    "updatedAt": "2026-11-25T00:59:20.600Z",
     "landingConfig": {
       "publicName": "Diagnóstico de Gobierno de Datos – Universidad Colegio Mayor de Cundinamarca",
       "slug": "diagnostico-de-gobierno-de-datos-universidad-colegio-mayor-de-cundinamarca",
@@ -154,7 +154,7 @@
       "resultsAndBenefits": "",
       "prerequisites": "",
       "visitorAction": "Unirse / Colaborar",
-      "commercialPitch": "",
+      "commercialPitch": "Reglas claras para que una universidad confíe en sus datos",
       "faqs": [
         {
           "q": "",
@@ -178,7 +178,7 @@
       "resultsAndBenefits": "",
       "prerequisites": "",
       "visitorAction": "Unirse / Colaborar",
-      "commercialPitch": "",
+      "commercialPitch": "Reglas claras para que una universidad confíe en sus datos",
       "faqs": [
         {
           "q": "",
@@ -328,7 +328,7 @@
         "resultsAndBenefits": "",
         "prerequisites": "",
         "visitorAction": "Unirse / Colaborar",
-        "commercialPitch": "",
+        "commercialPitch": "Reglas claras para que una universidad confíe en sus datos",
         "faqs": [
           {
             "q": "",
@@ -455,7 +455,7 @@
         "collaborators": ""
       },
       "createdAt": "2026-11-25T00:29:14.804Z",
-      "updatedAt": "2026-11-25T00:58:58.360Z",
+      "updatedAt": "2026-11-25T00:59:20.377Z",
       "progress": 85,
       "calculatedProgress": 85
     },
@@ -506,7 +506,16 @@
       ],
       "views": [],
       "ratings": []
-    }
+    },
+    "members": [
+      {
+        "name": "Juan Esteban Rosero Jimenez",
+        "email": "jeroseroj@gmail.com",
+        "role": "owner",
+        "leader": true
+      }
+    ],
+    "joinRequests": []
   },
   {
     "id": "reto_1795552054552",
