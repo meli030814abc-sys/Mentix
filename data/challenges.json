@@ -1248,7 +1248,7 @@
       "textColor": "#cbd5e1",
       "accentColor": "#00f5d4",
       "bannerStyle": "gradient-cosmos",
-      "bannerUrl": ""
+      "bannerUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fdraft%2F1795607078265_tkil_asset.jpg"
     },
     "authorsConfig": {
       "authorsList": "Jhomar Alejandra Cano Ramirez",
@@ -1393,7 +1393,8 @@
         "titleColor": "#ffffff",
         "textColor": "#cbd5e1",
         "accentColor": "#00f5d4",
-        "bannerStyle": "gradient-cosmos"
+        "bannerStyle": "gradient-cosmos",
+        "bannerUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fdraft%2F1795607078265_tkil_asset.jpg"
       },
       "authorsConfig": {
         "authorsList": "Jhomar Alejandra Cano Ramirez",
@@ -1403,9 +1404,13 @@
         "collaborators": ""
       },
       "createdAt": "2026-11-25T11:45:30.865Z",
-      "updatedAt": "2026-11-25T12:37:26.725Z",
+      "updatedAt": "2026-11-25T12:37:39.239Z",
       "progress": 95,
-      "calculatedProgress": 95
+      "calculatedProgress": 95,
+      "heroBanner": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fdraft%2F1795607078265_tkil_asset.jpg",
+      "banner": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fdraft%2F1795607078265_tkil_asset.jpg",
+      "image": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fdraft%2F1795607078265_tkil_asset.jpg",
+      "coverImage": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fdraft%2F1795607078265_tkil_asset.jpg"
     },
     "author": "Jhomar Alejandra Cano Ramirez",
     "authorId": "user_1795557081139",
@@ -1417,7 +1422,7 @@
     "authorAvatar": "🦊",
     "authorRole": "Estudiante / Creador",
     "createdAt": "2026-11-25T11:45:30.865Z",
-    "updatedAt": "2026-11-25T12:37:26.585Z",
+    "updatedAt": "2026-11-25T12:37:39.085Z",
     "fromStudentCreate": true,
     "_isStudentDraft": true,
     "timePerQuestion": 25,
