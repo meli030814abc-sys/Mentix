@@ -35,13 +35,14 @@
     "isPublic": false,
     "startDate": "2026-11-25",
     "endDate": "",
-    "currentStep": 6,
+    "currentStep": 7,
     "completedSteps": [
       1,
       2,
       3,
       4,
-      5
+      5,
+      6
     ],
     "progress": 85,
     "calculatedProgress": 85,
@@ -120,7 +121,9 @@
         "bulletsFont": "'Outfit', sans-serif",
         "bulletStyle": "✦",
         "isFullImage": true,
-        "isImported": true
+        "isImported": true,
+        "imageUrl": "",
+        "bgImage": ""
       }
     ],
     "presentations": [
@@ -156,7 +159,9 @@
             "bulletsFont": "'Outfit', sans-serif",
             "bulletStyle": "✦",
             "isFullImage": true,
-            "isImported": true
+            "isImported": true,
+            "imageUrl": "",
+            "bgImage": ""
           }
         ]
       }
@@ -335,9 +340,10 @@
         2,
         3,
         4,
-        5
+        5,
+        6
       ],
-      "currentStep": 6,
+      "currentStep": 7,
       "author": "Jhomar Alejandra Cano Ramirez",
       "authorId": "user_1795557081139",
       "ownerId": "user_1795557081139",
@@ -363,7 +369,7 @@
         "collaborators": ""
       },
       "createdAt": "2026-11-25T11:45:30.865Z",
-      "updatedAt": "2026-11-25T11:51:05.833Z",
+      "updatedAt": "2026-11-25T11:51:14.561Z",
       "progress": 85,
       "calculatedProgress": 85
     },
@@ -377,7 +383,54 @@
     "authorAvatar": "🦊",
     "authorRole": "Estudiante / Creador",
     "createdAt": "2026-11-25T11:45:30.865Z",
-    "updatedAt": "2026-11-25T11:51:05.721Z"
+    "updatedAt": "2026-11-25T11:51:14.412Z",
+    "fromStudentCreate": true,
+    "_isStudentDraft": true,
+    "timePerQuestion": 25,
+    "plays": 0,
+    "accessMode": "private",
+    "hub": {
+      "joinRequests": [],
+      "members": [
+        {
+          "name": "Jhomar Alejandra Cano Ramirez",
+          "email": "jhomaralejandracano@gmail.com",
+          "role": "owner",
+          "leader": true
+        }
+      ],
+      "views": [],
+      "ratings": []
+    },
+    "customProjectCodes": [
+      {
+        "code": "804263",
+        "author": "Melisa",
+        "authorRole": "admin",
+        "createdAt": "22/11/2026, 9:27:35 p.m."
+      },
+      {
+        "code": "371850",
+        "author": "Melisa",
+        "authorRole": "admin",
+        "createdAt": "22/11/2026, 9:27:35 p.m."
+      },
+      {
+        "code": "926407",
+        "author": "Melisa",
+        "authorRole": "admin",
+        "createdAt": "22/11/2026, 9:23:09 p.m."
+      },
+      {
+        "code": "583194",
+        "author": "Melisa",
+        "authorRole": "admin",
+        "createdAt": "22/11/2026, 9:22:51 p.m."
+      }
+    ],
+    "visibility": "private",
+    "rejectedAt": "",
+    "rejectionReason": ""
   },
   {
     "id": "proj_video_1795575349043",
