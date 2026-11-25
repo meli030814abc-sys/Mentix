@@ -28,7 +28,7 @@
     "accessMode": "private",
     "displayOrder": 1,
     "createdAt": "2026-11-25T00:29:14.804Z",
-    "updatedAt": "2026-11-25T00:53:06.708Z",
+    "updatedAt": "2026-11-25T00:53:17.007Z",
     "landingConfig": {
       "publicName": "Diagnóstico de Gobierno de Datos – Universidad Colegio Mayor de Cundinamarca",
       "slug": "diagnostico-de-gobierno-de-datos-universidad-colegio-mayor-de-cundinamarca",
@@ -243,11 +243,11 @@
         "icon": "clipboard"
       },
       {
-        "title": "Etapa 5",
-        "description": "Descripción de las metas y actividades de esta etapa.",
-        "progress": 0,
-        "status": "pending",
-        "emoji": "💡",
+        "title": "Calidad y operación",
+        "description": "Medición de calidad con 37 reglas sobre datos sintéticos, flujos de aprobación con SLA e incidentes.",
+        "status": "completed",
+        "progress": 100,
+        "emoji": "⚙️",
         "icon": "clipboard"
       }
     ],
@@ -335,11 +335,11 @@
           "icon": "clipboard"
         },
         {
-          "title": "Etapa 5",
-          "description": "Descripción de las metas y actividades de esta etapa.",
-          "progress": 0,
-          "status": "pending",
-          "emoji": "💡",
+          "title": "Calidad y operación",
+          "description": "Medición de calidad con 37 reglas sobre datos sintéticos, flujos de aprobación con SLA e incidentes.",
+          "status": "completed",
+          "progress": 100,
+          "emoji": "⚙️",
           "icon": "clipboard"
         }
       ],
@@ -389,7 +389,7 @@
         "authorsRole": "Estudiante / Creador"
       },
       "createdAt": "2026-11-25T00:29:14.804Z",
-      "updatedAt": "2026-11-25T00:53:06.497Z",
+      "updatedAt": "2026-11-25T00:53:16.781Z",
       "progress": 70,
       "calculatedProgress": 70
     },
