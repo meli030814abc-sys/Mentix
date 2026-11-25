@@ -126,5 +126,21 @@
     "lastLoginAt": "2026-11-24T21:53:03.989Z",
     "pwd": "4bb2aa52ca31a5747e2eff84b42e86464850bd64f943b60bf74e3753910cd7e4",
     "createdAt": "2026-11-24T21:51:20.630Z"
+  },
+  {
+    "id": "user_1795567784171",
+    "name": "Carlos",
+    "username": "night2026",
+    "email": "moralesmarianamc.1975@gmail.com",
+    "avatar": "🦊",
+    "role": "admin",
+    "xp": 100,
+    "level": 1,
+    "levelName": "Principiante",
+    "institution": "Comunidad MENTIX",
+    "isBlocked": false,
+    "lastLoginAt": "2026-11-25T00:49:40.216Z",
+    "pwd": "2fb751f5ecf7b406e5935f8f9466a8186fa095977421bdc92afe1f3c15fba41e",
+    "createdAt": "2026-11-25T00:49:40.216Z"
   }
 ]
