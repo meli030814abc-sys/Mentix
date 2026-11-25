@@ -22,7 +22,7 @@
     "_clearedMainImage": false,
     "_clearedThumbImage": false,
     "useDefaultImage": true,
-    "targetAudience": "Directivos docentes (rectoría y coordinaciones), personal administrativo y de secretaría académica, docentes",
+    "targetAudience": "Directivos docentes (rectoría y coordinaciones), personal administrativo y de secretaría académica, docentes.",
     "problemStatement": "",
     "mainObjective": "",
     "benefits": "",
@@ -204,7 +204,7 @@
       "category": "admin",
       "categoryName": "Administración Pública",
       "projectSubtype": "Gobierno de Datos e IA",
-      "targetAudience": "Directivos docentes (rectoría y coordinaciones), personal administrativo y de secretaría académica, docentes",
+      "targetAudience": "Directivos docentes (rectoría y coordinaciones), personal administrativo y de secretaría académica, docentes.",
       "problemStatement": "",
       "mainObjective": "",
       "benefits": "",
@@ -285,7 +285,7 @@
         "authorsRole": "Estudiante / Creador"
       },
       "createdAt": "2026-11-25T11:45:30.865Z",
-      "updatedAt": "2026-11-25T11:48:57.862Z",
+      "updatedAt": "2026-11-25T11:49:01.298Z",
       "progress": 70,
       "calculatedProgress": 70
     },
@@ -299,7 +299,7 @@
     "authorAvatar": "🦊",
     "authorRole": "student",
     "createdAt": "2026-11-25T11:45:30.865Z",
-    "updatedAt": "2026-11-25T11:48:57.740Z"
+    "updatedAt": "2026-11-25T11:49:01.185Z"
   },
   {
     "id": "proj_video_1795575349043",
