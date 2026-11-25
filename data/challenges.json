@@ -28,7 +28,7 @@
     "accessMode": "private",
     "displayOrder": 1,
     "createdAt": "2026-11-25T00:29:14.804Z",
-    "updatedAt": "2026-11-25T01:03:58.325Z",
+    "updatedAt": "2026-11-25T01:03:59.235Z",
     "landingConfig": {
       "publicName": "Diagnóstico de Gobierno de Datos – Universidad Colegio Mayor de Cundinamarca",
       "slug": "diagnostico-de-gobierno-de-datos-universidad-colegio-mayor-de-cundinamarca",
@@ -251,6 +251,23 @@
         "format": "PPT",
         "thumbnailUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fdraft%2F1795566538564_r3c9_asset.jpg",
         "description": "Diagnóstico de gobierno de datos de la Universidad Colegio Mayor de Cundinamarca. Con base en DAMA-DMBOK se midió una madurez de 2 sobre 5 y se propuso un modelo de roles, comité y políticas que fija reglas a los proyectos de datos ya aprobados. El modelo se implementó en la plataforma GovData Nexus."
+      },
+      {
+        "id": "res_1795568637157_ekdn",
+        "name": "Roadmap con Costos Gobierno Datos UCMC",
+        "fileName": "Roadmap_con_Costos_Gobierno_Datos_UCMC.docx",
+        "description": "Recurso oficial en formato DOCX (18.1 KB).",
+        "type": "word",
+        "url": "https://mentixs.vercel.app/api/challenges?file=data%2Fuploads%2Fproj_presentation_1795566554804%2F1795568637377_g6s4_Roadmap_con_Costos_Gobierno_Datos_UCMC.docx",
+        "format": "DOCX",
+        "sizeBytes": 18486,
+        "sizeLabel": "18.1 KB",
+        "category": "Guías y manuales",
+        "visibility": "public",
+        "order": 2,
+        "status": "verified",
+        "extractedText": "",
+        "uploadedAt": "2026-11-25T01:03:58.736Z"
       }
     ],
     "slug": "diagnostico-de-gobierno-de-datos-universidad-colegio-mayor-de-cundinamarca",
@@ -803,7 +820,7 @@
         "collaborators": ""
       },
       "createdAt": "2026-11-25T00:29:14.804Z",
-      "updatedAt": "2026-11-25T01:03:57.741Z",
+      "updatedAt": "2026-11-25T01:03:58.736Z",
       "progress": 95,
       "calculatedProgress": 95
     },
