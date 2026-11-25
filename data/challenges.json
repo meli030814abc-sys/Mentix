@@ -28,7 +28,7 @@
     "accessMode": "private",
     "displayOrder": 1,
     "createdAt": "2026-11-25T00:29:14.804Z",
-    "updatedAt": "2026-11-25T00:50:18.075Z",
+    "updatedAt": "2026-11-25T00:50:21.288Z",
     "landingConfig": {
       "publicName": "Diagnóstico de Gobierno de Datos – Universidad Colegio Mayor de Cundinamarca",
       "slug": "diagnostico-de-gobierno-de-datos-universidad-colegio-mayor-de-cundinamarca",
@@ -123,10 +123,11 @@
     "submittedForApproval": false,
     "startDate": "2026-11-25",
     "endDate": "",
-    "currentStep": 3,
+    "currentStep": 4,
     "completedSteps": [
       1,
-      2
+      2,
+      3
     ],
     "progress": 70,
     "calculatedProgress": 70,
@@ -208,7 +209,40 @@
       }
     ],
     "externalLinks": [],
-    "projectRoadmap": [],
+    "projectRoadmap": [
+      {
+        "title": "Planeación",
+        "description": "Conformación del equipo y definición de objetivos.",
+        "progress": 40,
+        "status": "active",
+        "icon": "clipboard",
+        "emoji": "📋"
+      },
+      {
+        "title": "Investigación",
+        "description": "Recopilación de datos e información relevante.",
+        "progress": 100,
+        "status": "completed",
+        "icon": "search",
+        "emoji": "🔍"
+      },
+      {
+        "title": "Desarrollo",
+        "description": "Construcción de la solución y prototipos.",
+        "progress": 0,
+        "status": "pending",
+        "icon": "code",
+        "emoji": "💻"
+      },
+      {
+        "title": "Publicación",
+        "description": "Despliegue en la Landing Page y comunicación.",
+        "progress": 0,
+        "status": "pending",
+        "icon": "rocket",
+        "emoji": "🚀"
+      }
+    ],
     "tags": [
       "Gobierno de Datos",
       "IA",
@@ -259,6 +293,40 @@
       "_clearedThumbImage": false,
       "useDefaultImage": true,
       "externalLinks": [],
+      "projectRoadmap": [
+        {
+          "title": "Planeación",
+          "description": "Conformación del equipo y definición de objetivos.",
+          "progress": 40,
+          "status": "active",
+          "icon": "clipboard",
+          "emoji": "📋"
+        },
+        {
+          "title": "Investigación",
+          "description": "Recopilación de datos e información relevante.",
+          "progress": 100,
+          "status": "completed",
+          "icon": "search",
+          "emoji": "🔍"
+        },
+        {
+          "title": "Desarrollo",
+          "description": "Construcción de la solución y prototipos.",
+          "progress": 0,
+          "status": "pending",
+          "icon": "code",
+          "emoji": "💻"
+        },
+        {
+          "title": "Publicación",
+          "description": "Despliegue en la Landing Page y comunicación.",
+          "progress": 0,
+          "status": "pending",
+          "icon": "rocket",
+          "emoji": "🚀"
+        }
+      ],
       "landingConfig": {
         "publicName": "Diagnóstico de Gobierno de Datos – Universidad Colegio Mayor de Cundinamarca",
         "slug": "diagnostico-de-gobierno-de-datos-universidad-colegio-mayor-de-cundinamarca",
@@ -278,9 +346,10 @@
       "publicationStatus": "pending_approval",
       "completedSteps": [
         1,
-        2
+        2,
+        3
       ],
-      "currentStep": 3,
+      "currentStep": 4,
       "author": "Juan Esteban Rosero Jimenez",
       "authorId": "user_1795545770936",
       "ownerId": "user_1795545770936",
@@ -304,7 +373,7 @@
         "authorsRole": "Estudiante / Creador"
       },
       "createdAt": "2026-11-25T00:29:14.804Z",
-      "updatedAt": "2026-11-25T00:50:17.854Z",
+      "updatedAt": "2026-11-25T00:50:21.150Z",
       "progress": 70,
       "calculatedProgress": 70
     },
