@@ -8,7 +8,7 @@
     "authorId": "user_1795545770936",
     "authorEmail": "jeroseroj@gmail.com",
     "authorAvatar": "🦊",
-    "authorRole": "student",
+    "authorRole": "Estudiante / Creador",
     "projectType": "presentation",
     "category": "gobierno_de__datos",
     "categoryName": "Gobierno de Datos",
@@ -28,7 +28,7 @@
     "accessMode": "private",
     "displayOrder": 1,
     "createdAt": "2026-11-25T00:29:14.804Z",
-    "updatedAt": "2026-11-25T00:53:46.149Z",
+    "updatedAt": "2026-11-25T00:53:57.446Z",
     "landingConfig": {
       "publicName": "Diagnóstico de Gobierno de Datos – Universidad Colegio Mayor de Cundinamarca",
       "slug": "diagnostico-de-gobierno-de-datos-universidad-colegio-mayor-de-cundinamarca",
@@ -48,7 +48,9 @@
     "authorsConfig": {
       "authorsList": "Juan Esteban Rosero Jimenez",
       "authorsEmails": "jeroseroj@gmail.com",
-      "authorsRole": "Estudiante / Creador"
+      "authorsRole": "Estudiante / Creador",
+      "authorsInstitution": "Politecnico Gran",
+      "collaborators": ""
     },
     "designConfig": {
       "themeId": "cosmos",
@@ -390,7 +392,7 @@
       "ownerUsername": "Juanes_RJ",
       "authorEmail": "jeroseroj@gmail.com",
       "authorAvatar": "🦊",
-      "authorRole": "student",
+      "authorRole": "Estudiante / Creador",
       "joinCode": "",
       "accessCode": "",
       "designConfig": {
@@ -404,10 +406,12 @@
       "authorsConfig": {
         "authorsList": "Juan Esteban Rosero Jimenez",
         "authorsEmails": "jeroseroj@gmail.com",
-        "authorsRole": "Estudiante / Creador"
+        "authorsRole": "Estudiante / Creador",
+        "authorsInstitution": "Politecnico Gran",
+        "collaborators": ""
       },
       "createdAt": "2026-11-25T00:29:14.804Z",
-      "updatedAt": "2026-11-25T00:53:45.916Z",
+      "updatedAt": "2026-11-25T00:53:57.279Z",
       "progress": 70,
       "calculatedProgress": 70
     },
