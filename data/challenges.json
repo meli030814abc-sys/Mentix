@@ -22,7 +22,7 @@
     "_clearedMainImage": false,
     "_clearedThumbImage": false,
     "useDefaultImage": true,
-    "targetAudience": "",
+    "targetAudience": "Directivos docentes (rectoría y coordinaciones), personal administrativo y de secretaría académica, docentes",
     "problemStatement": "",
     "mainObjective": "",
     "benefits": "",
@@ -40,8 +40,8 @@
       1,
       2
     ],
-    "progress": 60,
-    "calculatedProgress": 60,
+    "progress": 70,
+    "calculatedProgress": 70,
     "valueProp": {
       "problemSolved": "",
       "howItWorks": "",
@@ -204,7 +204,7 @@
       "category": "admin",
       "categoryName": "Administración Pública",
       "projectSubtype": "Gobierno de Datos e IA",
-      "targetAudience": "",
+      "targetAudience": "Directivos docentes (rectoría y coordinaciones), personal administrativo y de secretaría académica, docentes",
       "problemStatement": "",
       "mainObjective": "",
       "benefits": "",
@@ -285,9 +285,9 @@
         "authorsRole": "Estudiante / Creador"
       },
       "createdAt": "2026-11-25T11:45:30.865Z",
-      "updatedAt": "2026-11-25T11:48:03.992Z",
-      "progress": 60,
-      "calculatedProgress": 60
+      "updatedAt": "2026-11-25T11:48:57.862Z",
+      "progress": 70,
+      "calculatedProgress": 70
     },
     "author": "Jhomar Alejandra Cano Ramirez",
     "authorId": "user_1795557081139",
@@ -299,7 +299,7 @@
     "authorAvatar": "🦊",
     "authorRole": "student",
     "createdAt": "2026-11-25T11:45:30.865Z",
-    "updatedAt": "2026-11-25T11:48:03.948Z"
+    "updatedAt": "2026-11-25T11:48:57.740Z"
   },
   {
     "id": "proj_video_1795575349043",
