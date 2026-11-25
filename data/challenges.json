@@ -133,9 +133,7 @@
         "bulletsFont": "'Outfit', sans-serif",
         "bulletStyle": "✦",
         "isFullImage": true,
-        "isImported": true,
-        "imageUrl": "",
-        "bgImage": ""
+        "isImported": true
       }
     ],
     "presentations": [
@@ -171,9 +169,7 @@
             "bulletsFont": "'Outfit', sans-serif",
             "bulletStyle": "✦",
             "isFullImage": true,
-            "isImported": true,
-            "imageUrl": "",
-            "bgImage": ""
+            "isImported": true
           }
         ]
       }
@@ -403,7 +399,7 @@
     "authorAvatar": "🦊",
     "authorRole": "Estudiante / Creador",
     "createdAt": "2026-11-25T11:45:30.865Z",
-    "updatedAt": "2026-11-25T12:29:51.886Z",
+    "updatedAt": "2026-11-25T12:29:51.887Z",
     "fromStudentCreate": true,
     "_isStudentDraft": true,
     "timePerQuestion": 25,
@@ -450,16 +446,7 @@
     ],
     "visibility": "private",
     "rejectedAt": "",
-    "rejectionReason": "",
-    "members": [
-      {
-        "name": "Jhomar Alejandra Cano Ramirez",
-        "email": "jhomaralejandracano@gmail.com",
-        "role": "owner",
-        "leader": true
-      }
-    ],
-    "joinRequests": []
+    "rejectionReason": ""
   },
   {
     "id": "proj_video_1795575349043",
