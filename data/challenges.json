@@ -18,7 +18,7 @@
     "image": "assets/projects_ui/card_data_gov.png",
     "banner": "assets/projects_ui/card_data_gov.png",
     "createdAt": "2026-11-25T02:55:49.043Z",
-    "updatedAt": "2026-11-25T03:08:47.417Z",
+    "updatedAt": "2026-11-25T03:08:52.805Z",
     "govdata": {
       "id": "proj_video_1795575349043",
       "title": "Diagnóstico de Gobierno de Datos - Afiancol S.A.S.",
@@ -144,11 +144,11 @@
         "authorsList": "Danna Boada",
         "authorsEmails": "boadavillamil09@gmail.com",
         "authorsRole": "Estudiante / Creador",
-        "authorsInstitution": "Politécnico Gr",
+        "authorsInstitution": "Politécnico Grancolombiano",
         "collaborators": ""
       },
       "createdAt": "2026-11-25T02:55:49.043Z",
-      "updatedAt": "2026-11-25T03:08:47.435Z",
+      "updatedAt": "2026-11-25T03:08:53.087Z",
       "progress": 65,
       "calculatedProgress": 65
     },
@@ -186,7 +186,7 @@
       "authorsList": "Danna Boada",
       "authorsEmails": "boadavillamil09@gmail.com",
       "authorsRole": "Estudiante / Creador",
-      "authorsInstitution": "Politécnico Gr",
+      "authorsInstitution": "Politécnico Grancolombiano",
       "collaborators": ""
     },
     "designConfig": {
