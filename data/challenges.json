@@ -28,7 +28,7 @@
     "accessMode": "private",
     "displayOrder": 1,
     "createdAt": "2026-11-25T00:29:14.804Z",
-    "updatedAt": "2026-11-25T01:02:07.098Z",
+    "updatedAt": "2026-11-25T01:02:08.030Z",
     "landingConfig": {
       "publicName": "Diagnóstico de Gobierno de Datos – Universidad Colegio Mayor de Cundinamarca",
       "slug": "diagnostico-de-gobierno-de-datos-universidad-colegio-mayor-de-cundinamarca",
@@ -137,8 +137,8 @@
       8,
       9
     ],
-    "progress": 90,
-    "calculatedProgress": 90,
+    "progress": 85,
+    "calculatedProgress": 85,
     "valueProp": {
       "problemSolved": "La universidad tiene sus datos dispersos y duplicados entre cuatro sedes y varios sistemas, sin responsables ni reglas que garanticen su calidad. Su madurez en gobierno de datos es de 2 sobre 5.",
       "howItWorks": "Diagnostica la madurez con DAMA-DMBOK, asigna responsables a cada dominio de datos, define políticas y reglas de calidad, y las aplica en GovData Nexus con catálogo, flujos de aprobación y acuerdos de nivel de servicio.",
@@ -505,9 +505,9 @@
         "collaborators": ""
       },
       "createdAt": "2026-11-25T00:29:14.804Z",
-      "updatedAt": "2026-11-25T01:02:06.888Z",
-      "progress": 90,
-      "calculatedProgress": 90
+      "updatedAt": "2026-11-25T01:02:07.809Z",
+      "progress": 85,
+      "calculatedProgress": 85
     },
     "ownerId": "user_1795545770936",
     "ownerUsername": "Juanes_RJ",
