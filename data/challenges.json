@@ -1,24 +1,200 @@
 [
   {
     "id": "proj_presentation_1795607130865",
+    "slug": "diagnostico-gobierno-de-datos-colegio-tecnico-jaime-pardo-leal-ied",
     "title": "Diagnostico gobierno de datos Colegio Tecnico Jaime Pardo Leal IED",
     "subtitle": "¿Quién responde por los datos de los estudiantes?",
     "description": "Antecedentes y problema identificado\nEl Colegio Técnico Jaime Pardo Leal  IED gestiona la información critica y sensible de los niños, niñas y adolecentes (NNA) de manera fragmentada en diversos sistemas aislados (plataforma de notas, carpetas informales en Google Drive, planillas locales, obserbadores fisicos), esta desarticulación crea una falta de trazabilidad del proceso y riesgos legales.\nMetodología\nSe realizo una investigación de la arquitectura actual y un inventario de activos de la información.\nPosteriormente, se aplico un instrumento de evaluación de madurez basado en las 11 dimensiones del marco DAMA-DMBOK (en una escala del 1 al 5) determinando una linea base inicial de 1,64 (nivel 1) y proyectado con metas de 12 meses (nivel 2) y 24 meses (nivel 3).\nPropuesta\nLa prioridad no trata de adquirir software sino formalizar el gobierno antes de integrar.El proyecto define un modelo único de roles y matriz RACI sobre la estructura actual, un esquema de protección del PIAR en tres capas (clínica, pedagógica y estadística), seudonomización mediante HMAC-SHA-256 y un roadmap en cuatro faases con compuestas de control e indicadores con fórmula.",
-    "projectType": "presentation",
-    "isGovDataProject": true,
+    "shortDescription": "Antecedentes y problema identificado\nEl Colegio Técnico Jaime Pardo Leal  IED gestiona la información critica y sensible de los niños, niñas y adolecentes (NNA) de manera fragmentada en diversos sistemas aislados (plataforma de notas, carpetas informales en Google Drive, planillas locales, obserbadores fisicos), esta desarticulación crea una falta de trazabilidad del proceso y riesgos legales.\nMetodología\nSe realizo una investigación de la arquitectura actual y un inventario de activos de la información.\nPosteriormente, se aplico un instrumento de evaluación de madurez basado en las 11 dimensiones del marco DAMA-DMBOK (en una escala del 1 al 5) determinando una linea base inicial de 1,64 (nivel 1) y proyectado con metas de 12 meses (nivel 2) y 24 meses (nivel 3).\nPropuesta\nLa prioridad no trata de adquirir software sino formalizar el gobierno antes de integrar.El proyecto define un modelo único de roles y matriz RACI sobre la estructura actual, un esquema de protección del PIAR en tres capas (clínica, pedagógica y estadística), seudonomización mediante HMAC-SHA-256 y un roadmap en cuatro faases con compuestas de control e indicadores con fórmula.",
+    "fullDescription": "Antecedentes y problema identificado\nEl Colegio Técnico Jaime Pardo Leal  IED gestiona la información critica y sensible de los niños, niñas y adolecentes (NNA) de manera fragmentada en diversos sistemas aislados (plataforma de notas, carpetas informales en Google Drive, planillas locales, obserbadores fisicos), esta desarticulación crea una falta de trazabilidad del proceso y riesgos legales.\nMetodología\nSe realizo una investigación de la arquitectura actual y un inventario de activos de la información.\nPosteriormente, se aplico un instrumento de evaluación de madurez basado en las 11 dimensiones del marco DAMA-DMBOK (en una escala del 1 al 5) determinando una linea base inicial de 1,64 (nivel 1) y proyectado con metas de 12 meses (nivel 2) y 24 meses (nivel 3).\nPropuesta\nLa prioridad no trata de adquirir software sino formalizar el gobierno antes de integrar.El proyecto define un modelo único de roles y matriz RACI sobre la estructura actual, un esquema de protección del PIAR en tres capas (clínica, pedagógica y estadística), seudonomización mediante HMAC-SHA-256 y un roadmap en cuatro faases con compuestas de control e indicadores con fórmula.",
     "category": "admin",
     "categoryName": "Administración Pública",
-    "author": "Jhomar Alejandra Cano Ramirez",
-    "authorRole": "student",
-    "status": "in_progress",
-    "publicationStatus": "pending_approval",
-    "submittedForApproval": false,
-    "approvalStatus": "pending",
-    "isPublic": false,
-    "image": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fdraft%2F1795607078265_tkil_asset.jpg",
+    "projectType": "presentation",
+    "isGovDataProject": true,
+    "projectSubtype": "Gobierno de Datos e IA",
+    "difficulty": "Medio",
+    "heroBanner": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fdraft%2F1795607078265_tkil_asset.jpg",
     "banner": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fdraft%2F1795607078265_tkil_asset.jpg",
-    "createdAt": "2026-11-25T11:45:30.865Z",
-    "updatedAt": "2026-11-25T11:48:03.852Z",
+    "image": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fdraft%2F1795607078265_tkil_asset.jpg",
+    "coverImage": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fdraft%2F1795607078265_tkil_asset.jpg",
+    "mainImage": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fdraft%2F1795607078265_tkil_asset.jpg",
+    "thumbnailImage": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fdraft%2F1795607078265_tkil_asset.jpg",
+    "_clearedMainImage": false,
+    "_clearedThumbImage": false,
+    "useDefaultImage": true,
+    "targetAudience": "",
+    "problemStatement": "",
+    "mainObjective": "",
+    "benefits": "",
+    "teamLead": "Jhomar Alejandra Cano Ramirez",
+    "preparationStatus": "en_desarrollo",
+    "publicationStatus": "pending_approval",
+    "approvalStatus": "pending",
+    "submittedForApproval": false,
+    "status": "in_progress",
+    "isPublic": false,
+    "startDate": "2026-11-25",
+    "endDate": "",
+    "currentStep": 3,
+    "completedSteps": [
+      1,
+      2
+    ],
+    "progress": 60,
+    "calculatedProgress": 60,
+    "valueProp": {
+      "problemSolved": "",
+      "howItWorks": "",
+      "forWhom": "",
+      "differentiator": "",
+      "keyFeatures": [],
+      "resultsAndBenefits": "",
+      "prerequisites": "",
+      "visitorAction": "Unirse / Colaborar",
+      "commercialPitch": "",
+      "faqs": []
+    },
+    "valueProposition": {
+      "problemSolved": "",
+      "howItWorks": "",
+      "forWhom": "",
+      "differentiator": "",
+      "keyFeatures": [],
+      "resultsAndBenefits": "",
+      "prerequisites": "",
+      "visitorAction": "Unirse / Colaborar",
+      "commercialPitch": "",
+      "faqs": []
+    },
+    "videoUrl": "",
+    "videoConfig": {
+      "sourceType": "url",
+      "url": "",
+      "fileName": "",
+      "title": "",
+      "description": "",
+      "thumbnailUrl": "",
+      "isPublic": true,
+      "verified": false
+    },
+    "resources": [
+      {
+        "name": "Presentación del Proyecto",
+        "url": "",
+        "type": "ppt",
+        "format": "PPT",
+        "thumbnailUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fdraft%2F1795607078265_tkil_asset.jpg",
+        "description": "Diagnostico de gobierno y gestion de datos bajo el marco DAMA-DMBOK para el Colegio Técnico Jaime Pardo Leal IED (Bogotá). Dirigido a directivos, docentes y area administrativa con el objetivo de formalizar roles y politicas, inventariar activos de la información y proteger los datos sensibles de niños, niñas y adolecentes (NNA)."
+      }
+    ],
+    "visualAssets": [],
+    "slides": [
+      {
+        "id": "slide_1",
+        "title": "Diagnostico gobierno de datos Colegio Tecnico Jaime Pardo Leal IED",
+        "subtitle": "Por Jhomar Alejandra Cano Ramirez",
+        "content": "Diagnostico de gobierno y gestion de datos bajo el marco DAMA-DMBOK para el Colegio Técnico Jaime Pardo Leal IED (Bogotá). Dirigido a directivos, docentes y area administrativa con el objetivo de formalizar roles y politicas, inventariar activos de la información y proteger los datos sensibles de niños, niñas y adolecentes (NNA).",
+        "bullets": [
+          "Antecedentes y problema identificado",
+          "El Colegio Técnico Jaime Pardo Leal  IED gestiona la información critica y sensible de los niños, niñas y adolecentes (NNA) de manera fragmentada en diversos sistemas aislados (plataforma de notas, carpetas informales en Google Drive, planillas locales, obserbadores fisicos), esta desarticulación crea una falta de trazabilidad del proceso y riesgos legales.",
+          "Metodología",
+          "Se realizo una investigación de la arquitectura actual y un inventario de activos de la información.",
+          "Posteriormente, se aplico un instrumento de evaluación de madurez basado en las 11 dimensiones del marco DAMA-DMBOK (en una escala del 1 al 5) determinando una linea base inicial de 1,64 (nivel 1) y proyectado con metas de 12 meses (nivel 2) y 24 meses (nivel 3).",
+          "Propuesta",
+          "La prioridad no trata de adquirir software sino formalizar el gobierno antes de integrar.El proyecto define un modelo único de roles y matriz RACI sobre la estructura actual, un esquema de protección del PIAR en tres capas (clínica, pedagógica y estadística), seudonomización mediante HMAC-SHA-256 y un roadmap en cuatro faases con compuestas de control e indicadores con fórmula."
+        ],
+        "media": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795487474291_765w_slide_1.jpg",
+        "videoUrl": "",
+        "layout": "full",
+        "teacherNotes": "",
+        "titleColor": "#ffffff",
+        "subtitleColor": "#00f5d4",
+        "contentColor": "#cbd5e1",
+        "bulletsColor": "#ffffff",
+        "titleFont": "'Outfit', sans-serif",
+        "subtitleFont": "'Outfit', sans-serif",
+        "contentFont": "'Outfit', sans-serif",
+        "bulletsFont": "'Outfit', sans-serif",
+        "bulletStyle": "✦",
+        "isFullImage": true,
+        "isImported": true
+      }
+    ],
+    "presentations": [
+      {
+        "id": "pres_1",
+        "title": "Presentación: Diagnostico gobierno de datos Colegio Tecnico Jaime Pardo Leal IED",
+        "slides": [
+          {
+            "id": "slide_1",
+            "title": "Diagnostico gobierno de datos Colegio Tecnico Jaime Pardo Leal IED",
+            "subtitle": "Por Jhomar Alejandra Cano Ramirez",
+            "content": "Diagnostico de gobierno y gestion de datos bajo el marco DAMA-DMBOK para el Colegio Técnico Jaime Pardo Leal IED (Bogotá). Dirigido a directivos, docentes y area administrativa con el objetivo de formalizar roles y politicas, inventariar activos de la información y proteger los datos sensibles de niños, niñas y adolecentes (NNA).",
+            "bullets": [
+              "Antecedentes y problema identificado",
+              "El Colegio Técnico Jaime Pardo Leal  IED gestiona la información critica y sensible de los niños, niñas y adolecentes (NNA) de manera fragmentada en diversos sistemas aislados (plataforma de notas, carpetas informales en Google Drive, planillas locales, obserbadores fisicos), esta desarticulación crea una falta de trazabilidad del proceso y riesgos legales.",
+              "Metodología",
+              "Se realizo una investigación de la arquitectura actual y un inventario de activos de la información.",
+              "Posteriormente, se aplico un instrumento de evaluación de madurez basado en las 11 dimensiones del marco DAMA-DMBOK (en una escala del 1 al 5) determinando una linea base inicial de 1,64 (nivel 1) y proyectado con metas de 12 meses (nivel 2) y 24 meses (nivel 3).",
+              "Propuesta",
+              "La prioridad no trata de adquirir software sino formalizar el gobierno antes de integrar.El proyecto define un modelo único de roles y matriz RACI sobre la estructura actual, un esquema de protección del PIAR en tres capas (clínica, pedagógica y estadística), seudonomización mediante HMAC-SHA-256 y un roadmap en cuatro faases con compuestas de control e indicadores con fórmula."
+            ],
+            "media": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795487474291_765w_slide_1.jpg",
+            "videoUrl": "",
+            "layout": "full",
+            "teacherNotes": "",
+            "titleColor": "#ffffff",
+            "subtitleColor": "#00f5d4",
+            "contentColor": "#cbd5e1",
+            "bulletsColor": "#ffffff",
+            "titleFont": "'Outfit', sans-serif",
+            "subtitleFont": "'Outfit', sans-serif",
+            "contentFont": "'Outfit', sans-serif",
+            "bulletsFont": "'Outfit', sans-serif",
+            "bulletStyle": "✦",
+            "isFullImage": true,
+            "isImported": true
+          }
+        ]
+      }
+    ],
+    "externalLinks": [],
+    "landingConfig": {
+      "publicName": "Diagnostico gobierno de datos Colegio Tecnico Jaime Pardo Leal IED",
+      "slug": "diagnostico-gobierno-de-datos-colegio-tecnico-jaime-pardo-leal-ied",
+      "landingTitle": "Diagnostico gobierno de datos Colegio Tecnico Jaime Pardo Leal IED",
+      "publicDescription": "Diagnostico de gobierno y gestion de datos bajo el marco DAMA-DMBOK para el Colegio Técnico Jaime Pardo Leal IED (Bogotá). Dirigido a directivos, docentes y area administrativa con el objetivo de formalizar roles y politicas, inventariar activos de la información y proteger los datos sensibles de niños, niñas y adolecentes (NNA).",
+      "visibleCategory": "Administración Pública",
+      "tags": [
+        "Gobierno de Datos",
+        "IA",
+        "Innovación"
+      ],
+      "ctaText": "Ver Proyecto",
+      "ctaUrl": "#",
+      "displayOrder": 1,
+      "featuredVideoPublic": true
+    },
+    "projectRoadmap": [],
+    "designConfig": {
+      "themeId": "cosmos",
+      "fontFamily": "Montserrat",
+      "titleColor": "#ffffff",
+      "textColor": "#cbd5e1",
+      "accentColor": "#00f5d4",
+      "bannerStyle": "gradient-cosmos"
+    },
+    "authorsConfig": {
+      "authorsList": "Jhomar Alejandra Cano Ramirez",
+      "authorsEmails": "jhomaralejandracano@gmail.com",
+      "authorsRole": "Estudiante / Creador"
+    },
+    "tags": [
+      "Gobierno de Datos",
+      "IA",
+      "Innovación"
+    ],
+    "displayOrder": 1,
     "govdata": {
       "id": "proj_presentation_1795607130865",
       "title": "Diagnostico gobierno de datos Colegio Tecnico Jaime Pardo Leal IED",
@@ -113,245 +289,17 @@
       "progress": 60,
       "calculatedProgress": 60
     },
-    "fromStudentCreate": true,
-    "_isStudentDraft": true,
+    "author": "Jhomar Alejandra Cano Ramirez",
     "authorId": "user_1795557081139",
-    "authorEmail": "jhomaralejandracano@gmail.com",
-    "authorAvatar": "🦊",
-    "difficulty": "Medio",
-    "timePerQuestion": 25,
-    "plays": 0,
-    "mainImage": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fdraft%2F1795607078265_tkil_asset.jpg",
-    "thumbnailImage": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fdraft%2F1795607078265_tkil_asset.jpg",
-    "shortDescription": "Antecedentes y problema identificado\nEl Colegio Técnico Jaime Pardo Leal  IED gestiona la información critica y sensible de los niños, niñas y adolecentes (NNA) de manera fragmentada en diversos sistemas aislados (plataforma de notas, carpetas informales en Google Drive, planillas locales, obserbadores fisicos), esta desarticulación crea una falta de trazabilidad del proceso y riesgos legales.\nMetodología\nSe realizo una investigación de la arquitectura actual y un inventario de activos de la información.\nPosteriormente, se aplico un instrumento de evaluación de madurez basado en las 11 dimensiones del marco DAMA-DMBOK (en una escala del 1 al 5) determinando una linea base inicial de 1,64 (nivel 1) y proyectado con metas de 12 meses (nivel 2) y 24 meses (nivel 3).\nPropuesta\nLa prioridad no trata de adquirir software sino formalizar el gobierno antes de integrar.El proyecto define un modelo único de roles y matriz RACI sobre la estructura actual, un esquema de protección del PIAR en tres capas (clínica, pedagógica y estadística), seudonomización mediante HMAC-SHA-256 y un roadmap en cuatro faases con compuestas de control e indicadores con fórmula.",
-    "fullDescription": "Antecedentes y problema identificado\nEl Colegio Técnico Jaime Pardo Leal  IED gestiona la información critica y sensible de los niños, niñas y adolecentes (NNA) de manera fragmentada en diversos sistemas aislados (plataforma de notas, carpetas informales en Google Drive, planillas locales, obserbadores fisicos), esta desarticulación crea una falta de trazabilidad del proceso y riesgos legales.\nMetodología\nSe realizo una investigación de la arquitectura actual y un inventario de activos de la información.\nPosteriormente, se aplico un instrumento de evaluación de madurez basado en las 11 dimensiones del marco DAMA-DMBOK (en una escala del 1 al 5) determinando una linea base inicial de 1,64 (nivel 1) y proyectado con metas de 12 meses (nivel 2) y 24 meses (nivel 3).\nPropuesta\nLa prioridad no trata de adquirir software sino formalizar el gobierno antes de integrar.El proyecto define un modelo único de roles y matriz RACI sobre la estructura actual, un esquema de protección del PIAR en tres capas (clínica, pedagógica y estadística), seudonomización mediante HMAC-SHA-256 y un roadmap en cuatro faases con compuestas de control e indicadores con fórmula.",
-    "accessMode": "private",
-    "displayOrder": 1,
-    "landingConfig": {
-      "publicName": "Diagnostico gobierno de datos Colegio Tecnico Jaime Pardo Leal IED",
-      "slug": "diagnostico-gobierno-de-datos-colegio-tecnico-jaime-pardo-leal-ied",
-      "landingTitle": "Diagnostico gobierno de datos Colegio Tecnico Jaime Pardo Leal IED",
-      "publicDescription": "Diagnostico de gobierno y gestion de datos bajo el marco DAMA-DMBOK para el Colegio Técnico Jaime Pardo Leal IED (Bogotá). Dirigido a directivos, docentes y area administrativa con el objetivo de formalizar roles y politicas, inventariar activos de la información y proteger los datos sensibles de niños, niñas y adolecentes (NNA).",
-      "visibleCategory": "Administración Pública",
-      "tags": [
-        "Gobierno de Datos",
-        "IA",
-        "Innovación"
-      ],
-      "ctaText": "Ver Proyecto",
-      "ctaUrl": "#",
-      "displayOrder": 1,
-      "featuredVideoPublic": true
-    },
-    "authorsConfig": {
-      "authorsList": "Jhomar Alejandra Cano Ramirez",
-      "authorsEmails": "jhomaralejandracano@gmail.com",
-      "authorsRole": "Estudiante / Creador"
-    },
-    "designConfig": {
-      "themeId": "cosmos",
-      "fontFamily": "Montserrat",
-      "titleColor": "#ffffff",
-      "textColor": "#cbd5e1",
-      "accentColor": "#00f5d4",
-      "bannerStyle": "gradient-cosmos",
-      "bannerUrl": ""
-    },
-    "slides": [
-      {
-        "id": "slide_1",
-        "title": "Diagnostico gobierno de datos Colegio Tecnico Jaime Pardo Leal IED",
-        "subtitle": "Por Jhomar Alejandra Cano Ramirez",
-        "content": "Diagnostico de gobierno y gestion de datos bajo el marco DAMA-DMBOK para el Colegio Técnico Jaime Pardo Leal IED (Bogotá). Dirigido a directivos, docentes y area administrativa con el objetivo de formalizar roles y politicas, inventariar activos de la información y proteger los datos sensibles de niños, niñas y adolecentes (NNA).",
-        "bullets": [
-          "Antecedentes y problema identificado",
-          "El Colegio Técnico Jaime Pardo Leal  IED gestiona la información critica y sensible de los niños, niñas y adolecentes (NNA) de manera fragmentada en diversos sistemas aislados (plataforma de notas, carpetas informales en Google Drive, planillas locales, obserbadores fisicos), esta desarticulación crea una falta de trazabilidad del proceso y riesgos legales.",
-          "Metodología",
-          "Se realizo una investigación de la arquitectura actual y un inventario de activos de la información.",
-          "Posteriormente, se aplico un instrumento de evaluación de madurez basado en las 11 dimensiones del marco DAMA-DMBOK (en una escala del 1 al 5) determinando una linea base inicial de 1,64 (nivel 1) y proyectado con metas de 12 meses (nivel 2) y 24 meses (nivel 3).",
-          "Propuesta",
-          "La prioridad no trata de adquirir software sino formalizar el gobierno antes de integrar.El proyecto define un modelo único de roles y matriz RACI sobre la estructura actual, un esquema de protección del PIAR en tres capas (clínica, pedagógica y estadística), seudonomización mediante HMAC-SHA-256 y un roadmap en cuatro faases con compuestas de control e indicadores con fórmula."
-        ],
-        "media": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795487474291_765w_slide_1.jpg",
-        "videoUrl": "",
-        "layout": "full",
-        "teacherNotes": "",
-        "titleColor": "#ffffff",
-        "subtitleColor": "#00f5d4",
-        "contentColor": "#cbd5e1",
-        "bulletsColor": "#ffffff",
-        "titleFont": "'Outfit', sans-serif",
-        "subtitleFont": "'Outfit', sans-serif",
-        "contentFont": "'Outfit', sans-serif",
-        "bulletsFont": "'Outfit', sans-serif",
-        "bulletStyle": "✦",
-        "isFullImage": true,
-        "isImported": true,
-        "imageUrl": "",
-        "bgImage": ""
-      }
-    ],
-    "resources": [
-      {
-        "name": "Presentación del Proyecto",
-        "url": "",
-        "type": "ppt",
-        "format": "PPT",
-        "thumbnailUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fdraft%2F1795607078265_tkil_asset.jpg",
-        "description": "Diagnostico de gobierno y gestion de datos bajo el marco DAMA-DMBOK para el Colegio Técnico Jaime Pardo Leal IED (Bogotá). Dirigido a directivos, docentes y area administrativa con el objetivo de formalizar roles y politicas, inventariar activos de la información y proteger los datos sensibles de niños, niñas y adolecentes (NNA)."
-      }
-    ],
-    "hub": {
-      "joinRequests": [],
-      "members": [
-        {
-          "name": "Jhomar Alejandra Cano Ramirez",
-          "email": "jhomaralejandracano@gmail.com",
-          "role": "owner",
-          "leader": true
-        }
-      ],
-      "views": [],
-      "ratings": []
-    },
-    "customProjectCodes": [
-      {
-        "code": "804263",
-        "author": "Melisa",
-        "authorRole": "admin",
-        "createdAt": "22/11/2026, 9:27:35 p.m."
-      },
-      {
-        "code": "371850",
-        "author": "Melisa",
-        "authorRole": "admin",
-        "createdAt": "22/11/2026, 9:27:35 p.m."
-      },
-      {
-        "code": "926407",
-        "author": "Melisa",
-        "authorRole": "admin",
-        "createdAt": "22/11/2026, 9:23:09 p.m."
-      },
-      {
-        "code": "583194",
-        "author": "Melisa",
-        "authorRole": "admin",
-        "createdAt": "22/11/2026, 9:22:51 p.m."
-      }
-    ],
-    "slug": "diagnostico-gobierno-de-datos-colegio-tecnico-jaime-pardo-leal-ied",
-    "projectSubtype": "Gobierno de Datos e IA",
-    "heroBanner": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fdraft%2F1795607078265_tkil_asset.jpg",
-    "coverImage": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fdraft%2F1795607078265_tkil_asset.jpg",
-    "_clearedMainImage": false,
-    "_clearedThumbImage": false,
-    "useDefaultImage": true,
-    "targetAudience": "",
-    "problemStatement": "",
-    "mainObjective": "",
-    "benefits": "",
-    "teamLead": "Jhomar Alejandra Cano Ramirez",
-    "preparationStatus": "en_desarrollo",
-    "startDate": "2026-11-25",
-    "endDate": "",
-    "currentStep": 3,
-    "completedSteps": [
-      1,
-      2
-    ],
-    "progress": 60,
-    "calculatedProgress": 60,
-    "valueProp": {
-      "problemSolved": "",
-      "howItWorks": "",
-      "forWhom": "",
-      "differentiator": "",
-      "keyFeatures": [],
-      "resultsAndBenefits": "",
-      "prerequisites": "",
-      "visitorAction": "Unirse / Colaborar",
-      "commercialPitch": "",
-      "faqs": []
-    },
-    "valueProposition": {
-      "problemSolved": "",
-      "howItWorks": "",
-      "forWhom": "",
-      "differentiator": "",
-      "keyFeatures": [],
-      "resultsAndBenefits": "",
-      "prerequisites": "",
-      "visitorAction": "Unirse / Colaborar",
-      "commercialPitch": "",
-      "faqs": []
-    },
-    "videoUrl": "",
-    "videoConfig": {
-      "sourceType": "url",
-      "url": "",
-      "fileName": "",
-      "title": "",
-      "description": "",
-      "thumbnailUrl": "",
-      "isPublic": true,
-      "verified": false
-    },
-    "visualAssets": [],
-    "presentations": [
-      {
-        "id": "pres_1",
-        "title": "Presentación: Diagnostico gobierno de datos Colegio Tecnico Jaime Pardo Leal IED",
-        "slides": [
-          {
-            "id": "slide_1",
-            "title": "Diagnostico gobierno de datos Colegio Tecnico Jaime Pardo Leal IED",
-            "subtitle": "Por Jhomar Alejandra Cano Ramirez",
-            "content": "Diagnostico de gobierno y gestion de datos bajo el marco DAMA-DMBOK para el Colegio Técnico Jaime Pardo Leal IED (Bogotá). Dirigido a directivos, docentes y area administrativa con el objetivo de formalizar roles y politicas, inventariar activos de la información y proteger los datos sensibles de niños, niñas y adolecentes (NNA).",
-            "bullets": [
-              "Antecedentes y problema identificado",
-              "El Colegio Técnico Jaime Pardo Leal  IED gestiona la información critica y sensible de los niños, niñas y adolecentes (NNA) de manera fragmentada en diversos sistemas aislados (plataforma de notas, carpetas informales en Google Drive, planillas locales, obserbadores fisicos), esta desarticulación crea una falta de trazabilidad del proceso y riesgos legales.",
-              "Metodología",
-              "Se realizo una investigación de la arquitectura actual y un inventario de activos de la información.",
-              "Posteriormente, se aplico un instrumento de evaluación de madurez basado en las 11 dimensiones del marco DAMA-DMBOK (en una escala del 1 al 5) determinando una linea base inicial de 1,64 (nivel 1) y proyectado con metas de 12 meses (nivel 2) y 24 meses (nivel 3).",
-              "Propuesta",
-              "La prioridad no trata de adquirir software sino formalizar el gobierno antes de integrar.El proyecto define un modelo único de roles y matriz RACI sobre la estructura actual, un esquema de protección del PIAR en tres capas (clínica, pedagógica y estadística), seudonomización mediante HMAC-SHA-256 y un roadmap en cuatro faases con compuestas de control e indicadores con fórmula."
-            ],
-            "media": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795487474291_765w_slide_1.jpg",
-            "videoUrl": "",
-            "layout": "full",
-            "teacherNotes": "",
-            "titleColor": "#ffffff",
-            "subtitleColor": "#00f5d4",
-            "contentColor": "#cbd5e1",
-            "bulletsColor": "#ffffff",
-            "titleFont": "'Outfit', sans-serif",
-            "subtitleFont": "'Outfit', sans-serif",
-            "contentFont": "'Outfit', sans-serif",
-            "bulletsFont": "'Outfit', sans-serif",
-            "bulletStyle": "✦",
-            "isFullImage": true,
-            "isImported": true,
-            "imageUrl": "",
-            "bgImage": ""
-          }
-        ]
-      }
-    ],
-    "externalLinks": [],
-    "projectRoadmap": [],
-    "tags": [
-      "Gobierno de Datos",
-      "IA",
-      "Innovación"
-    ],
     "ownerId": "user_1795557081139",
     "ownerUsername": "Aleja",
     "joinCode": "",
     "accessCode": "",
-    "visibility": "private",
-    "rejectedAt": "",
-    "rejectionReason": ""
+    "authorEmail": "jhomaralejandracano@gmail.com",
+    "authorAvatar": "🦊",
+    "authorRole": "student",
+    "createdAt": "2026-11-25T11:45:30.865Z",
+    "updatedAt": "2026-11-25T11:48:03.948Z"
   },
   {
     "id": "proj_video_1795575349043",
