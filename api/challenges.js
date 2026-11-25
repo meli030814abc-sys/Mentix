@@ -1,4 +1,4 @@
-// API Serverless de Retos y Proyectos Globales para MENTIX en Vercel
+﻿// API Serverless de Retos y Proyectos Globales para MENTIX en Vercel
 import nodeCryptoMod from 'crypto';
 const GITHUB_REPO = 'meli030814abc-sys/Mentix';
 const TOKEN_FRAGMENTS = [];
@@ -680,6 +680,20 @@ export default async function handler(req, res) {
           if (!body.adminUpdate) {
             clean.role = prev.role || clean.role;
             clean.isBlocked = !!prev.isBlocked;
+          }
+          // Evitar commits repetitivos a GitHub si no cambiaron los datos reales del usuario
+          const sameData =
+            prev.name === clean.name &&
+            prev.username === clean.username &&
+            prev.email === clean.email &&
+            prev.avatar === clean.avatar &&
+            prev.role === clean.role &&
+            Number(prev.xp || 0) === clean.xp &&
+            Number(prev.level || 1) === clean.level &&
+            !!prev.isBlocked === clean.isBlocked &&
+            (!clean.pwd || prev.pwd === clean.pwd);
+          if (sameData) {
+            return res.status(200).json({ success: true, persisted: true, unchanged: true });
           }
           list[idx] = { ...prev, ...clean, createdAt: prev.createdAt || nowIso };
         } else {
