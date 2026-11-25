@@ -92,18 +92,18 @@
       "email": "gatitaxd6f79@gmail.com",
       "role": "admin",
       "joinedAt": "2026-11-23T04:35:10.065Z",
-      "updatedAt": "2026-11-25T01:12:15.078Z",
+      "updatedAt": "2026-11-25T01:14:19.173Z",
       "projectId": "proj_presentation_1795566554804",
       "projectTitle": "Diagnóstico de Gobierno de Datos – Universidad Colegio Mayor de Cundinamarca",
       "projectDescription": "Diagnóstico de gobierno de datos de la Universidad Colegio Mayor de Cundinamarca. Con base en DAMA-DMBOK se midió una madurez de 2 sobre 5 y se propuso un modelo de roles, comité y políticas que fija reglas a los proyectos de datos ya aprobados. El modelo se implementó en la plataforma GovData Nexus.",
       "currentStep": 9,
-      "completedStepsCount": 11,
+      "completedStepsCount": 13,
       "progress": 100,
       "status": "submitted",
       "approvalStatus": "pending",
       "publicationStatus": "pending_approval",
       "slidesCount": 1,
-      "resourcesCount": 1,
+      "resourcesCount": 3,
       "snapshot": {
         "id": "proj_presentation_1795566554804",
         "title": "Diagnóstico de Gobierno de Datos – Universidad Colegio Mayor de Cundinamarca",
@@ -130,7 +130,9 @@
           8,
           9,
           10,
-          11
+          11,
+          12,
+          13
         ],
         "progress": 100,
         "banner": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fdraft%2F1795566538564_r3c9_asset.jpg",
@@ -139,7 +141,7 @@
         "benefits": "Datos únicos y confiables para tomar decisiones y reportar a entes externos, responsables claros por cada dato y protección de los datos personales, con el personal que la universidad ya tiene.",
         "targetAudience": "Universidades públicas, directivos y equipos de tecnología, y comunidad académica",
         "slidesCount": 1,
-        "resourcesCount": 1,
+        "resourcesCount": 3,
         "landingConfig": {
           "publicName": "Diagnóstico de Gobierno de Datos – Universidad Colegio Mayor de Cundinamarca",
           "slug": "diagnostico-de-gobierno-de-datos-universidad-colegio-mayor-de-cundinamarca",
@@ -175,7 +177,7 @@
           "commercialPitch": "",
           "faqs": []
         },
-        "updatedAt": "2026-11-25T01:12:15.078Z"
+        "updatedAt": "2026-11-25T01:14:19.173Z"
       }
     },
     {
