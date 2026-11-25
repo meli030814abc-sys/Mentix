@@ -1472,14 +1472,10 @@
         "authorsInstitution": "Universidad Politecnico Grancolombiano"
       },
       "createdAt": "2026-11-25T11:45:30.865Z",
-      "updatedAt": "2026-11-25T12:41:53.079Z",
+      "updatedAt": "2026-11-25T12:41:48.971Z",
       "progress": 100,
       "calculatedProgress": 100,
-      "submittedForApproval": true,
-      "approvalStatus": "pending",
-      "status": "completed",
-      "completedAt": "2026-11-25T12:41:53.079Z",
-      "isPublic": false
+      "submittedForApproval": true
     },
     "author": "Jhomar Alejandra Cano Ramirez",
     "authorId": "user_1795557081139",
@@ -1491,7 +1487,7 @@
     "authorAvatar": "🦊",
     "authorRole": "Estudiante / Creador",
     "createdAt": "2026-11-25T11:45:30.865Z",
-    "updatedAt": "2026-11-25T12:41:53.326Z",
+    "updatedAt": "2026-11-25T12:41:53.097Z",
     "fromStudentCreate": true,
     "_isStudentDraft": true,
     "timePerQuestion": 25,
@@ -1548,7 +1544,7 @@
       }
     ],
     "joinRequests": [],
-    "completedAt": "2026-11-25T12:41:53.079Z"
+    "completedAt": "2026-11-25T12:41:53.062Z"
   },
   {
     "id": "proj_video_1795575349043",
