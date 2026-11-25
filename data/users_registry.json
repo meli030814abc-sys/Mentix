@@ -126,5 +126,21 @@
     "lastLoginAt": "2026-11-24T21:53:03.989Z",
     "pwd": "4bb2aa52ca31a5747e2eff84b42e86464850bd64f943b60bf74e3753910cd7e4",
     "createdAt": "2026-11-24T21:51:20.630Z"
+  },
+  {
+    "id": "user_1795574386910",
+    "name": "Danna Boada",
+    "username": "dan_boa27",
+    "email": "boadavillamil09@gmail.com",
+    "avatar": "🦊",
+    "role": "student",
+    "xp": 100,
+    "level": 1,
+    "levelName": "Principiante",
+    "institution": "Comunidad MENTIX",
+    "isBlocked": false,
+    "lastLoginAt": "2026-11-25T02:39:46.808Z",
+    "pwd": "1fdc86bde0763bae4ad48176bdc17f23cf1fca2157b690dafd62abfcb5ac2df1",
+    "createdAt": "2026-11-25T02:39:46.808Z"
   }
 ]
