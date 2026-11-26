@@ -4975,7 +4975,7 @@
     "accessMode": "public",
     "displayOrder": 1,
     "createdAt": "2026-11-24T02:08:03.167Z",
-    "updatedAt": "2026-11-26T00:13:32.535Z",
+    "updatedAt": "2026-11-26T00:13:35.063Z",
     "landingConfig": {
       "publicName": "Diagnóstico y propuesta de optimización del gobierno de datos en GPC Pharma S.A.S.",
       "slug": "propuesta-gobierno-de-datos-gpc-pharma",
@@ -5060,7 +5060,7 @@
       "views": [],
       "ratings": [],
       "projectId": "proj_video_1795486083167",
-      "updatedAt": 1795651433178
+      "updatedAt": 1795552713058
     },
     "slug": "propuesta-gobierno-de-datos-gpc-pharma",
     "subtitle": "Trazabilidad, calidad y cumplimiento regulatorio en GPC Pharma",
@@ -5237,24 +5237,6 @@
         "status": "verified",
         "extractedText": "",
         "uploadedAt": "2026-11-24T02:40:10.080Z",
-        "thumbnailUrl": ""
-      },
-      {
-        "id": "res_1795651885020_bdpy",
-        "name": "Documentacion Gobierno de Datos GPC Pharma compressed",
-        "fileName": "Documentacion_Gobierno_de_Datos_GPC_Pharma_compressed.pdf",
-        "description": "Recurso oficial en formato PDF (1.48 MB).",
-        "type": "pdf",
-        "url": "https://mentixs.vercel.app/api/challenges?file=data%2Fuploads%2Fproj_video_1795486083167%2F1795651884503_b1q6_Documentacion_Gobierno_de_Datos_GPC_Phar.pdf",
-        "format": "PDF",
-        "sizeBytes": 1548329,
-        "sizeLabel": "1.48 MB",
-        "category": "Documentación",
-        "visibility": "public",
-        "order": 5,
-        "status": "verified",
-        "extractedText": "",
-        "uploadedAt": "2026-11-26T00:11:29.470Z",
         "thumbnailUrl": ""
       }
     ],
@@ -6116,10 +6098,8 @@
       "image": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795551419904_efqo_card_cover.jpg",
       "banner": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795550719633_cw7g_hero_banner.jpg",
       "status": "completed",
-      "authorizedAt": "2026-11-26T00:13:33.458Z",
-      "authorizedBy": "Melisa",
-      "preparationStatus": "completado",
-      "updatedAt": "2026-11-26T00:13:33.458Z"
+      "authorizedAt": "2026-11-24T18:32:25.455Z",
+      "authorizedBy": "Melisa"
     },
     "ownerId": "user_1795437974586",
     "ownerUsername": "laurasofiahz",
@@ -6142,7 +6122,7 @@
     "completedAt": "2026-11-24T16:46:38.877Z",
     "_globalHeroBanner": "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=1600&q=80",
     "stage": "completed",
-    "authorizedAt": "2026-11-26T00:13:33.458Z",
+    "authorizedAt": "2026-11-24T18:32:25.455Z",
     "authorizedBy": "Melisa",
     "_globalHeroBannerStyle": {
       "fit": "cover",
@@ -6162,8 +6142,8 @@
       "offsetY": -14.1,
       "fit": "contain"
     },
-    "_cardCropUpdatedAt": 1795651937640,
-    "_heroCropUpdatedAt": 1795651937640,
+    "_cardCropUpdatedAt": 1795551499823,
+    "_heroCropUpdatedAt": 1795550986414,
     "_cardCoverUpdatedAt": 1795551501359,
     "_heroBannerUpdatedAt": 1795550956946
   },
