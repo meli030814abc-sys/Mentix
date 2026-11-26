@@ -35,12 +35,10 @@
     "isPublic": false,
     "startDate": "2026-11-26",
     "endDate": "",
-    "currentStep": 2,
-    "completedSteps": [
-      1
-    ],
-    "progress": 40,
-    "calculatedProgress": 40,
+    "currentStep": 1,
+    "completedSteps": [],
+    "progress": 30,
+    "calculatedProgress": 30,
     "valueProp": {
       "problemSolved": "",
       "howItWorks": "",
@@ -175,10 +173,8 @@
         "featuredVideoPublic": true
       },
       "publicationStatus": "draft",
-      "completedSteps": [
-        1
-      ],
-      "currentStep": 2,
+      "completedSteps": [],
+      "currentStep": 1,
       "author": "Annie",
       "authorId": "user_1795402834416",
       "ownerId": "user_1795402834416",
@@ -205,9 +201,9 @@
         "collaborators": ""
       },
       "createdAt": "2026-11-26T00:13:59.044Z",
-      "updatedAt": "2026-11-26T00:14:03.256Z",
-      "progress": 40,
-      "calculatedProgress": 40
+      "updatedAt": "2026-11-26T00:14:02.786Z",
+      "progress": 30,
+      "calculatedProgress": 30
     },
     "author": "Annie",
     "authorId": "user_1795402834416",
@@ -219,7 +215,7 @@
     "authorAvatar": "🐼",
     "authorRole": "student",
     "createdAt": "2026-11-26T00:13:59.044Z",
-    "updatedAt": "2026-11-26T00:14:02.360Z"
+    "updatedAt": "2026-11-26T00:14:01.865Z"
   },
   {
     "id": "proj_document_1795651508416",
