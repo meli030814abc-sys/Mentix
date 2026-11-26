@@ -10,13 +10,13 @@
       "email": "acanon@ciudadmontesbilingue.edu.com",
       "role": "student",
       "joinedAt": "2026-11-26T00:13:56.826Z",
-      "updatedAt": "2026-11-26T00:15:09.764Z",
+      "updatedAt": "2026-11-26T00:15:13.503Z",
       "projectId": "govdata_code_annie_804263",
       "projectTitle": "f",
       "projectDescription": "f",
-      "currentStep": 15,
-      "completedStepsCount": 14,
-      "progress": 88,
+      "currentStep": 1,
+      "completedStepsCount": 15,
+      "progress": 94,
       "status": "in_progress",
       "approvalStatus": "pending",
       "publicationStatus": "draft",
@@ -36,7 +36,7 @@
         "status": "in_progress",
         "publicationStatus": "draft",
         "approvalStatus": "pending",
-        "currentStep": 15,
+        "currentStep": 1,
         "completedSteps": [
           1,
           2,
@@ -51,9 +51,10 @@
           11,
           12,
           13,
-          14
+          14,
+          15
         ],
-        "progress": 88,
+        "progress": 94,
         "banner": "assets/projects_ui/card_data_gov.png",
         "problemStatement": "f",
         "mainObjective": "f",
@@ -90,7 +91,7 @@
           "commercialPitch": "f",
           "faqs": []
         },
-        "updatedAt": "2026-11-26T00:15:09.764Z"
+        "updatedAt": "2026-11-26T00:15:13.503Z"
       }
     },
     {
