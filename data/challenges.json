@@ -35,7 +35,7 @@
     "isPublic": false,
     "startDate": "2026-11-26",
     "endDate": "2026-11-18",
-    "currentStep": 12,
+    "currentStep": 13,
     "completedSteps": [
       1,
       2,
@@ -47,10 +47,11 @@
       8,
       9,
       10,
-      11
+      11,
+      12
     ],
-    "progress": 69,
-    "calculatedProgress": 69,
+    "progress": 75,
+    "calculatedProgress": 75,
     "valueProp": {
       "problemSolved": "f",
       "howItWorks": "f",
@@ -287,9 +288,10 @@
         8,
         9,
         10,
-        11
+        11,
+        12
       ],
-      "currentStep": 12,
+      "currentStep": 13,
       "author": "Annie",
       "authorId": "user_1795402834416",
       "ownerId": "user_1795402834416",
@@ -316,9 +318,9 @@
         "collaborators": "f"
       },
       "createdAt": "2026-11-26T00:13:59.044Z",
-      "updatedAt": "2026-11-26T00:15:01.005Z",
-      "progress": 69,
-      "calculatedProgress": 69,
+      "updatedAt": "2026-11-26T00:15:04.240Z",
+      "progress": 75,
+      "calculatedProgress": 75,
       "projectRoadmap": [
         {
           "title": "Planeación",
@@ -364,7 +366,7 @@
     "authorAvatar": "🐼",
     "authorRole": "Líder del Proyecto",
     "createdAt": "2026-11-26T00:13:59.044Z",
-    "updatedAt": "2026-11-26T00:15:00.239Z"
+    "updatedAt": "2026-11-26T00:15:03.347Z"
   },
   {
     "id": "proj_document_1795651508416",
