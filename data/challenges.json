@@ -4975,7 +4975,7 @@
     "accessMode": "public",
     "displayOrder": 1,
     "createdAt": "2026-11-24T02:08:03.167Z",
-    "updatedAt": "2026-11-26T00:11:50.157Z",
+    "updatedAt": "2026-11-26T00:11:50.150Z",
     "landingConfig": {
       "publicName": "Diagnóstico y propuesta de optimización del gobierno de datos en GPC Pharma S.A.S.",
       "slug": "propuesta-gobierno-de-datos-gpc-pharma",
@@ -6279,14 +6279,18 @@
         "collaborators": ""
       },
       "createdAt": "2026-11-24T02:08:03.167Z",
-      "updatedAt": "2026-11-26T00:11:49.384Z",
+      "updatedAt": "2026-11-26T00:11:51.111Z",
       "progress": 100,
       "calculatedProgress": 100,
       "heroBanner": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795546503582_z8rr_hero_banner.jpg",
       "banner": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795546503582_z8rr_hero_banner.jpg",
       "image": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795546503582_z8rr_hero_banner.jpg",
       "coverImage": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795546503582_z8rr_hero_banner.jpg",
-      "submittedForApproval": true
+      "submittedForApproval": true,
+      "approvalStatus": "pending",
+      "status": "completed",
+      "completedAt": "2026-11-26T00:11:51.111Z",
+      "isPublic": false
     },
     "ownerId": "user_1795437974586",
     "ownerUsername": "laurasofiahz",
@@ -6306,7 +6310,7 @@
     "rejectionReason": "",
     "tag": "✔ Completado",
     "tagClass": "badge-completed",
-    "completedAt": "2026-11-24T16:46:38.877Z",
+    "completedAt": "2026-11-26T00:11:51.111Z",
     "_globalHeroBanner": "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=1600&q=80",
     "stage": "completed",
     "authorizedAt": "2026-11-24T18:32:25.455Z",
@@ -6329,8 +6333,8 @@
       "offsetY": -14.1,
       "fit": "contain"
     },
-    "_cardCropUpdatedAt": 1795651911080,
-    "_heroCropUpdatedAt": 1795651911080,
+    "_cardCropUpdatedAt": 1795651911123,
+    "_heroCropUpdatedAt": 1795651911123,
     "_cardCoverUpdatedAt": 1795551501359,
     "_heroBannerUpdatedAt": 1795550956946
   },
