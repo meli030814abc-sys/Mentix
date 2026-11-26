@@ -2,8 +2,8 @@
   {
     "id": "govdata_code_annie_804263",
     "slug": "f",
-    "title": "f",
-    "subtitle": "f",
+    "title": "fñjkñl",
+    "subtitle": "fiul",
     "description": "f",
     "shortDescription": "f",
     "fullDescription": "f",
@@ -35,7 +35,7 @@
     "isPublic": false,
     "startDate": "2026-11-26",
     "endDate": "2026-11-18",
-    "currentStep": 1,
+    "currentStep": 2,
     "completedSteps": [
       1,
       2,
@@ -231,8 +231,8 @@
     "displayOrder": 1,
     "govdata": {
       "id": "govdata_code_annie_804263",
-      "title": "f",
-      "subtitle": "f",
+      "title": "fñjkñl",
+      "subtitle": "fiul",
       "shortDescription": "f",
       "fullDescription": "f",
       "category": "admin",
@@ -317,7 +317,7 @@
         14,
         15
       ],
-      "currentStep": 1,
+      "currentStep": 2,
       "author": "Annie",
       "authorId": "user_1795402834416",
       "ownerId": "user_1795402834416",
@@ -344,7 +344,7 @@
         "collaborators": "f"
       },
       "createdAt": "2026-11-26T00:13:59.044Z",
-      "updatedAt": "2026-11-26T00:15:13.456Z",
+      "updatedAt": "2026-11-26T00:15:19.432Z",
       "progress": 94,
       "calculatedProgress": 94,
       "projectRoadmap": [
@@ -398,7 +398,7 @@
     "authorAvatar": "🐼",
     "authorRole": "Líder del Proyecto",
     "createdAt": "2026-11-26T00:13:59.044Z",
-    "updatedAt": "2026-11-26T00:15:12.539Z"
+    "updatedAt": "2026-11-26T00:15:18.508Z"
   },
   {
     "id": "proj_document_1795651508416",
