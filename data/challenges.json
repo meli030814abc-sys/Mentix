@@ -35,7 +35,7 @@
     "isPublic": false,
     "startDate": "2026-11-26",
     "endDate": "2026-11-18",
-    "currentStep": 9,
+    "currentStep": 10,
     "completedSteps": [
       1,
       2,
@@ -44,10 +44,11 @@
       5,
       6,
       7,
-      8
+      8,
+      9
     ],
-    "progress": 50,
-    "calculatedProgress": 50,
+    "progress": 56,
+    "calculatedProgress": 56,
     "valueProp": {
       "problemSolved": "f",
       "howItWorks": "f",
@@ -59,7 +60,7 @@
       "resultsAndBenefits": "",
       "prerequisites": "",
       "visitorAction": "Unirse / Colaborar",
-      "commercialPitch": "",
+      "commercialPitch": "f",
       "faqs": []
     },
     "valueProposition": {
@@ -73,18 +74,19 @@
       "resultsAndBenefits": "",
       "prerequisites": "",
       "visitorAction": "Unirse / Colaborar",
-      "commercialPitch": "",
+      "commercialPitch": "f",
       "faqs": []
     },
-    "videoUrl": "",
+    "videoUrl": "f",
     "videoConfig": {
       "sourceType": "url",
-      "url": "",
+      "url": "f",
       "fileName": "",
       "title": "",
       "description": "",
       "isPublic": true,
-      "verified": false
+      "verified": false,
+      "thumbnailUrl": ""
     },
     "resources": [],
     "visualAssets": [],
@@ -189,17 +191,18 @@
         "resultsAndBenefits": "",
         "prerequisites": "",
         "visitorAction": "Unirse / Colaborar",
-        "commercialPitch": "",
+        "commercialPitch": "f",
         "faqs": []
       },
       "videoConfig": {
         "sourceType": "url",
-        "url": "",
+        "url": "f",
         "fileName": "",
         "title": "",
         "description": "",
         "isPublic": true,
-        "verified": false
+        "verified": false,
+        "thumbnailUrl": ""
       },
       "mainImage": "",
       "thumbnailImage": "",
@@ -229,9 +232,10 @@
         5,
         6,
         7,
-        8
+        8,
+        9
       ],
-      "currentStep": 9,
+      "currentStep": 10,
       "author": "Annie",
       "authorId": "user_1795402834416",
       "ownerId": "user_1795402834416",
@@ -258,9 +262,9 @@
         "collaborators": "f"
       },
       "createdAt": "2026-11-26T00:13:59.044Z",
-      "updatedAt": "2026-11-26T00:14:24.936Z",
-      "progress": 50,
-      "calculatedProgress": 50,
+      "updatedAt": "2026-11-26T00:14:29.684Z",
+      "progress": 56,
+      "calculatedProgress": 56,
       "projectRoadmap": [
         {
           "title": "Planeación",
@@ -306,7 +310,7 @@
     "authorAvatar": "🐼",
     "authorRole": "Líder del Proyecto",
     "createdAt": "2026-11-26T00:13:59.044Z",
-    "updatedAt": "2026-11-26T00:14:24.025Z"
+    "updatedAt": "2026-11-26T00:14:28.760Z"
   },
   {
     "id": "proj_document_1795651508416",
