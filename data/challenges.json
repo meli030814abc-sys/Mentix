@@ -253,7 +253,8 @@
         "authorRole": "admin",
         "createdAt": "22/11/2026, 9:22:51 p.m."
       }
-    ]
+    ],
+    "_globalHeroBanner": "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=1600&q=80"
   },
   {
     "id": "proj_presentation_1795607130865",
@@ -1758,7 +1759,8 @@
       }
     ],
     "joinRequests": [],
-    "completedAt": "2026-11-25T12:41:53.079Z"
+    "completedAt": "2026-11-25T12:41:53.079Z",
+    "_globalHeroBanner": "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=1600&q=80"
   },
   {
     "id": "proj_video_1795575349043",
@@ -2126,7 +2128,8 @@
     "duration": "5:00 min",
     "tag": "⏳ Pendiente de Autorización",
     "tagClass": "badge-review",
-    "_cardCoverUpdatedAt": 1795582356091
+    "_cardCoverUpdatedAt": 1795582356091,
+    "_globalHeroBanner": "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=1600&q=80"
   },
   {
     "id": "proj_presentation_1795566554804",
@@ -3182,7 +3185,8 @@
     "completedAt": "2026-11-25T01:23:06.413Z",
     "authorizedAt": "2026-11-25T18:54:44.979Z",
     "authorizedBy": "Melisa",
-    "stage": "completed"
+    "stage": "completed",
+    "_globalHeroBanner": "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=1600&q=80"
   },
   {
     "id": "reto_1795552054552",
@@ -4971,7 +4975,7 @@
     "accessMode": "public",
     "displayOrder": 1,
     "createdAt": "2026-11-24T02:08:03.167Z",
-    "updatedAt": "2026-11-26T00:11:33.582Z",
+    "updatedAt": "2026-11-26T00:11:41.348Z",
     "landingConfig": {
       "publicName": "Diagnóstico y propuesta de optimización del gobierno de datos en GPC Pharma S.A.S.",
       "slug": "propuesta-gobierno-de-datos-gpc-pharma",
@@ -5076,7 +5080,7 @@
     "submittedForApproval": true,
     "startDate": "2026-08-03",
     "endDate": "2026-11-25",
-    "currentStep": 12,
+    "currentStep": 13,
     "completedSteps": [
       1,
       2,
@@ -5251,7 +5255,8 @@
         "order": 5,
         "status": "verified",
         "extractedText": "",
-        "uploadedAt": "2026-11-26T00:11:29.470Z"
+        "uploadedAt": "2026-11-26T00:11:29.470Z",
+        "thumbnailUrl": ""
       }
     ],
     "visualAssets": [
@@ -6247,7 +6252,7 @@
         15,
         16
       ],
-      "currentStep": 12,
+      "currentStep": 13,
       "author": "Laura Sofía Hernández Chaparro",
       "authorId": "user_1795437974586",
       "ownerId": "user_1795437974586",
@@ -6274,7 +6279,7 @@
         "collaborators": ""
       },
       "createdAt": "2026-11-24T02:08:03.167Z",
-      "updatedAt": "2026-11-26T00:11:34.407Z",
+      "updatedAt": "2026-11-26T00:11:42.256Z",
       "progress": 100,
       "calculatedProgress": 100
     },
@@ -6292,7 +6297,7 @@
     ],
     "joinRequests": [],
     "visibility": "public",
-    "rejectedAt": "2026-11-24T18:31:56.040Z",
+    "rejectedAt": "",
     "rejectionReason": "",
     "tag": "✔ Completado",
     "tagClass": "badge-completed",
@@ -6319,8 +6324,8 @@
       "offsetY": -14.1,
       "fit": "contain"
     },
-    "_cardCropUpdatedAt": 1795551499823,
-    "_heroCropUpdatedAt": 1795550986414,
+    "_cardCropUpdatedAt": 1795651902270,
+    "_heroCropUpdatedAt": 1795651902270,
     "_cardCoverUpdatedAt": 1795551501359,
     "_heroBannerUpdatedAt": 1795550956946
   },
