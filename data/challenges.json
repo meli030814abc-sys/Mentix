@@ -1,5 +1,80 @@
 [
   {
+    "id": "proj_document_1795651508416",
+    "fromStudentCreate": true,
+    "_isStudentDraft": true,
+    "title": "uhjk",
+    "author": "Melisa",
+    "authorId": "user_1792184134006",
+    "authorEmail": "gatitaxd6f79@gmail.com",
+    "authorAvatar": "🐯",
+    "authorRole": "admin",
+    "projectType": "document",
+    "category": "admin",
+    "categoryName": "Administración Pública",
+    "difficulty": "Medio",
+    "timePerQuestion": 25,
+    "plays": 0,
+    "banner": "",
+    "mainImage": "",
+    "thumbnailImage": "",
+    "shortDescription": "h",
+    "description": "h",
+    "fullDescription": "h",
+    "publicationStatus": "published",
+    "approvalStatus": "approved",
+    "status": "completed",
+    "isPublic": true,
+    "accessMode": "public",
+    "displayOrder": 1,
+    "createdAt": "2026-11-26T00:05:08.416Z",
+    "updatedAt": "2026-11-26T00:05:07.429Z",
+    "landingConfig": {
+      "publicName": "uhjk",
+      "landingTitle": "uhjk",
+      "publicDescription": "h",
+      "slug": "uhjk",
+      "visibleCategory": "Administración Pública",
+      "tags": [
+        "Estudiantes",
+        "Proyecto",
+        "DOCUMENT"
+      ],
+      "ctaText": "Ver Proyecto",
+      "ctaUrl": "#",
+      "displayOrder": 1,
+      "featuredVideoPublic": true
+    },
+    "authorsConfig": {
+      "authorsList": "Melisa",
+      "authorsEmails": "gatitaxd6f79@gmail.com",
+      "authorsRole": "Estudiante / Creador",
+      "collaborators": ""
+    },
+    "designConfig": {
+      "themeId": "cosmos",
+      "fontFamily": "Montserrat",
+      "titleColor": "#ffffff",
+      "textColor": "#cbd5e1",
+      "accentColor": "#00f5d4",
+      "bannerStyle": "gradient-cosmos",
+      "bannerUrl": ""
+    },
+    "docContent": "# uhjk\n\n**Autor(es):** Melisa\n\n### Resumen\nh\n\n### Descripción y Desarrollo\nh\n",
+    "resources": [
+      {
+        "name": "Documento / Guía del Proyecto",
+        "url": "",
+        "type": "doc",
+        "format": "DOC",
+        "thumbnailUrl": "",
+        "description": "h"
+      }
+    ],
+    "visibility": "public",
+    "stage": "completed"
+  },
+  {
     "id": "proj_presentation_1795607130865",
     "slug": "diagnostico-gobierno-de-datos-colegio-tecnico-jaime-pardo-leal-i",
     "title": "Diagnostico gobierno de datos Colegio Tecnico Jaime Pardo Leal IED",
@@ -1502,8 +1577,7 @@
       }
     ],
     "joinRequests": [],
-    "completedAt": "2026-11-25T12:41:53.079Z",
-    "_globalHeroBanner": "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=1600&q=80"
+    "completedAt": "2026-11-25T12:41:53.079Z"
   },
   {
     "id": "proj_video_1795575349043",
@@ -1871,8 +1945,7 @@
     "duration": "5:00 min",
     "tag": "⏳ Pendiente de Autorización",
     "tagClass": "badge-review",
-    "_cardCoverUpdatedAt": 1795582356091,
-    "_globalHeroBanner": "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=1600&q=80"
+    "_cardCoverUpdatedAt": 1795582356091
   },
   {
     "id": "proj_presentation_1795566554804",
@@ -2928,8 +3001,7 @@
     "completedAt": "2026-11-25T01:23:06.413Z",
     "authorizedAt": "2026-11-25T18:54:44.979Z",
     "authorizedBy": "Melisa",
-    "stage": "completed",
-    "_globalHeroBanner": "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=1600&q=80"
+    "stage": "completed"
   },
   {
     "id": "reto_1795552054552",
@@ -4718,7 +4790,7 @@
     "accessMode": "public",
     "displayOrder": 1,
     "createdAt": "2026-11-24T02:08:03.167Z",
-    "updatedAt": "2026-11-26T00:04:13.983Z",
+    "updatedAt": "2026-11-25T00:12:11.426Z",
     "landingConfig": {
       "publicName": "Diagnóstico y propuesta de optimización del gobierno de datos en GPC Pharma S.A.S.",
       "slug": "propuesta-gobierno-de-datos-gpc-pharma",
@@ -4800,13 +4872,7 @@
           "leader": true
         }
       ],
-      "views": [
-        {
-          "t": 1795651433160,
-          "who": "user_1792184134006",
-          "name": "Melisa"
-        }
-      ],
+      "views": [],
       "ratings": [],
       "projectId": "proj_video_1795486083167",
       "updatedAt": 1795552713058
