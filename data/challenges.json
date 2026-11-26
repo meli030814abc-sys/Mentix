@@ -1835,7 +1835,7 @@
     "image": "assets/projects_ui/card_data_gov.png",
     "banner": "assets/projects_ui/card_data_gov.png",
     "createdAt": "2026-11-25T02:55:49.043Z",
-    "updatedAt": "2026-11-26T01:18:21.591Z",
+    "updatedAt": "2026-11-26T01:18:22.197Z",
     "govdata": {
       "id": "proj_video_1795575349043",
       "title": "Diagnóstico de Gobierno de Datos - Afiancol S.A.S.",
@@ -1883,6 +1883,14 @@
           {
             "q": "¿Por qué AFIANCOL necesita implementar un Gobierno de Datos?",
             "a": "Porque necesita mejorar la calidad, organización y disponibilidad de su información, reducir reprocesos y fortalecer la toma de decisiones."
+          },
+          {
+            "q": "",
+            "a": ""
+          },
+          {
+            "q": "",
+            "a": ""
           },
           {
             "q": "",
@@ -1994,7 +2002,7 @@
         "collaborators": "Extiendo mis agradecimientos al profesor Carlos Caño ya que con su guía y acompañamiento fue posible ejecutar un correcto proceso de implementación de Gobierno de Datos de manera teórico práctico."
       },
       "createdAt": "2026-11-25T02:55:49.043Z",
-      "updatedAt": "2026-11-26T01:18:21.059Z",
+      "updatedAt": "2026-11-26T01:18:21.732Z",
       "progress": 80,
       "calculatedProgress": 80
     },
@@ -2170,6 +2178,14 @@
         {
           "q": "",
           "a": ""
+        },
+        {
+          "q": "",
+          "a": ""
+        },
+        {
+          "q": "",
+          "a": ""
         }
       ]
     },
@@ -2203,6 +2219,14 @@
         {
           "q": "¿Por qué AFIANCOL necesita implementar un Gobierno de Datos?",
           "a": "Porque necesita mejorar la calidad, organización y disponibilidad de su información, reducir reprocesos y fortalecer la toma de decisiones."
+        },
+        {
+          "q": "",
+          "a": ""
+        },
+        {
+          "q": "",
+          "a": ""
         },
         {
           "q": "",
