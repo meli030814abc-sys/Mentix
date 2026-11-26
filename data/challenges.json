@@ -1835,7 +1835,7 @@
     "image": "assets/projects_ui/card_data_gov.png",
     "banner": "assets/projects_ui/card_data_gov.png",
     "createdAt": "2026-11-25T02:55:49.043Z",
-    "updatedAt": "2026-11-26T01:01:15.627Z",
+    "updatedAt": "2026-11-26T01:01:18.774Z",
     "govdata": {
       "id": "proj_video_1795575349043",
       "title": "Diagnóstico de Gobierno de Datos - Afiancol S.A.S.",
@@ -1950,9 +1950,10 @@
         3,
         4,
         5,
-        6
+        6,
+        7
       ],
-      "currentStep": 7,
+      "currentStep": 8,
       "author": "Danna Boada",
       "authorId": "user_1795574386910",
       "ownerId": "user_1795574386910",
@@ -1979,7 +1980,7 @@
         "collaborators": "Extiendo mis agradecimientos al profesor Carlos Caño ya que con su guía y acompañamiento fue posible ejecutar un correcto proceso de implementación de Gobierno de Datos de manera teórico práctico."
       },
       "createdAt": "2026-11-25T02:55:49.043Z",
-      "updatedAt": "2026-11-26T01:01:15.115Z",
+      "updatedAt": "2026-11-26T01:01:18.352Z",
       "progress": 80,
       "calculatedProgress": 80
     },
@@ -2108,14 +2109,15 @@
     "preparationStatus": "en_desarrollo",
     "startDate": "2026-11-25",
     "endDate": "",
-    "currentStep": 7,
+    "currentStep": 8,
     "completedSteps": [
       1,
       2,
       3,
       4,
       5,
-      6
+      6,
+      7
     ],
     "progress": 80,
     "calculatedProgress": 80,
