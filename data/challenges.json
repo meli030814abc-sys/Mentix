@@ -4975,7 +4975,7 @@
     "accessMode": "public",
     "displayOrder": 1,
     "createdAt": "2026-11-24T02:08:03.167Z",
-    "updatedAt": "2026-11-26T00:16:31.367Z",
+    "updatedAt": "2026-11-26T00:16:41.171Z",
     "landingConfig": {
       "publicName": "Diagnóstico y propuesta de optimización del gobierno de datos en GPC Pharma S.A.S.",
       "slug": "propuesta-gobierno-de-datos-gpc-pharma",
@@ -5237,24 +5237,6 @@
         "status": "verified",
         "extractedText": "",
         "uploadedAt": "2026-11-24T02:40:10.080Z",
-        "thumbnailUrl": ""
-      },
-      {
-        "id": "res_1795651885020_bdpy",
-        "name": "Documentacion Gobierno de Datos GPC Pharma compressed",
-        "fileName": "Documentacion_Gobierno_de_Datos_GPC_Pharma_compressed.pdf",
-        "description": "Recurso oficial en formato PDF (1.48 MB).",
-        "type": "pdf",
-        "url": "https://mentixs.vercel.app/api/challenges?file=data%2Fuploads%2Fproj_video_1795486083167%2F1795651884503_b1q6_Documentacion_Gobierno_de_Datos_GPC_Phar.pdf",
-        "format": "PDF",
-        "sizeBytes": 1548329,
-        "sizeLabel": "1.48 MB",
-        "category": "Documentación",
-        "visibility": "public",
-        "order": 5,
-        "status": "verified",
-        "extractedText": "",
-        "uploadedAt": "2026-11-26T00:11:29.470Z",
         "thumbnailUrl": ""
       }
     ],
@@ -6160,8 +6142,8 @@
       "offsetY": -14.1,
       "fit": "contain"
     },
-    "_cardCropUpdatedAt": 1795652153922,
-    "_heroCropUpdatedAt": 1795652153922,
+    "_cardCropUpdatedAt": 1795551499823,
+    "_heroCropUpdatedAt": 1795550986414,
     "_cardCoverUpdatedAt": 1795551501359,
     "_heroBannerUpdatedAt": 1795550956946
   },
