@@ -1,0 +1,1301 @@
+/* ==========================================================================
+   🔥 MENTIX - PANEL DOCENTE 3D (TEACHER DASHBOARD 3D)
+   Diseño de Alta Fidelidad con Extrusión 3D, Iluminación Táctil, Emojis Fluent 3D
+   Soporte Completo de Modo Claro y Modo Oscuro
+   ========================================================================== */
+
+/* Animación de Levitación Suave 3D */
+@keyframes t3dFloat {
+  0%, 100% {
+    transform: translateY(0px) rotate(-1.5deg);
+  }
+  50% {
+    transform: translateY(-8px) rotate(1.5deg);
+  }
+}
+
+@keyframes t3dPulseGlow {
+  0%, 100% {
+    filter: drop-shadow(0 8px 16px rgba(0, 245, 212, 0.35));
+  }
+  50% {
+    filter: drop-shadow(0 14px 28px rgba(0, 245, 212, 0.65));
+  }
+}
+
+@keyframes t3dShimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+/* Contenedor Principal */
+.t3d-container {
+  max-width: 1220px;
+  margin: 0 auto;
+  padding: 2rem 1.25rem 5rem;
+  font-family: inherit;
+  box-sizing: border-box;
+}
+
+/* Íconos 3D Inline */
+.t3d-ico-sm {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+  vertical-align: middle;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.25));
+  pointer-events: none;
+}
+.t3d-ico-md {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+  vertical-align: middle;
+  filter: drop-shadow(0 3px 6px rgba(0,0,0,0.3));
+  pointer-events: none;
+}
+.t3d-ico-lg {
+  width: 46px;
+  height: 46px;
+  object-fit: contain;
+  filter: drop-shadow(0 6px 12px rgba(0,0,0,0.28));
+  pointer-events: none;
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* ==========================================================================
+   HERO BANNER 3D
+   ========================================================================== */
+.t3d-hero {
+  position: relative;
+  border-radius: 26px;
+  padding: 2.2rem 2.2rem 2rem;
+  margin-bottom: 2.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.8rem;
+  transition: all 0.3s ease;
+  overflow: hidden;
+}
+
+.t3d-hero::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.8), transparent);
+}
+
+.t3d-hero-left {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  flex: 1;
+  min-width: 300px;
+}
+
+.t3d-hero-mascot-box {
+  position: relative;
+  width: 90px;
+  height: 90px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 24px;
+}
+
+.t3d-hero-mascot {
+  width: 82px;
+  height: 82px;
+  object-fit: contain;
+  animation: t3dFloat 4.2s ease-in-out infinite;
+  filter: drop-shadow(0 12px 18px rgba(0, 0, 0, 0.35));
+}
+
+.t3d-badge-gold {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.35rem 0.85rem;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 900;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  margin-bottom: 0.6rem;
+  box-shadow: 0 4px 0 #b45309, 0 8px 16px rgba(245, 158, 11, 0.25);
+  background: linear-gradient(135deg, #fef08a 0%, #f59e0b 100%);
+  color: #78350f;
+  border: 1px solid #fde047;
+}
+
+.t3d-hero-title {
+  font-size: 2.25rem;
+  font-weight: 950;
+  line-height: 1.15;
+  margin: 0 0 0.5rem 0;
+  letter-spacing: -0.02em;
+}
+
+.t3d-hero-sub {
+  font-size: 0.98rem;
+  margin: 0;
+  line-height: 1.5;
+  max-width: 600px;
+}
+
+.t3d-hero-actions {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+/* ==========================================================================
+   BOTONES 3D TÁCTILES CON EXTRUSIÓN
+   ========================================================================== */
+.t3d-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  padding: 0.68rem 1.25rem;
+  font-size: 0.88rem;
+  font-weight: 850;
+  border-radius: 14px;
+  cursor: pointer;
+  text-decoration: none;
+  user-select: none;
+  white-space: nowrap;
+  border: 1.5px solid transparent;
+  transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.18s ease;
+}
+
+.t3d-btn:hover {
+  transform: translateY(-2.5px);
+}
+
+.t3d-btn:active {
+  transform: translateY(3px);
+}
+
+/* Botón 3D Primary (Azul Royal) */
+.t3d-btn-primary {
+  background: linear-gradient(180deg, #3b82f6 0%, #1d4ed8 100%);
+  color: #ffffff !important;
+  border-color: #60a5fa;
+  box-shadow: 0 5px 0 #1e40af, 0 10px 20px rgba(37, 99, 235, 0.35);
+}
+.t3d-btn-primary:hover {
+  box-shadow: 0 7px 0 #1e40af, 0 14px 26px rgba(37, 99, 235, 0.45);
+}
+.t3d-btn-primary:active {
+  box-shadow: 0 2px 0 #1e40af;
+}
+
+/* Botón 3D Cyan (Neón Mentix) */
+.t3d-btn-cyan {
+  background: linear-gradient(180deg, #06b6d4 0%, #0891b2 100%);
+  color: #ffffff !important;
+  border-color: #67e8f9;
+  box-shadow: 0 5px 0 #0e7490, 0 10px 20px rgba(6, 182, 212, 0.35);
+}
+.t3d-btn-cyan:hover {
+  box-shadow: 0 7px 0 #0e7490, 0 14px 26px rgba(6, 182, 212, 0.45);
+}
+.t3d-btn-cyan:active {
+  box-shadow: 0 2px 0 #0e7490;
+}
+
+/* Botón 3D Emerald (Verde Éxito) */
+.t3d-btn-emerald {
+  background: linear-gradient(180deg, #10b981 0%, #059669 100%);
+  color: #ffffff !important;
+  border-color: #6ee7b7;
+  box-shadow: 0 5px 0 #047857, 0 10px 20px rgba(16, 185, 129, 0.35);
+}
+.t3d-btn-emerald:hover {
+  box-shadow: 0 7px 0 #047857, 0 14px 26px rgba(16, 185, 129, 0.45);
+}
+.t3d-btn-emerald:active {
+  box-shadow: 0 2px 0 #047857;
+}
+
+/* Botón 3D Amber (Dorado Proyector) */
+.t3d-btn-amber {
+  background: linear-gradient(180deg, #f59e0b 0%, #d97706 100%);
+  color: #ffffff !important;
+  border-color: #fcd34d;
+  box-shadow: 0 5px 0 #b45309, 0 10px 20px rgba(245, 158, 11, 0.35);
+}
+.t3d-btn-amber:hover {
+  box-shadow: 0 7px 0 #b45309, 0 14px 26px rgba(245, 158, 11, 0.45);
+}
+.t3d-btn-amber:active {
+  box-shadow: 0 2px 0 #b45309;
+}
+
+/* Botón 3D Outline */
+.t3d-btn-outline {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.25);
+  box-shadow: 0 4px 0 rgba(0, 0, 0, 0.15);
+}
+.t3d-btn-outline:active {
+  box-shadow: 0 1.5px 0 rgba(0, 0, 0, 0.15);
+}
+
+/* ==========================================================================
+   MÉTRICAS KPI 3D CON BASES EXTRUIDAS
+   ========================================================================== */
+.t3d-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 1.35rem;
+  margin-bottom: 2.8rem;
+}
+
+.t3d-kpi-card {
+  position: relative;
+  border-radius: 22px;
+  padding: 1.5rem 1.4rem;
+  display: flex;
+  align-items: center;
+  gap: 1.15rem;
+  transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.22s ease;
+  overflow: hidden;
+}
+
+.t3d-kpi-card:hover {
+  transform: translateY(-6px);
+}
+.t3d-kpi-card:hover .t3d-ico-lg {
+  transform: scale(1.15) rotate(-4deg);
+}
+
+.t3d-kpi-icon-wrap {
+  width: 64px;
+  height: 64px;
+  border-radius: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.5), 0 4px 10px rgba(0, 0, 0, 0.12);
+}
+
+.t3d-kpi-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.t3d-kpi-label {
+  font-size: 0.78rem;
+  font-weight: 850;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 0.2rem;
+}
+
+.t3d-kpi-val {
+  font-size: 2.3rem;
+  font-weight: 950;
+  line-height: 1.05;
+}
+
+.t3d-kpi-sub {
+  font-size: 0.8rem;
+  font-weight: 700;
+  margin-top: 0.35rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Colores específicos de KPI 3D */
+.t3d-kpi-blue .t3d-kpi-icon-wrap { background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); }
+.t3d-kpi-cyan .t3d-kpi-icon-wrap { background: linear-gradient(135deg, #cffafe 0%, #a5f3fc 100%); }
+.t3d-kpi-green .t3d-kpi-icon-wrap { background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%); }
+.t3d-kpi-gold .t3d-kpi-icon-wrap { background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); }
+
+/* ==========================================================================
+   TOOLBAR 3D Y BÚSQUEDA DE EVALUACIONES
+   ========================================================================== */
+.t3d-section-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.t3d-section-title {
+  font-size: 1.55rem;
+  font-weight: 950;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  letter-spacing: -0.01em;
+}
+
+.t3d-search-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.55rem 0.95rem;
+  border-radius: 14px;
+  width: 100%;
+  max-width: 360px;
+  transition: all 0.2s ease;
+}
+
+.t3d-search-input {
+  border: none;
+  background: transparent;
+  width: 100%;
+  font-size: 0.9rem;
+  font-weight: 700;
+  outline: none;
+}
+
+.t3d-filter-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1.6rem;
+}
+
+.t3d-filter-chip {
+  padding: 0.4rem 0.9rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 800;
+  cursor: pointer;
+  border: 1.5px solid transparent;
+  transition: all 0.15s ease;
+  user-select: none;
+}
+
+.t3d-filter-chip:hover {
+  transform: translateY(-1.5px);
+}
+
+.t3d-filter-chip.is-active {
+  transform: translateY(-2px);
+}
+
+/* ==========================================================================
+   CARDS DE EVALUACIONES / QUIZZES 3D
+   ========================================================================== */
+.t3d-quiz-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
+  gap: 1.4rem;
+  margin-bottom: 3.2rem;
+}
+
+.t3d-quiz-card {
+  position: relative;
+  border-radius: 22px;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.22s ease;
+}
+
+.t3d-quiz-card:hover {
+  transform: translateY(-6px);
+}
+
+.t3d-quiz-top-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.85rem;
+}
+
+.t3d-pill-category {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.28rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.76rem;
+  font-weight: 850;
+  text-transform: uppercase;
+}
+
+.t3d-pill-meta {
+  font-size: 0.76rem;
+  font-weight: 750;
+  padding: 0.28rem 0.65rem;
+  border-radius: 999px;
+}
+
+.t3d-quiz-title {
+  font-size: 1.25rem;
+  font-weight: 950;
+  line-height: 1.3;
+  margin: 0 0 0.5rem 0;
+}
+
+.t3d-quiz-desc {
+  font-size: 0.88rem;
+  line-height: 1.5;
+  margin: 0 0 1.1rem 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.t3d-quiz-author-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 1.2rem;
+  font-size: 0.82rem;
+}
+
+.t3d-author-info {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-weight: 700;
+}
+
+.t3d-badge-myquiz {
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 900;
+}
+
+/* Botones de acción dentro de la card de quiz */
+.t3d-quiz-actions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(95px, 1fr));
+  gap: 0.45rem;
+  padding-top: 1rem;
+}
+
+.t3d-card-btn {
+  padding: 0.55rem 0.65rem;
+  font-size: 0.82rem;
+  font-weight: 850;
+  border-radius: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  cursor: pointer;
+  border: 1.5px solid transparent;
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+  white-space: nowrap;
+}
+.t3d-card-btn:hover {
+  transform: translateY(-2px);
+}
+.t3d-card-btn:active {
+  transform: translateY(2px);
+}
+
+/* ==========================================================================
+   GRUPOS Y CURSOS 3D CON CUADRO DE HONOR / PODIO
+   ========================================================================== */
+.t3d-group-card {
+  border-radius: 24px;
+  padding: 1.85rem;
+  margin-bottom: 1.85rem;
+  transition: transform 0.22s ease, box-shadow 0.22s ease;
+}
+
+.t3d-group-card:hover {
+  transform: translateY(-4px);
+}
+
+.t3d-group-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.25rem;
+  padding-bottom: 1.35rem;
+  border-bottom: 1.5px dashed;
+  margin-bottom: 1.45rem;
+}
+
+.t3d-group-identity {
+  display: flex;
+  align-items: center;
+  gap: 1.1rem;
+}
+
+.t3d-group-icon-emblem {
+  width: 58px;
+  height: 58px;
+  border-radius: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.t3d-group-name {
+  font-size: 1.4rem;
+  font-weight: 950;
+  letter-spacing: -0.01em;
+  margin: 0;
+}
+
+.t3d-group-meta {
+  font-size: 0.92rem;
+  font-weight: 700;
+  margin-top: 0.3rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.t3d-group-actions {
+  display: flex;
+  gap: 0.65rem;
+  flex-wrap: wrap;
+}
+
+/* Cuadro de Honor 3D */
+.t3d-honor-title {
+  font-size: 1rem;
+  font-weight: 900;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.t3d-students-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  gap: 0.85rem;
+}
+
+.t3d-student-card {
+  position: relative;
+  border-radius: 16px;
+  padding: 0.85rem 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  border: 1.5px solid;
+}
+
+.t3d-student-card:hover {
+  transform: translateY(-3px);
+}
+
+.t3d-student-avatar {
+  font-size: 1.85rem;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.t3d-medal-badge {
+  position: absolute;
+  top: -8px;
+  right: -6px;
+  width: 26px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  filter: drop-shadow(0 3px 5px rgba(0,0,0,0.3));
+}
+
+.t3d-student-name {
+  font-size: 0.88rem;
+  font-weight: 850;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.t3d-student-pts {
+  font-size: 0.78rem;
+  font-weight: 900;
+  margin-top: 0.15rem;
+}
+
+/* ==========================================================================
+   MODALES 3D CON FOCO Y PROFUNDIDAD
+   ========================================================================== */
+.t3d-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.25rem;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  animation: t3dFadeIn 0.2s ease;
+}
+
+@keyframes t3dFadeIn {
+  from { opacity: 0; transform: scale(0.97); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.t3d-modal-window {
+  width: 100%;
+  max-width: 540px;
+  border-radius: 26px;
+  padding: 2.2rem;
+  position: relative;
+  border-width: 2px;
+  border-style: solid;
+}
+
+.t3d-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.4rem;
+}
+
+.t3d-modal-title {
+  font-size: 1.45rem;
+  font-weight: 950;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.t3d-modal-close {
+  background: transparent;
+  border: none;
+  font-size: 1.4rem;
+  cursor: pointer;
+  line-height: 1;
+  padding: 0.3rem;
+  border-radius: 8px;
+  transition: transform 0.15s ease;
+}
+.t3d-modal-close:hover {
+  transform: scale(1.15);
+}
+
+.t3d-form-group {
+  margin-bottom: 1.25rem;
+}
+
+.t3d-form-label {
+  display: block;
+  font-size: 0.84rem;
+  font-weight: 850;
+  margin-bottom: 0.45rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.t3d-form-input,
+.t3d-form-select {
+  width: 100%;
+  padding: 0.8rem 1rem;
+  border-radius: 12px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  outline: none;
+  border: 1.5px solid;
+  box-sizing: border-box;
+  transition: all 0.2s ease;
+}
+
+.t3d-room-type-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.85rem;
+  margin-bottom: 0.6rem;
+}
+
+.t3d-room-type-btn {
+  padding: 0.95rem 0.85rem;
+  border-radius: 16px;
+  text-align: center;
+  cursor: pointer;
+  border: 2px solid;
+  transition: all 0.18s ease;
+  user-select: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.t3d-room-type-btn:hover {
+  transform: translateY(-2px);
+}
+
+/* ==========================================================================
+   ESTILOS ESPECÍFICOS: MODO CLARO (LIGHT THEME)
+   ========================================================================== */
+#view-teacher.teacher-theme-light,
+.teacher-panel-wrapper.teacher-theme-light {
+  color: #0f172a;
+}
+
+/* Hero Light */
+.teacher-theme-light .t3d-hero {
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 55%, #eff6ff 100%);
+  border: 2px solid #cbd5e1;
+  box-shadow: 0 9px 0 #94a3b8, 0 22px 42px rgba(15, 23, 42, 0.08), inset 0 2px 0 #ffffff;
+}
+.teacher-theme-light .t3d-hero-mascot-box {
+  background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+  box-shadow: 0 6px 0 #93c5fd, inset 0 2px 0 rgba(255,255,255,0.9);
+}
+.teacher-theme-light .t3d-hero-title {
+  color: #0f172a;
+}
+.teacher-theme-light .t3d-hero-sub {
+  color: #475569;
+}
+.teacher-theme-light .t3d-btn-outline {
+  background: #ffffff;
+  color: #0f172a;
+  border-color: #cbd5e1;
+  box-shadow: 0 4px 0 #cbd5e1, 0 8px 16px rgba(15, 23, 42, 0.06);
+}
+.teacher-theme-light .t3d-btn-outline:hover {
+  border-color: #94a3b8;
+  box-shadow: 0 6px 0 #94a3b8;
+}
+
+/* KPI Cards Light */
+.teacher-theme-light .t3d-kpi-card {
+  background: #ffffff;
+  border: 2px solid #e2e8f0;
+  box-shadow: 0 8px 0 #cbd5e1, 0 16px 28px rgba(15, 23, 42, 0.06), inset 0 2px 0 #ffffff;
+}
+.teacher-theme-light .t3d-kpi-card:hover {
+  box-shadow: 0 12px 0 #94a3b8, 0 22px 36px rgba(15, 23, 42, 0.1);
+}
+.teacher-theme-light .t3d-kpi-label { color: #64748b; }
+.teacher-theme-light .t3d-kpi-sub { color: #475569; }
+.teacher-theme-light .t3d-kpi-blue .t3d-kpi-val { color: #1d4ed8; }
+.teacher-theme-light .t3d-kpi-cyan .t3d-kpi-val { color: #0284c7; }
+.teacher-theme-light .t3d-kpi-green .t3d-kpi-val { color: #059669; }
+.teacher-theme-light .t3d-kpi-gold .t3d-kpi-val { color: #d97706; }
+
+/* Toolbar Light */
+.teacher-theme-light .t3d-section-title { color: #0f172a; }
+.teacher-theme-light .t3d-search-bar {
+  background: #ffffff;
+  border: 2px solid #cbd5e1;
+  box-shadow: 0 3px 0 #e2e8f0, inset 0 2px 4px rgba(15, 23, 42, 0.03);
+}
+.teacher-theme-light .t3d-search-bar:focus-within {
+  border-color: #2563eb;
+  box-shadow: 0 4px 0 #bfdbfe, 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+.teacher-theme-light .t3d-search-input { color: #0f172a; }
+.teacher-theme-light .t3d-filter-chip {
+  background: #f1f5f9;
+  color: #475569;
+  border-color: #e2e8f0;
+  box-shadow: 0 3px 0 #cbd5e1;
+}
+.teacher-theme-light .t3d-filter-chip.is-active {
+  background: #eff6ff;
+  color: #1d4ed8;
+  border-color: #93c5fd;
+  box-shadow: 0 4px 0 #3b82f6;
+}
+
+/* Quiz Cards Light */
+.teacher-theme-light .t3d-quiz-card {
+  background: #ffffff;
+  border: 2px solid #e2e8f0;
+  box-shadow: 0 8px 0 #cbd5e1, 0 16px 30px rgba(15, 23, 42, 0.06), inset 0 2px 0 #ffffff;
+}
+.teacher-theme-light .t3d-quiz-card:hover {
+  box-shadow: 0 12px 0 #94a3b8, 0 24px 38px rgba(15, 23, 42, 0.1);
+}
+.teacher-theme-light .t3d-pill-category {
+  background: #e0f2fe;
+  color: #0369a1;
+  border: 1px solid #bae6fd;
+}
+.teacher-theme-light .t3d-pill-meta {
+  background: #f8fafc;
+  color: #64748b;
+  border: 1px solid #e2e8f0;
+}
+.teacher-theme-light .t3d-quiz-title { color: #0f172a; }
+.teacher-theme-light .t3d-quiz-desc { color: #475569; }
+.teacher-theme-light .t3d-author-info { color: #64748b; }
+.teacher-theme-light .t3d-badge-myquiz {
+  background: #dcfce7;
+  color: #15803d;
+  border: 1px solid #bbf7d0;
+}
+.teacher-theme-light .t3d-card-btn-test {
+  background: #f8fafc;
+  color: #334155;
+  border-color: #cbd5e1;
+  box-shadow: 0 3.5px 0 #cbd5e1;
+}
+.teacher-theme-light .t3d-card-btn-test:hover { background: #f1f5f9; }
+
+/* Group Cards Light */
+.teacher-theme-light .t3d-group-card {
+  background: #ffffff;
+  border: 2px solid #e2e8f0;
+  box-shadow: 0 9px 0 #cbd5e1, 0 20px 36px rgba(15, 23, 42, 0.06), inset 0 2px 0 #ffffff;
+}
+.teacher-theme-light .t3d-group-card:hover {
+  box-shadow: 0 13px 0 #94a3b8, 0 26px 44px rgba(15, 23, 42, 0.1);
+}
+.teacher-theme-light .t3d-group-header { border-color: #e2e8f0; }
+.teacher-theme-light .t3d-group-icon-emblem {
+  background: linear-gradient(135deg, #ede9fe 0%, #ddd6fe 100%);
+  box-shadow: 0 4px 0 #c4b5fd;
+}
+.teacher-theme-light .t3d-group-name { color: #0f172a; }
+.teacher-theme-light .t3d-group-meta { color: #475569; }
+.teacher-theme-light .t3d-honor-title { color: #854d0e; }
+
+.teacher-theme-light .t3d-student-card {
+  background: #f8fafc;
+  border-color: #e2e8f0;
+  box-shadow: 0 3px 0 #cbd5e1;
+}
+.teacher-theme-light .t3d-student-card:hover {
+  background: #ffffff;
+  box-shadow: 0 5px 0 #94a3b8;
+}
+.teacher-theme-light .t3d-student-avatar { background: #ffffff; border: 1.5px solid #e2e8f0; }
+.teacher-theme-light .t3d-student-name { color: #0f172a; }
+.teacher-theme-light .t3d-student-pts { color: #0284c7; }
+
+.teacher-theme-light .t3d-student-gold {
+  background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+  border-color: #fcd34d !important;
+  box-shadow: 0 4px 0 #f59e0b !important;
+}
+.teacher-theme-light .t3d-student-silver {
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border-color: #cbd5e1 !important;
+  box-shadow: 0 4px 0 #94a3b8 !important;
+}
+.teacher-theme-light .t3d-student-bronze {
+  background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%);
+  border-color: #fdba74 !important;
+  box-shadow: 0 4px 0 #f97316 !important;
+}
+
+/* Modals Light */
+.teacher-theme-light.t3d-modal-backdrop,
+.t3d-modal-backdrop {
+  background: rgba(15, 23, 42, 0.65);
+}
+.teacher-theme-light .t3d-modal-window {
+  background: #ffffff;
+  border-color: #93c5fd;
+  box-shadow: 0 12px 0 #60a5fa, 0 30px 60px rgba(15, 23, 42, 0.25);
+}
+.teacher-theme-light .t3d-modal-title { color: #0f172a; }
+.teacher-theme-light .t3d-modal-close { color: #64748b; }
+.teacher-theme-light .t3d-form-label { color: #475569; }
+.teacher-theme-light .t3d-form-input,
+.teacher-theme-light .t3d-form-select {
+  background: #f8fafc;
+  color: #0f172a;
+  border-color: #cbd5e1;
+}
+.teacher-theme-light .t3d-form-input:focus,
+.teacher-theme-light .t3d-form-select:focus {
+  border-color: #2563eb;
+  background: #ffffff;
+}
+.teacher-theme-light .t3d-room-type-btn {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+  color: #334155;
+  box-shadow: 0 4px 0 #cbd5e1;
+}
+.teacher-theme-light .t3d-room-type-btn.is-active {
+  background: #eff6ff;
+  border-color: #3b82f6;
+  color: #1d4ed8;
+  box-shadow: 0 5px 0 #2563eb;
+}
+
+/* ==========================================================================
+   ESTILOS ESPECÍFICOS: MODO OSCURO (DARK THEME)
+   ========================================================================== */
+#view-teacher:not(.teacher-theme-light),
+.teacher-panel-wrapper.teacher-theme-dark {
+  color: #f1f5f9;
+}
+
+/* Hero Dark */
+#view-teacher:not(.teacher-theme-light) .t3d-hero,
+.teacher-panel-wrapper.teacher-theme-dark .t3d-hero {
+  background: linear-gradient(135deg, rgba(14, 34, 66, 0.95) 0%, rgba(7, 18, 38, 0.98) 100%);
+  border: 2px solid rgba(0, 245, 212, 0.45);
+  box-shadow: 0 9px 0 #07152b, 0 24px 50px rgba(0, 0, 0, 0.75), inset 0 1px 0 rgba(0, 245, 212, 0.3);
+}
+#view-teacher:not(.teacher-theme-light) .t3d-hero-mascot-box,
+.teacher-panel-wrapper.teacher-theme-dark .t3d-hero-mascot-box {
+  background: linear-gradient(135deg, rgba(0, 245, 212, 0.2) 0%, rgba(37, 99, 235, 0.25) 100%);
+  box-shadow: 0 6px 0 #051426, inset 0 1.5px 0 rgba(0, 245, 212, 0.5);
+  border: 1.5px solid rgba(0, 245, 212, 0.35);
+}
+#view-teacher:not(.teacher-theme-light) .t3d-hero-title,
+.teacher-panel-wrapper.teacher-theme-dark .t3d-hero-title {
+  color: #ffffff !important;
+  text-shadow: 0 0 20px rgba(0, 245, 212, 0.5);
+}
+#view-teacher:not(.teacher-theme-light) .t3d-hero-sub,
+.teacher-panel-wrapper.teacher-theme-dark .t3d-hero-sub {
+  color: #cbd5e1 !important;
+}
+#view-teacher:not(.teacher-theme-light) .t3d-btn-outline,
+.teacher-panel-wrapper.teacher-theme-dark .t3d-btn-outline {
+  background: rgba(255, 255, 255, 0.08);
+  color: #f1f5f9;
+  border-color: rgba(0, 245, 212, 0.4);
+  box-shadow: 0 4px 0 #051426;
+}
+#view-teacher:not(.teacher-theme-light) .t3d-btn-outline:hover,
+.teacher-panel-wrapper.teacher-theme-dark .t3d-btn-outline:hover {
+  background: rgba(0, 245, 212, 0.15);
+  border-color: #00f5d4;
+  box-shadow: 0 6px 0 #051426, 0 0 16px rgba(0, 245, 212, 0.3);
+}
+
+/* KPI Cards Dark */
+#view-teacher:not(.teacher-theme-light) .t3d-kpi-card,
+.teacher-panel-wrapper.teacher-theme-dark .t3d-kpi-card {
+  background: linear-gradient(145deg, rgba(13, 31, 60, 0.95) 0%, rgba(6, 17, 36, 0.98) 100%);
+  border: 2px solid rgba(0, 245, 212, 0.28);
+  box-shadow: 0 8px 0 #040e1c, 0 16px 36px rgba(0, 0, 0, 0.65), inset 0 1px 0 rgba(255,255,255,0.12);
+}
+#view-teacher:not(.teacher-theme-light) .t3d-kpi-card:hover,
+.teacher-panel-wrapper.teacher-theme-dark .t3d-kpi-card:hover {
+  box-shadow: 0 12px 0 #040e1c, 0 22px 42px rgba(0, 0, 0, 0.8), 0 0 24px rgba(0, 245, 212, 0.25);
+  border-color: rgba(0, 245, 212, 0.6);
+}
+#view-teacher:not(.teacher-theme-light) .t3d-kpi-label,
+.teacher-panel-wrapper.teacher-theme-dark .t3d-kpi-label { color: #94a3b8; }
+#view-teacher:not(.teacher-theme-light) .t3d-kpi-sub,
+.teacher-panel-wrapper.teacher-theme-dark .t3d-kpi-sub { color: #cbd5e1; }
+#view-teacher:not(.teacher-theme-light) .t3d-kpi-blue .t3d-kpi-val,
+.teacher-panel-wrapper.teacher-theme-dark .t3d-kpi-blue .t3d-kpi-val { color: #60a5fa; text-shadow: 0 0 15px rgba(96, 165, 250, 0.6); }
+#view-teacher:not(.teacher-theme-light) .t3d-kpi-cyan .t3d-kpi-val,
+.teacher-panel-wrapper.teacher-theme-dark .t3d-kpi-cyan .t3d-kpi-val { color: #00f5d4; text-shadow: 0 0 15px rgba(0, 245, 212, 0.6); }
+#view-teacher:not(.teacher-theme-light) .t3d-kpi-green .t3d-kpi-val,
+.teacher-panel-wrapper.teacher-theme-dark .t3d-kpi-green .t3d-kpi-val { color: #34d399; text-shadow: 0 0 15px rgba(52, 211, 153, 0.6); }
+#view-teacher:not(.teacher-theme-light) .t3d-kpi-gold .t3d-kpi-val,
+.teacher-panel-wrapper.teacher-theme-dark .t3d-kpi-gold .t3d-kpi-val { color: #facc15; text-shadow: 0 0 15px rgba(250, 204, 21, 0.6); }
+
+/* Toolbar Dark */
+#view-teacher:not(.teacher-theme-light) .t3d-section-title,
+.teacher-panel-wrapper.teacher-theme-dark .t3d-section-title {
+  color: #ffffff !important;
+  text-shadow: 0 0 14px rgba(0, 245, 212, 0.4);
+}
+#view-teacher:not(.teacher-theme-light) .t3d-search-bar,
+.teacher-panel-wrapper.teacher-theme-dark .t3d-search-bar {
+  background: rgba(10, 25, 50, 0.92);
+  border: 2px solid rgba(0, 245, 212, 0.35);
+  box-shadow: 0 3px 0 #051426;
+}
+#view-teacher:not(.teacher-theme-light) .t3d-search-bar:focus-within,
+.teacher-panel-wrapper.teacher-theme-dark .t3d-search-bar:focus-within {
+  border-color: #00f5d4;
+  box-shadow: 0 4px 0 #051426, 0 0 18px rgba(0, 245, 212, 0.35);
+}
+#view-teacher:not(.teacher-theme-light) .t3d-search-input,
+.teacher-panel-wrapper.teacher-theme-dark .t3d-search-input { color: #ffffff; }
+#view-teacher:not(.teacher-theme-light) .t3d-filter-chip,
+.teacher-panel-wrapper.teacher-theme-dark .t3d-filter-chip {
+  background: rgba(255, 255, 255, 0.08);
+  color: #cbd5e1;
+  border-color: rgba(255, 255, 255, 0.15);
+  box-shadow: 0 3px 0 #051426;
+}
+#view-teacher:not(.teacher-theme-light) .t3d-filter-chip.is-active,
+.teacher-panel-wrapper.teacher-theme-dark .t3d-filter-chip.is-active {
+  background: rgba(0, 245, 212, 0.2);
+  color: #00f5d4;
+  border-color: #00f5d4;
+  box-shadow: 0 4px 0 #051426, 0 0 12px rgba(0, 245, 212, 0.3);
+}
+
+/* Quiz Cards Dark */
+#view-teacher:not(.teacher-theme-light) .t3d-quiz-card,
+.teacher-panel-wrapper.teacher-theme-dark .t3d-quiz-card {
+  background: linear-gradient(145deg, rgba(12, 28, 56, 0.94) 0%, rgba(6, 17, 36, 0.98) 100%);
+  border: 2px solid rgba(0, 245, 212, 0.28);
+  box-shadow: 0 8px 0 #040e1c, 0 18px 36px rgba(0, 0, 0, 0.65), inset 0 1px 0 rgba(255,255,255,0.1);
+}
+#view-teacher:not(.teacher-theme-light) .t3d-quiz-card:hover,
+.teacher-panel-wrapper.teacher-theme-dark .t3d-quiz-card:hover {
+  box-shadow: 0 12px 0 #040e1c, 0 24px 44px rgba(0, 0, 0, 0.8), 0 0 20px rgba(0, 245, 212, 0.2);
+  border-color: rgba(0, 245, 212, 0.55);
+}
+#view-teacher:not(.teacher-theme-light) .t3d-pill-category,
+.teacher-panel-wrapper.teacher-theme-dark .t3d-pill-category {
+  background: rgba(0, 245, 212, 0.18);
+  color: #00f5d4;
+  border: 1px solid rgba(0, 245, 212, 0.45);
+}
+#view-teacher:not(.teacher-theme-light) .t3d-pill-meta,
+.teacher-panel-wrapper.teacher-theme-dark .t3d-pill-meta {
+  background: rgba(255, 255, 255, 0.08);
+  color: #cbd5e1;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+#view-teacher:not(.teacher-theme-light) .t3d-quiz-title,
+.teacher-panel-wrapper.teacher-theme-dark .t3d-quiz-title {
+  color: #ffffff !important;
+  text-shadow: 0 0 14px rgba(0, 245, 212, 0.3);
+}
+#view-teacher:not(.teacher-theme-light) .t3d-quiz-desc,
+.teacher-panel-wrapper.teacher-theme-dark .t3d-quiz-desc { color: #cbd5e1; }
+#view-teacher:not(.teacher-theme-light) .t3d-author-info,
+.teacher-panel-wrapper.teacher-theme-dark .t3d-author-info { color: #94a3b8; }
+#view-teacher:not(.teacher-theme-light) .t3d-badge-myquiz,
+.teacher-panel-wrapper.teacher-theme-dark .t3d-badge-myquiz {
+  background: rgba(52, 211, 153, 0.2);
+  color: #34d399;
+  border: 1px solid rgba(52, 211, 153, 0.45);
+}
+#view-teacher:not(.teacher-theme-light) .t3d-card-btn-test,
+.teacher-panel-wrapper.teacher-theme-dark .t3d-card-btn-test {
+  background: rgba(255, 255, 255, 0.08);
+  color: #cbd5e1;
+  border-color: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 3.5px 0 #051426;
+}
+#view-teacher:not(.teacher-theme-light) .t3d-card-btn-test:hover,
+.teacher-panel-wrapper.teacher-theme-dark .t3d-card-btn-test:hover {
+  background: rgba(255, 255, 255, 0.14);
+}
+
+/* Group Cards Dark */
+#view-teacher:not(.teacher-theme-light) .t3d-group-card,
+.teacher-panel-wrapper.teacher-theme-dark .t3d-group-card {
+  background: linear-gradient(145deg, rgba(12, 28, 56, 0.95) 0%, rgba(6, 17, 36, 0.98) 100%);
+  border: 2px solid rgba(0, 245, 212, 0.3);
+  box-shadow: 0 9px 0 #040e1c, 0 22px 42px rgba(0, 0, 0, 0.7);
+}
+#view-teacher:not(.teacher-theme-light) .t3d-group-header,
+.teacher-panel-wrapper.teacher-theme-dark .t3d-group-header { border-color: rgba(255, 255, 255, 0.12); }
+#view-teacher:not(.teacher-theme-light) .t3d-group-icon-emblem,
+.teacher-panel-wrapper.teacher-theme-dark .t3d-group-icon-emblem {
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.25) 0%, rgba(139, 92, 246, 0.3) 100%);
+  box-shadow: 0 4px 0 #051426;
+  border: 1.5px solid rgba(139, 92, 246, 0.4);
+}
+#view-teacher:not(.teacher-theme-light) .t3d-group-name,
+.teacher-panel-wrapper.teacher-theme-dark .t3d-group-name {
+  color: #ffffff !important;
+  text-shadow: 0 0 14px rgba(0, 245, 212, 0.3);
+}
+#view-teacher:not(.teacher-theme-light) .t3d-group-meta,
+.teacher-panel-wrapper.teacher-theme-dark .t3d-group-meta { color: #cbd5e1; }
+#view-teacher:not(.teacher-theme-light) .t3d-honor-title,
+.teacher-panel-wrapper.teacher-theme-dark .t3d-honor-title {
+  color: #facc15 !important;
+  text-shadow: 0 0 12px rgba(250, 204, 21, 0.5);
+}
+
+#view-teacher:not(.teacher-theme-light) .t3d-student-card,
+.teacher-panel-wrapper.teacher-theme-dark .t3d-student-card {
+  background: rgba(4, 15, 32, 0.75);
+  border-color: rgba(0, 245, 212, 0.25);
+  box-shadow: 0 3px 0 #030a14;
+}
+#view-teacher:not(.teacher-theme-light) .t3d-student-card:hover,
+.teacher-panel-wrapper.teacher-theme-dark .t3d-student-card:hover {
+  background: rgba(8, 24, 50, 0.9);
+  border-color: rgba(0, 245, 212, 0.5);
+  box-shadow: 0 5px 0 #030a14;
+}
+#view-teacher:not(.teacher-theme-light) .t3d-student-avatar,
+.teacher-panel-wrapper.teacher-theme-dark .t3d-student-avatar {
+  background: rgba(0, 0, 0, 0.45);
+  border: 1.5px solid rgba(255, 255, 255, 0.1);
+}
+#view-teacher:not(.teacher-theme-light) .t3d-student-name,
+.teacher-panel-wrapper.teacher-theme-dark .t3d-student-name { color: #ffffff !important; }
+#view-teacher:not(.teacher-theme-light) .t3d-student-pts,
+.teacher-panel-wrapper.teacher-theme-dark .t3d-student-pts { color: #00f5d4; }
+
+#view-teacher:not(.teacher-theme-light) .t3d-student-gold,
+.teacher-panel-wrapper.teacher-theme-dark .t3d-student-gold {
+  border-color: rgba(250, 204, 21, 0.65) !important;
+  box-shadow: 0 4px 0 #030a14, 0 0 15px rgba(250, 204, 21, 0.25) !important;
+}
+#view-teacher:not(.teacher-theme-light) .t3d-student-silver,
+.teacher-panel-wrapper.teacher-theme-dark .t3d-student-silver {
+  border-color: rgba(203, 213, 225, 0.6) !important;
+  box-shadow: 0 4px 0 #030a14 !important;
+}
+#view-teacher:not(.teacher-theme-light) .t3d-student-bronze,
+.teacher-panel-wrapper.teacher-theme-dark .t3d-student-bronze {
+  border-color: rgba(251, 146, 60, 0.6) !important;
+  box-shadow: 0 4px 0 #030a14 !important;
+}
+
+/* Modals Dark */
+#view-teacher:not(.teacher-theme-light) .t3d-modal-window,
+.teacher-panel-wrapper.teacher-theme-dark .t3d-modal-window {
+  background: linear-gradient(150deg, #0d1e38 0%, #061124 100%);
+  border-color: var(--neon-cyan);
+  box-shadow: 0 12px 0 #040e1c, 0 35px 70px rgba(0, 0, 0, 0.9), 0 0 35px rgba(0, 245, 212, 0.25);
+}
+#view-teacher:not(.teacher-theme-light) .t3d-modal-title,
+.teacher-panel-wrapper.teacher-theme-dark .t3d-modal-title { color: #ffffff; }
+#view-teacher:not(.teacher-theme-light) .t3d-modal-close,
+.teacher-panel-wrapper.teacher-theme-dark .t3d-modal-close { color: #cbd5e1; }
+#view-teacher:not(.teacher-theme-light) .t3d-form-label,
+.teacher-panel-wrapper.teacher-theme-dark .t3d-form-label { color: #cbd5e1; }
+#view-teacher:not(.teacher-theme-light) .t3d-form-input,
+#view-teacher:not(.teacher-theme-light) .t3d-form-select,
+.teacher-panel-wrapper.teacher-theme-dark .t3d-form-input,
+.teacher-panel-wrapper.teacher-theme-dark .t3d-form-select {
+  background: rgba(10, 24, 48, 0.95);
+  color: #ffffff;
+  border-color: rgba(0, 245, 212, 0.4);
+}
+#view-teacher:not(.teacher-theme-light) .t3d-form-input:focus,
+#view-teacher:not(.teacher-theme-light) .t3d-form-select:focus,
+.teacher-panel-wrapper.teacher-theme-dark .t3d-form-input:focus,
+.teacher-panel-wrapper.teacher-theme-dark .t3d-form-select:focus {
+  border-color: #00f5d4;
+  box-shadow: 0 0 16px rgba(0, 245, 212, 0.4);
+}
+#view-teacher:not(.teacher-theme-light) .t3d-room-type-btn,
+.teacher-panel-wrapper.teacher-theme-dark .t3d-room-type-btn {
+  background: rgba(10, 24, 48, 0.85);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: #cbd5e1;
+  box-shadow: 0 4px 0 #051426;
+}
+#view-teacher:not(.teacher-theme-light) .t3d-room-type-btn.is-active,
+.teacher-panel-wrapper.teacher-theme-dark .t3d-room-type-btn.is-active {
+  background: rgba(0, 245, 212, 0.18);
+  border-color: #00f5d4;
+  color: #ffffff;
+  box-shadow: 0 5px 0 #051426, 0 0 16px rgba(0, 245, 212, 0.35);
+}
+
+/* ==========================================================================
+   RESPONSIVE DESIGN (MÓVILES Y PANTALLAS PEQUEÑAS)
+   ========================================================================== */
+@media (max-width: 768px) {
+  .t3d-container {
+    padding: 1rem 0.85rem 4rem;
+  }
+  .t3d-hero {
+    padding: 1.5rem 1.25rem;
+    gap: 1.25rem;
+  }
+  .t3d-hero-left {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  .t3d-hero-mascot-box {
+    width: 68px;
+    height: 68px;
+  }
+  .t3d-hero-mascot {
+    width: 60px;
+    height: 60px;
+  }
+  .t3d-hero-title {
+    font-size: 1.7rem;
+  }
+  .t3d-hero-actions {
+    width: 100%;
+    justify-content: stretch;
+  }
+  .t3d-hero-actions .t3d-btn {
+    flex: 1 1 100%;
+  }
+  .t3d-kpi-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 0.85rem;
+  }
+  .t3d-kpi-card {
+    padding: 1.15rem 1rem;
+    gap: 0.85rem;
+  }
+  .t3d-kpi-icon-wrap {
+    width: 50px;
+    height: 50px;
+  }
+  .t3d-ico-lg {
+    width: 36px;
+    height: 36px;
+  }
+  .t3d-kpi-val {
+    font-size: 1.8rem;
+  }
+  .t3d-quiz-grid {
+    grid-template-columns: 1fr;
+  }
+  .t3d-group-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .t3d-group-actions {
+    width: 100%;
+  }
+  .t3d-group-actions .t3d-btn {
+    flex: 1;
+  }
+  .t3d-students-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .t3d-kpi-grid {
+    grid-template-columns: 1fr;
+  }
+  .t3d-students-grid {
+    grid-template-columns: 1fr;
+  }
+  .t3d-room-type-grid {
+    grid-template-columns: 1fr;
+  }
+}
