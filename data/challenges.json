@@ -35,7 +35,7 @@
     "isPublic": false,
     "startDate": "2026-11-26",
     "endDate": "2026-11-18",
-    "currentStep": 3,
+    "currentStep": 9,
     "completedSteps": [
       1,
       2,
@@ -317,7 +317,7 @@
         14,
         15
       ],
-      "currentStep": 3,
+      "currentStep": 9,
       "author": "Annie",
       "authorId": "user_1795402834416",
       "ownerId": "user_1795402834416",
@@ -344,7 +344,7 @@
         "collaborators": "f"
       },
       "createdAt": "2026-11-26T00:13:59.044Z",
-      "updatedAt": "2026-11-26T00:15:20.128Z",
+      "updatedAt": "2026-11-26T00:15:26.232Z",
       "progress": 94,
       "calculatedProgress": 94,
       "projectRoadmap": [
@@ -398,7 +398,7 @@
     "authorAvatar": "🐼",
     "authorRole": "Líder del Proyecto",
     "createdAt": "2026-11-26T00:13:59.044Z",
-    "updatedAt": "2026-11-26T00:15:19.204Z"
+    "updatedAt": "2026-11-26T00:15:25.319Z"
   },
   {
     "id": "proj_document_1795651508416",
