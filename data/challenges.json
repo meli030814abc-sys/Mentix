@@ -1835,7 +1835,7 @@
     "image": "assets/projects_ui/card_data_gov.png",
     "banner": "assets/projects_ui/card_data_gov.png",
     "createdAt": "2026-11-25T02:55:49.043Z",
-    "updatedAt": "2026-11-26T01:19:09.089Z",
+    "updatedAt": "2026-11-26T01:19:15.017Z",
     "govdata": {
       "id": "proj_video_1795575349043",
       "title": "Diagnóstico de Gobierno de Datos - Afiancol S.A.S.",
@@ -1894,7 +1894,7 @@
           },
           {
             "q": "¿Cuánto tiempo tomará la implementación inicial?",
-            "a": ""
+            "a": "Se plantea una hoja de ruta de 90 días, distribuida en etapas de diagnóstico, definición de responsabilidades y ejecución de acciones prioritarias."
           },
           {
             "q": "",
@@ -2006,7 +2006,7 @@
         "collaborators": "Extiendo mis agradecimientos al profesor Carlos Caño ya que con su guía y acompañamiento fue posible ejecutar un correcto proceso de implementación de Gobierno de Datos de manera teórico práctico."
       },
       "createdAt": "2026-11-25T02:55:49.043Z",
-      "updatedAt": "2026-11-26T01:19:08.621Z",
+      "updatedAt": "2026-11-26T01:19:14.037Z",
       "progress": 80,
       "calculatedProgress": 80
     },
@@ -2189,7 +2189,7 @@
         },
         {
           "q": "¿Cuánto tiempo tomará la implementación inicial?",
-          "a": ""
+          "a": "Se plantea una hoja de ruta de 90 días, distribuida en etapas de diagnóstico, definición de responsabilidades y ejecución de acciones prioritarias."
         },
         {
           "q": "",
@@ -2238,7 +2238,7 @@
         },
         {
           "q": "¿Cuánto tiempo tomará la implementación inicial?",
-          "a": ""
+          "a": "Se plantea una hoja de ruta de 90 días, distribuida en etapas de diagnóstico, definición de responsabilidades y ejecución de acciones prioritarias."
         },
         {
           "q": "",
