@@ -1835,7 +1835,7 @@
     "image": "assets/projects_ui/robot_hero_banner.png",
     "banner": "assets/projects_ui/robot_hero_banner.png",
     "createdAt": "2026-11-25T02:55:49.043Z",
-    "updatedAt": "2026-11-26T01:23:44.769Z",
+    "updatedAt": "2026-11-26T01:23:44.771Z",
     "govdata": {
       "id": "proj_video_1795575349043",
       "title": "Diagnóstico de Gobierno de Datos - Afiancol S.A.S.",
@@ -2033,7 +2033,7 @@
         "collaborators": "Extiendo mis agradecimientos al profesor Carlos Caño ya que con su guía y acompañamiento fue posible ejecutar un correcto proceso de implementación de Gobierno de Datos de manera teórico práctico."
       },
       "createdAt": "2026-11-25T02:55:49.043Z",
-      "updatedAt": "2026-11-26T01:23:44.264Z",
+      "updatedAt": "2026-11-26T01:23:44.219Z",
       "progress": 100,
       "calculatedProgress": 100
     },
