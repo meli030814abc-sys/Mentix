@@ -1835,7 +1835,7 @@
     "image": "assets/projects_ui/card_data_gov.png",
     "banner": "assets/projects_ui/card_data_gov.png",
     "createdAt": "2026-11-25T02:55:49.043Z",
-    "updatedAt": "2026-11-26T01:19:48.064Z",
+    "updatedAt": "2026-11-26T01:19:55.607Z",
     "govdata": {
       "id": "proj_video_1795575349043",
       "title": "Diagnóstico de Gobierno de Datos - Afiancol S.A.S.",
@@ -1901,7 +1901,7 @@
             "a": "Mediante indicadores de calidad, cumplimiento, madurez y gestión de datos, apoyados en herramientas de seguimiento."
           },
           {
-            "q": "",
+            "q": "¿Qué beneficios obtendrá AFIANCOL?",
             "a": ""
           }
         ]
@@ -2010,7 +2010,7 @@
         "collaborators": "Extiendo mis agradecimientos al profesor Carlos Caño ya que con su guía y acompañamiento fue posible ejecutar un correcto proceso de implementación de Gobierno de Datos de manera teórico práctico."
       },
       "createdAt": "2026-11-25T02:55:49.043Z",
-      "updatedAt": "2026-11-26T01:19:46.796Z",
+      "updatedAt": "2026-11-26T01:19:54.733Z",
       "progress": 80,
       "calculatedProgress": 80
     },
@@ -2200,7 +2200,7 @@
           "a": "Mediante indicadores de calidad, cumplimiento, madurez y gestión de datos, apoyados en herramientas de seguimiento."
         },
         {
-          "q": "",
+          "q": "¿Qué beneficios obtendrá AFIANCOL?",
           "a": ""
         }
       ]
@@ -2253,7 +2253,7 @@
           "a": "Mediante indicadores de calidad, cumplimiento, madurez y gestión de datos, apoyados en herramientas de seguimiento."
         },
         {
-          "q": "",
+          "q": "¿Qué beneficios obtendrá AFIANCOL?",
           "a": ""
         }
       ]
