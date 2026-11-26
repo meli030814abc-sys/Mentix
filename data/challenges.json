@@ -253,7 +253,8 @@
         "authorRole": "admin",
         "createdAt": "22/11/2026, 9:22:51 p.m."
       }
-    ]
+    ],
+    "_globalHeroBanner": "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=1600&q=80"
   },
   {
     "id": "proj_presentation_1795607130865",
@@ -1758,7 +1759,8 @@
       }
     ],
     "joinRequests": [],
-    "completedAt": "2026-11-25T12:41:53.079Z"
+    "completedAt": "2026-11-25T12:41:53.079Z",
+    "_globalHeroBanner": "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=1600&q=80"
   },
   {
     "id": "proj_video_1795575349043",
@@ -2126,7 +2128,8 @@
     "duration": "5:00 min",
     "tag": "⏳ Pendiente de Autorización",
     "tagClass": "badge-review",
-    "_cardCoverUpdatedAt": 1795582356091
+    "_cardCoverUpdatedAt": 1795582356091,
+    "_globalHeroBanner": "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=1600&q=80"
   },
   {
     "id": "proj_presentation_1795566554804",
@@ -3182,7 +3185,8 @@
     "completedAt": "2026-11-25T01:23:06.413Z",
     "authorizedAt": "2026-11-25T18:54:44.979Z",
     "authorizedBy": "Melisa",
-    "stage": "completed"
+    "stage": "completed",
+    "_globalHeroBanner": "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=1600&q=80"
   },
   {
     "id": "reto_1795552054552",
@@ -4958,20 +4962,20 @@
     "difficulty": "Medio",
     "timePerQuestion": 25,
     "plays": 0,
-    "banner": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795546503582_z8rr_hero_banner.jpg",
+    "banner": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795550719633_cw7g_hero_banner.jpg",
     "mainImage": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795546503582_z8rr_hero_banner.jpg",
-    "thumbnailImage": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795546503582_z8rr_hero_banner.jpg",
+    "thumbnailImage": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795551419904_efqo_card_cover.jpg",
     "shortDescription": "Propuesta de gobierno de datos para GPC Pharma S.A.S., empresa farmacéutica que abastece a clínicas y hospitales, a partir de un diagnóstico de su situación actual. Define roles, políticas y comités basados en los cargos existentes, con un plan de implementación por fases, probado en GovData Nexus con datos sintéticos.",
     "description": "Propuesta de gobierno de datos para GPC Pharma S.A.S., empresa farmacéutica que abastece a clínicas y hospitales, a partir de un diagnóstico de su situación actual. Define roles, políticas y comités basados en los cargos existentes, con un plan de implementación por fases, probado en GovData Nexus con datos sintéticos.",
     "fullDescription": "Se realizó un diagnóstico de gobierno de datos en GPC Pharma S.A.S. mediante una entrevista con el área de tecnología y la revisión de fuentes públicas. Bajo el marco DAMA-DMBOK se obtuvo una madurez inicial de 48 %, explicada principalmente por las exigencias normativas externas. Con base en este resultado se diseñó un modelo de roles, políticas y comités, con una primera fase de 13 semanas, configurado en GovData Nexus. La inteligencia artificial se utilizó como apoyo y sus resultados fueron validados por la autora. Se concluye que el gobierno de datos puede iniciar con bajo costo y fortalece la trazabilidad y la confianza en la información. Este trabajo, desarrollado por mí, Laura Sofía Hernández Chaparro, en el marco del Politécnico Grancolombiano, utilizó datos sintéticos y no ha sido aprobado por GPC Pharma S.A.S. Constituye una base para una futura implementación, sujeta a la revisión y validación de la organización y de especialistas en gobierno de datos. Las cifras salariales provienen de la guía salarial 2026 de Michael Page.",
-    "publicationStatus": "pending_approval",
+    "publicationStatus": "completed",
     "approvalStatus": "pending",
     "status": "completed",
     "isPublic": false,
-    "accessMode": "public",
+    "accessMode": "private",
     "displayOrder": 1,
     "createdAt": "2026-11-24T02:08:03.167Z",
-    "updatedAt": "2026-11-26T00:12:18.384Z",
+    "updatedAt": "2026-11-26T00:12:30.210Z",
     "landingConfig": {
       "publicName": "Diagnóstico y propuesta de optimización del gobierno de datos en GPC Pharma S.A.S.",
       "slug": "propuesta-gobierno-de-datos-gpc-pharma",
@@ -5001,7 +5005,7 @@
       "textColor": "#cbd5e1",
       "accentColor": "#00f5d4",
       "bannerStyle": "gradient-cosmos",
-      "bannerUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795546503582_z8rr_hero_banner.jpg"
+      "bannerUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795550719633_cw7g_hero_banner.jpg"
     },
     "videoUrl": "https://youtu.be/C-OhiJbay80",
     "videoConfig": {
@@ -5015,8 +5019,8 @@
       "verified": true
     },
     "duration": "5:00 min",
-    "image": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795546503582_z8rr_hero_banner.jpg",
-    "heroBanner": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795546503582_z8rr_hero_banner.jpg",
+    "image": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795551419904_efqo_card_cover.jpg",
+    "heroBanner": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795550719633_cw7g_hero_banner.jpg",
     "customProjectCodes": [
       {
         "code": "804263",
@@ -5062,7 +5066,7 @@
     "subtitle": "Trazabilidad, calidad y cumplimiento regulatorio en GPC Pharma",
     "isGovDataProject": true,
     "projectSubtype": "Gobierno de Datos e IA",
-    "coverImage": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795546503582_z8rr_hero_banner.jpg",
+    "coverImage": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795551419904_efqo_card_cover.jpg",
     "_clearedMainImage": false,
     "_clearedThumbImage": false,
     "useDefaultImage": true,
@@ -5234,23 +5238,6 @@
         "extractedText": "",
         "uploadedAt": "2026-11-24T02:40:10.080Z",
         "thumbnailUrl": ""
-      },
-      {
-        "id": "res_1795651885020_bdpy",
-        "name": "Documentacion Gobierno de Datos GPC Pharma compressed",
-        "fileName": "Documentacion_Gobierno_de_Datos_GPC_Pharma_compressed.pdf",
-        "description": "Recurso oficial en formato PDF (1.48 MB).",
-        "type": "pdf",
-        "url": "https://mentixs.vercel.app/api/challenges?file=data%2Fuploads%2Fproj_video_1795486083167%2F1795651884503_b1q6_Documentacion_Gobierno_de_Datos_GPC_Phar.pdf",
-        "format": "PDF",
-        "sizeBytes": 1548329,
-        "sizeLabel": "1.48 MB",
-        "category": "Documentación",
-        "visibility": "public",
-        "order": 5,
-        "status": "verified",
-        "extractedText": "",
-        "uploadedAt": "2026-11-26T00:11:29.470Z"
       }
     ],
     "visualAssets": [
@@ -6101,185 +6088,18 @@
       "Innovación"
     ],
     "govdata": {
-      "id": "proj_video_1795486083167",
-      "title": "Diagnóstico y propuesta de optimización del gobierno de datos en GPC Pharma S.A.S. Empresa del Sector Farmaceutico.",
-      "subtitle": "Trazabilidad, calidad y cumplimiento regulatorio en GPC Pharma",
-      "shortDescription": "Propuesta de gobierno de datos para GPC Pharma S.A.S., empresa farmacéutica que abastece a clínicas y hospitales, a partir de un diagnóstico de su situación actual. Define roles, políticas y comités basados en los cargos existentes, con un plan de implementación por fases, probado en GovData Nexus con datos sintéticos.",
-      "fullDescription": "Se realizó un diagnóstico de gobierno de datos en GPC Pharma S.A.S. mediante una entrevista con el área de tecnología y la revisión de fuentes públicas. Bajo el marco DAMA-DMBOK se obtuvo una madurez inicial de 48 %, explicada principalmente por las exigencias normativas externas. Con base en este resultado se diseñó un modelo de roles, políticas y comités, con una primera fase de 13 semanas, configurado en GovData Nexus. La inteligencia artificial se utilizó como apoyo y sus resultados fueron validados por la autora. Se concluye que el gobierno de datos puede iniciar con bajo costo y fortalece la trazabilidad y la confianza en la información. Este trabajo, desarrollado por mí, Laura Sofía Hernández Chaparro, en el marco del Politécnico Grancolombiano, utilizó datos sintéticos y no ha sido aprobado por GPC Pharma S.A.S. Constituye una base para una futura implementación, sujeta a la revisión y validación de la organización y de especialistas en gobierno de datos. Las cifras salariales provienen de la guía salarial 2026 de Michael Page.",
-      "category": "gobierno_de__datos",
-      "categoryName": "Gobierno de Datos",
-      "projectSubtype": "Gobierno de Datos e IA",
-      "targetAudience": "Directivos y responsables de datos, tecnología y cumplimiento en organizaciones del sector farmacéutico; comunidad académica en gobierno de datos.",
-      "problemStatement": "GPC Pharma S.A.S. opera con una gestión de la información distribuida por áreas, apoyada en varias plataformas. Esto representa la oportunidad de formalizar roles de gobierno de datos, contar con un diccionario de metadatos y unificar criterios (por ejemplo, la identificación de clientes entre plataformas), de modo que la trazabilidad y la confianza en los datos acompañen el crecimiento de la operación.",
-      "mainObjective": "Diseñar un modelo de gobierno de datos para GPC Pharma S.A.S., con roles, políticas, comités y un plan de implementación por fases, basado en los cargos existentes y probado en GovData Nexus con datos sintéticos.",
-      "benefits": "Facilita definir responsables y reglas claras sobre los datos, fortalecer la calidad, la trazabilidad y la confianza en la información, y optimizar procesos de consolidación. Además, ofrece una base para implementar el gobierno de datos de forma gradual y de bajo costo.",
-      "teamLead": "Laura Sofía Hernández Chaparro",
-      "preparationStatus": "piloto",
-      "startDate": "2026-08-03",
-      "endDate": "2026-11-25",
-      "valueProp": {
-        "problemSolved": "GPC Pharma S.A.S. opera con una gestión de la información distribuida por áreas, apoyada en varias plataformas. Esto representa la oportunidad de formalizar roles de gobierno de datos, contar con un diccionario de metadatos y unificar criterios (por ejemplo, la identificación de clientes entre plataformas), de modo que la trazabilidad y la confianza en los datos acompañen el crecimiento de la operación.",
-        "howItWorks": "Parte de un diagnóstico de madurez bajo DAMA-DMBOK, identifica brechas y define un modelo de roles, políticas y comités basado en los cargos existentes. Luego se configura en GovData Nexus (catálogo de activos, reglas de calidad, reglas de SLA y riesgos) y se implementa mediante un plan por fases.",
-        "forWhom": "Directivos y responsables de datos, tecnología y cumplimiento en organizaciones del sector farmacéutico; comunidad académica en gobierno de datos.",
-        "differentiator": "Aprovecha los cargos y la información que la organización ya tiene, por lo que puede iniciar de forma gradual y con bajo costo. Integra diagnóstico, modelo, estimación de costos y configuración práctica en una plataforma, y está alineado con las exigencias regulatorias del sector farmacéutico.",
-        "keyFeatures": [
-          "Diagnóstico de madurez DAMA-DMBOK",
-          "Roles y responsabilidades basados en cargos existentes",
-          "Políticas y comités de gobierno de datos",
-          "Catálogo de activos de datos",
-          "Reglas de calidad y SLA",
-          "Gestión de riesgos",
-          "Roadmap de implementación por fases"
-        ],
-        "resultsAndBenefits": "Facilita definir responsables y reglas claras sobre los datos, fortalecer la calidad, la trazabilidad y la confianza en la información, y optimizar procesos de consolidación. Además, ofrece una base para implementar el gobierno de datos de forma gradual y de bajo costo.",
-        "prerequisites": "",
-        "visitorAction": "Unirse / Colaborar",
-        "commercialPitch": "Datos gobernados para una industria farmacéutica confiable.",
-        "faqs": [
-          {
-            "q": "¿Qué es el gobierno de datos?",
-            "a": "Es el conjunto de roles, políticas y reglas que definen quién es responsable de los datos de una organización y cómo se gestionan, para asegurar su calidad, trazabilidad y seguridad."
-          },
-          {
-            "q": "¿Los datos utilizados son reales?",
-            "a": "El diagnóstico se basó en una entrevista y en fuentes públicas sobre la organización. La base de datos con la que se probó la configuración en GovDataNexus es sintética, por lo que no contiene información real de clientes, empleados ni operaciones."
-          },
-          {
-            "q": "¿Qué herramientas y marco de referencia se utilizaron?",
-            "a": "El diagnóstico se basó en DAMA-DMBOK y la configuración se realizó en GovData Nexus, sobre una base de prueba en Supabase."
-          }
-        ]
-      },
-      "videoConfig": {
-        "sourceType": "url",
-        "url": "https://youtu.be/C-OhiJbay80",
-        "fileName": "",
-        "title": "Diagnóstico y propuesta de optimización del gobierno de datos en GPC Pharma S.A.S. Empresa del Sector Farmaceutico.",
-        "description": "Diagnóstico y propuesta de gobierno de datos para GPC Pharma S.A.S., empresa farmacéutica que abastece a clínicas y hospitales. Define roles, políticas y comités basados en los cargos existentes, con un plan por fases, probado en GovData Nexus con datos sintéticos.",
-        "thumbnailUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fdraft%2F1795486058971_9ioo_asset.jpg",
-        "isPublic": true,
-        "verified": true
-      },
+      "heroBanner": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795550719633_cw7g_hero_banner.jpg",
       "mainImage": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795546503582_z8rr_hero_banner.jpg",
-      "thumbnailImage": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795546503582_z8rr_hero_banner.jpg",
-      "_clearedMainImage": false,
-      "_clearedThumbImage": false,
-      "useDefaultImage": true,
-      "externalLinks": [
-        {
-          "id": "lnk_1795489746267",
-          "title": "GovDataNexus: Plataforma de Gobierno de datos",
-          "url": "https://www.govdatanexus.com/login?reason=unauthorized",
-          "description": "Plataforma donde se configuró el modelo de gobierno de datos. El acceso requiere credenciales; las evidencias están en las capturas del documento.",
-          "category": "Página web oficial",
-          "visibility": "public",
-          "verified": false,
-          "thumbnailUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795489911065_lq0r_asset.jpg"
-        }
-      ],
-      "projectRoadmap": [
-        {
-          "title": "Planeación",
-          "description": "Definición del caso de estudio (GPC Pharma S.A.S.), de los objetivos del diagnóstico y del alcance, y selección del marco de referencia DAMA-DMBOK y de la plataforma GovDataNexus.",
-          "status": "completed",
-          "progress": 100,
-          "emoji": "📋",
-          "icon": "clipboard"
-        },
-        {
-          "title": "Investigación",
-          "description": "Entrevista de diagnóstico con el área de tecnología, revisión de fuentes públicas y normativa aplicable (INVIMA, ISO 9001, Ley 1581) y recopilación de la guía salarial 2026 de Michael Page para la estimación de costos.",
-          "status": "completed",
-          "progress": 100,
-          "emoji": "🔍",
-          "icon": "clipboard"
-        },
-        {
-          "title": "Desarrollo",
-          "description": "Evaluación de madurez con DAMA-DMBOK (48 %), análisis de brechas y priorización; diseño del modelo de roles, políticas, comités y roadmap; y configuración en GovData Nexus del catálogo, reglas de calidad, reglas de SLA y riesgos, con datos sintéticos.",
-          "status": "completed",
-          "progress": 100,
-          "emoji": "💻",
-          "icon": "clipboard"
-        },
-        {
-          "title": "Publicación",
-          "description": "Elaboración del documento final, el video y la presentación, y publicación en la plataforma del curso para su comunicación y revisión.",
-          "status": "completed",
-          "progress": 100,
-          "emoji": "🚀",
-          "icon": "clipboard"
-        }
-      ],
-      "landingConfig": {
-        "publicName": "Diagnóstico y propuesta de optimización del gobierno de datos en GPC Pharma S.A.S.",
-        "slug": "propuesta-gobierno-de-datos-gpc-pharma",
-        "landingTitle": "Diagnóstico y propuesta de optimización del gobierno de datos en GPC Pharma S.A.S.",
-        "publicDescription": "Diagnóstico y propuesta de gobierno de datos para GPC Pharma S.A.S., empresa farmacéutica que abastece a clínicas y hospitales. Define roles, políticas y comités basados en los cargos existentes, con un plan por fases, probado en GovData Nexus con datos sintéticos.",
-        "visibleCategory": "Gobierno de Datos",
-        "tags": [
-          "Gobierno de Datos",
-          "IA",
-          "Innovación"
-        ],
-        "ctaText": "Ver Proyecto",
-        "ctaUrl": "#",
-        "displayOrder": 1,
-        "featuredVideoPublic": true
-      },
-      "publicationStatus": "pending_approval",
-      "completedSteps": [
-        1,
-        2,
-        3,
-        4,
-        5,
-        6,
-        7,
-        8,
-        9,
-        10,
-        11,
-        12,
-        13,
-        14,
-        15,
-        16
-      ],
-      "currentStep": 16,
-      "author": "Laura Sofía Hernández Chaparro",
-      "authorId": "user_1795437974586",
-      "ownerId": "user_1795437974586",
-      "ownerUsername": "laurasofiahz",
-      "authorEmail": "ing.laurasofiax04@gmail.com",
-      "authorAvatar": "🐼",
-      "authorRole": "Estudiante / Creador",
-      "joinCode": "804263",
-      "accessCode": "804263",
-      "designConfig": {
-        "themeId": "cosmos",
-        "fontFamily": "Montserrat",
-        "titleColor": "#ffffff",
-        "textColor": "#cbd5e1",
-        "accentColor": "#00f5d4",
-        "bannerStyle": "gradient-cosmos",
-        "bannerUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795546503582_z8rr_hero_banner.jpg"
-      },
-      "authorsConfig": {
-        "authorsList": "Laura Sofía Hernández Chaparro",
-        "authorsEmails": "ing.laurasofiax04@gmail.com",
-        "authorsRole": "Estudiante / Creador",
-        "authorsInstitution": "Institución Universitaria Politécnico Grancolombiano"
-      },
-      "createdAt": "2026-11-24T02:08:03.167Z",
-      "updatedAt": "2026-11-26T00:12:17.629Z",
-      "submittedForApproval": true,
-      "progress": 100,
-      "calculatedProgress": 100,
+      "thumbnailImage": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795551419904_efqo_card_cover.jpg",
       "approvalStatus": "pending",
+      "publicationStatus": "completed",
+      "isPublic": false,
+      "rejectionReason": "Desautorizado por el Administrador.",
+      "image": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795551419904_efqo_card_cover.jpg",
+      "banner": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795550719633_cw7g_hero_banner.jpg",
       "status": "completed",
-      "completedAt": "2026-11-26T00:12:17.629Z",
-      "isPublic": false
+      "authorizedAt": "2026-11-24T18:32:25.455Z",
+      "authorizedBy": "Melisa"
     },
     "ownerId": "user_1795437974586",
     "ownerUsername": "laurasofiahz",
@@ -6294,12 +6114,12 @@
       }
     ],
     "joinRequests": [],
-    "visibility": "public",
-    "rejectedAt": "2026-11-24T18:31:56.040Z",
-    "rejectionReason": "",
+    "visibility": "private",
+    "rejectedAt": "2026-11-26T00:11:56.571Z",
+    "rejectionReason": "Desautorizado por el Administrador.",
     "tag": "✔ Completado",
     "tagClass": "badge-completed",
-    "completedAt": "2026-11-26T00:12:17.629Z",
+    "completedAt": "2026-11-24T16:46:38.877Z",
     "_globalHeroBanner": "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=1600&q=80",
     "stage": "completed",
     "authorizedAt": "2026-11-24T18:32:25.455Z",
