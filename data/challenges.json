@@ -1835,7 +1835,7 @@
     "image": "assets/projects_ui/robot_hero_banner.png",
     "banner": "assets/projects_ui/robot_hero_banner.png",
     "createdAt": "2026-11-25T02:55:49.043Z",
-    "updatedAt": "2026-11-26T01:22:23.017Z",
+    "updatedAt": "2026-11-26T01:22:23.190Z",
     "govdata": {
       "id": "proj_video_1795575349043",
       "title": "Diagnóstico de Gobierno de Datos - Afiancol S.A.S.",
@@ -2300,8 +2300,7 @@
         "order": 1,
         "status": "verified",
         "extractedText": "",
-        "uploadedAt": "2026-11-26T01:21:51.221Z",
-        "thumbnailUrl": ""
+        "uploadedAt": "2026-11-26T01:21:51.221Z"
       },
       {
         "id": "res_1795656111413_cz0u",
@@ -2318,8 +2317,7 @@
         "order": 2,
         "status": "verified",
         "extractedText": "",
-        "uploadedAt": "2026-11-26T01:21:54.498Z",
-        "thumbnailUrl": ""
+        "uploadedAt": "2026-11-26T01:21:54.498Z"
       },
       {
         "id": "res_1795656114563_p9ic",
@@ -2336,8 +2334,7 @@
         "order": 3,
         "status": "verified",
         "extractedText": "",
-        "uploadedAt": "2026-11-26T01:21:56.561Z",
-        "thumbnailUrl": ""
+        "uploadedAt": "2026-11-26T01:21:56.561Z"
       },
       {
         "id": "res_1795656127942_xg2m",
@@ -2354,8 +2351,7 @@
         "order": 4,
         "status": "verified",
         "extractedText": "",
-        "uploadedAt": "2026-11-26T01:22:09.229Z",
-        "thumbnailUrl": ""
+        "uploadedAt": "2026-11-26T01:22:09.229Z"
       }
     ],
     "visualAssets": [],
@@ -2373,8 +2369,7 @@
         "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795575349043%2F1795656079107_yeu9_slide_1.jpg",
         "notes": "",
         "bgColor": "#ffffff",
-        "themeId": "cosmos",
-        "bgImage": ""
+        "themeId": "cosmos"
       },
       {
         "id": "slide_1795656075038_2",
@@ -2389,8 +2384,7 @@
         "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795575349043%2F1795656082167_w659_slide_2.jpg",
         "notes": "",
         "bgColor": "#ffffff",
-        "themeId": "cosmos",
-        "bgImage": ""
+        "themeId": "cosmos"
       },
       {
         "id": "slide_1795656075189_3",
@@ -2405,8 +2399,7 @@
         "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795575349043%2F1795656085008_hdwy_slide_3.jpg",
         "notes": "",
         "bgColor": "#ffffff",
-        "themeId": "cosmos",
-        "bgImage": ""
+        "themeId": "cosmos"
       },
       {
         "id": "slide_1795656075295_4",
@@ -2421,8 +2414,7 @@
         "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795575349043%2F1795656086570_ecog_slide_4.jpg",
         "notes": "",
         "bgColor": "#ffffff",
-        "themeId": "cosmos",
-        "bgImage": ""
+        "themeId": "cosmos"
       },
       {
         "id": "slide_1795656075422_5",
@@ -2437,8 +2429,7 @@
         "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795575349043%2F1795656088315_pjpg_slide_5.jpg",
         "notes": "",
         "bgColor": "#ffffff",
-        "themeId": "cosmos",
-        "bgImage": ""
+        "themeId": "cosmos"
       },
       {
         "id": "slide_1795656075504_6",
@@ -2453,8 +2444,7 @@
         "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795575349043%2F1795656091231_k4nt_slide_6.jpg",
         "notes": "",
         "bgColor": "#ffffff",
-        "themeId": "cosmos",
-        "bgImage": ""
+        "themeId": "cosmos"
       },
       {
         "id": "slide_1795656075605_7",
@@ -2469,8 +2459,7 @@
         "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795575349043%2F1795656092917_ymbt_slide_7.jpg",
         "notes": "",
         "bgColor": "#ffffff",
-        "themeId": "cosmos",
-        "bgImage": ""
+        "themeId": "cosmos"
       },
       {
         "id": "slide_1795656075702_8",
@@ -2485,8 +2474,7 @@
         "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795575349043%2F1795656094420_b0q1_slide_8.jpg",
         "notes": "",
         "bgColor": "#ffffff",
-        "themeId": "cosmos",
-        "bgImage": ""
+        "themeId": "cosmos"
       },
       {
         "id": "slide_1795656075793_9",
@@ -2501,8 +2489,7 @@
         "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795575349043%2F1795656095964_vpk2_slide_9.jpg",
         "notes": "",
         "bgColor": "#ffffff",
-        "themeId": "cosmos",
-        "bgImage": ""
+        "themeId": "cosmos"
       },
       {
         "id": "slide_1795656075966_10",
@@ -2517,8 +2504,7 @@
         "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795575349043%2F1795656097412_zs2d_slide_10.jpg",
         "notes": "",
         "bgColor": "#ffffff",
-        "themeId": "cosmos",
-        "bgImage": ""
+        "themeId": "cosmos"
       },
       {
         "id": "slide_1795656076106_11",
@@ -2533,8 +2519,7 @@
         "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795575349043%2F1795656098887_eyg9_slide_11.jpg",
         "notes": "",
         "bgColor": "#ffffff",
-        "themeId": "cosmos",
-        "bgImage": ""
+        "themeId": "cosmos"
       },
       {
         "id": "slide_1795656076357_12",
@@ -2549,8 +2534,7 @@
         "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795575349043%2F1795656100317_k3ds_slide_12.jpg",
         "notes": "",
         "bgColor": "#ffffff",
-        "themeId": "cosmos",
-        "bgImage": ""
+        "themeId": "cosmos"
       },
       {
         "id": "slide_1795656076448_13",
@@ -2565,8 +2549,7 @@
         "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795575349043%2F1795656101765_r6ic_slide_13.jpg",
         "notes": "",
         "bgColor": "#ffffff",
-        "themeId": "cosmos",
-        "bgImage": ""
+        "themeId": "cosmos"
       }
     ],
     "presentations": [
@@ -2587,8 +2570,7 @@
             "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795575349043%2F1795656079107_yeu9_slide_1.jpg",
             "notes": "",
             "bgColor": "#ffffff",
-            "themeId": "cosmos",
-            "bgImage": ""
+            "themeId": "cosmos"
           },
           {
             "id": "slide_1795656075038_2",
@@ -2603,8 +2585,7 @@
             "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795575349043%2F1795656082167_w659_slide_2.jpg",
             "notes": "",
             "bgColor": "#ffffff",
-            "themeId": "cosmos",
-            "bgImage": ""
+            "themeId": "cosmos"
           },
           {
             "id": "slide_1795656075189_3",
@@ -2619,8 +2600,7 @@
             "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795575349043%2F1795656085008_hdwy_slide_3.jpg",
             "notes": "",
             "bgColor": "#ffffff",
-            "themeId": "cosmos",
-            "bgImage": ""
+            "themeId": "cosmos"
           },
           {
             "id": "slide_1795656075295_4",
@@ -2635,8 +2615,7 @@
             "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795575349043%2F1795656086570_ecog_slide_4.jpg",
             "notes": "",
             "bgColor": "#ffffff",
-            "themeId": "cosmos",
-            "bgImage": ""
+            "themeId": "cosmos"
           },
           {
             "id": "slide_1795656075422_5",
@@ -2651,8 +2630,7 @@
             "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795575349043%2F1795656088315_pjpg_slide_5.jpg",
             "notes": "",
             "bgColor": "#ffffff",
-            "themeId": "cosmos",
-            "bgImage": ""
+            "themeId": "cosmos"
           },
           {
             "id": "slide_1795656075504_6",
@@ -2667,8 +2645,7 @@
             "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795575349043%2F1795656091231_k4nt_slide_6.jpg",
             "notes": "",
             "bgColor": "#ffffff",
-            "themeId": "cosmos",
-            "bgImage": ""
+            "themeId": "cosmos"
           },
           {
             "id": "slide_1795656075605_7",
@@ -2683,8 +2660,7 @@
             "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795575349043%2F1795656092917_ymbt_slide_7.jpg",
             "notes": "",
             "bgColor": "#ffffff",
-            "themeId": "cosmos",
-            "bgImage": ""
+            "themeId": "cosmos"
           },
           {
             "id": "slide_1795656075702_8",
@@ -2699,8 +2675,7 @@
             "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795575349043%2F1795656094420_b0q1_slide_8.jpg",
             "notes": "",
             "bgColor": "#ffffff",
-            "themeId": "cosmos",
-            "bgImage": ""
+            "themeId": "cosmos"
           },
           {
             "id": "slide_1795656075793_9",
@@ -2715,8 +2690,7 @@
             "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795575349043%2F1795656095964_vpk2_slide_9.jpg",
             "notes": "",
             "bgColor": "#ffffff",
-            "themeId": "cosmos",
-            "bgImage": ""
+            "themeId": "cosmos"
           },
           {
             "id": "slide_1795656075966_10",
@@ -2731,8 +2705,7 @@
             "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795575349043%2F1795656097412_zs2d_slide_10.jpg",
             "notes": "",
             "bgColor": "#ffffff",
-            "themeId": "cosmos",
-            "bgImage": ""
+            "themeId": "cosmos"
           },
           {
             "id": "slide_1795656076106_11",
@@ -2747,8 +2720,7 @@
             "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795575349043%2F1795656098887_eyg9_slide_11.jpg",
             "notes": "",
             "bgColor": "#ffffff",
-            "themeId": "cosmos",
-            "bgImage": ""
+            "themeId": "cosmos"
           },
           {
             "id": "slide_1795656076357_12",
@@ -2763,8 +2735,7 @@
             "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795575349043%2F1795656100317_k3ds_slide_12.jpg",
             "notes": "",
             "bgColor": "#ffffff",
-            "themeId": "cosmos",
-            "bgImage": ""
+            "themeId": "cosmos"
           },
           {
             "id": "slide_1795656076448_13",
@@ -2779,8 +2750,7 @@
             "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795575349043%2F1795656101765_r6ic_slide_13.jpg",
             "notes": "",
             "bgColor": "#ffffff",
-            "themeId": "cosmos",
-            "bgImage": ""
+            "themeId": "cosmos"
           }
         ]
       }
