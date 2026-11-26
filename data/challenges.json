@@ -1835,7 +1835,7 @@
     "image": "assets/projects_ui/card_data_gov.png",
     "banner": "assets/projects_ui/card_data_gov.png",
     "createdAt": "2026-11-25T02:55:49.043Z",
-    "updatedAt": "2026-11-26T01:19:42.429Z",
+    "updatedAt": "2026-11-26T01:19:45.379Z",
     "govdata": {
       "id": "proj_video_1795575349043",
       "title": "Diagnóstico de Gobierno de Datos - Afiancol S.A.S.",
@@ -1899,6 +1899,10 @@
           {
             "q": "¿Cómo se medirán los resultados?",
             "a": "Mediante indicadores de calidad, cumplimiento, madurez y gestión de datos, apoyados en herramientas de seguimiento."
+          },
+          {
+            "q": "",
+            "a": ""
           }
         ]
       },
@@ -2006,7 +2010,7 @@
         "collaborators": "Extiendo mis agradecimientos al profesor Carlos Caño ya que con su guía y acompañamiento fue posible ejecutar un correcto proceso de implementación de Gobierno de Datos de manera teórico práctico."
       },
       "createdAt": "2026-11-25T02:55:49.043Z",
-      "updatedAt": "2026-11-26T01:19:41.716Z",
+      "updatedAt": "2026-11-26T01:19:44.865Z",
       "progress": 80,
       "calculatedProgress": 80
     },
@@ -2194,6 +2198,10 @@
         {
           "q": "¿Cómo se medirán los resultados?",
           "a": "Mediante indicadores de calidad, cumplimiento, madurez y gestión de datos, apoyados en herramientas de seguimiento."
+        },
+        {
+          "q": "",
+          "a": ""
         }
       ]
     },
@@ -2243,6 +2251,10 @@
         {
           "q": "¿Cómo se medirán los resultados?",
           "a": "Mediante indicadores de calidad, cumplimiento, madurez y gestión de datos, apoyados en herramientas de seguimiento."
+        },
+        {
+          "q": "",
+          "a": ""
         }
       ]
     },
