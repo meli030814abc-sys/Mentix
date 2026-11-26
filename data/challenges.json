@@ -5016,7 +5016,7 @@
     "difficulty": "Medio",
     "timePerQuestion": 25,
     "plays": 0,
-    "banner": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795550719633_cw7g_hero_banner.jpg",
+    "banner": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795653424873_dryw_hero_banner.jpg",
     "mainImage": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795546503582_z8rr_hero_banner.jpg",
     "thumbnailImage": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795551419904_efqo_card_cover.jpg",
     "shortDescription": "Propuesta de gobierno de datos para GPC Pharma S.A.S., empresa farmacéutica que abastece a clínicas y hospitales, a partir de un diagnóstico de su situación actual. Define roles, políticas y comités basados en los cargos existentes, con un plan de implementación por fases, probado en GovData Nexus con datos sintéticos.",
@@ -5029,7 +5029,7 @@
     "accessMode": "public",
     "displayOrder": 1,
     "createdAt": "2026-11-24T02:08:03.167Z",
-    "updatedAt": "2026-11-26T00:17:58.729Z",
+    "updatedAt": "2026-11-26T00:37:07.952Z",
     "landingConfig": {
       "publicName": "Diagnóstico y propuesta de optimización del gobierno de datos en GPC Pharma S.A.S.",
       "slug": "propuesta-gobierno-de-datos-gpc-pharma",
@@ -5044,7 +5044,8 @@
       "ctaText": "Ver Proyecto",
       "ctaUrl": "#",
       "displayOrder": 1,
-      "featuredVideoPublic": true
+      "featuredVideoPublic": true,
+      "heroBanner": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795653424873_dryw_hero_banner.jpg"
     },
     "authorsConfig": {
       "authorsList": "Laura Sofía Hernández Chaparro",
@@ -5059,7 +5060,7 @@
       "textColor": "#cbd5e1",
       "accentColor": "#00f5d4",
       "bannerStyle": "gradient-cosmos",
-      "bannerUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795550719633_cw7g_hero_banner.jpg"
+      "bannerUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795653424873_dryw_hero_banner.jpg"
     },
     "videoUrl": "https://youtu.be/C-OhiJbay80",
     "videoConfig": {
@@ -5074,7 +5075,7 @@
     },
     "duration": "5:00 min",
     "image": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795551419904_efqo_card_cover.jpg",
-    "heroBanner": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795550719633_cw7g_hero_banner.jpg",
+    "heroBanner": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795653424873_dryw_hero_banner.jpg",
     "customProjectCodes": [
       {
         "code": "804263",
@@ -5291,6 +5292,24 @@
         "status": "verified",
         "extractedText": "",
         "uploadedAt": "2026-11-24T02:40:10.080Z",
+        "thumbnailUrl": ""
+      },
+      {
+        "id": "res_1795651885020_bdpy",
+        "name": "Documentacion Gobierno de Datos GPC Pharma compressed",
+        "fileName": "Documentacion_Gobierno_de_Datos_GPC_Pharma_compressed.pdf",
+        "description": "Recurso oficial en formato PDF (1.48 MB).",
+        "type": "pdf",
+        "url": "https://mentixs.vercel.app/api/challenges?file=data%2Fuploads%2Fproj_video_1795486083167%2F1795651884503_b1q6_Documentacion_Gobierno_de_Datos_GPC_Phar.pdf",
+        "format": "PDF",
+        "sizeBytes": 1548329,
+        "sizeLabel": "1.48 MB",
+        "category": "Documentación",
+        "visibility": "public",
+        "order": 5,
+        "status": "verified",
+        "extractedText": "",
+        "uploadedAt": "2026-11-26T00:11:29.470Z",
         "thumbnailUrl": ""
       }
     ],
@@ -6142,7 +6161,7 @@
       "Innovación"
     ],
     "govdata": {
-      "heroBanner": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795550719633_cw7g_hero_banner.jpg",
+      "heroBanner": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795653424873_dryw_hero_banner.jpg",
       "mainImage": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795546503582_z8rr_hero_banner.jpg",
       "thumbnailImage": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795551419904_efqo_card_cover.jpg",
       "approvalStatus": "approved",
@@ -6150,7 +6169,7 @@
       "isPublic": true,
       "rejectionReason": "",
       "image": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795551419904_efqo_card_cover.jpg",
-      "banner": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795550719633_cw7g_hero_banner.jpg",
+      "banner": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795486083167%2F1795653424873_dryw_hero_banner.jpg",
       "status": "completed",
       "authorizedAt": "2026-11-24T18:32:25.455Z",
       "authorizedBy": "Melisa"
@@ -6196,10 +6215,10 @@
       "offsetY": -14.1,
       "fit": "contain"
     },
-    "_cardCropUpdatedAt": 1795551499823,
-    "_heroCropUpdatedAt": 1795550986414,
+    "_cardCropUpdatedAt": 1795652231818,
+    "_heroCropUpdatedAt": 1795652231818,
     "_cardCoverUpdatedAt": 1795551501359,
-    "_heroBannerUpdatedAt": 1795550956946
+    "_heroBannerUpdatedAt": 1795653428888
   },
   {
     "id": "proj_1792971445678",
