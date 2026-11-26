@@ -1835,7 +1835,7 @@
     "image": "assets/projects_ui/card_data_gov.png",
     "banner": "assets/projects_ui/card_data_gov.png",
     "createdAt": "2026-11-25T02:55:49.043Z",
-    "updatedAt": "2026-11-26T01:14:54.421Z",
+    "updatedAt": "2026-11-26T01:15:13.389Z",
     "govdata": {
       "id": "proj_video_1795575349043",
       "title": "Diagnóstico de Gobierno de Datos - Afiancol S.A.S.",
@@ -1874,7 +1874,7 @@
         "resultsAndBenefits": "El modelo permitirá a AFIANCOL mejorar la calidad, organización y confiabilidad de sus datos, reducir reprocesos e inconsistencias, establecer responsabilidades claras en su gestión y fortalecer el seguimiento de procesos e indicadores. Esto facilitará el acceso a información oportuna, optimizará los procesos internos y permitirá tomar decisiones más informadas, consolidando una cultura organizacional orientada al aprovechamiento estratégico de los datos.",
         "prerequisites": "",
         "visitorAction": "Conocer la propuesta de Gobierno de Datos de AFIANCOL, consultar el diagnóstico y la hoja de ruta de implementación, y promover el compromiso de los responsables de las áreas para participar en su ejecución.",
-        "commercialPitch": "",
+        "commercialPitch": "Transformamos los datos de AFIANCOL en un activo estratégico para tomar decisiones confiables, mejorar procesos y generar valor.",
         "faqs": []
       },
       "videoConfig": {
@@ -1981,7 +1981,7 @@
         "collaborators": "Extiendo mis agradecimientos al profesor Carlos Caño ya que con su guía y acompañamiento fue posible ejecutar un correcto proceso de implementación de Gobierno de Datos de manera teórico práctico."
       },
       "createdAt": "2026-11-25T02:55:49.043Z",
-      "updatedAt": "2026-11-26T01:14:52.293Z",
+      "updatedAt": "2026-11-26T01:15:12.151Z",
       "progress": 80,
       "calculatedProgress": 80
     },
@@ -2144,7 +2144,7 @@
       "resultsAndBenefits": "El modelo permitirá a AFIANCOL mejorar la calidad, organización y confiabilidad de sus datos, reducir reprocesos e inconsistencias, establecer responsabilidades claras en su gestión y fortalecer el seguimiento de procesos e indicadores. Esto facilitará el acceso a información oportuna, optimizará los procesos internos y permitirá tomar decisiones más informadas, consolidando una cultura organizacional orientada al aprovechamiento estratégico de los datos.",
       "prerequisites": "",
       "visitorAction": "Conocer la propuesta de Gobierno de Datos de AFIANCOL, consultar el diagnóstico y la hoja de ruta de implementación, y promover el compromiso de los responsables de las áreas para participar en su ejecución.",
-      "commercialPitch": "",
+      "commercialPitch": "Transformamos los datos de AFIANCOL en un activo estratégico para tomar decisiones confiables, mejorar procesos y generar valor.",
       "faqs": []
     },
     "valueProposition": {
@@ -2168,7 +2168,7 @@
       "resultsAndBenefits": "El modelo permitirá a AFIANCOL mejorar la calidad, organización y confiabilidad de sus datos, reducir reprocesos e inconsistencias, establecer responsabilidades claras en su gestión y fortalecer el seguimiento de procesos e indicadores. Esto facilitará el acceso a información oportuna, optimizará los procesos internos y permitirá tomar decisiones más informadas, consolidando una cultura organizacional orientada al aprovechamiento estratégico de los datos.",
       "prerequisites": "",
       "visitorAction": "Conocer la propuesta de Gobierno de Datos de AFIANCOL, consultar el diagnóstico y la hoja de ruta de implementación, y promover el compromiso de los responsables de las áreas para participar en su ejecución.",
-      "commercialPitch": "",
+      "commercialPitch": "Transformamos los datos de AFIANCOL en un activo estratégico para tomar decisiones confiables, mejorar procesos y generar valor.",
       "faqs": []
     },
     "resources": [],
