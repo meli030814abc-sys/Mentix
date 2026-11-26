@@ -26,7 +26,7 @@
     "accessMode": "public",
     "displayOrder": 1,
     "createdAt": "2026-11-26T00:05:08.416Z",
-    "updatedAt": "2026-11-26T00:05:44.183Z",
+    "updatedAt": "2026-11-26T00:06:13.339Z",
     "landingConfig": {
       "publicName": "uhjk",
       "landingTitle": "uhjk",
@@ -56,7 +56,7 @@
       "textColor": "#cbd5e1",
       "accentColor": "#00f5d4",
       "bannerStyle": "gradient-cosmos",
-      "bannerUrl": ""
+      "bannerUrl": "assets/projects_ui/card_data_gov.png"
     },
     "docContent": "# uhjk\n\n**Autor(es):** Melisa\n\n### Resumen\nh\n\n### Descripción y Desarrollo\nh\n",
     "resources": [
@@ -212,7 +212,48 @@
     "heroBanner": "",
     "image": "",
     "visibility": "public",
-    "stage": "completed"
+    "stage": "completed",
+    "rejectionReason": "",
+    "authorizedAt": "2026-11-26T00:05:46.539Z",
+    "hub": {
+      "joinRequests": [],
+      "members": [
+        {
+          "name": "Melisa",
+          "email": "gatitaxd6f79@gmail.com",
+          "role": "owner",
+          "leader": true
+        }
+      ],
+      "views": [],
+      "ratings": []
+    },
+    "customProjectCodes": [
+      {
+        "code": "804263",
+        "author": "Melisa",
+        "authorRole": "admin",
+        "createdAt": "22/11/2026, 9:27:35 p.m."
+      },
+      {
+        "code": "371850",
+        "author": "Melisa",
+        "authorRole": "admin",
+        "createdAt": "22/11/2026, 9:27:35 p.m."
+      },
+      {
+        "code": "926407",
+        "author": "Melisa",
+        "authorRole": "admin",
+        "createdAt": "22/11/2026, 9:23:09 p.m."
+      },
+      {
+        "code": "583194",
+        "author": "Melisa",
+        "authorRole": "admin",
+        "createdAt": "22/11/2026, 9:22:51 p.m."
+      }
+    ]
   },
   {
     "id": "proj_presentation_1795607130865",
