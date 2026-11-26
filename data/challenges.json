@@ -71,7 +71,8 @@
       "title": "",
       "description": "",
       "isPublic": true,
-      "verified": false
+      "verified": false,
+      "thumbnailUrl": ""
     },
     "resources": [],
     "visualAssets": [],
@@ -215,7 +216,7 @@
     "authorAvatar": "🐼",
     "authorRole": "student",
     "createdAt": "2026-11-26T00:13:59.044Z",
-    "updatedAt": "2026-11-26T00:14:01.865Z"
+    "updatedAt": "2026-11-26T00:14:01.789Z"
   },
   {
     "id": "proj_document_1795651508416",
