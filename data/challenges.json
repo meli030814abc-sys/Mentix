@@ -1835,7 +1835,7 @@
     "image": "assets/projects_ui/card_data_gov.png",
     "banner": "assets/projects_ui/card_data_gov.png",
     "createdAt": "2026-11-25T02:55:49.043Z",
-    "updatedAt": "2026-11-26T00:56:44.314Z",
+    "updatedAt": "2026-11-26T00:56:43.003Z",
     "govdata": {
       "id": "proj_video_1795575349043",
       "title": "Diagnóstico de Gobierno de Datos - Afiancol S.A.S.",
@@ -2041,7 +2041,7 @@
       "views": [],
       "ratings": [],
       "projectId": "proj_video_1795575349043",
-      "updatedAt": 1795575717917
+      "updatedAt": 1795654514752
     },
     "customProjectCodes": [
       {
