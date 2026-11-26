@@ -1835,7 +1835,7 @@
     "image": "assets/projects_ui/card_data_gov.png",
     "banner": "assets/projects_ui/card_data_gov.png",
     "createdAt": "2026-11-25T02:55:49.043Z",
-    "updatedAt": "2026-11-26T01:16:37.018Z",
+    "updatedAt": "2026-11-26T01:17:41.172Z",
     "govdata": {
       "id": "proj_video_1795575349043",
       "title": "Diagnóstico de Gobierno de Datos - Afiancol S.A.S.",
@@ -1875,7 +1875,12 @@
         "prerequisites": "",
         "visitorAction": "Conocer la propuesta de Gobierno de Datos de AFIANCOL, consultar el diagnóstico y la hoja de ruta de implementación, y promover el compromiso de los responsables de las áreas para participar en su ejecución.",
         "commercialPitch": "Transformamos los datos de AFIANCOL en un activo estratégico para tomar decisiones confiables, mejorar procesos y generar valor.",
-        "faqs": []
+        "faqs": [
+          {
+            "q": "",
+            "a": ""
+          }
+        ]
       },
       "videoConfig": {
         "sourceType": "url",
@@ -1981,7 +1986,7 @@
         "collaborators": "Extiendo mis agradecimientos al profesor Carlos Caño ya que con su guía y acompañamiento fue posible ejecutar un correcto proceso de implementación de Gobierno de Datos de manera teórico práctico."
       },
       "createdAt": "2026-11-25T02:55:49.043Z",
-      "updatedAt": "2026-11-26T01:16:36.481Z",
+      "updatedAt": "2026-11-26T01:17:40.220Z",
       "progress": 80,
       "calculatedProgress": 80
     },
@@ -2145,7 +2150,12 @@
       "prerequisites": "",
       "visitorAction": "Conocer la propuesta de Gobierno de Datos de AFIANCOL, consultar el diagnóstico y la hoja de ruta de implementación, y promover el compromiso de los responsables de las áreas para participar en su ejecución.",
       "commercialPitch": "Transformamos los datos de AFIANCOL en un activo estratégico para tomar decisiones confiables, mejorar procesos y generar valor.",
-      "faqs": []
+      "faqs": [
+        {
+          "q": "",
+          "a": ""
+        }
+      ]
     },
     "valueProposition": {
       "problemSolved": "AFIANCOL presenta una gestión de datos poco estructurada, caracterizada por información dispersa, ausencia de responsabilidades formales sobre los datos e inconsistencias en la información. Esto genera reprocesos, dificultades en el seguimiento de procesos como cartera y siniestralidad, y limita la toma de decisiones basada en información confiable.",
@@ -2169,7 +2179,12 @@
       "prerequisites": "",
       "visitorAction": "Conocer la propuesta de Gobierno de Datos de AFIANCOL, consultar el diagnóstico y la hoja de ruta de implementación, y promover el compromiso de los responsables de las áreas para participar en su ejecución.",
       "commercialPitch": "Transformamos los datos de AFIANCOL en un activo estratégico para tomar decisiones confiables, mejorar procesos y generar valor.",
-      "faqs": []
+      "faqs": [
+        {
+          "q": "",
+          "a": ""
+        }
+      ]
     },
     "resources": [],
     "visualAssets": [],
