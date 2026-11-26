@@ -10,13 +10,13 @@
       "email": "acanon@ciudadmontesbilingue.edu.com",
       "role": "student",
       "joinedAt": "2026-11-26T00:13:56.826Z",
-      "updatedAt": "2026-11-26T00:14:02.833Z",
+      "updatedAt": "2026-11-26T00:14:04.982Z",
       "projectId": "govdata_code_annie_804263",
       "projectTitle": "f",
-      "projectDescription": "Proyecto en construcción con el Asistente Inteligente de Mentix.",
-      "currentStep": 1,
-      "completedStepsCount": 0,
-      "progress": 30,
+      "projectDescription": "f",
+      "currentStep": 2,
+      "completedStepsCount": 1,
+      "progress": 35,
       "status": "in_progress",
       "approvalStatus": "pending",
       "publicationStatus": "draft",
@@ -26,7 +26,7 @@
         "id": "govdata_code_annie_804263",
         "title": "f",
         "subtitle": "f",
-        "description": "Proyecto en construcción con el Asistente Inteligente de Mentix.",
+        "description": "f",
         "author": "Annie",
         "authorEmail": "acanon@ciudadmontesbilingue.edu.com",
         "joinCode": "804263",
@@ -36,9 +36,11 @@
         "status": "in_progress",
         "publicationStatus": "draft",
         "approvalStatus": "pending",
-        "currentStep": 1,
-        "completedSteps": [],
-        "progress": 30,
+        "currentStep": 2,
+        "completedSteps": [
+          1
+        ],
+        "progress": 35,
         "banner": "assets/projects_ui/card_data_gov.png",
         "problemStatement": "",
         "mainObjective": "",
@@ -50,7 +52,7 @@
           "publicName": "f",
           "slug": "f",
           "landingTitle": "f: f",
-          "publicDescription": "",
+          "publicDescription": "f",
           "visibleCategory": "Tecnología & Programación",
           "tags": [
             "Gobierno de Datos",
@@ -73,7 +75,7 @@
           "commercialPitch": "",
           "faqs": []
         },
-        "updatedAt": "2026-11-26T00:14:02.833Z"
+        "updatedAt": "2026-11-26T00:14:04.982Z"
       }
     },
     {
