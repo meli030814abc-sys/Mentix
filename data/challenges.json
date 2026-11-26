@@ -1835,7 +1835,7 @@
     "image": "assets/projects_ui/card_data_gov.png",
     "banner": "assets/projects_ui/card_data_gov.png",
     "createdAt": "2026-11-25T02:55:49.043Z",
-    "updatedAt": "2026-11-26T01:18:30.421Z",
+    "updatedAt": "2026-11-26T01:18:36.102Z",
     "govdata": {
       "id": "proj_video_1795575349043",
       "title": "Diagnóstico de Gobierno de Datos - Afiancol S.A.S.",
@@ -1886,7 +1886,7 @@
           },
           {
             "q": "¿La implementación requiere una gran inversión tecnológica?",
-            "a": ""
+            "a": "No necesariamente. La propuesta aprovecha los recursos y herramientas existentes en AFIANCOL, priorizando la organización, los procesos y las responsabilidades antes de realizar nuevas inversiones."
           },
           {
             "q": "",
@@ -2006,7 +2006,7 @@
         "collaborators": "Extiendo mis agradecimientos al profesor Carlos Caño ya que con su guía y acompañamiento fue posible ejecutar un correcto proceso de implementación de Gobierno de Datos de manera teórico práctico."
       },
       "createdAt": "2026-11-25T02:55:49.043Z",
-      "updatedAt": "2026-11-26T01:18:29.632Z",
+      "updatedAt": "2026-11-26T01:18:35.582Z",
       "progress": 80,
       "calculatedProgress": 80
     },
@@ -2181,7 +2181,7 @@
         },
         {
           "q": "¿La implementación requiere una gran inversión tecnológica?",
-          "a": ""
+          "a": "No necesariamente. La propuesta aprovecha los recursos y herramientas existentes en AFIANCOL, priorizando la organización, los procesos y las responsabilidades antes de realizar nuevas inversiones."
         },
         {
           "q": "",
@@ -2230,7 +2230,7 @@
         },
         {
           "q": "¿La implementación requiere una gran inversión tecnológica?",
-          "a": ""
+          "a": "No necesariamente. La propuesta aprovecha los recursos y herramientas existentes en AFIANCOL, priorizando la organización, los procesos y las responsabilidades antes de realizar nuevas inversiones."
         },
         {
           "q": "",
