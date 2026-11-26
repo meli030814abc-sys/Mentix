@@ -1835,7 +1835,7 @@
     "image": "assets/projects_ui/card_data_gov.png",
     "banner": "assets/projects_ui/card_data_gov.png",
     "createdAt": "2026-11-25T02:55:49.043Z",
-    "updatedAt": "2026-11-26T01:18:22.134Z",
+    "updatedAt": "2026-11-26T01:18:21.591Z",
     "govdata": {
       "id": "proj_video_1795575349043",
       "title": "Diagnóstico de Gobierno de Datos - Afiancol S.A.S.",
@@ -2170,10 +2170,6 @@
         {
           "q": "",
           "a": ""
-        },
-        {
-          "q": "",
-          "a": ""
         }
       ]
     },
@@ -2207,10 +2203,6 @@
         {
           "q": "¿Por qué AFIANCOL necesita implementar un Gobierno de Datos?",
           "a": "Porque necesita mejorar la calidad, organización y disponibilidad de su información, reducir reprocesos y fortalecer la toma de decisiones."
-        },
-        {
-          "q": "",
-          "a": ""
         },
         {
           "q": "",
