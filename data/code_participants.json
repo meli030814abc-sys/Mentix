@@ -10,11 +10,11 @@
       "email": "acanon@ciudadmontesbilingue.edu.com",
       "role": "student",
       "joinedAt": "2026-11-26T00:13:56.826Z",
-      "updatedAt": "2026-11-26T00:15:32.996Z",
+      "updatedAt": "2026-11-26T00:15:34.182Z",
       "projectId": "govdata_code_annie_804263",
       "projectTitle": "fñjkñl",
       "projectDescription": "f",
-      "currentStep": 14,
+      "currentStep": 15,
       "completedStepsCount": 15,
       "progress": 94,
       "status": "in_progress",
@@ -36,7 +36,7 @@
         "status": "in_progress",
         "publicationStatus": "draft",
         "approvalStatus": "pending",
-        "currentStep": 14,
+        "currentStep": 15,
         "completedSteps": [
           1,
           2,
@@ -91,7 +91,7 @@
           "commercialPitch": "f",
           "faqs": []
         },
-        "updatedAt": "2026-11-26T00:15:32.996Z"
+        "updatedAt": "2026-11-26T00:15:34.182Z"
       }
     },
     {
