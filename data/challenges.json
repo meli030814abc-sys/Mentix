@@ -18,7 +18,7 @@
     "image": "assets/projects_ui/card_data_gov.png",
     "banner": "assets/projects_ui/card_data_gov.png",
     "createdAt": "2026-11-26T00:13:59.044Z",
-    "updatedAt": "2026-11-26T00:14:13.054Z",
+    "updatedAt": "2026-11-26T00:14:17.401Z",
     "govdata": {
       "id": "govdata_code_annie_804263",
       "title": "f",
@@ -31,17 +31,19 @@
       "targetAudience": "f",
       "problemStatement": "f",
       "mainObjective": "f",
-      "benefits": "",
+      "benefits": "f",
       "teamLead": "Annie",
       "preparationStatus": "en_desarrollo",
       "startDate": "2026-11-26",
       "endDate": "",
       "valueProp": {
-        "problemSolved": "",
-        "howItWorks": "",
-        "forWhom": "",
-        "differentiator": "",
-        "keyFeatures": [],
+        "problemSolved": "f",
+        "howItWorks": "f",
+        "forWhom": "f",
+        "differentiator": "f",
+        "keyFeatures": [
+          "f"
+        ],
         "resultsAndBenefits": "",
         "prerequisites": "",
         "visitorAction": "Unirse / Colaborar",
@@ -82,9 +84,11 @@
         2,
         3,
         4,
-        5
+        5,
+        6,
+        7
       ],
-      "currentStep": 6,
+      "currentStep": 8,
       "author": "Annie",
       "authorId": "user_1795402834416",
       "ownerId": "user_1795402834416",
@@ -111,9 +115,9 @@
         "collaborators": "f"
       },
       "createdAt": "2026-11-26T00:13:59.044Z",
-      "updatedAt": "2026-11-26T00:14:14.057Z",
-      "progress": 43,
-      "calculatedProgress": 43,
+      "updatedAt": "2026-11-26T00:14:18.408Z",
+      "progress": 44,
+      "calculatedProgress": 44,
       "projectRoadmap": [
         {
           "title": "Planeación",
@@ -164,27 +168,31 @@
     "targetAudience": "f",
     "problemStatement": "f",
     "mainObjective": "f",
-    "benefits": "",
+    "benefits": "f",
     "teamLead": "Annie",
     "preparationStatus": "en_desarrollo",
     "startDate": "2026-11-26",
     "endDate": "",
-    "currentStep": 6,
+    "currentStep": 8,
     "completedSteps": [
       1,
       2,
       3,
       4,
-      5
+      5,
+      6,
+      7
     ],
-    "progress": 43,
-    "calculatedProgress": 43,
+    "progress": 44,
+    "calculatedProgress": 44,
     "valueProp": {
-      "problemSolved": "",
-      "howItWorks": "",
-      "forWhom": "",
-      "differentiator": "",
-      "keyFeatures": [],
+      "problemSolved": "f",
+      "howItWorks": "f",
+      "forWhom": "f",
+      "differentiator": "f",
+      "keyFeatures": [
+        "f"
+      ],
       "resultsAndBenefits": "",
       "prerequisites": "",
       "visitorAction": "Unirse / Colaborar",
@@ -192,11 +200,13 @@
       "faqs": []
     },
     "valueProposition": {
-      "problemSolved": "",
-      "howItWorks": "",
-      "forWhom": "",
-      "differentiator": "",
-      "keyFeatures": [],
+      "problemSolved": "f",
+      "howItWorks": "f",
+      "forWhom": "f",
+      "differentiator": "f",
+      "keyFeatures": [
+        "f"
+      ],
       "resultsAndBenefits": "",
       "prerequisites": "",
       "visitorAction": "Unirse / Colaborar",
@@ -299,7 +309,33 @@
     "accessMode": "private",
     "visibility": "private",
     "rejectedAt": "",
-    "rejectionReason": ""
+    "rejectionReason": "",
+    "customProjectCodes": [
+      {
+        "code": "804263",
+        "author": "Melisa",
+        "authorRole": "admin",
+        "createdAt": "22/11/2026, 9:27:35 p.m."
+      },
+      {
+        "code": "371850",
+        "author": "Melisa",
+        "authorRole": "admin",
+        "createdAt": "22/11/2026, 9:27:35 p.m."
+      },
+      {
+        "code": "926407",
+        "author": "Melisa",
+        "authorRole": "admin",
+        "createdAt": "22/11/2026, 9:23:09 p.m."
+      },
+      {
+        "code": "583194",
+        "author": "Melisa",
+        "authorRole": "admin",
+        "createdAt": "22/11/2026, 9:22:51 p.m."
+      }
+    ]
   },
   {
     "id": "proj_document_1795651508416",
