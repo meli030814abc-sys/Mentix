@@ -2505,6 +2505,31 @@ class AppRouter {
           }
         };
 
+        const isCurrentUserAdmin = Boolean(window.ProjectsView && typeof window.ProjectsView.isAdminUser === 'function' && window.ProjectsView.isAdminUser());
+        const cloudLookupForSync = new Map((cloudChallenges || []).map(c => [String(c?.id || ''), c]));
+
+        // Para usuarios NO administradores: la nube (lo que el Admin autorizó o borró) es la fuente de verdad absoluta.
+        // Eliminar de su dispositivo cualquier proyecto antiguo que ya no exista en la nube (borrado por el Admin),
+        // preservando únicamente sus propios borradores en proceso aún no enviados.
+        if (!isCurrentUserAdmin) {
+          const curUser = window.appState?.currentUser;
+          const isCurGuest = !curUser || curUser.isGuest || curUser.username === 'invitado';
+          Array.from(map.entries()).forEach(([idKey, localItem]) => {
+            if (!localItem || localItem.projectType === 'quiz') return;
+            const isProj = (localItem.projectType && localItem.projectType !== 'quiz') || localItem.isGovDataProject === true;
+            if (!isProj) return;
+            if (!cloudLookupForSync.has(String(idKey))) {
+              const isOwnUnfinishedDraft = !isCurGuest &&
+                (localItem.status === 'in_progress' || localItem.publicationStatus === 'draft') &&
+                localItem.approvalStatus !== 'approved' &&
+                ((window.appRouter && window.appRouter.isChallengeOwner(localItem)) || (localItem.authorId && localItem.authorId === curUser?.id));
+              if (!isOwnUnfinishedDraft) {
+                map.delete(idKey);
+              }
+            }
+          });
+        }
+
         cloudChallenges.forEach(c => {
           if (!c || !c.id) return;
           if (!c.projectType) c.projectType = (c.isGovDataProject || c.slides) ? 'presentation' : 'quiz';
@@ -2518,6 +2543,45 @@ class AppRouter {
           }
 
           const isProjectItem = (c.projectType && c.projectType !== 'quiz') || c.isGovDataProject === true;
+
+          // Para usuarios NO admin: obedecer 100% el estado de autorización exacto que tiene el Admin en la nube
+          if (isProjectItem && !isCurrentUserAdmin) {
+            const cloudIsApproved = c.approvalStatus === 'approved' && !c.rejectionReason;
+            if (cloudIsApproved) {
+              appMap[c.id] = { approvalStatus: 'approved', authorizedAt: c.authorizedAt || new Date().toISOString(), authorizedBy: c.authorizedBy || 'Administrador Mentix', updatedAt: c.updatedAt || new Date().toISOString() };
+              appMapDirty = true;
+              if (unappMap[c.id]) { delete unappMap[c.id]; unappMapDirty = true; }
+            } else {
+              if (appMap[c.id]) { delete appMap[c.id]; appMapDirty = true; }
+              if (c.rejectedAt || c.rejectionReason) {
+                unappMap[c.id] = { approvalStatus: c.approvalStatus || 'pending', rejectedAt: c.rejectedAt || new Date().toISOString(), rejectionReason: c.rejectionReason || 'Desautorizado por el Administrador.', updatedAt: c.updatedAt || new Date().toISOString() };
+                unappMapDirty = true;
+              }
+            }
+            const existingNonAdmin = map.get(c.id);
+            const finalObj = existingNonAdmin
+              ? ((typeof window.mergeProjectPreservingImages === 'function') ? window.mergeProjectPreservingImages(existingNonAdmin, c) : { ...existingNonAdmin, ...c })
+              : { ...c };
+            // Respetar estrictamente el estado de publicación/autorización de la nube
+            finalObj.approvalStatus = cloudIsApproved ? 'approved' : (c.approvalStatus || 'pending');
+            finalObj.publicationStatus = cloudIsApproved ? 'published' : (c.publicationStatus || 'pending_approval');
+            finalObj.isPublic = cloudIsApproved;
+            finalObj.visibility = cloudIsApproved ? 'public' : 'private';
+            finalObj.accessMode = cloudIsApproved ? 'public' : 'private';
+            finalObj.rejectionReason = cloudIsApproved ? '' : (c.rejectionReason || '');
+            finalObj.rejectedAt = cloudIsApproved ? '' : (c.rejectedAt || '');
+            finalObj.authorizedAt = cloudIsApproved ? (c.authorizedAt || new Date().toISOString()) : '';
+            if (finalObj.govdata && typeof finalObj.govdata === 'object') {
+              finalObj.govdata.approvalStatus = finalObj.approvalStatus;
+              finalObj.govdata.publicationStatus = finalObj.publicationStatus;
+              finalObj.govdata.isPublic = cloudIsApproved;
+              finalObj.govdata.rejectionReason = finalObj.rejectionReason;
+            }
+            syncLocalDraftApproval(c.id, cloudIsApproved, finalObj);
+            map.set(c.id, finalObj);
+            return;
+          }
+
           const unappEntry = unappMap[c.id];
           const appEntry = appMap[c.id];
           const unappTs = unappEntry ? (new Date(unappEntry.updatedAt || unappEntry.rejectedAt || 0).getTime() || 0) : 0;
@@ -2706,13 +2770,14 @@ class AppRouter {
         window.appState.challenges = merged;
         saveGlobalState(window.appState);
 
-        // Si en este navegador hay proyectos autorizados o desautorizados por Admin que aún no coinciden en la nube, subirlos automáticamente
+        // SOLO el Administrador puede subir cambios de autorización/desautorización pendientes a la nube.
+        // Los usuarios normales NUNCA sobrescriben la autorización global desde su caché local.
         const cloudLookup = new Map((cloudChallenges || []).map(c => [String(c?.id || ''), c]));
-        const unsyncedApproved = merged.filter(p => {
+        const unsyncedApproved = isCurrentUserAdmin ? merged.filter(p => {
           if (!p || !p.id || p.projectType === 'quiz' || p.approvalStatus !== 'approved' || p.rejectionReason || unappMap[p.id]) return false;
           const inCloud = cloudLookup.get(String(p.id));
           return !inCloud || inCloud.approvalStatus !== 'approved' || inCloud.isPublic !== true;
-        });
+        }) : [];
         if (unsyncedApproved.length > 0 && !this._pushingUnsyncedApproved) {
           this._pushingUnsyncedApproved = true;
           (async () => {
@@ -2734,13 +2799,13 @@ class AppRouter {
           })();
         }
 
-        const unsyncedUnapproved = merged.filter(p => {
+        const unsyncedUnapproved = isCurrentUserAdmin ? merged.filter(p => {
           if (!p || !p.id || p.projectType === 'quiz') return false;
           const isLocallyUnapproved = Boolean(unappMap[p.id]) || (p.approvalStatus !== 'approved' && (Boolean(p.rejectedAt) || Boolean(p.rejectionReason)));
           if (!isLocallyUnapproved) return false;
           const inCloud = cloudLookup.get(String(p.id));
           return Boolean(inCloud && (inCloud.approvalStatus === 'approved' || inCloud.isPublic === true));
-        });
+        }) : [];
         if (unsyncedUnapproved.length > 0 && !this._pushingUnsyncedUnapproved) {
           this._pushingUnsyncedUnapproved = true;
           (async () => {

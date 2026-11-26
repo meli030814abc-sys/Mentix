@@ -1,4 +1,4 @@
-﻿// API Serverless de Retos y Proyectos Globales para MENTIX en Vercel
+// API Serverless de Retos y Proyectos Globales para MENTIX en Vercel
 import nodeCryptoMod from 'crypto';
 const GITHUB_REPO = 'meli030814abc-sys/Mentix';
 const TOKEN_FRAGMENTS = [];
@@ -278,6 +278,50 @@ export default async function handler(req, res) {
     };
     const contentType = mimeMap[ext] || 'application/octet-stream';
     const fileName = rawPath.split('/').pop() || `documento.${ext || 'pdf'}`;
+
+    // Soporte para archivos pesados guardados por partes (manifiesto JSON .parts.json)
+    if (rawPath.endsWith('.parts.json')) {
+      try {
+        const manRes = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/contents/${rawPath}?ref=${DATA_BRANCH}`, {
+          headers: ghHeaders(),
+          cache: 'no-store'
+        });
+        if (manRes.ok) {
+          const manData = await manRes.json();
+          const manStr = manData.content
+            ? Buffer.from(manData.content.replace(/\s+/g, ''), 'base64').toString('utf8')
+            : (manData.download_url ? await (await fetch(manData.download_url, { headers: ghHeaders(), cache: 'no-store' })).text() : '');
+          const manifest = JSON.parse(manStr || '{}');
+          const parts = Array.isArray(manifest.parts) ? manifest.parts : [];
+          const realName = manifest.fileName || fileName.replace(/\.parts\.json$/i, '');
+          const realExt = (manifest.ext || realName.split('.').pop() || 'pdf').toLowerCase();
+          const realContentType = mimeMap[realExt] || manifest.mime || 'application/octet-stream';
+          const buffers = [];
+          for (const partPath of parts) {
+            const pr = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/contents/${partPath}?ref=${DATA_BRANCH}`, {
+              headers: ghHeaders(),
+              cache: 'no-store'
+            });
+            if (!pr.ok) return res.status(404).json({ error: 'Parte de archivo no encontrada' });
+            const pd = await pr.json();
+            let pbuf = null;
+            if (pd.content) {
+              pbuf = Buffer.from(pd.content.replace(/\s+/g, ''), 'base64');
+            } else if (pd.download_url) {
+              const rawPr = await fetch(pd.download_url, { headers: ghHeaders(), cache: 'no-store' });
+              if (rawPr.ok) pbuf = Buffer.from(await rawPr.arrayBuffer());
+            }
+            if (pbuf) buffers.push(pbuf);
+          }
+          const fullBuf = Buffer.concat(buffers);
+          res.setHeader('Content-Type', realContentType);
+          res.setHeader('Content-Disposition', `inline; filename="${realName}"`);
+          res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+          return res.status(200).send(fullBuf);
+        }
+      } catch (e) {}
+      return res.status(404).json({ error: 'Archivo multiparte no encontrado' });
+    }
 
     if (inMemoryImages.has(rawPath)) {
       res.setHeader('Content-Type', contentType);
@@ -569,6 +613,71 @@ export default async function handler(req, res) {
           return res.status(200).json({ success: true, persisted: true, path: filePath, url: publicUrl });
         }
         return res.status(200).json({ success: false, persisted: false });
+      }
+
+      // A0c. Subida por partes (chunks) para documentos pesados/muy largos (> 3 MB, sin límite práctico)
+      if (body && body.type === 'UPLOAD_PROJECT_FILE_CHUNK' && body.uploadId && body.chunkBase64) {
+        const safeProj = String(body.projectId || 'general').replace(/[^a-zA-Z0-9_\-]/g, '_').slice(0, 64) || 'general';
+        const safeUploadId = String(body.uploadId || '').replace(/[^a-zA-Z0-9_\-]/g, '_').slice(0, 64);
+        const partIndex = Math.max(0, parseInt(body.partIndex, 10) || 0);
+        const totalParts = Math.max(1, parseInt(body.totalParts, 10) || 1);
+        const rawFileName = String(body.fileName || 'documento.pdf').trim();
+        const ext = (rawFileName.split('.').pop() || 'pdf').toLowerCase().replace(/[^a-z0-9]/g, '') || 'pdf';
+        const allowedExts = new Set(['pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'txt', 'csv', 'md', 'zip', 'jpg', 'jpeg', 'png', 'webp', 'gif']);
+        if (!allowedExts.has(ext)) {
+          return res.status(400).json({ error: 'Extensión de documento no permitida' });
+        }
+        const b64Clean = String(body.chunkBase64 || '').replace(/\s+/g, '');
+        const partPath = `data/uploads/${safeProj}/chunks/${safeUploadId}_part_${String(partIndex).padStart(4, '0')}.bin`;
+
+        let partSaved = false;
+        if (GITHUB_TOKEN) {
+          for (let attempt = 0; attempt < 5; attempt++) {
+            try {
+              const ghPut = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/contents/${partPath}`, {
+                method: 'PUT',
+                headers: { ...ghHeaders(), 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  message: `chore(docs): subir parte ${partIndex + 1}/${totalParts} de ${rawFileName} [skip ci]`,
+                  content: b64Clean,
+                  branch: DATA_BRANCH
+                })
+              });
+              if (ghPut.ok) { partSaved = true; break; }
+            } catch (e) {}
+            await new Promise(r => setTimeout(r, 500 + attempt * 400));
+          }
+        }
+        if (!partSaved) {
+          return res.status(500).json({ success: false, error: 'No se pudo guardar parte del documento' });
+        }
+
+        // Si es la última parte, crear el manifiesto .parts.json con todas las rutas
+        if (partIndex === totalParts - 1) {
+          const baseName = rawFileName.replace(/\.[^/.]+$/, '').replace(/[^a-zA-Z0-9_\-]/g, '_').slice(0, 40) || 'doc';
+          const manifestPath = `data/uploads/${safeProj}/${safeUploadId}_${baseName}.${ext}.parts.json`;
+          const parts = [];
+          for (let p = 0; p < totalParts; p++) {
+            parts.push(`data/uploads/${safeProj}/chunks/${safeUploadId}_part_${String(p).padStart(4, '0')}.bin`);
+          }
+          const manifestObj = {
+            fileName: rawFileName,
+            ext,
+            mime: String(body.mime || ''),
+            totalParts,
+            totalBytes: Number(body.totalBytes) || 0,
+            parts,
+            createdAt: new Date().toISOString()
+          };
+          const manSaved = await writeGitHubJsonFile(manifestPath, manifestObj, `chore(docs): finalizar documento multiparte ${rawFileName}`);
+          if (manSaved) {
+            const publicUrl = `https://mentixs.vercel.app/api/challenges?file=${encodeURIComponent(manifestPath)}`;
+            return res.status(200).json({ success: true, completed: true, persisted: true, path: manifestPath, url: publicUrl });
+          }
+          return res.status(500).json({ success: false, error: 'No se pudo guardar el manifiesto del documento' });
+        }
+
+        return res.status(200).json({ success: true, completed: false, partIndex, totalParts });
       }
 
       // A. Soporte para actualización y persistencia mundial del banner principal (Hero de Proyectos) + encuadre

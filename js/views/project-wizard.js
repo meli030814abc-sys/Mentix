@@ -5829,10 +5829,6 @@ collectCurrentStepInputs() {
         alert(`⚠️ El archivo "${file.name}" no corresponde a un formato documental autorizado (PDF, Word, Excel, CSV, PPT, Imagen o ZIP).`);
         continue;
       }
-      if (file.size > 25 * 1024 * 1024) {
-        alert(`⚠️ El archivo "${file.name}" supera el límite de 25 MB por documento.`);
-        continue;
-      }
 
       const ext = (file.name.split('.').pop() || 'DOC').toUpperCase();
       const lowerFileName = file.name.toLowerCase();
@@ -5863,12 +5859,12 @@ collectCurrentStepInputs() {
         if (up && up.url) fileUrl = up.url;
       }
 
-      // Leer el archivo como Data URL (hasta 4.2 MB) para que persista fielmente y se visualice tal como se sube
+      // Subida directa o multiparte para cualquier peso (incluso documentos pesados / muy largos)
       let rawDataUrl = '';
       if (!fileUrl && file.type && file.type.startsWith('image/')) {
         fileUrl = await this.compressImageFile(file, 1440, 0.78);
         rawDataUrl = fileUrl;
-      } else if (!fileUrl && file.size <= 4.2 * 1024 * 1024) {
+      } else if (!fileUrl && file.size <= 2.5 * 1024 * 1024) {
         fileUrl = await new Promise((resolve) => {
           const reader = new FileReader();
           reader.onload = () => resolve(reader.result || '');
@@ -5877,7 +5873,25 @@ collectCurrentStepInputs() {
         });
         rawDataUrl = fileUrl;
       } else if (!fileUrl) {
-        fileUrl = URL.createObjectURL(file);
+        // Archivo pesado (> 2.5 MB): subir automáticamente por bloques a Mentix Cloud sin bloquear ni cortar
+        if (window.ProjectsView && typeof window.ProjectsView.uploadRawFileToMentixCloud === 'function') {
+          try {
+            if (typeof window.ProjectsView.showToast === 'function') {
+              window.ProjectsView.showToast(`📤 Subiendo documento pesado "${file.name}" (${this.formatBytes(file.size)})...`);
+            }
+            const chunkedUrl = await window.ProjectsView.uploadRawFileToMentixCloud(file, this.draft.id || 'general', (part, total) => {
+              if (typeof window.ProjectsView.showToast === 'function') {
+                window.ProjectsView.showToast(`📤 Subiendo "${file.name}" — parte ${part} de ${total}...`);
+              }
+            });
+            if (chunkedUrl && /^https?:\/\//i.test(chunkedUrl)) {
+              fileUrl = chunkedUrl;
+            }
+          } catch (err) {}
+        }
+        if (!fileUrl) {
+          fileUrl = URL.createObjectURL(file);
+        }
       }
 
       const resId = 'res_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6);

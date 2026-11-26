@@ -1,4 +1,4 @@
-﻿/**
+/**
  * 🔥 MENTIX - Vista de Proyectos & Retos (Projects View)
  * Gestión integral de proyectos educativos: Diapositivas, Videos interactivos y Quizzes gamificados.
  */
@@ -315,11 +315,96 @@ window.ProjectsView = {
   },
 
   /**
-   * Sube cualquier documento (PDF, Word, Excel, PPT, TXT, CSV, ZIP) como Data URL a Mentix Cloud
-   * (/api/challenges -> data/uploads/<projectId>/...) y devuelve su URL permanente.
-   * Si el archivo excede 4MB o el backend aún no soporta UPLOAD_PROJECT_FILE, retorna el dataUrl intacto
-   * (ya respaldado en IndexedDB MentixImageVault) para que nunca se pierda.
+   * Sube cualquier documento (PDF, Word, Excel, PPT, TXT, CSV, ZIP) sin límite práctico de peso a Mentix Cloud.
+   * - Si pesa <= 3 MB: subida directa en un solo paquete (/api/challenges -> UPLOAD_PROJECT_FILE).
+   * - Si es pesado / muy largo (> 3 MB, ej. 5 MB, 30 MB, 100 MB...): se divide automáticamente en bloques de 2 MB
+   *   (UPLOAD_PROJECT_FILE_CHUNK) y se reconstruye en el servidor, devolviendo la URL permanente.
    */
+  async uploadRawFileToMentixCloud(file, projectId = 'general', onProgress = null) {
+    if (!file || typeof file.slice !== 'function') return '';
+    const apiBase = (window.appRouter && typeof window.appRouter.getApiBase === 'function') ? window.appRouter.getApiBase() : '';
+    const CHUNK_BYTES = 2 * 1024 * 1024; // 2 MB binarios (~2.66 MB base64, siempre bajo el límite de Vercel)
+
+    // Si es pequeño (<= 2.5 MB), usar subida directa clásica
+    if (file.size <= 2.5 * 1024 * 1024) {
+      const dataUrl = await new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(String(reader.result || ''));
+        reader.onerror = () => resolve('');
+        reader.readAsDataURL(file);
+      });
+      if (dataUrl) {
+        const directUrl = await this.uploadFileToMentixCloud(dataUrl, projectId, file.name);
+        if (directUrl && /^https?:\/\//i.test(directUrl)) return directUrl;
+      }
+    }
+
+    // Subida por partes (chunks) para documentos pesados/muy largos
+    const totalParts = Math.max(1, Math.ceil(file.size / CHUNK_BYTES));
+    const uploadId = 'up_' + Date.now() + '_' + Math.random().toString(36).slice(2, 7);
+
+    const blobToBase64 = (blob) => new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const res = String(reader.result || '');
+        const comma = res.indexOf(',');
+        resolve(comma >= 0 ? res.slice(comma + 1) : res);
+      };
+      reader.onerror = () => resolve('');
+      reader.readAsDataURL(blob);
+    });
+
+    for (let partIndex = 0; partIndex < totalParts; partIndex++) {
+      const start = partIndex * CHUNK_BYTES;
+      const end = Math.min(file.size, start + CHUNK_BYTES);
+      const chunkBlob = file.slice(start, end);
+      const chunkBase64 = await blobToBase64(chunkBlob);
+      if (!chunkBase64) return '';
+
+      if (typeof onProgress === 'function') {
+        try { onProgress(partIndex + 1, totalParts); } catch (e) {}
+      }
+
+      let partOk = false;
+      let finalUrl = '';
+      for (let attempt = 0; attempt < 4; attempt++) {
+        try {
+          const ctrl = typeof AbortController !== 'undefined' ? new AbortController() : null;
+          const tid = ctrl ? setTimeout(() => ctrl.abort(), 35000) : null;
+          const r = await fetch(`${apiBase}/api/challenges`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              type: 'UPLOAD_PROJECT_FILE_CHUNK',
+              projectId: String(projectId || 'general'),
+              uploadId,
+              fileName: String(file.name || 'documento.pdf'),
+              mime: String(file.type || ''),
+              partIndex,
+              totalParts,
+              totalBytes: file.size,
+              chunkBase64
+            }),
+            signal: ctrl ? ctrl.signal : undefined
+          });
+          if (tid) clearTimeout(tid);
+          if (r && r.ok) {
+            const res = await r.json();
+            if (res && res.success) {
+              partOk = true;
+              if (res.completed && res.url) finalUrl = String(res.url).trim();
+              break;
+            }
+          }
+        } catch (e) {}
+        if (attempt < 3) await new Promise(res => setTimeout(res, 1000 * (attempt + 1)));
+      }
+      if (!partOk) return '';
+      if (partIndex === totalParts - 1 && finalUrl) return finalUrl;
+    }
+    return '';
+  },
+
   async uploadFileToMentixCloud(dataUrl, projectId = 'general', fileName = 'documento.pdf') {
     if (!dataUrl || typeof dataUrl !== 'string') return '';
     const trimmed = dataUrl.trim();
@@ -3822,18 +3907,21 @@ window.ProjectsView = {
       return;
     }
 
-    // Filtrar proyectos: Solo los proyectos debidamente autorizados por el Administrador son públicos.
-    // Si el Administrador desautoriza un proyecto, no lo ve nadie en ese momento (solo el Administrador).
+    // Filtrar proyectos: Solo los proyectos autorizados por el Administrador son visibles para toda la comunidad.
+    // Si el Administrador borra o desautoriza un proyecto, deja de verse para todos (solo el Admin ve los no autorizados).
     const isGuestUser = this.isUserGuest();
     const allUserProjects = rawProjects.filter(c => {
       const isApproved = c.approvalStatus === 'approved' && !c.rejectionReason;
       // Si el proyecto fue autorizado por el Administrador, es visible para TODA la comunidad de Mentix al instante
       if (isApproved) return true;
 
+      // Si el usuario actual es Administrador, ve también pendientes, borradores y desautorizados para gestionarlos
+      if (isAdmin) return true;
+
       const isExplicitlyUnapproved = Boolean(c.rejectedAt || c.rejectionReason || c.govdata?.rejectionReason);
-      // Si fue desautorizado por el Administrador, nadie más puede verlo (únicamente el Administrador para volver a autorizarlo)
+      // Si fue desautorizado por el Administrador, nadie más puede verlo
       if (isExplicitlyUnapproved) {
-        return Boolean(isAdmin);
+        return false;
       }
 
       const isAuthor = !isGuestUser && (
@@ -3841,10 +3929,9 @@ window.ProjectsView = {
         ((c.author || '').toLowerCase().trim() === (u?.name || '').toLowerCase().trim()) ||
         (c.authorId && c.authorId === u?.id)
       );
-      const isAcceptedMember = !isGuestUser && window.ProjectHub && typeof window.ProjectHub.canView === 'function' && window.ProjectHub.canView(c);
 
-      // Si está en proceso / borrador inicial aún no desautorizado, solo el administrador o su autor/miembro pueden verlo
-      if (isAdmin || isAuthor || isAcceptedMember) return true;
+      // Si es un borrador en proceso del propio autor (aún no enviado/revocado), solo el autor puede verlo para seguir trabajando
+      if (isAuthor) return true;
       return false;
     });
 
@@ -9700,74 +9787,83 @@ window.ProjectsView = {
     return dataUrl;
   },
 
-  attachFileToResource(event, resIdOrName, projectId) {
+  async attachFileToResource(event, resIdOrName, projectId) {
     const file = event?.target?.files?.[0];
     if (!file) return;
     const blobUrl = URL.createObjectURL(file);
-    const reader = new FileReader();
-    reader.onload = async (e) => {
-      const dataUrl = e.target?.result || '';
-      const projId = projectId || this.selectedProjectId;
-      let selected = this.getMergedProjectRecord(projId);
-      let finalUrl = dataUrl || blobUrl;
-      const ext = file.name.split('.').pop()?.toUpperCase() || 'PDF';
-      const sizeLabel = (file.size / 1024).toFixed(1) + ' KB';
+    const projId = projectId || this.selectedProjectId;
+    let selected = this.getMergedProjectRecord(projId);
+    const ext = file.name.split('.').pop()?.toUpperCase() || 'PDF';
+    const sizeLabel = file.size >= 1024 * 1024 ? ((file.size / (1024 * 1024)).toFixed(2) + ' MB') : ((file.size / 1024).toFixed(1) + ' KB');
 
-      // 1. Respaldar inmediatamente en MentixImageVault (IndexedDB) para que JAMÁS se borre
+    let dataUrl = '';
+    let finalUrl = blobUrl;
+
+    if (file.size <= 2.5 * 1024 * 1024) {
+      dataUrl = await new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onload = (e) => resolve(e.target?.result || '');
+        reader.onerror = () => resolve('');
+        reader.readAsDataURL(file);
+      });
+      finalUrl = dataUrl || blobUrl;
       if (dataUrl && window.MentixImageVault && projId) {
         try {
           if (resIdOrName) window.MentixImageVault.set(`${projId}__res_id_${resIdOrName}_url`, dataUrl);
           window.MentixImageVault.set(`${projId}__res_fn_${String(file.name).toLowerCase().slice(0, 60)}_url`, dataUrl);
         } catch (err) {}
       }
-
-      // 2. Intentar subir permanentemente a Mentix Cloud (/api/challenges?file=...)
       if (dataUrl && typeof this.uploadFileToMentixCloud === 'function') {
         try {
           const uploaded = await this.uploadFileToMentixCloud(dataUrl, projId || 'general', file.name);
-          if (uploaded && /^https?:\/\//i.test(uploaded)) {
-            finalUrl = uploaded;
-          }
+          if (uploaded && /^https?:\/\//i.test(uploaded)) finalUrl = uploaded;
         } catch (err) {}
       }
+    } else if (typeof this.uploadRawFileToMentixCloud === 'function') {
+      this.showToast(`📤 Subiendo documento pesado "${file.name}" (${sizeLabel})...`);
+      try {
+        const uploaded = await this.uploadRawFileToMentixCloud(file, projId || 'general', (part, total) => {
+          this.showToast(`📤 Subiendo "${file.name}" — parte ${part} de ${total}...`);
+        });
+        if (uploaded && /^https?:\/\//i.test(uploaded)) finalUrl = uploaded;
+      } catch (err) {}
+    }
 
-      if (selected && Array.isArray(selected.resources)) {
-        const targetClean = String(resIdOrName || '').toLowerCase().replace(/\.[^/.]+$/, '');
-        const resIdx = selected.resources.findIndex(r => 
-          (r.id && r.id === resIdOrName) || 
-          String(r.name || '').toLowerCase().replace(/\.[^/.]+$/, '') === targetClean ||
-          String(r.fileName || '').toLowerCase().replace(/\.[^/.]+$/, '') === targetClean
-        );
-        const res = resIdx >= 0 ? selected.resources[resIdx] : null;
-        if (res) {
-          res.url = finalUrl;
-          res.fileName = file.name;
-          res.name = file.name.replace(/\.[^/.]+$/, '');
-          res.format = ext;
-          res.sizeBytes = file.size;
-          res.sizeLabel = sizeLabel;
-          if (dataUrl && window.MentixImageVault && projId) {
-            try {
-              window.MentixImageVault.set(`${projId}__res_${resIdx}_url`, dataUrl);
-              if (res.id) window.MentixImageVault.set(`${projId}__res_id_${res.id}_url`, dataUrl);
-            } catch (err) {}
-          }
-          this.saveMergedProjectRecord(selected);
+    if (selected && Array.isArray(selected.resources)) {
+      const targetClean = String(resIdOrName || '').toLowerCase().replace(/\.[^/.]+$/, '');
+      const resIdx = selected.resources.findIndex(r =>
+        (r.id && r.id === resIdOrName) ||
+        String(r.name || '').toLowerCase().replace(/\.[^/.]+$/, '') === targetClean ||
+        String(r.fileName || '').toLowerCase().replace(/\.[^/.]+$/, '') === targetClean
+      );
+      const res = resIdx >= 0 ? selected.resources[resIdx] : null;
+      if (res) {
+        res.url = finalUrl;
+        res.fileName = file.name;
+        res.name = file.name.replace(/\.[^/.]+$/, '');
+        res.format = ext;
+        res.sizeBytes = file.size;
+        res.sizeLabel = sizeLabel;
+        if (dataUrl && window.MentixImageVault && projId) {
+          try {
+            window.MentixImageVault.set(`${projId}__res_${resIdx}_url`, dataUrl);
+            if (res.id) window.MentixImageVault.set(`${projId}__res_id_${res.id}_url`, dataUrl);
+          } catch (err) {}
         }
+        this.saveMergedProjectRecord(selected);
       }
-      this.showToast('✅ ¡Archivo guardado permanentemente!');
-      this.openResourceViewer({
-        id: resIdOrName,
-        name: file.name,
-        fileName: file.name,
-        title: file.name,
-        url: finalUrl.startsWith('http') ? finalUrl : blobUrl,
-        format: ext,
-        sizeBytes: file.size,
-        sizeLabel: sizeLabel
-      }, selected);
-    };
-    reader.readAsDataURL(file);
+    }
+    this.showToast('✅ ¡Archivo guardado permanentemente!');
+    this.openResourceViewer({
+      id: resIdOrName,
+      name: file.name,
+      fileName: file.name,
+      title: file.name,
+      url: finalUrl.startsWith('http') ? finalUrl : blobUrl,
+      format: ext,
+      sizeBytes: file.size,
+      sizeLabel: sizeLabel
+    }, selected);
   },
 
   promptResourceLink(resIdOrName, projectId) {
