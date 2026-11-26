@@ -1,5 +1,372 @@
 [
   {
+    "id": "govdata_code_annie_804263",
+    "slug": "f",
+    "title": "f",
+    "subtitle": "f",
+    "description": "f",
+    "shortDescription": "f",
+    "fullDescription": "f",
+    "category": "admin",
+    "categoryName": "Administración Pública",
+    "projectType": "presentation",
+    "isGovDataProject": true,
+    "projectSubtype": "Gobierno de Datos e IA",
+    "difficulty": "Medio",
+    "heroBanner": "assets/projects_ui/card_data_gov.png",
+    "banner": "assets/projects_ui/card_data_gov.png",
+    "image": "assets/projects_ui/card_data_gov.png",
+    "coverImage": "assets/projects_ui/card_data_gov.png",
+    "mainImage": "assets/projects_ui/card_data_gov.png",
+    "thumbnailImage": "assets/projects_ui/card_data_gov.png",
+    "_clearedMainImage": false,
+    "_clearedThumbImage": false,
+    "useDefaultImage": true,
+    "targetAudience": "f",
+    "problemStatement": "f",
+    "mainObjective": "f",
+    "benefits": "f",
+    "teamLead": "Annie",
+    "preparationStatus": "en_desarrollo",
+    "publicationStatus": "draft",
+    "approvalStatus": "pending",
+    "submittedForApproval": false,
+    "status": "in_progress",
+    "isPublic": false,
+    "startDate": "2026-11-26",
+    "endDate": "2026-11-18",
+    "currentStep": 12,
+    "completedSteps": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11
+    ],
+    "progress": 69,
+    "calculatedProgress": 69,
+    "valueProp": {
+      "problemSolved": "f",
+      "howItWorks": "f",
+      "forWhom": "f",
+      "differentiator": "f",
+      "keyFeatures": [
+        "f"
+      ],
+      "resultsAndBenefits": "",
+      "prerequisites": "",
+      "visitorAction": "Unirse / Colaborar",
+      "commercialPitch": "f",
+      "faqs": []
+    },
+    "valueProposition": {
+      "problemSolved": "f",
+      "howItWorks": "f",
+      "forWhom": "f",
+      "differentiator": "f",
+      "keyFeatures": [
+        "f"
+      ],
+      "resultsAndBenefits": "",
+      "prerequisites": "",
+      "visitorAction": "Unirse / Colaborar",
+      "commercialPitch": "f",
+      "faqs": []
+    },
+    "videoUrl": "f",
+    "videoConfig": {
+      "sourceType": "url",
+      "url": "f",
+      "fileName": "",
+      "title": "f",
+      "description": "f",
+      "isPublic": true,
+      "verified": false,
+      "thumbnailUrl": ""
+    },
+    "resources": [
+      {
+        "id": "res_1795652087930_3oc1",
+        "name": "Documentacion Gobierno de Datos GPC Pharma compressed",
+        "fileName": "Documentacion_Gobierno_de_Datos_GPC_Pharma_compressed.pdf",
+        "description": "Recurso oficial en formato PDF (1.48 MB).",
+        "type": "pdf",
+        "url": "https://mentixs.vercel.app/api/challenges?file=data%2Fuploads%2Fgovdata_code_annie_804263%2F1795652088148_zwrr_Documentacion_Gobierno_de_Datos_GPC_Phar.pdf",
+        "format": "PDF",
+        "sizeBytes": 1548329,
+        "sizeLabel": "1.48 MB",
+        "category": "Documentación",
+        "visibility": "public",
+        "order": 1,
+        "status": "verified",
+        "extractedText": "",
+        "uploadedAt": "2026-11-26T00:14:55.526Z"
+      }
+    ],
+    "visualAssets": [],
+    "slides": [
+      {
+        "id": "slide_1795652075248_s4xd",
+        "title": "Diapositiva #1",
+        "subtitle": "",
+        "content": "",
+        "bullets": [],
+        "layout": "split",
+        "media": "",
+        "notes": "",
+        "bgColor": "#0b091a",
+        "themeId": "cosmos"
+      }
+    ],
+    "presentations": [
+      {
+        "id": "pres_1795652075248_1",
+        "title": "Presentación: f",
+        "slides": [
+          {
+            "id": "slide_1795652075248_s4xd",
+            "title": "Diapositiva #1",
+            "subtitle": "",
+            "content": "",
+            "bullets": [],
+            "layout": "split",
+            "media": "",
+            "notes": "",
+            "bgColor": "#0b091a",
+            "themeId": "cosmos"
+          }
+        ]
+      }
+    ],
+    "externalLinks": [],
+    "landingConfig": {
+      "publicName": "f",
+      "slug": "f",
+      "landingTitle": "f: f",
+      "publicDescription": "f",
+      "visibleCategory": "Administración Pública",
+      "tags": [
+        "Gobierno de Datos",
+        "IA"
+      ],
+      "ctaText": "Unirse / Colaborar",
+      "ctaUrl": "#plp-sec-contacto",
+      "displayOrder": 1,
+      "featuredVideoPublic": true
+    },
+    "projectRoadmap": [
+      {
+        "title": "Planeación",
+        "description": "Conformación del equipo y definición de objetivos.",
+        "progress": 40,
+        "status": "active",
+        "icon": "clipboard",
+        "emoji": "📋"
+      },
+      {
+        "title": "Investigación",
+        "description": "Recopilación de datos e información relevante.",
+        "progress": 100,
+        "status": "completed",
+        "icon": "search",
+        "emoji": "🔍"
+      },
+      {
+        "title": "Desarrollo",
+        "description": "Construcción de la solución y prototipos.",
+        "progress": 0,
+        "status": "pending",
+        "icon": "code",
+        "emoji": "💻"
+      },
+      {
+        "title": "Publicación",
+        "description": "Despliegue en la Landing Page y comunicación.",
+        "progress": 0,
+        "status": "pending",
+        "icon": "rocket",
+        "emoji": "🚀"
+      }
+    ],
+    "designConfig": {
+      "themeId": "cosmos",
+      "fontFamily": "Montserrat",
+      "titleColor": "#ffffff",
+      "textColor": "#cbd5e1",
+      "accentColor": "#00f5d4",
+      "bannerStyle": "gradient-cosmos",
+      "bannerUrl": ""
+    },
+    "authorsConfig": {
+      "authorsList": "Annie",
+      "authorsEmails": "acanon@ciudadmontesbilingue.edu.com",
+      "authorsRole": "Líder del Proyecto",
+      "authorsInstitution": "f",
+      "collaborators": "f"
+    },
+    "tags": [
+      "Gobierno de Datos",
+      "IA"
+    ],
+    "displayOrder": 1,
+    "govdata": {
+      "id": "govdata_code_annie_804263",
+      "title": "f",
+      "subtitle": "f",
+      "shortDescription": "f",
+      "fullDescription": "f",
+      "category": "admin",
+      "categoryName": "Administración Pública",
+      "projectSubtype": "Gobierno de Datos e IA",
+      "targetAudience": "f",
+      "problemStatement": "f",
+      "mainObjective": "f",
+      "benefits": "f",
+      "teamLead": "Annie",
+      "preparationStatus": "en_desarrollo",
+      "startDate": "2026-11-26",
+      "endDate": "2026-11-18",
+      "valueProp": {
+        "problemSolved": "f",
+        "howItWorks": "f",
+        "forWhom": "f",
+        "differentiator": "f",
+        "keyFeatures": [
+          "f"
+        ],
+        "resultsAndBenefits": "",
+        "prerequisites": "",
+        "visitorAction": "Unirse / Colaborar",
+        "commercialPitch": "f",
+        "faqs": []
+      },
+      "videoConfig": {
+        "sourceType": "url",
+        "url": "f",
+        "fileName": "",
+        "title": "f",
+        "description": "f",
+        "isPublic": true,
+        "verified": false,
+        "thumbnailUrl": ""
+      },
+      "mainImage": "",
+      "thumbnailImage": "",
+      "useDefaultImage": true,
+      "externalLinks": [],
+      "landingConfig": {
+        "publicName": "f",
+        "slug": "f",
+        "landingTitle": "f: f",
+        "publicDescription": "f",
+        "visibleCategory": "Administración Pública",
+        "tags": [
+          "Gobierno de Datos",
+          "IA"
+        ],
+        "ctaText": "Unirse / Colaborar",
+        "ctaUrl": "#plp-sec-contacto",
+        "displayOrder": 1,
+        "featuredVideoPublic": true
+      },
+      "publicationStatus": "draft",
+      "completedSteps": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+      ],
+      "currentStep": 12,
+      "author": "Annie",
+      "authorId": "user_1795402834416",
+      "ownerId": "user_1795402834416",
+      "ownerUsername": "Annie",
+      "authorEmail": "acanon@ciudadmontesbilingue.edu.com",
+      "authorAvatar": "🐼",
+      "authorRole": "Líder del Proyecto",
+      "joinCode": "804263",
+      "accessCode": "804263",
+      "designConfig": {
+        "themeId": "cosmos",
+        "fontFamily": "Montserrat",
+        "titleColor": "#ffffff",
+        "textColor": "#cbd5e1",
+        "accentColor": "#00f5d4",
+        "bannerStyle": "gradient-cosmos",
+        "bannerUrl": ""
+      },
+      "authorsConfig": {
+        "authorsList": "Annie",
+        "authorsEmails": "acanon@ciudadmontesbilingue.edu.com",
+        "authorsRole": "Líder del Proyecto",
+        "authorsInstitution": "f",
+        "collaborators": "f"
+      },
+      "createdAt": "2026-11-26T00:13:59.044Z",
+      "updatedAt": "2026-11-26T00:14:55.526Z",
+      "progress": 69,
+      "calculatedProgress": 69,
+      "projectRoadmap": [
+        {
+          "title": "Planeación",
+          "description": "Conformación del equipo y definición de objetivos.",
+          "progress": 40,
+          "status": "active",
+          "icon": "clipboard",
+          "emoji": "📋"
+        },
+        {
+          "title": "Investigación",
+          "description": "Recopilación de datos e información relevante.",
+          "progress": 100,
+          "status": "completed",
+          "icon": "search",
+          "emoji": "🔍"
+        },
+        {
+          "title": "Desarrollo",
+          "description": "Construcción de la solución y prototipos.",
+          "progress": 0,
+          "status": "pending",
+          "icon": "code",
+          "emoji": "💻"
+        },
+        {
+          "title": "Publicación",
+          "description": "Despliegue en la Landing Page y comunicación.",
+          "progress": 0,
+          "status": "pending",
+          "icon": "rocket",
+          "emoji": "🚀"
+        }
+      ]
+    },
+    "author": "Annie",
+    "authorId": "user_1795402834416",
+    "ownerId": "user_1795402834416",
+    "ownerUsername": "Annie",
+    "joinCode": "804263",
+    "accessCode": "804263",
+    "authorEmail": "acanon@ciudadmontesbilingue.edu.com",
+    "authorAvatar": "🐼",
+    "authorRole": "Líder del Proyecto",
+    "createdAt": "2026-11-26T00:13:59.044Z",
+    "updatedAt": "2026-11-26T00:14:54.681Z"
+  },
+  {
     "id": "proj_document_1795651508416",
     "title": "Documentacion_Gobierno_de_Datos_GPC_Pharma_compressed",
     "author": "Melisa",
@@ -19,14 +386,14 @@
     "shortDescription": "h",
     "description": "h",
     "fullDescription": "h",
-    "publicationStatus": "completed",
-    "approvalStatus": "pending",
+    "publicationStatus": "published",
+    "approvalStatus": "approved",
     "status": "completed",
-    "isPublic": false,
-    "accessMode": "private",
+    "isPublic": true,
+    "accessMode": "public",
     "displayOrder": 1,
     "createdAt": "2026-11-26T00:05:08.416Z",
-    "updatedAt": "2026-11-26T00:14:51.637Z",
+    "updatedAt": "2026-11-26T00:07:35.386Z",
     "landingConfig": {
       "publicName": "uhjk",
       "landingTitle": "uhjk",
@@ -211,9 +578,9 @@
     "originalFormat": "pdf",
     "heroBanner": "",
     "image": "",
-    "visibility": "private",
+    "visibility": "public",
     "stage": "completed",
-    "rejectionReason": "Desautorizado por el Administrador (oculto al público).",
+    "rejectionReason": "",
     "authorizedAt": "2026-11-26T00:05:46.539Z",
     "hub": {
       "joinRequests": [],
@@ -254,32 +621,7 @@
         "createdAt": "22/11/2026, 9:22:51 p.m."
       }
     ],
-    "_globalHeroBanner": "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=1600&q=80",
-    "rejectedAt": "2026-11-26T00:13:47.160Z",
-    "authorizedBy": "Administrador Mentix",
-    "members": [
-      {
-        "name": "Melisa",
-        "email": "gatitaxd6f79@gmail.com",
-        "role": "owner",
-        "leader": true
-      }
-    ],
-    "joinRequests": [],
-    "fromStudentCreate": true,
-    "_isStudentDraft": true,
-    "slides": [],
-    "presentations": [],
-    "externalLinks": [],
-    "visualAssets": [],
-    "completedSteps": [],
-    "videoConfig": {
-      "thumbnailUrl": "",
-      "url": ""
-    },
-    "videoUrl": "",
-    "tag": "✔ Completado",
-    "tagClass": "badge-completed"
+    "_globalHeroBanner": "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=1600&q=80"
   },
   {
     "id": "proj_presentation_1795607130865",
