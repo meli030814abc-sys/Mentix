@@ -18,7 +18,7 @@
     "image": "assets/projects_ui/card_data_gov.png",
     "banner": "assets/projects_ui/card_data_gov.png",
     "createdAt": "2026-11-26T00:13:59.044Z",
-    "updatedAt": "2026-11-26T00:14:17.401Z",
+    "updatedAt": "2026-11-26T00:14:15.744Z",
     "govdata": {
       "id": "govdata_code_annie_804263",
       "title": "f",
@@ -38,9 +38,9 @@
       "endDate": "",
       "valueProp": {
         "problemSolved": "f",
-        "howItWorks": "f",
+        "howItWorks": "",
         "forWhom": "f",
-        "differentiator": "f",
+        "differentiator": "",
         "keyFeatures": [
           "f"
         ],
@@ -85,10 +85,9 @@
         3,
         4,
         5,
-        6,
-        7
+        6
       ],
-      "currentStep": 8,
+      "currentStep": 7,
       "author": "Annie",
       "authorId": "user_1795402834416",
       "ownerId": "user_1795402834416",
@@ -115,9 +114,9 @@
         "collaborators": "f"
       },
       "createdAt": "2026-11-26T00:13:59.044Z",
-      "updatedAt": "2026-11-26T00:14:18.408Z",
-      "progress": 44,
-      "calculatedProgress": 44,
+      "updatedAt": "2026-11-26T00:14:16.722Z",
+      "progress": 43,
+      "calculatedProgress": 43,
       "projectRoadmap": [
         {
           "title": "Planeación",
@@ -173,23 +172,22 @@
     "preparationStatus": "en_desarrollo",
     "startDate": "2026-11-26",
     "endDate": "",
-    "currentStep": 8,
+    "currentStep": 7,
     "completedSteps": [
       1,
       2,
       3,
       4,
       5,
-      6,
-      7
+      6
     ],
-    "progress": 44,
-    "calculatedProgress": 44,
+    "progress": 43,
+    "calculatedProgress": 43,
     "valueProp": {
       "problemSolved": "f",
-      "howItWorks": "f",
+      "howItWorks": "",
       "forWhom": "f",
-      "differentiator": "f",
+      "differentiator": "",
       "keyFeatures": [
         "f"
       ],
@@ -201,9 +199,9 @@
     },
     "valueProposition": {
       "problemSolved": "f",
-      "howItWorks": "f",
+      "howItWorks": "",
       "forWhom": "f",
-      "differentiator": "f",
+      "differentiator": "",
       "keyFeatures": [
         "f"
       ],
@@ -309,33 +307,7 @@
     "accessMode": "private",
     "visibility": "private",
     "rejectedAt": "",
-    "rejectionReason": "",
-    "customProjectCodes": [
-      {
-        "code": "804263",
-        "author": "Melisa",
-        "authorRole": "admin",
-        "createdAt": "22/11/2026, 9:27:35 p.m."
-      },
-      {
-        "code": "371850",
-        "author": "Melisa",
-        "authorRole": "admin",
-        "createdAt": "22/11/2026, 9:27:35 p.m."
-      },
-      {
-        "code": "926407",
-        "author": "Melisa",
-        "authorRole": "admin",
-        "createdAt": "22/11/2026, 9:23:09 p.m."
-      },
-      {
-        "code": "583194",
-        "author": "Melisa",
-        "authorRole": "admin",
-        "createdAt": "22/11/2026, 9:22:51 p.m."
-      }
-    ]
+    "rejectionReason": ""
   },
   {
     "id": "proj_document_1795651508416",
