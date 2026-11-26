@@ -1835,7 +1835,7 @@
     "image": "assets/projects_ui/card_data_gov.png",
     "banner": "assets/projects_ui/card_data_gov.png",
     "createdAt": "2026-11-25T02:55:49.043Z",
-    "updatedAt": "2026-11-26T01:01:47.212Z",
+    "updatedAt": "2026-11-26T01:01:49.981Z",
     "govdata": {
       "id": "proj_video_1795575349043",
       "title": "Diagnóstico de Gobierno de Datos - Afiancol S.A.S.",
@@ -1852,7 +1852,7 @@
       "teamLead": "Danna Boada",
       "preparationStatus": "finalizado",
       "startDate": "2026-11-25",
-      "endDate": "2026-11-30",
+      "endDate": "",
       "valueProp": {
         "problemSolved": "AFIANCOL presenta una gestión de datos poco estructurada, caracterizada por información dispersa, ausencia de responsabilidades formales sobre los datos e inconsistencias en la información. Esto genera reprocesos, dificultades en el seguimiento de procesos como cartera y siniestralidad, y limita la toma de decisiones basada en información confiable.",
         "howItWorks": "Parte de un diagnóstico de la situación actual de los datos, identifica brechas y establece un modelo de Gobierno de Datos basado en DAMA-DMBOK2. Define dominios, responsables, políticas, estándares y reglas de calidad, acompañado de una hoja de ruta de implementación de 90 días y mecanismos de seguimiento mediante indicadores.",
@@ -1980,7 +1980,7 @@
         "collaborators": "Extiendo mis agradecimientos al profesor Carlos Caño ya que con su guía y acompañamiento fue posible ejecutar un correcto proceso de implementación de Gobierno de Datos de manera teórico práctico."
       },
       "createdAt": "2026-11-25T02:55:49.043Z",
-      "updatedAt": "2026-11-26T01:01:45.574Z",
+      "updatedAt": "2026-11-26T01:01:48.569Z",
       "progress": 80,
       "calculatedProgress": 80
     },
@@ -2108,7 +2108,7 @@
     "teamLead": "Danna Boada",
     "preparationStatus": "finalizado",
     "startDate": "2026-11-25",
-    "endDate": "2026-11-30",
+    "endDate": "",
     "currentStep": 8,
     "completedSteps": [
       1,
