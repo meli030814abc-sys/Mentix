@@ -1835,7 +1835,7 @@
     "image": "assets/projects_ui/robot_hero_banner.png",
     "banner": "assets/projects_ui/robot_hero_banner.png",
     "createdAt": "2026-11-25T02:55:49.043Z",
-    "updatedAt": "2026-11-26T01:23:19.016Z",
+    "updatedAt": "2026-11-26T01:23:26.500Z",
     "govdata": {
       "id": "proj_video_1795575349043",
       "title": "Diagnóstico de Gobierno de Datos - Afiancol S.A.S.",
@@ -2033,14 +2033,18 @@
         "collaborators": "Extiendo mis agradecimientos al profesor Carlos Caño ya que con su guía y acompañamiento fue posible ejecutar un correcto proceso de implementación de Gobierno de Datos de manera teórico práctico."
       },
       "createdAt": "2026-11-25T02:55:49.043Z",
-      "updatedAt": "2026-11-26T01:23:13.502Z",
+      "updatedAt": "2026-11-26T01:23:18.503Z",
       "progress": 100,
       "calculatedProgress": 100,
       "heroBanner": "assets/projects_ui/robot_hero_banner.png",
       "banner": "assets/projects_ui/robot_hero_banner.png",
       "image": "assets/projects_ui/robot_hero_banner.png",
       "coverImage": "assets/projects_ui/robot_hero_banner.png",
-      "submittedForApproval": true
+      "submittedForApproval": true,
+      "approvalStatus": "pending",
+      "status": "completed",
+      "completedAt": "2026-11-26T01:23:18.503Z",
+      "isPublic": false
     },
     "fromStudentCreate": true,
     "_isStudentDraft": true,
@@ -2833,7 +2837,7 @@
     "tagClass": "badge-review",
     "_cardCoverUpdatedAt": 1795582356091,
     "_globalHeroBanner": "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=1600&q=80",
-    "completedAt": "2026-11-26T01:23:18.486Z"
+    "completedAt": "2026-11-26T01:23:18.503Z"
   },
   {
     "id": "proj_presentation_1795566554804",
