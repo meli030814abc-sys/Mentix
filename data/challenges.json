@@ -1835,7 +1835,7 @@
     "image": "assets/projects_ui/card_data_gov.png",
     "banner": "assets/projects_ui/card_data_gov.png",
     "createdAt": "2026-11-25T02:55:49.043Z",
-    "updatedAt": "2026-11-26T01:21:50.859Z",
+    "updatedAt": "2026-11-26T01:21:58.088Z",
     "govdata": {
       "id": "proj_video_1795575349043",
       "title": "Diagnóstico de Gobierno de Datos - Afiancol S.A.S.",
@@ -2017,7 +2017,7 @@
         "collaborators": "Extiendo mis agradecimientos al profesor Carlos Caño ya que con su guía y acompañamiento fue posible ejecutar un correcto proceso de implementación de Gobierno de Datos de manera teórico práctico."
       },
       "createdAt": "2026-11-25T02:55:49.043Z",
-      "updatedAt": "2026-11-26T01:21:50.002Z",
+      "updatedAt": "2026-11-26T01:21:56.561Z",
       "progress": 95,
       "calculatedProgress": 95
     },
@@ -2276,7 +2276,59 @@
         }
       ]
     },
-    "resources": [],
+    "resources": [
+      {
+        "id": "res_1795656109569_5vkv",
+        "name": "AFIANCOL   Entrevista",
+        "fileName": "AFIANCOL - Entrevista.pdf",
+        "description": "Recurso oficial en formato PDF (478.8 KB).",
+        "type": "pdf",
+        "url": "https://mentixs.vercel.app/api/challenges?file=data%2Fuploads%2Fproj_video_1795575349043%2F1795656110268_9016_AFIANCOL_-_Entrevista.pdf",
+        "format": "PDF",
+        "sizeBytes": 490247,
+        "sizeLabel": "478.8 KB",
+        "category": "Documentación",
+        "visibility": "public",
+        "order": 1,
+        "status": "verified",
+        "extractedText": "",
+        "uploadedAt": "2026-11-26T01:21:51.221Z"
+      },
+      {
+        "id": "res_1795656111413_cz0u",
+        "name": "AFINACOL   Informe",
+        "fileName": "AFINACOL - Informe.pdf",
+        "description": "Recurso oficial en formato PDF (88.3 KB).",
+        "type": "pdf",
+        "url": "https://mentixs.vercel.app/api/challenges?file=data%2Fuploads%2Fproj_video_1795575349043%2F1795656111938_650k_AFINACOL_-_Informe.pdf",
+        "format": "PDF",
+        "sizeBytes": 90402,
+        "sizeLabel": "88.3 KB",
+        "category": "Documentación",
+        "visibility": "public",
+        "order": 2,
+        "status": "verified",
+        "extractedText": "",
+        "uploadedAt": "2026-11-26T01:21:54.498Z"
+      },
+      {
+        "id": "res_1795656114563_p9ic",
+        "name": "Diagnóstico de gobierno de datos 360",
+        "fileName": "Diagnóstico de gobierno de datos 360.pdf",
+        "description": "Recurso oficial en formato PDF (725.0 KB).",
+        "type": "pdf",
+        "url": "https://mentixs.vercel.app/api/challenges?file=data%2Fuploads%2Fproj_video_1795575349043%2F1795656115240_8pic_Diagn_stico_de_gobierno_de_datos_360.pdf",
+        "format": "PDF",
+        "sizeBytes": 742392,
+        "sizeLabel": "725.0 KB",
+        "category": "Documentación",
+        "visibility": "public",
+        "order": 3,
+        "status": "verified",
+        "extractedText": "",
+        "uploadedAt": "2026-11-26T01:21:56.561Z"
+      }
+    ],
     "visualAssets": [],
     "slides": [
       {
