@@ -4,11 +4,11 @@
     "slug": "f",
     "title": "f",
     "subtitle": "f",
-    "description": "Proyecto en construcción con el Asistente Inteligente de Mentix.",
-    "shortDescription": "",
-    "fullDescription": "",
-    "category": "tecnologia",
-    "categoryName": "Tecnología & Programación",
+    "description": "f",
+    "shortDescription": "f",
+    "fullDescription": "f",
+    "category": "admin",
+    "categoryName": "Administración Pública",
     "projectType": "presentation",
     "isGovDataProject": true,
     "projectSubtype": "Gobierno de Datos e IA",
@@ -22,7 +22,7 @@
     "_clearedMainImage": false,
     "_clearedThumbImage": false,
     "useDefaultImage": true,
-    "targetAudience": "",
+    "targetAudience": "f",
     "problemStatement": "",
     "mainObjective": "",
     "benefits": "",
@@ -35,10 +35,14 @@
     "isPublic": false,
     "startDate": "2026-11-26",
     "endDate": "",
-    "currentStep": 1,
-    "completedSteps": [],
-    "progress": 30,
-    "calculatedProgress": 30,
+    "currentStep": 4,
+    "completedSteps": [
+      1,
+      2,
+      3
+    ],
+    "progress": 35,
+    "calculatedProgress": 35,
     "valueProp": {
       "problemSolved": "",
       "howItWorks": "",
@@ -71,8 +75,7 @@
       "title": "",
       "description": "",
       "isPublic": true,
-      "verified": false,
-      "thumbnailUrl": ""
+      "verified": false
     },
     "resources": [],
     "visualAssets": [],
@@ -83,8 +86,8 @@
       "publicName": "f",
       "slug": "f",
       "landingTitle": "f: f",
-      "publicDescription": "",
-      "visibleCategory": "Tecnología & Programación",
+      "publicDescription": "f",
+      "visibleCategory": "Administración Pública",
       "tags": [
         "Gobierno de Datos",
         "IA"
@@ -120,12 +123,12 @@
       "id": "govdata_code_annie_804263",
       "title": "f",
       "subtitle": "f",
-      "shortDescription": "",
-      "fullDescription": "",
-      "category": "tecnologia",
-      "categoryName": "Tecnología & Programación",
+      "shortDescription": "f",
+      "fullDescription": "f",
+      "category": "admin",
+      "categoryName": "Administración Pública",
       "projectSubtype": "Gobierno de Datos e IA",
-      "targetAudience": "",
+      "targetAudience": "f",
       "problemStatement": "",
       "mainObjective": "",
       "benefits": "",
@@ -162,8 +165,8 @@
         "publicName": "f",
         "slug": "f",
         "landingTitle": "f: f",
-        "publicDescription": "",
-        "visibleCategory": "Tecnología & Programación",
+        "publicDescription": "f",
+        "visibleCategory": "Administración Pública",
         "tags": [
           "Gobierno de Datos",
           "IA"
@@ -174,8 +177,12 @@
         "featuredVideoPublic": true
       },
       "publicationStatus": "draft",
-      "completedSteps": [],
-      "currentStep": 1,
+      "completedSteps": [
+        1,
+        2,
+        3
+      ],
+      "currentStep": 4,
       "author": "Annie",
       "authorId": "user_1795402834416",
       "ownerId": "user_1795402834416",
@@ -202,9 +209,9 @@
         "collaborators": ""
       },
       "createdAt": "2026-11-26T00:13:59.044Z",
-      "updatedAt": "2026-11-26T00:14:02.786Z",
-      "progress": 30,
-      "calculatedProgress": 30
+      "updatedAt": "2026-11-26T00:14:07.060Z",
+      "progress": 35,
+      "calculatedProgress": 35
     },
     "author": "Annie",
     "authorId": "user_1795402834416",
@@ -216,7 +223,7 @@
     "authorAvatar": "🐼",
     "authorRole": "student",
     "createdAt": "2026-11-26T00:13:59.044Z",
-    "updatedAt": "2026-11-26T00:14:01.789Z"
+    "updatedAt": "2026-11-26T00:14:06.228Z"
   },
   {
     "id": "proj_document_1795651508416",
