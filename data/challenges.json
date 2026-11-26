@@ -4975,7 +4975,7 @@
     "accessMode": "public",
     "displayOrder": 1,
     "createdAt": "2026-11-24T02:08:03.167Z",
-    "updatedAt": "2026-11-26T00:10:39.177Z",
+    "updatedAt": "2026-11-26T00:10:43.804Z",
     "landingConfig": {
       "publicName": "Diagnóstico y propuesta de optimización del gobierno de datos en GPC Pharma S.A.S.",
       "slug": "propuesta-gobierno-de-datos-gpc-pharma",
@@ -5080,7 +5080,7 @@
     "submittedForApproval": true,
     "startDate": "2026-08-03",
     "endDate": "2026-11-25",
-    "currentStep": 10,
+    "currentStep": 11,
     "completedSteps": [
       1,
       2,
@@ -6234,7 +6234,7 @@
         15,
         16
       ],
-      "currentStep": 10,
+      "currentStep": 11,
       "author": "Laura Sofía Hernández Chaparro",
       "authorId": "user_1795437974586",
       "ownerId": "user_1795437974586",
@@ -6261,7 +6261,7 @@
         "collaborators": ""
       },
       "createdAt": "2026-11-24T02:08:03.167Z",
-      "updatedAt": "2026-11-26T00:10:40.088Z",
+      "updatedAt": "2026-11-26T00:10:44.728Z",
       "progress": 100,
       "calculatedProgress": 100
     },
@@ -6306,8 +6306,8 @@
       "offsetY": -14.1,
       "fit": "contain"
     },
-    "_cardCropUpdatedAt": 1795651840099,
-    "_heroCropUpdatedAt": 1795651840099,
+    "_cardCropUpdatedAt": 1795651844740,
+    "_heroCropUpdatedAt": 1795651844740,
     "_cardCoverUpdatedAt": 1795551501359,
     "_heroBannerUpdatedAt": 1795550956946
   },
