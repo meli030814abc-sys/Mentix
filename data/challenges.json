@@ -1,5 +1,130 @@
 [
   {
+    "id": "govdata_code_annie_804263",
+    "title": "fñjkñl",
+    "subtitle": "fiul",
+    "description": "f",
+    "author": "Annie",
+    "authorEmail": "acanon@ciudadmontesbilingue.edu.com",
+    "joinCode": "804263",
+    "accessCode": "804263",
+    "projectType": "presentation",
+    "isGovDataProject": true,
+    "status": "completed",
+    "publicationStatus": "published",
+    "approvalStatus": "approved",
+    "currentStep": 16,
+    "completedSteps": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16
+    ],
+    "progress": 100,
+    "banner": "assets/projects_ui/card_data_gov.png",
+    "problemStatement": "f",
+    "mainObjective": "f",
+    "benefits": "f",
+    "targetAudience": "f",
+    "slidesCount": 1,
+    "resourcesCount": 1,
+    "landingConfig": {
+      "publicName": "f",
+      "slug": "f",
+      "landingTitle": "f: f",
+      "publicDescription": "f",
+      "visibleCategory": "Administración Pública",
+      "tags": [
+        "Gobierno de Datos",
+        "IA"
+      ],
+      "ctaText": "Unirse / Colaborar",
+      "ctaUrl": "#plp-sec-contacto",
+      "displayOrder": 1,
+      "featuredVideoPublic": true
+    },
+    "valueProp": {
+      "problemSolved": "f",
+      "howItWorks": "f",
+      "forWhom": "f",
+      "differentiator": "f",
+      "keyFeatures": [
+        "f"
+      ],
+      "resultsAndBenefits": "",
+      "prerequisites": "",
+      "visitorAction": "Unirse / Colaborar",
+      "commercialPitch": "f",
+      "faqs": []
+    },
+    "updatedAt": "2026-11-26T00:19:13.815Z",
+    "isPublic": true,
+    "hub": {
+      "joinRequests": [],
+      "members": [
+        {
+          "name": "Annie",
+          "email": "acanon@ciudadmontesbilingue.edu.com",
+          "role": "owner",
+          "leader": true
+        }
+      ],
+      "views": [],
+      "ratings": []
+    },
+    "stage": "completed",
+    "visibility": "public",
+    "accessMode": "public",
+    "authorizedAt": "2026-11-26T00:16:47.056Z",
+    "authorizedBy": "Melisa",
+    "rejectionReason": "",
+    "rejectedAt": "",
+    "tag": "✔ Completado",
+    "tagClass": "badge-completed",
+    "customProjectCodes": [
+      {
+        "code": "804263",
+        "author": "Melisa",
+        "authorRole": "admin",
+        "createdAt": "22/11/2026, 9:27:35 p.m."
+      },
+      {
+        "code": "371850",
+        "author": "Melisa",
+        "authorRole": "admin",
+        "createdAt": "22/11/2026, 9:27:35 p.m."
+      },
+      {
+        "code": "926407",
+        "author": "Melisa",
+        "authorRole": "admin",
+        "createdAt": "22/11/2026, 9:23:09 p.m."
+      },
+      {
+        "code": "583194",
+        "author": "Melisa",
+        "authorRole": "admin",
+        "createdAt": "22/11/2026, 9:22:51 p.m."
+      }
+    ],
+    "mainImage": "",
+    "thumbnailImage": "",
+    "image": "",
+    "createdAt": "2026-11-26T00:19:13.815Z"
+  },
+  {
     "id": "proj_document_1795651508416",
     "title": "Documentacion_Gobierno_de_Datos_GPC_Pharma_compressed",
     "author": "Melisa",
@@ -19,14 +144,14 @@
     "shortDescription": "h",
     "description": "h",
     "fullDescription": "h",
-    "publicationStatus": "completed",
-    "approvalStatus": "pending",
+    "publicationStatus": "published",
+    "approvalStatus": "approved",
     "status": "completed",
-    "isPublic": false,
-    "accessMode": "private",
+    "isPublic": true,
+    "accessMode": "public",
     "displayOrder": 1,
     "createdAt": "2026-11-26T00:05:08.416Z",
-    "updatedAt": "2026-11-26T00:19:08.325Z",
+    "updatedAt": "2026-11-26T00:07:35.386Z",
     "landingConfig": {
       "publicName": "uhjk",
       "landingTitle": "uhjk",
@@ -211,9 +336,9 @@
     "originalFormat": "pdf",
     "heroBanner": "",
     "image": "",
-    "visibility": "private",
+    "visibility": "public",
     "stage": "completed",
-    "rejectionReason": "Desautorizado por el Administrador (oculto al público).",
+    "rejectionReason": "",
     "authorizedAt": "2026-11-26T00:05:46.539Z",
     "hub": {
       "joinRequests": [],
@@ -254,18 +379,7 @@
         "createdAt": "22/11/2026, 9:22:51 p.m."
       }
     ],
-    "_globalHeroBanner": "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=1600&q=80",
-    "authorizedBy": "Administrador Mentix",
-    "rejectedAt": "2026-11-26T00:13:47.160Z",
-    "members": [
-      {
-        "name": "Melisa",
-        "email": "gatitaxd6f79@gmail.com",
-        "role": "owner",
-        "leader": true
-      }
-    ],
-    "joinRequests": []
+    "_globalHeroBanner": "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=1600&q=80"
   },
   {
     "id": "proj_presentation_1795607130865",
