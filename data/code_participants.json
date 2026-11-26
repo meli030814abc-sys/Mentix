@@ -10,7 +10,7 @@
       "email": "boadavillamil09@gmail.com",
       "role": "student",
       "joinedAt": "2026-11-26T00:56:42.586Z",
-      "updatedAt": "2026-11-26T00:58:47.224Z",
+      "updatedAt": "2026-11-26T00:58:47.849Z",
       "projectId": "proj_video_1795575349043",
       "projectTitle": "Diagnóstico de Gobierno de Datos - Afiancol S.A.S.",
       "projectDescription": "Afiancol, una compañía colombiana fundada en 2007 y especializada en fianzas y garantías para el sector solidario, vive de la confianza, pero sus datos se producían sin ser gestionados como un activo: faltaban responsables, reglas de decisión y control de calidad, y por eso no servían de base para decidir. Para abordarlo, se realizo un diagnóstico de gobierno de datos con la metodología DAMA-DMBOK2, a partir de entrevistas y documentos oficiales, midiendo la madurez en seis dimensiones y desarrollando una solución en cuatro fases, consolidada en Supabase y en la herramienta GovData Nexus, cuyas métricas se actualizan de forma continua. El resultado es una madurez global del 65 % al último corte, con una base sólida en Calidad, Seguridad y Organización, y con brechas prioritarias en Estrategia y Compliance (30 %), que marcan la ruta para convertir los datos en un activo estratégico y cumplir con Habeas Data. El principal aprendizaje es que gobernar datos es tanto un tema de personas como de tecnología: medir convierte una percepción en un punto de partida, y sostener ese gobierno día a día es lo que demuestra su valor a la dirección.",
@@ -81,7 +81,7 @@
           "commercialPitch": "",
           "faqs": []
         },
-        "updatedAt": "2026-11-26T00:58:47.224Z"
+        "updatedAt": "2026-11-26T00:58:47.849Z"
       }
     },
     {
