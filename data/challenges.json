@@ -253,7 +253,8 @@
         "authorRole": "admin",
         "createdAt": "22/11/2026, 9:22:51 p.m."
       }
-    ]
+    ],
+    "_globalHeroBanner": "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=1600&q=80"
   },
   {
     "id": "proj_presentation_1795607130865",
@@ -1758,7 +1759,8 @@
       }
     ],
     "joinRequests": [],
-    "completedAt": "2026-11-25T12:41:53.079Z"
+    "completedAt": "2026-11-25T12:41:53.079Z",
+    "_globalHeroBanner": "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=1600&q=80"
   },
   {
     "id": "proj_video_1795575349043",
@@ -2126,7 +2128,8 @@
     "duration": "5:00 min",
     "tag": "⏳ Pendiente de Autorización",
     "tagClass": "badge-review",
-    "_cardCoverUpdatedAt": 1795582356091
+    "_cardCoverUpdatedAt": 1795582356091,
+    "_globalHeroBanner": "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=1600&q=80"
   },
   {
     "id": "proj_presentation_1795566554804",
@@ -3182,7 +3185,8 @@
     "completedAt": "2026-11-25T01:23:06.413Z",
     "authorizedAt": "2026-11-25T18:54:44.979Z",
     "authorizedBy": "Melisa",
-    "stage": "completed"
+    "stage": "completed",
+    "_globalHeroBanner": "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=1600&q=80"
   },
   {
     "id": "reto_1795552054552",
@@ -4971,7 +4975,7 @@
     "accessMode": "public",
     "displayOrder": 1,
     "createdAt": "2026-11-24T02:08:03.167Z",
-    "updatedAt": "2026-11-26T00:10:23.140Z",
+    "updatedAt": "2026-11-26T00:10:21.924Z",
     "landingConfig": {
       "publicName": "Diagnóstico y propuesta de optimización del gobierno de datos en GPC Pharma S.A.S.",
       "slug": "propuesta-gobierno-de-datos-gpc-pharma",
@@ -4992,8 +4996,7 @@
       "authorsList": "Laura Sofía Hernández Chaparro",
       "authorsEmails": "ing.laurasofiax04@gmail.com",
       "authorsRole": "Estudiante / Creador",
-      "authorsInstitution": "Institución Universitaria Politécnico Grancolombiano",
-      "collaborators": ""
+      "authorsInstitution": "Institución Universitaria Politécnico Grancolombiano"
     },
     "designConfig": {
       "themeId": "cosmos",
@@ -5054,10 +5057,16 @@
           "leader": true
         }
       ],
-      "views": [],
+      "views": [
+        {
+          "t": 1795651433160,
+          "who": "user_1792184134006",
+          "name": "Melisa"
+        }
+      ],
       "ratings": [],
       "projectId": "proj_video_1795486083167",
-      "updatedAt": 1795552713058
+      "updatedAt": 1795651433178
     },
     "slug": "propuesta-gobierno-de-datos-gpc-pharma",
     "subtitle": "Trazabilidad, calidad y cumplimiento regulatorio en GPC Pharma",
@@ -5076,7 +5085,7 @@
     "submittedForApproval": true,
     "startDate": "2026-08-03",
     "endDate": "2026-11-25",
-    "currentStep": 6,
+    "currentStep": 5,
     "completedSteps": [
       1,
       2,
@@ -6230,7 +6239,7 @@
         15,
         16
       ],
-      "currentStep": 6,
+      "currentStep": 5,
       "author": "Laura Sofía Hernández Chaparro",
       "authorId": "user_1795437974586",
       "ownerId": "user_1795437974586",
@@ -6253,11 +6262,10 @@
         "authorsList": "Laura Sofía Hernández Chaparro",
         "authorsEmails": "ing.laurasofiax04@gmail.com",
         "authorsRole": "Estudiante / Creador",
-        "authorsInstitution": "Institución Universitaria Politécnico Grancolombiano",
-        "collaborators": ""
+        "authorsInstitution": "Institución Universitaria Politécnico Grancolombiano"
       },
       "createdAt": "2026-11-24T02:08:03.167Z",
-      "updatedAt": "2026-11-26T00:10:24.000Z",
+      "updatedAt": "2026-11-26T00:10:22.840Z",
       "progress": 100,
       "calculatedProgress": 100
     },
@@ -6302,8 +6310,8 @@
       "offsetY": -14.1,
       "fit": "contain"
     },
-    "_cardCropUpdatedAt": 1795551499823,
-    "_heroCropUpdatedAt": 1795550986414,
+    "_cardCropUpdatedAt": 1795651822852,
+    "_heroCropUpdatedAt": 1795651822852,
     "_cardCoverUpdatedAt": 1795551501359,
     "_heroBannerUpdatedAt": 1795550956946
   },
