@@ -1502,7 +1502,8 @@
       }
     ],
     "joinRequests": [],
-    "completedAt": "2026-11-25T12:41:53.079Z"
+    "completedAt": "2026-11-25T12:41:53.079Z",
+    "_globalHeroBanner": "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=1600&q=80"
   },
   {
     "id": "proj_video_1795575349043",
@@ -1870,7 +1871,8 @@
     "duration": "5:00 min",
     "tag": "⏳ Pendiente de Autorización",
     "tagClass": "badge-review",
-    "_cardCoverUpdatedAt": 1795582356091
+    "_cardCoverUpdatedAt": 1795582356091,
+    "_globalHeroBanner": "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=1600&q=80"
   },
   {
     "id": "proj_presentation_1795566554804",
@@ -2926,7 +2928,8 @@
     "completedAt": "2026-11-25T01:23:06.413Z",
     "authorizedAt": "2026-11-25T18:54:44.979Z",
     "authorizedBy": "Melisa",
-    "stage": "completed"
+    "stage": "completed",
+    "_globalHeroBanner": "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=1600&q=80"
   },
   {
     "id": "reto_1795552054552",
@@ -4715,7 +4718,7 @@
     "accessMode": "public",
     "displayOrder": 1,
     "createdAt": "2026-11-24T02:08:03.167Z",
-    "updatedAt": "2026-11-25T00:12:11.426Z",
+    "updatedAt": "2026-11-26T00:04:11.010Z",
     "landingConfig": {
       "publicName": "Diagnóstico y propuesta de optimización del gobierno de datos en GPC Pharma S.A.S.",
       "slug": "propuesta-gobierno-de-datos-gpc-pharma",
@@ -4797,7 +4800,13 @@
           "leader": true
         }
       ],
-      "views": [],
+      "views": [
+        {
+          "t": 1795651433160,
+          "who": "user_1792184134006",
+          "name": "Melisa"
+        }
+      ],
       "ratings": [],
       "projectId": "proj_video_1795486083167",
       "updatedAt": 1795552713058
