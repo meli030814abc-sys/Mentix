@@ -10,7 +10,7 @@
       "email": "acanon@ciudadmontesbilingue.edu.com",
       "role": "student",
       "joinedAt": "2026-11-26T00:13:56.826Z",
-      "updatedAt": "2026-11-26T00:14:16.793Z",
+      "updatedAt": "2026-11-26T00:14:18.034Z",
       "projectId": "govdata_code_annie_804263",
       "projectTitle": "f",
       "projectDescription": "f",
@@ -70,9 +70,9 @@
         },
         "valueProp": {
           "problemSolved": "f",
-          "howItWorks": "",
+          "howItWorks": "f",
           "forWhom": "f",
-          "differentiator": "",
+          "differentiator": "f",
           "keyFeatures": [
             "f"
           ],
@@ -82,7 +82,7 @@
           "commercialPitch": "",
           "faqs": []
         },
-        "updatedAt": "2026-11-26T00:14:16.793Z"
+        "updatedAt": "2026-11-26T00:14:18.034Z"
       }
     },
     {
