@@ -26,7 +26,7 @@
     "accessMode": "private",
     "displayOrder": 1,
     "createdAt": "2026-11-26T00:05:08.416Z",
-    "updatedAt": "2026-11-26T00:17:31.740Z",
+    "updatedAt": "2026-11-26T00:17:42.206Z",
     "landingConfig": {
       "publicName": "uhjk",
       "landingTitle": "uhjk",
@@ -255,8 +255,8 @@
       }
     ],
     "_globalHeroBanner": "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=1600&q=80",
-    "authorizedBy": "Administrador Mentix",
     "rejectedAt": "2026-11-26T00:13:47.160Z",
+    "authorizedBy": "Administrador Mentix",
     "members": [
       {
         "name": "Melisa",
@@ -265,7 +265,21 @@
         "leader": true
       }
     ],
-    "joinRequests": []
+    "joinRequests": [],
+    "fromStudentCreate": true,
+    "_isStudentDraft": true,
+    "slides": [],
+    "presentations": [],
+    "externalLinks": [],
+    "visualAssets": [],
+    "completedSteps": [],
+    "videoConfig": {
+      "thumbnailUrl": "",
+      "url": ""
+    },
+    "videoUrl": "",
+    "tag": "⏳ Pendiente de Autorización",
+    "tagClass": "badge-review"
   },
   {
     "id": "proj_presentation_1795607130865",
