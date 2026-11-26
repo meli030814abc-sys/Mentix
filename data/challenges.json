@@ -1835,7 +1835,7 @@
     "image": "assets/projects_ui/card_data_gov.png",
     "banner": "assets/projects_ui/card_data_gov.png",
     "createdAt": "2026-11-25T02:55:49.043Z",
-    "updatedAt": "2026-11-26T01:21:19.766Z",
+    "updatedAt": "2026-11-26T01:21:24.769Z",
     "govdata": {
       "id": "proj_video_1795575349043",
       "title": "Diagnóstico de Gobierno de Datos - Afiancol S.A.S.",
@@ -1987,9 +1987,10 @@
         7,
         8,
         9,
-        10
+        10,
+        11
       ],
-      "currentStep": 11,
+      "currentStep": 12,
       "author": "Danna Boada",
       "authorId": "user_1795574386910",
       "ownerId": "user_1795574386910",
@@ -2016,7 +2017,7 @@
         "collaborators": "Extiendo mis agradecimientos al profesor Carlos Caño ya que con su guía y acompañamiento fue posible ejecutar un correcto proceso de implementación de Gobierno de Datos de manera teórico práctico."
       },
       "createdAt": "2026-11-25T02:55:49.043Z",
-      "updatedAt": "2026-11-26T01:21:16.448Z",
+      "updatedAt": "2026-11-26T01:21:23.096Z",
       "progress": 95,
       "calculatedProgress": 95
     },
@@ -2145,7 +2146,7 @@
     "preparationStatus": "finalizado",
     "startDate": "2026-07-01",
     "endDate": "2026-11-25",
-    "currentStep": 11,
+    "currentStep": 12,
     "completedSteps": [
       1,
       2,
@@ -2156,7 +2157,8 @@
       7,
       8,
       9,
-      10
+      10,
+      11
     ],
     "progress": 95,
     "calculatedProgress": 95,
@@ -2286,8 +2288,8 @@
         "layout": "full",
         "isFullImage": true,
         "isImported": true,
-        "media": "",
-        "imageUrl": "",
+        "media": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795575349043%2F1795656079107_yeu9_slide_1.jpg",
+        "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795575349043%2F1795656079107_yeu9_slide_1.jpg",
         "notes": "",
         "bgColor": "#ffffff",
         "themeId": "cosmos"
@@ -2487,8 +2489,8 @@
             "layout": "full",
             "isFullImage": true,
             "isImported": true,
-            "media": "",
-            "imageUrl": "",
+            "media": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795575349043%2F1795656079107_yeu9_slide_1.jpg",
+            "imageUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795575349043%2F1795656079107_yeu9_slide_1.jpg",
             "notes": "",
             "bgColor": "#ffffff",
             "themeId": "cosmos"
