@@ -285,11 +285,11 @@
     "benefits": "Facilita la toma de decisiones directivas y administrativas con información más confiable, reduce riesgos de mal manejo de datos escolares y fortalece una cultura de cuidado y protección de los datos de niños, niñas, adolescentes y funcionarios.",
     "teamLead": "Jhomar Alejandra Cano Ramirez",
     "preparationStatus": "finalizado",
-    "publicationStatus": "published",
-    "approvalStatus": "approved",
+    "publicationStatus": "completed",
+    "approvalStatus": "pending",
     "submittedForApproval": true,
     "status": "completed",
-    "isPublic": true,
+    "isPublic": false,
     "startDate": "2026-08-30",
     "endDate": "2026-11-25",
     "currentStep": 16,
@@ -1684,7 +1684,7 @@
         "displayOrder": 1,
         "featuredVideoPublic": true
       },
-      "publicationStatus": "published",
+      "publicationStatus": "completed",
       "completedSteps": [
         1,
         2,
@@ -1729,15 +1729,15 @@
         "authorsInstitution": "Universidad Politecnico Grancolombiano"
       },
       "createdAt": "2026-11-25T11:45:30.865Z",
-      "updatedAt": "2026-11-25T12:41:53.079Z",
+      "updatedAt": "2026-11-27T16:34:05.632Z",
       "progress": 100,
       "calculatedProgress": 100,
       "submittedForApproval": true,
-      "approvalStatus": "approved",
+      "approvalStatus": "pending",
       "status": "completed",
       "completedAt": "2026-11-25T12:41:53.079Z",
-      "isPublic": true,
-      "rejectionReason": "",
+      "isPublic": false,
+      "rejectionReason": "Desautorizado por el Administrador (oculto al público).",
       "authorizedAt": "2026-11-26T00:21:13.488Z",
       "authorizedBy": "Melisa"
     },
@@ -1751,12 +1751,12 @@
     "authorAvatar": "🦊",
     "authorRole": "Estudiante / Creador",
     "createdAt": "2026-11-25T11:45:30.865Z",
-    "updatedAt": "2026-11-26T00:23:06.125Z",
+    "updatedAt": "2026-11-27T16:34:04.772Z",
     "fromStudentCreate": true,
     "_isStudentDraft": true,
     "timePerQuestion": 25,
     "plays": 0,
-    "accessMode": "public",
+    "accessMode": "private",
     "hub": {
       "joinRequests": [],
       "members": [
@@ -1796,9 +1796,9 @@
         "createdAt": "22/11/2026, 9:22:51 p.m."
       }
     ],
-    "visibility": "public",
-    "rejectedAt": "",
-    "rejectionReason": "",
+    "visibility": "private",
+    "rejectedAt": "2026-11-27T16:34:05.632Z",
+    "rejectionReason": "Desautorizado por el Administrador (oculto al público).",
     "members": [
       {
         "name": "Jhomar Alejandra Cano Ramirez",
