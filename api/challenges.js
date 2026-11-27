@@ -276,6 +276,18 @@ export default async function handler(req, res) {
       csv: 'text/csv; charset=utf-8',
       md: 'text/markdown; charset=utf-8',
       zip: 'application/zip',
+      rar: 'application/vnd.rar',
+      '7z': 'application/x-7z-compressed',
+      mp4: 'video/mp4',
+      webm: 'video/webm',
+      ogg: 'video/ogg',
+      mov: 'video/quicktime',
+      mp3: 'audio/mpeg',
+      wav: 'audio/wav',
+      svg: 'image/svg+xml',
+      json: 'application/json; charset=utf-8',
+      html: 'text/html; charset=utf-8',
+      bin: 'application/octet-stream',
       jpg: 'image/jpeg', jpeg: 'image/jpeg', png: 'image/png', webp: 'image/webp', gif: 'image/gif'
     };
     const contentType = mimeMap[ext] || 'application/octet-stream';
@@ -298,6 +310,120 @@ export default async function handler(req, res) {
           const realName = manifest.fileName || fileName.replace(/\.parts\.json$/i, '');
           const realExt = (manifest.ext || realName.split('.').pop() || 'pdf').toLowerCase();
           const realContentType = mimeMap[realExt] || manifest.mime || 'application/octet-stream';
+
+          // Si el cliente solicita solo el manifiesto para ensamblar las partes en el navegador (evita el límite de 4.5 MB de Vercel)
+          if (req.query.manifest === '1' || req.query.manifest === 'true') {
+            res.setHeader('Content-Type', 'application/json; charset=utf-8');
+            res.setHeader('Cache-Control', 'public, max-age=3600');
+            return res.status(200).json({
+              fileName: realName,
+              ext: realExt,
+              mime: realContentType,
+              totalParts: parts.length,
+              totalBytes: Number(manifest.totalBytes) || 0,
+              parts
+            });
+          }
+
+          // Si pesa > 4 MB (> 2 partes), servir un visor/ensamblador ligero en el navegador para nunca chocar con el límite 4.5 MB de Vercel
+          const isTooLargeForSingleResponse = parts.length > 2 || (Number(manifest.totalBytes) || 0) > 4 * 1024 * 1024;
+          if (isTooLargeForSingleResponse) {
+            const safeTitle = String(realName).replace(/[<>&"']/g, c => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;', '"': '&quot;', "'": '&#39;' }[c]));
+            const manifestApiUrl = `/api/challenges?file=${encodeURIComponent(rawPath)}&manifest=1`;
+            const htmlViewer = `<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>${safeTitle} — MENTIX</title>
+<style>
+  html, body { margin: 0; padding: 0; width: 100%; height: 100%; background: #071224; color: #f8fafc; font-family: system-ui, -apple-system, sans-serif; overflow: hidden; display: flex; flex-direction: column; }
+  .loader-wrap { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2rem; text-align: center; }
+  .card { background: rgba(15, 23, 42, 0.9); border: 2px solid #38bdf8; border-radius: 20px; padding: 2rem 2.5rem; max-width: 480px; width: 100%; box-shadow: 0 20px 60px rgba(0,0,0,0.6); }
+  .bar-bg { width: 100%; height: 12px; background: rgba(255,255,255,0.1); border-radius: 999px; overflow: hidden; margin: 1.2rem 0 0.6rem; }
+  .bar-fill { width: 0%; height: 100%; background: linear-gradient(90deg, #00f5d4, #3b82f6); transition: width 0.25s ease; }
+  .btn { display: inline-flex; align-items: center; gap: 0.5rem; background: linear-gradient(135deg, #00f5d4, #0284c7); color: #071739; font-weight: 800; padding: 0.75rem 1.4rem; border-radius: 12px; text-decoration: none; border: none; cursor: pointer; font-size: 0.95rem; margin-top: 1rem; }
+  iframe, img, video { width: 100%; height: 100%; border: none; flex: 1; background: #fff; }
+  .topbar { height: 44px; background: #061122; border-bottom: 1px solid rgba(255,255,255,0.12); display: none; align-items: center; justify-content: space-between; padding: 0 1rem; font-size: 0.85rem; }
+</style>
+</head>
+<body>
+  <div id="topbar" class="topbar">
+    <span style="font-weight:700; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">📄 ${safeTitle}</span>
+    <a id="dl-top" class="btn" style="margin:0; padding:0.3rem 0.9rem; font-size:0.78rem;" download="${safeTitle}">⬇ Descargar</a>
+  </div>
+  <div id="stage" class="loader-wrap">
+    <div class="card">
+      <div style="font-size:2.4rem; margin-bottom:0.5rem;">📦</div>
+      <h2 style="margin:0 0 0.4rem; font-size:1.15rem;">Cargando recurso grande...</h2>
+      <div id="fname" style="font-size:0.85rem; color:#94a3b8; word-break:break-word;">${safeTitle}</div>
+      <div class="bar-bg"><div id="bar" class="bar-fill"></div></div>
+      <div id="status" style="font-size:0.82rem; color:#38bdf8; font-weight:600;">Conectando con Mentix Cloud...</div>
+    </div>
+  </div>
+<script>
+(async function() {
+  const statusEl = document.getElementById('status');
+  const barEl = document.getElementById('bar');
+  const stageEl = document.getElementById('stage');
+  const topbarEl = document.getElementById('topbar');
+  const dlTopEl = document.getElementById('dl-top');
+  try {
+    const manRes = await fetch(${JSON.stringify(manifestApiUrl)});
+    if (!manRes.ok) throw new Error('No se pudo leer el manifiesto');
+    const man = await manRes.json();
+    const parts = man.parts || [];
+    const results = new Array(parts.length);
+    let done = 0;
+    const concurrency = 3;
+    let nextIdx = 0;
+    async function worker() {
+      while (nextIdx < parts.length) {
+        const i = nextIdx++;
+        const pr = await fetch('/api/challenges?file=' + encodeURIComponent(parts[i]));
+        if (!pr.ok) throw new Error('Error al descargar parte ' + (i + 1));
+        results[i] = await pr.arrayBuffer();
+        done++;
+        const pct = Math.round((done / parts.length) * 100);
+        barEl.style.width = pct + '%';
+        statusEl.textContent = 'Descargando parte ' + done + ' de ' + parts.length + ' (' + pct + '%)...';
+      }
+    }
+    await Promise.all(Array.from({ length: Math.min(concurrency, parts.length) }, worker));
+    const mime = man.mime || 'application/octet-stream';
+    const blob = new Blob(results, { type: mime });
+    const blobUrl = URL.createObjectURL(blob);
+    dlTopEl.href = blobUrl;
+    if (mime.includes('pdf') || mime.startsWith('text/')) {
+      topbarEl.style.display = 'flex';
+      stageEl.className = '';
+      stageEl.style.cssText = 'flex:1; display:flex; width:100%; height:calc(100% - 44px);';
+      stageEl.innerHTML = '<iframe src="' + blobUrl + '#toolbar=1&navpanes=1"></iframe>';
+    } else if (mime.startsWith('image/')) {
+      topbarEl.style.display = 'flex';
+      stageEl.innerHTML = '<img src="' + blobUrl + '" style="max-width:95%; max-height:85vh; object-fit:contain; background:transparent;" />';
+    } else if (mime.startsWith('video/')) {
+      topbarEl.style.display = 'flex';
+      stageEl.innerHTML = '<video controls autoplay style="max-width:95%; max-height:85vh; background:#000;"><source src="' + blobUrl + '" type="' + mime + '"></video>';
+    } else if (mime.startsWith('audio/')) {
+      topbarEl.style.display = 'flex';
+      stageEl.innerHTML = '<audio controls autoplay src="' + blobUrl + '"></audio>';
+    } else {
+      stageEl.innerHTML = '<div class="card"><div style="font-size:2.6rem;">✅</div><h2 style="margin:0.4rem 0;">Recurso Listo</h2><p style="font-size:0.86rem;color:#94a3b8;">' + ${JSON.stringify(safeTitle)} + '</p><a class="btn" href="' + blobUrl + '" download="' + ${JSON.stringify(safeTitle)} + '">⬇ Descargar / Abrir Archivo</a></div>';
+    }
+  } catch (err) {
+    statusEl.style.color = '#f87171';
+    statusEl.textContent = 'No se pudo cargar el recurso: ' + (err && err.message ? err.message : 'Error de red');
+  }
+})();
+</script>
+</body>
+</html>`;
+            res.setHeader('Content-Type', 'text/html; charset=utf-8');
+            res.setHeader('Cache-Control', 'no-store');
+            return res.status(200).send(htmlViewer);
+          }
+
           const buffers = [];
           for (const partPath of parts) {
             const pr = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/contents/${partPath}?ref=${DATA_BRANCH}`, {
@@ -648,7 +774,7 @@ export default async function handler(req, res) {
           'image/webp': 'webp',
           'image/gif': 'gif'
         };
-        const allowedExts = new Set(['pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'txt', 'csv', 'md', 'zip', 'jpg', 'jpeg', 'png', 'webp', 'gif']);
+        const allowedExts = new Set(['pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'txt', 'csv', 'md', 'zip', 'rar', '7z', 'mp4', 'webm', 'ogg', 'mov', 'mp3', 'wav', 'svg', 'json', 'html', 'jpg', 'jpeg', 'png', 'webp', 'gif']);
         let ext = mimeToExt[mime] || extFromName || 'pdf';
         if (ext === 'jpeg') ext = 'jpg';
         if (!allowedExts.has(ext)) {
@@ -702,7 +828,7 @@ export default async function handler(req, res) {
         const totalParts = Math.max(1, parseInt(body.totalParts, 10) || 1);
         const rawFileName = String(body.fileName || 'documento.pdf').trim();
         const ext = (rawFileName.split('.').pop() || 'pdf').toLowerCase().replace(/[^a-z0-9]/g, '') || 'pdf';
-        const allowedExts = new Set(['pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'txt', 'csv', 'md', 'zip', 'jpg', 'jpeg', 'png', 'webp', 'gif']);
+        const allowedExts = new Set(['pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'txt', 'csv', 'md', 'zip', 'rar', '7z', 'mp4', 'webm', 'ogg', 'mov', 'mp3', 'wav', 'svg', 'json', 'html', 'jpg', 'jpeg', 'png', 'webp', 'gif']);
         if (!allowedExts.has(ext)) {
           return res.status(400).json({ error: 'Extensión de documento no permitida' });
         }

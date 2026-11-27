@@ -9897,6 +9897,48 @@ window.ProjectsView = {
     }, selected);
   },
 
+  async fetchChunkedResourceBlobUrl(rawUrl, onProgress = null) {
+    if (!rawUrl || !/\.parts\.json($|\?)/i.test(rawUrl)) return null;
+    try {
+      const apiBase = (window.appRouter && typeof window.appRouter.getApiBase === 'function') ? window.appRouter.getApiBase() : '';
+      const manUrl = rawUrl + (rawUrl.includes('?') ? '&manifest=1' : '?manifest=1');
+      const manRes = await fetch(manUrl);
+      if (!manRes || !manRes.ok) return null;
+      const man = await manRes.json();
+      const parts = Array.isArray(man.parts) ? man.parts : [];
+      if (parts.length === 0) return null;
+
+      const results = new Array(parts.length);
+      let done = 0;
+      let nextIdx = 0;
+      const concurrency = 3;
+      const worker = async () => {
+        while (nextIdx < parts.length) {
+          const i = nextIdx++;
+          const partUrl = `${apiBase}/api/challenges?file=${encodeURIComponent(parts[i])}`;
+          const pr = await fetch(partUrl);
+          if (!pr || !pr.ok) throw new Error('Error descargando parte ' + (i + 1));
+          results[i] = await pr.arrayBuffer();
+          done++;
+          if (typeof onProgress === 'function') {
+            try { onProgress(done, parts.length); } catch (e) {}
+          }
+        }
+      };
+      await Promise.all(Array.from({ length: Math.min(concurrency, parts.length) }, worker));
+      const mime = man.mime || 'application/octet-stream';
+      const blob = new Blob(results, { type: mime });
+      return {
+        blobUrl: URL.createObjectURL(blob),
+        mime,
+        fileName: man.fileName || 'recurso',
+        totalBytes: Number(man.totalBytes) || blob.size
+      };
+    } catch (e) {
+      return null;
+    }
+  },
+
   openResourceViewer(res, project) {
     if (!res) return;
     const { modal, body } = this.getOrMountLightbox();
@@ -9967,16 +10009,18 @@ window.ProjectsView = {
     const sizeStr = res.sizeLabel || (res.sizeBytes ? (res.sizeBytes / 1024).toFixed(1) + ' KB' : (rawUrl.startsWith('http') ? 'Enlace en la nube' : 'Recurso oficial'));
 
     const isUrl = /^https?:\/\//i.test(rawUrl);
+    const isChunkedManifest = /\.parts\.json($|\?)/i.test(rawUrl);
     const isGoogleForm = rawUrl.includes('docs.google.com/forms');
     const isGoogleDoc = rawUrl.includes('docs.google.com/document') || rawUrl.includes('docs.google.com/spreadsheets') || rawUrl.includes('docs.google.com/presentation');
     const isYouTube = rawUrl.includes('youtube.com') || rawUrl.includes('youtu.be');
     const isVimeo = rawUrl.includes('vimeo.com');
     const isPdf = fmt.includes('PDF') || name.toLowerCase().endsWith('.pdf') || (rawUrl && (rawUrl.startsWith('data:application/pdf') || rawUrl.toLowerCase().includes('.pdf')));
     const isImage = fmt.match(/PNG|JPG|JPEG|WEBP|SVG|GIF/) || name.match(/\.(png|jpe?g|webp|svg|gif)($|\?)/i) || (rawUrl && rawUrl.startsWith('data:image/'));
-    const isVideo = fmt.includes('VID') || name.match(/\.(mp4|webm|ogg)($|\?)/i) || (rawUrl && (rawUrl.startsWith('data:video/') || isYouTube || isVimeo));
+    const isVideo = fmt.includes('VID') || name.match(/\.(mp4|webm|ogg|mov)($|\?)/i) || (rawUrl && (rawUrl.startsWith('data:video/') || /\.(mp4|webm|ogg|mov)(\.parts\.json)?($|\?)/i.test(rawUrl) || isYouTube || isVimeo));
+    const isOfficeOrArchive = fmt.match(/DOCX?|PPTX?|XLSX?|ZIP|RAR|7Z/) || /\.(docx?|pptx?|xlsx?|zip|rar|7z)($|\?)/i.test(name) || /\.(docx?|pptx?|xlsx?|zip|rar|7z)\.parts\.json/i.test(rawUrl);
 
     let blobUrl = '';
-    if (rawUrl) {
+    if (rawUrl && !isChunkedManifest) {
       blobUrl = this.getBlobUrlFromData(rawUrl);
       this._currentResourceBlobUrl = blobUrl;
     }
@@ -9988,7 +10032,99 @@ window.ProjectsView = {
 
     let contentHtml = '';
 
-    if (isUrl && !isPdf && !isImage) {
+    if (isChunkedManifest) {
+      // Recurso pesado almacenado por partes (.parts.json): ensamblar en el navegador sin límite de 4.5 MB
+      contentHtml = `
+        <div id="mentix-chunked-stage" style="flex:1; width:100%; height:calc(100vh - 66px); background:#071224; display:flex; align-items:center; justify-content:center; padding:2rem;">
+          <div style="width:100%; max-width:480px; background:rgba(15,23,42,0.92); border:2px solid #38bdf8; border-radius:22px; padding:2rem 2.2rem; text-align:center; box-shadow:0 20px 60px rgba(0,0,0,0.65); color:#f8fafc;">
+            <div style="font-size:2.6rem; margin-bottom:0.5rem;">📦</div>
+            <h3 style="margin:0 0 0.4rem; font-size:1.15rem; font-weight:850;">Preparando recurso grande...</h3>
+            <p style="margin:0 0 1rem; font-size:0.86rem; color:#94a3b8; word-break:break-word;">${this.escapeHtml(name)} (${this.escapeHtml(sizeStr)})</p>
+            <div style="width:100%; height:12px; background:rgba(255,255,255,0.1); border-radius:999px; overflow:hidden; margin-bottom:0.7rem;">
+              <div id="mentix-chunked-bar" style="width:8%; height:100%; background:linear-gradient(90deg, #00f5d4, #3b82f6); transition:width 0.25s ease;"></div>
+            </div>
+            <div id="mentix-chunked-status" style="font-size:0.82rem; color:#38bdf8; font-weight:700;">Conectando con Mentix Cloud...</div>
+          </div>
+        </div>
+      `;
+      setTimeout(async () => {
+        const bar = document.getElementById('mentix-chunked-bar');
+        const st = document.getElementById('mentix-chunked-status');
+        const stage = document.getElementById('mentix-chunked-stage');
+        const result = await this.fetchChunkedResourceBlobUrl(rawUrl, (done, total) => {
+          const pct = Math.round((done / total) * 100);
+          if (bar) bar.style.width = pct + '%';
+          if (st) st.textContent = `Cargando parte ${done} de ${total} (${pct}%)...`;
+        });
+        if (!stage) return;
+        if (!result || !result.blobUrl) {
+          stage.innerHTML = `
+            <div style="max-width:480px; background:rgba(15,23,42,0.92); border:2px solid #f59e0b; border-radius:22px; padding:2rem; text-align:center; color:#f8fafc;">
+              <div style="font-size:2.4rem; margin-bottom:0.5rem;">📥</div>
+              <h3 style="margin:0 0 0.5rem;">Abrir Recurso Directamente</h3>
+              <p style="font-size:0.86rem; color:#94a3b8; margin-bottom:1.2rem;">Puedes abrir o descargar "${this.escapeHtml(name)}" directamente en una pestaña nueva.</p>
+              <a href="${this.escapeHtml(rawUrl)}" target="_blank" rel="noopener noreferrer" style="display:inline-flex; align-items:center; gap:0.5rem; background:linear-gradient(135deg, #00f5d4, #0284c7); color:#071739; font-weight:900; padding:0.75rem 1.4rem; border-radius:12px; text-decoration:none;">
+                <span>↗</span> <span>Abrir / Descargar</span>
+              </a>
+            </div>`;
+          return;
+        }
+        const bUrl = result.blobUrl;
+        this._currentResourceBlobUrl = bUrl;
+        this._currentResourceForDownload = { url: bUrl, name: name, res: res, selected: selected };
+        const topBar = `
+          <div style="height:42px; background:#061122; border-bottom:1px solid rgba(255,255,255,0.1); display:flex; align-items:center; justify-content:space-between; padding:0 1.25rem; font-size:0.82rem; flex-shrink:0; width:100%;">
+            <span style="color:#cbd5e1; font-weight:700;">📄 ${this.escapeHtml(name)}</span>
+            <div style="display:flex; align-items:center; gap:0.55rem;">
+              <a href="${this.escapeHtml(bUrl)}" target="_blank" rel="noopener noreferrer" style="display:inline-flex; align-items:center; gap:0.35rem; background:rgba(0,245,212,0.16); border:1px solid #00f5d4; color:#00f5d4; border-radius:999px; padding:0.22rem 0.8rem; font-size:0.78rem; font-weight:800; text-decoration:none;">
+                <span>↗</span> <span>Abrir en pestaña nueva</span>
+              </a>
+              <a href="${this.escapeHtml(bUrl)}" download="${this.escapeHtml(name)}" style="display:inline-flex; align-items:center; gap:0.35rem; background:rgba(59,130,246,0.2); border:1px solid #60a5fa; color:#93c5fd; border-radius:999px; padding:0.22rem 0.8rem; font-size:0.78rem; font-weight:800; text-decoration:none;">
+                <span>⬇</span> <span>Descargar</span>
+              </a>
+            </div>
+          </div>`;
+        stage.style.padding = '0';
+        stage.style.flexDirection = 'column';
+        if (isPdf) {
+          stage.innerHTML = topBar + `<iframe src="${this.escapeHtml(bUrl)}#toolbar=1&navpanes=1&zoom=page-fit" type="application/pdf" style="width:100%; height:100%; flex:1; border:none; background:#fff;" title="${this.escapeHtml(name)}"></iframe>`;
+        } else if (isImage) {
+          stage.innerHTML = topBar + `<div style="flex:1; width:100%; display:flex; align-items:center; justify-content:center; padding:1.5rem; overflow:auto;"><img src="${this.escapeHtml(bUrl)}" alt="${this.escapeHtml(name)}" style="max-width:94%; max-height:84vh; object-fit:contain; border-radius:12px;" /></div>`;
+        } else if (isVideo) {
+          stage.innerHTML = topBar + `<div style="flex:1; width:100%; background:#000; display:flex; align-items:center; justify-content:center;"><video controls autoplay style="max-width:92%; max-height:82vh; border-radius:12px;"><source src="${this.escapeHtml(bUrl)}" type="${this.escapeHtml(result.mime || 'video/mp4')}"></video></div>`;
+        } else {
+          stage.innerHTML = topBar + `
+            <div style="flex:1; width:100%; display:flex; align-items:center; justify-content:center; padding:2rem;">
+              <div style="max-width:520px; width:100%; background:rgba(15,23,42,0.95); border:2px solid #38bdf8; border-radius:22px; padding:2.2rem; text-align:center; color:#fff; box-shadow:0 20px 60px rgba(0,0,0,0.65);">
+                <div style="font-size:3rem; margin-bottom:0.6rem;">✅</div>
+                <h2 style="margin:0 0 0.4rem; font-size:1.3rem; font-weight:900;">${this.escapeHtml(name)}</h2>
+                <p style="margin:0 0 1.4rem; color:#94a3b8; font-size:0.9rem;">Recurso listo (${this.escapeHtml(sizeStr)}). Haz clic abajo para abrirlo o descargarlo.</p>
+                <a href="${this.escapeHtml(bUrl)}" download="${this.escapeHtml(name)}" style="display:inline-flex; align-items:center; gap:0.5rem; background:linear-gradient(135deg, #00f5d4 0%, #0284c7 100%); color:#071739; font-weight:900; padding:0.85rem 1.7rem; border-radius:14px; text-decoration:none; font-size:0.96rem;">
+                  <span>⬇</span> <span>Descargar / Abrir Archivo</span>
+                </a>
+              </div>
+            </div>`;
+        }
+      }, 20);
+    } else if (isUrl && isOfficeOrArchive) {
+      contentHtml = `
+        <div style="flex:1; width:100%; height:calc(100vh - 66px); background:#081326; display:flex; align-items:center; justify-content:center; padding:2rem;">
+          <div style="max-width:540px; width:100%; background:linear-gradient(135deg, rgba(15,23,42,0.95), rgba(10,18,38,0.98)); border:2px solid #38bdf8; border-radius:24px; padding:2.4rem; text-align:center; color:#fff; box-shadow:0 25px 70px rgba(0,0,0,0.7);">
+            <div style="font-size:3.2rem; margin-bottom:0.6rem;">📁</div>
+            <h2 style="margin:0 0 0.4rem; font-size:1.35rem; font-weight:900;">${this.escapeHtml(name)}</h2>
+            <p style="margin:0 0 1.5rem; color:#94a3b8; font-size:0.9rem;">Formato ${this.escapeHtml(fmt)} (${this.escapeHtml(sizeStr)}). Descárgalo o ábrelo en una nueva pestaña.</p>
+            <div style="display:flex; justify-content:center; gap:0.8rem; flex-wrap:wrap;">
+              <a href="${this.escapeHtml(rawUrl)}" download="${this.escapeHtml(name)}" style="display:inline-flex; align-items:center; gap:0.5rem; background:linear-gradient(135deg, #00f5d4 0%, #0284c7 100%); color:#071739; font-weight:900; padding:0.85rem 1.6rem; border-radius:14px; text-decoration:none;">
+                <span>⬇</span> <span>Descargar Archivo</span>
+              </a>
+              <a href="${this.escapeHtml(rawUrl)}" target="_blank" rel="noopener noreferrer" style="display:inline-flex; align-items:center; gap:0.5rem; background:rgba(255,255,255,0.08); border:1.5px solid rgba(255,255,255,0.22); color:#fff; font-weight:800; padding:0.85rem 1.4rem; border-radius:14px; text-decoration:none;">
+                <span>↗</span> <span>Abrir en pestaña nueva</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      `;
+    } else if (isUrl && !isPdf && !isImage && !isVideo) {
       // 1. Enlaces Web, Formularios de Google, Google Docs, Sitios Web (Visualización interactiva en la página)
       let embedUrl = rawUrl;
       if (isGoogleForm) {
@@ -10135,7 +10271,7 @@ window.ProjectsView = {
               <div style="display:flex; justify-content:center; gap:0.9rem; flex-wrap:wrap;">
                 <label style="display:inline-flex; align-items:center; gap:0.5rem; background:linear-gradient(135deg, #00f5d4 0%, #0284c7 100%); color:#071739; font-weight:900; font-size:0.95rem; padding:0.8rem 1.5rem; border-radius:14px; cursor:pointer; box-shadow:0 6px 20px rgba(0,245,212,0.35); transition:transform 0.15s ease;">
                   <span>📁</span> <span>Cargar archivo PDF original</span>
-                  <input type="file" accept=".pdf,image/*,video/*" style="display:none;" onchange="window.ProjectsView.attachFileToResource(event, '${this.escapeHtml(res.id || name)}', '${this.escapeHtml(selected?.id || '')}')" />
+                  <input type="file" accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.zip,.rar,.7z,image/*,video/*" style="display:none;" onchange="window.ProjectsView.attachFileToResource(event, '${this.escapeHtml(res.id || name)}', '${this.escapeHtml(selected?.id || '')}')" />
                 </label>
 
                 <button type="button" onclick="window.ProjectsView.promptResourceLink('${this.escapeHtml(res.id || name)}', '${this.escapeHtml(selected?.id || '')}')" style="display:inline-flex; align-items:center; gap:0.5rem; background:rgba(255,255,255,0.08); border:1.5px solid rgba(255,255,255,0.2); color:#ffffff; font-weight:800; font-size:0.92rem; padding:0.8rem 1.4rem; border-radius:14px; cursor:pointer;">
