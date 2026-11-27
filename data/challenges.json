@@ -1,5 +1,1356 @@
 [
   {
+    "id": "reto_1792180343870",
+    "title": "AGILE  Y SCRUM",
+    "description": "",
+    "category": "cultura",
+    "difficulty": "Medio",
+    "banner": "https://wallpaperaccess.com/full/1224636.jpg",
+    "timePerQuestion": 60,
+    "pointsStandard": 1000,
+    "isPublic": true,
+    "accessMode": "link_only",
+    "accessCode": "MTX-UUPML",
+    "expiresAt": "2026-11-28T17:15:53.345Z",
+    "temporalDuration": "24h",
+    "questions": [
+      {
+        "id": "q_1792180343870_c8fv",
+        "text": "¿Cuál es el principal objetivo de la gestión ágil de proyectos?",
+        "type": "single",
+        "media": "",
+        "mediaType": "none",
+        "timeLimit": 60,
+        "points": 1000,
+        "options": [
+          {
+            "text": "Cumplir un plan inicial sin modificaciones",
+            "shape": "✦",
+            "color": "opt-1"
+          },
+          {
+            "text": "Entregar valor al cliente de forma incremental y adaptarse al cambio",
+            "shape": "⬢",
+            "color": "opt-2"
+          },
+          {
+            "text": " Eliminar toda la documentación del proyecto",
+            "shape": "⚡",
+            "color": "opt-3"
+          },
+          {
+            "text": "Evitar la participación del cliente.",
+            "shape": "🛡️",
+            "color": "opt-4"
+          }
+        ],
+        "correctAnswer": 1
+      },
+      {
+        "id": "q_1792183608320_ib1m",
+        "text": "¿Qué propone el Manifiesto Ágil respecto a las personas y los procesos?",
+        "type": "single",
+        "media": "",
+        "mediaType": "none",
+        "timeLimit": 60,
+        "points": 1000,
+        "options": [
+          {
+            "text": "Los procesos son más importantes que las personas.",
+            "shape": "✦",
+            "color": "opt-1"
+          },
+          {
+            "text": "Las herramientas sustituyen la comunicación.",
+            "shape": "⬢",
+            "color": "opt-2"
+          },
+          {
+            "text": "Las personas y sus interacciones tienen mayor importancia que los procesos y las herramientas.",
+            "shape": "⚡",
+            "color": "opt-3"
+          },
+          {
+            "text": "Los procesos deben eliminarse por completo.",
+            "shape": "🛡️",
+            "color": "opt-4"
+          }
+        ],
+        "correctAnswer": 2
+      },
+      {
+        "id": "q_1792183696552_awsj",
+        "text": "¿Cuál es el principal objetivo de Agile?",
+        "type": "single",
+        "media": "",
+        "mediaType": "none",
+        "timeLimit": 60,
+        "points": 1000,
+        "options": [
+          {
+            "text": "Entregar valor al cliente y adaptarse a sus necesidades.",
+            "shape": "✦",
+            "color": "opt-1"
+          },
+          {
+            "text": "Cumplir todos los documentos inicialmente definidos.",
+            "shape": "⬢",
+            "color": "opt-2"
+          },
+          {
+            "text": "Evitar la participación del cliente.",
+            "shape": "⚡",
+            "color": "opt-3"
+          },
+          {
+            "text": "Reducir la comunicación entre los equipos.",
+            "shape": "🛡️",
+            "color": "opt-4"
+          }
+        ],
+        "correctAnswer": 3
+      },
+      {
+        "id": "q_1792184034073_p3df",
+        "text": "¿Qué promueve el Manifiesto Ágil?",
+        "type": "single",
+        "media": "",
+        "mediaType": "none",
+        "timeLimit": 60,
+        "points": 1000,
+        "options": [
+          {
+            "text": "Los procesos por encima de las personas.",
+            "shape": "✦",
+            "color": "opt-1"
+          },
+          {
+            "text": "La planificación rígida sobre la adaptación.",
+            "shape": "⬢",
+            "color": "opt-2"
+          },
+          {
+            "text": "La documentación exhaustiva como único indicador de éxito.",
+            "shape": "⚡",
+            "color": "opt-3"
+          },
+          {
+            "text": "Las personas y sus interacciones por encima de los procesos y las herramientas.",
+            "shape": "🛡️",
+            "color": "opt-4"
+          }
+        ],
+        "correctAnswer": 1
+      },
+      {
+        "id": "q_1792184136077_dntj",
+        "text": "¿Qué significa aceptar cambios en un proyecto ágil?",
+        "type": "single",
+        "media": "",
+        "mediaType": "none",
+        "timeLimit": 60,
+        "points": 1000,
+        "options": [
+          {
+            "text": "Ignorar el plan del proyecto.",
+            "shape": "✦",
+            "color": "opt-1"
+          },
+          {
+            "text": "Adaptar el trabajo cuando los cambios aportan valor.",
+            "shape": "⬢",
+            "color": "opt-2"
+          },
+          {
+            "text": "Aceptar cualquier cambio sin analizarlo.",
+            "shape": "⚡",
+            "color": "opt-3"
+          },
+          {
+            "text": "Evitar consultar al cliente.",
+            "shape": "🛡️",
+            "color": "opt-4"
+          }
+        ],
+        "correctAnswer": 1
+      },
+      {
+        "id": "q_1792184138317_uzol",
+        "text": "¿Cuál es una ventaja de trabajar de forma ágil?",
+        "type": "single",
+        "media": "",
+        "mediaType": "none",
+        "timeLimit": 60,
+        "points": 1000,
+        "options": [
+          {
+            "text": "Detectar problemas y necesidades de mejora de manera temprana.",
+            "shape": "✦",
+            "color": "opt-1"
+          },
+          {
+            "text": "Eliminar la necesidad de probar el producto.",
+            "shape": "⬢",
+            "color": "opt-2"
+          },
+          {
+            "text": " Garantizar que nunca habrá errores.",
+            "shape": "⚡",
+            "color": "opt-3"
+          },
+          {
+            "text": "Evitar que los usuarios participen.",
+            "shape": "🛡️",
+            "color": "opt-4"
+          }
+        ],
+        "correctAnswer": 0
+      },
+      {
+        "id": "q_1792184138540_23en",
+        "text": "¿Qué importancia tiene la colaboración con el cliente?",
+        "type": "single",
+        "media": "",
+        "mediaType": "none",
+        "timeLimit": 60,
+        "points": 1000,
+        "options": [
+          {
+            "text": "Permite eliminar todos los requisitos.",
+            "shape": "✦",
+            "color": "opt-1"
+          },
+          {
+            "text": "Sustituye las pruebas de software.",
+            "shape": "⬢",
+            "color": "opt-2"
+          },
+          {
+            "text": "Evita que el equipo tome decisiones.",
+            "shape": "⚡",
+            "color": "opt-3"
+          },
+          {
+            "text": "Ayuda a comprender las necesidades y validar que el producto aporte valor",
+            "shape": "🛡️",
+            "color": "opt-4"
+          }
+        ],
+        "correctAnswer": 3
+      },
+      {
+        "id": "q_1792184138781_he13",
+        "text": "¿Qué busca la mejora continua en Agile?",
+        "type": "single",
+        "media": "",
+        "mediaType": "none",
+        "timeLimit": 60,
+        "points": 1000,
+        "options": [
+          {
+            "text": "Mantener los mismos procesos sin importar los resultados",
+            "shape": "✦",
+            "color": "opt-1"
+          },
+          {
+            "text": "Aumentar el trabajo sin evaluar su calidad.",
+            "shape": "⬢",
+            "color": "opt-2"
+          },
+          {
+            "text": "Identificar oportunidades y mejorar la forma de trabajar.",
+            "shape": "⚡",
+            "color": "opt-3"
+          },
+          {
+            "text": "Eliminar la retroalimentación.",
+            "shape": "🛡️",
+            "color": "opt-4"
+          }
+        ],
+        "correctAnswer": 2
+      },
+      {
+        "id": "q_1792184297549_4jkz",
+        "text": "¿Qué es Scrum?",
+        "type": "single",
+        "media": "",
+        "mediaType": "none",
+        "timeLimit": 60,
+        "points": 1000,
+        "options": [
+          {
+            "text": "Un marco de trabajo ligero para abordar problemas complejos y generar valor.",
+            "shape": "✦",
+            "color": "opt-1"
+          },
+          {
+            "text": "Un lenguaje de programación.",
+            "shape": "⬢",
+            "color": "opt-2"
+          },
+          {
+            "text": "Una técnica exclusiva de documentación.",
+            "shape": "⚡",
+            "color": "opt-3"
+          },
+          {
+            "text": "Un modelo que impide modificar los requisitos.",
+            "shape": "🛡️",
+            "color": "opt-4"
+          }
+        ],
+        "correctAnswer": 0
+      },
+      {
+        "id": "q_1792184298003_sv78",
+        "text": "¿Cuál es el objetivo principal de Scrum?",
+        "type": "single",
+        "media": "",
+        "mediaType": "none",
+        "timeLimit": 60,
+        "points": 1000,
+        "options": [
+          {
+            "text": "Asegurar que una persona controle todas las decisiones.",
+            "shape": "✦",
+            "color": "opt-1"
+          },
+          {
+            "text": "Producir la mayor cantidad de documentos.",
+            "shape": "⬢",
+            "color": "opt-2"
+          },
+          {
+            "text": "Evitar la incertidumbre en cualquier proyecto.",
+            "shape": "⚡",
+            "color": "opt-3"
+          },
+          {
+            "text": "Ayudar a generar valor mediante soluciones adaptativas a problemas complejos.",
+            "shape": "🛡️",
+            "color": "opt-4"
+          }
+        ],
+        "correctAnswer": 3
+      },
+      {
+        "id": "q_1792184298192_s5y4",
+        "text": "¿Cuáles son los tres pilares de Scrum?",
+        "type": "single",
+        "media": "",
+        "mediaType": "none",
+        "timeLimit": 60,
+        "points": 1000,
+        "options": [
+          {
+            "text": "Calidad, rapidez y presupuesto",
+            "shape": "✦",
+            "color": "opt-1"
+          },
+          {
+            "text": "Transparencia, inspección y adaptación.",
+            "shape": "⬢",
+            "color": "opt-2"
+          },
+          {
+            "text": "Planificación, ejecución y cierre.",
+            "shape": "⚡",
+            "color": "opt-3"
+          },
+          {
+            "text": "Comunicación, documentación y control.",
+            "shape": "🛡️",
+            "color": "opt-4"
+          }
+        ],
+        "correctAnswer": 1
+      },
+      {
+        "id": "q_1792184298370_zsdx",
+        "text": "¿Qué significa transparencia en Scrum?",
+        "type": "single",
+        "media": "",
+        "mediaType": "none",
+        "timeLimit": 60,
+        "points": 1000,
+        "options": [
+          {
+            "text": "Que solo los responsables conocen el avance.",
+            "shape": "✦",
+            "color": "opt-1"
+          },
+          {
+            "text": "Que los errores deben mantenerse ocultos.",
+            "shape": "⬢",
+            "color": "opt-2"
+          },
+          {
+            "text": "Que el trabajo y su estado son visibles y comprensibles para quienes corresponda",
+            "shape": "⚡",
+            "color": "opt-3"
+          },
+          {
+            "text": "Que todas las decisiones las toma el cliente.",
+            "shape": "🛡️",
+            "color": "opt-4"
+          }
+        ],
+        "correctAnswer": 2
+      },
+      {
+        "id": "q_1792184298557_1hzb",
+        "text": "¿Qué significa inspección en Scrum?",
+        "type": "single",
+        "media": "",
+        "mediaType": "none",
+        "timeLimit": 60,
+        "points": 1000,
+        "options": [
+          {
+            "text": "Revisar el progreso y los resultados para detectar desviaciones o problemas.",
+            "shape": "✦",
+            "color": "opt-1"
+          },
+          {
+            "text": "Aprobar todos los cambios sin analizarlos",
+            "shape": "⬢",
+            "color": "opt-2"
+          },
+          {
+            "text": "Controlar únicamente los costos.",
+            "shape": "⚡",
+            "color": "opt-3"
+          },
+          {
+            "text": "Evaluar solamente el desempeño individual.",
+            "shape": "🛡️",
+            "color": "opt-4"
+          }
+        ],
+        "correctAnswer": 0
+      },
+      {
+        "id": "q_1792184298738_05ip",
+        "text": "¿Qué significa adaptación en Scrum?",
+        "type": "single",
+        "media": "",
+        "mediaType": "none",
+        "timeLimit": 60,
+        "points": 1000,
+        "options": [
+          {
+            "text": "Conservar el plan aunque los resultados sean deficientes.",
+            "shape": "✦",
+            "color": "opt-1"
+          },
+          {
+            "text": " Eliminar los objetivos del producto.",
+            "shape": "⬢",
+            "color": "opt-2"
+          },
+          {
+            "text": "Cambiar continuamente sin analizar información.",
+            "shape": "⚡",
+            "color": "opt-3"
+          },
+          {
+            "text": "Ajustar el trabajo cuando la inspección indica que es necesario.",
+            "shape": "🛡️",
+            "color": "opt-4"
+          }
+        ],
+        "correctAnswer": 3
+      },
+      {
+        "id": "q_1792184298921_1i8x",
+        "text": "¿Cuáles son los cinco valores de Scrum?",
+        "type": "single",
+        "media": "",
+        "mediaType": "none",
+        "timeLimit": 60,
+        "points": 1000,
+        "options": [
+          {
+            "text": "Calidad, costo, alcance, tiempo y riesgo.",
+            "shape": "✦",
+            "color": "opt-1"
+          },
+          {
+            "text": "Compromiso, foco, apertura, respeto y coraje.",
+            "shape": "⬢",
+            "color": "opt-2"
+          },
+          {
+            "text": "Transparencia, inspección, adaptación, calidad y rapidez.",
+            "shape": "⚡",
+            "color": "opt-3"
+          },
+          {
+            "text": "Planificación, control, ejecución, revisión y cierre.",
+            "shape": "🛡️",
+            "color": "opt-4"
+          }
+        ],
+        "correctAnswer": 1
+      },
+      {
+        "id": "q_1792184299087_ojfx",
+        "text": "¿Qué es la autogestión en un equipo Scrum?",
+        "type": "single",
+        "media": "",
+        "mediaType": "none",
+        "timeLimit": 60,
+        "points": 1000,
+        "options": [
+          {
+            "text": "Que el equipo decide cómo organizar su trabajo para alcanzar los objetivos.",
+            "shape": "✦",
+            "color": "opt-1"
+          },
+          {
+            "text": "Que cada integrante trabaja sin coordinarse",
+            "shape": "⬢",
+            "color": "opt-2"
+          },
+          {
+            "text": "Que el Scrum Master asigna cada tarea individual.",
+            "shape": "⚡",
+            "color": "opt-3"
+          },
+          {
+            "text": "Que no existen responsabilidades definidas.",
+            "shape": "🛡️",
+            "color": "opt-4"
+          }
+        ],
+        "correctAnswer": 0
+      },
+      {
+        "id": "q_1792184299270_bf9x",
+        "text": "¿Qué significa que un equipo sea multifuncional?",
+        "type": "single",
+        "media": "",
+        "mediaType": "none",
+        "timeLimit": 60,
+        "points": 1000,
+        "options": [
+          {
+            "text": "Que todos los integrantes desempeñan exactamente el mismo trabajo.",
+            "shape": "✦",
+            "color": "opt-1"
+          },
+          {
+            "text": "Que cada integrante pertenece a un proyecto distinto.",
+            "shape": "⬢",
+            "color": "opt-2"
+          },
+          {
+            "text": "Que el equipo reúne las habilidades necesarias para crear valor",
+            "shape": "⚡",
+            "color": "opt-3"
+          },
+          {
+            "text": "Que el equipo no necesita conocimientos técnicos",
+            "shape": "🛡️",
+            "color": "opt-4"
+          }
+        ],
+        "correctAnswer": 2
+      },
+      {
+        "id": "q_1792184299469_h4y1",
+        "text": "¿Quién es responsable de maximizar el valor del producto en Scrum?",
+        "type": "single",
+        "media": "",
+        "mediaType": "none",
+        "timeLimit": 20,
+        "points": 1000,
+        "options": [
+          {
+            "text": "El Scrum Master.",
+            "shape": "✦",
+            "color": "opt-1"
+          },
+          {
+            "text": "El patrocinador del proyecto en todos los casos.",
+            "shape": "⬢",
+            "color": "opt-2"
+          },
+          {
+            "text": "Los usuarios finales exclusivamente.",
+            "shape": "⚡",
+            "color": "opt-3"
+          },
+          {
+            "text": "El Product Owner.",
+            "shape": "🛡️",
+            "color": "opt-4"
+          }
+        ],
+        "correctAnswer": 3
+      },
+      {
+        "id": "q_1792184299728_zt2f",
+        "text": "¿Cuál es una responsabilidad del Product Owner?",
+        "type": "single",
+        "media": "",
+        "mediaType": "none",
+        "timeLimit": 60,
+        "points": 1000,
+        "options": [
+          {
+            "text": "Asignar cada tarea técnica a los Developers.",
+            "shape": "✦",
+            "color": "opt-1"
+          },
+          {
+            "text": "Gestionar y ordenar el Product Backlog para maximizar el valor del producto",
+            "shape": "⬢",
+            "color": "opt-2"
+          },
+          {
+            "text": "Supervisar las vacaciones de los integrantes.",
+            "shape": "⚡",
+            "color": "opt-3"
+          },
+          {
+            "text": "Aprobar personalmente cada línea de código",
+            "shape": "🛡️",
+            "color": "opt-4"
+          }
+        ],
+        "correctAnswer": 1
+      },
+      {
+        "id": "q_1792184299854_7smh",
+        "text": "¿Cuál es el propósito del Scrum Master?",
+        "type": "single",
+        "media": "",
+        "mediaType": "none",
+        "timeLimit": 60,
+        "points": 1000,
+        "options": [
+          {
+            "text": "Actuar como jefe jerárquico del equipo.",
+            "shape": "✦",
+            "color": "opt-1"
+          },
+          {
+            "text": "Definir por sí solo todas las funcionalidades",
+            "shape": "⬢",
+            "color": "opt-2"
+          },
+          {
+            "text": "Ayudar a que Scrum se comprenda y aplique y mejorar la efectividad del equipo.",
+            "shape": "⚡",
+            "color": "opt-3"
+          },
+          {
+            "text": "Reemplazar al Product Owner.",
+            "shape": "🛡️",
+            "color": "opt-4"
+          }
+        ],
+        "correctAnswer": 2
+      },
+      {
+        "id": "q_1792184300090_h1mf",
+        "text": "¿Cuál es una responsabilidad de los Developers?",
+        "type": "single",
+        "media": "",
+        "mediaType": "none",
+        "timeLimit": 60,
+        "points": 1000,
+        "options": [
+          {
+            "text": "Crear un incremento que cumpla la Definición de Terminado.",
+            "shape": "✦",
+            "color": "opt-1"
+          },
+          {
+            "text": "Definir unilateralmente la estrategia comercial",
+            "shape": "⬢",
+            "color": "opt-2"
+          },
+          {
+            "text": "Administrar exclusivamente el presupuesto de la empresa.",
+            "shape": "⚡",
+            "color": "opt-3"
+          },
+          {
+            "text": "Decidir todas las prioridades del producto sin consultar al Product Owner.",
+            "shape": "🛡️",
+            "color": "opt-4"
+          }
+        ],
+        "correctAnswer": 0
+      },
+      {
+        "id": "q_1792184300193_6mj6",
+        "text": "¿Quiénes conforman el Scrum Team?",
+        "type": "single",
+        "media": "",
+        "mediaType": "none",
+        "timeLimit": 60,
+        "points": 1000,
+        "options": [
+          {
+            "text": "El cliente y los proveedores exclusivamente.",
+            "shape": "✦",
+            "color": "opt-1"
+          },
+          {
+            "text": "El Product Owner y la dirección financiera",
+            "shape": "⬢",
+            "color": "opt-2"
+          },
+          {
+            "text": "El Scrum Master y los gerentes de la organización.",
+            "shape": "⚡",
+            "color": "opt-3"
+          },
+          {
+            "text": "El Product Owner, el Scrum Master y los Developers.",
+            "shape": "🛡️",
+            "color": "opt-4"
+          }
+        ],
+        "correctAnswer": 3
+      },
+      {
+        "id": "q_1792184300412_29aj",
+        "text": "Qué es el Product Backlog?",
+        "type": "single",
+        "media": "",
+        "mediaType": "none",
+        "timeLimit": 60,
+        "points": 1000,
+        "options": [
+          {
+            "text": "Una lista de tareas personales de cada integrante.",
+            "shape": "✦",
+            "color": "opt-1"
+          },
+          {
+            "text": "Una lista ordenada de lo necesario para mejorar el producto.",
+            "shape": "⬢",
+            "color": "opt-2"
+          },
+          {
+            "text": "Un informe de gastos del proyecto.",
+            "shape": "⚡",
+            "color": "opt-3"
+          },
+          {
+            "text": "Un documento que contiene únicamente errores técnicos",
+            "shape": "🛡️",
+            "color": "opt-4"
+          }
+        ],
+        "correctAnswer": 1
+      },
+      {
+        "id": "q_1792184300607_89nd",
+        "text": "¿Para qué sirven los criterios de aceptación?",
+        "type": "single",
+        "media": "",
+        "mediaType": "none",
+        "timeLimit": 60,
+        "points": 1000,
+        "options": [
+          {
+            "text": " Para establecer las condiciones que debe cumplir una funcionalidad para satisfacer la necesidad.",
+            "shape": "✦",
+            "color": "opt-1"
+          },
+          {
+            "text": "Para asignar calificaciones a los programadores.",
+            "shape": "⬢",
+            "color": "opt-2"
+          },
+          {
+            "text": "Para definir el presupuesto general",
+            "shape": "⚡",
+            "color": "opt-3"
+          },
+          {
+            "text": "Para reemplazar las pruebas del producto",
+            "shape": "🛡️",
+            "color": "opt-4"
+          }
+        ],
+        "correctAnswer": 0
+      },
+      {
+        "id": "q_1792184300794_zu2w",
+        "text": "¿Qué significa priorizar por valor de negocio?",
+        "type": "single",
+        "media": "",
+        "mediaType": "none",
+        "timeLimit": 60,
+        "points": 1000,
+        "options": [
+          {
+            "text": "Realizar primero las tareas más largas.",
+            "shape": "✦",
+            "color": "opt-1"
+          },
+          {
+            "text": "Elegir actividades al azar",
+            "shape": "⬢",
+            "color": "opt-2"
+          },
+          {
+            "text": "Resolver primero únicamente los problemas técnicos.",
+            "shape": "⚡",
+            "color": "opt-3"
+          },
+          {
+            "text": "Atender primero los elementos que generan mayor beneficio según los criterios acordados.",
+            "shape": "🛡️",
+            "color": "opt-4"
+          }
+        ],
+        "correctAnswer": 3
+      },
+      {
+        "id": "q_1792184300981_hel1",
+        "text": "¿Qué significa que Agile trabaje de forma incremental?",
+        "type": "single",
+        "media": "",
+        "mediaType": "none",
+        "timeLimit": 60,
+        "points": 1000,
+        "options": [
+          {
+            "text": "Esperar hasta el final para mostrar el producto.",
+            "shape": "✦",
+            "color": "opt-1"
+          },
+          {
+            "text": " Construir y entregar partes funcionales del producto progresivamente",
+            "shape": "⬢",
+            "color": "opt-2"
+          },
+          {
+            "text": "Desarrollar únicamente documentos",
+            "shape": "⚡",
+            "color": "opt-3"
+          },
+          {
+            "text": "Dividir las tareas sin producir resultados utilizables.",
+            "shape": "🛡️",
+            "color": "opt-4"
+          }
+        ],
+        "correctAnswer": 1
+      },
+      {
+        "id": "q_1792184301177_zc41",
+        "text": "¿Cómo se relacionan Agile y Scrum?",
+        "type": "single",
+        "media": "",
+        "mediaType": "none",
+        "timeLimit": 60,
+        "points": 1000,
+        "options": [
+          {
+            "text": "Son exactamente lo mismo",
+            "shape": "✦",
+            "color": "opt-1"
+          },
+          {
+            "text": "Agile es un enfoque de trabajo y Scrum es un marco de trabajo que aplica principios ágiles.",
+            "shape": "⬢",
+            "color": "opt-2"
+          },
+          {
+            "text": "Scrum es un lenguaje de programación",
+            "shape": "⚡",
+            "color": "opt-3"
+          },
+          {
+            "text": "Agile es un rol dentro de Scrum.",
+            "shape": "🛡️",
+            "color": "opt-4"
+          }
+        ],
+        "correctAnswer": 1
+      },
+      {
+        "id": "q_1792184301356_n5me",
+        "text": "¿Qué criterio debería tener mayor peso al priorizar los elementos del producto?",
+        "type": "single",
+        "media": "",
+        "mediaType": "none",
+        "timeLimit": 60,
+        "points": 1000,
+        "options": [
+          {
+            "text": "La facilidad para desarrollarlos, sin considerar otros factores",
+            "shape": "✦",
+            "color": "opt-1"
+          },
+          {
+            "text": "El valor para el cliente y el impacto en los objetivos del negocio.",
+            "shape": "⬢",
+            "color": "opt-2"
+          },
+          {
+            "text": "La preferencia personal del equipo técnico.",
+            "shape": "⚡",
+            "color": "opt-3"
+          },
+          {
+            "text": "El orden en que fueron solicitados.",
+            "shape": "🛡️",
+            "color": "opt-4"
+          }
+        ],
+        "correctAnswer": 1
+      },
+      {
+        "id": "q_1792186675562_e58z",
+        "text": "¿Quién es responsable de maximizar el valor del producto en Scrum?",
+        "type": "single",
+        "media": "",
+        "mediaType": "none",
+        "timeLimit": 60,
+        "points": 1000,
+        "options": [
+          {
+            "text": "El Scrum Master",
+            "shape": "✦",
+            "color": "opt-1"
+          },
+          {
+            "text": "El Development Team.",
+            "shape": "⬢",
+            "color": "opt-2"
+          },
+          {
+            "text": "El Product Owner",
+            "shape": "⚡",
+            "color": "opt-3"
+          },
+          {
+            "text": "El gerente de tecnología.",
+            "shape": "🛡️",
+            "color": "opt-4"
+          }
+        ],
+        "correctAnswer": 2
+      },
+      {
+        "id": "q_1792186676434_61rj",
+        "text": " ¿Cuál es una responsabilidad principal del Product Owner?",
+        "type": "single",
+        "media": "",
+        "mediaType": "none",
+        "timeLimit": 60,
+        "points": 1000,
+        "options": [
+          {
+            "text": "Asignar individualmente todas las tareas técnicas.",
+            "shape": "✦",
+            "color": "opt-1"
+          },
+          {
+            "text": "Gestionar y ordenar el Product Backlog para favorecer el valor del producto",
+            "shape": "⬢",
+            "color": "opt-2"
+          },
+          {
+            "text": "Aprobar cada línea de código.",
+            "shape": "⚡",
+            "color": "opt-3"
+          },
+          {
+            "text": "Supervisar los horarios laborales del equipo.",
+            "shape": "🛡️",
+            "color": "opt-4"
+          }
+        ],
+        "correctAnswer": 1
+      },
+      {
+        "id": "q_1792186677063_77x5",
+        "text": "Un equipo tiene dificultades para trabajar de manera autónoma. ¿Cómo debería actuar el Scrum Master?",
+        "type": "single",
+        "media": "",
+        "mediaType": "none",
+        "timeLimit": 60,
+        "points": 1000,
+        "options": [
+          {
+            "text": "Tomar todas las decisiones por el equipo.",
+            "shape": "✦",
+            "color": "opt-1"
+          },
+          {
+            "text": "Reemplazar al Product Owner.",
+            "shape": "⬢",
+            "color": "opt-2"
+          },
+          {
+            "text": "Asignar tareas y controlar cada paso",
+            "shape": "⚡",
+            "color": "opt-3"
+          },
+          {
+            "text": "Facilitar la autogestión y ayudar a eliminar impedimentos",
+            "shape": "🛡️",
+            "color": "opt-4"
+          }
+        ],
+        "correctAnswer": 3
+      },
+      {
+        "id": "q_1792186677727_o47c",
+        "text": "¿Cuál es la responsabilidad del Development Team en Scrum?",
+        "type": "single",
+        "media": "",
+        "mediaType": "none",
+        "timeLimit": 60,
+        "points": 1000,
+        "options": [
+          {
+            "text": "Convertir los elementos seleccionados en un incremento de producto que cumpla la definición de terminado",
+            "shape": "✦",
+            "color": "opt-1"
+          },
+          {
+            "text": "Definir por sí solo la estrategia comercial de la empresa.",
+            "shape": "⬢",
+            "color": "opt-2"
+          },
+          {
+            "text": "Decidir unilateralmente las prioridades del Product Backlog.",
+            "shape": "⚡",
+            "color": "opt-3"
+          },
+          {
+            "text": "Delegar todo el desarrollo a otros departamentos",
+            "shape": "🛡️",
+            "color": "opt-4"
+          }
+        ],
+        "correctAnswer": 0
+      },
+      {
+        "id": "q_1792186678358_uvz7",
+        "text": "¿Qué debería hacerse si una funcionalidad solicitada tiene poco valor y requiere mucho esfuerzo?",
+        "type": "single",
+        "media": "",
+        "mediaType": "none",
+        "timeLimit": 60,
+        "points": 1000,
+        "options": [
+          {
+            "text": "Desarrollarla primero para evitar discusiones",
+            "shape": "✦",
+            "color": "opt-1"
+          },
+          {
+            "text": "Incluirla obligatoriamente en la siguiente entrega",
+            "shape": "⬢",
+            "color": "opt-2"
+          },
+          {
+            "text": "Evaluar su prioridad frente a otras opciones según valor, esfuerzo y objetivos",
+            "shape": "⚡",
+            "color": "opt-3"
+          },
+          {
+            "text": "Eliminarla sin consultar ni evaluar su utilidad.",
+            "shape": "🛡️",
+            "color": "opt-4"
+          }
+        ],
+        "correctAnswer": 2
+      },
+      {
+        "id": "q_1792186678931_pv4g",
+        "text": "¿Qué diferencia mejor al Product Owner del Scrum Master?",
+        "type": "single",
+        "media": "",
+        "mediaType": "none",
+        "timeLimit": 60,
+        "points": 1000,
+        "options": [
+          {
+            "text": "Ambos tienen exactamente las mismas responsabilidades.",
+            "shape": "✦",
+            "color": "opt-1"
+          },
+          {
+            "text": "El Product Owner se enfoca en el valor del producto y el Scrum Master en la efectividad de Scrum.",
+            "shape": "⬢",
+            "color": "opt-2"
+          },
+          {
+            "text": "El Scrum Master define siempre las necesidades del cliente.",
+            "shape": "⚡",
+            "color": "opt-3"
+          },
+          {
+            "text": "El Product Owner se ocupa exclusivamente de programar",
+            "shape": "🛡️",
+            "color": "opt-4"
+          }
+        ],
+        "correctAnswer": 1
+      },
+      {
+        "id": "q_1792186679428_d7pc",
+        "text": "¿Quién decide cómo organizar el trabajo técnico para construir el incremento?",
+        "type": "single",
+        "media": "",
+        "mediaType": "none",
+        "timeLimit": 60,
+        "points": 1000,
+        "options": [
+          {
+            "text": "Exclusivamente el Product Owner.",
+            "shape": "✦",
+            "color": "opt-1"
+          },
+          {
+            "text": "El Scrum Master de manera unilateral",
+            "shape": "⬢",
+            "color": "opt-2"
+          },
+          {
+            "text": "El cliente en cada tarea.",
+            "shape": "⚡",
+            "color": "opt-3"
+          },
+          {
+            "text": "Los Developers, como equipo autogestionado.",
+            "shape": "🛡️",
+            "color": "opt-4"
+          }
+        ],
+        "correctAnswer": 3
+      },
+      {
+        "id": "q_1792186679960_semy",
+        "text": "¿Qué aporta Product Management a la gestión de un producto?",
+        "type": "single",
+        "media": "",
+        "mediaType": "none",
+        "timeLimit": 60,
+        "points": 1000,
+        "options": [
+          {
+            "text": "Comprender necesidades del mercado, definir la dirección del producto y orientar su evolución.",
+            "shape": "✦",
+            "color": "opt-1"
+          },
+          {
+            "text": "Controlar únicamente la asistencia del equipo",
+            "shape": "⬢",
+            "color": "opt-2"
+          },
+          {
+            "text": "Reemplazar todas las responsabilidades del equipo de desarrollo",
+            "shape": "⚡",
+            "color": "opt-3"
+          },
+          {
+            "text": "Evitar cambios en la estrategia del producto.",
+            "shape": "🛡️",
+            "color": "opt-4"
+          }
+        ],
+        "correctAnswer": 0
+      },
+      {
+        "id": "q_1792186680444_5xzv",
+        "text": "Si aparece nueva información que cambia las prioridades del negocio, ¿qué acción es más adecuada?",
+        "type": "single",
+        "media": "",
+        "mediaType": "none",
+        "timeLimit": 60,
+        "points": 1000,
+        "options": [
+          {
+            "text": "Mantener siempre el orden inicial sin revisar el contexto",
+            "shape": "✦",
+            "color": "opt-1"
+          },
+          {
+            "text": "Permitir que cada desarrollador cambie las prioridades por separado.",
+            "shape": "⬢",
+            "color": "opt-2"
+          },
+          {
+            "text": " Reevaluar las prioridades del producto con base en el valor y los objetivos actualizados.",
+            "shape": "⚡",
+            "color": "opt-3"
+          },
+          {
+            "text": "Suspender indefinidamente el desarrollo",
+            "shape": "🛡️",
+            "color": "opt-4"
+          }
+        ],
+        "correctAnswer": 2
+      },
+      {
+        "id": "q_1792186681052_1mut",
+        "text": "¿Qué principio de Agile permite responder mejor a los cambios en los requisitos?",
+        "type": "single",
+        "media": "",
+        "mediaType": "none",
+        "timeLimit": 60,
+        "points": 1000,
+        "options": [
+          {
+            "text": "Seguir estrictamente el plan inicial, aunque cambien las necesidades.",
+            "shape": "✦",
+            "color": "opt-1"
+          },
+          {
+            "text": "Evitar modificar el producto después de comenzar.",
+            "shape": "⬢",
+            "color": "opt-2"
+          },
+          {
+            "text": "Priorizar la documentación sobre los resultados.",
+            "shape": "⚡",
+            "color": "opt-3"
+          },
+          {
+            "text": "Adaptar el trabajo según las nuevas necesidades y la retroalimentación.",
+            "shape": "🛡️",
+            "color": "opt-4"
+          }
+        ],
+        "correctAnswer": 3
+      },
+      {
+        "id": "q_1792187295248_y479",
+        "text": "¿Cuál es el propósito de mantener un enfoque de mejora continua en Agile y Scrum?",
+        "type": "single",
+        "media": "",
+        "mediaType": "none",
+        "timeLimit": 60,
+        "points": 1000,
+        "options": [
+          {
+            "text": "Identificar oportunidades para mejorar los procesos, la colaboración y la calidad del producto.",
+            "shape": "✦",
+            "color": "opt-1"
+          },
+          {
+            "text": "Aumentar la cantidad de tareas sin evaluar sus resultados.",
+            "shape": "⬢",
+            "color": "opt-2"
+          },
+          {
+            "text": "Evitar que el equipo cambie su forma de trabajar.",
+            "shape": "⚡",
+            "color": "opt-3"
+          },
+          {
+            "text": "Concentrar todas las decisiones en una sola persona.",
+            "shape": "🛡️",
+            "color": "opt-4"
+          }
+        ],
+        "correctAnswer": 0
+      },
+      {
+        "id": "q_1792187295907_1u08",
+        "text": "¿Qué caracteriza al Scrum Team?",
+        "type": "single",
+        "media": "",
+        "mediaType": "none",
+        "timeLimit": 60,
+        "points": 1000,
+        "options": [
+          {
+            "text": "Tiene varios jefes que asignan las tareas diarias.",
+            "shape": "✦",
+            "color": "opt-1"
+          },
+          {
+            "text": "Es un equipo cohesionado, sin subequipos ni jerarquías internas propias de Scrum.",
+            "shape": "⬢",
+            "color": "opt-2"
+          },
+          {
+            "text": "Está formado únicamente por programadores.",
+            "shape": "⚡",
+            "color": "opt-3"
+          },
+          {
+            "text": "Trabaja sin un objetivo compartido",
+            "shape": "🛡️",
+            "color": "opt-4"
+          }
+        ],
+        "correctAnswer": 1
+      }
+    ],
+    "entityName": "",
+    "categoryName": "Cultura General",
+    "author": "Melisa",
+    "authorAvatar": "🦊",
+    "authorId": "user_melisa",
+    "authorEmail": "darioscanon85@gmail.com",
+    "authorRole": "admin",
+    "plays": 0,
+    "projectType": "quiz",
+    "updatedAt": "2026-11-27T17:16:17.616Z",
+    "createdAt": "2026-10-16T21:52:13.370Z",
+    "rating": "4.9",
+    "mainImage": "",
+    "thumbnailImage": "",
+    "image": "",
+    "hub": {
+      "joinRequests": [
+        {
+          "id": "req_demo_1",
+          "name": "Carlos Ruiz",
+          "email": "carlos.ruiz@mentix.edu",
+          "passHash": "demo",
+          "status": "pending",
+          "created": 1794877550493
+        }
+      ],
+      "members": [
+        {
+          "name": "Melisa",
+          "email": "melisa@mentix.edu",
+          "role": "owner",
+          "leader": true
+        },
+        {
+          "name": "Elena Morales",
+          "email": "elena.morales@mentix.edu",
+          "role": "collaborator"
+        },
+        {
+          "name": "David Soto",
+          "email": "david.soto@mentix.edu",
+          "role": "viewer"
+        }
+      ],
+      "views": [],
+      "ratings": []
+    },
+    "_globalHeroBannerStyle": {
+      "fit": "cover",
+      "offsetX": 4.8,
+      "offsetY": 8,
+      "zoom": 134
+    },
+    "heroBanner": ""
+  },
+  {
     "id": "proj_document_1795651508416",
     "title": "Documentacion_Gobierno_de_Datos_GPC_Pharma_compressed",
     "author": "Melisa",
