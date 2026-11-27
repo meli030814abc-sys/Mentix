@@ -3691,7 +3691,9 @@ window.AdminView = {
    * Abre el Modal de Detalles y Aleatorización Inteligente de un Examen
    */
   openExamDetailsModal(examId) {
-    if (window.TeacherView && typeof window.TeacherView.openExamDetailsModal === 'function') {
+    if (window.ExamDetailsView && typeof window.ExamDetailsView.open === 'function') {
+      window.ExamDetailsView.open(examId, 'config');
+    } else if (window.TeacherView && typeof window.TeacherView.openExamDetailsModal === 'function') {
       window.TeacherView.openExamDetailsModal(examId);
     }
   },

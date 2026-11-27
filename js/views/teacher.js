@@ -1764,6 +1764,10 @@ window.TeacherView = {
   },
 
   openExamDetailsModal(examId) {
+    if (window.ExamDetailsView && typeof window.ExamDetailsView.open === 'function') {
+      window.ExamDetailsView.open(examId, 'config');
+      return;
+    }
     let exam = (window.appState?.challenges || []).find(c => c && String(c.id).trim() === String(examId).trim());
     if (!exam && typeof DEFAULT_CHALLENGES !== 'undefined') {
       exam = DEFAULT_CHALLENGES.find(c => c && String(c.id).trim() === String(examId).trim());
