@@ -13,6 +13,8 @@ window.TeacherView = {
   selectedCategory: 'all',
   activeGroupForStudent: null,
   editingGroupId: null,
+  selectedExamIdForNewGroup: null,
+  newGroupExamMode: 'existing',
   _cloudSyncInFlight: false,
   _hasSyncedCloudOnce: false,
 
@@ -646,67 +648,74 @@ window.TeacherView = {
       </div>
 
       <!-- ==========================================================================
-           MODAL 1: LANZAR RETO DEL GRUPO (USA EL EXAMEN REAL DEL GRUPO)
+           MODAL 1: LANZAR RETO DEL GRUPO (PANTALLA 3D ULTRA CHÉVERE)
            ========================================================================== -->
       <div id="teacher-launch-modal" class="t3d-modal-backdrop" style="display: none;">
-        <div class="t3d-modal-window">
+        <div class="t3d-modal-window" style="max-width: 680px; width: 96%; padding: 2.2rem;">
           <div class="t3d-modal-header">
             <h3 class="t3d-modal-title">
               <img src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Rocket/3D/rocket_3d.png" class="t3d-ico-md" alt="" />
-              <span>Lanzar Examen del Grupo</span>
+              <span>Lanzar Examen a Grupo 3D</span>
             </h3>
             <button class="t3d-modal-close" onclick="window.TeacherView.closeLaunchModal()">&times;</button>
           </div>
 
-          <p id="teacher-modal-group-name" style="font-weight: 850; font-size: 1rem; color: #0284c7; margin-bottom: 1.25rem;"></p>
+          <div id="teacher-modal-group-name" style="padding: 0.85rem 1.1rem; border-radius: 14px; background: rgba(59, 130, 246, 0.12); border: 1.5px solid rgba(59, 130, 246, 0.35); font-weight: 850; font-size: 0.95rem; color: #38bdf8; margin-bottom: 1.35rem; display: flex; align-items: center; gap: 0.5rem;"></div>
 
           <div class="t3d-form-group">
-            <label class="t3d-form-label">EXAMEN REAL DEL GRUPO A INICIAR:</label>
+            <label class="t3d-form-label">📝 EXAMEN A EVALUAR EN ESTA SALA:</label>
             <select id="teacher-modal-challenge-select" class="t3d-form-select"></select>
           </div>
 
           <div class="t3d-form-group">
-            <label class="t3d-form-label">TIPO DE SALA EN VIVO:</label>
-            <div class="t3d-room-type-grid">
+            <label class="t3d-form-label">🎮 ELIGE EL TIPO DE EXPERIENCIA EN VIVO:</label>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 0.5rem;">
               <div 
                 id="t3d-type-btn-presented" 
-                class="t3d-room-type-btn is-active" 
+                class="t3d-launch-mode-card is-active" 
                 onclick="window.TeacherView.selectModalRoomType('presented')"
               >
-                <img src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Television/3D/television_3d.png" class="t3d-ico-md" alt="" />
-                <span style="font-weight: 900;">Proyector / Kahoot</span>
-                <span style="font-size: 0.76rem; opacity: 0.85;">Pantalla grande</span>
+                <img src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Television/3D/television_3d.png" class="t3d-ico-lg" alt="" />
+                <div>
+                  <div style="font-weight: 950; font-size: 1.05rem; margin-bottom: 0.25rem;">📽️ Modo Proyector / TV</div>
+                  <div style="font-size: 0.78rem; opacity: 0.85; line-height: 1.35;">Estilo Kahoot Live. Preguntas en pantalla grande y los alumnos responden con 4 formas geométricas de colores en sus celulares.</div>
+                </div>
+                <span class="t3d-pill-category" style="background: rgba(59, 130, 246, 0.2); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.4); font-size: 0.72rem;">⭐ Recomendado para Aula</span>
               </div>
+
               <div 
                 id="t3d-type-btn-normal" 
-                class="t3d-room-type-btn" 
+                class="t3d-launch-mode-card" 
                 onclick="window.TeacherView.selectModalRoomType('normal')"
               >
-                <img src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Video%20game/3D/video_game_3d.png" class="t3d-ico-md" alt="" />
-                <span style="font-weight: 900;">Sala Normal</span>
-                <span style="font-size: 0.76rem; opacity: 0.85;">Móviles y PCs</span>
+                <img src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Video%20game/3D/video_game_3d.png" class="t3d-ico-lg" alt="" />
+                <div>
+                  <div style="font-weight: 950; font-size: 1.05rem; margin-bottom: 0.25rem;">🎮 Sala Móvil &amp; PCs</div>
+                  <div style="font-size: 0.78rem; opacity: 0.85; line-height: 1.35;">Desafío individual en dispositivos. Cada alumno lee las preguntas completas en su propio teléfono o computadora.</div>
+                </div>
+                <span class="t3d-pill-category" style="background: rgba(6, 182, 212, 0.2); color: #22d3ee; border: 1px solid rgba(6, 182, 212, 0.4); font-size: 0.72rem;">📱 Sin Proyector</span>
               </div>
             </div>
-            <p id="t3d-modal-type-desc" style="font-size: 0.82rem; margin: 0.5rem 0 0; color: var(--text-secondary); line-height: 1.4;">
+            <p id="t3d-modal-type-desc" style="font-size: 0.82rem; margin: 0.75rem 0 0; color: var(--text-secondary); line-height: 1.4; text-align: center;">
               📽️ Modo Proyector: Las preguntas aparecen en la pantalla central y los alumnos responden desde sus celulares.
             </p>
           </div>
 
           <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1.8rem;">
             <button class="t3d-btn t3d-btn-outline" onclick="window.TeacherView.closeLaunchModal()">Cancelar</button>
-            <button class="t3d-btn t3d-btn-primary" onclick="window.TeacherView.confirmLaunchForGroup()">
+            <button class="t3d-btn t3d-btn-primary" style="padding: 0.85rem 1.6rem; font-size: 0.96rem;" onclick="window.TeacherView.confirmLaunchForGroup()">
               <img src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Rocket/3D/rocket_3d.png" class="t3d-ico-sm" alt="" />
-              <span>Abrir Sala Ahora</span>
+              <span>🚀 ¡ABRIR SALA Y LANZAR AHORA!</span>
             </button>
           </div>
         </div>
       </div>
 
       <!-- ==========================================================================
-           MODAL 2: CREAR NUEVO GRUPO 3D (PANTALLA AMPLIA + TODOS LOS EXÁMENES + CREAR EXAMEN)
+           MODAL 2: CREAR NUEVO GRUPO 3D (PANTALLA AMPLIA, ULTRA CHÉVERE & GAMING)
            ========================================================================== -->
       <div id="teacher-new-group-modal" class="t3d-modal-backdrop" style="display: none;">
-        <div class="t3d-modal-window" style="max-width: 820px; width: 96%; max-height: 92vh; overflow-y: auto; padding: 2.25rem;">
+        <div class="t3d-modal-window is-large">
           <div class="t3d-modal-header">
             <h3 class="t3d-modal-title">
               <img src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Graduation%20cap/3D/graduation_cap_3d.png" class="t3d-ico-md" alt="" />
@@ -715,107 +724,128 @@ window.TeacherView = {
             <button class="t3d-modal-close" onclick="window.TeacherView.closeNewGroupModal()">&times;</button>
           </div>
 
-          <div class="t3d-form-group">
-            <label class="t3d-form-label">Nombre del Curso / Grado:</label>
-            <input 
-              type="text" 
-              id="t3d-new-group-name" 
-              class="t3d-form-input" 
-              placeholder="Ej: GRADO 10-A CIENCIAS Y TECNOLOGÍA" 
-            />
+          <!-- TARJETA HOLOGRÁFICA DE CÓDIGO DE ACCESO -->
+          <div class="t3d-hologram-code-card" style="margin-bottom: 1.4rem;">
+            <div>
+              <div style="font-size: 0.76rem; font-weight: 850; text-transform: uppercase; letter-spacing: 0.08em; opacity: 0.85; margin-bottom: 0.35rem;">
+                🔑 CÓDIGO DE ACCESO PARA TUS ALUMNOS (SE UNEN DESDE "UNIRSE A UN CÓDIGO"):
+              </div>
+              <div class="t3d-code-digits" id="t3d-new-group-code-preview">------</div>
+              <input type="hidden" id="t3d-new-group-code" />
+            </div>
+            <div style="display: flex; gap: 0.5rem; align-items: center; position: relative; z-index: 2;">
+              <button type="button" class="t3d-btn t3d-btn-outline" style="padding: 0.5rem 0.85rem; font-size: 0.8rem;" onclick="window.TeacherView.rerollNewGroupCode()" title="Generar un nuevo código aleatorio">
+                🎲 Nuevo Código
+              </button>
+              <button type="button" class="t3d-btn t3d-btn-cyan" style="padding: 0.5rem 0.95rem; font-size: 0.8rem;" onclick="window.TeacherView.copyGroupCode(document.getElementById('t3d-new-group-code')?.value, this)">
+                📋 Copiar
+              </button>
+            </div>
           </div>
 
-          <div class="t3d-form-group" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 0.85rem;">
+          <!-- DATOS GENERALES DEL GRUPO -->
+          <div style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 0.85rem; margin-bottom: 1.4rem;">
             <div>
-              <label class="t3d-form-label">Alumnos Estimados:</label>
+              <label class="t3d-form-label">🏫 Nombre del Curso / Grado:</label>
+              <input 
+                type="text" 
+                id="t3d-new-group-name" 
+                class="t3d-form-input" 
+                placeholder="Ej: GRADO 10-A CIENCIAS Y TECNOLOGÍA" 
+              />
+            </div>
+            <div>
+              <label class="t3d-form-label">👥 Alumnos Estimados:</label>
               <input type="number" id="t3d-new-group-count" class="t3d-form-input" value="30" min="1" max="300" />
             </div>
             <div>
-              <label class="t3d-form-label">Promedio Base (%):</label>
+              <label class="t3d-form-label">🎯 Promedio Base (%):</label>
               <input type="number" id="t3d-new-group-avg" class="t3d-form-input" value="80" min="0" max="100" />
-            </div>
-            <div>
-              <label class="t3d-form-label">Código de Acceso:</label>
-              <input type="text" id="t3d-new-group-code" class="t3d-form-input" maxlength="8" style="letter-spacing: 2px; text-align: center;" />
             </div>
           </div>
 
-          <!-- Selección o Creación del Examen para el Grupo -->
-          <div class="t3d-form-group" style="padding: 1.25rem; border-radius: 18px; border: 2px solid rgba(59, 130, 246, 0.35); background: rgba(59, 130, 246, 0.05);">
-            <label class="t3d-form-label" style="font-size: 0.95rem; margin-bottom: 0.75rem;">
-              📝 ¿Qué examen va a ir en este grupo?
-            </label>
+          <!-- SECCIÓN: ¿QUÉ EXAMEN VA A IR EN ESTE GRUPO? -->
+          <div style="padding: 1.35rem; border-radius: 22px; border: 2px solid rgba(59, 130, 246, 0.35); background: rgba(59, 130, 246, 0.04); margin-bottom: 1.25rem;">
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: 1rem; flex-wrap: wrap;">
+              <div>
+                <h4 style="font-size: 1.05rem; font-weight: 950; margin: 0 0 0.2rem; display: flex; align-items: center; gap: 0.45rem;">
+                  <span>📝</span> ¿Qué examen va a ir en este grupo?
+                </h4>
+                <p style="font-size: 0.82rem; margin: 0; opacity: 0.85;">Selecciona uno de la biblioteca o créalo al instante con preguntas interactivas.</p>
+              </div>
 
-            <div style="display: flex; gap: 0.65rem; flex-wrap: wrap; margin-bottom: 1rem;">
-              <button type="button" id="t3d-ng-tab-existing" class="t3d-btn t3d-btn-primary" style="flex: 1; min-width: 200px;" onclick="window.TeacherView.switchNewGroupExamMode('existing')">
-                📚 Elegir de Todos los Exámenes (${this.getAllRealExams().length})
-              </button>
-              <button type="button" id="t3d-ng-tab-create" class="t3d-btn t3d-btn-outline" style="flex: 1; min-width: 200px;" onclick="window.TeacherView.switchNewGroupExamMode('create')">
-                ➕ Crear un Examen Nuevo Aquí
-              </button>
+              <!-- Pestañas segmentadas 3D -->
+              <div class="t3d-segmented-tabs" style="margin-bottom: 0;">
+                <button type="button" id="t3d-ng-tab-existing" class="t3d-tab-btn is-active" onclick="window.TeacherView.switchNewGroupExamMode('existing')">
+                  📚 Biblioteca (${this.getAllRealExams().length})
+                </button>
+                <button type="button" id="t3d-ng-tab-create" class="t3d-tab-btn" onclick="window.TeacherView.switchNewGroupExamMode('create')">
+                  ⚡ Crear Examen Aquí
+                </button>
+              </div>
             </div>
 
-            <!-- MODO A: Elegir entre TODOS los exámenes reales disponibles -->
+            <!-- PANEL A: ELECCIÓN DE EXAMEN CON TARJETAS 3D INTERACTIVAS -->
             <div id="t3d-ng-panel-existing">
-              <input 
-                type="text" 
-                id="t3d-new-group-exam-filter" 
-                class="t3d-form-input" 
-                placeholder="🔍 Buscar examen por título o profesor..." 
-                style="margin-bottom: 0.65rem;"
-                oninput="window.TeacherView.filterNewGroupExams(this.value)"
-              />
-              <select id="t3d-new-group-exam" class="t3d-form-select" size="5" style="min-height: 145px; padding: 0.5rem;">
-                ${this.getAllRealExams().length === 0 ? `
-                  <option value="">No hay exámenes creados aún — usa "Crear un Examen Nuevo Aquí"</option>
-                ` : this.getAllRealExams().map((ex, i) => `
-                  <option value="${ex.id}" ${i === 0 ? 'selected' : ''}>
-                    ${this.isOwnedByCurrentTeacher(ex) ? '⭐ [Tuyo] ' : '📚 '}${ex.title} — ${ex.author || 'Docente'} (${ex.questions.length} preg.)
-                  </option>
-                `).join('')}
-              </select>
-              <small style="display: block; margin-top: 0.45rem; opacity: 0.82; font-size: 0.8rem;">
-                Lee todos los exámenes reales disponibles. Luego puedes añadir más, cambiarlos o borrarlos desde <strong>Editar / Exámenes</strong>.
-              </small>
+              <div style="position: relative; margin-bottom: 0.75rem;">
+                <input 
+                  type="text" 
+                  id="t3d-new-group-exam-filter" 
+                  class="t3d-form-input" 
+                  placeholder="🔍 Buscar examen por título, tema o profesor..." 
+                  oninput="window.TeacherView.filterNewGroupExams(this.value)"
+                />
+              </div>
+
+              <!-- Grid scrolleable de tarjetas 3D -->
+              <div class="t3d-exam-grid-scroll" id="t3d-new-group-exam-cards-container"></div>
+              <input type="hidden" id="t3d-new-group-selected-exam-id" />
+
+              <div style="display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; margin-top: 0.5rem; font-size: 0.8rem; opacity: 0.85;">
+                <span>💡 Haz clic sobre cualquier examen para seleccionarlo.</span>
+                <span id="t3d-new-group-exam-selected-preview" style="font-weight: 900; color: #38bdf8;"></span>
+              </div>
             </div>
 
-            <!-- MODO B: Crear un Examen Nuevo directo dentro de Crear Grupo -->
+            <!-- PANEL B: CREADOR DE EXAMEN RÁPIDO CON PREGUNTAS Y BOTONES KAHOOT -->
             <div id="t3d-ng-panel-create" style="display: none;">
-              <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 0.75rem; margin-bottom: 0.9rem;">
+              <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 0.85rem; margin-bottom: 1.15rem;">
                 <div>
-                  <label class="t3d-form-label">Título del Nuevo Examen:</label>
-                  <input type="text" id="t3d-inline-exam-title" class="t3d-form-input" placeholder="Ej: Parcial 1 - Biología Celular" />
+                  <label class="t3d-form-label">✨ Título del Examen a Crear:</label>
+                  <input type="text" id="t3d-inline-exam-title" class="t3d-form-input" placeholder="Ej: Parcial de Ciencias Naturales 10°" />
                 </div>
                 <div>
-                  <label class="t3d-form-label">Tiempo por pregunta:</label>
+                  <label class="t3d-form-label">⏱️ Tiempo por Pregunta:</label>
                   <select id="t3d-inline-exam-time" class="t3d-form-select">
                     <option value="20" selected>20 segundos</option>
                     <option value="30">30 segundos</option>
                     <option value="45">45 segundos</option>
                     <option value="60">60 segundos</option>
-                    <option value="0">Sin límite</option>
+                    <option value="0">Sin límite de tiempo</option>
                   </select>
                 </div>
               </div>
 
-              <div id="t3d-inline-questions-container" style="display: flex; flex-direction: column; gap: 0.85rem; margin-bottom: 0.85rem;"></div>
+              <div id="t3d-inline-questions-container" style="display: flex; flex-direction: column; gap: 1rem; margin-bottom: 1rem;"></div>
 
-              <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
-                <button type="button" class="t3d-btn t3d-btn-emerald" style="padding: 0.5rem 0.95rem; font-size: 0.84rem;" onclick="window.TeacherView.addInlineQuestionRow()">
-                  ➕ Agregar Pregunta
+              <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.65rem; padding-top: 0.5rem;">
+                <button type="button" class="t3d-btn t3d-btn-emerald" onclick="window.TeacherView.addInlineQuestionRow()">
+                  <img src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Plus/3D/plus_3d.png" class="t3d-ico-sm" alt="" />
+                  <span>Añadir Otra Pregunta</span>
                 </button>
-                <button type="button" class="t3d-btn t3d-btn-outline" style="padding: 0.5rem 0.95rem; font-size: 0.82rem;" onclick="window.TeacherView.closeNewGroupModal(); window.appRouter.navigate('creator');">
-                  🚀 Ir al Creador Completo (IA / PDF)
+                <button type="button" class="t3d-btn t3d-btn-outline" onclick="window.TeacherView.closeNewGroupModal(); window.appRouter.navigate('creator');">
+                  <span>🚀 Ir al Creador con IA o PDF</span>
                 </button>
               </div>
             </div>
           </div>
 
-          <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1.6rem;">
+          <!-- BOTONES DE ACCIÓN DEL MODAL -->
+          <div style="display: flex; justify-content: flex-end; gap: 0.85rem; margin-top: 1.6rem;">
             <button class="t3d-btn t3d-btn-outline" onclick="window.TeacherView.closeNewGroupModal()">Cancelar</button>
-            <button class="t3d-btn t3d-btn-emerald" onclick="window.TeacherView.saveNewGroup()">
+            <button class="t3d-btn t3d-btn-emerald" style="padding: 0.85rem 1.6rem; font-size: 0.95rem;" onclick="window.TeacherView.saveNewGroup()">
               <img src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Sparkles/3D/sparkles_3d.png" class="t3d-ico-sm" alt="" />
-              <span>Crear Grupo y Generar Código</span>
+              <span>✨ CREAR GRUPO Y ACTIVAR CÓDIGO</span>
             </button>
           </div>
         </div>
@@ -825,43 +855,50 @@ window.TeacherView = {
            MODAL 3: EDITAR GRUPO Y GESTIONAR EXÁMENES (AÑADIR / ACTIVAR / BORRAR)
            ========================================================================== -->
       <div id="teacher-edit-group-modal" class="t3d-modal-backdrop" style="display: none;">
-        <div class="t3d-modal-window" style="max-width: 620px; max-height: 90vh; overflow-y: auto;">
+        <div class="t3d-modal-window is-large" style="max-width: 780px;">
           <div class="t3d-modal-header">
             <h3 class="t3d-modal-title">
               <img src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Clipboard/3D/clipboard_3d.png" class="t3d-ico-md" alt="" />
-              <span>Editar Grupo y Exámenes</span>
+              <span>Editar Grupo y Exámenes 3D</span>
             </h3>
             <button class="t3d-modal-close" onclick="window.TeacherView.closeEditGroupModal()">&times;</button>
           </div>
 
-          <div class="t3d-form-group">
-            <label class="t3d-form-label">Nombre del Curso / Grado:</label>
-            <input type="text" id="t3d-edit-group-name" class="t3d-form-input" />
-          </div>
-
-          <div class="t3d-form-group" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.75rem;">
+          <div style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 0.85rem; margin-bottom: 1.35rem;">
             <div>
-              <label class="t3d-form-label">Alumnos Estimados:</label>
+              <label class="t3d-form-label">🏫 Nombre del Curso / Grado:</label>
+              <input type="text" id="t3d-edit-group-name" class="t3d-form-input" />
+            </div>
+            <div>
+              <label class="t3d-form-label">👥 Alumnos Estimados:</label>
               <input type="number" id="t3d-edit-group-count" class="t3d-form-input" min="1" max="300" />
             </div>
             <div>
-              <label class="t3d-form-label">Promedio Base (%):</label>
+              <label class="t3d-form-label">🎯 Promedio Base (%):</label>
               <input type="number" id="t3d-edit-group-avg" class="t3d-form-input" min="0" max="100" />
-            </div>
-            <div>
-              <label class="t3d-form-label">Código de Acceso:</label>
-              <input type="text" id="t3d-edit-group-code" class="t3d-form-input" maxlength="8" style="letter-spacing: 2px; text-align: center;" />
             </div>
           </div>
 
-          <!-- Gestión Dinámica de Exámenes del Grupo -->
-          <div class="t3d-form-group" style="padding: 1rem; border-radius: 16px; border: 1.5px solid rgba(59, 130, 246, 0.35); background: rgba(59, 130, 246, 0.06);">
-            <label class="t3d-form-label" style="margin-bottom: 0.65rem;">📝 Exámenes Asignados a este Grupo:</label>
-            <div id="t3d-edit-group-exams-list" style="display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 0.9rem;"></div>
+          <div class="t3d-hologram-code-card" style="margin-bottom: 1.35rem;">
+            <div>
+              <div style="font-size: 0.74rem; font-weight: 850; text-transform: uppercase; opacity: 0.85; margin-bottom: 0.25rem;">
+                🔑 CÓDIGO DE ACCESO PARA LOS ESTUDIANTES:
+              </div>
+              <input type="text" id="t3d-edit-group-code" class="t3d-form-input" style="font-family: 'Gagalin', 'Montserrat', monospace; font-size: 1.6rem; letter-spacing: 4px; font-weight: 900; max-width: 220px;" maxlength="8" />
+            </div>
+            <button type="button" class="t3d-btn t3d-btn-cyan" style="padding: 0.5rem 0.95rem; font-size: 0.8rem;" onclick="window.TeacherView.copyGroupCode(document.getElementById('t3d-edit-group-code')?.value, this)">
+              📋 Copiar Código
+            </button>
+          </div>
 
-            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-              <select id="t3d-edit-add-exam-select" class="t3d-form-select" style="flex: 1; min-width: 200px;">
-                <option value="">-- Elegir examen para añadir --</option>
+          <!-- Gestión Dinámica de Exámenes del Grupo -->
+          <div style="padding: 1.25rem; border-radius: 20px; border: 2px solid rgba(59, 130, 246, 0.35); background: rgba(59, 130, 246, 0.05); margin-bottom: 1.25rem;">
+            <label class="t3d-form-label" style="font-size: 0.95rem; margin-bottom: 0.75rem;">📝 Exámenes Asignados a este Grupo:</label>
+            <div id="t3d-edit-group-exams-list" style="display: flex; flex-direction: column; gap: 0.65rem; margin-bottom: 1.1rem;"></div>
+
+            <div style="display: flex; gap: 0.65rem; flex-wrap: wrap;">
+              <select id="t3d-edit-add-exam-select" class="t3d-form-select" style="flex: 1; min-width: 220px;">
+                <option value="">-- Elegir examen para añadir a este grupo --</option>
                 ${this.getAllRealExams().map(ex => `<option value="${ex.id}">${this.isOwnedByCurrentTeacher(ex) ? '⭐ ' : '📚 '}${ex.title} (${ex.questions.length} preg.)</option>`).join('')}
               </select>
               <button type="button" class="t3d-btn t3d-btn-emerald" onclick="window.TeacherView.addExamToEditingGroup()">
@@ -1021,21 +1058,20 @@ window.TeacherView = {
      MODAL CREAR NUEVO GRUPO 3D
      ========================================================================== */
   newGroupExamMode: 'existing',
+  selectedExamIdForNewGroup: null,
 
   openNewGroupModal() {
     const modal = document.getElementById('teacher-new-group-modal');
     const nameInput = document.getElementById('t3d-new-group-name');
-    const codeInput = document.getElementById('t3d-new-group-code');
     const filterInput = document.getElementById('t3d-new-group-exam-filter');
     const inlineTitle = document.getElementById('t3d-inline-exam-title');
     const qContainer = document.getElementById('t3d-inline-questions-container');
 
     if (nameInput) nameInput.value = '';
-    if (codeInput) codeInput.value = this.generateGroupAccessCode();
-    if (filterInput) {
-      filterInput.value = '';
-      this.filterNewGroupExams('');
-    }
+    this.rerollNewGroupCode();
+    if (filterInput) filterInput.value = '';
+    this.renderNewGroupExamCards('');
+
     if (inlineTitle) inlineTitle.value = '';
     if (qContainer) {
       qContainer.innerHTML = '';
@@ -1047,6 +1083,15 @@ window.TeacherView = {
     if (nameInput) setTimeout(() => nameInput.focus(), 100);
   },
 
+  rerollNewGroupCode() {
+    const code = this.generateGroupAccessCode();
+    const input = document.getElementById('t3d-new-group-code');
+    const preview = document.getElementById('t3d-new-group-code-preview');
+    if (input) input.value = code;
+    if (preview) preview.textContent = code;
+    return code;
+  },
+
   switchNewGroupExamMode(mode) {
     this.newGroupExamMode = mode === 'create' ? 'create' : 'existing';
     const tabEx = document.getElementById('t3d-ng-tab-existing');
@@ -1055,21 +1100,28 @@ window.TeacherView = {
     const panCr = document.getElementById('t3d-ng-panel-create');
 
     if (this.newGroupExamMode === 'create') {
-      if (tabEx) tabEx.className = 't3d-btn t3d-btn-outline';
-      if (tabCr) tabCr.className = 't3d-btn t3d-btn-primary';
+      if (tabEx) tabEx.className = 't3d-tab-btn';
+      if (tabCr) tabCr.className = 't3d-tab-btn is-active';
       if (panEx) panEx.style.display = 'none';
       if (panCr) panCr.style.display = 'block';
     } else {
-      if (tabEx) tabEx.className = 't3d-btn t3d-btn-primary';
-      if (tabCr) tabCr.className = 't3d-btn t3d-btn-outline';
+      if (tabEx) tabEx.className = 't3d-tab-btn is-active';
+      if (tabCr) tabCr.className = 't3d-tab-btn';
       if (panEx) panEx.style.display = 'block';
       if (panCr) panCr.style.display = 'none';
     }
   },
 
   filterNewGroupExams(query) {
-    const select = document.getElementById('t3d-new-group-exam');
-    if (!select) return;
+    this.renderNewGroupExamCards(query);
+  },
+
+  renderNewGroupExamCards(query) {
+    const container = document.getElementById('t3d-new-group-exam-cards-container');
+    const hiddenInput = document.getElementById('t3d-new-group-selected-exam-id');
+    const preview = document.getElementById('t3d-selected-exam-preview');
+    if (!container) return;
+
     const q = (query || '').toLowerCase().trim();
     const exams = this.getAllRealExams();
     const filtered = exams.filter(ex =>
@@ -1078,15 +1130,81 @@ window.TeacherView = {
       (ex.author || '').toLowerCase().includes(q) ||
       (ex.categoryName || '').toLowerCase().includes(q)
     );
+
     if (filtered.length === 0) {
-      select.innerHTML = `<option value="">Sin coincidencias para "${query}"</option>`;
-    } else {
-      select.innerHTML = filtered.map((ex, i) => `
-        <option value="${ex.id}" ${i === 0 ? 'selected' : ''}>
-          ${this.isOwnedByCurrentTeacher(ex) ? '⭐ [Tuyo] ' : '📚 '}${ex.title} — ${ex.author || 'Docente'} (${ex.questions.length} preg.)
-        </option>
-      `).join('');
+      container.innerHTML = `
+        <div style="grid-column: 1 / -1; padding: 2.2rem 1.5rem; text-align: center; color: var(--t3d-text-sub); background: rgba(148,163,184,0.06); border: 1.5px dashed rgba(148,163,184,0.3); border-radius: 16px;">
+          <div style="font-size: 2rem; margin-bottom: 0.4rem;">🔍</div>
+          <p style="font-size: 1rem; font-weight: 750; margin-bottom: 0.35rem; color: var(--t3d-text-main);">No se encontraron exámenes para "${query || ''}"</p>
+          <p style="font-size: 0.82rem; margin: 0;">¡Puedes crear uno nuevo inmediatamente haciendo clic arriba en <strong>✨ Crear Examen Nuevo</strong>!</p>
+        </div>
+      `;
+      if (hiddenInput) hiddenInput.value = '';
+      if (preview) preview.textContent = 'Ninguno';
+      this.selectedExamIdForNewGroup = null;
+      return;
     }
+
+    let curSelectedId = this.selectedExamIdForNewGroup;
+    if (!curSelectedId || !filtered.some(e => String(e.id) === String(curSelectedId))) {
+      curSelectedId = filtered[0].id;
+      this.selectedExamIdForNewGroup = curSelectedId;
+    }
+    if (hiddenInput) hiddenInput.value = curSelectedId;
+
+    const selectedExam = filtered.find(e => String(e.id) === String(curSelectedId));
+    if (preview && selectedExam) {
+      preview.textContent = selectedExam.title;
+    }
+
+    container.innerHTML = filtered.map(ex => {
+      const isSelected = String(ex.id) === String(curSelectedId);
+      const isOwned = this.isOwnedByCurrentTeacher(ex);
+      const qCount = Array.isArray(ex.questions) ? ex.questions.length : 0;
+      const safeTitle = (ex.title || 'Sin Título').replace(/"/g, '&quot;');
+      const safeAuthor = (ex.author || 'Docente').replace(/"/g, '&quot;');
+      const safeCat = (ex.categoryName || ex.category || 'General').toUpperCase();
+
+      return `
+        <div class="t3d-exam-pick-card ${isSelected ? 'is-selected' : ''}" 
+             data-exam-id="${ex.id}" 
+             onclick="window.TeacherView.selectExamPickCard('${ex.id}')">
+          <div class="t3d-pick-check-badge">✓</div>
+          <div style="display: flex; align-items: center; justify-content: space-between; gap: 0.4rem; margin-bottom: 0.4rem;">
+            <span class="t3d-badge-pill" style="font-size: 0.68rem; padding: 0.15rem 0.55rem; background: rgba(59,130,246,0.15); color: #3b82f6;">${safeCat}</span>
+            ${isOwned ? '<span class="t3d-badge-pill" style="font-size: 0.68rem; padding: 0.15rem 0.55rem; background: rgba(16,185,129,0.18); color: #10b981;">⭐ Tuyo</span>' : ''}
+          </div>
+          <h4 style="font-size: 0.94rem; font-weight: 850; margin: 0 0 0.35rem 0; line-height: 1.25; color: var(--t3d-text-main);">${safeTitle}</h4>
+          <div style="font-size: 0.77rem; color: var(--t3d-text-sub); display: flex; align-items: center; gap: 0.5rem; margin-top: auto; padding-top: 0.35rem;">
+            <span>📝 ${qCount} preg.</span>
+            <span>•</span>
+            <span>👤 ${safeAuthor}</span>
+          </div>
+        </div>
+      `;
+    }).join('');
+  },
+
+  selectExamPickCard(examId) {
+    this.selectedExamIdForNewGroup = examId;
+    const hiddenInput = document.getElementById('t3d-new-group-selected-exam-id');
+    const preview = document.getElementById('t3d-selected-exam-preview');
+    if (hiddenInput) hiddenInput.value = examId;
+
+    const allExams = this.getAllRealExams();
+    const chosen = allExams.find(e => String(e.id) === String(examId));
+    if (preview && chosen) {
+      preview.textContent = chosen.title;
+    }
+
+    const cards = document.querySelectorAll('.t3d-exam-pick-card');
+    cards.forEach(card => {
+      if (card.getAttribute('data-exam-id') === String(examId)) {
+        card.classList.add('is-selected');
+      } else {
+        card.classList.remove('is-selected');
+      }
+    });
   },
 
   addInlineQuestionRow() {
@@ -1095,23 +1213,41 @@ window.TeacherView = {
     const idx = container.children.length + 1;
     const rowUid = 'iq_' + Date.now() + '_' + idx;
     const row = document.createElement('div');
-    row.className = 't3d-inline-q-row';
-    row.style.cssText = 'padding: 0.9rem; border-radius: 14px; border: 1.5px solid rgba(148,163,184,0.35); background: rgba(15,23,42,0.04);';
+    row.className = 't3d-q-builder-card';
+
+    const tileConfig = [
+      { shape: '✦', class: 't3d-tile-opt1', label: 'Opción Roja' },
+      { shape: '⬢', class: 't3d-tile-opt2', label: 'Opción Azul' },
+      { shape: '⚡', class: 't3d-tile-opt3', label: 'Opción Amarilla' },
+      { shape: '🛡️', class: 't3d-tile-opt4', label: 'Opción Verde' }
+    ];
+
     row.innerHTML = `
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.55rem;">
-        <strong style="font-size: 0.85rem;">Pregunta #${idx}</strong>
-        ${idx > 1 ? `<button type="button" style="background:none;border:none;cursor:pointer;color:#ef4444;font-weight:900;" onclick="this.closest('.t3d-inline-q-row').remove()">🗑️ Quitar</button>` : ''}
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; border-bottom: 1px dashed rgba(148,163,184,0.3); padding-bottom: 0.45rem;">
+        <div style="display: flex; align-items: center; gap: 0.5rem;">
+          <span style="display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 9px; background: linear-gradient(135deg, #3b82f6, #06b6d4); color: #fff; font-weight: 900; font-size: 0.85rem;">#${idx}</span>
+          <strong style="font-size: 0.95rem; font-weight: 850;">Pregunta del Examen</strong>
+        </div>
+        ${idx > 1 ? `<button type="button" class="t3d-btn t3d-btn-outline" style="color: #ef4444; border-color: rgba(239,68,68,0.4); padding: 0.35rem 0.75rem; font-size: 0.76rem;" onclick="this.closest('.t3d-q-builder-card').remove()">🗑️ Quitar Pregunta</button>` : ''}
       </div>
-      <input type="text" class="t3d-form-input t3d-iq-text" placeholder="Escribe la pregunta aquí..." style="margin-bottom: 0.6rem;" />
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
-        ${['A', 'B', 'C', 'D'].map((lbl, oi) => `
-          <label style="display: flex; align-items: center; gap: 0.4rem; font-size: 0.82rem;">
-            <input type="radio" name="correct_${rowUid}" value="${oi}" ${oi === 0 ? 'checked' : ''} title="Marcar como correcta" />
-            <input type="text" class="t3d-form-input t3d-iq-opt" placeholder="Opción ${lbl}${oi < 2 ? ' *' : ' (opcional)'}" style="padding: 0.48rem 0.7rem; font-size: 0.84rem;" />
-          </label>
+
+      <input type="text" class="t3d-form-input t3d-iq-text" placeholder="Escribe el enunciado de la pregunta aquí... (Ej: ¿Cuál es el resultado de 15 × 12?)" style="margin-bottom: 0.85rem; font-size: 0.95rem; font-weight: 650;" />
+
+      <div class="t3d-kahoot-grid">
+        ${tileConfig.map((cfg, oi) => `
+          <div class="t3d-kahoot-tile ${cfg.class}">
+            <div class="t3d-tile-badge">${cfg.shape}</div>
+            <input type="text" class="t3d-form-input t3d-iq-opt" placeholder="${cfg.label}${oi < 2 ? ' *' : ' (opcional)'}" style="background: rgba(255,255,255,0.92); color: #0f172a; font-weight: 650; font-size: 0.86rem; border: none;" />
+            <label class="t3d-tile-radio" title="Marcar como respuesta correcta">
+              <input type="radio" name="correct_${rowUid}" value="${oi}" ${oi === 0 ? 'checked' : ''} />
+              <span class="t3d-tile-radio-custom"></span>
+            </label>
+          </div>
         `).join('')}
       </div>
-      <small style="display:block; margin-top:0.35rem; opacity:0.75; font-size:0.75rem;">Marca el círculo de la opción correcta.</small>
+      <div style="margin-top: 0.55rem; font-size: 0.75rem; color: var(--t3d-text-sub); display: flex; align-items: center; gap: 0.4rem;">
+        <span>🎯 Haz clic en el círculo de la opción que sea la respuesta correcta.</span>
+      </div>
     `;
     container.appendChild(row);
   },
@@ -1126,7 +1262,7 @@ window.TeacherView = {
     const countInput = document.getElementById('t3d-new-group-count');
     const avgInput = document.getElementById('t3d-new-group-avg');
     const codeInput = document.getElementById('t3d-new-group-code');
-    const examSelect = document.getElementById('t3d-new-group-exam');
+    const hiddenExamId = document.getElementById('t3d-new-group-selected-exam-id');
 
     const name = (nameInput?.value || '').trim();
     if (!name) {
@@ -1148,7 +1284,7 @@ window.TeacherView = {
     if (this.newGroupExamMode === 'create') {
       const exTitle = (document.getElementById('t3d-inline-exam-title')?.value || '').trim();
       const exTime = parseInt(document.getElementById('t3d-inline-exam-time')?.value);
-      const qRows = Array.from(document.querySelectorAll('.t3d-inline-q-row'));
+      const qRows = Array.from(document.querySelectorAll('.t3d-q-builder-card, .t3d-inline-q-row'));
       if (!exTitle) {
         alert('⚠️ Escribe el título del nuevo examen.');
         document.getElementById('t3d-inline-exam-title')?.focus();
@@ -1224,13 +1360,12 @@ window.TeacherView = {
       } catch (e) {}
     } else {
       const allRealExams = this.getAllRealExams();
-      const chosenExamId = examSelect?.value || '';
+      const chosenExamId = (hiddenExamId?.value) || (this.selectedExamIdForNewGroup) || '';
       if (allRealExams.length > 0 && !chosenExamId) {
-        alert('⚠️ Selecciona qué examen va a ir en este grupo.');
-        if (examSelect) examSelect.focus();
+        alert('⚠️ Por favor selecciona qué examen va a ir en este grupo.');
         return;
       }
-      chosenExam = allRealExams.find(ex => String(ex.id) === String(chosenExamId)) || null;
+      chosenExam = allRealExams.find(ex => String(ex.id) === String(chosenExamId)) || allRealExams[0] || null;
     }
 
     const count = parseInt(countInput?.value) || 30;
@@ -1298,27 +1433,35 @@ window.TeacherView = {
     const active = this.getGroupActiveExam(group);
 
     if (assigned.length === 0) {
-      listEl.innerHTML = `<div style="font-size: 0.85rem; opacity: 0.8;">No hay exámenes asignados todavía. Selecciona uno abajo y pulsa "➕ Añadir Examen".</div>`;
+      listEl.innerHTML = `<div style="font-size: 0.88rem; padding: 1rem; text-align: center; color: var(--t3d-text-sub); background: rgba(148,163,184,0.06); border-radius: 12px;">⚠️ No hay exámenes asignados todavía. Selecciona uno abajo y pulsa "➕ Añadir Examen".</div>`;
       return;
     }
 
     listEl.innerHTML = assigned.map(ex => {
       const isActive = active && String(active.id) === String(ex.id);
       return `
-        <div style="display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; padding: 0.55rem 0.75rem; border-radius: 10px; border: 1.5px solid ${isActive ? '#3b82f6' : 'rgba(148,163,184,0.3)'}; background: ${isActive ? 'rgba(59, 130, 246, 0.12)' : 'transparent'};">
+        <div style="display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; padding: 0.75rem 1rem; border-radius: 14px; border: 2px solid ${isActive ? '#3b82f6' : 'rgba(148,163,184,0.25)'}; background: ${isActive ? 'rgba(59, 130, 246, 0.12)' : 'var(--t3d-surface-card)'}; box-shadow: ${isActive ? '0 0 16px rgba(59,130,246,0.25)' : 'none'};">
           <div style="min-width: 0; flex: 1;">
-            <div style="font-weight: 850; font-size: 0.88rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-              ${isActive ? '🎯 ' : '📝 '}${ex.title}
+            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.2rem;">
+              <span style="font-size: 1.1rem;">${isActive ? '🎯' : '📝'}</span>
+              <div style="font-weight: 850; font-size: 0.95rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--t3d-text-main);">
+                ${ex.title}
+              </div>
+              ${isActive ? '<span class="t3d-badge-pill" style="background: rgba(59,130,246,0.2); color: #3b82f6; font-size: 0.72rem; padding: 0.15rem 0.55rem;">ACTIVO</span>' : ''}
             </div>
-            <div style="font-size: 0.75rem; opacity: 0.8;">${ex.questions.length} preguntas ${isActive ? '• Examen Activo' : ''}</div>
+            <div style="font-size: 0.78rem; color: var(--t3d-text-sub); display: flex; align-items: center; gap: 0.5rem;">
+              <span>${ex.questions.length} preguntas</span>
+              <span>•</span>
+              <span>👤 ${ex.author || 'Docente'}</span>
+            </div>
           </div>
-          <div style="display: flex; gap: 0.35rem;">
+          <div style="display: flex; gap: 0.45rem; align-items: center;">
             ${!isActive ? `
-              <button type="button" class="t3d-card-btn t3d-btn-primary" style="padding: 0.3rem 0.6rem; font-size: 0.74rem;" onclick="window.TeacherView.setActiveExamForEditingGroup('${ex.id}')">
+              <button type="button" class="t3d-btn t3d-btn-primary" style="padding: 0.4rem 0.8rem; font-size: 0.78rem;" onclick="window.TeacherView.setActiveExamForEditingGroup('${ex.id}')">
                 🎯 Activar
               </button>
             ` : ''}
-            <button type="button" class="t3d-card-btn t3d-card-btn-test" style="padding: 0.3rem 0.55rem; font-size: 0.74rem; color: #ef4444;" onclick="window.TeacherView.removeExamFromEditingGroup('${ex.id}')" title="Quitar examen del grupo">
+            <button type="button" class="t3d-btn t3d-btn-outline" style="padding: 0.4rem 0.65rem; font-size: 0.78rem; color: #ef4444; border-color: rgba(239,68,68,0.4);" onclick="window.TeacherView.removeExamFromEditingGroup('${ex.id}')" title="Quitar examen del grupo">
               🗑️
             </button>
           </div>
