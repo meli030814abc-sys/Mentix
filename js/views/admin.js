@@ -897,10 +897,20 @@ window.AdminView = {
                         <span>${c.authorAvatar || '👨‍🏫'}</span>
                         <span>Autor: <strong>${c.author || 'Docente'}</strong></span>
                       </div>
-                      ${inProc
-                        ? `<span class="t3d-badge-myquiz" style="background: rgba(245, 158, 11, 0.18); color: #f59e0b; border-color: rgba(245, 158, 11, 0.4);">⏳ En Proceso</span>`
-                        : `<span class="t3d-badge-myquiz" style="background: rgba(16, 185, 129, 0.16); color: #10b981; border-color: rgba(16, 185, 129, 0.35);">✅ Aprobado</span>`
-                      }
+                      <div style="display: inline-flex; align-items: center; gap: 0.45rem; flex-wrap: wrap;">
+                        <button 
+                          type="button" 
+                          class="t3d-btn-details-badge" 
+                          title="⚙️ Detalles y Aleatorización inteligente de preguntas y respuestas"
+                          onclick="window.TeacherView ? window.TeacherView.openExamDetailsModal('${c.id}') : (window.AdminView && window.AdminView.openExamDetailsModal('${c.id}'))"
+                        >
+                          <span>⚙️ Detalles</span>
+                        </button>
+                        ${inProc
+                          ? `<span class="t3d-badge-myquiz" style="background: rgba(245, 158, 11, 0.18); color: #f59e0b; border-color: rgba(245, 158, 11, 0.4);">⏳ En Proceso</span>`
+                          : `<span class="t3d-badge-myquiz" style="background: rgba(16, 185, 129, 0.16); color: #10b981; border-color: rgba(16, 185, 129, 0.35);">✅ Aprobado</span>`
+                        }
+                      </div>
                     </div>
                   </div>
 
@@ -3676,6 +3686,15 @@ window.AdminView = {
   // ==========================================
   // MODALES DEL SISTEMA (PROYECTOS Y USUARIOS)
   // ==========================================
+
+  /**
+   * Abre el Modal de Detalles y Aleatorización Inteligente de un Examen
+   */
+  openExamDetailsModal(examId) {
+    if (window.TeacherView && typeof window.TeacherView.openExamDetailsModal === 'function') {
+      window.TeacherView.openExamDetailsModal(examId);
+    }
+  },
 
   /**
    * Abre el Modal de Detalle Profesional de Proyecto con 4 Pestañas

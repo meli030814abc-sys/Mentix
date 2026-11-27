@@ -1857,3 +1857,823 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* ==========================================================================
+   BOTÓN DETALLES Y MÓDULO: ALEATORIZACIÓN INTELIGENTE DE PREGUNTAS Y RESPUESTAS
+   ========================================================================== */
+.t3d-btn-details-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%);
+  color: #ffffff !important;
+  font-weight: 850;
+  font-size: 0.74rem;
+  padding: 0.32rem 0.75rem;
+  border-radius: 999px;
+  border: 1.5px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 3px 0 #4c1d95, 0 6px 14px rgba(109, 40, 217, 0.35);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  text-decoration: none;
+  user-select: none;
+}
+.t3d-btn-details-badge:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 0 #4c1d95, 0 8px 18px rgba(109, 40, 217, 0.5);
+  filter: brightness(1.08);
+}
+.t3d-btn-details-badge:active {
+  transform: translateY(1px);
+  box-shadow: 0 1px 0 #4c1d95;
+}
+
+/* Modal Ventana Extragrande para Aleatorización Inteligente */
+.t3d-modal-window.is-rand-modal {
+  max-width: 1180px;
+  width: 95vw;
+  max-height: 94vh;
+  overflow-y: auto;
+  padding: 1.75rem 2rem 2rem;
+  border-radius: 26px;
+  background: #f8fafc;
+  border: 1.5px solid #e2e8f0;
+  box-shadow: 0 25px 60px -15px rgba(15, 23, 42, 0.35);
+}
+
+.teacher-theme-dark .t3d-modal-window.is-rand-modal,
+.teacher-panel-wrapper.teacher-theme-dark .t3d-modal-window.is-rand-modal,
+.t3d-modal-backdrop.teacher-theme-dark .t3d-modal-window.is-rand-modal {
+  background: #0f172a !important;
+  border-color: rgba(255, 255, 255, 0.12) !important;
+  box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.7) !important;
+}
+
+/* Top bar del modal */
+.t3d-rand-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-bottom: 1.1rem;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+.teacher-theme-dark .t3d-rand-topbar {
+  border-bottom-color: rgba(255, 255, 255, 0.1);
+}
+
+.t3d-rand-brand-crumbs {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: #64748b;
+}
+.t3d-rand-brand-crumbs strong {
+  color: #0f172a;
+  font-weight: 900;
+}
+.teacher-theme-dark .t3d-rand-brand-crumbs strong {
+  color: #f8fafc;
+}
+
+.t3d-rand-topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.t3d-rand-btn-preview {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.55rem 1.1rem;
+  background: #ffffff;
+  color: #334155;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 12px;
+  font-weight: 850;
+  font-size: 0.88rem;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+.t3d-rand-btn-preview:hover {
+  background: #f1f5f9;
+  border-color: #94a3b8;
+  transform: translateY(-1px);
+}
+.teacher-theme-dark .t3d-rand-btn-preview {
+  background: #1e293b;
+  color: #f1f5f9;
+  border-color: #475569;
+}
+
+.t3d-rand-btn-save {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1.35rem;
+  background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
+  color: #ffffff !important;
+  border: none;
+  border-radius: 12px;
+  font-weight: 900;
+  font-size: 0.92rem;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  box-shadow: 0 4px 0 #4c1d95, 0 8px 18px rgba(109, 40, 217, 0.4);
+}
+.t3d-rand-btn-save:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 0 #4c1d95, 0 10px 22px rgba(109, 40, 217, 0.55);
+  filter: brightness(1.08);
+}
+.t3d-rand-btn-save:active {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 #4c1d95;
+}
+
+/* Layout 2 Columnas */
+.t3d-rand-layout {
+  display: grid;
+  grid-template-columns: 1.28fr 0.92fr;
+  gap: 1.6rem;
+  align-items: start;
+}
+
+/* Columna Izquierda: Configuración */
+.t3d-rand-main-card {
+  background: #ffffff;
+  border-radius: 20px;
+  border: 1px solid #e2e8f0;
+  padding: 1.6rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+}
+.teacher-theme-dark .t3d-rand-main-card {
+  background: #1e293b;
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+.t3d-rand-header-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.85rem;
+  margin-bottom: 1.4rem;
+}
+.t3d-rand-header-ico {
+  width: 44px;
+  height: 44px;
+  background: #ede9fe;
+  color: #7c3aed;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+.teacher-theme-dark .t3d-rand-header-ico {
+  background: rgba(124, 58, 237, 0.25);
+  color: #c4b5fd;
+}
+.t3d-rand-header-title {
+  font-size: 1.28rem;
+  font-weight: 950;
+  margin: 0 0 0.25rem 0;
+  color: #0f172a;
+}
+.teacher-theme-dark .t3d-rand-header-title {
+  color: #ffffff;
+}
+.t3d-rand-header-sub {
+  font-size: 0.88rem;
+  color: #64748b;
+  margin: 0;
+}
+.teacher-theme-dark .t3d-rand-header-sub {
+  color: #94a3b8;
+}
+
+/* Tarjetas de controles */
+.t3d-rand-setting-box {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 1rem 1.2rem;
+  margin-bottom: 0.9rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  transition: all 0.2s ease;
+}
+.teacher-theme-dark .t3d-rand-setting-box {
+  background: #0f172a;
+  border-color: rgba(255, 255, 255, 0.08);
+}
+.t3d-rand-setting-box:hover {
+  border-color: #cbd5e1;
+}
+
+.t3d-rand-setting-info {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+.t3d-rand-setting-ico {
+  width: 38px;
+  height: 38px;
+  background: #ede9fe;
+  color: #7c3aed;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  flex-shrink: 0;
+}
+.teacher-theme-dark .t3d-rand-setting-ico {
+  background: rgba(124, 58, 237, 0.2);
+  color: #c4b5fd;
+}
+.t3d-rand-setting-title {
+  font-size: 0.95rem;
+  font-weight: 900;
+  color: #0f172a;
+  margin: 0 0 0.15rem 0;
+}
+.teacher-theme-dark .t3d-rand-setting-title {
+  color: #f1f5f9;
+}
+.t3d-rand-setting-desc {
+  font-size: 0.81rem;
+  color: #64748b;
+  margin: 0;
+}
+.teacher-theme-dark .t3d-rand-setting-desc {
+  color: #94a3b8;
+}
+
+/* Switches estilo iOS */
+.t3d-ios-switch {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 28px;
+  flex-shrink: 0;
+}
+.t3d-ios-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+.t3d-ios-slider {
+  position: absolute;
+  cursor: pointer;
+  inset: 0;
+  background-color: #cbd5e1;
+  transition: .3s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 34px;
+}
+.t3d-ios-slider:before {
+  position: absolute;
+  content: "";
+  height: 22px;
+  width: 22px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: .3s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 50%;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.25);
+}
+.t3d-ios-switch input:checked + .t3d-ios-slider {
+  background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
+  box-shadow: 0 0 12px rgba(124, 58, 237, 0.45);
+}
+.t3d-ios-switch input:checked + .t3d-ios-slider:before {
+  transform: translateX(22px);
+}
+
+/* Fila de 2 Estadísticas: Disponibles y Por Estudiante */
+.t3d-rand-stats-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.9rem;
+  margin-bottom: 0.9rem;
+}
+.t3d-rand-stat-card {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 1rem 1.2rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.9rem;
+}
+.teacher-theme-dark .t3d-rand-stat-card {
+  background: #0f172a;
+  border-color: rgba(255, 255, 255, 0.08);
+}
+.t3d-rand-stat-card .t3d-rand-stat-ico {
+  width: 38px;
+  height: 38px;
+  background: #ede9fe;
+  color: #7c3aed;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+.teacher-theme-dark .t3d-rand-stat-card .t3d-rand-stat-ico {
+  background: rgba(124, 58, 237, 0.2);
+  color: #c4b5fd;
+}
+.t3d-rand-stat-content {
+  flex: 1;
+}
+.t3d-rand-stat-label {
+  font-size: 0.8rem;
+  font-weight: 850;
+  color: #475569;
+  margin-bottom: 0.35rem;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+.teacher-theme-dark .t3d-rand-stat-label {
+  color: #cbd5e1;
+}
+.t3d-rand-stat-num {
+  font-size: 1.6rem;
+  font-weight: 950;
+  color: #0f172a;
+  line-height: 1;
+}
+.teacher-theme-dark .t3d-rand-stat-num {
+  color: #ffffff;
+}
+.t3d-rand-stat-input {
+  width: 100%;
+  max-width: 120px;
+  font-size: 1.3rem;
+  font-weight: 900;
+  padding: 0.4rem 0.6rem;
+  border-radius: 10px;
+  border: 1.5px solid #cbd5e1;
+  background: #ffffff;
+  color: #0f172a;
+}
+.teacher-theme-dark .t3d-rand-stat-input {
+  background: #1e293b;
+  border-color: #475569;
+  color: #ffffff;
+}
+.t3d-rand-stat-hint {
+  font-size: 0.74rem;
+  color: #64748b;
+  margin-top: 0.4rem;
+}
+.teacher-theme-dark .t3d-rand-stat-hint {
+  color: #94a3b8;
+}
+
+/* Botón Seleccionar Obligatorias */
+.t3d-rand-btn-select-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: #ffffff;
+  border: 1.5px solid #cbd5e1;
+  color: #334155;
+  padding: 0.45rem 0.95rem;
+  border-radius: 10px;
+  font-weight: 850;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+.t3d-rand-btn-select-pill:hover {
+  background: #f1f5f9;
+  border-color: #7c3aed;
+  color: #7c3aed;
+}
+.teacher-theme-dark .t3d-rand-btn-select-pill {
+  background: #1e293b;
+  border-color: #475569;
+  color: #cbd5e1;
+}
+
+/* Tabla de Distribución */
+.t3d-rand-dist-table-wrap {
+  margin-top: 0.85rem;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  overflow: hidden;
+}
+.teacher-theme-dark .t3d-rand-dist-table-wrap {
+  background: #1e293b;
+  border-color: rgba(255, 255, 255, 0.08);
+}
+.t3d-rand-dist-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+.t3d-rand-dist-table th {
+  background: #f8fafc;
+  padding: 0.65rem 0.85rem;
+  font-weight: 850;
+  color: #475569;
+  text-align: left;
+  border-bottom: 1px solid #e2e8f0;
+}
+.teacher-theme-dark .t3d-rand-dist-table th {
+  background: #0f172a;
+  color: #94a3b8;
+  border-bottom-color: rgba(255, 255, 255, 0.08);
+}
+.t3d-rand-dist-table td {
+  padding: 0.55rem 0.85rem;
+  border-bottom: 1px solid #f1f5f9;
+  vertical-align: middle;
+}
+.teacher-theme-dark .t3d-rand-dist-table td {
+  border-bottom-color: rgba(255, 255, 255, 0.05);
+}
+
+.t3d-rand-input-sm {
+  width: 100%;
+  padding: 0.4rem 0.55rem;
+  border-radius: 8px;
+  border: 1px solid #cbd5e1;
+  font-weight: 700;
+  font-size: 0.84rem;
+  background: #ffffff;
+  color: #0f172a;
+}
+.teacher-theme-dark .t3d-rand-input-sm {
+  background: #0f172a;
+  border-color: #475569;
+  color: #ffffff;
+}
+
+.t3d-rand-select-diff {
+  padding: 0.35rem 0.6rem;
+  border-radius: 8px;
+  font-weight: 850;
+  font-size: 0.82rem;
+  border: 1px solid transparent;
+  cursor: pointer;
+}
+.t3d-rand-select-diff.is-baja {
+  background: #ecfdf5;
+  color: #059669;
+  border-color: #a7f3d0;
+}
+.t3d-rand-select-diff.is-media {
+  background: #fef3c7;
+  color: #d97706;
+  border-color: #fde68a;
+}
+.t3d-rand-select-diff.is-alta {
+  background: #fee2e2;
+  color: #dc2626;
+  border-color: #fca5a5;
+}
+
+.t3d-rand-btn-del-rule {
+  background: transparent;
+  border: none;
+  font-size: 1.1rem;
+  cursor: pointer;
+  padding: 0.25rem;
+  border-radius: 6px;
+  opacity: 0.6;
+  transition: opacity 0.15s ease;
+}
+.t3d-rand-btn-del-rule:hover {
+  opacity: 1;
+}
+
+.t3d-rand-btn-add-rule {
+  margin-top: 0.65rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: transparent;
+  border: 1px dashed #7c3aed;
+  color: #7c3aed;
+  padding: 0.45rem 0.9rem;
+  border-radius: 10px;
+  font-size: 0.82rem;
+  font-weight: 850;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.t3d-rand-btn-add-rule:hover {
+  background: #ede9fe;
+}
+.teacher-theme-dark .t3d-rand-btn-add-rule {
+  border-color: #a78bfa;
+  color: #a78bfa;
+}
+.teacher-theme-dark .t3d-rand-btn-add-rule:hover {
+  background: rgba(124, 58, 237, 0.2);
+}
+
+/* Columna Derecha: Tarjetas informativas y vista previa */
+.t3d-rand-right-col {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+/* Tarjeta 1: ¿Cómo funciona? */
+.t3d-rand-card-how {
+  background: #f5f3ff;
+  border: 1.5px solid #ddd6fe;
+  border-radius: 18px;
+  padding: 1.35rem;
+}
+.teacher-theme-dark .t3d-rand-card-how {
+  background: rgba(124, 58, 237, 0.12);
+  border-color: rgba(124, 58, 237, 0.35);
+}
+.t3d-rand-card-how-title {
+  font-size: 1.05rem;
+  font-weight: 950;
+  color: #6d28d9;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0 0 0.5rem 0;
+}
+.teacher-theme-dark .t3d-rand-card-how-title {
+  color: #c4b5fd;
+}
+.t3d-rand-card-how-p {
+  font-size: 0.86rem;
+  color: #4c1d95;
+  margin: 0;
+  line-height: 1.5;
+}
+.teacher-theme-dark .t3d-rand-card-how-p {
+  color: #ddd6fe;
+}
+
+/* Tarjeta 2: Vista previa de la aleatorización */
+.t3d-rand-card-preview {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 18px;
+  padding: 1.35rem;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.04);
+}
+.teacher-theme-dark .t3d-rand-card-preview {
+  background: #1e293b;
+  border-color: rgba(255, 255, 255, 0.08);
+}
+.t3d-rand-card-prev-title {
+  font-size: 1.05rem;
+  font-weight: 950;
+  color: #0f172a;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 0 0 1rem 0;
+}
+.teacher-theme-dark .t3d-rand-card-prev-title {
+  color: #ffffff;
+}
+
+.t3d-rand-prev-box {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 0.75rem 0.9rem;
+  margin-bottom: 0.65rem;
+}
+.teacher-theme-dark .t3d-rand-prev-box {
+  background: #0f172a;
+  border-color: rgba(255, 255, 255, 0.06);
+}
+.t3d-rand-prev-box-label {
+  font-size: 0.78rem;
+  font-weight: 850;
+  color: #64748b;
+  margin-bottom: 0.45rem;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+.teacher-theme-dark .t3d-rand-prev-box-label {
+  color: #94a3b8;
+}
+
+/* Chips numerados */
+.t3d-sim-chips-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  align-items: center;
+}
+.t3d-sim-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 27px;
+  height: 27px;
+  border-radius: 7px;
+  font-size: 0.78rem;
+  font-weight: 850;
+  transition: transform 0.15s ease;
+}
+.t3d-sim-chip:hover {
+  transform: scale(1.15);
+}
+.t3d-sim-chip-bank {
+  background: #f1f5f9;
+  color: #334155;
+  border: 1px solid #cbd5e1;
+}
+.teacher-theme-dark .t3d-sim-chip-bank {
+  background: #1e293b;
+  color: #cbd5e1;
+  border-color: #475569;
+}
+
+/* Flecha y motor central */
+.t3d-rand-arrow-down {
+  display: flex;
+  justify-content: center;
+  color: #7c3aed;
+  font-size: 1.1rem;
+  margin: 0.4rem 0;
+}
+.t3d-rand-engine-box {
+  background: #ede9fe;
+  border: 1.5px solid #c4b5fd;
+  border-radius: 12px;
+  padding: 0.75rem;
+  text-align: center;
+  margin: 0.45rem 0;
+}
+.teacher-theme-dark .t3d-rand-engine-box {
+  background: rgba(124, 58, 237, 0.2);
+  border-color: rgba(124, 58, 237, 0.45);
+}
+.t3d-rand-engine-title {
+  font-size: 0.88rem;
+  font-weight: 900;
+  color: #5b21b6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  margin-bottom: 0.2rem;
+}
+.teacher-theme-dark .t3d-rand-engine-title {
+  color: #c4b5fd;
+}
+.t3d-rand-engine-desc {
+  font-size: 0.76rem;
+  color: #6d28d9;
+}
+.teacher-theme-dark .t3d-rand-engine-desc {
+  color: #ddd6fe;
+}
+
+/* Filas de Estudiantes */
+.t3d-rand-student-row {
+  border-radius: 12px;
+  padding: 0.65rem 0.85rem;
+  margin-bottom: 0.45rem;
+}
+.t3d-rand-student-row.s1 {
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+}
+.t3d-rand-student-row.s2 {
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+}
+.t3d-rand-student-row.s3 {
+  background: #faf5ff;
+  border: 1px solid #e9d5ff;
+}
+.teacher-theme-dark .t3d-rand-student-row.s1 {
+  background: rgba(59, 130, 246, 0.12);
+  border-color: rgba(59, 130, 246, 0.3);
+}
+.teacher-theme-dark .t3d-rand-student-row.s2 {
+  background: rgba(16, 185, 129, 0.12);
+  border-color: rgba(16, 185, 129, 0.3);
+}
+.teacher-theme-dark .t3d-rand-student-row.s3 {
+  background: rgba(168, 85, 247, 0.12);
+  border-color: rgba(168, 85, 247, 0.3);
+}
+
+.t3d-rand-student-header {
+  font-size: 0.78rem;
+  font-weight: 850;
+  margin-bottom: 0.35rem;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+.t3d-rand-student-row.s1 .t3d-rand-student-header { color: #1d4ed8; }
+.t3d-rand-student-row.s2 .t3d-rand-student-header { color: #15803d; }
+.t3d-rand-student-row.s3 .t3d-rand-student-header { color: #7e22ce; }
+.teacher-theme-dark .t3d-rand-student-row.s1 .t3d-rand-student-header { color: #93c5fd; }
+.teacher-theme-dark .t3d-rand-student-row.s2 .t3d-rand-student-header { color: #86efac; }
+.teacher-theme-dark .t3d-rand-student-row.s3 .t3d-rand-student-header { color: #d8b4fe; }
+
+.t3d-sim-chip-s1 {
+  background: #dbeafe;
+  color: #1d4ed8;
+  border: 1px solid #93c5fd;
+}
+.t3d-sim-chip-s2 {
+  background: #dcfce7;
+  color: #15803d;
+  border: 1px solid #86efac;
+}
+.t3d-sim-chip-s3 {
+  background: #f3e8ff;
+  color: #7e22ce;
+  border: 1px solid #d8b4fe;
+}
+.teacher-theme-dark .t3d-sim-chip-s1 {
+  background: rgba(59, 130, 246, 0.25);
+  color: #bfdbfe;
+  border-color: rgba(59, 130, 246, 0.4);
+}
+.teacher-theme-dark .t3d-sim-chip-s2 {
+  background: rgba(16, 185, 129, 0.25);
+  color: #bbf7d0;
+  border-color: rgba(16, 185, 129, 0.4);
+}
+.teacher-theme-dark .t3d-sim-chip-s3 {
+  background: rgba(168, 85, 247, 0.25);
+  color: #e9d5ff;
+  border-color: rgba(168, 85, 247, 0.4);
+}
+
+/* Tarjeta 3: Beneficios */
+.t3d-rand-card-benefits {
+  background: #f0fdf4;
+  border: 1.5px solid #bbf7d0;
+  border-radius: 18px;
+  padding: 1.35rem;
+}
+.teacher-theme-dark .t3d-rand-card-benefits {
+  background: rgba(16, 185, 129, 0.12);
+  border-color: rgba(16, 185, 129, 0.35);
+}
+.t3d-rand-card-ben-title {
+  font-size: 1.05rem;
+  font-weight: 950;
+  color: #15803d;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0 0 0.65rem 0;
+}
+.teacher-theme-dark .t3d-rand-card-ben-title {
+  color: #86efac;
+}
+.t3d-rand-ben-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+.t3d-rand-ben-list li {
+  font-size: 0.85rem;
+  color: #166534;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 700;
+}
+.teacher-theme-dark .t3d-rand-ben-list li {
+  color: #bbf7d0;
+}
+
+/* Responsive */
+@media (max-width: 960px) {
+  .t3d-rand-layout {
+    grid-template-columns: 1fr;
+  }
+}

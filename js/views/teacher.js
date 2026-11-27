@@ -490,6 +490,8 @@ window.TeacherView = {
               const qCount = c.questions?.length || 0;
               const isInProcess = c.approvalStatus === 'pending' || c.status === 'in_progress' || c.status === 'draft' || qCount === 0;
               const isMine = this.isOwnedByCurrentTeacher(c);
+              const currentUser = window.appState?.currentUser;
+              const isCreatorOrAdmin = isMine || this.isOwnedByCurrentTeacher(c) || (window.appRouter && window.appRouter.isChallengeOwner && window.appRouter.isChallengeOwner(c)) || (currentUser && (['admin', 'administrador'].includes(String(currentUser.role).toLowerCase()) || currentUser.isAdmin === true));
 
               return `
                 <div 
@@ -512,13 +514,25 @@ window.TeacherView = {
                         <span>${c.authorAvatar || '👨‍🏫'}</span>
                         <span>Prof: <strong>${c.author || 'Docente'}</strong></span>
                       </div>
-                      ${isInProcess
-                        ? `<span class="t3d-badge-myquiz" style="background: rgba(245, 158, 11, 0.18); color: #f59e0b; border-color: rgba(245, 158, 11, 0.4);">⏳ En Proceso</span>`
-                        : (isMine
-                          ? `<span class="t3d-badge-myquiz">⭐ Creado por ti</span>`
-                          : `<span class="t3d-badge-myquiz" style="background: rgba(16, 185, 129, 0.16); color: #10b981; border-color: rgba(16, 185, 129, 0.35);">✅ Listo</span>`
-                        )
-                      }
+                      <div style="display: inline-flex; align-items: center; gap: 0.45rem; flex-wrap: wrap;">
+                        ${isCreatorOrAdmin ? `
+                          <button 
+                            type="button" 
+                            class="t3d-btn-details-badge" 
+                            title="⚙️ Detalles y Aleatorización inteligente de preguntas y respuestas"
+                            onclick="window.TeacherView.openExamDetailsModal('${c.id}')"
+                          >
+                            <span>⚙️ Detalles</span>
+                          </button>
+                        ` : ''}
+                        ${isInProcess
+                          ? `<span class="t3d-badge-myquiz" style="background: rgba(245, 158, 11, 0.18); color: #f59e0b; border-color: rgba(245, 158, 11, 0.4);">⏳ En Proceso</span>`
+                          : (isMine
+                            ? `<span class="t3d-badge-myquiz">⭐ Creado por ti</span>`
+                            : `<span class="t3d-badge-myquiz" style="background: rgba(16, 185, 129, 0.16); color: #10b981; border-color: rgba(16, 185, 129, 0.35);">✅ Listo</span>`
+                          )
+                        }
+                      </div>
                     </div>
                   </div>
 
@@ -1734,5 +1748,759 @@ window.TeacherView = {
     this.closeAddStudentModal();
     this.render(true);
     await this.pushGroupToCloud(group);
+  },
+
+  // ==========================================================================
+  // MÓDULO: DETALLES Y ALEATORIZACIÓN INTELIGENTE DE PREGUNTAS Y RESPUESTAS
+  // ==========================================================================
+  canConfigureExam(exam) {
+    if (!exam) return false;
+    const u = window.appState?.currentUser;
+    const isAdmin = Boolean(u && (['admin', 'administrador'].includes(String(u.role).toLowerCase()) || u.isAdmin === true));
+    if (isAdmin) return true;
+    const isMine = this.isOwnedByCurrentTeacher(exam);
+    const isOwner = Boolean(window.appRouter && typeof window.appRouter.isChallengeOwner === 'function' && window.appRouter.isChallengeOwner(exam));
+    return isMine || isOwner;
+  },
+
+  openExamDetailsModal(examId) {
+    let exam = (window.appState?.challenges || []).find(c => c && String(c.id).trim() === String(examId).trim());
+    if (!exam && typeof DEFAULT_CHALLENGES !== 'undefined') {
+      exam = DEFAULT_CHALLENGES.find(c => c && String(c.id).trim() === String(examId).trim());
+    }
+    if (!exam) {
+      alert('⚠️ No se encontró la información del examen.');
+      return;
+    }
+
+    if (!this.canConfigureExam(exam)) {
+      alert('🔒 Solo el administrador o el creador de este examen puede configurar sus detalles y aleatorización.');
+      return;
+    }
+
+    const totalAvailable = Array.isArray(exam.questions) ? exam.questions.length : 0;
+    const defaultPerStudent = totalAvailable > 0 ? Math.min(10, totalAvailable) : 1;
+
+    if (!exam.randomizationConfig || typeof exam.randomizationConfig !== 'object') {
+      exam.randomizationConfig = {
+        enabled: true,
+        questionsPerStudent: defaultPerStudent,
+        shuffleQuestions: true,
+        shuffleOptions: true,
+        mandatoryQuestionIds: [],
+        distributionEnabled: false,
+        distributionRules: []
+      };
+    } else {
+      if (typeof exam.randomizationConfig.enabled !== 'boolean') exam.randomizationConfig.enabled = true;
+      const curCount = parseInt(exam.randomizationConfig.questionsPerStudent, 10);
+      exam.randomizationConfig.questionsPerStudent = (!curCount || curCount < 1)
+        ? defaultPerStudent
+        : (totalAvailable > 0 ? Math.min(curCount, totalAvailable) : curCount);
+      if (typeof exam.randomizationConfig.shuffleQuestions !== 'boolean') exam.randomizationConfig.shuffleQuestions = true;
+      if (typeof exam.randomizationConfig.shuffleOptions !== 'boolean') exam.randomizationConfig.shuffleOptions = true;
+      if (!Array.isArray(exam.randomizationConfig.mandatoryQuestionIds)) exam.randomizationConfig.mandatoryQuestionIds = [];
+      if (typeof exam.randomizationConfig.distributionEnabled !== 'boolean') exam.randomizationConfig.distributionEnabled = false;
+      if (!Array.isArray(exam.randomizationConfig.distributionRules)) exam.randomizationConfig.distributionRules = [];
+    }
+
+    // Trabajar sobre un borrador editable para que cancelar no altere nada hasta guardar
+    this.activeExamForDetails = exam;
+    this.draftRandomizationConfig = JSON.parse(JSON.stringify(exam.randomizationConfig));
+
+    this.ensureRandomizeModalsInDOM();
+    this.renderRandomizeModalContent();
+
+    const modal = document.getElementById('teacher-randomize-modal');
+    if (modal) {
+      modal.style.display = 'flex';
+      const isDark = document.body.classList.contains('teacher-theme-dark') ||
+                     document.getElementById('view-teacher')?.classList.contains('teacher-theme-dark') ||
+                     document.querySelector('.teacher-panel-wrapper')?.classList.contains('teacher-theme-dark') ||
+                     !document.body.classList.contains('light-theme');
+      modal.classList.toggle('teacher-theme-dark', isDark);
+    }
+    this.updateSimulationPreview();
+  },
+
+  closeExamDetailsModal() {
+    const modal = document.getElementById('teacher-randomize-modal');
+    if (modal) modal.style.display = 'none';
+  },
+
+  ensureRandomizeModalsInDOM() {
+    if (!document.getElementById('teacher-randomize-modal')) {
+      const wrap = document.createElement('div');
+      wrap.innerHTML = `
+        <div id="teacher-randomize-modal" class="t3d-modal-backdrop" style="display: none; z-index: 10020;">
+          <div class="t3d-modal-window is-rand-modal" id="teacher-randomize-modal-content"></div>
+        </div>
+      `;
+      document.body.appendChild(wrap.firstElementChild);
+    }
+    if (!document.getElementById('teacher-mandatory-modal')) {
+      const wrap2 = document.createElement('div');
+      wrap2.innerHTML = `
+        <div id="teacher-mandatory-modal" class="t3d-modal-backdrop" style="display: none; z-index: 10030;">
+          <div class="t3d-modal-window" style="max-width: 680px; width: 92vw; max-height: 85vh; overflow-y: auto;">
+            <div class="t3d-modal-header">
+              <h3 class="t3d-modal-title">
+                <span>📌</span>
+                <span>Seleccionar Preguntas Obligatorias</span>
+              </h3>
+              <button class="t3d-modal-close" onclick="window.TeacherView.closeMandatoryModal()">&times;</button>
+            </div>
+            <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1rem;">
+              Estas preguntas aparecerán <strong>siempre</strong> en la evaluación de cada estudiante, antes de completar el cupo con preguntas aleatorias.
+            </p>
+            <div id="teacher-mandatory-list" style="display: flex; flex-direction: column; gap: 0.65rem; max-height: 50vh; overflow-y: auto; padding-right: 0.35rem;"></div>
+            <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid rgba(148,163,184,0.2);">
+              <button class="t3d-btn t3d-btn-primary" onclick="window.TeacherView.closeMandatoryModal()">
+                <span>Listo</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(wrap2.firstElementChild);
+    }
+  },
+
+  renderDistributionRowsHtml(rules, existingTopics) {
+    if (!Array.isArray(rules) || rules.length === 0) {
+      return `
+        <tr>
+          <td colspan="4" style="text-align: center; padding: 1rem; color: #94a3b8; font-size: 0.82rem;">
+            No hay reglas definidas aún. Pulsa "+ Agregar regla" para distribuir por temática y dificultad.
+          </td>
+        </tr>
+      `;
+    }
+    return rules.map((r, idx) => {
+      const diff = (r.difficulty || 'media').toLowerCase();
+      const diffClass = diff === 'baja' ? 'is-baja' : (diff === 'alta' ? 'is-alta' : 'is-media');
+      const topicVal = (r.topic || existingTopics[0] || 'General').replace(/"/g, '&quot;');
+      const topicOptions = Array.from(new Set([r.topic, ...existingTopics, 'Programación', 'Bases de Datos', 'Redes', 'General'].filter(Boolean)));
+      return `
+        <tr>
+          <td>
+            <select class="t3d-rand-input-sm" onchange="window.TeacherView.onDistributionRuleChange(${idx}, 'topic', this.value)">
+              ${topicOptions.map(t => `<option value="${String(t).replace(/"/g, '&quot;')}" ${t === topicVal ? 'selected' : ''}>${t}</option>`).join('')}
+            </select>
+          </td>
+          <td>
+            <select class="t3d-rand-select-diff ${diffClass}" onchange="window.TeacherView.onDistributionRuleChange(${idx}, 'difficulty', this.value)">
+              <option value="baja" ${diff === 'baja' ? 'selected' : ''}>Baja</option>
+              <option value="media" ${diff === 'media' ? 'selected' : ''}>Media</option>
+              <option value="alta" ${diff === 'alta' ? 'selected' : ''}>Alta</option>
+            </select>
+          </td>
+          <td>
+            <input type="number" class="t3d-rand-input-sm" min="1" max="100" value="${parseInt(r.count, 10) || 1}" onchange="window.TeacherView.onDistributionRuleChange(${idx}, 'count', parseInt(this.value, 10) || 1)" />
+          </td>
+          <td style="text-align: center;">
+            <button type="button" class="t3d-rand-btn-del-rule" title="Eliminar regla" onclick="window.TeacherView.removeDistributionRule(${idx})">🗑️</button>
+          </td>
+        </tr>
+      `;
+    }).join('');
+  },
+
+  renderRandomizeModalContent() {
+    const exam = this.activeExamForDetails;
+    const cfg = this.draftRandomizationConfig;
+    if (!exam || !cfg) return;
+
+    const total = Array.isArray(exam.questions) ? exam.questions.length : 0;
+    const mandatoryCount = (cfg.mandatoryQuestionIds || []).length;
+    const content = document.getElementById('teacher-randomize-modal-content');
+    if (!content) return;
+
+    const existingTopics = Array.from(new Set((exam.questions || []).map(q => q.topic || q.category || exam.categoryName || 'General').filter(Boolean)));
+    if (existingTopics.length === 0) existingTopics.push('General');
+
+    // Consultar intentos registrados para trazabilidad
+    let attempts = [];
+    try {
+      const rawAtt = localStorage.getItem(`mentix_exam_attempts_${exam.id}`);
+      if (rawAtt) attempts = JSON.parse(rawAtt) || [];
+    } catch (e) {}
+
+    content.innerHTML = `
+      <!-- Barra superior con breadcrumb y botones de acción -->
+      <div class="t3d-rand-topbar">
+        <div class="t3d-rand-brand-crumbs">
+          <span>🎓 Plataforma Educativa</span>
+          <span>›</span>
+          <span>Cuestionarios</span>
+          <span>›</span>
+          <strong>Configurar cuestionario: ${(exam.title || 'Examen').replace(/</g, '&lt;')}</strong>
+        </div>
+        <div class="t3d-rand-topbar-actions">
+          <button type="button" class="t3d-rand-btn-preview" onclick="window.TeacherView.previewRandomizedExam('${exam.id}')" title="Probar evaluación aleatorizada como estudiante">
+            <span>👁️</span>
+            <span>Vista previa</span>
+          </button>
+          <button type="button" class="t3d-rand-btn-save" onclick="window.TeacherView.saveExamRandomization('${exam.id}')" title="Guardar cambios">
+            <span>💾</span>
+            <span>Guardar cambios</span>
+          </button>
+          <button class="t3d-modal-close" style="font-size: 1.6rem; margin-left: 0.35rem;" onclick="window.TeacherView.closeExamDetailsModal()">&times;</button>
+        </div>
+      </div>
+
+      <!-- Layout 2 Columnas -->
+      <div class="t3d-rand-layout">
+        <!-- COLUMNA IZQUIERDA -->
+        <div class="t3d-rand-main-card">
+          <div class="t3d-rand-header-row">
+            <div class="t3d-rand-header-ico">🎲</div>
+            <div>
+              <h2 class="t3d-rand-header-title">Aleatorización de preguntas y respuestas</h2>
+              <p class="t3d-rand-header-sub">Personaliza la evaluación para que cada estudiante reciba un cuestionario distinto.</p>
+            </div>
+          </div>
+
+          <!-- 1. Selección aleatoria de preguntas -->
+          <div class="t3d-rand-setting-box">
+            <div class="t3d-rand-setting-info">
+              <div class="t3d-rand-setting-ico">🎲</div>
+              <div>
+                <h4 class="t3d-rand-setting-title">Selección aleatoria de preguntas</h4>
+                <p class="t3d-rand-setting-desc">El sistema elegirá automáticamente las preguntas del banco.</p>
+              </div>
+            </div>
+            <label class="t3d-ios-switch">
+              <input type="checkbox" id="t3d-rand-enable-toggle" ${cfg.enabled ? 'checked' : ''} onchange="window.TeacherView.onRandomizeConfigChange('enabled', this.checked)">
+              <span class="t3d-ios-slider"></span>
+            </label>
+          </div>
+
+          <!-- Estadísticas: Preguntas disponibles y Preguntas por estudiante -->
+          <div class="t3d-rand-stats-row">
+            <div class="t3d-rand-stat-card">
+              <div class="t3d-rand-stat-ico">📚</div>
+              <div class="t3d-rand-stat-content">
+                <div class="t3d-rand-stat-label">Preguntas disponibles</div>
+                <div class="t3d-rand-stat-num" id="t3d-rand-disp-total">${total}</div>
+              </div>
+            </div>
+            <div class="t3d-rand-stat-card">
+              <div class="t3d-rand-stat-ico">📋</div>
+              <div class="t3d-rand-stat-content">
+                <div class="t3d-rand-stat-label">Preguntas por estudiante <span style="color:#ef4444;">*</span></div>
+                <input
+                  type="number"
+                  id="t3d-rand-input-count"
+                  class="t3d-rand-stat-input"
+                  value="${cfg.questionsPerStudent}"
+                  min="1"
+                  max="${Math.max(1, total)}"
+                  oninput="window.TeacherView.onRandomizeConfigChange('questionsPerStudent', parseInt(this.value, 10) || 1)"
+                />
+                <div class="t3d-rand-stat-hint" id="t3d-rand-count-hint">Cada estudiante responderá ${cfg.questionsPerStudent} de ${total} preguntas.</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 2. Orden aleatorio de preguntas -->
+          <div class="t3d-rand-setting-box">
+            <div class="t3d-rand-setting-info">
+              <div class="t3d-rand-setting-ico">🔀</div>
+              <div>
+                <h4 class="t3d-rand-setting-title">Orden aleatorio de preguntas</h4>
+                <p class="t3d-rand-setting-desc">Las preguntas se mostrarán en un orden diferente para cada estudiante.</p>
+              </div>
+            </div>
+            <label class="t3d-ios-switch">
+              <input type="checkbox" id="t3d-rand-shuffle-q-toggle" ${cfg.shuffleQuestions ? 'checked' : ''} onchange="window.TeacherView.onRandomizeConfigChange('shuffleQuestions', this.checked)">
+              <span class="t3d-ios-slider"></span>
+            </label>
+          </div>
+
+          <!-- 3. Orden aleatorio de opciones de respuesta -->
+          <div class="t3d-rand-setting-box">
+            <div class="t3d-rand-setting-info">
+              <div class="t3d-rand-setting-ico">🔤</div>
+              <div>
+                <h4 class="t3d-rand-setting-title">Orden aleatorio de opciones de respuesta</h4>
+                <p class="t3d-rand-setting-desc">Las opciones (A, B, C, D, ...) se mostrarán en distinto orden.</p>
+              </div>
+            </div>
+            <label class="t3d-ios-switch">
+              <input type="checkbox" id="t3d-rand-shuffle-opt-toggle" ${cfg.shuffleOptions ? 'checked' : ''} onchange="window.TeacherView.onRandomizeConfigChange('shuffleOptions', this.checked)">
+              <span class="t3d-ios-slider"></span>
+            </label>
+          </div>
+
+          <!-- 4. Preguntas obligatorias -->
+          <div class="t3d-rand-setting-box">
+            <div class="t3d-rand-setting-info">
+              <div class="t3d-rand-setting-ico">📌</div>
+              <div>
+                <h4 class="t3d-rand-setting-title">Preguntas obligatorias</h4>
+                <p class="t3d-rand-setting-desc">Selecciona preguntas que siempre deberán aparecer en el cuestionario.</p>
+              </div>
+            </div>
+            <button type="button" class="t3d-rand-btn-select-pill" onclick="window.TeacherView.openMandatoryModal()">
+              <span id="t3d-rand-mandatory-badge">Seleccionar (${mandatoryCount})</span>
+              <span>›</span>
+            </button>
+          </div>
+
+          <!-- 5. Distribución por temática y dificultad (opcional) -->
+          <div class="t3d-rand-setting-box" style="flex-direction: column; align-items: stretch;">
+            <div style="display: flex; align-items: center; justify-content: space-between; width: 100%; gap: 1rem;">
+              <div class="t3d-rand-setting-info">
+                <div class="t3d-rand-setting-ico">🎛️</div>
+                <div>
+                  <h4 class="t3d-rand-setting-title">Distribución por temática y dificultad (opcional)</h4>
+                  <p class="t3d-rand-setting-desc">Define la cantidad de preguntas por temática y nivel.</p>
+                </div>
+              </div>
+              <label class="t3d-ios-switch">
+                <input type="checkbox" id="t3d-rand-dist-toggle" ${cfg.distributionEnabled ? 'checked' : ''} onchange="window.TeacherView.onRandomizeConfigChange('distributionEnabled', this.checked)">
+                <span class="t3d-ios-slider"></span>
+              </label>
+            </div>
+
+            <div id="t3d-rand-dist-rules-container" style="${cfg.distributionEnabled ? 'display: block;' : 'display: none;'}">
+              <div class="t3d-rand-dist-table-wrap">
+                <table class="t3d-rand-dist-table">
+                  <thead>
+                    <tr>
+                      <th style="width: 44%;">Temática</th>
+                      <th style="width: 30%;">Dificultad</th>
+                      <th style="width: 16%;">Cantidad</th>
+                      <th style="width: 10%;"></th>
+                    </tr>
+                  </thead>
+                  <tbody id="t3d-rand-dist-tbody">
+                    ${this.renderDistributionRowsHtml(cfg.distributionRules, existingTopics)}
+                  </tbody>
+                </table>
+              </div>
+              <button type="button" class="t3d-rand-btn-add-rule" onclick="window.TeacherView.addDistributionRule()">
+                <span>+</span>
+                <span>Agregar regla</span>
+              </button>
+            </div>
+          </div>
+
+          ${attempts.length > 0 ? `
+            <div class="t3d-rand-setting-box" style="flex-direction: column; align-items: stretch; margin-top: 0.9rem;">
+              <div style="display: flex; align-items: center; justify-content: space-between;">
+                <div class="t3d-rand-setting-info">
+                  <div class="t3d-rand-setting-ico">🧾</div>
+                  <div>
+                    <h4 class="t3d-rand-setting-title">Trazabilidad de intentos (${attempts.length})</h4>
+                    <p class="t3d-rand-setting-desc">Cuestionarios exactos generados recientemente para cada estudiante.</p>
+                  </div>
+                </div>
+              </div>
+              <div style="display: flex; flex-direction: column; gap: 0.45rem; max-height: 150px; overflow-y: auto; margin-top: 0.5rem;">
+                ${attempts.slice(-6).reverse().map(att => `
+                  <div style="display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; font-size: 0.78rem; padding: 0.45rem 0.7rem; border-radius: 10px; background: rgba(124, 58, 237, 0.08); border: 1px solid rgba(124, 58, 237, 0.2);">
+                    <span><strong>👤 ${(att.studentName || 'Estudiante').replace(/</g, '&lt;')}</strong> (${att.questionNumbers?.length || 0} preg.)</span>
+                    <span style="font-family: monospace; opacity: 0.85;">[#${(att.questionNumbers || []).join(', #')}]</span>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+          ` : ''}
+        </div>
+
+        <!-- COLUMNA DERECHA -->
+        <div class="t3d-rand-right-col">
+          <!-- Tarjeta 1: ¿Cómo funciona? -->
+          <div class="t3d-rand-card-how">
+            <h3 class="t3d-rand-card-how-title">
+              <span>🎯</span>
+              <span>¿Cómo funciona?</span>
+            </h3>
+            <p class="t3d-rand-card-how-p" id="t3d-rand-how-text">
+              Con un banco de <strong>${total}</strong> preguntas y una evaluación de <strong>${cfg.questionsPerStudent}</strong> preguntas, cada estudiante recibirá una selección aleatoria de <strong>${cfg.questionsPerStudent}</strong> preguntas, con un orden distinto y opciones de respuesta reordenadas.
+            </p>
+          </div>
+
+          <!-- Tarjeta 2: Vista previa de la aleatorización -->
+          <div class="t3d-rand-card-preview">
+            <div class="t3d-rand-card-prev-title">
+              <div style="display: flex; align-items: center; gap: 0.45rem;">
+                <span>👁️</span>
+                <span>Vista previa de la aleatorización</span>
+              </div>
+              <button
+                type="button"
+                class="t3d-btn-details-badge"
+                style="padding: 0.22rem 0.6rem; font-size: 0.72rem;"
+                onclick="window.TeacherView.updateSimulationPreview()"
+                title="Regenerar simulación"
+              >
+                🔄 Simular
+              </button>
+            </div>
+
+            <div class="t3d-rand-prev-box">
+              <div class="t3d-rand-prev-box-label">
+                <span>📚</span>
+                <span>Banco de preguntas (${total})</span>
+              </div>
+              <div class="t3d-sim-chips-container" id="t3d-sim-bank-chips"></div>
+            </div>
+
+            <div class="t3d-rand-arrow-down">↓</div>
+
+            <div class="t3d-rand-engine-box">
+              <div class="t3d-rand-engine-title">
+                <span>🎲</span>
+                <span>Motor de aleatorización</span>
+              </div>
+              <div class="t3d-rand-engine-desc" id="t3d-sim-engine-desc">
+                Selección de ${cfg.questionsPerStudent} preguntas por estudiante y orden aleatorio de respuestas
+              </div>
+            </div>
+
+            <div class="t3d-rand-arrow-down">↓</div>
+
+            <div class="t3d-rand-student-row s1">
+              <div class="t3d-rand-student-header"><span>👤</span><span>Estudiante 1</span></div>
+              <div class="t3d-sim-chips-container" id="t3d-sim-student1-chips"></div>
+            </div>
+
+            <div class="t3d-rand-student-row s2">
+              <div class="t3d-rand-student-header"><span>👤</span><span>Estudiante 2</span></div>
+              <div class="t3d-sim-chips-container" id="t3d-sim-student2-chips"></div>
+            </div>
+
+            <div class="t3d-rand-student-row s3">
+              <div class="t3d-rand-student-header"><span>👤</span><span>Estudiante 3</span></div>
+              <div class="t3d-sim-chips-container" id="t3d-sim-student3-chips"></div>
+            </div>
+          </div>
+
+          <!-- Tarjeta 3: Beneficios -->
+          <div class="t3d-rand-card-benefits">
+            <h3 class="t3d-rand-card-ben-title">
+              <span>✅</span>
+              <span>Beneficios</span>
+            </h3>
+            <ul class="t3d-rand-ben-list">
+              <li><span>✓</span> Evaluaciones individualizadas.</li>
+              <li><span>✓</span> Reduce la copia entre estudiantes.</li>
+              <li><span>✓</span> Mantiene la calificación automática.</li>
+              <li><span>✓</span> Registra y conserva el cuestionario de cada intento.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    `;
+  },
+
+  onRandomizeConfigChange(field, value) {
+    if (!this.draftRandomizationConfig || !this.activeExamForDetails) return;
+    const total = Array.isArray(this.activeExamForDetails.questions) ? this.activeExamForDetails.questions.length : 0;
+
+    if (field === 'questionsPerStudent') {
+      let n = parseInt(value, 10) || 1;
+      if (n < 1) n = 1;
+      if (total > 0 && n > total) n = total;
+      this.draftRandomizationConfig.questionsPerStudent = n;
+
+      const hint = document.getElementById('t3d-rand-count-hint');
+      if (hint) hint.textContent = `Cada estudiante responderá ${n} de ${total} preguntas.`;
+      const how = document.getElementById('t3d-rand-how-text');
+      if (how) {
+        how.innerHTML = `Con un banco de <strong>${total}</strong> preguntas y una evaluación de <strong>${n}</strong> preguntas, cada estudiante recibirá una selección aleatoria de <strong>${n}</strong> preguntas, con un orden distinto y opciones de respuesta reordenadas.`;
+      }
+      const eng = document.getElementById('t3d-sim-engine-desc');
+      if (eng) {
+        eng.textContent = `Selección de ${n} preguntas por estudiante y ${this.draftRandomizationConfig.shuffleOptions ? 'orden aleatorio de respuestas' : 'orden fijo de respuestas'}`;
+      }
+    } else {
+      this.draftRandomizationConfig[field] = value;
+      if (field === 'distributionEnabled') {
+        const cont = document.getElementById('t3d-rand-dist-rules-container');
+        if (cont) cont.style.display = value ? 'block' : 'none';
+        if (value && (!this.draftRandomizationConfig.distributionRules || this.draftRandomizationConfig.distributionRules.length === 0)) {
+          this.addDistributionRule();
+          return;
+        }
+      }
+    }
+
+    this.updateSimulationPreview();
+  },
+
+  addDistributionRule() {
+    if (!this.draftRandomizationConfig || !this.activeExamForDetails) return;
+    if (!Array.isArray(this.draftRandomizationConfig.distributionRules)) {
+      this.draftRandomizationConfig.distributionRules = [];
+    }
+    const existingTopics = Array.from(new Set((this.activeExamForDetails.questions || []).map(q => q.topic || q.category || this.activeExamForDetails.categoryName || 'General').filter(Boolean)));
+    const defaultTopic = existingTopics[this.draftRandomizationConfig.distributionRules.length % existingTopics.length] || 'General';
+    const diffs = ['media', 'alta', 'baja'];
+    const defaultDiff = diffs[this.draftRandomizationConfig.distributionRules.length % diffs.length];
+
+    this.draftRandomizationConfig.distributionRules.push({
+      topic: defaultTopic,
+      difficulty: defaultDiff,
+      count: 2
+    });
+    const tbody = document.getElementById('t3d-rand-dist-tbody');
+    if (tbody) {
+      tbody.innerHTML = this.renderDistributionRowsHtml(this.draftRandomizationConfig.distributionRules, existingTopics);
+    }
+    this.updateSimulationPreview();
+  },
+
+  removeDistributionRule(idx) {
+    if (!this.draftRandomizationConfig || !Array.isArray(this.draftRandomizationConfig.distributionRules)) return;
+    this.draftRandomizationConfig.distributionRules.splice(idx, 1);
+    const existingTopics = Array.from(new Set((this.activeExamForDetails?.questions || []).map(q => q.topic || q.category || this.activeExamForDetails?.categoryName || 'General').filter(Boolean)));
+    const tbody = document.getElementById('t3d-rand-dist-tbody');
+    if (tbody) {
+      tbody.innerHTML = this.renderDistributionRowsHtml(this.draftRandomizationConfig.distributionRules, existingTopics);
+    }
+    this.updateSimulationPreview();
+  },
+
+  onDistributionRuleChange(idx, field, value) {
+    if (!this.draftRandomizationConfig?.distributionRules?.[idx]) return;
+    this.draftRandomizationConfig.distributionRules[idx][field] = value;
+    if (field === 'difficulty') {
+      const existingTopics = Array.from(new Set((this.activeExamForDetails?.questions || []).map(q => q.topic || q.category || this.activeExamForDetails?.categoryName || 'General').filter(Boolean)));
+      const tbody = document.getElementById('t3d-rand-dist-tbody');
+      if (tbody) {
+        tbody.innerHTML = this.renderDistributionRowsHtml(this.draftRandomizationConfig.distributionRules, existingTopics);
+      }
+    }
+    this.updateSimulationPreview();
+  },
+
+  openMandatoryModal() {
+    const exam = this.activeExamForDetails;
+    const cfg = this.draftRandomizationConfig;
+    if (!exam || !cfg) return;
+    const modal = document.getElementById('teacher-mandatory-modal');
+    const list = document.getElementById('teacher-mandatory-list');
+    if (!modal || !list) return;
+
+    const questions = Array.isArray(exam.questions) ? exam.questions : [];
+    const selectedSet = new Set((cfg.mandatoryQuestionIds || []).map(String));
+
+    if (questions.length === 0) {
+      list.innerHTML = `<p style="text-align:center; color:#94a3b8; padding:1.5rem;">Este examen aún no tiene preguntas en el banco.</p>`;
+    } else {
+      list.innerHTML = questions.map((q, idx) => {
+        const qKey = String(q.id || idx);
+        const checked = selectedSet.has(qKey);
+        const text = (q.text || q.question || `Pregunta #${idx + 1}`).replace(/</g, '&lt;');
+        return `
+          <label style="display:flex; align-items:flex-start; gap:0.75rem; padding:0.75rem 0.9rem; border-radius:12px; border:1.5px solid ${checked ? '#7c3aed' : 'rgba(148,163,184,0.3)'}; background:${checked ? 'rgba(124,58,237,0.08)' : 'transparent'}; cursor:pointer;">
+            <input type="checkbox" ${checked ? 'checked' : ''} style="margin-top:0.2rem; width:18px; height:18px; accent-color:#7c3aed;" onchange="window.TeacherView.toggleMandatoryQuestion('${qKey.replace(/'/g, "\\'")}', this.checked)" />
+            <div style="flex:1;">
+              <div style="font-weight:850; font-size:0.86rem;">Pregunta #${idx + 1}</div>
+              <div style="font-size:0.82rem; opacity:0.85; line-height:1.35;">${text.slice(0, 140)}${text.length > 140 ? '...' : ''}</div>
+            </div>
+          </label>
+        `;
+      }).join('');
+    }
+
+    const isDark = document.getElementById('teacher-randomize-modal')?.classList.contains('teacher-theme-dark');
+    modal.classList.toggle('teacher-theme-dark', Boolean(isDark));
+    modal.style.display = 'flex';
+  },
+
+  closeMandatoryModal() {
+    const modal = document.getElementById('teacher-mandatory-modal');
+    if (modal) modal.style.display = 'none';
+    const badge = document.getElementById('t3d-rand-mandatory-badge');
+    if (badge && this.draftRandomizationConfig) {
+      badge.textContent = `Seleccionar (${(this.draftRandomizationConfig.mandatoryQuestionIds || []).length})`;
+    }
+    this.updateSimulationPreview();
+  },
+
+  toggleMandatoryQuestion(qKey, isChecked) {
+    if (!this.draftRandomizationConfig) return;
+    const arr = new Set((this.draftRandomizationConfig.mandatoryQuestionIds || []).map(String));
+    if (isChecked) arr.add(String(qKey));
+    else arr.delete(String(qKey));
+    this.draftRandomizationConfig.mandatoryQuestionIds = Array.from(arr);
+  },
+
+  simulateSingleStudentOrder(total, cfg, previousSignatures) {
+    if (total <= 0) return [];
+    const target = cfg.enabled ? Math.max(1, Math.min(Number(cfg.questionsPerStudent) || total, total)) : total;
+    const exam = this.activeExamForDetails;
+    const allQ = Array.isArray(exam?.questions) ? exam.questions : [];
+    const mandatoryIds = new Set((cfg.mandatoryQuestionIds || []).map(String));
+
+    let bestOrder = null;
+    for (let attempt = 0; attempt < 8; attempt++) {
+      const picked = [];
+      const pickedIdx = new Set();
+
+      // 1. Obligatorias
+      allQ.forEach((q, idx) => {
+        if (mandatoryIds.has(String(q.id || idx)) && picked.length < target) {
+          pickedIdx.add(idx);
+          picked.push(idx + 1);
+        }
+      });
+
+      // 2. Restantes aleatorias
+      const pool = [];
+      for (let i = 0; i < total; i++) {
+        if (!pickedIdx.has(i)) pool.push(i + 1);
+      }
+      if (cfg.enabled) {
+        for (let i = pool.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [pool[i], pool[j]] = [pool[j], pool[i]];
+        }
+      }
+      while (picked.length < target && pool.length > 0) {
+        picked.push(pool.shift());
+      }
+
+      // 3. Orden aleatorio de preguntas
+      if (cfg.shuffleQuestions) {
+        for (let i = picked.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [picked[i], picked[j]] = [picked[j], picked[i]];
+        }
+      } else {
+        picked.sort((a, b) => a - b);
+      }
+
+      const sig = picked.join(',');
+      bestOrder = picked;
+      if (!previousSignatures.has(sig)) {
+        previousSignatures.add(sig);
+        break;
+      }
+    }
+    return bestOrder || [];
+  },
+
+  updateSimulationPreview() {
+    const exam = this.activeExamForDetails;
+    const cfg = this.draftRandomizationConfig;
+    if (!exam || !cfg) return;
+
+    const total = Array.isArray(exam.questions) ? exam.questions.length : 0;
+    const bankEl = document.getElementById('t3d-sim-bank-chips');
+    const s1El = document.getElementById('t3d-sim-student1-chips');
+    const s2El = document.getElementById('t3d-sim-student2-chips');
+    const s3El = document.getElementById('t3d-sim-student3-chips');
+    if (!bankEl || !s1El || !s2El || !s3El) return;
+
+    if (total === 0) {
+      bankEl.innerHTML = `<span style="font-size:0.78rem; color:#94a3b8;">Agrega preguntas al examen para ver la simulación.</span>`;
+      s1El.innerHTML = s2El.innerHTML = s3El.innerHTML = `<span style="font-size:0.75rem; opacity:0.65;">Sin preguntas</span>`;
+      return;
+    }
+
+    // Mostrar banco (si son más de 12, resumir con "...")
+    let bankHtml = '';
+    if (total <= 12) {
+      for (let i = 1; i <= total; i++) {
+        bankHtml += `<span class="t3d-sim-chip t3d-sim-chip-bank">${i}</span>`;
+      }
+    } else {
+      for (let i = 1; i <= 5; i++) bankHtml += `<span class="t3d-sim-chip t3d-sim-chip-bank">${i}</span>`;
+      bankHtml += `<span style="font-weight:900; color:#94a3b8; padding:0 4px;">...</span>`;
+      for (let i = total - 4; i <= total; i++) bankHtml += `<span class="t3d-sim-chip t3d-sim-chip-bank">${i}</span>`;
+    }
+    bankEl.innerHTML = bankHtml;
+
+    const sigs = new Set();
+    const o1 = this.simulateSingleStudentOrder(total, cfg, sigs);
+    const o2 = this.simulateSingleStudentOrder(total, cfg, sigs);
+    const o3 = this.simulateSingleStudentOrder(total, cfg, sigs);
+
+    const renderChips = (arr, cls) => arr.map(n => `<span class="t3d-sim-chip ${cls}" title="Pregunta #${n}">${n}</span>`).join('');
+    s1El.innerHTML = renderChips(o1, 't3d-sim-chip-s1');
+    s2El.innerHTML = renderChips(o2, 't3d-sim-chip-s2');
+    s3El.innerHTML = renderChips(o3, 't3d-sim-chip-s3');
+  },
+
+  async saveExamRandomization(examId) {
+    const exam = this.activeExamForDetails;
+    const cfg = this.draftRandomizationConfig;
+    if (!exam || !cfg) return;
+
+    const total = Array.isArray(exam.questions) ? exam.questions.length : 0;
+    if (cfg.enabled && total > 0) {
+      if (cfg.questionsPerStudent < 1 || cfg.questionsPerStudent > total) {
+        alert(`⚠️ La cantidad de preguntas por estudiante debe estar entre 1 y ${total}.`);
+        return;
+      }
+      if ((cfg.mandatoryQuestionIds || []).length > cfg.questionsPerStudent) {
+        alert(`⚠️ Has seleccionado ${cfg.mandatoryQuestionIds.length} preguntas obligatorias, pero el límite por estudiante es ${cfg.questionsPerStudent}. Ajusta alguno de los dos valores.`);
+        return;
+      }
+    }
+
+    exam.randomizationConfig = JSON.parse(JSON.stringify(cfg));
+    exam.updatedAt = Date.now();
+
+    // Actualizar en appState.challenges
+    if (window.appState && Array.isArray(window.appState.challenges)) {
+      const idx = window.appState.challenges.findIndex(c => c && String(c.id).trim() === String(exam.id).trim());
+      if (idx !== -1) {
+        window.appState.challenges[idx].randomizationConfig = exam.randomizationConfig;
+        window.appState.challenges[idx].updatedAt = exam.updatedAt;
+      }
+    }
+
+    // Limpiar caché de intentos solo previos para este examen para que el docente pueda probar de inmediato
+    try {
+      Object.keys(sessionStorage).forEach(k => {
+        if (k.startsWith(`mentix_rand_attempt_${exam.id}_`)) sessionStorage.removeItem(k);
+      });
+    } catch (e) {}
+
+    if (typeof saveGlobalState === 'function') saveGlobalState(window.appState);
+
+    // Sincronizar con backend /api/challenges si está disponible
+    try {
+      await fetch('/api/challenges', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(exam)
+      });
+    } catch (e) {
+      console.warn('Guardado local exitoso; sincronización en la nube omitida:', e);
+    }
+
+    this.closeExamDetailsModal();
+    if (window.appRouter?.currentView === 'teacher') {
+      this.render(true);
+    } else if (window.appRouter?.currentView === 'admin' && window.AdminView?.render) {
+      window.AdminView.render();
+    }
+    alert('✅ ¡Configuración de aleatorización inteligente guardada exitosamente!');
+  },
+
+  previewRandomizedExam(examId) {
+    // Aplicar temporalmente el borrador y lanzar prueba como estudiante
+    if (this.activeExamForDetails && this.draftRandomizationConfig) {
+      this.activeExamForDetails.randomizationConfig = JSON.parse(JSON.stringify(this.draftRandomizationConfig));
+      try {
+        Object.keys(sessionStorage).forEach(k => {
+          if (k.startsWith(`mentix_rand_attempt_${this.activeExamForDetails.id}_SOLO`)) {
+            sessionStorage.removeItem(k);
+          }
+        });
+      } catch (e) {}
+    }
+    this.closeExamDetailsModal();
+    if (window.appRouter && typeof window.appRouter.startSinglePlayer === 'function') {
+      window.appRouter.startSinglePlayer(examId);
+    }
   }
 };

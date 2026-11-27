@@ -24,10 +24,188 @@ window.GameView = {
   studentQuestionOrder: null,
   playerOptionMapping: null,
 
+  generateRandomizedQuestionSet(challenge, pin, playerId) {
+    const config = challenge?.randomizationConfig;
+    const allQ = Array.isArray(challenge?.questions) ? challenge.questions : [];
+    const total = allQ.length;
+    if (!config || !config.enabled || total === 0) return allQ;
+
+    const count = Math.max(1, Math.min(parseInt(config.questionsPerStudent, 10) || total, total));
+    const mandatoryIds = Array.isArray(config.mandatoryQuestionIds) ? config.mandatoryQuestionIds.map(String) : [];
+
+    // Semilla determinista para sala "presented" (todos ven la misma selección)
+    let randFn = Math.random;
+    if (!this.isSolo && pin && this.room?.roomType !== 'normal') {
+      let seed = 0;
+      String(pin).split('').forEach(ch => { seed = (seed * 31 + ch.charCodeAt(0)) >>> 0; });
+      seed = (seed + total * 7919) >>> 0;
+      randFn = () => {
+        seed = (seed + 0x6D2B79F5) >>> 0;
+        let t = seed;
+        t = Math.imul(t ^ (t >>> 15), t | 1);
+        t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+        return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+      };
+    }
+
+    const chosen = [];
+    const chosenIndices = new Set();
+
+    // 1. Preguntas obligatorias
+    mandatoryIds.forEach(idOrIdx => {
+      const idx = allQ.findIndex((q, i) => String(q.id || i) === idOrIdx);
+      if (idx !== -1 && !chosenIndices.has(idx) && chosen.length < count) {
+        chosenIndices.add(idx);
+        chosen.push({ ...allQ[idx], _originalBankIndex: idx });
+      }
+    });
+
+    // 2. Distribución por temática y dificultad (opcional)
+    if (config.distributionEnabled && Array.isArray(config.distributionRules) && config.distributionRules.length > 0) {
+      config.distributionRules.forEach(rule => {
+        if (!rule || !rule.count) return;
+        const needed = parseInt(rule.count, 10) || 0;
+        const matches = [];
+        allQ.forEach((q, idx) => {
+          if (chosenIndices.has(idx)) return;
+          const qTopic = String(q.topic || q.category || challenge.categoryName || 'General').toLowerCase();
+          const qDiff = String(q.difficulty || 'media').toLowerCase();
+          const matchesTopic = !rule.topic || qTopic === String(rule.topic).toLowerCase();
+          const matchesDiff = !rule.difficulty || qDiff === String(rule.difficulty).toLowerCase();
+          if (matchesTopic && matchesDiff) matches.push(idx);
+        });
+        for (let i = matches.length - 1; i > 0; i--) {
+          const j = Math.floor(randFn() * (i + 1));
+          [matches[i], matches[j]] = [matches[j], matches[i]];
+        }
+        matches.slice(0, needed).forEach(idx => {
+          if (chosen.length < count && !chosenIndices.has(idx)) {
+            chosenIndices.add(idx);
+            chosen.push({ ...allQ[idx], _originalBankIndex: idx });
+          }
+        });
+      });
+    }
+
+    // 3. Completar aleatoriamente sin duplicados
+    const remaining = [];
+    allQ.forEach((_, idx) => {
+      if (!chosenIndices.has(idx)) remaining.push(idx);
+    });
+    for (let i = remaining.length - 1; i > 0; i--) {
+      const j = Math.floor(randFn() * (i + 1));
+      [remaining[i], remaining[j]] = [remaining[j], remaining[i]];
+    }
+    while (chosen.length < count && remaining.length > 0) {
+      const idx = remaining.pop();
+      chosenIndices.add(idx);
+      chosen.push({ ...allQ[idx], _originalBankIndex: idx });
+    }
+
+    // 4. Orden aleatorio de preguntas
+    if (config.shuffleQuestions !== false) {
+      for (let i = chosen.length - 1; i > 0; i--) {
+        const j = Math.floor(randFn() * (i + 1));
+        [chosen[i], chosen[j]] = [chosen[j], chosen[i]];
+      }
+    } else {
+      chosen.sort((a, b) => (a._originalBankIndex ?? 0) - (b._originalBankIndex ?? 0));
+    }
+
+    // 5. Orden aleatorio de opciones preservando la respuesta correcta
+    return chosen.map((q, qIdx) => {
+      const isTextOrOpen = q.type === 'text' || q.type === 'open';
+      if (config.shuffleOptions !== false && !isTextOrOpen && Array.isArray(q.options) && q.options.length > 1) {
+        const optIndices = q.options.map((_, i) => i);
+        for (let i = optIndices.length - 1; i > 0; i--) {
+          const j = Math.floor(randFn() * (i + 1));
+          [optIndices[i], optIndices[j]] = [optIndices[j], optIndices[i]];
+        }
+        const shuffledOptions = optIndices.map(i => q.options[i]);
+        let mappedCorrect = q.correctAnswer;
+        if (Array.isArray(q.correctAnswer)) {
+          mappedCorrect = q.correctAnswer.map(c => optIndices.indexOf(c));
+        } else if (typeof q.correctAnswer === 'number') {
+          mappedCorrect = optIndices.indexOf(q.correctAnswer);
+        }
+        return {
+          ...q,
+          options: shuffledOptions,
+          correctAnswer: mappedCorrect,
+          _shuffledOptions: true,
+          _optionShuffleMapping: optIndices,
+          _originalQuestionIndex: q._originalBankIndex !== undefined ? q._originalBankIndex : qIdx
+        };
+      }
+      return {
+        ...q,
+        _shuffledOptions: false,
+        _originalQuestionIndex: q._originalBankIndex !== undefined ? q._originalBankIndex : qIdx
+      };
+    });
+  },
+
+  applyRandomizationToCurrentSession(pin, playerId) {
+    if (!this.challenge || !this.challenge.randomizationConfig?.enabled) return;
+    if (this.challenge._isRandomized) return;
+    const allQuestions = this.challenge.questions || [];
+    if (allQuestions.length === 0) return;
+
+    const effectivePin = pin || 'SOLO';
+    const effectivePlayer = playerId || window.appState?.currentUser?.id || 'solo_player';
+    const storageKey = `mentix_rand_attempt_${this.challenge.id}_${effectivePin}_${effectivePlayer}`;
+    let selected = null;
+    try {
+      const cached = sessionStorage.getItem(storageKey);
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (Array.isArray(parsed) && parsed.length > 0) selected = parsed;
+      }
+    } catch (e) {}
+
+    if (!selected) {
+      selected = this.generateRandomizedQuestionSet(this.challenge, effectivePin, effectivePlayer);
+      try {
+        sessionStorage.setItem(storageKey, JSON.stringify(selected));
+      } catch (e) {}
+
+      // Registrar trazabilidad del intento para consulta del docente
+      try {
+        const logKey = `mentix_exam_attempts_${this.challenge.id}`;
+        const prev = JSON.parse(localStorage.getItem(logKey) || '[]');
+        const studentName = window.realtimeEngine?.localPlayer?.nickname || window.appState?.currentUser?.name || 'Estudiante';
+        prev.push({
+          attemptId: 'att_' + Date.now(),
+          studentId: effectivePlayer,
+          studentName,
+          pin: effectivePin,
+          timestamp: Date.now(),
+          questionNumbers: selected.map(q => (q._originalQuestionIndex ?? 0) + 1)
+        });
+        localStorage.setItem(logKey, JSON.stringify(prev.slice(-40)));
+      } catch (e) {}
+    }
+
+    this.originalChallengeQuestions = allQuestions;
+    this.challenge = {
+      ...this.challenge,
+      questions: selected,
+      _isRandomized: true
+    };
+    if (this.room) {
+      this.room.challenge = this.challenge;
+    }
+  },
+
   generateStudentQuestionOrder() {
     const total = this.challenge?.questions?.length || 0;
     if (total <= 1) {
       this.studentQuestionOrder = [0];
+      return;
+    }
+    // Si el motor de Aleatorización Inteligente ya generó el subconjunto y orden definitivo, respetarlo 1 a 1
+    if (this.challenge?._isRandomized) {
+      this.studentQuestionOrder = Array.from({ length: total }, (_, i) => i);
       return;
     }
     const arr = Array.from({ length: total }, (_, i) => i);
@@ -110,6 +288,7 @@ window.GameView = {
 
     this.challenge = resolved;
     this.currentQuestionIndex = (options && typeof options.startIndex === 'number') ? options.startIndex : 0;
+    this.applyRandomizationToCurrentSession('SOLO', window.appState?.currentUser?.id || 'solo_player');
     this.generateStudentQuestionOrder();
     this.gameMode = gameMode || 'clasico';
     this.modeConfig = {};
@@ -172,6 +351,9 @@ window.GameView = {
     this.gameMode = room.gameMode || 'clasico';
     this.modeConfig = room.modeConfig || {};
     this.currentQuestionIndex = 0;
+    if (!this.isSelfPaced() && this.challenge?.randomizationConfig?.enabled) {
+      this.applyRandomizationToCurrentSession(room.pin, 'host');
+    }
     // 🎲 Preguntas aleatorias también en "Preguntas Presentadas" (mismo orden para profesor y alumnos)
     if (!this.isSelfPaced() && this.room?.randomizeQuestions !== false) {
       this.generateStudentQuestionOrder();
@@ -253,6 +435,12 @@ window.GameView = {
 
     this.gameMode = detectedMode || 'clasico';
     this.currentQuestionIndex = this.isSelfPaced() ? 0 : (this.room?.currentQuestionIndex || 0);
+    if (this.challenge?.randomizationConfig?.enabled) {
+      this.applyRandomizationToCurrentSession(
+        this.room?.pin,
+        this.isSelfPaced() ? (window.realtimeEngine?.localPlayer?.id || window.appState?.currentUser?.id || 'player') : 'host'
+      );
+    }
     if (this.room?.randomizeQuestions !== false) {
       this.generateStudentQuestionOrder();
     } else {
@@ -1148,7 +1336,8 @@ window.GameView = {
     let displayOptions = rawOptions;
     this.playerOptionMapping = null;
 
-    if (isNormalRoom && rawOptions.length > 1 && !isTextOrOpen) {
+    const allowOptShuffle = !q._shuffledOptions && !(this.challenge?.randomizationConfig?.enabled && this.challenge.randomizationConfig.shuffleOptions === false);
+    if (isNormalRoom && rawOptions.length > 1 && !isTextOrOpen && allowOptShuffle) {
       const indices = rawOptions.map((_, i) => i);
       for (let i = indices.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
@@ -1341,7 +1530,8 @@ window.GameView = {
     let displayOptions = rawOptions;
     this.playerOptionMapping = null;
 
-    if (rawOptions.length > 1 && !isTextOrOpen) {
+    const allowSoloOptShuffle = !q._shuffledOptions && !(this.challenge?.randomizationConfig?.enabled && this.challenge.randomizationConfig.shuffleOptions === false);
+    if (rawOptions.length > 1 && !isTextOrOpen && allowSoloOptShuffle) {
       const indices = rawOptions.map((_, i) => i);
       for (let i = indices.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
