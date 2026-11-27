@@ -2907,16 +2907,16 @@ body.light-theme {
 }
 
 /* Títulos y Encabezados en Modo Claro (Excluyendo proyector de diapositivas, podio y pantallas de estadísticas de juego) */
-body.light-theme h1:not(.gradient-title):not(#presentation-slide-canvas *):not(.slide-custom-title):not(#view-podium *):not(#view-game *):not(#view-leaderboard *):not(.podium-title-3d),
-body.light-theme h2:not(.gradient-title):not(#presentation-slide-canvas *):not(#view-podium *):not(#view-game *):not(#view-leaderboard *):not(.podium-table-title),
-body.light-theme h3:not(.gradient-title):not(#presentation-slide-canvas *):not(#view-podium *):not(#view-game *):not(#view-leaderboard *),
-body.light-theme h4:not(#presentation-slide-canvas *):not(#view-podium *):not(#view-game *):not(#view-leaderboard *),
-body.light-theme h5:not(#presentation-slide-canvas *):not(#view-podium *):not(#view-game *):not(#view-leaderboard *),
-body.light-theme h6:not(#presentation-slide-canvas *):not(#view-podium *):not(#view-game *):not(#view-leaderboard *) {
+body.light-theme h1:not(.gradient-title):not(#presentation-slide-canvas *):not(.slide-custom-title):not(#view-podium *):not(#view-game *):not(#view-leaderboard *):not(.podium-title-3d):not(.teacher-theme-dark *):not(#view-teacher.teacher-theme-dark *),
+body.light-theme h2:not(.gradient-title):not(#presentation-slide-canvas *):not(#view-podium *):not(#view-game *):not(#view-leaderboard *):not(.podium-table-title):not(.teacher-theme-dark *):not(#view-teacher.teacher-theme-dark *),
+body.light-theme h3:not(.gradient-title):not(#presentation-slide-canvas *):not(#view-podium *):not(#view-game *):not(#view-leaderboard *):not(.teacher-theme-dark *):not(#view-teacher.teacher-theme-dark *),
+body.light-theme h4:not(#presentation-slide-canvas *):not(#view-podium *):not(#view-game *):not(#view-leaderboard *):not(.teacher-theme-dark *):not(#view-teacher.teacher-theme-dark *),
+body.light-theme h5:not(#presentation-slide-canvas *):not(#view-podium *):not(#view-game *):not(#view-leaderboard *):not(.teacher-theme-dark *):not(#view-teacher.teacher-theme-dark *),
+body.light-theme h6:not(#presentation-slide-canvas *):not(#view-podium *):not(#view-game *):not(#view-leaderboard *):not(.teacher-theme-dark *):not(#view-teacher.teacher-theme-dark *) {
   color: #0f172a !important;
 }
 
-body.light-theme p:not(#presentation-slide-canvas *) {
+body.light-theme p:not(#presentation-slide-canvas *):not(.teacher-theme-dark *):not(#view-teacher.teacher-theme-dark *) {
   color: var(--text-secondary);
 }
 

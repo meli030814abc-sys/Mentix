@@ -202,6 +202,10 @@ window.TeacherView = {
       container.classList.toggle('teacher-theme-light', isLight);
       container.classList.toggle('teacher-theme-dark', !isLight);
     }
+    document.querySelectorAll('.t3d-modal-backdrop').forEach(m => {
+      m.classList.toggle('teacher-theme-light', isLight);
+      m.classList.toggle('teacher-theme-dark', !isLight);
+    });
     const iconEl = document.getElementById('t3d-theme-icon');
     const textEl = document.getElementById('t3d-theme-text');
     if (iconEl) {
