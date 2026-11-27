@@ -142,5 +142,21 @@
     "lastLoginAt": "2026-11-25T02:40:31.386Z",
     "pwd": "1fdc86bde0763bae4ad48176bdc17f23cf1fca2157b690dafd62abfcb5ac2df1",
     "createdAt": "2026-11-25T02:39:46.808Z"
+  },
+  {
+    "id": "user_1795797568394",
+    "name": "jhcc",
+    "username": "gcc",
+    "email": "gatitaxd679@gmail.comm",
+    "avatar": "👨‍🏫",
+    "role": "teacher",
+    "xp": 100,
+    "level": 1,
+    "levelName": "Principiante",
+    "institution": "Comunidad MENTIX",
+    "isBlocked": false,
+    "lastLoginAt": "2026-11-27T16:39:27.710Z",
+    "pwd": "1a5beffd1eb5f46d0498eaf3c1ada9dd5a70061a6992ec9e3d3c6bfe5b22f9d5",
+    "createdAt": "2026-11-27T16:39:27.710Z"
   }
 ]
