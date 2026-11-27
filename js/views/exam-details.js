@@ -943,10 +943,41 @@ window.ExamDetailsView = {
     this.render();
   },
 
-  simulateStudent(total, target, mandatoryNums, cfg, usedSigs) {
+  cryptoRand() {
+    try {
+      if (window.crypto && typeof window.crypto.getRandomValues === 'function') {
+        const b = new Uint32Array(1);
+        window.crypto.getRandomValues(b);
+        return b[0] / 4294967296;
+      }
+    } catch (e) {}
+    return Math.random();
+  },
+
+  strongMix(arr, avoidSame = true) {
+    const out = [...arr];
+    const n = out.length;
+    if (n <= 1) return out;
+    const orig = out.join(',');
+    for (let pass = 0; pass < 2; pass++) {
+      for (let i = n - 1; i > 0; i--) {
+        const j = Math.floor(this.cryptoRand() * (i + 1));
+        [out[i], out[j]] = [out[j], out[i]];
+      }
+    }
+    if (avoidSame && out.join(',') === orig) {
+      const shift = 1 + Math.floor(this.cryptoRand() * (n - 1));
+      return out.map((_, i) => out[(i + shift) % n]);
+    }
+    return out;
+  },
+
+  simulateStudent(total, target, mandatoryNums, cfg, previousOrders) {
     if (total <= 0) return [];
     let best = [];
-    for (let t = 0; t < 10; t++) {
+    let bestScore = Infinity;
+
+    for (let t = 0; t < 24; t++) {
       const picked = [];
       const seen = new Set();
       mandatoryNums.forEach(num => {
@@ -959,49 +990,64 @@ window.ExamDetailsView = {
       for (let i = 1; i <= total; i++) {
         if (!seen.has(i)) pool.push(i);
       }
-      if (cfg.enabled) {
-        for (let i = pool.length - 1; i > 0; i--) {
-          const j = Math.floor(Math.random() * (i + 1));
-          [pool[i], pool[j]] = [pool[j], pool[i]];
-        }
-      }
-      while (picked.length < target && pool.length > 0) picked.push(pool.shift());
-
-      if (cfg.shuffleQuestions) {
-        for (let i = picked.length - 1; i > 0; i--) {
-          const j = Math.floor(Math.random() * (i + 1));
-          [picked[i], picked[j]] = [picked[j], picked[i]];
-        }
-      } else {
-        picked.sort((a, b) => a - b);
+      const mixedPool = cfg.enabled ? this.strongMix(pool, false) : pool;
+      for (let i = 0; i < mixedPool.length && picked.length < target; i++) {
+        picked.push(mixedPool[i]);
       }
 
-      const sig = picked.join(',');
-      best = picked;
-      if (!usedSigs.has(sig)) {
-        usedSigs.add(sig);
-        break;
+      const finalOrder = cfg.shuffleQuestions
+        ? this.strongMix(picked, true)
+        : [...picked].sort((a, b) => a - b);
+
+      // Evaluar dispersión respecto a estudiantes previos (mínimas coincidencias posicionales)
+      let score = 0;
+      const sig = finalOrder.join(',');
+      if (cfg.shuffleQuestions && finalOrder.length > 1) {
+        finalOrder.forEach((num, idx) => {
+          if (num === idx + 1) score += 2;
+        });
+      }
+      previousOrders.forEach(prev => {
+        if (prev.join(',') === sig) score += 100;
+        const prevSet = new Set(prev);
+        finalOrder.forEach((num, idx) => {
+          if (prev[idx] === num) score += 8;
+          else if (prevSet.has(num)) score += 1;
+        });
+      });
+
+      if (score < bestScore) {
+        bestScore = score;
+        best = finalOrder;
+        if (score === 0) break;
       }
     }
+
+    previousOrders.push(best);
     return best;
   },
 
-  renderOptionPreviewHtml(shuffleOptions) {
+  renderOptionPreviewHtml(shuffleOptions, usedOptSigs) {
     const baseOpts = [
-      { label: 'Resp. 1 ✓', correct: true },
-      { label: 'Resp. 2', correct: false },
-      { label: 'Resp. 3', correct: false },
-      { label: 'Resp. 4', correct: false }
+      { id: 0, label: 'Resp. 1 ✓', correct: true },
+      { id: 1, label: 'Resp. 2', correct: false },
+      { id: 2, label: 'Resp. 3', correct: false },
+      { id: 3, label: 'Resp. 4', correct: false }
     ];
-    const arr = [...baseOpts];
+    let arr = [...baseOpts];
     if (shuffleOptions) {
-      for (let i = arr.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [arr[i], arr[j]] = [arr[j], arr[i]];
+      for (let attempt = 0; attempt < 16; attempt++) {
+        const cand = this.strongMix(baseOpts, true);
+        const sig = cand.map(x => x.id).join(',');
+        arr = cand;
+        if (!usedOptSigs || !usedOptSigs.has(sig)) {
+          if (usedOptSigs) usedOptSigs.add(sig);
+          break;
+        }
       }
     }
     const letters = ['A', 'B', 'C', 'D'];
-    return `<span style="opacity:0.75; margin-right:0.2rem;">Opciones P1:</span>` + arr.map((o, i) => `
+    return `<span style="opacity:0.75; margin-right:0.2rem;">Opciones:</span>` + arr.map((o, i) => `
       <span class="t3d-opt-mini-pill ${o.correct ? 'is-correct' : ''}">${letters[i]}) ${o.label}</span>
     `).join('');
   },
@@ -1055,19 +1101,20 @@ window.ExamDetailsView = {
     }
     bankEl.innerHTML = bankHtml;
 
-    const usedSigs = new Set();
-    const r1 = this.simulateStudent(total, target, mandatoryNums, cfg, usedSigs);
-    const r2 = this.simulateStudent(total, target, mandatoryNums, cfg, usedSigs);
-    const r3 = this.simulateStudent(total, target, mandatoryNums, cfg, usedSigs);
+    const prevOrders = [];
+    const r1 = this.simulateStudent(total, target, mandatoryNums, cfg, prevOrders);
+    const r2 = this.simulateStudent(total, target, mandatoryNums, cfg, prevOrders);
+    const r3 = this.simulateStudent(total, target, mandatoryNums, cfg, prevOrders);
 
     const mkChips = (arr, cls) => arr.map(n => `<span class="t3d-sim-chip ${cls} ${mandSet.has(n) ? 'is-mandatory' : ''}" title="${mandSet.has(n) ? '📌 Pregunta Obligatoria #' + n : 'Pregunta #' + n}">${n}</span>`).join('');
     s1El.innerHTML = mkChips(r1, 't3d-sim-chip-s1');
     s2El.innerHTML = mkChips(r2, 't3d-sim-chip-s2');
     s3El.innerHTML = mkChips(r3, 't3d-sim-chip-s3');
 
-    if (o1El) o1El.innerHTML = this.renderOptionPreviewHtml(cfg.shuffleOptions);
-    if (o2El) o2El.innerHTML = this.renderOptionPreviewHtml(cfg.shuffleOptions);
-    if (o3El) o3El.innerHTML = this.renderOptionPreviewHtml(cfg.shuffleOptions);
+    const usedOptSigs = new Set();
+    if (o1El) o1El.innerHTML = this.renderOptionPreviewHtml(cfg.shuffleOptions, usedOptSigs);
+    if (o2El) o2El.innerHTML = this.renderOptionPreviewHtml(cfg.shuffleOptions, usedOptSigs);
+    if (o3El) o3El.innerHTML = this.renderOptionPreviewHtml(cfg.shuffleOptions, usedOptSigs);
   },
 
   async saveAll() {
