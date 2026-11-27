@@ -142,5 +142,21 @@
     "lastLoginAt": "2026-11-25T02:40:31.386Z",
     "pwd": "1fdc86bde0763bae4ad48176bdc17f23cf1fca2157b690dafd62abfcb5ac2df1",
     "createdAt": "2026-11-25T02:39:46.808Z"
+  },
+  {
+    "id": "user_1795799865117",
+    "name": "k5+9",
+    "username": "g336",
+    "email": "gatitaxd679@gmail.comg",
+    "avatar": "🦊",
+    "role": "student",
+    "xp": 100,
+    "level": 1,
+    "levelName": "Principiante",
+    "institution": "Comunidad MENTIX",
+    "isBlocked": false,
+    "lastLoginAt": "2026-11-27T17:17:44.340Z",
+    "pwd": "29c4a640c10ef449c25c89afbb95dd51794f593f9ce318118eb65fe91dc1f359",
+    "createdAt": "2026-11-27T17:17:44.340Z"
   }
 ]
