@@ -226,6 +226,18 @@ window.CreatorView = {
     };
   },
 
+  handleBackNav() {
+    const u = window.appState?.currentUser;
+    const role = String(u?.role || '').toLowerCase().trim();
+    if (this._fromTeacher || role === 'teacher' || role === 'docente' || role === 'profesor') {
+      window.appRouter.navigate('teacher');
+    } else if (this._fromAdmin || role === 'admin' || role === 'administrador') {
+      window.appRouter.navigate('admin');
+    } else {
+      window.appRouter.navigate('home');
+    }
+  },
+
   render(existingChallenge = null) {
     const container = document.getElementById('view-creator');
     if (!container) return;
@@ -249,8 +261,8 @@ window.CreatorView = {
         <!-- Header -->
         <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: 2rem;">
           <div>
-            <button class="btn btn-outline" style="padding: 0.4rem 0.8rem; font-size: 0.85rem; margin-bottom: 0.5rem;" onclick="window.appRouter.navigate('home')">
-              ← Volver al Inicio
+            <button class="btn btn-outline" style="padding: 0.4rem 0.8rem; font-size: 0.85rem; margin-bottom: 0.5rem;" onclick="window.CreatorView.handleBackNav()">
+              ← Volver
             </button>
             <h1 style="font-size: 2.2rem; display: flex; align-items: center; gap: 0.6rem;">
               <span class="glow-text-cyan">🎯</span> Estudio de Creación de Retos
@@ -1838,9 +1850,10 @@ Ante esta situación, la Dirección de Impuestos y Aduanas Nacionales (DIAN) rea
     if (confirm(`🎉 ¡Evaluación "${savedChallengeTitle}" publicada exitosamente con ${savedQuestionsCount} preguntas!\n\n¿Quieres realizar la prueba ahora mismo como estudiante?`)) {
       window.appRouter.startSinglePlayer(savedChallengeId);
     } else {
-      if (u && u.role === 'teacher') {
+      const roleStr = String(u?.role || '').toLowerCase().trim();
+      if (this._fromTeacher || roleStr === 'teacher' || roleStr === 'docente' || roleStr === 'profesor') {
         window.appRouter.navigate('teacher');
-      } else if (u && u.role === 'admin') {
+      } else if (this._fromAdmin || roleStr === 'admin' || roleStr === 'administrador') {
         window.appRouter.navigate('admin');
       } else {
         window.appRouter.navigate('home');

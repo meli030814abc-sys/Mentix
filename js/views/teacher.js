@@ -90,6 +90,16 @@ window.TeacherView = {
     }
   },
 
+  editExam(examId) {
+    if (!examId) return;
+    const allExams = (window.appState?.challenges || []).concat(window.appState?.projects || []);
+    let exam = allExams.find(c => c && String(c.id).trim() === String(examId).trim());
+    if (!exam && typeof DEFAULT_CHALLENGES !== 'undefined') {
+      exam = DEFAULT_CHALLENGES.find(c => c && String(c.id).trim() === String(examId).trim());
+    }
+    window.appRouter.navigate('creator', { editId: String(examId).trim(), challenge: exam, fromTeacher: true });
+  },
+
   // Devuelve TODOS los exámenes reales disponibles en la plataforma (propios primero)
   getAllRealExams() {
     const challenges = window.appState?.challenges || [];
@@ -541,7 +551,7 @@ window.TeacherView = {
                       class="t3d-card-btn t3d-btn-amber" 
                       title="Editar examen"
                       style="max-width: 44px; padding: 0.55rem 0.4rem;"
-                      onclick="window.appRouter.navigate('creator', { editId: '${c.id}' })"
+                      onclick="window.TeacherView.editExam('${c.id}')"
                     >
                       ✏️
                     </button>
@@ -1567,6 +1577,9 @@ window.TeacherView = {
             </div>
           </div>
           <div style="display: flex; gap: 0.45rem; align-items: center;">
+            <button type="button" class="t3d-btn t3d-btn-amber" style="padding: 0.4rem 0.65rem; font-size: 0.78rem;" onclick="window.TeacherView.closeEditGroupModal(); window.TeacherView.editExam('${ex.id}')" title="Editar preguntas y contenido de este examen">
+              ✏️
+            </button>
             ${!isActive ? `
               <button type="button" class="t3d-btn t3d-btn-primary" style="padding: 0.4rem 0.8rem; font-size: 0.78rem;" onclick="window.TeacherView.setActiveExamForEditingGroup('${ex.id}')">
                 🎯 Activar

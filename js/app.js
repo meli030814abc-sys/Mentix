@@ -444,28 +444,45 @@ class AppRouter {
 
       case 'creator':
         document.getElementById('view-creator')?.classList.add('active');
-        if (params.editId) {
-          // Editar un reto existente por id
-          const challengeToEdit = (window.appState.challenges || []).find(c => c.id === params.editId);
-          if (challengeToEdit && !this.isChallengeOwner(challengeToEdit)) {
+        if (params.editId || params.challenge) {
+          // Editar un reto existente por id o por objeto pasado
+          let challengeToEdit = params.challenge || null;
+          if (!challengeToEdit && params.editId) {
+            const idStr = String(params.editId).trim();
+            challengeToEdit = (window.appState?.challenges || []).find(c => c && String(c.id).trim() === idStr)
+              || (window.appState?.projects || []).find(c => c && String(c.id).trim() === idStr);
+            if (!challengeToEdit && typeof DEFAULT_CHALLENGES !== 'undefined') {
+              challengeToEdit = DEFAULT_CHALLENGES.find(c => c && String(c.id).trim() === idStr);
+            }
+          }
+
+          const uRole = String(window.appState?.currentUser?.role || '').toLowerCase().trim();
+          const isTeacherOrAdmin = ['teacher', 'profesor', 'docente', 'admin', 'administrador'].includes(uRole) || params.fromTeacher || params.fromAdmin;
+
+          if (challengeToEdit && !isTeacherOrAdmin && !this.isChallengeOwner(challengeToEdit)) {
             alert('🚫 Solo el creador de este cuestionario tiene permiso para editarlo.');
             this.navigate('home');
             return;
           }
-          window.CreatorView.render(challengeToEdit || null);
-        } else if (params.challenge) {
-          window.CreatorView.render(params.challenge);
+
+          if (window.CreatorView) {
+            window.CreatorView._fromTeacher = (params.fromTeacher === true || ['teacher', 'profesor', 'docente'].includes(uRole));
+            window.CreatorView._fromAdmin = (params.fromAdmin === true || ['admin', 'administrador'].includes(uRole));
+            window.CreatorView.render(challengeToEdit || null);
+          }
         } else {
           // Crear un nuevo reto desde cero:
           // Si no hay reto actual o si el que está en el creador ya está publicado/guardado, reiniciar el formulario
           if (window.CreatorView) {
             const currentC = window.CreatorView.currentChallenge;
-            const isAlreadyPublished = currentC && (window.appState.challenges || []).some(item => item.id === currentC.id);
+            const isAlreadyPublished = currentC && (window.appState.challenges || []).some(item => String(item.id).trim() === String(currentC.id).trim());
             if (!currentC || isAlreadyPublished) {
               window.CreatorView.resetForm(null);
             }
+            window.CreatorView._fromTeacher = (params.fromTeacher === true);
+            window.CreatorView._fromAdmin = (params.fromAdmin === true);
+            window.CreatorView.render();
           }
-          window.CreatorView.render();
         }
         break;
 
@@ -2144,11 +2161,11 @@ class AppRouter {
     // 1. Melisa tiene permisos globales absolutos para editar todos los exámenes, retos y proyectos
     if (isMelisa) return true;
 
-    // 2. Administradores oficiales de la plataforma
+    // 2. Administradores oficiales de la plataforma y Docentes
     const roleLower = String(u.role || '').toLowerCase().trim();
-    const isStudentOrTeacher = roleLower === 'student' || roleLower === 'estudiante' || roleLower === 'teacher' || roleLower === 'profesor' || roleLower === 'docente';
-    const isAdmin = !isStudentOrTeacher && (roleLower === 'admin' || roleLower === 'administrador' || u.isAdmin === true || (window.AdminView && window.AdminView.isAdminAuditing));
-    if (isAdmin) return true;
+    const isTeacher = roleLower === 'teacher' || roleLower === 'profesor' || roleLower === 'docente';
+    const isAdmin = roleLower === 'admin' || roleLower === 'administrador' || u.isAdmin === true || (window.AdminView && window.AdminView.isAdminAuditing);
+    if (isAdmin || isTeacher) return true;
 
     // Si el reto de AGILE Y SCRUM es exclusivo de Melisa
     const cleanTitle = clean(challenge.title);
