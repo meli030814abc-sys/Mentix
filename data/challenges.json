@@ -1636,11 +1636,11 @@
     "benefits": "Facilita la toma de decisiones directivas y administrativas con información más confiable, reduce riesgos de mal manejo de datos escolares y fortalece una cultura de cuidado y protección de los datos de niños, niñas, adolescentes y funcionarios.",
     "teamLead": "Jhomar Alejandra Cano Ramirez",
     "preparationStatus": "finalizado",
-    "publicationStatus": "published",
-    "approvalStatus": "approved",
+    "publicationStatus": "completed",
+    "approvalStatus": "pending",
     "submittedForApproval": true,
     "status": "completed",
-    "isPublic": true,
+    "isPublic": false,
     "startDate": "2026-08-30",
     "endDate": "2026-11-25",
     "currentStep": 16,
@@ -1781,17 +1781,9 @@
       {
         "id": "slide_1795609857643_0",
         "title": "Diagnostico gobierno de datos Colegio Tecnico Jaime Pardo Leal IED",
-        "subtitle": "Por Jhomar Alejandra Cano Ramirez",
-        "content": "Diagnostico de gobierno y gestion de datos bajo el marco DAMA-DMBOK para el Colegio Técnico Jaime Pardo Leal IED (Bogotá). Dirigido a directivos, docentes y area administrativa con el objetivo de formalizar roles y politicas, inventariar activos de la información y proteger los datos sensibles de niños, niñas y adolecentes (NNA).",
-        "bullets": [
-          "Antecedentes y problema identificado",
-          "El Colegio Técnico Jaime Pardo Leal  IED gestiona la información critica y sensible de los niños, niñas y adolecentes (NNA) de manera fragmentada en diversos sistemas aislados (plataforma de notas, carpetas informales en Google Drive, planillas locales, obserbadores fisicos), esta desarticulación crea una falta de trazabilidad del proceso y riesgos legales.",
-          "Metodología",
-          "Se realizo una investigación de la arquitectura actual y un inventario de activos de la información.",
-          "Posteriormente, se aplico un instrumento de evaluación de madurez basado en las 11 dimensiones del marco DAMA-DMBOK (en una escala del 1 al 5) determinando una linea base inicial de 1,64 (nivel 1) y proyectado con metas de 12 meses (nivel 2) y 24 meses (nivel 3).",
-          "Propuesta",
-          "La prioridad no trata de adquirir software sino formalizar el gobierno antes de integrar.El proyecto define un modelo único de roles y matriz RACI sobre la estructura actual, un esquema de protección del PIAR en tres capas (clínica, pedagógica y estadística), seudonomización mediante HMAC-SHA-256 y un roadmap en cuatro faases con compuestas de control e indicadores con fórmula."
-        ],
+        "subtitle": "",
+        "content": "",
+        "bullets": [],
         "layout": "full",
         "isFullImage": true,
         "isImported": true,
@@ -1805,17 +1797,9 @@
       {
         "id": "slide_1795609857643_1",
         "title": "Diagnostico gobierno de datos Colegio Tecnico Jaime Pardo Leal IED",
-        "subtitle": "Por Jhomar Alejandra Cano Ramirez",
-        "content": "Diagnostico de gobierno y gestion de datos bajo el marco DAMA-DMBOK para el Colegio Técnico Jaime Pardo Leal IED (Bogotá). Dirigido a directivos, docentes y area administrativa con el objetivo de formalizar roles y politicas, inventariar activos de la información y proteger los datos sensibles de niños, niñas y adolecentes (NNA).",
-        "bullets": [
-          "Antecedentes y problema identificado",
-          "El Colegio Técnico Jaime Pardo Leal  IED gestiona la información critica y sensible de los niños, niñas y adolecentes (NNA) de manera fragmentada en diversos sistemas aislados (plataforma de notas, carpetas informales en Google Drive, planillas locales, obserbadores fisicos), esta desarticulación crea una falta de trazabilidad del proceso y riesgos legales.",
-          "Metodología",
-          "Se realizo una investigación de la arquitectura actual y un inventario de activos de la información.",
-          "Posteriormente, se aplico un instrumento de evaluación de madurez basado en las 11 dimensiones del marco DAMA-DMBOK (en una escala del 1 al 5) determinando una linea base inicial de 1,64 (nivel 1) y proyectado con metas de 12 meses (nivel 2) y 24 meses (nivel 3).",
-          "Propuesta",
-          "La prioridad no trata de adquirir software sino formalizar el gobierno antes de integrar.El proyecto define un modelo único de roles y matriz RACI sobre la estructura actual, un esquema de protección del PIAR en tres capas (clínica, pedagógica y estadística), seudonomización mediante HMAC-SHA-256 y un roadmap en cuatro faases con compuestas de control e indicadores con fórmula."
-        ],
+        "subtitle": "",
+        "content": "",
+        "bullets": [],
         "layout": "full",
         "isFullImage": true,
         "isImported": true,
@@ -1829,17 +1813,9 @@
       {
         "id": "slide_1795609857643_2",
         "title": "Diagnostico gobierno de datos Colegio Tecnico Jaime Pardo Leal IED",
-        "subtitle": "Por Jhomar Alejandra Cano Ramirez",
-        "content": "Diagnostico de gobierno y gestion de datos bajo el marco DAMA-DMBOK para el Colegio Técnico Jaime Pardo Leal IED (Bogotá). Dirigido a directivos, docentes y area administrativa con el objetivo de formalizar roles y politicas, inventariar activos de la información y proteger los datos sensibles de niños, niñas y adolecentes (NNA).",
-        "bullets": [
-          "Antecedentes y problema identificado",
-          "El Colegio Técnico Jaime Pardo Leal  IED gestiona la información critica y sensible de los niños, niñas y adolecentes (NNA) de manera fragmentada en diversos sistemas aislados (plataforma de notas, carpetas informales en Google Drive, planillas locales, obserbadores fisicos), esta desarticulación crea una falta de trazabilidad del proceso y riesgos legales.",
-          "Metodología",
-          "Se realizo una investigación de la arquitectura actual y un inventario de activos de la información.",
-          "Posteriormente, se aplico un instrumento de evaluación de madurez basado en las 11 dimensiones del marco DAMA-DMBOK (en una escala del 1 al 5) determinando una linea base inicial de 1,64 (nivel 1) y proyectado con metas de 12 meses (nivel 2) y 24 meses (nivel 3).",
-          "Propuesta",
-          "La prioridad no trata de adquirir software sino formalizar el gobierno antes de integrar.El proyecto define un modelo único de roles y matriz RACI sobre la estructura actual, un esquema de protección del PIAR en tres capas (clínica, pedagógica y estadística), seudonomización mediante HMAC-SHA-256 y un roadmap en cuatro faases con compuestas de control e indicadores con fórmula."
-        ],
+        "subtitle": "",
+        "content": "",
+        "bullets": [],
         "layout": "full",
         "isFullImage": true,
         "isImported": true,
@@ -1853,17 +1829,9 @@
       {
         "id": "slide_1795609857643_3",
         "title": "Diagnostico gobierno de datos Colegio Tecnico Jaime Pardo Leal IED",
-        "subtitle": "Por Jhomar Alejandra Cano Ramirez",
-        "content": "Diagnostico de gobierno y gestion de datos bajo el marco DAMA-DMBOK para el Colegio Técnico Jaime Pardo Leal IED (Bogotá). Dirigido a directivos, docentes y area administrativa con el objetivo de formalizar roles y politicas, inventariar activos de la información y proteger los datos sensibles de niños, niñas y adolecentes (NNA).",
-        "bullets": [
-          "Antecedentes y problema identificado",
-          "El Colegio Técnico Jaime Pardo Leal  IED gestiona la información critica y sensible de los niños, niñas y adolecentes (NNA) de manera fragmentada en diversos sistemas aislados (plataforma de notas, carpetas informales en Google Drive, planillas locales, obserbadores fisicos), esta desarticulación crea una falta de trazabilidad del proceso y riesgos legales.",
-          "Metodología",
-          "Se realizo una investigación de la arquitectura actual y un inventario de activos de la información.",
-          "Posteriormente, se aplico un instrumento de evaluación de madurez basado en las 11 dimensiones del marco DAMA-DMBOK (en una escala del 1 al 5) determinando una linea base inicial de 1,64 (nivel 1) y proyectado con metas de 12 meses (nivel 2) y 24 meses (nivel 3).",
-          "Propuesta",
-          "La prioridad no trata de adquirir software sino formalizar el gobierno antes de integrar.El proyecto define un modelo único de roles y matriz RACI sobre la estructura actual, un esquema de protección del PIAR en tres capas (clínica, pedagógica y estadística), seudonomización mediante HMAC-SHA-256 y un roadmap en cuatro faases con compuestas de control e indicadores con fórmula."
-        ],
+        "subtitle": "",
+        "content": "",
+        "bullets": [],
         "layout": "full",
         "isFullImage": true,
         "isImported": true,
@@ -1877,17 +1845,9 @@
       {
         "id": "slide_1795609857643_4",
         "title": "Diagnostico gobierno de datos Colegio Tecnico Jaime Pardo Leal IED",
-        "subtitle": "Por Jhomar Alejandra Cano Ramirez",
-        "content": "Diagnostico de gobierno y gestion de datos bajo el marco DAMA-DMBOK para el Colegio Técnico Jaime Pardo Leal IED (Bogotá). Dirigido a directivos, docentes y area administrativa con el objetivo de formalizar roles y politicas, inventariar activos de la información y proteger los datos sensibles de niños, niñas y adolecentes (NNA).",
-        "bullets": [
-          "Antecedentes y problema identificado",
-          "El Colegio Técnico Jaime Pardo Leal  IED gestiona la información critica y sensible de los niños, niñas y adolecentes (NNA) de manera fragmentada en diversos sistemas aislados (plataforma de notas, carpetas informales en Google Drive, planillas locales, obserbadores fisicos), esta desarticulación crea una falta de trazabilidad del proceso y riesgos legales.",
-          "Metodología",
-          "Se realizo una investigación de la arquitectura actual y un inventario de activos de la información.",
-          "Posteriormente, se aplico un instrumento de evaluación de madurez basado en las 11 dimensiones del marco DAMA-DMBOK (en una escala del 1 al 5) determinando una linea base inicial de 1,64 (nivel 1) y proyectado con metas de 12 meses (nivel 2) y 24 meses (nivel 3).",
-          "Propuesta",
-          "La prioridad no trata de adquirir software sino formalizar el gobierno antes de integrar.El proyecto define un modelo único de roles y matriz RACI sobre la estructura actual, un esquema de protección del PIAR en tres capas (clínica, pedagógica y estadística), seudonomización mediante HMAC-SHA-256 y un roadmap en cuatro faases con compuestas de control e indicadores con fórmula."
-        ],
+        "subtitle": "",
+        "content": "",
+        "bullets": [],
         "layout": "full",
         "isFullImage": true,
         "isImported": true,
@@ -1901,17 +1861,9 @@
       {
         "id": "slide_1795609857643_5",
         "title": "Diagnostico gobierno de datos Colegio Tecnico Jaime Pardo Leal IED",
-        "subtitle": "Por Jhomar Alejandra Cano Ramirez",
-        "content": "Diagnostico de gobierno y gestion de datos bajo el marco DAMA-DMBOK para el Colegio Técnico Jaime Pardo Leal IED (Bogotá). Dirigido a directivos, docentes y area administrativa con el objetivo de formalizar roles y politicas, inventariar activos de la información y proteger los datos sensibles de niños, niñas y adolecentes (NNA).",
-        "bullets": [
-          "Antecedentes y problema identificado",
-          "El Colegio Técnico Jaime Pardo Leal  IED gestiona la información critica y sensible de los niños, niñas y adolecentes (NNA) de manera fragmentada en diversos sistemas aislados (plataforma de notas, carpetas informales en Google Drive, planillas locales, obserbadores fisicos), esta desarticulación crea una falta de trazabilidad del proceso y riesgos legales.",
-          "Metodología",
-          "Se realizo una investigación de la arquitectura actual y un inventario de activos de la información.",
-          "Posteriormente, se aplico un instrumento de evaluación de madurez basado en las 11 dimensiones del marco DAMA-DMBOK (en una escala del 1 al 5) determinando una linea base inicial de 1,64 (nivel 1) y proyectado con metas de 12 meses (nivel 2) y 24 meses (nivel 3).",
-          "Propuesta",
-          "La prioridad no trata de adquirir software sino formalizar el gobierno antes de integrar.El proyecto define un modelo único de roles y matriz RACI sobre la estructura actual, un esquema de protección del PIAR en tres capas (clínica, pedagógica y estadística), seudonomización mediante HMAC-SHA-256 y un roadmap en cuatro faases con compuestas de control e indicadores con fórmula."
-        ],
+        "subtitle": "",
+        "content": "",
+        "bullets": [],
         "layout": "full",
         "isFullImage": true,
         "isImported": true,
@@ -1925,17 +1877,9 @@
       {
         "id": "slide_1795609857643_6",
         "title": "Diagnostico gobierno de datos Colegio Tecnico Jaime Pardo Leal IED",
-        "subtitle": "Por Jhomar Alejandra Cano Ramirez",
-        "content": "Diagnostico de gobierno y gestion de datos bajo el marco DAMA-DMBOK para el Colegio Técnico Jaime Pardo Leal IED (Bogotá). Dirigido a directivos, docentes y area administrativa con el objetivo de formalizar roles y politicas, inventariar activos de la información y proteger los datos sensibles de niños, niñas y adolecentes (NNA).",
-        "bullets": [
-          "Antecedentes y problema identificado",
-          "El Colegio Técnico Jaime Pardo Leal  IED gestiona la información critica y sensible de los niños, niñas y adolecentes (NNA) de manera fragmentada en diversos sistemas aislados (plataforma de notas, carpetas informales en Google Drive, planillas locales, obserbadores fisicos), esta desarticulación crea una falta de trazabilidad del proceso y riesgos legales.",
-          "Metodología",
-          "Se realizo una investigación de la arquitectura actual y un inventario de activos de la información.",
-          "Posteriormente, se aplico un instrumento de evaluación de madurez basado en las 11 dimensiones del marco DAMA-DMBOK (en una escala del 1 al 5) determinando una linea base inicial de 1,64 (nivel 1) y proyectado con metas de 12 meses (nivel 2) y 24 meses (nivel 3).",
-          "Propuesta",
-          "La prioridad no trata de adquirir software sino formalizar el gobierno antes de integrar.El proyecto define un modelo único de roles y matriz RACI sobre la estructura actual, un esquema de protección del PIAR en tres capas (clínica, pedagógica y estadística), seudonomización mediante HMAC-SHA-256 y un roadmap en cuatro faases con compuestas de control e indicadores con fórmula."
-        ],
+        "subtitle": "",
+        "content": "",
+        "bullets": [],
         "layout": "full",
         "isFullImage": true,
         "isImported": true,
@@ -1949,17 +1893,9 @@
       {
         "id": "slide_1795609857643_7",
         "title": "Diagnostico gobierno de datos Colegio Tecnico Jaime Pardo Leal IED",
-        "subtitle": "Por Jhomar Alejandra Cano Ramirez",
-        "content": "Diagnostico de gobierno y gestion de datos bajo el marco DAMA-DMBOK para el Colegio Técnico Jaime Pardo Leal IED (Bogotá). Dirigido a directivos, docentes y area administrativa con el objetivo de formalizar roles y politicas, inventariar activos de la información y proteger los datos sensibles de niños, niñas y adolecentes (NNA).",
-        "bullets": [
-          "Antecedentes y problema identificado",
-          "El Colegio Técnico Jaime Pardo Leal  IED gestiona la información critica y sensible de los niños, niñas y adolecentes (NNA) de manera fragmentada en diversos sistemas aislados (plataforma de notas, carpetas informales en Google Drive, planillas locales, obserbadores fisicos), esta desarticulación crea una falta de trazabilidad del proceso y riesgos legales.",
-          "Metodología",
-          "Se realizo una investigación de la arquitectura actual y un inventario de activos de la información.",
-          "Posteriormente, se aplico un instrumento de evaluación de madurez basado en las 11 dimensiones del marco DAMA-DMBOK (en una escala del 1 al 5) determinando una linea base inicial de 1,64 (nivel 1) y proyectado con metas de 12 meses (nivel 2) y 24 meses (nivel 3).",
-          "Propuesta",
-          "La prioridad no trata de adquirir software sino formalizar el gobierno antes de integrar.El proyecto define un modelo único de roles y matriz RACI sobre la estructura actual, un esquema de protección del PIAR en tres capas (clínica, pedagógica y estadística), seudonomización mediante HMAC-SHA-256 y un roadmap en cuatro faases con compuestas de control e indicadores con fórmula."
-        ],
+        "subtitle": "",
+        "content": "",
+        "bullets": [],
         "layout": "full",
         "isFullImage": true,
         "isImported": true,
@@ -1973,17 +1909,9 @@
       {
         "id": "slide_1795609857643_8",
         "title": "Diagnostico gobierno de datos Colegio Tecnico Jaime Pardo Leal IED",
-        "subtitle": "Por Jhomar Alejandra Cano Ramirez",
-        "content": "Diagnostico de gobierno y gestion de datos bajo el marco DAMA-DMBOK para el Colegio Técnico Jaime Pardo Leal IED (Bogotá). Dirigido a directivos, docentes y area administrativa con el objetivo de formalizar roles y politicas, inventariar activos de la información y proteger los datos sensibles de niños, niñas y adolecentes (NNA).",
-        "bullets": [
-          "Antecedentes y problema identificado",
-          "El Colegio Técnico Jaime Pardo Leal  IED gestiona la información critica y sensible de los niños, niñas y adolecentes (NNA) de manera fragmentada en diversos sistemas aislados (plataforma de notas, carpetas informales en Google Drive, planillas locales, obserbadores fisicos), esta desarticulación crea una falta de trazabilidad del proceso y riesgos legales.",
-          "Metodología",
-          "Se realizo una investigación de la arquitectura actual y un inventario de activos de la información.",
-          "Posteriormente, se aplico un instrumento de evaluación de madurez basado en las 11 dimensiones del marco DAMA-DMBOK (en una escala del 1 al 5) determinando una linea base inicial de 1,64 (nivel 1) y proyectado con metas de 12 meses (nivel 2) y 24 meses (nivel 3).",
-          "Propuesta",
-          "La prioridad no trata de adquirir software sino formalizar el gobierno antes de integrar.El proyecto define un modelo único de roles y matriz RACI sobre la estructura actual, un esquema de protección del PIAR en tres capas (clínica, pedagógica y estadística), seudonomización mediante HMAC-SHA-256 y un roadmap en cuatro faases con compuestas de control e indicadores con fórmula."
-        ],
+        "subtitle": "",
+        "content": "",
+        "bullets": [],
         "layout": "full",
         "isFullImage": true,
         "isImported": true,
@@ -1997,17 +1925,9 @@
       {
         "id": "slide_1795609857643_9",
         "title": "Diagnostico gobierno de datos Colegio Tecnico Jaime Pardo Leal IED",
-        "subtitle": "Por Jhomar Alejandra Cano Ramirez",
-        "content": "Diagnostico de gobierno y gestion de datos bajo el marco DAMA-DMBOK para el Colegio Técnico Jaime Pardo Leal IED (Bogotá). Dirigido a directivos, docentes y area administrativa con el objetivo de formalizar roles y politicas, inventariar activos de la información y proteger los datos sensibles de niños, niñas y adolecentes (NNA).",
-        "bullets": [
-          "Antecedentes y problema identificado",
-          "El Colegio Técnico Jaime Pardo Leal  IED gestiona la información critica y sensible de los niños, niñas y adolecentes (NNA) de manera fragmentada en diversos sistemas aislados (plataforma de notas, carpetas informales en Google Drive, planillas locales, obserbadores fisicos), esta desarticulación crea una falta de trazabilidad del proceso y riesgos legales.",
-          "Metodología",
-          "Se realizo una investigación de la arquitectura actual y un inventario de activos de la información.",
-          "Posteriormente, se aplico un instrumento de evaluación de madurez basado en las 11 dimensiones del marco DAMA-DMBOK (en una escala del 1 al 5) determinando una linea base inicial de 1,64 (nivel 1) y proyectado con metas de 12 meses (nivel 2) y 24 meses (nivel 3).",
-          "Propuesta",
-          "La prioridad no trata de adquirir software sino formalizar el gobierno antes de integrar.El proyecto define un modelo único de roles y matriz RACI sobre la estructura actual, un esquema de protección del PIAR en tres capas (clínica, pedagógica y estadística), seudonomización mediante HMAC-SHA-256 y un roadmap en cuatro faases con compuestas de control e indicadores con fórmula."
-        ],
+        "subtitle": "",
+        "content": "",
+        "bullets": [],
         "layout": "full",
         "isFullImage": true,
         "isImported": true,
@@ -2021,17 +1941,9 @@
       {
         "id": "slide_1795609857643_10",
         "title": "Diagnostico gobierno de datos Colegio Tecnico Jaime Pardo Leal IED",
-        "subtitle": "Por Jhomar Alejandra Cano Ramirez",
-        "content": "Diagnostico de gobierno y gestion de datos bajo el marco DAMA-DMBOK para el Colegio Técnico Jaime Pardo Leal IED (Bogotá). Dirigido a directivos, docentes y area administrativa con el objetivo de formalizar roles y politicas, inventariar activos de la información y proteger los datos sensibles de niños, niñas y adolecentes (NNA).",
-        "bullets": [
-          "Antecedentes y problema identificado",
-          "El Colegio Técnico Jaime Pardo Leal  IED gestiona la información critica y sensible de los niños, niñas y adolecentes (NNA) de manera fragmentada en diversos sistemas aislados (plataforma de notas, carpetas informales en Google Drive, planillas locales, obserbadores fisicos), esta desarticulación crea una falta de trazabilidad del proceso y riesgos legales.",
-          "Metodología",
-          "Se realizo una investigación de la arquitectura actual y un inventario de activos de la información.",
-          "Posteriormente, se aplico un instrumento de evaluación de madurez basado en las 11 dimensiones del marco DAMA-DMBOK (en una escala del 1 al 5) determinando una linea base inicial de 1,64 (nivel 1) y proyectado con metas de 12 meses (nivel 2) y 24 meses (nivel 3).",
-          "Propuesta",
-          "La prioridad no trata de adquirir software sino formalizar el gobierno antes de integrar.El proyecto define un modelo único de roles y matriz RACI sobre la estructura actual, un esquema de protección del PIAR en tres capas (clínica, pedagógica y estadística), seudonomización mediante HMAC-SHA-256 y un roadmap en cuatro faases con compuestas de control e indicadores con fórmula."
-        ],
+        "subtitle": "",
+        "content": "",
+        "bullets": [],
         "layout": "full",
         "isFullImage": true,
         "isImported": true,
@@ -2045,17 +1957,9 @@
       {
         "id": "slide_1795609857643_11",
         "title": "Diagnostico gobierno de datos Colegio Tecnico Jaime Pardo Leal IED",
-        "subtitle": "Por Jhomar Alejandra Cano Ramirez",
-        "content": "Diagnostico de gobierno y gestion de datos bajo el marco DAMA-DMBOK para el Colegio Técnico Jaime Pardo Leal IED (Bogotá). Dirigido a directivos, docentes y area administrativa con el objetivo de formalizar roles y politicas, inventariar activos de la información y proteger los datos sensibles de niños, niñas y adolecentes (NNA).",
-        "bullets": [
-          "Antecedentes y problema identificado",
-          "El Colegio Técnico Jaime Pardo Leal  IED gestiona la información critica y sensible de los niños, niñas y adolecentes (NNA) de manera fragmentada en diversos sistemas aislados (plataforma de notas, carpetas informales en Google Drive, planillas locales, obserbadores fisicos), esta desarticulación crea una falta de trazabilidad del proceso y riesgos legales.",
-          "Metodología",
-          "Se realizo una investigación de la arquitectura actual y un inventario de activos de la información.",
-          "Posteriormente, se aplico un instrumento de evaluación de madurez basado en las 11 dimensiones del marco DAMA-DMBOK (en una escala del 1 al 5) determinando una linea base inicial de 1,64 (nivel 1) y proyectado con metas de 12 meses (nivel 2) y 24 meses (nivel 3).",
-          "Propuesta",
-          "La prioridad no trata de adquirir software sino formalizar el gobierno antes de integrar.El proyecto define un modelo único de roles y matriz RACI sobre la estructura actual, un esquema de protección del PIAR en tres capas (clínica, pedagógica y estadística), seudonomización mediante HMAC-SHA-256 y un roadmap en cuatro faases con compuestas de control e indicadores con fórmula."
-        ],
+        "subtitle": "",
+        "content": "",
+        "bullets": [],
         "layout": "full",
         "isFullImage": true,
         "isImported": true,
@@ -2069,17 +1973,9 @@
       {
         "id": "slide_1795609857643_12",
         "title": "Diagnostico gobierno de datos Colegio Tecnico Jaime Pardo Leal IED",
-        "subtitle": "Por Jhomar Alejandra Cano Ramirez",
-        "content": "Diagnostico de gobierno y gestion de datos bajo el marco DAMA-DMBOK para el Colegio Técnico Jaime Pardo Leal IED (Bogotá). Dirigido a directivos, docentes y area administrativa con el objetivo de formalizar roles y politicas, inventariar activos de la información y proteger los datos sensibles de niños, niñas y adolecentes (NNA).",
-        "bullets": [
-          "Antecedentes y problema identificado",
-          "El Colegio Técnico Jaime Pardo Leal  IED gestiona la información critica y sensible de los niños, niñas y adolecentes (NNA) de manera fragmentada en diversos sistemas aislados (plataforma de notas, carpetas informales en Google Drive, planillas locales, obserbadores fisicos), esta desarticulación crea una falta de trazabilidad del proceso y riesgos legales.",
-          "Metodología",
-          "Se realizo una investigación de la arquitectura actual y un inventario de activos de la información.",
-          "Posteriormente, se aplico un instrumento de evaluación de madurez basado en las 11 dimensiones del marco DAMA-DMBOK (en una escala del 1 al 5) determinando una linea base inicial de 1,64 (nivel 1) y proyectado con metas de 12 meses (nivel 2) y 24 meses (nivel 3).",
-          "Propuesta",
-          "La prioridad no trata de adquirir software sino formalizar el gobierno antes de integrar.El proyecto define un modelo único de roles y matriz RACI sobre la estructura actual, un esquema de protección del PIAR en tres capas (clínica, pedagógica y estadística), seudonomización mediante HMAC-SHA-256 y un roadmap en cuatro faases con compuestas de control e indicadores con fórmula."
-        ],
+        "subtitle": "",
+        "content": "",
+        "bullets": [],
         "layout": "full",
         "isFullImage": true,
         "isImported": true,
@@ -2093,17 +1989,9 @@
       {
         "id": "slide_1795609857643_13",
         "title": "Diagnostico gobierno de datos Colegio Tecnico Jaime Pardo Leal IED",
-        "subtitle": "Por Jhomar Alejandra Cano Ramirez",
-        "content": "Diagnostico de gobierno y gestion de datos bajo el marco DAMA-DMBOK para el Colegio Técnico Jaime Pardo Leal IED (Bogotá). Dirigido a directivos, docentes y area administrativa con el objetivo de formalizar roles y politicas, inventariar activos de la información y proteger los datos sensibles de niños, niñas y adolecentes (NNA).",
-        "bullets": [
-          "Antecedentes y problema identificado",
-          "El Colegio Técnico Jaime Pardo Leal  IED gestiona la información critica y sensible de los niños, niñas y adolecentes (NNA) de manera fragmentada en diversos sistemas aislados (plataforma de notas, carpetas informales en Google Drive, planillas locales, obserbadores fisicos), esta desarticulación crea una falta de trazabilidad del proceso y riesgos legales.",
-          "Metodología",
-          "Se realizo una investigación de la arquitectura actual y un inventario de activos de la información.",
-          "Posteriormente, se aplico un instrumento de evaluación de madurez basado en las 11 dimensiones del marco DAMA-DMBOK (en una escala del 1 al 5) determinando una linea base inicial de 1,64 (nivel 1) y proyectado con metas de 12 meses (nivel 2) y 24 meses (nivel 3).",
-          "Propuesta",
-          "La prioridad no trata de adquirir software sino formalizar el gobierno antes de integrar.El proyecto define un modelo único de roles y matriz RACI sobre la estructura actual, un esquema de protección del PIAR en tres capas (clínica, pedagógica y estadística), seudonomización mediante HMAC-SHA-256 y un roadmap en cuatro faases con compuestas de control e indicadores con fórmula."
-        ],
+        "subtitle": "",
+        "content": "",
+        "bullets": [],
         "layout": "full",
         "isFullImage": true,
         "isImported": true,
@@ -2117,17 +2005,9 @@
       {
         "id": "slide_1795609857643_14",
         "title": "Diagnostico gobierno de datos Colegio Tecnico Jaime Pardo Leal IED",
-        "subtitle": "Por Jhomar Alejandra Cano Ramirez",
-        "content": "Diagnostico de gobierno y gestion de datos bajo el marco DAMA-DMBOK para el Colegio Técnico Jaime Pardo Leal IED (Bogotá). Dirigido a directivos, docentes y area administrativa con el objetivo de formalizar roles y politicas, inventariar activos de la información y proteger los datos sensibles de niños, niñas y adolecentes (NNA).",
-        "bullets": [
-          "Antecedentes y problema identificado",
-          "El Colegio Técnico Jaime Pardo Leal  IED gestiona la información critica y sensible de los niños, niñas y adolecentes (NNA) de manera fragmentada en diversos sistemas aislados (plataforma de notas, carpetas informales en Google Drive, planillas locales, obserbadores fisicos), esta desarticulación crea una falta de trazabilidad del proceso y riesgos legales.",
-          "Metodología",
-          "Se realizo una investigación de la arquitectura actual y un inventario de activos de la información.",
-          "Posteriormente, se aplico un instrumento de evaluación de madurez basado en las 11 dimensiones del marco DAMA-DMBOK (en una escala del 1 al 5) determinando una linea base inicial de 1,64 (nivel 1) y proyectado con metas de 12 meses (nivel 2) y 24 meses (nivel 3).",
-          "Propuesta",
-          "La prioridad no trata de adquirir software sino formalizar el gobierno antes de integrar.El proyecto define un modelo único de roles y matriz RACI sobre la estructura actual, un esquema de protección del PIAR en tres capas (clínica, pedagógica y estadística), seudonomización mediante HMAC-SHA-256 y un roadmap en cuatro faases con compuestas de control e indicadores con fórmula."
-        ],
+        "subtitle": "",
+        "content": "",
+        "bullets": [],
         "layout": "full",
         "isFullImage": true,
         "isImported": true,
@@ -2141,17 +2021,9 @@
       {
         "id": "slide_1795609857643_15",
         "title": "Diagnostico gobierno de datos Colegio Tecnico Jaime Pardo Leal IED",
-        "subtitle": "Por Jhomar Alejandra Cano Ramirez",
-        "content": "Diagnostico de gobierno y gestion de datos bajo el marco DAMA-DMBOK para el Colegio Técnico Jaime Pardo Leal IED (Bogotá). Dirigido a directivos, docentes y area administrativa con el objetivo de formalizar roles y politicas, inventariar activos de la información y proteger los datos sensibles de niños, niñas y adolecentes (NNA).",
-        "bullets": [
-          "Antecedentes y problema identificado",
-          "El Colegio Técnico Jaime Pardo Leal  IED gestiona la información critica y sensible de los niños, niñas y adolecentes (NNA) de manera fragmentada en diversos sistemas aislados (plataforma de notas, carpetas informales en Google Drive, planillas locales, obserbadores fisicos), esta desarticulación crea una falta de trazabilidad del proceso y riesgos legales.",
-          "Metodología",
-          "Se realizo una investigación de la arquitectura actual y un inventario de activos de la información.",
-          "Posteriormente, se aplico un instrumento de evaluación de madurez basado en las 11 dimensiones del marco DAMA-DMBOK (en una escala del 1 al 5) determinando una linea base inicial de 1,64 (nivel 1) y proyectado con metas de 12 meses (nivel 2) y 24 meses (nivel 3).",
-          "Propuesta",
-          "La prioridad no trata de adquirir software sino formalizar el gobierno antes de integrar.El proyecto define un modelo único de roles y matriz RACI sobre la estructura actual, un esquema de protección del PIAR en tres capas (clínica, pedagógica y estadística), seudonomización mediante HMAC-SHA-256 y un roadmap en cuatro faases con compuestas de control e indicadores con fórmula."
-        ],
+        "subtitle": "",
+        "content": "",
+        "bullets": [],
         "layout": "full",
         "isFullImage": true,
         "isImported": true,
@@ -2165,17 +2037,9 @@
       {
         "id": "slide_1795609857643_16",
         "title": "Diagnostico gobierno de datos Colegio Tecnico Jaime Pardo Leal IED",
-        "subtitle": "Por Jhomar Alejandra Cano Ramirez",
-        "content": "Diagnostico de gobierno y gestion de datos bajo el marco DAMA-DMBOK para el Colegio Técnico Jaime Pardo Leal IED (Bogotá). Dirigido a directivos, docentes y area administrativa con el objetivo de formalizar roles y politicas, inventariar activos de la información y proteger los datos sensibles de niños, niñas y adolecentes (NNA).",
-        "bullets": [
-          "Antecedentes y problema identificado",
-          "El Colegio Técnico Jaime Pardo Leal  IED gestiona la información critica y sensible de los niños, niñas y adolecentes (NNA) de manera fragmentada en diversos sistemas aislados (plataforma de notas, carpetas informales en Google Drive, planillas locales, obserbadores fisicos), esta desarticulación crea una falta de trazabilidad del proceso y riesgos legales.",
-          "Metodología",
-          "Se realizo una investigación de la arquitectura actual y un inventario de activos de la información.",
-          "Posteriormente, se aplico un instrumento de evaluación de madurez basado en las 11 dimensiones del marco DAMA-DMBOK (en una escala del 1 al 5) determinando una linea base inicial de 1,64 (nivel 1) y proyectado con metas de 12 meses (nivel 2) y 24 meses (nivel 3).",
-          "Propuesta",
-          "La prioridad no trata de adquirir software sino formalizar el gobierno antes de integrar.El proyecto define un modelo único de roles y matriz RACI sobre la estructura actual, un esquema de protección del PIAR en tres capas (clínica, pedagógica y estadística), seudonomización mediante HMAC-SHA-256 y un roadmap en cuatro faases con compuestas de control e indicadores con fórmula."
-        ],
+        "subtitle": "",
+        "content": "",
+        "bullets": [],
         "layout": "full",
         "isFullImage": true,
         "isImported": true,
@@ -2189,17 +2053,9 @@
       {
         "id": "slide_1795609857643_17",
         "title": "Diagnostico gobierno de datos Colegio Tecnico Jaime Pardo Leal IED",
-        "subtitle": "Por Jhomar Alejandra Cano Ramirez",
-        "content": "Diagnostico de gobierno y gestion de datos bajo el marco DAMA-DMBOK para el Colegio Técnico Jaime Pardo Leal IED (Bogotá). Dirigido a directivos, docentes y area administrativa con el objetivo de formalizar roles y politicas, inventariar activos de la información y proteger los datos sensibles de niños, niñas y adolecentes (NNA).",
-        "bullets": [
-          "Antecedentes y problema identificado",
-          "El Colegio Técnico Jaime Pardo Leal  IED gestiona la información critica y sensible de los niños, niñas y adolecentes (NNA) de manera fragmentada en diversos sistemas aislados (plataforma de notas, carpetas informales en Google Drive, planillas locales, obserbadores fisicos), esta desarticulación crea una falta de trazabilidad del proceso y riesgos legales.",
-          "Metodología",
-          "Se realizo una investigación de la arquitectura actual y un inventario de activos de la información.",
-          "Posteriormente, se aplico un instrumento de evaluación de madurez basado en las 11 dimensiones del marco DAMA-DMBOK (en una escala del 1 al 5) determinando una linea base inicial de 1,64 (nivel 1) y proyectado con metas de 12 meses (nivel 2) y 24 meses (nivel 3).",
-          "Propuesta",
-          "La prioridad no trata de adquirir software sino formalizar el gobierno antes de integrar.El proyecto define un modelo único de roles y matriz RACI sobre la estructura actual, un esquema de protección del PIAR en tres capas (clínica, pedagógica y estadística), seudonomización mediante HMAC-SHA-256 y un roadmap en cuatro faases con compuestas de control e indicadores con fórmula."
-        ],
+        "subtitle": "",
+        "content": "",
+        "bullets": [],
         "layout": "full",
         "isFullImage": true,
         "isImported": true,
@@ -2213,17 +2069,9 @@
       {
         "id": "slide_1795609857643_18",
         "title": "Diagnostico gobierno de datos Colegio Tecnico Jaime Pardo Leal IED",
-        "subtitle": "Por Jhomar Alejandra Cano Ramirez",
-        "content": "Diagnostico de gobierno y gestion de datos bajo el marco DAMA-DMBOK para el Colegio Técnico Jaime Pardo Leal IED (Bogotá). Dirigido a directivos, docentes y area administrativa con el objetivo de formalizar roles y politicas, inventariar activos de la información y proteger los datos sensibles de niños, niñas y adolecentes (NNA).",
-        "bullets": [
-          "Antecedentes y problema identificado",
-          "El Colegio Técnico Jaime Pardo Leal  IED gestiona la información critica y sensible de los niños, niñas y adolecentes (NNA) de manera fragmentada en diversos sistemas aislados (plataforma de notas, carpetas informales en Google Drive, planillas locales, obserbadores fisicos), esta desarticulación crea una falta de trazabilidad del proceso y riesgos legales.",
-          "Metodología",
-          "Se realizo una investigación de la arquitectura actual y un inventario de activos de la información.",
-          "Posteriormente, se aplico un instrumento de evaluación de madurez basado en las 11 dimensiones del marco DAMA-DMBOK (en una escala del 1 al 5) determinando una linea base inicial de 1,64 (nivel 1) y proyectado con metas de 12 meses (nivel 2) y 24 meses (nivel 3).",
-          "Propuesta",
-          "La prioridad no trata de adquirir software sino formalizar el gobierno antes de integrar.El proyecto define un modelo único de roles y matriz RACI sobre la estructura actual, un esquema de protección del PIAR en tres capas (clínica, pedagógica y estadística), seudonomización mediante HMAC-SHA-256 y un roadmap en cuatro faases con compuestas de control e indicadores con fórmula."
-        ],
+        "subtitle": "",
+        "content": "",
+        "bullets": [],
         "layout": "full",
         "isFullImage": true,
         "isImported": true,
@@ -2237,17 +2085,9 @@
       {
         "id": "slide_1795609857643_19",
         "title": "Diagnostico gobierno de datos Colegio Tecnico Jaime Pardo Leal IED",
-        "subtitle": "Por Jhomar Alejandra Cano Ramirez",
-        "content": "Diagnostico de gobierno y gestion de datos bajo el marco DAMA-DMBOK para el Colegio Técnico Jaime Pardo Leal IED (Bogotá). Dirigido a directivos, docentes y area administrativa con el objetivo de formalizar roles y politicas, inventariar activos de la información y proteger los datos sensibles de niños, niñas y adolecentes (NNA).",
-        "bullets": [
-          "Antecedentes y problema identificado",
-          "El Colegio Técnico Jaime Pardo Leal  IED gestiona la información critica y sensible de los niños, niñas y adolecentes (NNA) de manera fragmentada en diversos sistemas aislados (plataforma de notas, carpetas informales en Google Drive, planillas locales, obserbadores fisicos), esta desarticulación crea una falta de trazabilidad del proceso y riesgos legales.",
-          "Metodología",
-          "Se realizo una investigación de la arquitectura actual y un inventario de activos de la información.",
-          "Posteriormente, se aplico un instrumento de evaluación de madurez basado en las 11 dimensiones del marco DAMA-DMBOK (en una escala del 1 al 5) determinando una linea base inicial de 1,64 (nivel 1) y proyectado con metas de 12 meses (nivel 2) y 24 meses (nivel 3).",
-          "Propuesta",
-          "La prioridad no trata de adquirir software sino formalizar el gobierno antes de integrar.El proyecto define un modelo único de roles y matriz RACI sobre la estructura actual, un esquema de protección del PIAR en tres capas (clínica, pedagógica y estadística), seudonomización mediante HMAC-SHA-256 y un roadmap en cuatro faases con compuestas de control e indicadores con fórmula."
-        ],
+        "subtitle": "",
+        "content": "",
+        "bullets": [],
         "layout": "full",
         "isFullImage": true,
         "isImported": true,
@@ -2261,17 +2101,9 @@
       {
         "id": "slide_1795609857643_20",
         "title": "Diagnostico gobierno de datos Colegio Tecnico Jaime Pardo Leal IED",
-        "subtitle": "Por Jhomar Alejandra Cano Ramirez",
-        "content": "Diagnostico de gobierno y gestion de datos bajo el marco DAMA-DMBOK para el Colegio Técnico Jaime Pardo Leal IED (Bogotá). Dirigido a directivos, docentes y area administrativa con el objetivo de formalizar roles y politicas, inventariar activos de la información y proteger los datos sensibles de niños, niñas y adolecentes (NNA).",
-        "bullets": [
-          "Antecedentes y problema identificado",
-          "El Colegio Técnico Jaime Pardo Leal  IED gestiona la información critica y sensible de los niños, niñas y adolecentes (NNA) de manera fragmentada en diversos sistemas aislados (plataforma de notas, carpetas informales en Google Drive, planillas locales, obserbadores fisicos), esta desarticulación crea una falta de trazabilidad del proceso y riesgos legales.",
-          "Metodología",
-          "Se realizo una investigación de la arquitectura actual y un inventario de activos de la información.",
-          "Posteriormente, se aplico un instrumento de evaluación de madurez basado en las 11 dimensiones del marco DAMA-DMBOK (en una escala del 1 al 5) determinando una linea base inicial de 1,64 (nivel 1) y proyectado con metas de 12 meses (nivel 2) y 24 meses (nivel 3).",
-          "Propuesta",
-          "La prioridad no trata de adquirir software sino formalizar el gobierno antes de integrar.El proyecto define un modelo único de roles y matriz RACI sobre la estructura actual, un esquema de protección del PIAR en tres capas (clínica, pedagógica y estadística), seudonomización mediante HMAC-SHA-256 y un roadmap en cuatro faases con compuestas de control e indicadores con fórmula."
-        ],
+        "subtitle": "",
+        "content": "",
+        "bullets": [],
         "layout": "full",
         "isFullImage": true,
         "isImported": true,
@@ -2285,17 +2117,9 @@
       {
         "id": "slide_1795609857643_21",
         "title": "Diagnostico gobierno de datos Colegio Tecnico Jaime Pardo Leal IED",
-        "subtitle": "Por Jhomar Alejandra Cano Ramirez",
-        "content": "Diagnostico de gobierno y gestion de datos bajo el marco DAMA-DMBOK para el Colegio Técnico Jaime Pardo Leal IED (Bogotá). Dirigido a directivos, docentes y area administrativa con el objetivo de formalizar roles y politicas, inventariar activos de la información y proteger los datos sensibles de niños, niñas y adolecentes (NNA).",
-        "bullets": [
-          "Antecedentes y problema identificado",
-          "El Colegio Técnico Jaime Pardo Leal  IED gestiona la información critica y sensible de los niños, niñas y adolecentes (NNA) de manera fragmentada en diversos sistemas aislados (plataforma de notas, carpetas informales en Google Drive, planillas locales, obserbadores fisicos), esta desarticulación crea una falta de trazabilidad del proceso y riesgos legales.",
-          "Metodología",
-          "Se realizo una investigación de la arquitectura actual y un inventario de activos de la información.",
-          "Posteriormente, se aplico un instrumento de evaluación de madurez basado en las 11 dimensiones del marco DAMA-DMBOK (en una escala del 1 al 5) determinando una linea base inicial de 1,64 (nivel 1) y proyectado con metas de 12 meses (nivel 2) y 24 meses (nivel 3).",
-          "Propuesta",
-          "La prioridad no trata de adquirir software sino formalizar el gobierno antes de integrar.El proyecto define un modelo único de roles y matriz RACI sobre la estructura actual, un esquema de protección del PIAR en tres capas (clínica, pedagógica y estadística), seudonomización mediante HMAC-SHA-256 y un roadmap en cuatro faases con compuestas de control e indicadores con fórmula."
-        ],
+        "subtitle": "",
+        "content": "",
+        "bullets": [],
         "layout": "full",
         "isFullImage": true,
         "isImported": true,
@@ -3035,7 +2859,7 @@
         "displayOrder": 1,
         "featuredVideoPublic": true
       },
-      "publicationStatus": "published",
+      "publicationStatus": "completed",
       "completedSteps": [
         1,
         2,
@@ -3080,15 +2904,15 @@
         "authorsInstitution": "Universidad Politecnico Grancolombiano"
       },
       "createdAt": "2026-11-25T11:45:30.865Z",
-      "updatedAt": "2026-11-25T12:41:53.079Z",
+      "updatedAt": "2026-11-27T21:54:12.948Z",
       "progress": 100,
       "calculatedProgress": 100,
       "submittedForApproval": true,
-      "approvalStatus": "approved",
+      "approvalStatus": "pending",
       "status": "completed",
       "completedAt": "2026-11-25T12:41:53.079Z",
-      "isPublic": true,
-      "rejectionReason": "",
+      "isPublic": false,
+      "rejectionReason": "Desautorizado por el Administrador (oculto al público).",
       "authorizedAt": "2026-11-26T00:21:13.488Z",
       "authorizedBy": "Melisa"
     },
@@ -3102,12 +2926,12 @@
     "authorAvatar": "🦊",
     "authorRole": "Estudiante / Creador",
     "createdAt": "2026-11-25T11:45:30.865Z",
-    "updatedAt": "2026-11-27T20:29:54.876Z",
+    "updatedAt": "2026-11-27T21:54:11.817Z",
     "fromStudentCreate": true,
     "_isStudentDraft": true,
     "timePerQuestion": 25,
     "plays": 0,
-    "accessMode": "public",
+    "accessMode": "private",
     "hub": {
       "joinRequests": [],
       "members": [
@@ -3147,9 +2971,9 @@
         "createdAt": "22/11/2026, 9:22:51 p.m."
       }
     ],
-    "visibility": "public",
-    "rejectedAt": "",
-    "rejectionReason": "",
+    "visibility": "private",
+    "rejectedAt": "2026-11-27T21:54:12.948Z",
+    "rejectionReason": "Desautorizado por el Administrador (oculto al público).",
     "members": [
       {
         "name": "Jhomar Alejandra Cano Ramirez",
@@ -3179,24 +3003,221 @@
     "author": "Danna Boada",
     "authorRole": "Estudiante / Creador",
     "status": "completed",
-    "publicationStatus": "completed",
-    "submittedForApproval": false,
-    "approvalStatus": "pending",
-    "isPublic": false,
+    "publicationStatus": "published",
+    "submittedForApproval": true,
+    "approvalStatus": "approved",
+    "isPublic": true,
     "image": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795575349043%2F1795714730665_da38_card_cover.jpg",
-    "banner": "assets/projects_ui/card_data_gov.png",
+    "banner": "assets/projects_ui/robot_hero_banner.png",
     "createdAt": "2026-11-25T02:55:49.043Z",
-    "updatedAt": "2026-11-27T21:54:08.514Z",
+    "updatedAt": "2026-11-27T20:30:15.795Z",
     "govdata": {
+      "id": "proj_video_1795575349043",
+      "title": "Diagnóstico de Gobierno de Datos - Afiancol S.A.S.",
+      "subtitle": "De la producción de datos a la gestión como activo estratégico",
+      "shortDescription": "Afiancol, una compañía colombiana fundada en 2007 y especializada en fianzas y garantías para el sector solidario, vive de la confianza, pero sus datos se producían sin ser gestionados como un activo: faltaban responsables, reglas de decisión y control de calidad, y por eso no servían de base para decidir. Para abordarlo, se realizo un diagnóstico de gobierno de datos con la metodología DAMA-DMBOK2, a partir de entrevistas y documentos oficiales, midiendo la madurez en seis dimensiones y desarrollando una solución en cuatro fases, consolidada en Supabase y en la herramienta GovData Nexus, cuyas métricas se actualizan de forma continua. El resultado es una madurez global del 65 % al último corte, con una base sólida en Calidad, Seguridad y Organización, y con brechas prioritarias en Estrategia y Compliance (30 %), que marcan la ruta para convertir los datos en un activo estratégico y cumplir con Habeas Data. El principal aprendizaje es que gobernar datos es tanto un tema de personas como de tecnología: medir convierte una percepción en un punto de partida, y sostener ese gobierno día a día es lo que demuestra su valor a la dirección.",
+      "fullDescription": "Afiancol, una compañía colombiana fundada en 2007 y especializada en fianzas y garantías para el sector solidario, vive de la confianza, pero sus datos se producían sin ser gestionados como un activo: faltaban responsables, reglas de decisión y control de calidad, y por eso no servían de base para decidir. Para abordarlo, se realizo un diagnóstico de gobierno de datos con la metodología DAMA-DMBOK2, a partir de entrevistas y documentos oficiales, midiendo la madurez en seis dimensiones y desarrollando una solución en cuatro fases, consolidada en Supabase y en la herramienta GovData Nexus, cuyas métricas se actualizan de forma continua. El resultado es una madurez global del 65 % al último corte, con una base sólida en Calidad, Seguridad y Organización, y con brechas prioritarias en Estrategia y Compliance (30 %), que marcan la ruta para convertir los datos en un activo estratégico y cumplir con Habeas Data. El principal aprendizaje es que gobernar datos es tanto un tema de personas como de tecnología: medir convierte una percepción en un punto de partida, y sostener ese gobierno día a día es lo que demuestra su valor a la dirección.",
+      "category": "gobierno_de__datos",
+      "categoryName": "Gobierno de Datos",
+      "projectSubtype": "Gobierno de Datos e IA",
+      "targetAudience": "Público General",
+      "problemStatement": "AFIANCOL presenta una gestión de datos poco estructurada, caracterizada por información dispersa, ausencia de responsabilidades formales sobre los datos e inconsistencias en la información. Esto genera reprocesos, dificultades en el seguimiento de procesos como cartera y siniestralidad, y limita la toma de decisiones basada en información confiable.",
+      "mainObjective": "Establecer un modelo de Gobierno de Datos para AFIANCOL, basado en DAMA-DMBOK, que fortalezca la gestión de la información mediante la definición de roles, políticas, estándares y procesos orientados a mejorar su calidad, organización, disponibilidad y aprovechamiento estratégico.",
+      "benefits": "El modelo permitirá a AFIANCOL mejorar la calidad, organización y confiabilidad de sus datos, reducir reprocesos e inconsistencias, establecer responsabilidades claras en su gestión y fortalecer el seguimiento de procesos e indicadores. Esto facilitará el acceso a información oportuna, optimizará los procesos internos y permitirá tomar decisiones más informadas, consolidando una cultura organizacional orientada al aprovechamiento estratégico de los datos.",
+      "teamLead": "Danna Boada",
+      "preparationStatus": "completado",
+      "startDate": "2026-07-01",
+      "endDate": "2026-11-25",
+      "valueProp": {
+        "problemSolved": "AFIANCOL presenta una gestión de datos poco estructurada, caracterizada por información dispersa, ausencia de responsabilidades formales sobre los datos e inconsistencias en la información. Esto genera reprocesos, dificultades en el seguimiento de procesos como cartera y siniestralidad, y limita la toma de decisiones basada en información confiable.",
+        "howItWorks": "Parte de un diagnóstico de la situación actual de los datos, identifica brechas y establece un modelo de Gobierno de Datos basado en DAMA-DMBOK2. Define dominios, responsables, políticas, estándares y reglas de calidad, acompañado de una hoja de ruta de implementación de 90 días y mecanismos de seguimiento mediante indicadores.",
+        "forWhom": "A AFIANCOL S.A.S., especialmente a la alta dirección, líderes de procesos y equipos de las áreas administrativas, financieras, comerciales, operativas y de tecnología que gestionan, producen o utilizan información para tomar decisiones.",
+        "differentiator": "Es una propuesta diseñada a la medida de AFIANCOL, que parte de su realidad organizacional, recursos y nivel de madurez. No impone un modelo genérico, sino que plantea una implementación progresiva, con responsables definidos, prioridades claras y resultados medibles.",
+        "keyFeatures": [
+          "Gobierno y estrategia de datos",
+          "Diagnóstico y medición de madurez",
+          "Gestión de calidad de datos",
+          "Catálogo y diccionario de datos",
+          "Gestión de metadatos y linaje",
+          "Asignación de Data Owners y Data Stewards",
+          "Gestión de datos maestros y de referencia",
+          "Seguridad y clasificación de la información",
+          "Estandarización de políticas y procesos",
+          "Command Center 360 y seguimiento en GovData Nexus",
+          "Hoja de ruta de implementación de 90 días"
+        ],
+        "resultsAndBenefits": "El modelo permitirá a AFIANCOL mejorar la calidad, organización y confiabilidad de sus datos, reducir reprocesos e inconsistencias, establecer responsabilidades claras en su gestión y fortalecer el seguimiento de procesos e indicadores. Esto facilitará el acceso a información oportuna, optimizará los procesos internos y permitirá tomar decisiones más informadas, consolidando una cultura organizacional orientada al aprovechamiento estratégico de los datos.",
+        "prerequisites": "",
+        "visitorAction": "Conocer la propuesta de Gobierno de Datos de AFIANCOL, consultar el diagnóstico y la hoja de ruta de implementación, y promover el compromiso de los responsables de las áreas para participar en su ejecución.",
+        "commercialPitch": "Transformamos los datos de AFIANCOL en un activo estratégico para tomar decisiones confiables, mejorar procesos y generar valor.",
+        "faqs": [
+          {
+            "q": "¿Qué es el Gobierno de Datos?",
+            "a": "Es un conjunto de políticas, procesos y responsabilidades que permiten gestionar los datos de forma organizada, segura y confiable durante todo su ciclo de vida."
+          },
+          {
+            "q": "¿Por qué AFIANCOL necesita implementar un Gobierno de Datos?",
+            "a": "Porque necesita mejorar la calidad, organización y disponibilidad de su información, reducir reprocesos y fortalecer la toma de decisiones."
+          },
+          {
+            "q": "¿La implementación requiere una gran inversión tecnológica?",
+            "a": "No necesariamente. La propuesta aprovecha los recursos y herramientas existentes en AFIANCOL, priorizando la organización, los procesos y las responsabilidades antes de realizar nuevas inversiones."
+          },
+          {
+            "q": "¿Quiénes son responsables del Gobierno de Datos?",
+            "a": "La responsabilidad es compartida entre la dirección y las diferentes áreas. Se establecen roles como Data Owner, Data Steward y custodios técnicos para garantizar una gestión adecuada."
+          },
+          {
+            "q": "¿Cuánto tiempo tomará la implementación inicial?",
+            "a": "Se plantea una hoja de ruta de 90 días, distribuida en etapas de diagnóstico, definición de responsabilidades y ejecución de acciones prioritarias."
+          },
+          {
+            "q": "¿Cómo se medirán los resultados?",
+            "a": "Mediante indicadores de calidad, cumplimiento, madurez y gestión de datos, apoyados en herramientas de seguimiento."
+          },
+          {
+            "q": "¿Qué beneficios obtendrá AFIANCOL?",
+            "a": "Mayor confiabilidad de la información, reducción de reprocesos, responsabilidades claras, procesos estandarizados y mejores decisiones basadas en datos."
+          },
+          {
+            "q": "¿Es necesario que todos los colaboradores participen?",
+            "a": "Sí. El éxito del Gobierno de Datos depende de la participación y compromiso de las personas que generan, administran y utilizan la información."
+          }
+        ]
+      },
+      "videoConfig": {
+        "sourceType": "url",
+        "url": "https://youtu.be/j9dX1jtgO4A",
+        "fileName": "",
+        "title": "Diagnóstico de Gobierno de Datos - Afiancol S.A.S.",
+        "description": "Se hace medición de la madurez con DAMA-DMBOK2, identificando las brechas y definiendo por dónde empezar a convertir los datos en un activo estratégico para la organización.",
+        "thumbnailUrl": "",
+        "isPublic": true,
+        "verified": true
+      },
+      "mainImage": "assets/projects_ui/robot_hero_banner.png",
       "thumbnailImage": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795575349043%2F1795714730665_da38_card_cover.jpg",
-      "image": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795575349043%2F1795714730665_da38_card_cover.jpg",
-      "approvalStatus": "pending",
-      "publicationStatus": "completed",
-      "isPublic": false,
-      "rejectionReason": "Desautorizado por el Administrador (oculto al público).",
+      "_clearedMainImage": false,
+      "_clearedThumbImage": false,
+      "useDefaultImage": true,
+      "externalLinks": [
+        {
+          "id": "lnk_1795656162686",
+          "title": "Página Web Oficial",
+          "url": "https://afiancol.com/",
+          "description": "",
+          "category": "Página web oficial",
+          "visibility": "public",
+          "verified": false,
+          "thumbnailUrl": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795575349043%2F1795656180747_8gul_asset.jpg"
+        }
+      ],
+      "projectRoadmap": [
+        {
+          "title": "Planeación",
+          "description": "Definición del caso de estudio (Afiancol S.A.S.) y del alcance, selección de artefactos de evaluación y del marco de referencia DAMA-DMBOK, en conjunto con la plataforma GovData Nexus.",
+          "status": "completed",
+          "progress": 100,
+          "emoji": "📝",
+          "icon": "clipboard"
+        },
+        {
+          "title": "Investigación",
+          "description": "Entrevista de diagnóstico con el director de TI, revisión de fuentes públicas y normativa.",
+          "status": "completed",
+          "progress": 100,
+          "emoji": "🔍",
+          "icon": "clipboard"
+        },
+        {
+          "title": "Desarrollo",
+          "description": "Evaluación de madurez con DAMA-DMBOK (100 preguntas), análisis de brechas y priorización; diseño del modelo de roles, políticas, comités y roadmap; y configuración en GovData Nexus del catálogo, reglas de calidad, reglas de SLA y riesgos, con datos sintéticos.",
+          "status": "completed",
+          "progress": 100,
+          "emoji": "💻",
+          "icon": "clipboard"
+        },
+        {
+          "title": "Publicación",
+          "description": "Elaboración del video y la presentación, además de la publicación en la plataforma del curso para su socialización y revisión.",
+          "status": "completed",
+          "progress": 100,
+          "emoji": "🚀",
+          "icon": "clipboard"
+        }
+      ],
+      "landingConfig": {
+        "publicName": "Diagnóstico de Gobierno de Datos - Afiancol S.A.S.",
+        "slug": "diagnostico-de-gobierno-de-datos-afiancol-s-a-s",
+        "landingTitle": "Diagnóstico de Gobierno de Datos - Afiancol S.A.S.",
+        "publicDescription": "Se hace medición de la madurez con DAMA-DMBOK2, identificando las brechas y definiendo por dónde empezar a convertir los datos en un activo estratégico para la organización.",
+        "visibleCategory": "Gobierno de Datos",
+        "tags": [
+          "Gobierno de Datos",
+          "IA",
+          "Innovación"
+        ],
+        "ctaText": "Ver Proyecto",
+        "ctaUrl": "#",
+        "displayOrder": 1,
+        "featuredVideoPublic": true
+      },
+      "publicationStatus": "published",
+      "completedSteps": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16
+      ],
+      "currentStep": 15,
+      "author": "Danna Boada",
+      "authorId": "user_1795574386910",
+      "ownerId": "user_1795574386910",
+      "ownerUsername": "dan_boa27",
+      "authorEmail": "boadavillamil09@gmail.com",
+      "authorAvatar": "🦄",
+      "authorRole": "Estudiante / Creador",
+      "joinCode": "804263",
+      "accessCode": "804263",
+      "designConfig": {
+        "themeId": "cosmos",
+        "fontFamily": "Montserrat",
+        "titleColor": "#ffffff",
+        "textColor": "#cbd5e1",
+        "accentColor": "#00f5d4",
+        "bannerStyle": "gradient-cosmos",
+        "bannerUrl": "assets/projects_ui/robot_hero_banner.png"
+      },
+      "authorsConfig": {
+        "authorsList": "Danna Boada",
+        "authorsEmails": "boadavillamil09@gmail.com",
+        "authorsRole": "Estudiante / Creador",
+        "authorsInstitution": "Politécnico Grancolombiano",
+        "collaborators": "Extiendo mis agradecimientos al profesor Carlos Caño ya que con su guía y acompañamiento fue posible ejecutar un correcto proceso de implementación de Gobierno de Datos de manera teórico práctico."
+      },
+      "createdAt": "2026-11-25T02:55:49.043Z",
+      "updatedAt": "2026-11-26T15:11:14.664Z",
+      "progress": 100,
+      "calculatedProgress": 100,
+      "approvalStatus": "approved",
       "status": "completed",
-      "rejectedAt": "",
-      "updatedAt": "2026-11-27T21:54:09.724Z"
+      "isPublic": true,
+      "rejectionReason": "",
+      "authorizedAt": "2026-11-26T15:11:13.841Z",
+      "authorizedBy": "Melisa",
+      "image": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795575349043%2F1795714730665_da38_card_cover.jpg"
     },
     "fromStudentCreate": true,
     "_isStudentDraft": true,
@@ -3206,11 +3227,11 @@
     "difficulty": "Medio",
     "timePerQuestion": 25,
     "plays": 0,
-    "mainImage": "assets/projects_ui/card_data_gov.png",
+    "mainImage": "assets/projects_ui/robot_hero_banner.png",
     "thumbnailImage": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795575349043%2F1795714730665_da38_card_cover.jpg",
     "shortDescription": "Afiancol, una compañía colombiana fundada en 2007 y especializada en fianzas y garantías para el sector solidario, vive de la confianza, pero sus datos se producían sin ser gestionados como un activo: faltaban responsables, reglas de decisión y control de calidad, y por eso no servían de base para decidir. Para abordarlo, se realizo un diagnóstico de gobierno de datos con la metodología DAMA-DMBOK2, a partir de entrevistas y documentos oficiales, midiendo la madurez en seis dimensiones y desarrollando una solución en cuatro fases, consolidada en Supabase y en la herramienta GovData Nexus, cuyas métricas se actualizan de forma continua. El resultado es una madurez global del 65 % al último corte, con una base sólida en Calidad, Seguridad y Organización, y con brechas prioritarias en Estrategia y Compliance (30 %), que marcan la ruta para convertir los datos en un activo estratégico y cumplir con Habeas Data. El principal aprendizaje es que gobernar datos es tanto un tema de personas como de tecnología: medir convierte una percepción en un punto de partida, y sostener ese gobierno día a día es lo que demuestra su valor a la dirección.",
     "fullDescription": "Afiancol, una compañía colombiana fundada en 2007 y especializada en fianzas y garantías para el sector solidario, vive de la confianza, pero sus datos se producían sin ser gestionados como un activo: faltaban responsables, reglas de decisión y control de calidad, y por eso no servían de base para decidir. Para abordarlo, se realizo un diagnóstico de gobierno de datos con la metodología DAMA-DMBOK2, a partir de entrevistas y documentos oficiales, midiendo la madurez en seis dimensiones y desarrollando una solución en cuatro fases, consolidada en Supabase y en la herramienta GovData Nexus, cuyas métricas se actualizan de forma continua. El resultado es una madurez global del 65 % al último corte, con una base sólida en Calidad, Seguridad y Organización, y con brechas prioritarias en Estrategia y Compliance (30 %), que marcan la ruta para convertir los datos en un activo estratégico y cumplir con Habeas Data. El principal aprendizaje es que gobernar datos es tanto un tema de personas como de tecnología: medir convierte una percepción en un punto de partida, y sostener ese gobierno día a día es lo que demuestra su valor a la dirección.",
-    "accessMode": "private",
+    "accessMode": "public",
     "displayOrder": 1,
     "landingConfig": {
       "publicName": "Diagnóstico de Gobierno de Datos - Afiancol S.A.S.",
@@ -3242,7 +3263,7 @@
       "textColor": "#cbd5e1",
       "accentColor": "#00f5d4",
       "bannerStyle": "gradient-cosmos",
-      "bannerUrl": "assets/projects_ui/card_data_gov.png"
+      "bannerUrl": "assets/projects_ui/robot_hero_banner.png"
     },
     "videoUrl": "https://youtu.be/j9dX1jtgO4A",
     "videoConfig": {
@@ -3268,7 +3289,7 @@
       "views": [],
       "ratings": [],
       "projectId": "proj_video_1795575349043",
-      "updatedAt": 1795705876092
+      "updatedAt": 1795654514752
     },
     "customProjectCodes": [
       {
@@ -3296,9 +3317,9 @@
         "createdAt": "22/11/2026, 9:22:51 p.m."
       }
     ],
-    "visibility": "private",
-    "rejectedAt": "2026-11-27T21:54:09.724Z",
-    "rejectionReason": "Desautorizado por el Administrador (oculto al público).",
+    "visibility": "public",
+    "rejectedAt": "",
+    "rejectionReason": "",
     "members": [
       {
         "name": "Danna Boada",
@@ -3310,20 +3331,20 @@
     "joinRequests": [],
     "slug": "diagnostico-de-gobierno-de-datos-afiancol-s-a-s",
     "projectSubtype": "Gobierno de Datos e IA",
-    "heroBanner": "assets/projects_ui/card_data_gov.png",
+    "heroBanner": "assets/projects_ui/robot_hero_banner.png",
     "coverImage": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795575349043%2F1795714730665_da38_card_cover.jpg",
     "_clearedMainImage": false,
     "_clearedThumbImage": false,
     "useDefaultImage": true,
     "targetAudience": "Público General",
-    "problemStatement": "",
-    "mainObjective": "",
-    "benefits": "",
+    "problemStatement": "AFIANCOL presenta una gestión de datos poco estructurada, caracterizada por información dispersa, ausencia de responsabilidades formales sobre los datos e inconsistencias en la información. Esto genera reprocesos, dificultades en el seguimiento de procesos como cartera y siniestralidad, y limita la toma de decisiones basada en información confiable.",
+    "mainObjective": "Establecer un modelo de Gobierno de Datos para AFIANCOL, basado en DAMA-DMBOK, que fortalezca la gestión de la información mediante la definición de roles, políticas, estándares y procesos orientados a mejorar su calidad, organización, disponibilidad y aprovechamiento estratégico.",
+    "benefits": "El modelo permitirá a AFIANCOL mejorar la calidad, organización y confiabilidad de sus datos, reducir reprocesos e inconsistencias, establecer responsabilidades claras en su gestión y fortalecer el seguimiento de procesos e indicadores. Esto facilitará el acceso a información oportuna, optimizará los procesos internos y permitirá tomar decisiones más informadas, consolidando una cultura organizacional orientada al aprovechamiento estratégico de los datos.",
     "teamLead": "Danna Boada",
-    "preparationStatus": "en_desarrollo",
-    "startDate": "2026-11-25",
-    "endDate": "",
-    "currentStep": 6,
+    "preparationStatus": "finalizado",
+    "startDate": "2026-07-01",
+    "endDate": "2026-11-25",
+    "currentStep": 15,
     "completedSteps": [
       1,
       2,
@@ -3342,31 +3363,121 @@
       15,
       16
     ],
-    "progress": 65,
-    "calculatedProgress": 65,
+    "progress": 100,
+    "calculatedProgress": 100,
     "valueProp": {
-      "problemSolved": "",
-      "howItWorks": "",
-      "forWhom": "Público General",
-      "differentiator": "",
-      "keyFeatures": [],
-      "resultsAndBenefits": "",
+      "problemSolved": "AFIANCOL presenta una gestión de datos poco estructurada, caracterizada por información dispersa, ausencia de responsabilidades formales sobre los datos e inconsistencias en la información. Esto genera reprocesos, dificultades en el seguimiento de procesos como cartera y siniestralidad, y limita la toma de decisiones basada en información confiable.",
+      "howItWorks": "Parte de un diagnóstico de la situación actual de los datos, identifica brechas y establece un modelo de Gobierno de Datos basado en DAMA-DMBOK2. Define dominios, responsables, políticas, estándares y reglas de calidad, acompañado de una hoja de ruta de implementación de 90 días y mecanismos de seguimiento mediante indicadores.",
+      "forWhom": "A AFIANCOL S.A.S., especialmente a la alta dirección, líderes de procesos y equipos de las áreas administrativas, financieras, comerciales, operativas y de tecnología que gestionan, producen o utilizan información para tomar decisiones.",
+      "differentiator": "Es una propuesta diseñada a la medida de AFIANCOL, que parte de su realidad organizacional, recursos y nivel de madurez. No impone un modelo genérico, sino que plantea una implementación progresiva, con responsables definidos, prioridades claras y resultados medibles.",
+      "keyFeatures": [
+        "Gobierno y estrategia de datos",
+        "Diagnóstico y medición de madurez",
+        "Gestión de calidad de datos",
+        "Catálogo y diccionario de datos",
+        "Gestión de metadatos y linaje",
+        "Asignación de Data Owners y Data Stewards",
+        "Gestión de datos maestros y de referencia",
+        "Seguridad y clasificación de la información",
+        "Estandarización de políticas y procesos",
+        "Command Center 360 y seguimiento en GovData Nexus",
+        "Hoja de ruta de implementación de 90 días"
+      ],
+      "resultsAndBenefits": "El modelo permitirá a AFIANCOL mejorar la calidad, organización y confiabilidad de sus datos, reducir reprocesos e inconsistencias, establecer responsabilidades claras en su gestión y fortalecer el seguimiento de procesos e indicadores. Esto facilitará el acceso a información oportuna, optimizará los procesos internos y permitirá tomar decisiones más informadas, consolidando una cultura organizacional orientada al aprovechamiento estratégico de los datos.",
       "prerequisites": "",
-      "visitorAction": "Unirse / Colaborar",
-      "commercialPitch": "",
-      "faqs": []
+      "visitorAction": "Conocer la propuesta de Gobierno de Datos de AFIANCOL, consultar el diagnóstico y la hoja de ruta de implementación, y promover el compromiso de los responsables de las áreas para participar en su ejecución.",
+      "commercialPitch": "Transformamos los datos de AFIANCOL en un activo estratégico para tomar decisiones confiables, mejorar procesos y generar valor.",
+      "faqs": [
+        {
+          "q": "¿Qué es el Gobierno de Datos?",
+          "a": "Es un conjunto de políticas, procesos y responsabilidades que permiten gestionar los datos de forma organizada, segura y confiable durante todo su ciclo de vida."
+        },
+        {
+          "q": "¿Por qué AFIANCOL necesita implementar un Gobierno de Datos?",
+          "a": "Porque necesita mejorar la calidad, organización y disponibilidad de su información, reducir reprocesos y fortalecer la toma de decisiones."
+        },
+        {
+          "q": "¿La implementación requiere una gran inversión tecnológica?",
+          "a": "No necesariamente. La propuesta aprovecha los recursos y herramientas existentes en AFIANCOL, priorizando la organización, los procesos y las responsabilidades antes de realizar nuevas inversiones."
+        },
+        {
+          "q": "¿Quiénes son responsables del Gobierno de Datos?",
+          "a": "La responsabilidad es compartida entre la dirección y las diferentes áreas. Se establecen roles como Data Owner, Data Steward y custodios técnicos para garantizar una gestión adecuada."
+        },
+        {
+          "q": "¿Cuánto tiempo tomará la implementación inicial?",
+          "a": "Se plantea una hoja de ruta de 90 días, distribuida en etapas de diagnóstico, definición de responsabilidades y ejecución de acciones prioritarias."
+        },
+        {
+          "q": "¿Cómo se medirán los resultados?",
+          "a": "Mediante indicadores de calidad, cumplimiento, madurez y gestión de datos, apoyados en herramientas de seguimiento."
+        },
+        {
+          "q": "¿Qué beneficios obtendrá AFIANCOL?",
+          "a": "Mayor confiabilidad de la información, reducción de reprocesos, responsabilidades claras, procesos estandarizados y mejores decisiones basadas en datos."
+        },
+        {
+          "q": "¿Es necesario que todos los colaboradores participen?",
+          "a": "Sí. El éxito del Gobierno de Datos depende de la participación y compromiso de las personas que generan, administran y utilizan la información."
+        }
+      ]
     },
     "valueProposition": {
-      "problemSolved": "",
-      "howItWorks": "",
-      "forWhom": "Público General",
-      "differentiator": "",
-      "keyFeatures": [],
-      "resultsAndBenefits": "",
+      "problemSolved": "AFIANCOL presenta una gestión de datos poco estructurada, caracterizada por información dispersa, ausencia de responsabilidades formales sobre los datos e inconsistencias en la información. Esto genera reprocesos, dificultades en el seguimiento de procesos como cartera y siniestralidad, y limita la toma de decisiones basada en información confiable.",
+      "howItWorks": "Parte de un diagnóstico de la situación actual de los datos, identifica brechas y establece un modelo de Gobierno de Datos basado en DAMA-DMBOK2. Define dominios, responsables, políticas, estándares y reglas de calidad, acompañado de una hoja de ruta de implementación de 90 días y mecanismos de seguimiento mediante indicadores.",
+      "forWhom": "A AFIANCOL S.A.S., especialmente a la alta dirección, líderes de procesos y equipos de las áreas administrativas, financieras, comerciales, operativas y de tecnología que gestionan, producen o utilizan información para tomar decisiones.",
+      "differentiator": "Es una propuesta diseñada a la medida de AFIANCOL, que parte de su realidad organizacional, recursos y nivel de madurez. No impone un modelo genérico, sino que plantea una implementación progresiva, con responsables definidos, prioridades claras y resultados medibles.",
+      "keyFeatures": [
+        "Gobierno y estrategia de datos",
+        "Diagnóstico y medición de madurez",
+        "Gestión de calidad de datos",
+        "Catálogo y diccionario de datos",
+        "Gestión de metadatos y linaje",
+        "Asignación de Data Owners y Data Stewards",
+        "Gestión de datos maestros y de referencia",
+        "Seguridad y clasificación de la información",
+        "Estandarización de políticas y procesos",
+        "Command Center 360 y seguimiento en GovData Nexus",
+        "Hoja de ruta de implementación de 90 días"
+      ],
+      "resultsAndBenefits": "El modelo permitirá a AFIANCOL mejorar la calidad, organización y confiabilidad de sus datos, reducir reprocesos e inconsistencias, establecer responsabilidades claras en su gestión y fortalecer el seguimiento de procesos e indicadores. Esto facilitará el acceso a información oportuna, optimizará los procesos internos y permitirá tomar decisiones más informadas, consolidando una cultura organizacional orientada al aprovechamiento estratégico de los datos.",
       "prerequisites": "",
-      "visitorAction": "Unirse / Colaborar",
-      "commercialPitch": "",
-      "faqs": []
+      "visitorAction": "Conocer la propuesta de Gobierno de Datos de AFIANCOL, consultar el diagnóstico y la hoja de ruta de implementación, y promover el compromiso de los responsables de las áreas para participar en su ejecución.",
+      "commercialPitch": "Transformamos los datos de AFIANCOL en un activo estratégico para tomar decisiones confiables, mejorar procesos y generar valor.",
+      "faqs": [
+        {
+          "q": "¿Qué es el Gobierno de Datos?",
+          "a": "Es un conjunto de políticas, procesos y responsabilidades que permiten gestionar los datos de forma organizada, segura y confiable durante todo su ciclo de vida."
+        },
+        {
+          "q": "¿Por qué AFIANCOL necesita implementar un Gobierno de Datos?",
+          "a": "Porque necesita mejorar la calidad, organización y disponibilidad de su información, reducir reprocesos y fortalecer la toma de decisiones."
+        },
+        {
+          "q": "¿La implementación requiere una gran inversión tecnológica?",
+          "a": "No necesariamente. La propuesta aprovecha los recursos y herramientas existentes en AFIANCOL, priorizando la organización, los procesos y las responsabilidades antes de realizar nuevas inversiones."
+        },
+        {
+          "q": "¿Quiénes son responsables del Gobierno de Datos?",
+          "a": "La responsabilidad es compartida entre la dirección y las diferentes áreas. Se establecen roles como Data Owner, Data Steward y custodios técnicos para garantizar una gestión adecuada."
+        },
+        {
+          "q": "¿Cuánto tiempo tomará la implementación inicial?",
+          "a": "Se plantea una hoja de ruta de 90 días, distribuida en etapas de diagnóstico, definición de responsabilidades y ejecución de acciones prioritarias."
+        },
+        {
+          "q": "¿Cómo se medirán los resultados?",
+          "a": "Mediante indicadores de calidad, cumplimiento, madurez y gestión de datos, apoyados en herramientas de seguimiento."
+        },
+        {
+          "q": "¿Qué beneficios obtendrá AFIANCOL?",
+          "a": "Mayor confiabilidad de la información, reducción de reprocesos, responsabilidades claras, procesos estandarizados y mejores decisiones basadas en datos."
+        },
+        {
+          "q": "¿Es necesario que todos los colaboradores participen?",
+          "a": "Sí. El éxito del Gobierno de Datos depende de la participación y compromiso de las personas que generan, administran y utilizan la información."
+        }
+      ]
     },
     "resources": [
       {
@@ -3927,7 +4038,7 @@
     "duration": "5:00 min",
     "tag": "✔ Completado",
     "tagClass": "badge-completed",
-    "_cardCoverUpdatedAt": 1795582356091,
+    "_cardCoverUpdatedAt": 1795714734250,
     "_globalHeroBanner": "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=1600&q=80",
     "completedAt": "2026-11-26T01:23:18.503Z",
     "authorizedAt": "2026-11-26T15:11:13.841Z",
