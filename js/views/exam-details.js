@@ -169,6 +169,10 @@ window.ExamDetailsView = {
     }
   },
 
+  ico3d(path, cls = 't3d-ex-ico-sm') {
+    return `<img src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/${path}" class="${cls}" alt="" />`;
+  },
+
   render() {
     const content = document.getElementById('teacher-randomize-modal-content');
     const exam = this.activeExam;
@@ -188,7 +192,8 @@ window.ExamDetailsView = {
             <span>Volver</span>
           </button>
           <div class="t3d-rand-brand-crumbs" style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
-            <span>🎓 Mentix 3D</span>
+            ${this.ico3d('Graduation%20cap/3D/graduation_cap_3d.png', 't3d-ex-ico-sm')}
+            <span>Mentix 3D</span>
             <span>›</span>
             <span>Cuestionarios</span>
             <span>›</span>
@@ -202,46 +207,46 @@ window.ExamDetailsView = {
 
         <div class="t3d-rand-topbar-actions">
           <button type="button" class="t3d-rand-btn-preview" onclick="window.ExamDetailsView.previewExam()" title="Probar cómo lo verá el estudiante con esta configuración">
-            <span>👁️</span>
+            ${this.ico3d('Eye/3D/eye_3d.png', 't3d-ex-ico-xs')}
             <span>Vista previa</span>
           </button>
           <button type="button" id="t3d-examhub-save-btn" class="t3d-rand-btn-save" onclick="window.ExamDetailsView.saveAll()">
-            <span>💾</span>
+            ${this.ico3d('Floppy%20disk/3D/floppy_disk_3d.png', 't3d-ex-ico-xs')}
             <span>Guardar cambios</span>
           </button>
         </div>
       </header>
 
-      <!-- CUERPO A PANTALLA COMPLETA: SIDEBAR + ÁREA DE TRABAJO -->
+      <!-- CUERPO A PANTALLA COMPLETA: SIDEBAR 3D + ÁREA DE TRABAJO -->
       <div class="t3d-examhub-body">
         <aside class="t3d-examhub-sidebar">
           <button type="button" class="t3d-examhub-nav-btn ${this.activeTab === 'general' ? 'active' : ''}" onclick="window.ExamDetailsView.switchTab('general')">
-            <span>🪪</span>
+            ${this.ico3d('Identification%20card/3D/identification_card_3d.png', 't3d-ex-ico-sm')}
             <span>General</span>
           </button>
           <button type="button" class="t3d-examhub-nav-btn ${this.activeTab === 'questions' ? 'active' : ''}" onclick="window.ExamDetailsView.switchTab('questions')">
-            <span>❓</span>
+            ${this.ico3d('Books/3D/books_3d.png', 't3d-ex-ico-sm')}
             <span>Preguntas</span>
             <span class="t3d-examhub-nav-count">${realTotal}</span>
           </button>
           <button type="button" class="t3d-examhub-nav-btn ${this.activeTab === 'config' ? 'active' : ''}" onclick="window.ExamDetailsView.switchTab('config')">
-            <span>⚙️</span>
+            ${this.ico3d('Game%20die/3D/game_die_3d.png', 't3d-ex-ico-sm')}
             <span>Aleatorización</span>
             <span class="t3d-examhub-nav-count">${cfg.enabled ? 'ON' : 'OFF'}</span>
           </button>
           <button type="button" class="t3d-examhub-nav-btn ${this.activeTab === 'publish' ? 'active' : ''}" onclick="window.ExamDetailsView.switchTab('publish')">
-            <span>🚀</span>
+            ${this.ico3d('Rocket/3D/rocket_3d.png', 't3d-ex-ico-sm')}
             <span>Publicación</span>
           </button>
           <button type="button" class="t3d-examhub-nav-btn ${this.activeTab === 'results' ? 'active' : ''}" onclick="window.ExamDetailsView.switchTab('results')">
-            <span>📊</span>
+            ${this.ico3d('Bar%20chart/3D/bar_chart_3d.png', 't3d-ex-ico-sm')}
             <span>Resultados</span>
             <span class="t3d-examhub-nav-count">${attempts.length}</span>
           </button>
 
-          <div style="margin-top: auto; padding-top: 1rem; border-top: 1px dashed rgba(148,163,184,0.3);">
-            <button type="button" class="t3d-btn t3d-btn-amber" style="width:100%; justify-content:center; font-size:0.84rem;" onclick="window.ExamDetailsView.openInCreator()">
-              <span>✏️</span>
+          <div style="margin-top: auto; padding-top: 1rem; border-top: 2px dashed rgba(148,163,184,0.35);">
+            <button type="button" class="t3d-btn t3d-btn-amber" style="width:100%; justify-content:center; font-size:0.86rem;" onclick="window.ExamDetailsView.openInCreator()">
+              ${this.ico3d('Pencil/3D/pencil_3d.png', 't3d-ex-ico-xs')}
               <span>Editar Preguntas</span>
             </button>
           </div>
@@ -409,10 +414,10 @@ window.ExamDetailsView = {
         <!-- COLUMNA IZQUIERDA: CONFIGURACIÓN DEL DOCENTE -->
         <div class="t3d-rand-main-card">
           <div class="t3d-rand-header-row">
-            <div class="t3d-rand-header-ico">🎲</div>
+            <div class="t3d-rand-header-ico">${this.ico3d('Game%20die/3D/game_die_3d.png', 't3d-ex-ico-md')}</div>
             <div>
               <h2 class="t3d-rand-header-title">Aleatorización inteligente de preguntas y respuestas</h2>
-              <p class="t3d-rand-header-sub">Activa o desactiva cada regla y observa al instante cómo se comporta el motor en la vista previa derecha.</p>
+              <p class="t3d-rand-header-sub">Activa o desactiva cada regla y observa al instante cómo se comporta el motor 3D en la vista previa derecha.</p>
             </div>
           </div>
 
@@ -438,7 +443,7 @@ window.ExamDetailsView = {
           <!-- 1. Selección aleatoria de preguntas -->
           <div class="t3d-rand-setting-box ${cfg.enabled ? '' : 'is-off'}">
             <div class="t3d-rand-setting-info">
-              <div class="t3d-rand-setting-ico">🎲</div>
+              <div class="t3d-rand-setting-ico">${this.ico3d('Game%20die/3D/game_die_3d.png', 't3d-ex-ico-sm')}</div>
               <div>
                 <h4 class="t3d-rand-setting-title">
                   Selección aleatoria de preguntas
@@ -460,7 +465,7 @@ window.ExamDetailsView = {
           <!-- 2. Banco disponible vs Preguntas por estudiante -->
           <div class="t3d-rand-stats-row">
             <div class="t3d-rand-stat-card">
-              <div class="t3d-rand-stat-ico">📚</div>
+              <div class="t3d-rand-stat-ico">${this.ico3d('Books/3D/books_3d.png', 't3d-ex-ico-sm')}</div>
               <div class="t3d-rand-stat-content">
                 <div class="t3d-rand-stat-label">Preguntas disponibles ${this.demoSimMode ? '(Demo)' : ''}</div>
                 <div class="t3d-rand-stat-num">${effTotal}</div>
@@ -468,7 +473,7 @@ window.ExamDetailsView = {
               </div>
             </div>
             <div class="t3d-rand-stat-card ${cfg.enabled ? '' : 'is-disabled'}">
-              <div class="t3d-rand-stat-ico">📋</div>
+              <div class="t3d-rand-stat-ico">${this.ico3d('Clipboard/3D/clipboard_3d.png', 't3d-ex-ico-sm')}</div>
               <div class="t3d-rand-stat-content">
                 <div class="t3d-rand-stat-label">Preguntas por estudiante <span style="color:#ef4444;">*</span></div>
                 <input
@@ -493,7 +498,7 @@ window.ExamDetailsView = {
           <!-- 3. Orden aleatorio de preguntas -->
           <div class="t3d-rand-setting-box ${cfg.shuffleQuestions ? '' : 'is-off'}">
             <div class="t3d-rand-setting-info">
-              <div class="t3d-rand-setting-ico">🔀</div>
+              <div class="t3d-rand-setting-ico">${this.ico3d('Shuffle%20tracks%20button/3D/shuffle_tracks_button_3d.png', 't3d-ex-ico-sm')}</div>
               <div>
                 <h4 class="t3d-rand-setting-title">
                   Orden aleatorio de preguntas
@@ -515,7 +520,7 @@ window.ExamDetailsView = {
           <!-- 4. Orden aleatorio de opciones de respuesta -->
           <div class="t3d-rand-setting-box ${cfg.shuffleOptions ? '' : 'is-off'}">
             <div class="t3d-rand-setting-info">
-              <div class="t3d-rand-setting-ico">🔤</div>
+              <div class="t3d-rand-setting-ico">${this.ico3d('Input%20latin%20letters/3D/input_latin_letters_3d.png', 't3d-ex-ico-sm')}</div>
               <div>
                 <h4 class="t3d-rand-setting-title">
                   Orden aleatorio de opciones de respuesta
@@ -537,7 +542,7 @@ window.ExamDetailsView = {
           <!-- 5. Preguntas obligatorias -->
           <div class="t3d-rand-setting-box">
             <div class="t3d-rand-setting-info">
-              <div class="t3d-rand-setting-ico">📌</div>
+              <div class="t3d-rand-setting-ico">${this.ico3d('Pushpin/3D/pushpin_3d.png', 't3d-ex-ico-sm')}</div>
               <div>
                 <h4 class="t3d-rand-setting-title">
                   Preguntas obligatorias
@@ -556,7 +561,7 @@ window.ExamDetailsView = {
           <div class="t3d-rand-setting-box" style="flex-direction: column; align-items: stretch;">
             <div style="display:flex; align-items:center; justify-content:space-between; width:100%; gap:1rem;">
               <div class="t3d-rand-setting-info">
-                <div class="t3d-rand-setting-ico">🎛️</div>
+                <div class="t3d-rand-setting-ico">${this.ico3d('Control%20knobs/3D/control_knobs_3d.png', 't3d-ex-ico-sm')}</div>
                 <div>
                   <h4 class="t3d-rand-setting-title">
                     Distribución por temática y dificultad (opcional)
@@ -604,7 +609,7 @@ window.ExamDetailsView = {
         <div class="t3d-rand-right-col">
           <div class="t3d-rand-card-how">
             <h3 class="t3d-rand-card-how-title">
-              <span>🎯</span>
+              ${this.ico3d('Direct%20hit/3D/direct_hit_3d.png', 't3d-ex-ico-sm')}
               <span>¿Cómo funciona?</span>
             </h3>
             <p class="t3d-rand-card-how-p">
@@ -616,18 +621,18 @@ window.ExamDetailsView = {
 
           <div class="t3d-rand-card-preview">
             <div class="t3d-rand-card-prev-title">
-              <div style="display:flex; align-items:center; gap:0.45rem;">
-                <span>👁️</span>
+              <div style="display:flex; align-items:center; gap:0.5rem;">
+                ${this.ico3d('Eye/3D/eye_3d.png', 't3d-ex-ico-sm')}
                 <span>Vista previa en vivo</span>
               </div>
-              <button type="button" class="t3d-btn-details-badge" style="padding:0.25rem 0.7rem; font-size:0.74rem;" onclick="window.ExamDetailsView.updateSimulationPreview()">
+              <button type="button" class="t3d-btn-details-badge" style="padding:0.28rem 0.75rem; font-size:0.76rem;" onclick="window.ExamDetailsView.updateSimulationPreview()">
                 <span>🔄 Simular ahora</span>
               </button>
             </div>
 
             <div class="t3d-rand-prev-box">
               <div class="t3d-rand-prev-box-label">
-                <span>📚</span>
+                ${this.ico3d('Books/3D/books_3d.png', 't3d-ex-ico-xs')}
                 <span>Banco de preguntas (${effTotal}${this.demoSimMode ? ' — Modo Demo' : ''})</span>
               </div>
               <div class="t3d-sim-chips-container" id="t3d-sim-bank-chips"></div>
@@ -637,8 +642,8 @@ window.ExamDetailsView = {
 
             <div class="t3d-rand-engine-box">
               <div class="t3d-rand-engine-title">
-                <span>🎲</span>
-                <span>Motor de aleatorización</span>
+                ${this.ico3d('Game%20die/3D/game_die_3d.png', 't3d-ex-ico-sm')}
+                <span>Motor 3D de aleatorización</span>
               </div>
               <div class="t3d-rand-engine-desc">
                 ${cfg.enabled ? `Elige ${effPerStudent} preguntas` : `Usa todas (${effTotal})`} •
@@ -650,19 +655,19 @@ window.ExamDetailsView = {
             <div class="t3d-rand-arrow-down">↓</div>
 
             <div class="t3d-rand-student-row s1">
-              <div class="t3d-rand-student-header"><span>👤</span><span>Estudiante 1</span></div>
+              <div class="t3d-rand-student-header">${this.ico3d('Student/Default/3D/student_3d_default.png', 't3d-ex-ico-xs')}<span>Estudiante 1</span></div>
               <div class="t3d-sim-chips-container" id="t3d-sim-student1-chips"></div>
               <div class="t3d-opt-preview-row" id="t3d-sim-student1-opts"></div>
             </div>
 
             <div class="t3d-rand-student-row s2">
-              <div class="t3d-rand-student-header"><span>👤</span><span>Estudiante 2</span></div>
+              <div class="t3d-rand-student-header">${this.ico3d('Student/Default/3D/student_3d_default.png', 't3d-ex-ico-xs')}<span>Estudiante 2</span></div>
               <div class="t3d-sim-chips-container" id="t3d-sim-student2-chips"></div>
               <div class="t3d-opt-preview-row" id="t3d-sim-student2-opts"></div>
             </div>
 
             <div class="t3d-rand-student-row s3">
-              <div class="t3d-rand-student-header"><span>👤</span><span>Estudiante 3</span></div>
+              <div class="t3d-rand-student-header">${this.ico3d('Student/Default/3D/student_3d_default.png', 't3d-ex-ico-xs')}<span>Estudiante 3</span></div>
               <div class="t3d-sim-chips-container" id="t3d-sim-student3-chips"></div>
               <div class="t3d-opt-preview-row" id="t3d-sim-student3-opts"></div>
             </div>
@@ -670,7 +675,7 @@ window.ExamDetailsView = {
 
           <div class="t3d-rand-card-benefits">
             <h3 class="t3d-rand-card-ben-title">
-              <span>✅</span>
+              ${this.ico3d('Check%20mark%20button/3D/check_mark_button_3d.png', 't3d-ex-ico-sm')}
               <span>Beneficios activos</span>
             </h3>
             <ul class="t3d-rand-ben-list">
