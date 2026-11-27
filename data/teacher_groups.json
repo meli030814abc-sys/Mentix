@@ -13,7 +13,16 @@
     "teacherId": "user_1792184134006",
     "teacherEmail": "gatitaxd6f79@gmail.com",
     "teacherName": "Melisa",
-    "students": [],
+    "students": [
+      {
+        "id": "user_1792184134006",
+        "name": "Melisa",
+        "avatar": "🦄",
+        "points": 0,
+        "played": 0,
+        "joinedAt": 1795806750370
+      }
+    ],
     "updatedAt": 1795806734445
   }
 ]
