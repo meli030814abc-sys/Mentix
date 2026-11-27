@@ -1,0 +1,19 @@
+[
+  {
+    "id": "group_1795806735508",
+    "name": "6",
+    "studentsCount": 30,
+    "avgScore": 80,
+    "accessCode": "674600",
+    "examId": "reto_1795552054552",
+    "examIds": [
+      "reto_1795552054552"
+    ],
+    "lastChallenge": "j",
+    "teacherId": "user_1792184134006",
+    "teacherEmail": "gatitaxd6f79@gmail.com",
+    "teacherName": "Melisa",
+    "students": [],
+    "updatedAt": 1795806734445
+  }
+]
