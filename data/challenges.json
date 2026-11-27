@@ -3186,7 +3186,7 @@
     "image": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795575349043%2F1795714730665_da38_card_cover.jpg",
     "banner": "assets/projects_ui/robot_hero_banner.png",
     "createdAt": "2026-11-25T02:55:49.043Z",
-    "updatedAt": "2026-11-27T20:25:08.430Z",
+    "updatedAt": "2026-11-27T20:25:11.160Z",
     "govdata": {
       "id": "proj_video_1795575349043",
       "title": "Diagnóstico de Gobierno de Datos - Afiancol S.A.S.",
@@ -3384,14 +3384,14 @@
         "collaborators": "Extiendo mis agradecimientos al profesor Carlos Caño ya que con su guía y acompañamiento fue posible ejecutar un correcto proceso de implementación de Gobierno de Datos de manera teórico práctico."
       },
       "createdAt": "2026-11-25T02:55:49.043Z",
-      "updatedAt": "2026-11-27T20:25:09.531Z",
+      "updatedAt": "2026-11-26T15:11:14.664Z",
       "progress": 100,
       "calculatedProgress": 100,
       "approvalStatus": "approved",
       "status": "completed",
       "isPublic": true,
       "rejectionReason": "",
-      "authorizedAt": "2026-11-27T20:25:09.531Z",
+      "authorizedAt": "2026-11-26T15:11:13.841Z",
       "authorizedBy": "Melisa",
       "image": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795575349043%2F1795714730665_da38_card_cover.jpg"
     },
@@ -3465,7 +3465,7 @@
       "views": [],
       "ratings": [],
       "projectId": "proj_video_1795575349043",
-      "updatedAt": 1795705876092
+      "updatedAt": 1795654514752
     },
     "customProjectCodes": [
       {
@@ -4217,7 +4217,7 @@
     "_cardCoverUpdatedAt": 1795714734250,
     "_globalHeroBanner": "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=1600&q=80",
     "completedAt": "2026-11-26T01:23:18.503Z",
-    "authorizedAt": "2026-11-27T20:25:09.531Z",
+    "authorizedAt": "2026-11-26T15:11:13.841Z",
     "authorizedBy": "Melisa",
     "stage": "completed"
   },
