@@ -29,6 +29,8 @@ const USERS_PATH = 'data/users_registry.json';
 let inMemoryUsers = null;
 const DELETED_USERS_PATH = 'data/deleted_users.json';
 let inMemoryDeletedUsers = null;
+const TEACHER_GROUPS_PATH = 'data/teacher_groups.json';
+let inMemoryTeacherGroups = null;
 const nodeCrypto = { createHmac: (...a) => nodeCryptoMod.createHmac(...a) };
 // La contraseña (ya hasheada en el cliente) se vuelve a firmar con un secreto del servidor antes de guardarse; nunca se devuelve por la API
 function sealPwd(clientHash) {
@@ -411,6 +413,19 @@ export default async function handler(req, res) {
     return res.status(200).json(codes);
   }
 
+  if (req.method === 'GET' && req.query && (req.query.teacherGroups || req.query.groupCode)) {
+    const { data } = await readGitHubJsonFile(TEACHER_GROUPS_PATH, inMemoryTeacherGroups || []);
+    if (Array.isArray(data)) inMemoryTeacherGroups = data;
+    const list = Array.isArray(inMemoryTeacherGroups) ? inMemoryTeacherGroups : [];
+    res.setHeader('Cache-Control', 'no-store');
+    if (req.query.groupCode) {
+      const cleanCode = String(req.query.groupCode).replace(/\D/g, '').trim();
+      const found = list.find(g => g && String(g.accessCode || '').replace(/\D/g, '').trim() === cleanCode) || null;
+      return res.status(200).json({ group: found });
+    }
+    return res.status(200).json({ groups: list });
+  }
+
   if (req.method === 'GET' && req.query && req.query.deleted) {
     const { ids } = await readDeletedIds();
     res.setHeader('Cache-Control', 'no-store');
@@ -490,6 +505,70 @@ export default async function handler(req, res) {
   if (req.method === 'POST') {
     try {
       const body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
+
+      // A00. Gestión de Grupos Docentes 3D (creación, edición, borrado e inscripción por código)
+      if (body && body.type === 'SAVE_TEACHER_GROUP' && body.group && body.group.id) {
+        const { data } = await readGitHubJsonFile(TEACHER_GROUPS_PATH, inMemoryTeacherGroups || []);
+        const list = Array.isArray(data) ? [...data] : (Array.isArray(inMemoryTeacherGroups) ? [...inMemoryTeacherGroups] : []);
+        const g = body.group;
+        const idx = list.findIndex(x => x && x.id === g.id);
+        if (idx >= 0) {
+          // Conservar estudiantes que ya se unieron desde otros dispositivos si no vienen completos
+          const existingStudents = Array.isArray(list[idx].students) ? list[idx].students : [];
+          const incomingStudents = Array.isArray(g.students) ? g.students : [];
+          const mergedMap = new Map();
+          existingStudents.forEach(s => { if (s && (s.id || s.name)) mergedMap.set(String(s.id || s.name).toLowerCase(), s); });
+          incomingStudents.forEach(s => { if (s && (s.id || s.name)) mergedMap.set(String(s.id || s.name).toLowerCase(), s); });
+          list[idx] = { ...list[idx], ...g, students: Array.from(mergedMap.values()), updatedAt: Date.now() };
+        } else {
+          list.unshift({ ...g, updatedAt: Date.now() });
+        }
+        inMemoryTeacherGroups = list;
+        await writeGitHubJsonFile(TEACHER_GROUPS_PATH, list, `chore(groups): guardar grupo "${g.name || g.id}" [skip ci]`);
+        return res.status(200).json({ success: true, group: idx >= 0 ? list[idx] : list[0], groups: list });
+      }
+
+      if (body && body.type === 'DELETE_TEACHER_GROUP' && body.groupId) {
+        const { data } = await readGitHubJsonFile(TEACHER_GROUPS_PATH, inMemoryTeacherGroups || []);
+        const list = (Array.isArray(data) ? data : (Array.isArray(inMemoryTeacherGroups) ? inMemoryTeacherGroups : [])).filter(g => g && g.id !== body.groupId);
+        inMemoryTeacherGroups = list;
+        await writeGitHubJsonFile(TEACHER_GROUPS_PATH, list, `chore(groups): eliminar grupo "${body.groupId}" [skip ci]`);
+        return res.status(200).json({ success: true, groups: list });
+      }
+
+      if (body && body.type === 'JOIN_TEACHER_GROUP' && (body.groupId || body.accessCode) && body.student) {
+        const { data } = await readGitHubJsonFile(TEACHER_GROUPS_PATH, inMemoryTeacherGroups || []);
+        const list = Array.isArray(data) ? [...data] : (Array.isArray(inMemoryTeacherGroups) ? [...inMemoryTeacherGroups] : []);
+        const cleanCode = String(body.accessCode || '').replace(/\D/g, '').trim();
+        const idx = list.findIndex(g => g && ((body.groupId && g.id === body.groupId) || (cleanCode && String(g.accessCode || '').replace(/\D/g, '').trim() === cleanCode)));
+        if (idx < 0) {
+          return res.status(404).json({ error: 'Grupo no encontrado' });
+        }
+        const grp = { ...list[idx] };
+        const students = Array.isArray(grp.students) ? [...grp.students] : [];
+        const stName = String(body.student.name || 'Estudiante').trim();
+        const stId = body.student.id || ('st_' + Date.now());
+        const existingIdx = students.findIndex(s => s && ((s.id && s.id === stId) || String(s.name || '').toLowerCase() === stName.toLowerCase()));
+        const stObj = {
+          id: existingIdx >= 0 ? students[existingIdx].id : stId,
+          name: stName,
+          avatar: body.student.avatar || '🦊',
+          points: existingIdx >= 0 ? (students[existingIdx].points || 0) : (parseInt(body.student.points) || 0),
+          played: existingIdx >= 0 ? (students[existingIdx].played || 0) : 0,
+          joinedAt: Date.now()
+        };
+        if (existingIdx >= 0) {
+          students[existingIdx] = { ...students[existingIdx], ...stObj };
+        } else {
+          students.push(stObj);
+        }
+        grp.students = students;
+        grp.studentsCount = Math.max(parseInt(grp.studentsCount) || 0, students.length);
+        list[idx] = grp;
+        inMemoryTeacherGroups = list;
+        await writeGitHubJsonFile(TEACHER_GROUPS_PATH, list, `chore(groups): alumno "${stName}" unido al grupo "${grp.name}" [skip ci]`);
+        return res.status(200).json({ success: true, group: grp, student: stObj });
+      }
 
       // A0. Subida y almacenamiento permanente de imágenes dentro del mismo proyecto y BD (data/uploads/<projectId>/...)
       if (body && body.type === 'UPLOAD_PROJECT_IMAGE' && body.dataUrl) {

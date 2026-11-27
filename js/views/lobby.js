@@ -1116,6 +1116,8 @@ window.LobbyView = {
   renderJoinView(container) {
     if (this.joinStep === 'profile') {
       this.renderJoinProfileStep(container);
+    } else if (this.joinStep === 'group-join') {
+      this.renderJoinGroupStep(container);
     } else {
       this.renderJoinPinStep(container);
       // Solo enfocar automaticamente en escritorio; en celulares abre el teclado y descuadra la pantalla
@@ -1248,8 +1250,33 @@ window.LobbyView = {
       }
 
       if (!room || !room.challenge || room.status === 'closed') {
+        // Verificar si el código corresponde a un Grupo Docente 3D (local o nube)
+        let matchedGroup = (window.appState?.groups || []).find(g => g && String(g.accessCode || '').replace(/\D/g, '').trim() === cleanPin) || null;
+        if (!matchedGroup) {
+          try {
+            const apiUrl = (window.TeacherView && window.TeacherView.getApiBaseUrl)
+              ? window.TeacherView.getApiBaseUrl()
+              : (window.location.hostname.includes('vercel.app') || window.location.hostname === 'localhost' ? '/api/challenges' : 'https://mentixs.vercel.app/api/challenges');
+            const gRes = await fetch(`${apiUrl}?groupCode=${encodeURIComponent(cleanPin)}&t=${Date.now()}`, { cache: 'no-store' });
+            if (gRes.ok) {
+              const gJson = await gRes.json();
+              if (gJson && gJson.group) matchedGroup = gJson.group;
+            }
+          } catch (ge) {}
+        }
+
+        if (matchedGroup) {
+          this.joinPin = cleanPin;
+          this.joinGroupData = matchedGroup;
+          this.joinGroupJoined = false;
+          this.joinStep = 'group-join';
+          if (window.soundEngine) window.soundEngine.playClick();
+          this.render();
+          return;
+        }
+
         if (err) {
-          err.innerHTML = `❌ Código no válido.<br><span style="font-size: 0.82rem; font-weight: 500; color: #ffd166;">El código <strong>${cleanPin}</strong> no corresponde a una sala abierta o el anfitrión ya la cerró.</span>`;
+          err.innerHTML = `❌ Código no válido.<br><span style="font-size: 0.82rem; font-weight: 500; color: #ffd166;">El código <strong>${cleanPin}</strong> no corresponde a una sala abierta o grupo docente activo.</span>`;
           err.style.display = 'block';
         } else {
           alert(`Código no válido. La sala ${cleanPin} no está activa o ya ha sido cerrada.`);
@@ -1286,7 +1313,161 @@ window.LobbyView = {
 
   backToPinStep() {
     this.joinStep = 'pin';
+    this.joinGroupData = null;
+    this.joinGroupJoined = false;
     if (window.soundEngine) window.soundEngine.playClick();
+    this.render();
+  },
+
+  renderJoinGroupStep(container) {
+    const grp = this.joinGroupData;
+    if (!grp) {
+      this.joinStep = 'pin';
+      this.renderJoinPinStep(container);
+      return;
+    }
+
+    const activeExamId = grp.examId || (Array.isArray(grp.examIds) ? grp.examIds[0] : null);
+    const activeExam = activeExamId
+      ? (window.appState?.challenges || []).find(c => c && String(c.id) === String(activeExamId))
+      : null;
+
+    const currentUser = window.appState?.currentUser || {};
+    const defaultName = currentUser.name && currentUser.name !== 'Mateo Gamer' ? currentUser.name : '';
+    const avatars = ['🦊', '🐼', '🦁', '🐯', '🦄', '🤖', '🚀', '🦉'];
+    const selectedAv = currentUser.avatar || '🦊';
+
+    container.innerHTML = `
+      <div style="min-height: 100vh; min-height: 100dvh; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2rem 1.25rem; box-sizing: border-box; background: #0b0f19 url('assets/mentix_join_bg.jpg') center center / cover no-repeat; position: relative;">
+        <div style="position: fixed; inset: 0; background: radial-gradient(circle at center, rgba(5, 12, 35, 0.5) 0%, rgba(3, 7, 24, 0.82) 100%); pointer-events: none; z-index: 0;"></div>
+        <div style="position: relative; z-index: 2; width: 100%; max-width: 500px; margin: 0 auto;">
+          <div class="glass-panel" style="padding: 2.2rem 1.85rem; text-align: center; border: 2px solid #00f5d4; border-radius: 24px; background: rgba(12, 22, 46, 0.96); box-shadow: 0 18px 45px rgba(0,0,0,0.65);">
+            <div style="display: inline-flex; align-items: center; gap: 0.45rem; padding: 0.35rem 0.9rem; border-radius: 999px; background: rgba(0, 245, 212, 0.16); border: 1.5px solid rgba(0, 245, 212, 0.45); color: #00f5d4; font-weight: 900; font-size: 0.82rem; margin-bottom: 0.85rem;">
+              🎓 GRUPO DOCENTE • CÓDIGO ${grp.accessCode}
+            </div>
+            <h2 style="color: #ffffff; font-size: 1.6rem; font-weight: 950; margin: 0 0 0.4rem;">${grp.name}</h2>
+            <p style="color: #cbd5e1; font-size: 0.92rem; margin: 0 0 1.4rem;">
+              Profesor: <strong style="color: #ffffff;">${grp.teacherName || 'Docente'}</strong>
+              ${activeExam ? `<br><span style="color: #38bdf8; font-weight: 800;">📝 Examen activo: ${activeExam.title}</span>` : ''}
+            </p>
+
+            ${this.joinGroupJoined ? `
+              <div style="padding: 1.25rem; border-radius: 16px; background: rgba(16, 185, 129, 0.16); border: 1.5px solid #34d399; margin-bottom: 1.4rem;">
+                <div style="font-size: 1.15rem; font-weight: 900; color: #34d399; margin-bottom: 0.35rem;">✅ ¡Ya estás inscrito en este grupo!</div>
+                <p style="color: #e2e8f0; font-size: 0.88rem; margin: 0;">
+                  ${activeExam ? 'Tu profesor asignó este examen para el grupo:' : 'Tu profesor aún no ha activado un examen para este grupo. Vuelve a entrar con el mismo código cuando te indique.'}
+                </p>
+              </div>
+              ${activeExam ? `
+                <button type="button" class="btn btn-primary" style="width: 100%; padding: 0.95rem; font-size: 1.05rem; font-weight: 900; border-radius: 14px; margin-bottom: 0.75rem;" onclick="window.appRouter.startSinglePlayer('${activeExam.id}')">
+                  🚀 Comenzar Examen: ${activeExam.title}
+                </button>
+              ` : ''}
+              <button type="button" class="btn btn-outline" style="width: 100%; padding: 0.75rem; border-radius: 12px;" onclick="window.LobbyView.backToPinStep()">
+                ⬅️ Volver
+              </button>
+            ` : `
+              <form onsubmit="event.preventDefault(); window.LobbyView.confirmJoinTeacherGroup();" style="text-align: left;">
+                <div style="margin-bottom: 1.15rem;">
+                  <label style="display: block; font-weight: 850; font-size: 0.85rem; color: #e2e8f0; margin-bottom: 0.45rem; text-transform: uppercase;">
+                    ✍️ Escribe tu Nombre Completo:
+                  </label>
+                  <input
+                    type="text"
+                    id="join-group-student-name"
+                    required
+                    placeholder="Ej: Sofía Ramírez"
+                    value="${defaultName.replace(/"/g, '&quot;')}"
+                    style="width: 100%; box-sizing: border-box; padding: 0.85rem 1rem; border-radius: 12px; border: 2px solid rgba(0, 245, 212, 0.5); background: rgba(15, 23, 42, 0.95); color: #ffffff; font-size: 1rem; font-weight: 700; outline: none;"
+                  />
+                </div>
+
+                <div style="margin-bottom: 1.5rem;">
+                  <label style="display: block; font-weight: 850; font-size: 0.85rem; color: #e2e8f0; margin-bottom: 0.5rem; text-transform: uppercase;">
+                    🐾 Elige tu Avatar:
+                  </label>
+                  <input type="hidden" id="join-group-avatar-input" value="${selectedAv}" />
+                  <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; justify-content: center;">
+                    ${avatars.map(av => `
+                      <button
+                        type="button"
+                        onclick="document.getElementById('join-group-avatar-input').value='${av}'; this.parentElement.querySelectorAll('button').forEach(b=>b.style.borderColor='rgba(255,255,255,0.2)'); this.style.borderColor='#00f5d4';"
+                        style="font-size: 1.65rem; width: 48px; height: 48px; border-radius: 12px; border: 2px solid ${av === selectedAv ? '#00f5d4' : 'rgba(255,255,255,0.2)'}; background: rgba(255,255,255,0.08); cursor: pointer;"
+                      >${av}</button>
+                    `).join('')}
+                  </div>
+                </div>
+
+                <div style="display: flex; gap: 0.75rem;">
+                  <button type="button" class="btn btn-outline" style="padding: 0.85rem 1rem; border-radius: 12px;" onclick="window.LobbyView.backToPinStep()">
+                    ⬅️ Atrás
+                  </button>
+                  <button type="submit" id="join-group-submit-btn" class="btn btn-primary" style="flex: 1; padding: 0.9rem; font-size: 1rem; font-weight: 900; border-radius: 12px;">
+                    🚀 Unirse al Grupo
+                  </button>
+                </div>
+              </form>
+            `}
+          </div>
+        </div>
+      </div>
+    `;
+  },
+
+  async confirmJoinTeacherGroup() {
+    const grp = this.joinGroupData;
+    const nameEl = document.getElementById('join-group-student-name');
+    const avEl = document.getElementById('join-group-avatar-input');
+    const btn = document.getElementById('join-group-submit-btn');
+
+    const studentName = (nameEl?.value || '').trim();
+    if (!studentName) {
+      alert('⚠️ Por favor escribe tu nombre.');
+      if (nameEl) nameEl.focus();
+      return;
+    }
+
+    const avatar = avEl?.value || '🦊';
+    const studentId = window.appState?.currentUser?.id || ('st_' + Date.now());
+    if (btn) {
+      btn.disabled = true;
+      btn.textContent = '⏳ Uniéndose...';
+    }
+
+    try {
+      const apiUrl = (window.TeacherView && window.TeacherView.getApiBaseUrl)
+        ? window.TeacherView.getApiBaseUrl()
+        : (window.location.hostname.includes('vercel.app') || window.location.hostname === 'localhost' ? '/api/challenges' : 'https://mentixs.vercel.app/api/challenges');
+
+      const res = await fetch(apiUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type: 'JOIN_TEACHER_GROUP',
+          groupId: grp.id,
+          accessCode: grp.accessCode,
+          student: { id: studentId, name: studentName, avatar }
+        })
+      });
+
+      if (res.ok) {
+        const json = await res.json();
+        if (json && json.group) {
+          this.joinGroupData = json.group;
+          const groups = Array.isArray(window.appState?.groups) ? window.appState.groups : [];
+          const idx = groups.findIndex(g => g && g.id === json.group.id);
+          if (idx >= 0) groups[idx] = json.group;
+          else groups.unshift(json.group);
+          window.appState.groups = groups;
+          if (typeof saveGlobalState === 'function') saveGlobalState(window.appState);
+        }
+      }
+    } catch (e) {
+      console.warn('Error uniendo al grupo en la nube:', e);
+    }
+
+    this.joinGroupJoined = true;
+    if (window.soundEngine) window.soundEngine.playSuccess?.();
     this.render();
   },
 
