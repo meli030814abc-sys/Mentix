@@ -1636,11 +1636,11 @@
     "benefits": "Facilita la toma de decisiones directivas y administrativas con información más confiable, reduce riesgos de mal manejo de datos escolares y fortalece una cultura de cuidado y protección de los datos de niños, niñas, adolescentes y funcionarios.",
     "teamLead": "Jhomar Alejandra Cano Ramirez",
     "preparationStatus": "finalizado",
-    "publicationStatus": "published",
-    "approvalStatus": "approved",
+    "publicationStatus": "completed",
+    "approvalStatus": "pending",
     "submittedForApproval": true,
     "status": "completed",
-    "isPublic": true,
+    "isPublic": false,
     "startDate": "2026-08-30",
     "endDate": "2026-11-25",
     "currentStep": 16,
@@ -3035,7 +3035,7 @@
         "displayOrder": 1,
         "featuredVideoPublic": true
       },
-      "publicationStatus": "published",
+      "publicationStatus": "completed",
       "completedSteps": [
         1,
         2,
@@ -3084,11 +3084,11 @@
       "progress": 100,
       "calculatedProgress": 100,
       "submittedForApproval": true,
-      "approvalStatus": "approved",
+      "approvalStatus": "pending",
       "status": "completed",
       "completedAt": "2026-11-25T12:41:53.079Z",
-      "isPublic": true,
-      "rejectionReason": "",
+      "isPublic": false,
+      "rejectionReason": "Desautorizado por el Administrador (oculto al público).",
       "authorizedAt": "2026-11-26T00:21:13.488Z",
       "authorizedBy": "Melisa"
     },
@@ -3102,12 +3102,12 @@
     "authorAvatar": "🦊",
     "authorRole": "Estudiante / Creador",
     "createdAt": "2026-11-25T11:45:30.865Z",
-    "updatedAt": "2026-11-27T20:25:14.984Z",
+    "updatedAt": "2026-11-27T16:34:43.008Z",
     "fromStudentCreate": true,
     "_isStudentDraft": true,
     "timePerQuestion": 25,
     "plays": 0,
-    "accessMode": "public",
+    "accessMode": "private",
     "hub": {
       "joinRequests": [],
       "members": [
@@ -3147,9 +3147,9 @@
         "createdAt": "22/11/2026, 9:22:51 p.m."
       }
     ],
-    "visibility": "public",
-    "rejectedAt": "",
-    "rejectionReason": "",
+    "visibility": "private",
+    "rejectedAt": "2026-11-27T16:34:05.632Z",
+    "rejectionReason": "Desautorizado por el Administrador (oculto al público).",
     "members": [
       {
         "name": "Jhomar Alejandra Cano Ramirez",
@@ -3164,7 +3164,7 @@
     "tag": "✔ Completado",
     "tagClass": "badge-completed",
     "stage": "completed",
-    "authorizedAt": "2026-11-27T20:25:10.771Z",
+    "authorizedAt": "2026-11-26T00:21:13.488Z",
     "authorizedBy": "Melisa"
   },
   {
@@ -3179,14 +3179,14 @@
     "author": "Danna Boada",
     "authorRole": "Estudiante / Creador",
     "status": "completed",
-    "publicationStatus": "completed",
+    "publicationStatus": "published",
     "submittedForApproval": true,
-    "approvalStatus": "pending",
-    "isPublic": false,
+    "approvalStatus": "approved",
+    "isPublic": true,
     "image": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795575349043%2F1795714730665_da38_card_cover.jpg",
     "banner": "assets/projects_ui/robot_hero_banner.png",
     "createdAt": "2026-11-25T02:55:49.043Z",
-    "updatedAt": "2026-11-27T16:38:53.434Z",
+    "updatedAt": "2026-11-27T20:25:41.210Z",
     "govdata": {
       "id": "proj_video_1795575349043",
       "title": "Diagnóstico de Gobierno de Datos - Afiancol S.A.S.",
@@ -3338,7 +3338,7 @@
         "displayOrder": 1,
         "featuredVideoPublic": true
       },
-      "publicationStatus": "completed",
+      "publicationStatus": "published",
       "completedSteps": [
         1,
         2,
@@ -3387,10 +3387,10 @@
       "updatedAt": "2026-11-26T15:11:14.664Z",
       "progress": 100,
       "calculatedProgress": 100,
-      "approvalStatus": "pending",
+      "approvalStatus": "approved",
       "status": "completed",
-      "isPublic": false,
-      "rejectionReason": "Desautorizado por el Administrador (oculto al público).",
+      "isPublic": true,
+      "rejectionReason": "",
       "authorizedAt": "2026-11-26T15:11:13.841Z",
       "authorizedBy": "Melisa",
       "image": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795575349043%2F1795714730665_da38_card_cover.jpg"
@@ -3407,7 +3407,7 @@
     "thumbnailImage": "https://mentixs.vercel.app/api/challenges?img=data%2Fuploads%2Fproj_video_1795575349043%2F1795714730665_da38_card_cover.jpg",
     "shortDescription": "Afiancol, una compañía colombiana fundada en 2007 y especializada en fianzas y garantías para el sector solidario, vive de la confianza, pero sus datos se producían sin ser gestionados como un activo: faltaban responsables, reglas de decisión y control de calidad, y por eso no servían de base para decidir. Para abordarlo, se realizo un diagnóstico de gobierno de datos con la metodología DAMA-DMBOK2, a partir de entrevistas y documentos oficiales, midiendo la madurez en seis dimensiones y desarrollando una solución en cuatro fases, consolidada en Supabase y en la herramienta GovData Nexus, cuyas métricas se actualizan de forma continua. El resultado es una madurez global del 65 % al último corte, con una base sólida en Calidad, Seguridad y Organización, y con brechas prioritarias en Estrategia y Compliance (30 %), que marcan la ruta para convertir los datos en un activo estratégico y cumplir con Habeas Data. El principal aprendizaje es que gobernar datos es tanto un tema de personas como de tecnología: medir convierte una percepción en un punto de partida, y sostener ese gobierno día a día es lo que demuestra su valor a la dirección.",
     "fullDescription": "Afiancol, una compañía colombiana fundada en 2007 y especializada en fianzas y garantías para el sector solidario, vive de la confianza, pero sus datos se producían sin ser gestionados como un activo: faltaban responsables, reglas de decisión y control de calidad, y por eso no servían de base para decidir. Para abordarlo, se realizo un diagnóstico de gobierno de datos con la metodología DAMA-DMBOK2, a partir de entrevistas y documentos oficiales, midiendo la madurez en seis dimensiones y desarrollando una solución en cuatro fases, consolidada en Supabase y en la herramienta GovData Nexus, cuyas métricas se actualizan de forma continua. El resultado es una madurez global del 65 % al último corte, con una base sólida en Calidad, Seguridad y Organización, y con brechas prioritarias en Estrategia y Compliance (30 %), que marcan la ruta para convertir los datos en un activo estratégico y cumplir con Habeas Data. El principal aprendizaje es que gobernar datos es tanto un tema de personas como de tecnología: medir convierte una percepción en un punto de partida, y sostener ese gobierno día a día es lo que demuestra su valor a la dirección.",
-    "accessMode": "private",
+    "accessMode": "public",
     "displayOrder": 1,
     "landingConfig": {
       "publicName": "Diagnóstico de Gobierno de Datos - Afiancol S.A.S.",
@@ -3493,9 +3493,9 @@
         "createdAt": "22/11/2026, 9:22:51 p.m."
       }
     ],
-    "visibility": "private",
-    "rejectedAt": "2026-11-27T16:34:19.112Z",
-    "rejectionReason": "Desautorizado por el Administrador (oculto al público).",
+    "visibility": "public",
+    "rejectedAt": "",
+    "rejectionReason": "",
     "members": [
       {
         "name": "Danna Boada",
