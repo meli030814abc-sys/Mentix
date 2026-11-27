@@ -154,8 +154,8 @@
     "level": 1,
     "levelName": "Principiante",
     "institution": "Comunidad MENTIX",
-    "isBlocked": true,
-    "lastLoginAt": "2026-11-27T17:17:52.210Z",
+    "isBlocked": false,
+    "lastLoginAt": "2026-11-27T17:17:56.360Z",
     "pwd": "29c4a640c10ef449c25c89afbb95dd51794f593f9ce318118eb65fe91dc1f359",
     "createdAt": "2026-11-27T17:17:44.340Z"
   }
