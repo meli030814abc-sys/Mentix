@@ -42,6 +42,35 @@ window.LobbyView = {
           window.realtimeEngine.initMqtt(cleanPrefilled, false);
         }
       } else {
+        // Verificar si el PIN corresponde a un Grupo Docente (local o nube)
+        let matchedGroup = (window.appState?.groups || []).find(g => g && String(g.accessCode || '').replace(/\D/g, '').trim() === cleanPrefilled) || null;
+        if (!matchedGroup) {
+          try {
+            const apiUrl = (window.TeacherView && window.TeacherView.getApiBaseUrl)
+              ? window.TeacherView.getApiBaseUrl()
+              : '/api/challenges';
+            const gRes = await fetch(`${apiUrl}?groupCode=${encodeURIComponent(cleanPrefilled)}&t=${Date.now()}`, { cache: 'no-store' });
+            if (gRes.ok) {
+              const gJson = await gRes.json();
+              if (gJson && gJson.group) matchedGroup = gJson.group;
+            }
+          } catch (ge) {}
+        }
+        if (matchedGroup) {
+          this.joinPin = cleanPrefilled;
+          this.joinGroupData = matchedGroup;
+          const curUser = window.appState?.currentUser;
+          const alreadyJoined = curUser && Array.isArray(matchedGroup.students) && matchedGroup.students.some(s =>
+            (s.id && s.id === curUser.id) ||
+            (s.name && curUser.name && s.name.toLowerCase() === curUser.name.toLowerCase())
+          );
+          this.joinGroupJoined = !!alreadyJoined;
+          this.joinStep = 'group-join';
+          this.setupListeners();
+          this.render();
+          return;
+        }
+
         this.joinStep = 'pin';
         this.joinRoomData = null;
       }
@@ -1328,9 +1357,15 @@ window.LobbyView = {
     }
 
     const activeExamId = grp.examId || (Array.isArray(grp.examIds) ? grp.examIds[0] : null);
-    const activeExam = activeExamId
+    let activeExam = activeExamId
       ? (window.appState?.challenges || []).find(c => c && String(c.id) === String(activeExamId))
       : null;
+    if (!activeExam && activeExamId) {
+      activeExam = (window.appState?.projects || []).find(c => c && String(c.id) === String(activeExamId));
+    }
+    if (!activeExam && (grp.lastChallenge || activeExamId)) {
+      activeExam = { id: activeExamId || ('ex_' + grp.id), title: grp.lastChallenge || 'Examen Asignado' };
+    }
 
     const currentUser = window.appState?.currentUser || {};
     const defaultName = currentUser.name && currentUser.name !== 'Mateo Gamer' ? currentUser.name : '';
@@ -1359,7 +1394,7 @@ window.LobbyView = {
                 </p>
               </div>
               ${activeExam ? `
-                <button type="button" class="btn btn-primary" style="width: 100%; padding: 0.95rem; font-size: 1.05rem; font-weight: 900; border-radius: 14px; margin-bottom: 0.75rem;" onclick="window.appRouter.startSinglePlayer('${activeExam.id}')">
+                <button type="button" class="btn btn-primary" style="width: 100%; padding: 0.95rem; font-size: 1.05rem; font-weight: 900; border-radius: 14px; margin-bottom: 0.75rem;" onclick="window.LobbyView.startGroupExam('${activeExam.id}')">
                   🚀 Comenzar Examen: ${activeExam.title}
                 </button>
               ` : ''}
@@ -1469,6 +1504,30 @@ window.LobbyView = {
     this.joinGroupJoined = true;
     if (window.soundEngine) window.soundEngine.playSuccess?.();
     this.render();
+  },
+
+  async startGroupExam(examId) {
+    let ex = (window.appState?.challenges || []).find(c => c && String(c.id) === String(examId));
+    if (!ex || !Array.isArray(ex.questions) || ex.questions.length === 0) {
+      try {
+        const apiUrl = (window.TeacherView && window.TeacherView.getApiBaseUrl)
+          ? window.TeacherView.getApiBaseUrl()
+          : '/api/challenges';
+        const res = await fetch(`${apiUrl}?t=${Date.now()}`, { cache: 'no-store' });
+        if (res.ok) {
+          const data = await res.json();
+          const list = Array.isArray(data.challenges) ? data.challenges : (Array.isArray(data) ? data : []);
+          const found = list.find(c => c && String(c.id) === String(examId));
+          if (found && Array.isArray(found.questions) && found.questions.length > 0) {
+            ex = found;
+            if (!Array.isArray(window.appState.challenges)) window.appState.challenges = [];
+            window.appState.challenges.unshift(found);
+            if (typeof saveGlobalState === 'function') saveGlobalState(window.appState);
+          }
+        }
+      } catch (e) {}
+    }
+    window.appRouter.startSinglePlayer(examId, { fromGroup: true });
   },
 
   // ==========================================

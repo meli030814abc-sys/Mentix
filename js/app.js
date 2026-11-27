@@ -759,7 +759,7 @@ class AppRouter {
     const isOwner = this.isChallengeOwner(c);
     const mode = c.accessMode || (c.isPublic === false ? 'private' : 'public');
 
-    if (!isOwner) {
+    if (!isOwner && !options.fromGroup) {
       if (mode === 'private') {
         alert('🔒 Este cuestionario es privado: solo el creador puede ver el cuestionario.');
         return;
@@ -872,7 +872,7 @@ class AppRouter {
     const isOwner = this.isChallengeOwner(c);
     const mode = c.accessMode || (c.isPublic === false ? 'private' : 'public');
 
-    if (!isOwner) {
+    if (!isOwner && !options.fromGroup) {
       if (mode === 'private') {
         alert('🔒 Este cuestionario es privado: solo el creador puede ver el cuestionario.');
         return;

@@ -6029,10 +6029,6 @@ window.ProjectsView = {
   },
 
   openJoinProjectModal(prefillCode = '', pushHistory = true) {
-    if (this.isUserGuest()) {
-      this.guestJoinBlocked();
-      return;
-    }
     if (window.soundEngine && window.soundEngine.playClick) window.soundEngine.playClick();
     const existing = document.getElementById('project-join-modal');
     if (existing) existing.remove();
@@ -6121,16 +6117,6 @@ window.ProjectsView = {
   },
 
   async submitJoinProjectCode() {
-    if (this.isUserGuest()) {
-      const errEl = document.getElementById('project-join-error');
-      if (errEl) {
-        errEl.textContent = '🔒 Para unirte a un proyecto con código debes registrarte o iniciar sesión en Mentix.';
-        errEl.style.color = '#ff4d6d';
-        errEl.style.display = 'block';
-      }
-      this.guestJoinBlocked();
-      return;
-    }
     const input = document.getElementById('project-join-code-input');
     const errEl = document.getElementById('project-join-error');
     const raw = input ? input.value.trim() : '';
@@ -6150,6 +6136,96 @@ window.ProjectsView = {
     const clean = raw.trim();
     const normalize = str => String(str || '').trim().toLowerCase().replace(/[\s\-_]/g, '');
     const cleanNorm = normalize(clean);
+    const cleanDigits = clean.replace(/\D/g, '').trim();
+
+    // 0. VERIFICAR SI EL CÓDIGO CORRESPONDE A UN GRUPO DOCENTE (TEACHER GROUP ACCESS CODE)
+    let matchedGroup = (window.appState?.groups || []).find(g => 
+      g && (
+        normalize(g.accessCode) === cleanNorm ||
+        (cleanDigits && normalize(g.accessCode) === cleanDigits) ||
+        normalize(g.code) === cleanNorm ||
+        normalize(g.id) === cleanNorm
+      )
+    );
+
+    if (!matchedGroup) {
+      try {
+        const apiUrl = `/api/challenges?groupCode=${encodeURIComponent(cleanDigits || cleanNorm)}&t=${Date.now()}`;
+        const gRes = await fetch(apiUrl, { cache: 'no-store' });
+        if (gRes.ok) {
+          const gJson = await gRes.json();
+          if (gJson && gJson.group) matchedGroup = gJson.group;
+        }
+      } catch (ge) {}
+    }
+
+    if (!matchedGroup) {
+      try {
+        const apiUrlAll = `/api/challenges?teacherGroups=1&t=${Date.now()}`;
+        const allRes = await fetch(apiUrlAll, { cache: 'no-store' });
+        if (allRes.ok) {
+          const allJson = await allRes.json();
+          if (allJson && Array.isArray(allJson.groups)) {
+            matchedGroup = allJson.groups.find(g => 
+              g && (
+                normalize(g.accessCode) === cleanNorm ||
+                (cleanDigits && normalize(g.accessCode) === cleanDigits) ||
+                normalize(g.code) === cleanNorm ||
+                normalize(g.id) === cleanNorm
+              )
+            ) || null;
+          }
+        }
+      } catch (ge) {}
+    }
+
+    if (matchedGroup) {
+      if (errEl) {
+        errEl.textContent = `¡Grupo "${matchedGroup.name || 'Docente'}" encontrado! Conectando...`;
+        errEl.style.color = '#22c55e';
+        errEl.style.display = 'block';
+      }
+      if (window.soundEngine && window.soundEngine.playSuccess) window.soundEngine.playSuccess();
+
+      // Guardar en grupos locales si no existía aún
+      if (Array.isArray(window.appState?.groups)) {
+        const idx = window.appState.groups.findIndex(g => g && g.id === matchedGroup.id);
+        if (idx >= 0) window.appState.groups[idx] = matchedGroup;
+        else window.appState.groups.unshift(matchedGroup);
+      } else {
+        window.appState.groups = [matchedGroup];
+      }
+      if (typeof saveGlobalState === 'function') saveGlobalState(window.appState);
+
+      this.closeJoinProjectModal(false);
+
+      if (window.LobbyView) {
+        window.LobbyView.joinPin = cleanDigits || cleanNorm;
+        window.LobbyView.joinGroupData = matchedGroup;
+        const curUser = window.appState?.currentUser;
+        const alreadyJoined = curUser && Array.isArray(matchedGroup.students) && matchedGroup.students.some(s =>
+          (s.id && s.id === curUser.id) ||
+          (s.name && curUser.name && s.name.toLowerCase() === curUser.name.toLowerCase())
+        );
+        window.LobbyView.joinGroupJoined = !!alreadyJoined;
+        window.LobbyView.joinStep = 'group-join';
+      }
+
+      window.appRouter.navigate('lobby-join', { pin: cleanDigits || cleanNorm });
+      return;
+    }
+
+    // Si NO es grupo docente y el usuario es invitado, requerir registro para proyectos privados
+    if (this.isUserGuest()) {
+      const errEl = document.getElementById('project-join-error');
+      if (errEl) {
+        errEl.textContent = '🔒 Para unirte a un proyecto con código debes registrarte o iniciar sesión en Mentix.';
+        errEl.style.color = '#ff4d6d';
+        errEl.style.display = 'block';
+      }
+      this.guestJoinBlocked();
+      return;
+    }
 
     // Función auxiliar para buscar si el código existe en una lista de códigos (respetando códigos borrados por admin)
     const deletedSet = new Set((typeof this.getDeletedProjectCodes === 'function' ? this.getDeletedProjectCodes() : []).map(x => normalize(x)));
@@ -12069,7 +12145,7 @@ Generado por Mentix - Plataforma de Proyectos y Retos
           </h1>
           
           <p style="color: #ffffff !important; font-size: clamp(1.05rem, 2.5vw, 1.25rem); font-weight: 700; margin: 0 0 2.25rem; text-shadow: 0 2px 12px rgba(0,0,0,0.95);">
-            Está en la pantalla frente a ti
+            Ingresa tu código de proyecto o código de grupo docente
           </p>
 
           <form id="project-join-form" onsubmit="event.preventDefault(); window.ProjectsView.submitJoinProjectCode();" style="width: 100%;">
@@ -12077,7 +12153,7 @@ Generado por Mentix - Plataforma de Proyectos y Retos
               <input 
                 type="text" 
                 id="project-join-code-input" 
-                placeholder="1234 5678" 
+                placeholder="1234 5678 (o código de grupo)" 
                 maxlength="24" 
                 value="${this.escapeHtml(prefillCode)}"
                 required
