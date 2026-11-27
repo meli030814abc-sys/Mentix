@@ -54,6 +54,17 @@ window.TeacherView = {
     });
   },
 
+  // Devuelve TODOS los exámenes reales disponibles en la plataforma (propios primero)
+  getAllRealExams() {
+    const challenges = window.appState?.challenges || [];
+    const real = challenges.filter(c => c && !this.isProjectItem(c) && Array.isArray(c.questions) && c.questions.length > 0);
+    return real.sort((a, b) => {
+      const aMine = this.isOwnedByCurrentTeacher(a) ? 1 : 0;
+      const bMine = this.isOwnedByCurrentTeacher(b) ? 1 : 0;
+      return bMine - aMine;
+    });
+  },
+
   // Devuelve los grupos creados por el docente actual
   getTeacherGroups() {
     const groups = window.appState?.groups || [];
@@ -692,10 +703,10 @@ window.TeacherView = {
       </div>
 
       <!-- ==========================================================================
-           MODAL 2: CREAR NUEVO GRUPO 3D (CON CÓDIGO Y EXÁMENES)
+           MODAL 2: CREAR NUEVO GRUPO 3D (PANTALLA AMPLIA + TODOS LOS EXÁMENES + CREAR EXAMEN)
            ========================================================================== -->
       <div id="teacher-new-group-modal" class="t3d-modal-backdrop" style="display: none;">
-        <div class="t3d-modal-window" style="max-width: 580px;">
+        <div class="t3d-modal-window" style="max-width: 820px; width: 96%; max-height: 92vh; overflow-y: auto; padding: 2.25rem;">
           <div class="t3d-modal-header">
             <h3 class="t3d-modal-title">
               <img src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Graduation%20cap/3D/graduation_cap_3d.png" class="t3d-ico-md" alt="" />
@@ -714,7 +725,7 @@ window.TeacherView = {
             />
           </div>
 
-          <div class="t3d-form-group" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.75rem;">
+          <div class="t3d-form-group" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 0.85rem;">
             <div>
               <label class="t3d-form-label">Alumnos Estimados:</label>
               <input type="number" id="t3d-new-group-count" class="t3d-form-input" value="30" min="1" max="300" />
@@ -729,24 +740,78 @@ window.TeacherView = {
             </div>
           </div>
 
-          <div class="t3d-form-group">
-            <label class="t3d-form-label">Añadir Exámenes Reales al Grupo:</label>
-            ${myExams.length === 0 ? `
-              <div style="padding: 0.85rem; border-radius: 12px; border: 1.5px dashed rgba(245, 158, 11, 0.6); background: rgba(245, 158, 11, 0.1); font-size: 0.85rem;">
-                ⚠️ Aún no tienes exámenes creados. Puedes crear el grupo ahora con su código y añadirle exámenes después desde <strong>Editar / Exámenes</strong>, o crear un examen primero.
-              </div>
-            ` : `
-              <select id="t3d-new-group-exam" class="t3d-form-select">
-                <option value="">-- Selecciona el examen inicial para este grupo --</option>
-                ${myExams.map(ex => `<option value="${ex.id}">${ex.title} (${ex.questions.length} preguntas)</option>`).join('')}
+          <!-- Selección o Creación del Examen para el Grupo -->
+          <div class="t3d-form-group" style="padding: 1.25rem; border-radius: 18px; border: 2px solid rgba(59, 130, 246, 0.35); background: rgba(59, 130, 246, 0.05);">
+            <label class="t3d-form-label" style="font-size: 0.95rem; margin-bottom: 0.75rem;">
+              📝 ¿Qué examen va a ir en este grupo?
+            </label>
+
+            <div style="display: flex; gap: 0.65rem; flex-wrap: wrap; margin-bottom: 1rem;">
+              <button type="button" id="t3d-ng-tab-existing" class="t3d-btn t3d-btn-primary" style="flex: 1; min-width: 200px;" onclick="window.TeacherView.switchNewGroupExamMode('existing')">
+                📚 Elegir de Todos los Exámenes (${this.getAllRealExams().length})
+              </button>
+              <button type="button" id="t3d-ng-tab-create" class="t3d-btn t3d-btn-outline" style="flex: 1; min-width: 200px;" onclick="window.TeacherView.switchNewGroupExamMode('create')">
+                ➕ Crear un Examen Nuevo Aquí
+              </button>
+            </div>
+
+            <!-- MODO A: Elegir entre TODOS los exámenes reales disponibles -->
+            <div id="t3d-ng-panel-existing">
+              <input 
+                type="text" 
+                id="t3d-new-group-exam-filter" 
+                class="t3d-form-input" 
+                placeholder="🔍 Buscar examen por título o profesor..." 
+                style="margin-bottom: 0.65rem;"
+                oninput="window.TeacherView.filterNewGroupExams(this.value)"
+              />
+              <select id="t3d-new-group-exam" class="t3d-form-select" size="5" style="min-height: 145px; padding: 0.5rem;">
+                ${this.getAllRealExams().length === 0 ? `
+                  <option value="">No hay exámenes creados aún — usa "Crear un Examen Nuevo Aquí"</option>
+                ` : this.getAllRealExams().map((ex, i) => `
+                  <option value="${ex.id}" ${i === 0 ? 'selected' : ''}>
+                    ${this.isOwnedByCurrentTeacher(ex) ? '⭐ [Tuyo] ' : '📚 '}${ex.title} — ${ex.author || 'Docente'} (${ex.questions.length} preg.)
+                  </option>
+                `).join('')}
               </select>
-              <small style="display: block; margin-top: 0.35rem; opacity: 0.8; font-size: 0.78rem;">
-                Luego podrás añadir más exámenes, cambiarlos o borrarlos desde <strong>Editar / Exámenes</strong>.
+              <small style="display: block; margin-top: 0.45rem; opacity: 0.82; font-size: 0.8rem;">
+                Lee todos los exámenes reales disponibles. Luego puedes añadir más, cambiarlos o borrarlos desde <strong>Editar / Exámenes</strong>.
               </small>
-            `}
+            </div>
+
+            <!-- MODO B: Crear un Examen Nuevo directo dentro de Crear Grupo -->
+            <div id="t3d-ng-panel-create" style="display: none;">
+              <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 0.75rem; margin-bottom: 0.9rem;">
+                <div>
+                  <label class="t3d-form-label">Título del Nuevo Examen:</label>
+                  <input type="text" id="t3d-inline-exam-title" class="t3d-form-input" placeholder="Ej: Parcial 1 - Biología Celular" />
+                </div>
+                <div>
+                  <label class="t3d-form-label">Tiempo por pregunta:</label>
+                  <select id="t3d-inline-exam-time" class="t3d-form-select">
+                    <option value="20" selected>20 segundos</option>
+                    <option value="30">30 segundos</option>
+                    <option value="45">45 segundos</option>
+                    <option value="60">60 segundos</option>
+                    <option value="0">Sin límite</option>
+                  </select>
+                </div>
+              </div>
+
+              <div id="t3d-inline-questions-container" style="display: flex; flex-direction: column; gap: 0.85rem; margin-bottom: 0.85rem;"></div>
+
+              <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
+                <button type="button" class="t3d-btn t3d-btn-emerald" style="padding: 0.5rem 0.95rem; font-size: 0.84rem;" onclick="window.TeacherView.addInlineQuestionRow()">
+                  ➕ Agregar Pregunta
+                </button>
+                <button type="button" class="t3d-btn t3d-btn-outline" style="padding: 0.5rem 0.95rem; font-size: 0.82rem;" onclick="window.TeacherView.closeNewGroupModal(); window.appRouter.navigate('creator');">
+                  🚀 Ir al Creador Completo (IA / PDF)
+                </button>
+              </div>
+            </div>
           </div>
 
-          <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1.8rem;">
+          <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1.6rem;">
             <button class="t3d-btn t3d-btn-outline" onclick="window.TeacherView.closeNewGroupModal()">Cancelar</button>
             <button class="t3d-btn t3d-btn-emerald" onclick="window.TeacherView.saveNewGroup()">
               <img src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Sparkles/3D/sparkles_3d.png" class="t3d-ico-sm" alt="" />
@@ -797,7 +862,7 @@ window.TeacherView = {
             <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
               <select id="t3d-edit-add-exam-select" class="t3d-form-select" style="flex: 1; min-width: 200px;">
                 <option value="">-- Elegir examen para añadir --</option>
-                ${myExams.map(ex => `<option value="${ex.id}">${ex.title} (${ex.questions.length} preg.)</option>`).join('')}
+                ${this.getAllRealExams().map(ex => `<option value="${ex.id}">${this.isOwnedByCurrentTeacher(ex) ? '⭐ ' : '📚 '}${ex.title} (${ex.questions.length} preg.)</option>`).join('')}
               </select>
               <button type="button" class="t3d-btn t3d-btn-emerald" onclick="window.TeacherView.addExamToEditingGroup()">
                 <span>➕ Añadir Examen</span>
@@ -955,14 +1020,100 @@ window.TeacherView = {
   /* ==========================================================================
      MODAL CREAR NUEVO GRUPO 3D
      ========================================================================== */
+  newGroupExamMode: 'existing',
+
   openNewGroupModal() {
     const modal = document.getElementById('teacher-new-group-modal');
     const nameInput = document.getElementById('t3d-new-group-name');
     const codeInput = document.getElementById('t3d-new-group-code');
+    const filterInput = document.getElementById('t3d-new-group-exam-filter');
+    const inlineTitle = document.getElementById('t3d-inline-exam-title');
+    const qContainer = document.getElementById('t3d-inline-questions-container');
+
     if (nameInput) nameInput.value = '';
     if (codeInput) codeInput.value = this.generateGroupAccessCode();
+    if (filterInput) {
+      filterInput.value = '';
+      this.filterNewGroupExams('');
+    }
+    if (inlineTitle) inlineTitle.value = '';
+    if (qContainer) {
+      qContainer.innerHTML = '';
+      this.addInlineQuestionRow();
+    }
+
+    this.switchNewGroupExamMode(this.getAllRealExams().length > 0 ? 'existing' : 'create');
     if (modal) modal.style.display = 'flex';
     if (nameInput) setTimeout(() => nameInput.focus(), 100);
+  },
+
+  switchNewGroupExamMode(mode) {
+    this.newGroupExamMode = mode === 'create' ? 'create' : 'existing';
+    const tabEx = document.getElementById('t3d-ng-tab-existing');
+    const tabCr = document.getElementById('t3d-ng-tab-create');
+    const panEx = document.getElementById('t3d-ng-panel-existing');
+    const panCr = document.getElementById('t3d-ng-panel-create');
+
+    if (this.newGroupExamMode === 'create') {
+      if (tabEx) tabEx.className = 't3d-btn t3d-btn-outline';
+      if (tabCr) tabCr.className = 't3d-btn t3d-btn-primary';
+      if (panEx) panEx.style.display = 'none';
+      if (panCr) panCr.style.display = 'block';
+    } else {
+      if (tabEx) tabEx.className = 't3d-btn t3d-btn-primary';
+      if (tabCr) tabCr.className = 't3d-btn t3d-btn-outline';
+      if (panEx) panEx.style.display = 'block';
+      if (panCr) panCr.style.display = 'none';
+    }
+  },
+
+  filterNewGroupExams(query) {
+    const select = document.getElementById('t3d-new-group-exam');
+    if (!select) return;
+    const q = (query || '').toLowerCase().trim();
+    const exams = this.getAllRealExams();
+    const filtered = exams.filter(ex =>
+      !q ||
+      (ex.title || '').toLowerCase().includes(q) ||
+      (ex.author || '').toLowerCase().includes(q) ||
+      (ex.categoryName || '').toLowerCase().includes(q)
+    );
+    if (filtered.length === 0) {
+      select.innerHTML = `<option value="">Sin coincidencias para "${query}"</option>`;
+    } else {
+      select.innerHTML = filtered.map((ex, i) => `
+        <option value="${ex.id}" ${i === 0 ? 'selected' : ''}>
+          ${this.isOwnedByCurrentTeacher(ex) ? '⭐ [Tuyo] ' : '📚 '}${ex.title} — ${ex.author || 'Docente'} (${ex.questions.length} preg.)
+        </option>
+      `).join('');
+    }
+  },
+
+  addInlineQuestionRow() {
+    const container = document.getElementById('t3d-inline-questions-container');
+    if (!container) return;
+    const idx = container.children.length + 1;
+    const rowUid = 'iq_' + Date.now() + '_' + idx;
+    const row = document.createElement('div');
+    row.className = 't3d-inline-q-row';
+    row.style.cssText = 'padding: 0.9rem; border-radius: 14px; border: 1.5px solid rgba(148,163,184,0.35); background: rgba(15,23,42,0.04);';
+    row.innerHTML = `
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.55rem;">
+        <strong style="font-size: 0.85rem;">Pregunta #${idx}</strong>
+        ${idx > 1 ? `<button type="button" style="background:none;border:none;cursor:pointer;color:#ef4444;font-weight:900;" onclick="this.closest('.t3d-inline-q-row').remove()">🗑️ Quitar</button>` : ''}
+      </div>
+      <input type="text" class="t3d-form-input t3d-iq-text" placeholder="Escribe la pregunta aquí..." style="margin-bottom: 0.6rem;" />
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
+        ${['A', 'B', 'C', 'D'].map((lbl, oi) => `
+          <label style="display: flex; align-items: center; gap: 0.4rem; font-size: 0.82rem;">
+            <input type="radio" name="correct_${rowUid}" value="${oi}" ${oi === 0 ? 'checked' : ''} title="Marcar como correcta" />
+            <input type="text" class="t3d-form-input t3d-iq-opt" placeholder="Opción ${lbl}${oi < 2 ? ' *' : ' (opcional)'}" style="padding: 0.48rem 0.7rem; font-size: 0.84rem;" />
+          </label>
+        `).join('')}
+      </div>
+      <small style="display:block; margin-top:0.35rem; opacity:0.75; font-size:0.75rem;">Marca el círculo de la opción correcta.</small>
+    `;
+    container.appendChild(row);
   },
 
   closeNewGroupModal() {
@@ -991,18 +1142,99 @@ window.TeacherView = {
       return;
     }
 
-    const myExams = this.getTeacherExams();
-    const chosenExamId = examSelect?.value || '';
-    if (myExams.length > 0 && !chosenExamId) {
-      alert('⚠️ Selecciona un examen inicial para este grupo.');
-      if (examSelect) examSelect.focus();
-      return;
+    const u = window.appState?.currentUser || {};
+    let chosenExam = null;
+
+    if (this.newGroupExamMode === 'create') {
+      const exTitle = (document.getElementById('t3d-inline-exam-title')?.value || '').trim();
+      const exTime = parseInt(document.getElementById('t3d-inline-exam-time')?.value);
+      const qRows = Array.from(document.querySelectorAll('.t3d-inline-q-row'));
+      if (!exTitle) {
+        alert('⚠️ Escribe el título del nuevo examen.');
+        document.getElementById('t3d-inline-exam-title')?.focus();
+        return;
+      }
+
+      const shapes = ['✦', '⬢', '⚡', '🛡️'];
+      const colors = ['opt-1', 'opt-2', 'opt-3', 'opt-4'];
+      const parsedQuestions = [];
+
+      for (const row of qRows) {
+        const qText = (row.querySelector('.t3d-iq-text')?.value || '').trim();
+        const optInputs = Array.from(row.querySelectorAll('.t3d-iq-opt'));
+        const checkedRadio = row.querySelector('input[type="radio"]:checked');
+        const rawCorrectIdx = checkedRadio ? parseInt(checkedRadio.value) : 0;
+
+        const validOptions = [];
+        let mappedCorrect = 0;
+        optInputs.forEach((inp, idx) => {
+          const t = (inp.value || '').trim();
+          if (t) {
+            if (idx === rawCorrectIdx) mappedCorrect = validOptions.length;
+            validOptions.push({ text: t, shape: shapes[validOptions.length] || '✦', color: colors[validOptions.length] || 'opt-1' });
+          }
+        });
+
+        if (qText && validOptions.length >= 2) {
+          parsedQuestions.push({
+            id: 'q_' + Date.now() + '_' + parsedQuestions.length,
+            text: qText,
+            options: validOptions,
+            correctAnswer: mappedCorrect,
+            timeLimit: isNaN(exTime) ? 20 : exTime
+          });
+        }
+      }
+
+      if (parsedQuestions.length === 0) {
+        alert('⚠️ Agrega al menos 1 pregunta completa con mínimo 2 opciones de respuesta.');
+        return;
+      }
+
+      chosenExam = {
+        id: 'exam_' + Date.now(),
+        title: exTitle,
+        description: `Examen creado para el grupo ${name.toUpperCase()}`,
+        category: 'general',
+        categoryName: 'General',
+        projectType: 'quiz',
+        approvalStatus: 'approved',
+        isPublic: true,
+        timePerQuestion: isNaN(exTime) ? 20 : exTime,
+        questions: parsedQuestions,
+        author: u.name || 'Docente',
+        authorAvatar: u.avatar || '👨‍🏫',
+        authorId: u.id || 'teacher_1',
+        authorEmail: u.email || '',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        plays: 0
+      };
+
+      if (!Array.isArray(window.appState.challenges)) window.appState.challenges = [];
+      window.appState.challenges.unshift(chosenExam);
+      if (typeof saveGlobalState === 'function') saveGlobalState(window.appState);
+
+      try {
+        await fetch(this.getApiBaseUrl(), {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(chosenExam)
+        });
+      } catch (e) {}
+    } else {
+      const allRealExams = this.getAllRealExams();
+      const chosenExamId = examSelect?.value || '';
+      if (allRealExams.length > 0 && !chosenExamId) {
+        alert('⚠️ Selecciona qué examen va a ir en este grupo.');
+        if (examSelect) examSelect.focus();
+        return;
+      }
+      chosenExam = allRealExams.find(ex => String(ex.id) === String(chosenExamId)) || null;
     }
 
-    const chosenExam = myExams.find(ex => String(ex.id) === String(chosenExamId)) || null;
     const count = parseInt(countInput?.value) || 30;
     const avg = parseInt(avgInput?.value) || 80;
-    const u = window.appState?.currentUser || {};
 
     const newGroup = {
       id: 'group_' + Date.now(),
