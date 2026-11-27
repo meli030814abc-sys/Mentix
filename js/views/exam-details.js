@@ -52,7 +52,8 @@ window.ExamDetailsView = {
       shuffleOptions: typeof existingCfg.shuffleOptions === 'boolean' ? existingCfg.shuffleOptions : true,
       mandatoryQuestionIds: Array.isArray(existingCfg.mandatoryQuestionIds) ? [...existingCfg.mandatoryQuestionIds.map(String)] : [],
       distributionEnabled: Boolean(existingCfg.distributionEnabled),
-      distributionRules: Array.isArray(existingCfg.distributionRules) ? JSON.parse(JSON.stringify(existingCfg.distributionRules)) : []
+      distributionRules: Array.isArray(existingCfg.distributionRules) ? JSON.parse(JSON.stringify(existingCfg.distributionRules)) : [],
+      customTopics: Array.isArray(existingCfg.customTopics) ? [...existingCfg.customTopics] : []
     };
 
     this.draftMeta = {
@@ -577,13 +578,33 @@ window.ExamDetailsView = {
             </div>
 
             ${cfg.distributionEnabled ? `
+              <!-- Barra rápida 3D para crear nuevas temáticas personalizadas -->
+              <div style="display:flex; align-items:center; gap:0.55rem; margin-top:0.85rem; flex-wrap:wrap;">
+                <input
+                  type="text"
+                  id="t3d-new-topic-input"
+                  class="t3d-rand-input-sm"
+                  style="flex:1; min-width:190px; padding:0.5rem 0.75rem; border-radius:12px;"
+                  placeholder="Escribe una nueva temática (ej: Historia, Álgebra, Ética)..."
+                  onkeydown="if(event.key==='Enter'){ event.preventDefault(); window.ExamDetailsView.createCustomTopicFromBar(); }"
+                />
+                <button
+                  type="button"
+                  class="t3d-btn-details-badge"
+                  style="padding:0.48rem 0.95rem; font-size:0.8rem;"
+                  onclick="window.ExamDetailsView.createCustomTopicFromBar()"
+                >
+                  <span>➕ Crear temática</span>
+                </button>
+              </div>
+
               <div class="t3d-rand-dist-table-wrap">
                 <table class="t3d-rand-dist-table">
                   <thead>
                     <tr>
-                      <th style="width: 40%;">Temática</th>
-                      <th style="width: 28%;">Dificultad</th>
-                      <th style="width: 20%;">Cantidad</th>
+                      <th style="width: 44%;">Temática</th>
+                      <th style="width: 26%;">Dificultad</th>
+                      <th style="width: 18%;">Cantidad</th>
                       <th style="width: 12%;"></th>
                     </tr>
                   </thead>
@@ -792,21 +813,39 @@ window.ExamDetailsView = {
       return `
         <tr>
           <td colspan="4" style="text-align:center; padding:1rem; color:#94a3b8; font-size:0.82rem;">
-            Pulsa "+ Agregar regla" para definir cuántas preguntas incluir por temática y dificultad.
+            Pulsa "+ Agregar regla" o crea una nueva temática arriba para definir la distribución.
           </td>
         </tr>
       `;
     }
+    const customTopics = Array.isArray(this.draftConfig?.customTopics) ? this.draftConfig.customTopics : [];
     return rules.map((r, idx) => {
       const diff = String(r.difficulty || 'media').toLowerCase();
       const diffCls = diff === 'baja' ? 'is-baja' : (diff === 'alta' ? 'is-alta' : 'is-media');
-      const topicOptions = Array.from(new Set([r.topic, ...existingTopics, 'Programación', 'Bases de Datos', 'Redes', 'General'].filter(Boolean)));
+      const topicOptions = Array.from(new Set([r.topic, ...customTopics, ...existingTopics, 'Programación', 'Bases de Datos', 'Redes', 'General'].filter(Boolean)));
+      const isEditingNew = this.creatingTopicRowIdx === idx;
       return `
         <tr>
           <td>
-            <select class="t3d-rand-input-sm" onchange="window.ExamDetailsView.onRuleChange(${idx}, 'topic', this.value)">
-              ${topicOptions.map(t => `<option value="${String(t).replace(/"/g, '&quot;')}" ${t === r.topic ? 'selected' : ''}>${t}</option>`).join('')}
-            </select>
+            ${isEditingNew ? `
+              <div style="display:flex; align-items:center; gap:0.3rem;">
+                <input
+                  type="text"
+                  id="t3d-inline-topic-input-${idx}"
+                  class="t3d-rand-input-sm"
+                  placeholder="Nombre de la temática..."
+                  autofocus
+                  onkeydown="if(event.key==='Enter'){ event.preventDefault(); window.ExamDetailsView.confirmInlineTopic(${idx}); } else if(event.key==='Escape'){ window.ExamDetailsView.cancelInlineTopic(); }"
+                />
+                <button type="button" class="t3d-btn-details-badge" style="padding:0.28rem 0.5rem; font-size:0.75rem;" title="Guardar temática" onclick="window.ExamDetailsView.confirmInlineTopic(${idx})">✓</button>
+                <button type="button" class="t3d-rand-btn-del-rule" title="Cancelar" onclick="window.ExamDetailsView.cancelInlineTopic()">✕</button>
+              </div>
+            ` : `
+              <select class="t3d-rand-input-sm" onchange="window.ExamDetailsView.onRuleChange(${idx}, 'topic', this.value)">
+                ${topicOptions.map(t => `<option value="${String(t).replace(/"/g, '&quot;')}" ${t === r.topic ? 'selected' : ''}>${t}</option>`).join('')}
+                <option value="__CREATE_NEW__">➕ Crear nueva temática...</option>
+              </select>
+            `}
           </td>
           <td>
             <select class="t3d-rand-select-diff ${diffCls}" onchange="window.ExamDetailsView.onRuleChange(${idx}, 'difficulty', this.value)">
@@ -890,8 +929,66 @@ window.ExamDetailsView = {
 
   onRuleChange(idx, field, value) {
     if (!this.draftConfig?.distributionRules?.[idx]) return;
+    if (field === 'topic' && value === '__CREATE_NEW__') {
+      this.creatingTopicRowIdx = idx;
+      this.render();
+      setTimeout(() => {
+        const inp = document.getElementById(`t3d-inline-topic-input-${idx}`);
+        if (inp) inp.focus();
+      }, 30);
+      return;
+    }
     this.draftConfig.distributionRules[idx][field] = value;
     this.markDirty();
+    this.render();
+  },
+
+  createCustomTopicFromBar() {
+    const inp = document.getElementById('t3d-new-topic-input');
+    const name = (inp?.value || '').trim();
+    if (!name) {
+      this.showToast('⚠️ Escribe el nombre de la nueva temática.', true);
+      if (inp) inp.focus();
+      return;
+    }
+    if (!Array.isArray(this.draftConfig.customTopics)) this.draftConfig.customTopics = [];
+    if (!this.draftConfig.customTopics.some(t => t.toLowerCase() === name.toLowerCase())) {
+      this.draftConfig.customTopics.unshift(name);
+    }
+    if (!Array.isArray(this.draftConfig.distributionRules)) this.draftConfig.distributionRules = [];
+    this.draftConfig.distributionRules.push({
+      topic: name,
+      difficulty: 'media',
+      count: 2
+    });
+    this.markDirty();
+    this.render();
+    this.showToast(`✅ Temática "${name}" creada y agregada.`);
+  },
+
+  confirmInlineTopic(idx) {
+    const inp = document.getElementById(`t3d-inline-topic-input-${idx}`);
+    const name = (inp?.value || '').trim();
+    if (!name) {
+      this.showToast('⚠️ Escribe un nombre para la temática.', true);
+      if (inp) inp.focus();
+      return;
+    }
+    if (!Array.isArray(this.draftConfig.customTopics)) this.draftConfig.customTopics = [];
+    if (!this.draftConfig.customTopics.some(t => t.toLowerCase() === name.toLowerCase())) {
+      this.draftConfig.customTopics.unshift(name);
+    }
+    if (this.draftConfig.distributionRules?.[idx]) {
+      this.draftConfig.distributionRules[idx].topic = name;
+    }
+    this.creatingTopicRowIdx = null;
+    this.markDirty();
+    this.render();
+    this.showToast(`✅ Temática "${name}" creada.`);
+  },
+
+  cancelInlineTopic() {
+    this.creatingTopicRowIdx = null;
     this.render();
   },
 
