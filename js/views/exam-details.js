@@ -808,6 +808,60 @@ window.ExamDetailsView = {
     `;
   },
 
+  normalizeText(str) {
+    return String(str || '')
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .trim();
+  },
+
+  questionMatchesTopic(q, topic) {
+    const t = this.normalizeText(topic);
+    if (!t || t === 'general') return true;
+    const qTopic = this.normalizeText(q.topic || q.category || '');
+    if (qTopic && (qTopic === t || qTopic.includes(t) || t.includes(qTopic))) return true;
+    const qBody = this.normalizeText(
+      [
+        q.text,
+        q.question,
+        q.context,
+        q.explanation,
+        ...(Array.isArray(q.options) ? q.options.map(o => (typeof o === 'string' ? o : (o?.text || ''))) : [])
+      ].filter(Boolean).join(' ')
+    );
+    return qBody.includes(t);
+  },
+
+  getMatchingQuestionNumbersForRule(rule) {
+    const questions = Array.isArray(this.activeExam?.questions) ? this.activeExam.questions : [];
+    const targetDiff = this.normalizeText(rule?.difficulty || '');
+    const exact = [];
+    const byTopic = [];
+    questions.forEach((q, idx) => {
+      if (!this.questionMatchesTopic(q, rule?.topic)) return;
+      byTopic.push(idx + 1);
+      const qDiff = this.normalizeText(q.difficulty || 'media');
+      if (!targetDiff || qDiff === targetDiff) exact.push(idx + 1);
+    });
+    return { exact, byTopic };
+  },
+
+  syncRuleToMatchingQuestions(topic, difficulty) {
+    const questions = Array.isArray(this.activeExam?.questions) ? this.activeExam.questions : [];
+    const t = this.normalizeText(topic);
+    if (!t || t === 'general') return 0;
+    let updated = 0;
+    questions.forEach(q => {
+      if (this.questionMatchesTopic(q, topic)) {
+        q.topic = topic;
+        if (difficulty) q.difficulty = String(difficulty).toLowerCase();
+        updated++;
+      }
+    });
+    return updated;
+  },
+
   renderDistributionRows(rules, existingTopics) {
     if (!Array.isArray(rules) || rules.length === 0) {
       return `
@@ -824,6 +878,11 @@ window.ExamDetailsView = {
       const diffCls = diff === 'baja' ? 'is-baja' : (diff === 'alta' ? 'is-alta' : 'is-media');
       const topicOptions = Array.from(new Set([r.topic, ...customTopics, ...existingTopics, 'Programación', 'Bases de Datos', 'Redes', 'General'].filter(Boolean)));
       const isEditingNew = this.creatingTopicRowIdx === idx;
+      const matchInfo = this.getMatchingQuestionNumbersForRule(r);
+      const matchedList = matchInfo.exact.length > 0 ? matchInfo.exact : matchInfo.byTopic;
+      const matchBadge = matchedList.length > 0
+        ? `<div style="font-size:0.72rem; font-weight:800; color:#15803d; margin-top:0.28rem;">✅ ${matchedList.length} preg. conectada${matchedList.length > 1 ? 's' : ''} (#${matchedList.slice(0, 6).join(', #')}${matchedList.length > 6 ? '...' : ''})</div>`
+        : `<div style="font-size:0.72rem; font-weight:800; color:#d97706; margin-top:0.28rem;">⚠️ 0 preg. tratan de "${String(r.topic || '').replace(/</g, '&lt;')}" aún</div>`;
       return `
         <tr>
           <td>
@@ -845,6 +904,7 @@ window.ExamDetailsView = {
                 ${topicOptions.map(t => `<option value="${String(t).replace(/"/g, '&quot;')}" ${t === r.topic ? 'selected' : ''}>${t}</option>`).join('')}
                 <option value="__CREATE_NEW__">➕ Crear nueva temática...</option>
               </select>
+              ${matchBadge}
             `}
           </td>
           <td>
@@ -939,6 +999,13 @@ window.ExamDetailsView = {
       return;
     }
     this.draftConfig.distributionRules[idx][field] = value;
+    const rule = this.draftConfig.distributionRules[idx];
+    if (field === 'difficulty' || field === 'topic') {
+      const linked = this.syncRuleToMatchingQuestions(rule.topic, rule.difficulty);
+      if (linked > 0 && field === 'difficulty') {
+        this.showToast(`🔗 Dificultad "${rule.difficulty}" aplicada a ${linked} pregunta${linked > 1 ? 's' : ''} de "${rule.topic}".`);
+      }
+    }
     this.markDirty();
     this.render();
   },
@@ -956,14 +1023,17 @@ window.ExamDetailsView = {
       this.draftConfig.customTopics.unshift(name);
     }
     if (!Array.isArray(this.draftConfig.distributionRules)) this.draftConfig.distributionRules = [];
+    const linked = this.syncRuleToMatchingQuestions(name, 'media');
     this.draftConfig.distributionRules.push({
       topic: name,
       difficulty: 'media',
-      count: 2
+      count: Math.max(1, linked || 2)
     });
     this.markDirty();
     this.render();
-    this.showToast(`✅ Temática "${name}" creada y agregada.`);
+    this.showToast(linked > 0
+      ? `✅ Temática "${name}" creada y conectada a ${linked} pregunta${linked > 1 ? 's' : ''}.`
+      : `✅ Temática "${name}" creada y agregada.`);
   },
 
   confirmInlineTopic(idx) {
@@ -978,13 +1048,17 @@ window.ExamDetailsView = {
     if (!this.draftConfig.customTopics.some(t => t.toLowerCase() === name.toLowerCase())) {
       this.draftConfig.customTopics.unshift(name);
     }
+    let linked = 0;
     if (this.draftConfig.distributionRules?.[idx]) {
       this.draftConfig.distributionRules[idx].topic = name;
+      linked = this.syncRuleToMatchingQuestions(name, this.draftConfig.distributionRules[idx].difficulty);
     }
     this.creatingTopicRowIdx = null;
     this.markDirty();
     this.render();
-    this.showToast(`✅ Temática "${name}" creada.`);
+    this.showToast(linked > 0
+      ? `✅ Temática "${name}" conectada a ${linked} pregunta${linked > 1 ? 's' : ''}.`
+      : `✅ Temática "${name}" creada.`);
   },
 
   cancelInlineTopic() {
@@ -1083,6 +1157,25 @@ window.ExamDetailsView = {
           picked.push(num);
         }
       });
+
+      // Respetar reglas de distribución por temática y dificultad conectadas a las preguntas reales
+      if (!this.demoSimMode && cfg.enabled && cfg.distributionEnabled && Array.isArray(cfg.distributionRules)) {
+        cfg.distributionRules.forEach(rule => {
+          if (!rule || !rule.count) return;
+          const needed = parseInt(rule.count, 10) || 0;
+          const m = this.getMatchingQuestionNumbersForRule(rule);
+          const candidates = [
+            ...this.strongMix(m.exact.filter(n => !seen.has(n)), false),
+            ...this.strongMix(m.byTopic.filter(n => !seen.has(n) && !m.exact.includes(n)), false)
+          ];
+          candidates.slice(0, needed).forEach(num => {
+            if (num >= 1 && num <= total && !seen.has(num) && picked.length < target) {
+              seen.add(num);
+              picked.push(num);
+            }
+          });
+        });
+      }
       const pool = [];
       for (let i = 1; i <= total; i++) {
         if (!seen.has(i)) pool.push(i);

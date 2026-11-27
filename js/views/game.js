@@ -24,6 +24,33 @@ window.GameView = {
   studentQuestionOrder: null,
   playerOptionMapping: null,
 
+  normalizeMatchText(str) {
+    return String(str || '')
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .trim();
+  },
+
+  questionMatchesTopic(q, topic, fallbackCategory) {
+    const t = this.normalizeMatchText(topic);
+    if (!t || t === 'general') return true;
+    const qTopic = this.normalizeMatchText(q.topic || q.category || '');
+    if (qTopic && (qTopic === t || qTopic.includes(t) || t.includes(qTopic))) return true;
+    const qBody = this.normalizeMatchText(
+      [
+        q.text,
+        q.question,
+        q.context,
+        q.explanation,
+        ...(Array.isArray(q.options) ? q.options.map(o => (typeof o === 'string' ? o : (o?.text || ''))) : [])
+      ].filter(Boolean).join(' ')
+    );
+    if (qBody.includes(t)) return true;
+    const fb = this.normalizeMatchText(fallbackCategory || '');
+    return Boolean(fb && fb === t);
+  },
+
   cryptoRandomFloat() {
     try {
       if (window.crypto && typeof window.crypto.getRandomValues === 'function') {
@@ -109,22 +136,32 @@ window.GameView = {
         }
       });
 
-      // 2. Distribución por temática y dificultad (opcional)
+      // 2. Distribución por temática y dificultad (conectada al contenido real de cada pregunta)
       if (config.enabled && config.distributionEnabled && Array.isArray(config.distributionRules) && config.distributionRules.length > 0) {
         config.distributionRules.forEach(rule => {
           if (!rule || !rule.count) return;
           const needed = parseInt(rule.count, 10) || 0;
-          const matches = [];
+          const exactMatches = [];
+          const topicOnlyMatches = [];
+          const targetDiff = this.normalizeMatchText(rule.difficulty || '');
+
           allQ.forEach((q, idx) => {
             if (chosenIndices.has(idx)) return;
-            const qTopic = String(q.topic || q.category || challenge.categoryName || 'General').toLowerCase();
-            const qDiff = String(q.difficulty || 'media').toLowerCase();
-            const matchesTopic = !rule.topic || qTopic === String(rule.topic).toLowerCase();
-            const matchesDiff = !rule.difficulty || qDiff === String(rule.difficulty).toLowerCase();
-            if (matchesTopic && matchesDiff) matches.push(idx);
+            const matchesTopic = this.questionMatchesTopic(q, rule.topic, challenge.categoryName);
+            if (!matchesTopic) return;
+            const qDiff = this.normalizeMatchText(q.difficulty || 'media');
+            if (!targetDiff || qDiff === targetDiff) {
+              exactMatches.push(idx);
+            } else {
+              topicOnlyMatches.push(idx);
+            }
           });
-          const shuffledMatches = this.strongShuffle(matches, randFn, false);
-          shuffledMatches.slice(0, needed).forEach(idx => {
+
+          const prioritized = [
+            ...this.strongShuffle(exactMatches, randFn, false),
+            ...this.strongShuffle(topicOnlyMatches, randFn, false)
+          ];
+          prioritized.slice(0, needed).forEach(idx => {
             if (chosen.length < count && !chosenIndices.has(idx)) {
               chosenIndices.add(idx);
               chosen.push({ ...allQ[idx], _originalBankIndex: idx });
