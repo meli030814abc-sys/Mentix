@@ -12,6 +12,11 @@ window.AdminView = {
     status: 'all',
     viewMode: 'cards' // 'cards' | 'table'
   },
+  examFilter: {
+    search: '',
+    category: 'all',
+    status: 'all'
+  },
   userFilter: {
     search: '',
     role: 'all',
@@ -444,6 +449,11 @@ window.AdminView = {
               <span class="admin-nav-icon"><img src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Gear/3D/gear_3d.png" alt="Configuración" width="24" height="24" class="rv3d-ico" /></span>
               <span class="admin-nav-label sidebar-hideable">Configuración</span>
             </button>
+            <button class="admin-nav-item ${this.activeTab === 'exams' ? 'active' : ''}" onclick="window.AdminView.switchTab('exams')">
+              <span class="admin-nav-icon"><img src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Open%20book/3D/open_book_3d.png" alt="Exámenes" width="24" height="24" class="rv3d-ico" /></span>
+              <span class="admin-nav-label sidebar-hideable">Exámenes</span>
+              <span class="admin-nav-badge sidebar-hideable">${this.getAllExams().length}</span>
+            </button>
           </nav>
         </aside>
 
@@ -610,6 +620,9 @@ window.AdminView = {
       case 'design':
         content.innerHTML = this.templateDesign();
         break;
+      case 'exams':
+        content.innerHTML = this.templateExams();
+        break;
       case 'categories':
         content.innerHTML = this.templateCategories();
         break;
@@ -619,6 +632,336 @@ window.AdminView = {
       default:
         content.innerHTML = this.templateDashboard();
     }
+  },
+
+  isExamItem(c) {
+    if (!c || typeof c !== 'object') return false;
+    const pType = String(c.projectType || c.project_type || '').toLowerCase().trim();
+    if (pType === 'quiz') return true;
+    if (pType === 'presentation' || pType === 'video' || pType === 'document' || pType === 'url') return false;
+    if (c.isGovDataProject || c.is_gov_data_project) return false;
+    return Array.isArray(c.questions) && c.questions.length > 0;
+  },
+
+  getAllExams() {
+    const challenges = window.appState?.challenges || [];
+    return challenges.filter(c => this.isExamItem(c));
+  },
+
+  setExamFilter(key, val) {
+    if (!this.examFilter) this.examFilter = { search: '', category: 'all', status: 'all' };
+    this.examFilter[key] = val;
+    if (key === 'search') {
+      const q = (val || '').toLowerCase().trim();
+      const cards = document.querySelectorAll('#admin-exams-grid .t3d-quiz-card[data-title]');
+      let vis = 0;
+      cards.forEach(card => {
+        const title = (card.getAttribute('data-title') || '').toLowerCase();
+        const desc = (card.getAttribute('data-desc') || '').toLowerCase();
+        const author = (card.getAttribute('data-author') || '').toLowerCase();
+        const ok = !q || title.includes(q) || desc.includes(q) || author.includes(q);
+        card.style.display = ok ? 'flex' : 'none';
+        if (ok) vis++;
+      });
+      const cntEl = document.getElementById('admin-exams-visible-count');
+      if (cntEl) cntEl.textContent = vis;
+      return;
+    }
+    this.renderActiveTab();
+  },
+
+  async approveExam(examId) {
+    const c = (window.appState?.challenges || []).find(x => String(x.id) === String(examId));
+    if (!c) return;
+    c.approvalStatus = 'approved';
+    c.status = 'completed';
+    c.isPublic = true;
+    c.updatedAt = new Date().toISOString();
+    if (typeof saveGlobalState === 'function') saveGlobalState(window.appState);
+    try {
+      const apiBase = (window.appRouter && typeof window.appRouter.getApiBase === 'function') ? window.appRouter.getApiBase() : '';
+      await fetch(`${apiBase}/api/challenges`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(c)
+      });
+    } catch (e) {}
+    if (typeof this.showToast === 'function') {
+      this.showToast(`✅ Examen "${c.title}" aprobado y publicado`, 'success');
+    }
+    this.renderActiveTab();
+  },
+
+  async deleteExam(examId) {
+    const c = (window.appState?.challenges || []).find(x => String(x.id) === String(examId));
+    if (!c) return;
+    if (!confirm(`¿Seguro que deseas eliminar el examen "${c.title}"?`)) return;
+    window.appState.challenges = (window.appState.challenges || []).filter(x => String(x.id) !== String(examId));
+    if (typeof saveGlobalState === 'function') saveGlobalState(window.appState);
+    try {
+      const apiBase = (window.appRouter && typeof window.appRouter.getApiBase === 'function') ? window.appRouter.getApiBase() : '';
+      await fetch(`${apiBase}/api/challenges`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type: 'DELETE_CHALLENGE', id: examId })
+      });
+    } catch (e) {}
+    if (typeof this.showToast === 'function') {
+      this.showToast(`🗑️ Examen "${c.title}" eliminado`, 'info');
+    }
+    this.render();
+  },
+
+  templateExams() {
+    const allExams = this.getAllExams();
+    const ef = this.examFilter || { search: '', category: 'all', status: 'all' };
+    const isLight = document.body.classList.contains('light-theme') || (typeof this.getTheme === 'function' && this.getTheme() === 'light');
+
+    const isExamInProcess = (c) => c.approvalStatus === 'pending' || c.status === 'in_progress' || c.status === 'draft' || !Array.isArray(c.questions) || c.questions.length === 0;
+    const inProcessCount = allExams.filter(isExamInProcess).length;
+    const approvedCount = allExams.length - inProcessCount;
+
+    const categoriesMap = new Map();
+    allExams.forEach(c => {
+      const cat = c.categoryName || 'General';
+      categoriesMap.set(cat, (categoriesMap.get(cat) || 0) + 1);
+    });
+
+    const filtered = allExams.filter(c => {
+      const cat = (c.categoryName || 'General').toLowerCase();
+      if (ef.category !== 'all' && cat !== ef.category.toLowerCase()) return false;
+      const inProc = isExamInProcess(c);
+      if (ef.status === 'in_progress' && !inProc) return false;
+      if (ef.status === 'approved' && inProc) return false;
+      if (ef.search) {
+        const q = ef.search.toLowerCase();
+        const mTitle = (c.title || '').toLowerCase().includes(q);
+        const mDesc = (c.description || '').toLowerCase().includes(q);
+        const mAuth = (c.author || '').toLowerCase().includes(q);
+        if (!mTitle && !mDesc && !mAuth) return false;
+      }
+      return true;
+    });
+
+    return `
+      <div class="t3d-container ${isLight ? 'teacher-theme-light' : 'teacher-theme-dark'}" style="padding: 0.5rem 0 3rem;">
+        <!-- HERO BANNER 3D DE EXÁMENES -->
+        <header class="t3d-hero">
+          <div class="t3d-hero-left">
+            <div class="t3d-hero-mascot-box">
+              <img 
+                src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Open%20book/3D/open_book_3d.png" 
+                alt="Exámenes 3D" 
+                class="t3d-hero-mascot"
+              />
+            </div>
+            <div>
+              <span class="t3d-badge-gold">
+                <img src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Sparkles/3D/sparkles_3d.png" class="t3d-ico-sm" alt="" />
+                ADMINISTRACIÓN DE EXÁMENES 3D
+              </span>
+              <h1 class="t3d-hero-title">Exámenes y Evaluaciones 3D</h1>
+              <p class="t3d-hero-sub">Gestiona todos los exámenes creados y en proceso: edita, aprueba, prueba o lanza salas en vivo.</p>
+            </div>
+          </div>
+
+          <div class="t3d-hero-actions">
+            <button class="t3d-btn t3d-btn-primary" onclick="window.appRouter.navigate('creator')">
+              <img src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Plus/3D/plus_3d.png" class="t3d-ico-sm" alt="" />
+              <span>+ Crear Nuevo Examen</span>
+            </button>
+          </div>
+        </header>
+
+        <!-- KPI CARDS 3D -->
+        <section class="t3d-kpi-grid" style="margin-bottom: 2rem;">
+          <div class="t3d-kpi-card t3d-kpi-blue">
+            <div class="t3d-kpi-icon-wrap">
+              <img src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Books/3D/books_3d.png" class="t3d-ico-lg" alt="" />
+            </div>
+            <div class="t3d-kpi-info">
+              <div class="t3d-kpi-label">Total Exámenes</div>
+              <div class="t3d-kpi-val">${allExams.length}</div>
+              <div class="t3d-kpi-sub">📚 En toda la plataforma</div>
+            </div>
+          </div>
+
+          <div class="t3d-kpi-card t3d-kpi-gold">
+            <div class="t3d-kpi-icon-wrap">
+              <img src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Hourglass%20not%20done/3D/hourglass_not_done_3d.png" class="t3d-ico-lg" alt="" />
+            </div>
+            <div class="t3d-kpi-info">
+              <div class="t3d-kpi-label">En Proceso</div>
+              <div class="t3d-kpi-val">${inProcessCount}</div>
+              <div class="t3d-kpi-sub">⏳ Pendientes o en borrador</div>
+            </div>
+          </div>
+
+          <div class="t3d-kpi-card t3d-kpi-green">
+            <div class="t3d-kpi-icon-wrap">
+              <img src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Check%20mark%20button/3D/check_mark_button_3d.png" class="t3d-ico-lg" alt="" />
+            </div>
+            <div class="t3d-kpi-info">
+              <div class="t3d-kpi-label">Aprobados y Listos</div>
+              <div class="t3d-kpi-val">${approvedCount}</div>
+              <div class="t3d-kpi-sub">✅ Disponibles para grupos</div>
+            </div>
+          </div>
+
+          <div class="t3d-kpi-card t3d-kpi-purple">
+            <div class="t3d-kpi-icon-wrap">
+              <img src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Label/3D/label_3d.png" class="t3d-ico-lg" alt="" />
+            </div>
+            <div class="t3d-kpi-info">
+              <div class="t3d-kpi-label">Categorías</div>
+              <div class="t3d-kpi-val">${categoriesMap.size}</div>
+              <div class="t3d-kpi-sub">🏷️ Áreas académicas</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- BARRA DE BÚSQUEDA Y FILTROS -->
+        <section>
+          <div class="t3d-section-header">
+            <h2 class="t3d-section-title">
+              <img src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Clipboard/3D/clipboard_3d.png" class="t3d-ico-md" alt="" />
+              <span>Catálogo Completo de Exámenes</span>
+              <span class="t3d-pill-meta" id="admin-exams-visible-count" style="margin-left: 0.5rem;">${filtered.length}</span>
+            </h2>
+
+            <div class="t3d-search-bar">
+              <img src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Magnifying%20glass%20tilted%20right/3D/magnifying_glass_tilted_right_3d.png" class="t3d-ico-sm" alt="" />
+              <input 
+                type="text" 
+                class="t3d-search-input" 
+                placeholder="Buscar examen por título o docente..." 
+                value="${(ef.search || '').replace(/"/g, '&quot;')}"
+                oninput="window.AdminView.setExamFilter('search', this.value)" 
+              />
+            </div>
+          </div>
+
+          <div class="t3d-filter-chips">
+            <div class="t3d-filter-chip ${ef.status === 'all' && ef.category === 'all' ? 'is-active' : ''}" onclick="window.AdminView.examFilter.category='all'; window.AdminView.setExamFilter('status', 'all')">
+              🌟 Todos (${allExams.length})
+            </div>
+            <div class="t3d-filter-chip ${ef.status === 'in_progress' ? 'is-active' : ''}" onclick="window.AdminView.setExamFilter('status', 'in_progress')">
+              ⏳ En Proceso (${inProcessCount})
+            </div>
+            <div class="t3d-filter-chip ${ef.status === 'approved' ? 'is-active' : ''}" onclick="window.AdminView.setExamFilter('status', 'approved')">
+              ✅ Listos (${approvedCount})
+            </div>
+            ${Array.from(categoriesMap.entries()).map(([catName, count]) => `
+              <div class="t3d-filter-chip ${ef.category.toLowerCase() === catName.toLowerCase() ? 'is-active' : ''}" onclick="window.AdminView.setExamFilter('category', '${catName.replace(/'/g, "\\'")}')">
+                📁 ${catName} (${count})
+              </div>
+            `).join('')}
+          </div>
+
+          <div class="t3d-quiz-grid" id="admin-exams-grid">
+            ${filtered.length === 0 ? `
+              <div class="t3d-quiz-card" style="grid-column: 1 / -1; text-align: center; padding: 3rem 1.5rem;">
+                <img src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Clipboard/3D/clipboard_3d.png" class="t3d-ico-lg" style="margin: 0 auto 1rem;" alt="" />
+                <h3 style="font-size: 1.3rem; font-weight: 900; margin: 0 0 0.5rem;">No hay exámenes con este filtro</h3>
+                <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">Crea un nuevo examen o cambia los filtros para ver todos los exámenes disponibles.</p>
+                <div>
+                  <button class="t3d-btn t3d-btn-primary" onclick="window.appRouter.navigate('creator')">
+                    <span>+ Crear Nuevo Examen</span>
+                  </button>
+                </div>
+              </div>
+            ` : filtered.map(c => {
+              const catName = c.categoryName || 'General';
+              const timeLimit = c.timePerQuestion === 0 ? 'Sin límite' : ((c.timePerQuestion || 20) + 's');
+              const qCount = c.questions?.length || 0;
+              const inProc = isExamInProcess(c);
+
+              return `
+                <div 
+                  class="t3d-quiz-card" 
+                  data-title="${(c.title || '').replace(/"/g, '&quot;')}" 
+                  data-desc="${(c.description || '').replace(/"/g, '&quot;')}" 
+                  data-author="${(c.author || '').replace(/"/g, '&quot;')}"
+                >
+                  <div>
+                    <div class="t3d-quiz-top-row">
+                      <span class="t3d-pill-category">📚 ${catName}</span>
+                      <span class="t3d-pill-meta">⏱️ ${timeLimit} • 📝 ${qCount} preg.</span>
+                    </div>
+
+                    <h3 class="t3d-quiz-title">${c.title || 'Examen sin título'}</h3>
+                    <p class="t3d-quiz-desc">${c.description || 'Evaluación lista para administrar, editar o lanzar en vivo.'}</p>
+
+                    <div class="t3d-quiz-author-bar">
+                      <div class="t3d-author-info">
+                        <span>${c.authorAvatar || '👨‍🏫'}</span>
+                        <span>Autor: <strong>${c.author || 'Docente'}</strong></span>
+                      </div>
+                      ${inProc
+                        ? `<span class="t3d-badge-myquiz" style="background: rgba(245, 158, 11, 0.18); color: #f59e0b; border-color: rgba(245, 158, 11, 0.4);">⏳ En Proceso</span>`
+                        : `<span class="t3d-badge-myquiz" style="background: rgba(16, 185, 129, 0.16); color: #10b981; border-color: rgba(16, 185, 129, 0.35);">✅ Aprobado</span>`
+                      }
+                    </div>
+                  </div>
+
+                  <div class="t3d-quiz-actions">
+                    <button 
+                      class="t3d-card-btn t3d-card-btn-test" 
+                      title="Probar examen"
+                      onclick="window.appRouter.startSinglePlayer('${c.id}')"
+                    >
+                      <img src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Play%20button/3D/play_button_3d.png" class="t3d-ico-sm" alt="" />
+                      <span>Probar</span>
+                    </button>
+                    <button 
+                      class="t3d-card-btn t3d-btn-primary" 
+                      title="Proyectar en pantalla grande"
+                      onclick="window.appRouter.hostRoom('${c.id}', 'presented')"
+                    >
+                      <img src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Television/3D/television_3d.png" class="t3d-ico-sm" alt="" />
+                      <span>Proyectar</span>
+                    </button>
+                    <button 
+                      class="t3d-card-btn t3d-btn-cyan" 
+                      title="Sala normal para celulares"
+                      onclick="window.appRouter.hostRoom('${c.id}', 'normal')"
+                    >
+                      <img src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Video%20game/3D/video_game_3d.png" class="t3d-ico-sm" alt="" />
+                      <span>Móvil</span>
+                    </button>
+                    <button 
+                      class="t3d-card-btn t3d-btn-amber" 
+                      title="Editar examen"
+                      style="max-width: 44px; padding: 0.55rem 0.4rem;"
+                      onclick="window.appRouter.navigate('creator', { editId: '${c.id}' })"
+                    >
+                      ✏️
+                    </button>
+                    ${inProc ? `
+                      <button 
+                        class="t3d-card-btn t3d-btn-emerald" 
+                        title="Aprobar examen"
+                        onclick="window.AdminView.approveExam('${c.id}')"
+                      >
+                        <span>✅ Aprobar</span>
+                      </button>
+                    ` : ''}
+                    <button 
+                      class="t3d-card-btn t3d-card-btn-test" 
+                      title="Eliminar examen"
+                      style="max-width: 44px; padding: 0.55rem 0.4rem; color: #ef4444;"
+                      onclick="window.AdminView.deleteExam('${c.id}')"
+                    >
+                      🗑️
+                    </button>
+                  </div>
+                </div>
+              `;
+            }).join('')}
+          </div>
+        </section>
+      </div>
+    `;
   },
 
   templateTeacher() {

@@ -22,9 +22,10 @@ window.TeacherView = {
   isProjectItem(c) {
     if (!c || typeof c !== 'object') return false;
     const pType = String(c.projectType || c.project_type || '').toLowerCase().trim();
+    if (pType === 'quiz') return false;
     if (pType === 'presentation' || pType === 'video' || pType === 'document' || pType === 'url') return true;
     if (c.isGovDataProject || c.is_gov_data_project) return true;
-    if (pType !== 'quiz' && (!Array.isArray(c.questions) || c.questions.length === 0)) return true;
+    if (!Array.isArray(c.questions) || c.questions.length === 0) return true;
     return false;
   },
 
@@ -46,14 +47,47 @@ window.TeacherView = {
     return false;
   },
 
-  // Devuelve solo los exámenes reales creados por el docente actual (nunca proyectos ni exámenes ajenos)
+  // Devuelve TODOS los exámenes creados (incluyendo los que están en proceso, propios primero)
   getTeacherExams() {
     const challenges = window.appState?.challenges || [];
-    return challenges.filter(c => {
-      if (!c || this.isProjectItem(c)) return false;
-      if (!Array.isArray(c.questions) || c.questions.length === 0) return false;
-      return this.isOwnedByCurrentTeacher(c);
+    const exams = challenges.filter(c => c && !this.isProjectItem(c));
+    return exams.sort((a, b) => {
+      const aMine = this.isOwnedByCurrentTeacher(a) ? 1 : 0;
+      const bMine = this.isOwnedByCurrentTeacher(b) ? 1 : 0;
+      return bMine - aMine;
     });
+  },
+
+  // Devuelve los proyectos autorizados para mostrar en la sección de evaluaciones del docente (solo Presentar / Ver Landing)
+  getAuthorizedProjects() {
+    const challenges = window.appState?.challenges || [];
+    return challenges.filter(c => {
+      if (!c || !this.isProjectItem(c)) return false;
+      if (c.rejectionReason) return false;
+      return c.approvalStatus === 'approved' || (c.publicationStatus === 'published' && c.approvalStatus !== 'pending');
+    });
+  },
+
+  presentAuthorizedProject(projectId) {
+    const p = (window.appState?.challenges || []).find(c => String(c.id) === String(projectId));
+    if (!p) {
+      window.appRouter.navigate('projects');
+      return;
+    }
+    const pType = String(p.projectType || p.project_type || 'presentation').toLowerCase().trim();
+    if (pType === 'presentation') {
+      window.appRouter.navigate('presentation', { id: p.id, project: p });
+    } else if (pType === 'video') {
+      window.appRouter.navigate('video', { id: p.id, project: p });
+    } else if (pType === 'document') {
+      window.appRouter.navigate('document', { id: p.id, project: p });
+    } else if (pType === 'url') {
+      window.appRouter.navigate('url', { id: p.id, project: p });
+    } else if (window.ProjectsView && typeof window.ProjectsView.openProjectLanding === 'function') {
+      window.ProjectsView.openProjectLanding(p.id);
+    } else {
+      window.appRouter.navigate('projects');
+    }
   },
 
   // Devuelve TODOS los exámenes reales disponibles en la plataforma (propios primero)
@@ -276,6 +310,7 @@ window.TeacherView = {
 
     const myGroups = this.getTeacherGroups();
     const myExams = this.getTeacherExams();
+    const authorizedProjects = this.getAuthorizedProjects();
     const currentTheme = this.getTheme();
 
     container.classList.toggle('teacher-theme-light', currentTheme === 'light');
@@ -439,6 +474,8 @@ window.TeacherView = {
               const catName = c.categoryName || 'General';
               const timeLimit = c.timePerQuestion === 0 ? 'Sin límite' : ((c.timePerQuestion || 20) + 's');
               const qCount = c.questions?.length || 0;
+              const isInProcess = c.approvalStatus === 'pending' || c.status === 'in_progress' || c.status === 'draft' || qCount === 0;
+              const isMine = this.isOwnedByCurrentTeacher(c);
 
               return `
                 <div 
@@ -459,9 +496,15 @@ window.TeacherView = {
                     <div class="t3d-quiz-author-bar">
                       <div class="t3d-author-info">
                         <span>${c.authorAvatar || '👨‍🏫'}</span>
-                        <span>Prof: <strong>${c.author || 'Tú'}</strong></span>
+                        <span>Prof: <strong>${c.author || 'Docente'}</strong></span>
                       </div>
-                      <span class="t3d-badge-myquiz">⭐ Creado por ti</span>
+                      ${isInProcess
+                        ? `<span class="t3d-badge-myquiz" style="background: rgba(245, 158, 11, 0.18); color: #f59e0b; border-color: rgba(245, 158, 11, 0.4);">⏳ En Proceso</span>`
+                        : (isMine
+                          ? `<span class="t3d-badge-myquiz">⭐ Creado por ti</span>`
+                          : `<span class="t3d-badge-myquiz" style="background: rgba(16, 185, 129, 0.16); color: #10b981; border-color: rgba(16, 185, 129, 0.35);">✅ Listo</span>`
+                        )
+                      }
                     </div>
                   </div>
 
@@ -508,6 +551,70 @@ window.TeacherView = {
             <p style="font-size: 1.1rem; font-weight: 800; color: var(--text-secondary);">
               🔍 No se encontraron exámenes con ese término o categoría.
             </p>
+          </div>
+
+          <!-- PROYECTOS AUTORIZADOS (SOLO PRESENTAR O VER LANDING, Y BOTÓN PARA IR A PROYECTOS) -->
+          <div style="margin-top: 2.5rem; padding-top: 2rem; border-top: 1.5px dashed rgba(148, 163, 184, 0.25);">
+            <div class="t3d-section-header" style="margin-bottom: 1.15rem;">
+              <h3 class="t3d-section-title" style="font-size: 1.2rem;">
+                <img src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Rocket/3D/rocket_3d.png" class="t3d-ico-md" alt="" />
+                <span>Proyectos Autorizados</span>
+                <span class="t3d-pill-meta" style="margin-left: 0.5rem;">${authorizedProjects.length}</span>
+              </h3>
+              <button class="t3d-btn t3d-btn-outline" onclick="window.appRouter.navigate('projects')">
+                <span>🌐 Ver más en Proyectos →</span>
+              </button>
+            </div>
+
+            ${authorizedProjects.length === 0 ? `
+              <div class="t3d-quiz-card" style="padding: 1.75rem; text-align: center;">
+                <p style="margin: 0 0 1rem; color: var(--text-secondary); font-weight: 600;">No hay proyectos autorizados publicados en este momento.</p>
+                <div>
+                  <button class="t3d-btn t3d-btn-cyan" onclick="window.appRouter.navigate('projects')">
+                    <span>🌐 Ir a la Página de Proyectos</span>
+                  </button>
+                </div>
+              </div>
+            ` : `
+              <div class="t3d-quiz-grid">
+                ${authorizedProjects.slice(0, 6).map(p => {
+                  const pCat = p.categoryName || 'Proyecto';
+                  const pTitle = p.landingConfig?.publicName || p.title || 'Proyecto Autorizado';
+                  return `
+                    <div class="t3d-quiz-card">
+                      <div>
+                        <div class="t3d-quiz-top-row">
+                          <span class="t3d-pill-category">🚀 ${pCat}</span>
+                          <span class="t3d-badge-myquiz" style="background: rgba(16, 185, 129, 0.16); color: #10b981; border-color: rgba(16, 185, 129, 0.35);">✅ Autorizado</span>
+                        </div>
+                        <h3 class="t3d-quiz-title">${pTitle}</h3>
+                        <p class="t3d-quiz-desc">${p.description || 'Proyecto educativo autorizado para presentar en clase.'}</p>
+                        <div class="t3d-quiz-author-bar">
+                          <div class="t3d-author-info">
+                            <span>${p.authorAvatar || '👨‍🏫'}</span>
+                            <span>Por: <strong>${p.author || 'Equipo Mentix'}</strong></span>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="t3d-quiz-actions" style="grid-template-columns: 1fr 1fr; display: grid; gap: 0.6rem;">
+                        <button 
+                          class="t3d-card-btn t3d-btn-primary" 
+                          onclick="window.TeacherView.presentAuthorizedProject('${p.id}')"
+                        >
+                          <span>📽️ Presentar</span>
+                        </button>
+                        <button 
+                          class="t3d-card-btn t3d-btn-cyan" 
+                          onclick="window.ProjectsView ? window.ProjectsView.openProjectLanding('${p.id}') : window.appRouter.navigate('projects')"
+                        >
+                          <span>🚀 Ver Landing</span>
+                        </button>
+                      </div>
+                    </div>
+                  `;
+                }).join('')}
+              </div>
+            `}
           </div>
         </section>
 
